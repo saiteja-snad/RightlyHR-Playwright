@@ -58,7 +58,7 @@
                 <p class="popup-heading mb-0">Add Identiy Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();identityForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -96,6 +96,9 @@
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['maxlength']">
                                 Identity Number must not exceed {{ IdentityMaxNumber }} digits
                             </div>
+                            <div *ngIf="identityForm.get('identityNumber')?.errors?.['pattern']">
+                                Identity Number is required
+                            </div>
                         </div>
                     </div>}
                     @if(this.rbac.allowedToAccess('Identity.view')){
@@ -117,7 +120,14 @@
     
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityForm.invalid">Add</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Add'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>
@@ -191,7 +201,14 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid">Update</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Update'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>

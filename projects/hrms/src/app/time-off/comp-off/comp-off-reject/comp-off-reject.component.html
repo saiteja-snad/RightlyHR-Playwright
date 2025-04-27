@@ -1,54 +1,72 @@
 <div class="custom-main-component-container">
-    <div class="custom-table-content ">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Worked Date</th>
-                    <th>Availed</th>
-                    <th>Reason</th>
-                    <th>Applied Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (rbac.allowedToAccess('Compoff Tab.view')) {
-                <ng-container *ngIf="rejectedCompOffRequests!.length > 0; else noDataTemplate">
-                    <tr *ngFor="let compOffRequest of rejectedCompOffRequests; let i = index">
-                        <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
-                        <td [ngSwitch]="compOffRequest.durationType">
-                            <span *ngSwitchCase="1">First Half</span>
-                            <span *ngSwitchCase="3">Second Half</span>
-                            <span *ngSwitchCase="2">Full Day</span>
-                            <span *ngSwitchDefault>-</span>
-                        </td>
-                        <td>
-                            <div>
-                                <span>
-                                    <a type="button" placement="top" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #reason>
-                                        <div>
-                                            <p class="mb-0">{{compOffRequest.reason}}</p>
-                                        </div>
-                                    </ng-template>
-                                </span>
-                            </div>
-                        </td>
-                        <td>{{ compOffRequest.requestedDate | dateformat }}</td>
-                        <td>{{ compOffRequest.status }}</td>
-                    </tr>
-                </ng-container>
-
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <td colspan="4">
-                            <app-no-data-found></app-no-data-found>
-                        </td>
-                    </tr>
+  <div class="custom-table-content ">
+    @if(!dataload){
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Worked Date</th>
+          <th>Availed</th>
+          <th>Applied Date</th>
+          <th>Reason</th>
+          <th>Rejected Reason</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (rbac.allowedToAccess('Compoff Tab.view')) {
+        <ng-container *ngIf="rejectedCompOffRequests!.length > 0; else noDataTemplate">
+          <tr *ngFor="let compOffRequest of rejectedCompOffRequests; let i = index">
+            <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
+            <td [ngSwitch]="compOffRequest.durationType">
+              <span *ngSwitchCase="1">First Half</span>
+              <span *ngSwitchCase="3">Second Half</span>
+              <span *ngSwitchCase="2">Full Day</span>
+              <span *ngSwitchDefault>-</span>
+            </td>
+            <td>{{ compOffRequest.requestedDate | dateformat }}</td>
+            <td>
+              <div>
+                <a *ngIf="compOffRequest.requestedComments; else noRequestedComments" type="button"
+                  [ngbPopover]="requestedComments">
+                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                </a>
+                <ng-template #requestedComments>
+                  <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
                 </ng-template>
-                }
-            </tbody>
-        </table>
-    </div>
+                <ng-template #noRequestedComments>
+                  <span>-</span>
+                </ng-template>
+              </div>
+            </td>
+            <td>
+              <div>
+                <a *ngIf="compOffRequest.reason; else noReason" type="button" [ngbPopover]="reason">
+                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{ compOffRequest.reason }}</p>
+                </ng-template>
+                <ng-template #noReason>
+                  <span>-</span>
+                </ng-template>
+              </div>
+            </td>
+            <td>{{ compOffRequest.status }}</td>
+          </tr>
+        </ng-container>
+
+        <ng-template #noDataTemplate>
+          <tr>
+            <td colspan="4">
+              <app-no-data-found></app-no-data-found>
+            </td>
+          </tr>
+        </ng-template>
+        }
+      </tbody>
+    </table>
+    }@else{
+    <app-data-loader-content />
+    }
+  </div>
 </div>

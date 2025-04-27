@@ -4,9 +4,9 @@
             <p class="component-header cursor mb-0">Permission</p>
         </div>
         <div class="d-flex gap-3">
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addpremission)" *ngIf="rbac.allowedToAccess('Permissions Tab.create')"><i
-                    class="bi bi-plus me-2"></i>Request
-                Permission</button>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addpremission)" 
+            *ngIf="rbac.allowedToAccess('Permissions Tab.create')">
+            <i class="bi bi-plus me-2"></i>Request Permission</button>
         </div>
     </div>
 
@@ -24,11 +24,12 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Request Premission</p>
+                <p class="popup-heading mb-0">Request Permission</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();this.permissionForm.reset()">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
             </div>
         </div>
         
@@ -38,7 +39,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="Date" class="form-label custom-label mb-2">Date<span class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" formControlName="permissionDate" id="Date"
-                            onkeydown="return false" placeholder="Select Date" />
+                            onkeydown="return false" placeholder="Select Date" autocomplete="off"  [min]="getPastDate()" [max]="getFutureDate()" />
                         <div *ngIf="permissionForm.get('permissionDate')?.touched && permissionForm.get('permissionDate')?.invalid"
                             class="error-msg">
                             Permission Date is required.
@@ -59,21 +60,21 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="leaveType" class="form-label custom-label mb-2">Premission Type<span class="text-danger">*</span></label>
+                        <label for="leaveType" class="form-label custom-label mb-2">Permission Type<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="leaveTypes" optionLabel="name" formControlName="leaveType"
                                 placeholder="Please select permission type" id="leaveType" class="form-select custom-select" />
                         </div>
                         <div *ngIf="permissionForm.get('leaveType')?.touched && permissionForm.get('leaveType')?.invalid" class="error-msg">
-                            Premission Type is required.
+                            Permission Type is required.
                         </div>
                     </div>
 
                     <div class="col-md-12 mb-3">
                         <label for="reason" class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
-                            placeholder="Type here" maxlength="250" placeholder="Type Here"></textarea>
-                        <div class="form-label custom-label text-end my-1">
+                            placeholder="Reason for permission" maxlength="250" (input)="formsValidation.validateInput(permissionForm.get('reason'))" ></textarea>
+                            <div class="textarea-count-text">
                             {{ permissionForm.get('reason')?.value?.length || 0 }}/250
                         </div>
                         <div class="error-msg" *ngIf="permissionForm.get('reason')?.touched && permissionForm.get('reason')?.invalid">
@@ -91,8 +92,10 @@
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();this.permissionForm.reset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="permissionForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}...</span>
+                        <div class="button-loader-content">
+                            <div class="spinner-border button-spinner text-light" role="status"></div>
+                            <div>{{'Loading..'}}...</div>
+                        </div>
                         }@else {
                         <span>{{'Request'}}</span>
                         }

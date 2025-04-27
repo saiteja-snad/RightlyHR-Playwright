@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div> <span class="family-sub-header">Family Details</span></div>
+        <div> <span class="component-sub-header">Family Details</span></div>
         @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective'
         && employedata.empstatus.toLowerCase() !== 'inactive' && employedata.empstatus.toLowerCase() !== 'trainee inactive')){
         <div class="custom-add-btn" (click)="openModal(addFamilyModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
@@ -73,7 +73,7 @@
                 <p class="popup-heading mb-0">Add New Family Member Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();familyDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">

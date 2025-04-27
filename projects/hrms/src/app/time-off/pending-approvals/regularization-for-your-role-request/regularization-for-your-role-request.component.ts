@@ -5,7 +5,7 @@ import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { IJob } from '../../../Interfaces/letters-model';
 import { PermissionRequestResponse, ICategoryDetails } from '../../../Interfaces/timoff-model';
@@ -15,21 +15,15 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
-
+import { PermissionsearchPipe } from "../../../Pipes/permissionsearch.pipe";
 @Component({
   selector: 'app-regularization-for-your-role-request',
-  imports: [CommonModule,
-    NgbPopoverModule,
-    FormsModule,
-    PaginatorModule,
-    DropdownModule,
-    NoDataFoundComponent,
-    DateformatPipe,
-    ReactiveFormsModule,
-    TranslateModule],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent,
+    DateformatPipe, ReactiveFormsModule, TranslateModule, PermissionsearchPipe],
   templateUrl: './regularization-for-your-role-request.component.html',
   styleUrl: './regularization-for-your-role-request.component.scss'
 })
+
 export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestroy{
   totalRecords = 100;
   first: any = 0;
@@ -50,13 +44,11 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
   rejectForm!:FormGroup;
-  constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private sharedModalService: OpenModalService,
-    public rbac: RbacService,
-  ) {}
+  searchValue: any;
+  leaves = new BehaviorSubject<PermissionRequestResponse[]>([]);
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
+    private sharedModalService: OpenModalService, public rbac: RbacService,) {}
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
@@ -71,33 +63,29 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
   intializeRejectForm() {  
     this.rejectForm = this.fb.group({
       comments: ['',[Validators.required,Validators.maxLength(250),noWhitespaceValidator]],
-    }); 
-
+    });
   }
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    console.log(EmployeeId);
-    let moduleId=environment.attendanceRegularizationModuleId;
-    this.http
-      .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=ROLE`
-      )
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.regularization = response.data as PermissionRequestResponse[];
-          console.log(this.regularization);
-        },
-        error: (reason) => console.log(reason),
-      });
+    let moduleId = environment.attendanceRegularizationModuleId;
+    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=ROLE`).subscribe({
+      next: (response: any) => {
+         response.data as PermissionRequestResponse[];
+         this.leaves.next( response.data as PermissionRequestResponse[]);
+      },
+      error: (reason) => console.log(reason),
+    });
   }
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -108,6 +96,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
     this.intializeApproveForm();
     this.selectedLeaveData = request;
   }
+
   openRejectModal(content: any, request: PermissionRequestResponse) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeRejectForm();
@@ -122,33 +111,24 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
       };
-
-      this.http
-        .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
-        )
-        .subscribe({
-          next: (response: any) => {
-            this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Request Approved Successfully'
-            );
-            this.approveForm.reset();
-            this.selectedLeaveData = {} as PermissionRequestResponse;
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              permission: true,
-            }));
-          },
-          error: (reason: any) => {
-            this.sharedModalService.openErrorModal(reason.error.Message);
-          },
-          complete: () => {
-
-            this.getAllPendingApprovals();
-          },
-        });
+      this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal('Request Approved Successfully');
+          this.approveForm.reset();
+          this.selectedLeaveData = {} as PermissionRequestResponse;
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            permission: true,
+          }));
+        },
+        error: (reason: any) => {
+          this.sharedModalService.openErrorModal(reason.error.Message);
+        },
+        complete: () => {
+          this.getAllPendingApprovals();
+        },
+      });
     }
   }
 
@@ -157,36 +137,27 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
     };
-    this.sharedModalService.openLoaderModal(
-      'Processing Request, Please wait...');
-    this.http
-      .putData(
-        `PendingApproval/process/${request.approvalHeader.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (respone: any) => {
-          this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal(
-            'Request Processed Successfully'
-          );
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            permission: true,
-          }));
-        },
-        error: (reason: any) => {
-          this.modalService.dismissAll();
-          this.sharedModalService.openErrorModal(
-            reason.error.Message
-          );
-        },
-        complete: () => {
-          this.getAllPendingApprovals();
-        },
-      });
+    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
+    this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).subscribe({
+      next: (respone: any) => {
+        this.modalService.dismissAll();
+        this.sharedModalService.openSuccessModal('Request Processed Successfully');
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          permission: true,
+        }));
+      },
+      error: (reason: any) => {
+        this.modalService.dismissAll();
+        this.sharedModalService.openErrorModal(
+          reason.error.Message
+        );
+      },
+      complete: () => {
+        this.getAllPendingApprovals();
+      },
+    });
   }
-
 
   handleReject(rejectForm: FormGroup): void {
     if (rejectForm.valid) {
@@ -195,42 +166,30 @@ export class RegularizationForYourRoleRequestComponent implements OnInit,OnDestr
         status: 'Rejected',
         comments: formData.comments,
       };
-
-      this.http
-        .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
-        )
-        .subscribe({
-          next: (response: any) => {
-            this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Request Rejected Successfully'
-            );
-            this.rejectForm.reset();
-            this.selectedLeaveData  = {} as PermissionRequestResponse;
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              permission: true,
-            }));
-          },
-          error: (reason: any) => {
-            this.sharedModalService.openErrorModal(reason.error.Message);
-          },
-          complete: () => {
-            this.getAllPendingApprovals();
-          },
-        });
+      this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal('Request Rejected Successfully');
+          this.rejectForm.reset();
+          this.selectedLeaveData = {} as PermissionRequestResponse;
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            permission: true,
+          }));
+        },
+        error: (reason: any) => {
+          this.sharedModalService.openErrorModal(reason.error.Message);
+        },
+        complete: () => {
+          this.getAllPendingApprovals();
+        },
+      });
     }
   }
+
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg',
-    });
+    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', size: 'lg' });
     this.approverComments = value;
-    console.log(this.approverComments);
   }
 
   ngOnDestroy(): void {

@@ -69,16 +69,16 @@
                                         <td>{{(item.firstLogin|dateformat)??'-'}}</td>
                                         <td>{{(item.lastLogout|dateformat)??'-'}}</td>
                                         <td>{{item.duration?.totalDuration??'-'}}</td>
-                                        <td [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}} @if((item?.tags ?? []).length > 0){<span>({{item?.tags}}) </span>} 
+                                         <td [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}} @if((item?.tags ?? []).length > 0){<span>({{item?.tags}}) </span>} 
                                             @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdata.employeeId){
                                                <a  class="ms-2"><u>Leave</u> </a>
-                                            }
-                                            @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && 
+                                            } 
+                                             @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && 
                                             (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs) && currentMonth == selectedMonth && 
                                             this.rbac.allowedToAccess('Attendance Regularization Button.view')){ 
                                                 <a class="ms-2" (click)="openModal(raiseregularization); onclickRegularization(item.date)"><u>Regularization</u> </a>
-                                            }
-                                        </td>
+                                            } 
+                                       </td>
                                         <td>
                                             @if((item?.dayLogs??[]).length>0){
                                                 <div>
@@ -215,13 +215,13 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();this.regularizationForm.reset()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="regularizationForm.invalid || spinnerLoader">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();this.regularizationForm.reset()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="regularizationForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}...</span>
+                        <div class="button-loader-content">
+                            <div class="spinner-border button-spinner text-light" role="status"></div>
+                            <div>{{'Loading..'}}...</div>
+                        </div>
                         }@else {
                         <span>{{'Request'}}</span>
                         }
@@ -245,7 +245,7 @@
 
         <div class="custom-main-popup-content">
             <div class="custom-table-content time-custom">
-                <table class="table">
+                <table class="w-100">
                     <thead>
                         <tr>
                             <th>In</th>

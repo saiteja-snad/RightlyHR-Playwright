@@ -13,8 +13,8 @@ export class LettersTabComponent {
   navTabs = [
     { label: 'Offer Letter', link: '/admin/letters/offer-letter' },
     { label: 'Appointment Letter', link: '/admin/letters/appointment-letter' },
-    { label: 'Intern Offer Letter', link: '/admin/letters/trainee-offer-letter' },
-    { label: 'Intern Appointment Letter', link: '/admin/letters/trainee-appointment-letter' },
+    { label: 'Trainee Offer Letter', link: '/admin/letters/trainee-offer-letter' },
+    { label: 'Trainee Appointment Letter', link: '/admin/letters/trainee-appointment-letter' },
     { label: 'Welcome Letter', link: '/admin/letters/welcome-letter' }
   ];
 }

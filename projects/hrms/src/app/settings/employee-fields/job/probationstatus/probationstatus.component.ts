@@ -40,10 +40,10 @@ export class ProbationstatusComponent {
   }
   ngOnInit(): void {
     this.probitionForm = this.fb.group({
-      probitiontype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      probitiontype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
     this.updateForm = this.fb.group({
-      probitiontype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      probitiontype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
 
     this.getprobitiontype();
@@ -68,11 +68,12 @@ export class ProbationstatusComponent {
     this.subscription = this.http.postdata('ProbationStatus', request).subscribe({
       next: () => {
         this.getprobitiontype();
-        this.conformationPopup.openSuccessModal('probitiontstatus Name added successfully');
+        this.conformationPopup.openSuccessModal('Probation Status added successfully');
         // this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
         // this.resetForm();
       }
     });
@@ -91,10 +92,11 @@ export class ProbationstatusComponent {
               this.getprobitiontype();
               modal.close();
               this.updateForm.reset();
-              this.conformationPopup.openSuccessModal('ProbationStatus Name updated successfully');
+              this.conformationPopup.openSuccessModal('Probation Status updated successfully');
             },
             error: (err: any) => {
-              this.conformationPopup.openErrorModal('Update failed. Please try again.');
+              const errorMessage = err.error?.Message;
+              this.conformationPopup.openErrorModal(errorMessage);
             }
           });
         }
@@ -126,10 +128,11 @@ export class ProbationstatusComponent {
           next: () => {
             this.getprobitiontype();
             modal.close();
-            this.conformationPopup.openSuccessModal('ProbationStatus Name deleted successfully');
+            this.conformationPopup.openSuccessModal('Probation Status deleted successfully');
           },
           error: (err: any) => {
-            this.conformationPopup.openErrorModal('Failed to delete the location');
+            const errorMessage = err.error?.Message;
+            this.conformationPopup.openErrorModal(errorMessage);
           }
         });
       }

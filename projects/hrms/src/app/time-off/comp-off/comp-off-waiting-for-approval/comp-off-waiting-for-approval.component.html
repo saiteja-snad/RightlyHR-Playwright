@@ -1,11 +1,12 @@
 <div class="custom-main-component-container">
   <div class="custom-table-content ">
+    @if(!dataload){
     <table class="w-100">
       <thead>
         <tr>
           <th>Worked Date</th>
           <th>Availed</th>
-          <!-- <th>Reason</th> -->
+          <th>Reason</th>
           <th>Applied Date</th>
           <th>Status</th>
         </tr>
@@ -22,6 +23,20 @@
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
+            <td>
+              <div>
+                <a *ngIf="compOffRequest.requestedComments; else noReason" type="button"
+                  [ngbPopover]="requestedComments">
+                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                </a>
+                <ng-template #requestedComments>
+                  <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
+                </ng-template>
+                <ng-template #noReason>
+                  <span>-</span>
+                </ng-template>
+              </div>
+            </td>
             <td>{{ compOffRequest.requestedDate | dateformat }}</td>
             <td>{{ compOffRequest.status }}</td>
           </tr>
@@ -37,5 +52,8 @@
         }
       </tbody>
     </table>
+    }@else{
+    <app-data-loader-content />
+    }
   </div>
 </div>

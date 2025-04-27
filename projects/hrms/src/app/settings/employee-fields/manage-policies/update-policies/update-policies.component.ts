@@ -120,7 +120,7 @@ export class UpdatePoliciesComponent {
       next: (response: any) => {
         console.log(response);
         this.confirmation.openSuccessModal('Policies updated successfully');
-        
+        this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
         
       },
       error: (err) => {
@@ -170,13 +170,14 @@ export class UpdatePoliciesComponent {
     this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
       next: (response: any) => {
         console.log(response);
-        this.confirmation.openSuccessModal('Holidays published successfully');
+        this.confirmation.openSuccessModal('Policies published successfully');
+        this.router.navigate(['/settings/employee-fields/manage-policies/published-policies']);
         
         
       },
       error: (err) => {
         console.log(err);
-        this.confirmation.openErrorModal('Holidays published failed');
+        this.confirmation.openErrorModal('Policies published failed');
         
       }
     });

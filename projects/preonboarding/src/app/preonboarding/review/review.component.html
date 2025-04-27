@@ -43,7 +43,7 @@
                                     </tr>
                                     <tr>
                                         <td>Mobile Number Witd Country</td>
-                                        <td>{{empDetails?.mobilePhoneCountryCode}}
+                                        <td>{{empDetails?.mobilePhoneCountryCode?? ''}} {{empDetails?.contactnumber ??''}}
                                         </td>
                                     </tr>
                                     <tr>
@@ -110,7 +110,6 @@
                                                     <button class="view-btn"
                                                         (click)="onSelectDownload(ed.attachment)">Download</button>
                                                 </ng-template>
-        
                                             </td>
                                         </tr>
                                     </tbody>
@@ -184,9 +183,12 @@
         </div>
 
         <div class="footer-btn-content d-flex justify-content-between pt-4">
-            <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">
-                Experience Details
-            </button>
+            @if(this.empDetails.substatus !== 'Offer Letter Accepted'){
+                <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">
+                    Experience Details
+                </button>
+            }
+           
             <div>
                 <div *ngIf="loadingcircle" class="spinner-border text-primary me-3" role="status">
                     <span class="visually-hidden">Loading...</span>
@@ -194,7 +196,7 @@
                 <button *ngIf="!isCheckedoffer" class="custom-btn btn-primary px-5" (click)="openconformatioModal(submitornot)">
                     Submit
                 </button>
-                <button *ngIf="isCheckedoffer" [disabled]="this.prosempdata.substatus === 'Offer letter Accepted'" class="custom-btn btn-primary px-5"
+                <button *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'" class="custom-btn btn-primary px-5"
                  (click)="openconformatioModal(submitornot)">
                     Submit
                 </button>
@@ -212,7 +214,7 @@
         </div>
         <div class="d-flex justify-content-center gap-5 pt-3">
             <button class="custom-btn btn-secondary w-100" (click)="modal.dismiss()">No</button>
-            <button class="custom-btn btn-primary w-100" (click)="submitReviw()">yes</button>
+            <button class="custom-btn btn-primary w-100" (click)="submitReviw()">Yes</button>
         </div>
     </div>
 </ng-template>

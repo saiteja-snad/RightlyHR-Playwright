@@ -354,6 +354,8 @@ export class DocumentHistoryInternOfferLetterComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
+          this.rejectDocument.reset();
+          this.modalService.dismissAll();
           this.updatetraineeemployeestatus(data)
           this.rejectTraineeEmail();
           //this.RejectTraineenotification();

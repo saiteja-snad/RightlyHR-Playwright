@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div><span class="component-sub-header">{{'Manage Policies' | translate}}</span></div>
-      <div class="custom-add-btn" *ngIf="rbac.allowedToAccess('Manage Policies Tab.create')">
-        <i class="bi bi-plus plus-icon me-1" (click)="nagvition()"></i>Add New
+      <div class="custom-add-btn" *ngIf="rbac.allowedToAccess('Manage Policies Tab.create')"  (click)="nagvition()">
+        <i class="bi bi-plus plus-icon me-1"></i>Add New
       </div>
     </div>
   
@@ -17,9 +17,9 @@
             <th>{{'Status' | translate}}</th>
             <th>{{'Added By' | translate}}</th>
             <th *ngIf="rbac.allowedToAccess('Manage Policies Tab.update')">{{'Action(s)' | translate}}</th>
-  
           </tr>
         </thead>
+        
         <tbody>
           @if (allPolicies.length > 0) {
           @for (item of allPolicies; track item.id) {
@@ -56,6 +56,4 @@
         </tbody>
       </table>
   </div>
-
 </div>
-

@@ -23,9 +23,9 @@
                         <td>{{bankiteams.accountName}}</td>
                         <td>{{bankiteams.accountNo}}</td>
                         <td>{{bankiteams.ifscCode}}</td>
-                        <td>
-                            <span *ngIf="bankiteams.docUrl;else noData" class="dowload-text" (click)="onSelectBankProofDownload(bankiteams)">
-                                <i class="bi bi-download clip-icon me-1"></i>Download</span><ng-template #noData>-</ng-template>
+                        <td class="text-nowrap">
+                            <div *ngIf="bankiteams.docUrl;else noData" class="dowload-text" (click)="onSelectBankProofDownload(bankiteams)">
+                                <i class="bi bi-download clip-icon me-1"></i>Download</div><ng-template #noData>-</ng-template>
                         </td>
                         <td>{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
                         <td class="text-center">
@@ -66,7 +66,7 @@
                 <p class="popup-heading mb-0">Add New Bank Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();bankDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -158,7 +158,14 @@
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="bankDetailsForm.reset();modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsForm.invalid">Add</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Add'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>
@@ -211,7 +218,7 @@
                         <label for="accountNoupdate" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="accountNoupdate"
-                            formControlName="accountNoupdate" placeholder="Please enter account number">
+                            formControlName="accountNoupdate" placeholder="Please enter account number" maxlength="20">
                         <div class="error-msg"
                             *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.invalid && bankDetailsUpdateForm.get('accountNoupdate')?.touched">
                             <div *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['required']">Account
@@ -227,7 +234,7 @@
                         <label for="ifscCode" class="form-label custom-label mb-2">IFSC Code<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="ifscCode"
-                            formControlName="ifscCodeupdate" placeholder="Please enter IFSC code">
+                            formControlName="ifscCodeupdate" placeholder="Please enter IFSC code" maxlength="11">
                         <div class="error-msg"
                             *ngIf="bankDetailsUpdateForm.get('ifscCodeupdate')?.invalid && bankDetailsUpdateForm.get('ifscCodeupdate')?.touched">
                             <div *ngIf="bankDetailsUpdateForm.get('ifscCodeupdate')?.errors?.['required']">IFSC Code is
@@ -267,7 +274,15 @@
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="bankDetailsUpdateForm.reset();modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsUpdateForm.invalid">Update</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsUpdateForm.invalid">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Update'| translate}}</span>
+                            }
+
+                    </button>
                 </div>
             </form>
         </div>

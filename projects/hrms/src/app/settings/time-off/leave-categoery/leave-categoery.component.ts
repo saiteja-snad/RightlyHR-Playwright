@@ -76,9 +76,10 @@ export class LeaveCategoeryComponent implements OnInit {
     const currentYear = new Date().getFullYear();
 
     // Display one past year, the current year, and one future year
-    for (let i = currentYear - 1; i <= currentYear + 1; i++) {
+    for (let i = currentYear; i <= currentYear + 1; i++) {
       this.years.push(i);
     }
+    this.postOrgPloicyDetails.applicableYear = currentYear;
 
   }
 

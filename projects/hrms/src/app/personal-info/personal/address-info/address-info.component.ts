@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -40,63 +40,73 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
     this.getEmployeeId();
-    ;
+  
     this.addressForm.disable();
+    this.addressForm.get('permanentAddress')?.valueChanges.subscribe(() => {
+      this.checkIfAddressesAreSame();
+    });
+   
   }
 
   initializeForm(): void {
     this.addressForm = this.fb.group({
-      currentAddressLine1: ['', Validators.required],
-      currentAddressLine2: [''],
-      currentCity: ['', Validators.required],
-      currentState: ['', Validators.required],
-      currentCountry: ['', Validators.required],
-      currentZipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
-      permanentAddressLine1: ['', Validators.required],
-      permanentAddressLine2: [''],
-      permanentCity: ['', Validators.required],
-      permanentState: ['', Validators.required],
-      permanentCountry: ['', Validators.required],
-      permanentZipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$')]],
+      sameAsPermanent: [{value:false}], // Checkbox for "Same as Current Address"
+      currentAddress: this.fb.group({
+        addressLine1: ['', [Validators.required, Validators.maxLength(150)]],
+        addressLine2: [''],
+        city: ['', [Validators.required, Validators.maxLength(50)]],
+        state: ['', [Validators.required, Validators.maxLength(50)]],
+        country: ['', [Validators.required, Validators.maxLength(50)]],
+        zipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$'), this.invalidZipCodeValidator()]],
+      }),
+      permanentAddress: this.fb.group({
+        addressLine1: ['', [Validators.required, Validators.maxLength(150)]],
+        addressLine2: [''],
+        city: ['', [Validators.required, Validators.maxLength(50)]],
+        state: ['', [Validators.required, Validators.maxLength(50)]],
+        country: ['', [Validators.required, Validators.maxLength(50)]],
+        zipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$'), this.invalidZipCodeValidator()]],
+      }),
     });
+  }
+
+  invalidZipCodeValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (value && /^0+$/.test(value)) {
+        return { invalidZipCode: true }; // Return error if zip code is all zeros
+      }
+      return null; // Valid zip code
+    };
   }
 
   enableForm(): void {
     this.buttons = true;
-    this.addressForm.get('currentAddressLine1')?.enable();
-    this.addressForm.get('currentAddressLine2')?.enable();
-    this.addressForm.get('currentCity')?.enable();
-    this.addressForm.get('currentState')?.enable();
-    this.addressForm.get('currentCountry')?.enable();
-    this.addressForm.get('currentZipCode')?.enable();
-    this.addressForm.get('permanentAddressLine1')?.enable();
-    this.addressForm.get('permanentAddressLine2')?.enable();
-    this.addressForm.get('permanentCity')?.enable();
-    this.addressForm.get('permanentState')?.enable();
-    this.addressForm.get('permanentCountry')?.enable();
-    this.addressForm.get('permanentZipCode')?.enable();
+    this.addressForm.get('sameAsPermanent')?.enable();
+    this.addressForm.get('currentAddress')?.enable(); // Enable all current address fields
+    this.addressForm.get('permanentAddress')?.enable(); // Enable all permanent address fields
   }
+  
   enableForm2(): void {
     this.buttons2 = true;
-    this.addressForm.get('permanentAddressLine1')?.enable();
-    this.addressForm.get('permanentAddressLine2')?.enable();
-    this.addressForm.get('permanentCity')?.enable();
-    this.addressForm.get('permanentState')?.enable();
-    this.addressForm.get('permanentCountry')?.enable();
-    this.addressForm.get('permanentZipCode')?.enable();
+    this.addressForm.get('sameAsPermanent')?.enable();
+    this.addressForm.get('permanentAddress')?.enable(); // Enable all permanent address fields
   }
 
   disableForm(): void {
     this.buttons = false;
     this.buttons2 = false;
     this.addressForm.disable();
+    this.addressForm.reset(); 
+    this.getEmployeeId(); 
+
   }
 
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.empinfo = data;
+        this.employedata = data;
         this.patchForm(data);
       },
       error: (reason: any) => console.error('Error fetching employee data:', reason),
@@ -106,168 +116,149 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   patchForm(data: any): void {
     this.currentAddress = data.employeeAddresses.find((address: any) => address.type === 'C');
     this.permanentAddress = data.employeeAddresses.find((address: any) => address.type === 'P');
-    // this.empinfo = data
-
-    this.addressForm.patchValue({
-      currentAddressLine1: this.currentAddress?.addressLine1 || '',
-      currentAddressLine2: this.currentAddress?.addressLine2 || '',
-      currentCity: this.currentAddress?.city || '',
-      currentState: this.currentAddress?.state || '',
-      currentCountry: this.currentAddress?.country || '',
-      currentZipCode: this.currentAddress?.zipCode || '',
-      permanentAddressLine1: this.permanentAddress?.addressLine1 || '',
-      permanentAddressLine2: this.permanentAddress?.addressLine2 || '',
-      permanentCity: this.permanentAddress?.city || '',
-      permanentState: this.permanentAddress?.state || '',
-      permanentCountry: this.permanentAddress?.country || '',
-      permanentZipCode: this.permanentAddress?.zipCode || '',
-      // Add any other fields you need to patch
+  
+    // Patch currentAddress fields
+    this.addressForm.get('currentAddress')?.patchValue({
+      addressLine1: this.currentAddress?.addressLine1 || '',
+      addressLine2: this.currentAddress?.addressLine2 || '',
+      city: this.currentAddress?.city || '',
+      state: this.currentAddress?.state || '',
+      country: this.currentAddress?.country || '',
+      zipCode: this.currentAddress?.zipCode || '',
     });
+  
+    // Patch permanentAddress fields
+    this.addressForm.get('permanentAddress')?.patchValue({
+      addressLine1: this.permanentAddress?.addressLine1 || '',
+      addressLine2: this.permanentAddress?.addressLine2 || '',
+      city: this.permanentAddress?.city || '',
+      state: this.permanentAddress?.state || '',
+      country: this.permanentAddress?.country || '',
+      zipCode: this.permanentAddress?.zipCode || '',
+    });
+    this.checkIfAddressesAreSame();
   }
+
+  checkIfAddressesAreSame(): void {
+    const currentAddress = this.addressForm.get('currentAddress')?.value;
+    const permanentAddress = this.addressForm.get('permanentAddress')?.value;
+  
+    const areAddressesSame = JSON.stringify(currentAddress) === JSON.stringify(permanentAddress);
+  
+    // Update the checkbox value based on the comparison
+    this.addressForm.get('sameAsPermanent')?.setValue(areAddressesSame, { emitEvent: false });
+  }
+
   updateAddressInfo(): void {
     const formValue = this.addressForm.value; // Get updated form values
-
-  // Ensure the existing address object remains unchanged while updating fields
-  this.currentAddress = this.currentAddress
-    ? {
-        ...this.currentAddress,
-        addressLine1: formValue.currentAddressLine1 || this.currentAddress.addressLine1,
-        addressLine2: formValue.currentAddressLine2 || this.currentAddress.addressLine2,
-        city: formValue.currentCity || this.currentAddress.city,
-        state: formValue.currentState || this.currentAddress.state,
-        country: formValue.currentCountry || this.currentAddress.country,
-        zipCode: formValue.currentZipCode || this.currentAddress.zipCode,
-      }
-    : null;
-
-  this.permanentAddress = this.permanentAddress
-    ? {
-        ...this.permanentAddress,
-        addressLine1: formValue.permanentAddressLine1 || this.permanentAddress.addressLine1,
-        addressLine2: formValue.permanentAddressLine2 || this.permanentAddress.addressLine2,
-        city: formValue.permanentCity || this.permanentAddress.city,
-        state: formValue.permanentState || this.permanentAddress.state,
-        country: formValue.permanentCountry || this.permanentAddress.country,
-        zipCode: formValue.permanentZipCode || this.permanentAddress.zipCode,
-      }
-    : null;
-
-  // Debugging Log - Ensure both addresses are updated properly
-  console.log('Updated Current Address:', this.currentAddress);
-  console.log('Updated Permanent Address:', this.permanentAddress);
-
-  // Prepare payload for employee details update
-  const updatePayload = {
-    employeeId: this.empinfo.employeeId,
-    title: this.empinfo.title || null,
-    firstName: this.empinfo.firstName,
-    middleName: this.empinfo.middleName,
-    lastName: this.empinfo.lastName,
-    gender: this.empinfo.gender || null,
-    dob: this.empinfo.dob,
-    bloodGroup: this.empinfo.bloodGroup || null,
-    maritalStatus: this.empinfo.maritalStatus || null,
-    empStatus: this.empinfo.empstatus,
-    emailaddress: this.empinfo.emailaddress || null, 
-    workEmail: this.empinfo.workEmail || null, 
-    contactnumber: this.empinfo.contactnumber || null,
-    workPhone: this.empinfo.workPhone || null, 
-    emergencyName: this.empinfo.emergencyName,
-    emailId: this.empinfo.emailId,
-    relationShip: this.empinfo.relationShip,
-    mobileNumber: this.empinfo.mobileNumber,
-    emergencyName1: this.empinfo.emergencyName1,
-    emergencyEmail1: this.empinfo.emergencyEmail1,
-    emergencyNumber1: this.empinfo.emergencyNumber1,
-    relationship1: this.empinfo.relationship1,
-    profileUrl: this.empinfo.profileUrl,
-    fusionEmpId: this.empinfo.fusionEmpId,
-    dateOfJoining: this.empinfo.dateOfJoining,
-    branchCode: this.empinfo.branchCode,
-    probationEndDate: this.empinfo.probationEndDate,
-    probationStatus: this.empinfo.probationStatus,
-    noticePeriod: this.empinfo.noticePeriod,
-    backgroundCheckStatus: this.empinfo.backgroundCheckStatus,
-    issalaryhold:this.empinfo.issalaryhold,
-    pf: this.empinfo.pf,
-    esic:this.empinfo.esic,
-    pt: this.empinfo.pt,
-    totalYearsOfExperience: this.empinfo.totalYearsOfExperience,
-    allowWFH: this.empinfo.allowWFH,
-    workLocation:this.empinfo.workLocation,
-    wfhManagerId: this.empinfo.wfhManagerId
-  };
-
-  // Send employee basic details update
-  this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
-    .subscribe({
+  
+    // Ensure the existing address object remains unchanged while updating fields
+    this.currentAddress = this.currentAddress
+      ? {
+          ...this.currentAddress,
+          addressLine1: formValue.currentAddress.addressLine1 || this.currentAddress.addressLine1,
+          addressLine2: formValue.currentAddress.addressLine2 || this.currentAddress.addressLine2,
+          city: formValue.currentAddress.city || this.currentAddress.city,
+          state: formValue.currentAddress.state || this.currentAddress.state,
+          country: formValue.currentAddress.country || this.currentAddress.country,
+          zipCode: formValue.currentAddress.zipCode || this.currentAddress.zipCode,
+        }
+      : null;
+  
+    this.permanentAddress = this.permanentAddress
+      ? {
+          ...this.permanentAddress,
+          addressLine1: formValue.permanentAddress.addressLine1 || this.permanentAddress.addressLine1,
+          addressLine2: formValue.permanentAddress.addressLine2 || this.permanentAddress.addressLine2,
+          city: formValue.permanentAddress.city || this.permanentAddress.city,
+          state: formValue.permanentAddress.state || this.permanentAddress.state,
+          country: formValue.permanentAddress.country || this.permanentAddress.country,
+          zipCode: formValue.permanentAddress.zipCode || this.permanentAddress.zipCode,
+        }
+      : null;
+  
+    // Debugging Log - Ensure both addresses are updated properly
+    console.log('Updated Current Address:', this.currentAddress);
+    console.log('Updated Permanent Address:', this.permanentAddress);
+  
+    // Prepare payload for employee details update
+    const updatePayload = {
+      ...this.employedata,
+      currentAddress: this.currentAddress, // Include current address in the payload
+      permanentAddress: this.permanentAddress, // Include permanent address in the payload
+    };
+  
+    // Send employee basic details update
+    this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload).subscribe({
       next: (data: any) => {
         console.log('Data updated successfully:', data);
-
+  
         this.modalService.dismissAll();
         this.postEmployeeAddresses(); // Ensure updated addresses are sent
-        //this.conformationPopup.openSuccessModal('Address Info updated successfully');
+        // this.conformationPopup.openSuccessModal('Address Info updated successfully');
       },
       error: (reason: any) => {
         console.log(reason);
-        //this.conformationPopup.openErrorModal('Address Info update failed');
+        // this.conformationPopup.openErrorModal('Address Info update failed');
       },
     });
   }
-
-  postEmployeeAddresses() {
+  
+  postEmployeeAddresses(): void {
     const payload = {
       employeeAddresses: [this.currentAddress, this.permanentAddress],
     };
   
-    this.subscription = this.http.postdata('EmployeeAddress', payload)
-      .subscribe({
-        next: (data: any) => {
-          console.log('Addresses updated successfully:', data);
-          this.addressForm.disable();
-          this.getEmployeeId();
-          this.buttons = false;
-          this.buttons2 = false;
-          this.conformationPopup.openSuccessModal('Address Info updated successfully');
-        },
-        error: (reason) => {
-          console.log(reason);
-          this.conformationPopup.openErrorModal('Address Info update failed');
-
-        },
-      });
+    this.subscription = this.http.postdata('EmployeeAddress', payload).subscribe({
+      next: (data: any) => {
+        console.log('Addresses updated successfully:', data);
+        this.addressForm.disable();
+        this.getEmployeeId();
+        this.buttons = false;
+        this.buttons2 = false;
+        this.conformationPopup.openSuccessModal('Address Info updated successfully');
+      },
+      error: (reason) => {
+        console.log(reason);
+        this.conformationPopup.openErrorModal('Address Info update failed');
+      },
+    });
   }
 
   copyCurrentAddress(event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
+  
     if (isChecked) {
-      this.addressForm.patchValue({
-        permanentAddressLine1: this.addressForm.value.currentAddressLine1,
-        permanentAddressLine2: this.addressForm.value.currentAddressLine2,
-        permanentCity: this.addressForm.value.currentCity,
-        permanentState: this.addressForm.value.currentState,
-        permanentCountry: this.addressForm.value.currentCountry,
-        permanentZipCode: this.addressForm.value.currentZipCode,
+      // Set the checkbox value to true
+      this.addressForm.get('sameAsPermanent')?.setValue(true, { emitEvent: false });
+  
+      // Copy currentAddress fields to permanentAddress
+      this.addressForm.get('permanentAddress')?.patchValue({
+        addressLine1: this.addressForm.get('currentAddress.addressLine1')?.value,
+        addressLine2: this.addressForm.get('currentAddress.addressLine2')?.value,
+        city: this.addressForm.get('currentAddress.city')?.value,
+        state: this.addressForm.get('currentAddress.state')?.value,
+        country: this.addressForm.get('currentAddress.country')?.value,
+        zipCode: this.addressForm.get('currentAddress.zipCode')?.value,
       });
     } else {
-      this.addressForm.patchValue({
-        permanentAddressLine1:this.permanentAddress?.addressLine1 || '',
-        permanentAddressLine2: this.permanentAddress?.addressLine2 || '',
-        permanentCity: this.permanentAddress?.city || '',
-        permanentState: this.permanentAddress?.state || '',
-        permanentCountry:  this.permanentAddress?.country || '',
-        permanentZipCode:  this.permanentAddress?.zipCode || '',
+      // Set the checkbox value to false
+      this.addressForm.get('sameAsPermanent')?.setValue(false, { emitEvent: false });
+  
+      // Restore original permanentAddress fields
+      this.addressForm.get('permanentAddress')?.patchValue({
+        addressLine1: this.permanentAddress?.addressLine1 || '',
+        addressLine2: this.permanentAddress?.addressLine2 || '',
+        city: this.permanentAddress?.city || '',
+        state: this.permanentAddress?.state || '',
+        country: this.permanentAddress?.country || '',
+        zipCode: this.permanentAddress?.zipCode || '',
       });
     }
+    this.checkIfAddressesAreSame();
   }
-  showButtons(): void {
-    this.buttons = !this.buttons;
-    if (this.buttons) {
-      this.enableForm();
-    } else {
-      this.disableForm();
-    }
-  }
+
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

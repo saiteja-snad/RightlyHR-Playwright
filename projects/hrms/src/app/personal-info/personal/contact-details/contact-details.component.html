@@ -23,17 +23,35 @@
     </div>
 
     <!-- Reactive Form -->
-    <form [formGroup]="contactForm">
+       <form [formGroup]="contactForm">
       <div class="row">
-        <div class="col-md-6 col-lg-4 mb-3">
-          <label for="workNumber" class="form-label custom-label mb-2">Work Number<span
+     
+        <div class="col-lg-4 col-md-6 mb-3">
+          <label for="location" class="form-label custom-label mb-2">Mobile Number<span
               class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" id="workNumber" formControlName="workNumber"
-            placeholder="Please enter work number">
-          <div class="error-msg"
-            *ngIf="contactForm.get('workNumber')?.invalid && contactForm.get('workNumber')?.touched">
-            <div *ngIf="contactForm.get('workNumber')?.errors?.['required']">Work number is required</div>
-            <div *ngIf="contactForm.get('workNumber')?.errors?.['pattern']">Work number must be a valid 10-digit number
+          <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+            <div *ngIf="!loading; else loadingTemplate">
+              <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                [selectedCountryCode]="selectedworkcoutrycode()"  [countryListConfig]="countryListConfig"
+                class="country-input"  [ngClass]="{ 'disabled-country-code': !buttons }"   (onCountryChange)="onCountryChange($event)">
+              </lib-country-list>
+            </div>
+            <ng-template #loadingTemplate>
+              <p>Loading...</p>
+            </ng-template>
+            <input type="text" class="form-control custom-input" formControlName="workNumber"  (input)="onWorkNumberInput()"
+              placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+            
+              autocomplete="off" required>
+          </div>
+          <div class="error-msg my-1"
+            *ngIf="contactForm.get('workNumber')?.invalid &&  (contactForm.get('workNumber')?.touched || contactForm.get('workNumber')?.dirty)">
+            <div *ngIf="contactForm.get('workNumber')?.hasError('required')">Mobile number is
+              required</div>
+            <div *ngIf="contactForm.get('workNumber')?.hasError('pattern')">Please enter a valid
+              mobile number</div>
+            <div *ngIf="contactForm.get('workNumber')?.hasError('invalidPhoneNumber')">
+              The phone number is not valid for the selected country
             </div>
           </div>
         </div>
@@ -41,37 +59,53 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="phoneNumber" class="form-label custom-label mb-2">Phone Number <span
               class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" id="phoneNumber" formControlName="phoneNumber"
-            placeholder="Please enter phone number">
-          <div class="error-msg"
-            *ngIf="contactForm.get('phoneNumber')?.invalid && contactForm.get('phoneNumber')?.touched">
-            <div *ngIf="contactForm.get('phoneNumber')?.errors?.['required']">Phone number is required</div>
-            <div *ngIf="contactForm.get('phoneNumber')?.errors?.['pattern']">Phone number must be a valid 10-digit
-              number</div>
+          <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+            <div *ngIf="!loading; else loadingTemplate">
+              <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                [selectedCountryCode]="selectedpersonalnumbercode()" [countryListConfig]="countryListConfig"
+                class="country-input"  [ngClass]="{ 'disabled-country-code': !buttons }"  (onCountryChange)="onCountryphoneChange($event)">
+              </lib-country-list>
+            </div>
+            <ng-template #loadingTemplate>
+              <p>Loading...</p>
+            </ng-template>
+            <input type="text" class="form-control custom-input" formControlName="phoneNumber"   (input)="onPhoneNumberInput()"
+              placeholder="Please enter your phone number" id="phonenumbers" aria-describedby="phonenumbers"
+            
+              autocomplete="off" required>
+          </div>
+          <div class="error-msg my-1"
+            *ngIf="contactForm.get('phoneNumber')?.invalid &&  (contactForm.get('phoneNumber')?.touched || contactForm.get('phoneNumber')?.dirty)">
+            <div *ngIf="contactForm.get('phoneNumber')?.hasError('required')">Mobile number is
+              required</div>
+            <div *ngIf="contactForm.get('phoneNumber')?.hasError('pattern')">Please enter a valid
+              mobile number</div>
+            <div *ngIf="contactForm.get('phoneNumber')?.hasError('invalidPhoneNumber')">
+              The phone number is not valid for the selected country
+            </div>
           </div>
         </div>
-
+      
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="workMail" class="form-label custom-label mb-2">Work Email ID<span
-              class="text-danger">*</span></label>
+          <label for="workMail" class="form-label custom-label mb-2">Work Mail<span class="text-danger">*</span></label>
           <input type="email" class="form-control custom-input" id="workMail" formControlName="workMail"
-            placeholder="Please enter work email ID">
+            placeholder="Please enter work mail">
           <div class="error-msg" *ngIf="contactForm.get('workMail')?.invalid && contactForm.get('workMail')?.touched">
             <div *ngIf="contactForm.get('workMail')?.errors?.['required']">Work email is required</div>
             <div *ngIf="contactForm.get('workMail')?.errors?.['email']">Work email must be a valid email address</div>
           </div>
         </div>
-
+       
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="personalEmail" class="form-label custom-label mb-2">Personal Email ID<span
+          <label for="personalEmail" class="form-label custom-label mb-2">Personal Email<span
               class="text-danger">*</span></label>
           <input type="email" class="form-control custom-input" id="personalEmail" formControlName="personalEmail"
-            placeholder="Please enter personal email ID">
+            placeholder="Please enter personal email">
           <div class="error-msg"
             *ngIf="contactForm.get('personalEmail')?.invalid && contactForm.get('personalEmail')?.touched">
-            <div *ngIf="contactForm.get('personalEmail')?.errors?.['required']">Personal email ID is required</div>
-            <div *ngIf="contactForm.get('personalEmail')?.errors?.['email']">Personal email must be a valid email ID
-            </div>
+            <div *ngIf="contactForm.get('personalEmail')?.errors?.['required']">Personal email is required</div>
+            <div *ngIf="contactForm.get('personalEmail')?.errors?.['email']">Personal email must be a valid email
+              address</div>
           </div>
         </div>
       </div>

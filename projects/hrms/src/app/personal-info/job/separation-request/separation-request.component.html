@@ -1,9 +1,11 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div><span class="component-sub-header">Separation Details</span></div>
-    @if(isLastWorkingDate(this.empdata.lastworkingday) && nodueclearancedetails.length <= 0 && getSeparationDetails.value.length > 0){
-      <div class="custom-add-btn" (click)="openModal(raiseNodue)"><i class="bi bi-plus plus-icon me-1"></i>Raise No Due</div>
-      }
+    <div class="component-sub-header">Separation Details</div>
+    <!-- @if(isLastWorkingDate(this.empdata.lastworkingday) && nodueclearancedetails.length <= 0 && getSeparationDetails.value.length> 0){ -->
+      <div class="custom-add-btn" (click)="openModal(raiseNodue)">
+        <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
+      </div>
+      <!-- } -->
   </div>
 
   <div class="custom-table-content">
@@ -28,38 +30,35 @@
           </td>
           <td>
             @if(item.recallStatus == 'Recalled'){
-            <span>NA</span>
+              <div>NA</div>
             }
             @else{
             {{ item.noticePeriodDuration?item.noticePeriodDuration:'NA' }}
             }
           </td>
-
           <td>
             {{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}
           </td>
           <td>
             @if(item.description){
-            <span id="tooltip">
-              <div (click)="decription(item.description,openDiscriotionviewpopup)">
+              <div (click)="decription(item.description,openDiscriotionviewpopup)" class="cursor">
                 <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
               </div>
-            </span>
             }
             @else {
-            NA
+            <div>NA</div>
             }
             <div>
             </div>
           </td>
           <td>
             @if(item.approvers && item.approvers.length > 0;){
-            <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)">
+            <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)" class="cursor">
               <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
             </div>
             }
             @else{
-            NA
+              <div>NA</div>
             }
           </td>
           <td>
@@ -72,14 +71,11 @@
               <div >NA</div>
             }
           </td>
-          <td>
-            {{item.status?item.status:'NA'}}
-          </td>
+          <td>{{item.status?item.status:'NA'}}</td>
           <td>
             <div class="dropdown">
-              @if(item.status != 'Rejected' &&
-              item.status != 'Recalled' &&item.status != 'Withdrawn' && !recallbuttonConditions &&item.status !=
-              'Recalled Processed'){
+              @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' && !recallbuttonConditions && 
+              item.status != 'Recalled Processed'){
               <span type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
               </span>
@@ -87,16 +83,12 @@
               <ul class="dropdown-menu custom-dropdown-menu">
                 <li (click)="recallRequest(item,recallrequestpopup)">
                   <a class="dropdown-item">
-                    <i class="bi bi-repeat me-2 fs-5"></i>Recall
+                    <i class="bi bi-repeat me-2"></i>Recall
                   </a>
                 </li>
-                @if( item.recallStatus.toLowerCase() !=
-                'earlyrelieving' &&
-                !recallandearlyrelievingbuttonConditions){
+                @if( item.recallStatus.toLowerCase() != 'earlyrelieving' && !recallandearlyrelievingbuttonConditions){
                 <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
-                  <a class="dropdown-item">
-                    <i class="bi bi-trash3 me-2"></i>Early Relieving
-                  </a>
+                  <a class="dropdown-item">Early Relieving</a>
                 </li>
                 }
               </ul>
@@ -118,10 +110,10 @@
   </div>
 </div>
 
-<!-- Modal -->
+<!-- View comments Modal -->
 <ng-template #openDiscriotionviewpopup let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">View Comments</p>
       </div>
@@ -129,20 +121,16 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
-      <p>
-        <b> Comments:</b> {{ decription_Storing_Variable }}
-      </p>
-      <div class="d-flex justify-content-end gap-3 pt-4">
-        <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
-      </div>
+    <div class="custom-main-popup-content">
+      <p><b> Comments:</b> {{ decription_Storing_Variable }}</p>
     </div>
   </div>
 </ng-template>
 
+<!-- View comments Modal -->
 <ng-template #ApprovalPopup let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">Approver History Details</p>
       </div>
@@ -150,8 +138,9 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
-      <div class="custom-table-content mb-3">
+
+    <div class="custom-main-popup-content">
+      <div class="custom-table-content custom-height">
         <table class="w-100">
           <thead>
             <tr>
@@ -183,9 +172,7 @@
 
               <td>
                 <span *ngIf="comment.employeeName; else addedname">
-                  {{ comment.employeeName }} ({{
-                  comment.fusionEmployeeId
-                  }})</span>
+                  {{ comment.employeeName }} ({{ comment.fusionEmployeeId }})</span>
                 <ng-template #addedname>NA</ng-template>
               </td>
               <td>
@@ -234,27 +221,25 @@
           </tbody>
         </table>
       </div>
-      <div class="d-flex justify-content-end gap-3">
-        <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
-      </div>
     </div>
   </div>
 </ng-template>
 
+<!--Recall Request Popup-->
 <ng-template #recallrequestpopup let-modal>
-  <div class="custom-main-popup-container p-4" ngbAutofocus>
-    <div class="text-center pt-2 mb-4">
-      <p class="popup-heading mb-0">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early Relieving'}} Request?</p>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early Relieving'}} Request?</p>
     </div>
-    <div class="custom-main-popup-content">
+    <div class="custom-main-popup-content p-0 pt-3">
       <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">Reason For Recall <span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2">Reason For Recall<span class="error-msg">*</span></label>
           <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
             placeholder="Please enter recall reason" name="recallReason" formControlName="recallReason"></textarea>
-          <div class="color">{{ recallreason.get('recallReason')?.value?.length || 0 }} / 250</div>
-          <div class="error-msg"
-            *ngIf="recallreason.get('recallReason')?.touched && recallreason.get('recallReason')?.invalid">
+          <div class="textarea-count-text">{{ recallreason.get('recallReason')?.value?.length || 0 }} / 250</div>
+          <div class="error-msg" *ngIf="recallreason.get('recallReason')?.touched && recallreason.get('recallReason')?.invalid">
             <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['required']">
               Recall Reason is required
             </ng-container>
@@ -266,20 +251,16 @@
             </ng-container>
           </div>
         </div>
-
-        <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-            {{'No'|translate}}
-          </button>
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'No'|translate}}</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid||isLoading">
             @if(!isLoading){
             {{'Yes'|translate}}
             }
             @else {
-            <div class="d-flex">
-              <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
-              </div>
-              <div> {{'Submitting'|translate}}</div>
+            <div class="button-loader-content">
+              <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+              <div>{{'Submitting'|translate}}</div>
             </div>
             }
           </button>
@@ -291,59 +272,51 @@
 
 <!-- modal strat to open the early relieving popup -->
 <ng-template #earlyrequestpopup let-modal>
-  <div class="custom-main-popup-container p-4" ngbAutofocus>
-    <div class="text-center pt-2 mb-4">
-      <p class="popup-heading mb-0">Request For Early Relieving</p>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Request For Early Relieving</p>
     </div>
-    <div class="custom-main-popup-content">
+    <div class="custom-main-popup-content p-0 pt-3">
       <form [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="Effective Date ">Early Relieving Date <span class="error-msg">*</span></label>
-            <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
-              id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
-            <div class="error-msg"
-              *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && recallreason.get('earlyReleivingDate')?.touched">
-              Early relieving Date is required </div>
+        <div class="mb-4">
+          <label class="form-label custom-label mb-2">Early Relieving Date<span class="error-msg">*</span></label>
+          <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
+            id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
+          <div class="error-msg"
+            *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && recallreason.get('earlyReleivingDate')?.touched">
+            Early relieving Date is required</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Reason for Early Relieving<span class="error-msg">*</span></label>
+          <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*" rows="3"
+            placeholder="Please provide early relieving reason...." name="Reason"
+            formControlName="earlyReleivingReason"></textarea>
+          <div class="textarea-count-text">{{ earlyReleivingform.get('earlyReleivingReason')?.value?.length || 0 }}/250
           </div>
-
-          <div class="col-md-12 mb-3">
-            <label class="form-label custom-label mb-2">Reason for Early Relieving <span class="error-msg">*</span></label>
-            <textarea class="form-control custom-input" maxlength="250" pattern="^(?!\s).*"
-              placeholder="Please provide early relieving reason...." name="Reason"
-              formControlName="earlyReleivingReason"></textarea>
-            <div>
-              <span class="color">
-                {{ earlyReleivingform.get('earlyReleivingReason')?.value?.length || 0 }} / 250
-              </span>
-              <div>
-                <div class="error-msg" *ngIf="earlyReleivingform.get('earlyReleivingReason')?.touched && earlyReleivingform.get('earlyReleivingReason')?.invalid">
-                  <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['required']">
-                    Reason for Early Relieving is required
-                  </ng-container>
-                  <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength']">
-                    Maximum 400 characters allowed
-                  </ng-container>
-                  <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern']">
-                    Reason for Early Relieving should not start with a space.
-                  </ng-container>
-                </div>
-              </div>
-            </div>
+          <div class="error-msg"
+            *ngIf="earlyReleivingform.get('earlyReleivingReason')?.touched && earlyReleivingform.get('earlyReleivingReason')?.invalid">
+            <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['required']">
+              Reason for Early Relieving is required
+            </ng-container>
+            <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['maxlength']">
+              Maximum 400 characters allowed
+            </ng-container>
+            <ng-container *ngIf="earlyReleivingform.get('earlyReleivingReason')?.errors?.['pattern']">
+              Reason for Early Relieving should not start with a space.
+            </ng-container>
           </div>
         </div>
-
-        <div class="d-flex justify-content-around w-100">
-          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
-            {{'Close'|translate}}
-          </button>
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|
+            translate}}</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid||isLoading">
             @if(!isLoading){
             {{'Submit'|translate}}
             }
             @else {
-            <div class="d-flex">
-              <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+            <div class="button-loader-content">
+              <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
               <div> {{'Submitting'|translate}}</div>
             </div>
             }
@@ -357,22 +330,23 @@
 
 <!-- modal open to raise nodue -->
 <ng-template #raiseNodue let-modal>
-  <div class="custom-main-popup-container p-4" ngbAutofocus>
-    <div class="text-center pt-2">
-      <p class="popup-heading">Raise No Due Request</p>
-      <p class="popup-heading">Provide your official work email addresses!</p>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Raise No Due Request</p>
+      <p class="confirmation-text">Provide your official work email addresses!</p>
     </div>
-    <div class="custom-main-popup-content">
+    <div class="custom-main-popup-content p-0 pt-3">
       <form [formGroup]="profileForm">
-        <div class="mb-3">
-          <p class="popup-heading mb-2">Add Emails<span class="error-msg">*</span></p>
-
+        <div>
+          <label for="comments" class="form-label custom-label mb-2">Add Emails<span
+              class="text-danger">*</span></label>
           <div class="mb-3">
             <div class="d-flex">
-              <input name="addemail" class="form-control w-100" placeholder="Enter email" type="text"
+              <input name="addemail" class="form-control custom-input" placeholder="Enter email" type="text"
                 formControlName="emails" />
               <div class="pt-2 ps-2">
-                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close me-2"></button>
               </div>
             </div>
             <!-- Error message for the main email input -->
@@ -383,14 +357,13 @@
           </div>
 
           <!-- Dynamic email inputs from FormArray -->
-          <div class="" formArrayName="noduerequestedemails">
-            <div *ngFor="let item of formemailsfornodue.controls; let i = index">
+          <div formArrayName="noduerequestedemails">
+            <div *ngFor="let item of formemailsfornodue.controls; let i = index" class="mb-3">
               <div class="d-flex">
-                <input [formControlName]="i" class="form-control mt-2 w-100" placeholder="Enter email" id="item-{{ i }}"
-                  type="text" />
+                <input type="text" [formControlName]="i" class="form-control custom-input" placeholder="Enter email"
+                  id="item-{{ i }}" />
                 <div class="pt-3 ps-2">
-                  <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"
-                    (click)="removeSection(i)"></button>
+                  <button type="button" class="btn-close me-2" (click)="removeSection(i)"></button>
                 </div>
               </div>
               <div *ngIf="item.invalid && (item.dirty || item.touched)" class="error-msg">
@@ -399,30 +372,26 @@
               </div>
             </div>
           </div>
-
-          <!-- Add button at the bottom -->
-          <div class="d-flex text-end my-1">
-            <button type="button" class="custom-btn btn-primary" (click)="addAlias()">+ Add</button>
+          
+          <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="custom-btn btn-primary text-nowrap w-25 px-2" (click)="addAlias()">+ Add</button>
           </div>
-
-          <div class="d-flex justify-content-end w-100 gap-2 pt-3">
-            <button type="button" class="custom-btn btn-secondary px-4"
-              (click)="modal.dismiss(); profileForm.reset(); formemailsfornodue.clear()">
-              {{'Cancel'|translate}}
-            </button>
-            <button type="submit" class="custom-btn btn-primary px-4" [disabled]="profileForm.invalid||isLoading"
-              (click)="requestNoDue(profileForm)">
-              @if(!isLoading){
-              {{'Submit'|translate}}
-              }
-              @else {
-              <div class="d-flex">
-                <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-                <div> {{'Submitting'|translate}}</div>
-              </div>
-              }
-            </button>
-          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss(); profileForm.reset(); formemailsfornodue.clear()">
+            {{'Close'|translate}}</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="profileForm.invalid||isLoading"
+            (click)="requestNoDue(profileForm)">
+            @if(!isLoading){
+            {{'Submit'|translate}}
+            }
+            @else {
+            <div class="button-loader-content">
+              <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+              <div> {{'Submitting'|translate}}</div>
+            </div>
+            }
+          </button>
         </div>
       </form>
     </div>

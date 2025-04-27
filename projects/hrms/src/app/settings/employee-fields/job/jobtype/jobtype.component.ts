@@ -38,10 +38,10 @@ export class JobtypeComponent {
   }
   ngOnInit(): void {
     this.JobtypeForm = this.fb.group({
-      jobtype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      jobtype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
     this.updateForm = this.fb.group({
-      jobtype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      jobtype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
     });
 
     this.getJobtype();
@@ -66,11 +66,12 @@ export class JobtypeComponent {
     this.subscription = this.http.postdata('Jobtype', request).subscribe({
       next: () => {
         this.getJobtype();
-        this.conformationPopup.openSuccessModal('Jobtype added successfully');
+        this.conformationPopup.openSuccessModal('Job Type added successfully');
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
         this.resetForm();
       }
     });
@@ -89,10 +90,11 @@ export class JobtypeComponent {
             this.getJobtype();
             modal.close();
             this.updateForm.reset();
-            this.conformationPopup.openSuccessModal('Jobtype updated successfully');
+            this.conformationPopup.openSuccessModal('Job Type updated successfully');
           },
           error: (err: any) => {
-            this.conformationPopup.openErrorModal('Update failed. Please try again.');
+            const errorMessage = err.error?.Message;
+            this.conformationPopup.openErrorModal(errorMessage);
           }
         });
       }
@@ -124,10 +126,11 @@ export class JobtypeComponent {
         next: () => {
           this.getJobtype();
           modal.close();
-          this.conformationPopup.openSuccessModal('JobType deleted successfully');
+          this.conformationPopup.openSuccessModal('Job Type deleted successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Failed to delete the location');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }

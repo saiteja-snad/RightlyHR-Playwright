@@ -1,207 +1,154 @@
 <div class="custom-main-component-container">
-    <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
-                    class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
-        </div>
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
+    </div>
 
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>{{'Employee ID'|translate}}</th>
-                        <th>{{'Employee Name' | translate}}</th>
-                        <th>{{'Requested Date' |translate}}</th>
-                        <th>{{'Department' |translate}}</th>
-                        <th>{{'Status' |translate}}</th>
-                        <th>{{'Employee Emails' |translate}}</th>
-                        <th>{{'Actions' |translate}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (rbac.allowedToAccess('No Due Clearance Tab.view')) {
-                    @if (((nodue_Request_data | async) ?? []).length > 0) {
-                    @for (item of ((nodue_Request_data | async) ?? []) | nodueDetails : searchValue; track item.id){
-                    <tr>
-                        <td>{{item?.employeeFusionEmpId ?? '-'}}</td>
-                        <td>{{item?.employeeName ?? '-'}}</td>
-                        <td>{{item?.requestedDate ?? '-'}}</td>
-                        <td>{{item?.departmentName ?? '-'}}</td>
-                        <td>{{item?.status ?? '-'}}</td>
-                        <td class="text-center">
-                            <div class="mt-2">
-                                <div class="text-center" *ngIf="item.requiredEmails; else popupcomments">
-                                    <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
-                                        ngbPopover="{{ item.requiredEmails }}" container="body"></i>
-                                </div>
-                                <ng-template #popupcomments>NA</ng-template>
-
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <a type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu py-0">
-                                    <li><a class="dropdown-item" (click)="openModal(item,approval)" *ngIf="rbac.allowedToAccess('No Due Clearance Tab.update')"><i
-                                                class="bi bi-check-circle me-2"></i>{{'Approve' |translate}}</a></li>
-                                    <li><a class="dropdown-item" (click)="openModal(item,rejectmodal)" *ngIf="rbac.allowedToAccess('No Due Clearance Tab.delete')"><i
-                                                class="bi bi-x-circle me-2"></i>{{'Reject' |translate}}</a></li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                    }
-
-                    }
-                    @else{
-                    <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                    }
-
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>{{'Employee ID'|translate}}</th>
+                    <th>{{'Employee Name' | translate}}</th>
+                    <th>{{'Requested Date' |translate}}</th>
+                    <th>{{'Department' |translate}}</th>
+                    <th>{{'Status' |translate}}</th>
+                    <th>{{'Employee Emails' |translate}}</th>
+                    <th>{{'Actions' |translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (rbac.allowedToAccess('No Due Clearance Tab.view')) {
+                @if (((nodue_Request_data | async) ?? []).length > 0) {
+                @for (item of ((nodue_Request_data | async) ?? []) | nodueDetails : searchValue; track item.id){
+                <tr>
+                    <td>{{item?.employeeFusionEmpId ?? '-'}}</td>
+                    <td>{{item?.employeeName ?? '-'}}</td>
+                    <td>{{item?.requestedDate ?? '-'}}</td>
+                    <td>{{item?.departmentName ?? '-'}}</td>
+                    <td>{{item?.status ?? '-'}}</td>
+                    <td class="text-center">
+                        <div *ngIf="item.requiredEmails; else popupcomments">
+                            <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave" ngbPopover="{{ item.requiredEmails }}" 
+                            container="body"></i>
+                        </div>
+                        <ng-template #popupcomments>NA</ng-template>
+                    </td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <a type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu py-0">
+                                <li>
+                                    <a class="dropdown-item" (click)="openModal(item,approval)"
+                                        *ngIf="rbac.allowedToAccess('No Due Clearance Tab.update')">
+                                        <i class="bi bi-check-circle me-2"></i>{{'Approve' |translate}}</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" (click)="openModal(item,rejectmodal)"
+                                        *ngIf="rbac.allowedToAccess('No Due Clearance Tab.delete')">
+                                        <i class="bi bi-x-circle me-2"></i>{{'Reject' |translate}}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
                 }
-
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination-content pt-2 w-100">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                <!-- Dropdown for Rows per Page -->
-                <div class="d-flex align-items-center gap-3 p-2">
-                    <!-- Bootstrap Select -->
-                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onRowsChange()">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-                </div>
-
-                <!-- Pagination -->
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-            </div>
-        </div>
+                }
+                @else{
+                <tr>
+                    <td>
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                }
+                }
+            </tbody>
+        </table>
     </div>
 </div>
+
 <ng-template #approval let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-
-        <div class="custom-main-popup-content p-5">
-            <div class="d-flex justify-content-center align-items-center">
-                <img src="icons\succes.png" alt="succues" class="succes-icon">
-            </div>
-            <h4 class="text-center ps-3 pe-3 inactive-poptext">{{'Are you sure you want to Approve?' |translate}}</h4>
-            <form [formGroup]="AcceptForm" (ngSubmit)="handleAccept()" class="ps-5 mb-3 w-100">
-                <div class="col-11">
-                    <div class="mb-3 mt-2">
-                        <label for="exampleFormControlTextarea1" class="form-label labell">
-                            Comments <span class="error-msg">*</span>
-                        </label>
-                        <textarea id="exampleFormControlTextarea1" class="form-control" formControlName="AcceptReason"
-                            maxlength="250" placeholder="Please enter comments" rows="3">
-                    </textarea>
-
-                        <div>
-                            <span>{{ AcceptForm.get('AcceptReason')?.value?.length || 0 }} /250</span>
-                        </div>
-
-                        <small class="error-msg"
-                            *ngIf="AcceptForm.get('AcceptReason')?.touched && AcceptForm.get('AcceptReason')?.invalid">
-                            <ng-container *ngIf="AcceptForm.get('AcceptReason')?.errors?.['required']">
-                                Comments is required
-                            </ng-container>
-                            <ng-container *ngIf="AcceptForm.get('AcceptReason')?.errors?.['maxlength']">
-                                Maximum 250 characters allowed
-                            </ng-container>
-                            <ng-container *ngIf="AcceptForm.get('AcceptReason')?.errors?.['pattern']">
-                                Leading spaces are not allowed
-                            </ng-container>
-                        </small>
-                    </div>
-                </div>
-
-                <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();AcceptForm.reset()">
-                        {{ 'Cancel' | translate }}
-                    </button>
-
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="AcceptForm.invalid || isLoading">
-                        @if (!isLoading) {
-                        {{ 'Approve' | translate }}
-                        } @else {
-                        <div class="d-flex">
-                            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-                            <div>{{ 'Submitting' | translate }}</div>
-                        </div>
-                        }
-                    </button>
-                </div>
-            </form>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
         </div>
+        <form [formGroup]="AcceptForm" (ngSubmit)="handleAccept()">
+            <div class="custom-main-popup-content">
+                <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}
+                    <span class="text-danger">*</span></label>
+                <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="AcceptReason" maxlength="250"
+                    placeholder="Please enter comments" rows="3"></textarea>
+                <!-- Character counter -->
+                <div class="textarea-count-text">{{ AcceptForm.get('AcceptReason')?.value?.length || 0 }} /250
+                </div>
+                <div class="error-msg" *ngIf="AcceptForm.get('AcceptReason')?.touched && AcceptForm.get('AcceptReason')?.invalid">
+                    <ng-container *ngIf="AcceptForm.get('AcceptReason')?.errors?.['required']">Comments is required</ng-container>
+                    <ng-container *ngIf="AcceptForm.get('AcceptReason')?.errors?.['maxlength']">
+                        Maximum 250 characters allowed
+                    </ng-container>
+                    <ng-container *ngIf="AcceptForm.get('AcceptReason')?.errors?.['pattern']">
+                        Leading spaces are not allowed
+                    </ng-container>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();AcceptForm.reset()">{{'Close'| translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="AcceptForm.invalid || isLoading"> @if
+                    (!isLoading) { {{ 'Approve' | translate }} } @else {
+                    <div class="button-loader-content">
+                        <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Submitting'|translate}}</div>
+                    </div>
+                    }
+                </button>
+            </div>
+        </form>
     </div>
 </ng-template>
 
 <ng-template #rejectmodal let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-main-popup-content p-5">
-            <div class="d-flex justify-content-center align-items-center">
-                <img src="icons\reject.png" alt="succues" class="succes-icon">
-            </div>
-            <div class="d-flex justify-content-center align-items-center mt-3">
-                <h4 class="text-center">{{'Are you sure you want to reject this request?' |translate}}</h4>
-            </div>
-            <form [formGroup]="rejectForm" (ngSubmit)="rejectNodue()" class="ps-5 w-100">
-                <div class="col-11">
-                    <div class="mb-3 mt-2">
-                        <label for="exampleFormControlTextarea1" class="form-label labell">{{'Enter reason' |translate}}
-                            <span class="error-msg">*</span>
-                        </label>
-                        <textarea class="form-control" id="exampleFormControlTextarea1"
-                            placeholder="Please enter reason" formControlName="notes" rows="3" maxlength="250">
-                        </textarea>
-                        <div>
-                            <span>{{ rejectForm.get('notes')?.value?.length || 0 }}/250</span>
-                        </div>
-                        <small class="error-msg"
-                            *ngIf="rejectForm.get('notes')?.touched && rejectForm.get('notes')?.invalid">
-                            <ng-container *ngIf="rejectForm.get('notes')?.errors?.['required']">
-                                Reason is required
-                            </ng-container>
-                            <ng-container *ngIf="rejectForm.get('notes')?.errors?.['maxlength']">
-                                Maximum 250 characters allowed
-                            </ng-container>
-                            <ng-container *ngIf="rejectForm.get('notes')?.errors?.['pattern']">
-                                Leading spaces are not allowed
-                            </ng-container>
-                        </small>
-                    </div>
-                </div>
-
-                <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();rejectForm.reset()">
-                        {{ 'Cancel' | translate }}
-                    </button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || isLoading">
-                        @if (!isLoading) {
-                        {{ 'Reject' | translate }}
-                        } @else {
-                        <div class="d-flex">
-                            <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-                            <div>{{ 'Submitting' | translate }}</div>
-                        </div>
-                        }
-                    </button>
-                </div>
-            </form>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to reject this request?' |translate}}</p>
         </div>
+        <form [formGroup]="rejectForm" (ngSubmit)="rejectNodue()">
+            <div class="custom-main-popup-content">
+                <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
+                    <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Please enter reason"
+                    formControlName="notes" rows="3" maxlength="250"></textarea>
+                <div class="textarea-count-text">{{ rejectForm.get('notes')?.value?.length || 0 }}/250
+                </div>
+                <div class="error-msg" *ngIf="rejectForm.get('notes')?.touched && rejectForm.get('notes')?.invalid">
+                    <ng-container *ngIf="rejectForm.get('notes')?.errors?.['required']">Reason is
+                        required</ng-container>
+                    <ng-container *ngIf="rejectForm.get('notes')?.errors?.['maxlength']">Maximum 250 characters
+                        allowed</ng-container>
+                    <ng-container *ngIf="rejectForm.get('notes')?.errors?.['pattern']">Leading spaces are not
+                        allowed</ng-container>
+                </div>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="reset" class="custom-btn btn-secondary"
+                    (click)="modal.dismiss();rejectForm.reset()">{{'Close' | translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || isLoading">@if
+                    (!isLoading) {
+                    {{ 'Reject' | translate }}
+                    } @else {
+                    <div class="button-loader-content">
+                        <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Submitting'|translate}}</div>
+                    </div>
+                    }
+                </button>
+            </div>
+        </form>
     </div>
 </ng-template>

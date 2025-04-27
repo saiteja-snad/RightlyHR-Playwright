@@ -2,13 +2,13 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
       <p class="component-header mb-0">
-        <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Prospective Interns'|translate}}
+        <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Prospective Trainees'|translate}}
       </p>
     </div>
 
     <div class="d-flex">
       <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
-        <i class="bi bi-plus me-2"></i>{{'Add Prospective Intern'| translate}}</button>
+        <i class="bi bi-plus me-2"></i>{{'Add Prospective Trainee'| translate}}</button>
     </div>
   </div>
 
@@ -39,12 +39,14 @@
         <tbody>
           <tr *ngFor="let act of Trainee | activeEmployee : searchValue">
             <td>{{act.employeeId}}</td>
-            <td><span *ngIf="act.firstName ; else firstname"><a class="select-item cursor" (click)="select(act)">
-              {{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
-              </span></td>
-            <ng-template #firstname>
-              -
-            </ng-template>
+            <td>
+              <span *ngIf="act.firstName ; else firstname">
+                <a class="select-item cursor" (click)="select(act)">{{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
+              </span>
+              <ng-template #firstname>
+                <div>-</div>
+              </ng-template>
+            </td>
             <td>{{act.emailaddress}}</td>
             <td> <span *ngIf="act.contactnumber;else contact">+91 {{act.contactnumber}}</span>
               <ng-template #contact>

@@ -12,13 +12,18 @@ import moment from 'moment';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
 import { CompOffApprovalTabsComponent } from "../../shared/time-off-module-tabs/comp-off-approval-tabs/comp-off-approval-tabs.component";
+import { FormValidationsService } from '../../services/form-validations.service';
 @Component({
   selector: 'app-comp-off',
-  imports: [RouterModule, ReactiveFormsModule, CommonModule, CompOffApprovalTabsComponent],
+  imports: [
+    RouterModule,
+    ReactiveFormsModule,
+    CommonModule,
+    CompOffApprovalTabsComponent,
+  ],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',
 })
-
 export class CompOffComponent implements OnInit, OnDestroy {
   addCompOffForm!: FormGroup;
   empinfo = {} as IJob;
@@ -36,19 +41,34 @@ export class CompOffComponent implements OnInit, OnDestroy {
   wfhValidations = {} as IValidations;
   spinnerLoader = false;
   alloweddates: string = '';
-
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, 
-    private sharedModalService: OpenModalService, public rbac: RbacService) { }
+  isWeekOffSelected = true;
+  isHolidaySelected = true;
+  selectedDay = '';
+  pastDatesAllowed!:number;
+  futureDatesAllowed!:number;
+  compOffCriterias = [] as any;
+  constructor(
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private sharedModalService: OpenModalService,
+    public rbac: RbacService,
+    public formsValidation:FormValidationsService
+  ) {}
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.halfDayValue = JSON.parse(localStorage.getItem('filterHalfDayData') || '{}');
-    this.fullDayValue = JSON.parse(localStorage.getItem('filterFullDayData') || '{}');
+    // this.halfDayValue = JSON.parse(
+    //   localStorage.getItem('filterHalfDayData') || '{}'
+    // );
+    // this.fullDayValue = JSON.parse(
+    //   localStorage.getItem('filterFullDayData') || '{}'
+    // );
     this.intializeCompOffForm();
     this.getWorkfromhomeCriteria();
     this.getEmployeeeHolidays();
     this.getEmployeeeWeekends();
-    this.handleAvailingChange()
+    this.handleAvailingChange();
   }
 
   openModal(content: any) {
@@ -57,8 +77,9 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   intializeCompOffForm() {
     this.addCompOffForm = this.fb.group({
-      workedDate: ['',
-        [Validators.required, this.onlyWeekendsValidator.bind(this), this.afterJoiningDateValidator.bind(this)]
+      workedDate: [
+        '',
+        [Validators.required, this.afterJoiningDateValidator.bind(this)],
       ],
       availing: ['', Validators.required],
       halfType: [''],
@@ -79,6 +100,116 @@ export class CompOffComponent implements OnInit, OnDestroy {
     });
   }
 
+  weekendAndHolidaysCheck(selectedDate:string){
+    this.dateCheckWithHoliday(selectedDate);
+    this.checkWeekends(selectedDate);
+  }
+
+  dateCheckWithHoliday(selectedDate: string) {
+    if (this.holidaysData?.orgHolidaysItems) {
+      this.holidaysData?.orgHolidaysItems?.forEach((element: any) => {
+        const currentDate = new Date(element.holidayDate);
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, '0')
+        const day = String(currentDate.getDate()).padStart(2, '0');
+        element.holidayDate = `${year}-${month}-${day}`;
+      });
+    }
+    
+    const isDatePresent = this.holidaysData?.orgHolidaysItems?.some((holiday: any) => holiday.holidayDate === selectedDate);
+    this.isHolidaySelected = isDatePresent;
+  }
+
+  checkWeekends(selectedDate: string) {
+    let selectedDate1 = moment(selectedDate);
+    let dayOfMonth = selectedDate1.date();
+    let weekNumber = Math.ceil(dayOfMonth / 7);
+    const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    this.selectedDay = weekdayNames[selectedDate1.day()];
+    let captureHoliday: any;
+    const dayPresent = this.weekendsData?.orgWeekendItems?.some((holiday: any) => {
+      if (holiday.weekday === this.selectedDay) {
+        captureHoliday = holiday;
+        return true;
+      }
+      this.isWeekOffSelected = false;
+      return false;
+    });
+  
+    console.log(captureHoliday);
+    if (captureHoliday && dayPresent) {
+      if (weekNumber === 1 && dayPresent) {
+        if (captureHoliday.firstweek) {
+          this.isWeekOffSelected = true;
+        } else {
+          this.isWeekOffSelected = false;
+        }
+        console.log("First week of the month");
+      } else if (weekNumber === 2 && dayPresent) {
+        if (captureHoliday.secondweek) {
+          this.isWeekOffSelected = true;
+        } else {
+          this.isWeekOffSelected = false;
+        }
+        console.log("Second week of the month");
+      } else if (weekNumber === 3) {
+        if (captureHoliday.thirdweek) {
+          this.isWeekOffSelected = true;
+        } else {
+          this.isWeekOffSelected = false;
+        }
+        console.log("Third week of the month");
+      } else if (weekNumber === 4) {
+        if (captureHoliday.fourthweek) {
+          this.isWeekOffSelected = true;
+        } else {
+          this.isWeekOffSelected = false;
+        }
+        console.log("Fourth week of the month");
+      } else if (weekNumber === 5) {
+        if (captureHoliday.fifthweek) {
+          this.isWeekOffSelected = true;
+        } else {
+          this.isWeekOffSelected = false;
+        }
+        console.log("Fifth week of the month");
+      }
+    }
+    console.log(this.isWeekOffSelected);
+  }
+
+  getPastDate(): string {
+    const days = Number(this.pastDatesAllowed ?? 0);
+  
+    if (isNaN(days)) {
+      console.error('Invalid pastDatesAllowed:', this.pastDatesAllowed);
+      return new Date().toISOString().split('T')[0]; // Fallback to current date
+    }
+  
+    const currentDate = new Date();
+    const pastDate = new Date(currentDate);
+    pastDate.setDate(currentDate.getDate() - days); // subtract days for past
+    return pastDate.toISOString().split('T')[0];
+  }
+  
+  
+ 
+  getFutureDate(): string {
+    const days = Number(this.futureDatesAllowed ?? 0);
+  
+    if (isNaN(days)) {
+      console.error('Invalid futureDatesAllowed:', this.futureDatesAllowed);
+      return new Date().toISOString().split('T')[0]; // Fallback to current date
+    }
+  
+    const currentDate = new Date();
+    const futureDate = new Date(currentDate);
+    futureDate.setDate(currentDate.getDate() + days);
+    return futureDate.toISOString().split('T')[0];
+  }
+
+
+
   applyCompOff(addForm: FormGroup) {
     if (addForm.valid) {
       const formData = addForm.value;
@@ -87,7 +218,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
         empId: this.empinfo.employeeId,
         startTime: formData.workedDate,
         endTime: formData.workedDate,
-        requestedComments: this.compoffdata.requestedComments,
+        requestedComments: formData.reason,
         durationType: isFullDay ? 2 : +formData.halfType, // 1: First Half, 3: Second Half, 2: Full Day
         duration: isFullDay ? 1 : 0.5,
         status: 'Waiting for Approval',
@@ -97,40 +228,53 @@ export class CompOffComponent implements OnInit, OnDestroy {
         requestedDate: new Date(),
       };
       this.spinnerLoader = true;
-      this.http.postdata('AttendanceRequests', payload).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          // this.getCompOffRequest();
-          this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request submitted successfully');
-          this.http.tirggerCountSignal.update((status) => ({
-            ...status,
-            compOff: true,
-          }));
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
-          //write a signal to trigger the get all count in the side bar
-        },
-        error: (err: any) => {
-          this.spinnerLoader = false;
-          if (err.error.message.toLowerCase() == 'you already applied to same category for same day') {
-            this.sharedModalService.openErrorModal('Same date range already exists')
-          } else {
-            this.sharedModalService.openErrorModal(err.error.message)
-          }
-        },
-        complete: () => {
-          this.addCompOffForm.reset();
-          this.spinnerLoader = false;
-        },
-      });
+      this.http
+        .postdata('AttendanceRequests', payload)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (res: any) => {
+            // this.getCompOffRequest();
+            this.modalService.dismissAll();
+            this.sharedModalService.openSuccessModal(
+              'Request submitted successfully'
+            );
+            this.http.tirggerCountSignal.update((status) => ({
+              ...status,
+              compOff: true,
+            }));
+            this.http.compOffTriggerSignal.set(true);
+            this.addCompOffForm.reset();
+            //write a signal to trigger the get all count in the side bar
+          },
+          error: (err: any) => {
+            this.spinnerLoader = false;
+            if (
+              err.error.message.toLowerCase() ==
+              'you already applied to same category for same day'
+            ) {
+              this.sharedModalService.openErrorModal(
+                'Same date range already exists'
+              );
+            } else {
+              this.sharedModalService.openErrorModal(err.error.message);
+            }
+          },
+          complete: () => {
+            
+            this.spinnerLoader = false;
+          },
+        });
     }
   }
 
   updateDuration() {
     if (this.compoffdata.startTimeProp && this.compoffdata.endTimeProp) {
-      const formattedStartTime = moment(this.compoffdata.startTimeProp).format('HH:mm');
-      const formattedEndTime = moment(this.compoffdata.endTimeProp).format('HH:mm');
+      const formattedStartTime = moment(this.compoffdata.startTimeProp).format(
+        'HH:mm'
+      );
+      const formattedEndTime = moment(this.compoffdata.endTimeProp).format(
+        'HH:mm'
+      );
       const startTime = moment(formattedStartTime, 'hh:mm A');
       const endTime = moment(formattedEndTime, 'hh:mm A');
       // Calculate the duration in minutes
@@ -146,10 +290,11 @@ export class CompOffComponent implements OnInit, OnDestroy {
       // Calculate duration as a float
       const durationAsFloat = this.hours + this.minutes / 60;
       this.compoffdata.duration = durationAsFloat.toFixed(2);
-      const orgHalfDayWFHCritera = parseFloat(this.halfDayValue.value);
+      const orgHalfDayWFHCritera = parseFloat(this.halfDayValue?.value);
       if (this.compoffdata.duration < orgHalfDayWFHCritera) {
         this.compoffdata.duration = null;
-        this.wfhValidations.DurationErrorMessage = 'Provided duration is not eligible for Comp Off';
+        this.wfhValidations.DurationErrorMessage =
+          'Provided duration is not eligible for Comp Off';
         this.wfhValidations.isdurationValidated = true;
       } else {
         this.duration = this.compoffdata.duration;
@@ -163,48 +308,56 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   getEmployeeeHolidays() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.http.getData(`orgHolidays/getOrgHoliday/${EmployeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.holidaysData = data;
-      },
-    });
+    this.http
+      .getData(`orgHolidays/getOrgHoliday/${EmployeeId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.holidaysData = data;
+        },
+      });
   }
 
   getWorkfromhomeCriteria() {
-    this.http.getData(`CompOffEligibilityCriteria`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response: any) => {
-        this.compOffEligibilityCriteria = response;
-        const filterHalfDayData = this.compOffEligibilityCriteria.find(
-          (item: any) => item.name === 'minHalfDayHours'
-        );
-        const filterminhoursData = this.compOffEligibilityCriteria.find(
-          (item: any) => item.name === 'maxDuration'
-        );
-        this.filteredMinhoursData = filterminhoursData ?? ({} as LeaveConfigurationSetting);
-        localStorage.setItem('filterHalfDayData',JSON.stringify(filterHalfDayData));
-        const filterFullDayData = this.compOffEligibilityCriteria.find(
-          (item: any) => item.name === 'minFullDayHours'
-        );
-        localStorage.setItem('filterFullDayData', JSON.stringify(filterFullDayData));
-      },
-      error: (error) => {
-        console.error('Error fetching data:', error);
-        this.compOffEligibilityCriteria = []; // Set to empty array on error
-      },
-    });
+    this.http
+      .getData(`CompOffEligibilityCriteria`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.compOffEligibilityCriteria = response;
+          this.futureDatesAllowed = parseInt(
+            this.compOffEligibilityCriteria?.find((item: any) => item.name === 'futureDays')?.value ?? '0',
+            10
+          );
+          
+          this.pastDatesAllowed = parseInt(
+            this.compOffEligibilityCriteria?.find((item: any) => item.name === 'pastDays')?.value ?? '0',
+            10
+          );
+        },
+        error: (error) => {
+          console.error('Error fetching data:', error);
+          this.compOffEligibilityCriteria = []; // Set to empty array on error
+        },
+      });
   }
 
   getEmployeeeWeekends() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.http.getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${EmployeeId}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (data: any) => {
-        this.weekendsData = data;
-      },
-    });
+    this.http
+      .getData(`OrgWeekendHeader/getOrgWeekendByEmpId/${EmployeeId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.weekendsData = data;
+        },
+      });
   }
 
   // Custom Validator: Allow only weekends
-  onlyWeekendsValidator(control: AbstractControl): { [key: string]: boolean } | null {
+  onlyWeekendsValidator(
+    control: AbstractControl
+  ): { [key: string]: boolean } | null {
     if (control.value) {
       const date = new Date(control.value);
       const day = date.getDay();
@@ -217,7 +370,9 @@ export class CompOffComponent implements OnInit, OnDestroy {
   }
 
   // Custom Validator: Ensure date is after the date of joining
-  afterJoiningDateValidator(control: AbstractControl): { [key: string]: boolean } | null {
+  afterJoiningDateValidator(
+    control: AbstractControl
+  ): { [key: string]: boolean } | null {
     if (control.value && this.empinfo.dateOfJoining) {
       const selectedDate = new Date(control.value);
       const joiningDate = new Date(this.empinfo.dateOfJoining);

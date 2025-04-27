@@ -16,7 +16,7 @@
   <form [formGroup]="inviteActiveEmployeeForm" (ngSubmit)="activeInviteEmployee()">
     <div class="card custom-content-data p-4">
       <div class="input-content mb-4">
-        <label for="exampleFormControlInput1" class="form-label custom-label mb-3">Search Employee
+        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Search Employee
           <span class="text-danger">*</span></label>
         <div class="custom-p-select-content">
           <p-select [options]="Activeemployeedata" optionLabel="name" optionValue="employeeId" [filter]="true"
@@ -33,14 +33,13 @@
       </div>
 
       <div class="input-content mb-4">
-        <label class="form-label input-heading">Employee Name</label>
+        <label class="form-label custom-label mb-2">Employee Name</label>
         <input type="text" formControlName="fullname" class="form-control custom-input">
       </div>
   
-      <div class="form-check input-field">
+      <div class="form-check input-field mb-4">
         <input type="checkbox" class="form-check-input" id="flexCheckDefault" formControlName="agreement" (click)="onCheckValue()">
-        <label class="form-check-label check-box-text" for="flexCheckDefault">
-          <p style="font-size: 14px;">I Agree to invite <b><span class="email">{{ getName.workEmail }}</span></b> into organization</p>
+        <label class="form-check-label check-box-text" for="flexCheckDefault">I Agree to invite <b><span class="email">{{ getName.workEmail }}</span></b> into organization
         </label>
       </div>
   

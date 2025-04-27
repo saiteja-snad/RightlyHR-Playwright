@@ -72,11 +72,7 @@
 
         <div class="footer-btn-content d-flex justify-content-between gap-2 pt-4 px-4">
             <button class="custom-btn btn-secondary rounded-pill px-5" (click)="navigatePrevious()">Personal Details</button>
-            @if(loadingcircle){
-            <div class="spinner-border text-primary me-4" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-            }
+          
             <!-- @if(this.prosempdata.substatus.toLowerCase() == 'Requested Documents' || this.prosempdata.substatus.toLowerCase() == 'Documents Rejected'){
             <button type="submit" class="custom-btn btn-primary py-2 px-5"
                 [disabled]="!aftersubmitbuttondisable||!submitbuttondisableforrejected"
@@ -130,7 +126,7 @@
                             formControlName="documentType" placeholder="document type">
                     </div>
                     <div class="mb-3">
-                        <label for="documentNumber" class="form-label custom-label mb-2">Document Number<span
+                        <label for="documentNumber" class="form-label custom-label mb-2">Document Number<span *ngIf="isMandatory"
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="documentNumber"
                             formControlName="documentNumber" placeholder="Please enter document number"
@@ -141,9 +137,13 @@
                             <div *ngIf="documentForm.get('documentNumber')?.hasError('required')">Document Number is
                                 required</div>
                             <!-- Min Length Error -->
-                            <div *ngIf="documentForm.get('documentNumber')?.hasError('minlength')">Document Number must
+                            <div *ngIf="documentForm.get('documentNumber')?.hasError('minlength')||documentForm.get('documentNumber')?.hasError('maxlength')">Document Number must
                                 be at least
                                 {{ IdentityMinNumber }} digits</div>
+                            <!-- Pattern Error -->
+                              <!-- Min Length Error -->
+                            <div *ngIf="documentForm.get('documentNumber')?.hasError('maxlength')">Document Number should not be greater than
+                                {{ IdentityMaxNumber }} digits</div>
                             <!-- Pattern Error -->
                             <div *ngIf="documentForm.get('documentNumber')?.hasError('pattern')">{{ errorMsg }}</div>
                         </div>
@@ -156,7 +156,7 @@
                             formControlName="docFile">
                     </div>
                     <div class="mb-4">
-                        <p class="note-text"><span class="note me-2">Note:</span>Only Pdf and image are allowed. The
+                        <p class="note-text"><span class="note me-2">Note:</span> Only Pdf and image are allowed. The
                             file size should be less than 25MB.</p>
                     </div>
                 </div>
@@ -201,7 +201,18 @@
         </div>
         <div class="d-flex justify-content-center gap-5 mt-4">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="close()">Close</button>
-            <button type="submit" class="custom-btn btn-primary px-5" (click)="submit()">Submit</button>
+            <button type="submit" class="custom-btn btn-primary px-5" (click)="submit()" [disabled]="loadingcircle">
+            @if(!loadingcircle){ Submit }
+                    @else {
+                    <div class="d-flex">
+                        @if(loadingcircle){
+                            <div class="spinner-border text-primary me-4" role="status">
+                                <span class="visually-hidden">Submitting</span>
+                            </div>
+                            }
+                    </div>
+                    }
+            </button>
         </div>
     </div>
 </ng-template>

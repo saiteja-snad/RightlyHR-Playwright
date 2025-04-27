@@ -45,7 +45,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   IdentityMaxNumber: number = 15;   // used to max fields for comparision
   IdentityMinNumber: number = 12;
   isMandatory: boolean = false;
-  pattern= '[0-9]';
+  pattern!:any;
   @ViewChild('uploadPopup') uploadPopup: any;
   @ViewChild('viewpopup') viewpopup: any;
   @ViewChild('confirmationPopup') confirmationPopup: any;
@@ -89,7 +89,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   initializeForm() {
     this.documentForm = this.fb.group({
       documentType: [{ value: '', disabled: true }, Validators.required],
-      documentNumber: ['', [Validators.required, Validators.minLength(this.IdentityMinNumber), Validators.maxLength(this.IdentityMaxNumber), Validators.pattern(this.pattern)]],
+      documentNumber: ['', [ Validators.minLength(this.IdentityMinNumber), Validators.maxLength(this.IdentityMaxNumber), Validators.pattern(this.pattern)]],
       docFile: [null, Validators.required],
     });
   }
@@ -168,20 +168,66 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   onClickEditDocument(data: any) {
 
     this.documentSelectFields = JSON.parse(JSON.stringify(data));
-    this.isMandatory = false;
+    this.isMandatory = this.documentSelectFields.isMandatory;
+    if(this.isMandatory){
+      this.documentForm
+      .get('documentNumber')
+      ?.setValidators([
+        Validators.required,
+        Validators.pattern(this.pattern),
+        Validators.minLength(this.IdentityMinNumber),
+        Validators.maxLength(this.IdentityMaxNumber),
+      ]);
+
+    this.documentForm.get('documentNumber')?.updateValueAndValidity();
+    }
     if (this.documentSelectFields.documentType?.toLowerCase() === "pan") {
       this.isMandatory = this.documentSelectFields.isMandatory
       this.IdentityMaxNumber = 10;
       this.IdentityMinNumber = 10;
       this.pattern = "[a-zA-Z0-9]*";
       this.errorMsg = 'Special characters are not allowed';
+         // Set value false or clear the value if needed
+         this.documentForm.get('documentNumber')?.setValue('');
+       // Apply validators dynamically
+       if(this.isMandatory){
+        this.documentForm
+        .get('documentNumber')
+        ?.setValidators([
+          Validators.required,
+          Validators.pattern(this.pattern),
+          Validators.minLength(this.IdentityMinNumber),
+          Validators.maxLength(this.IdentityMaxNumber),
+        ]);
+
+      this.documentForm.get('documentNumber')?.updateValueAndValidity();
+      }
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "aadhaar") {
-      this.isMandatory = this.documentSelectFields.isMandatory
+      this.isMandatory = this.documentSelectFields.isMandatory;
+
+      // Set value false or clear the value if needed
+      this.documentForm.get('documentNumber')?.setValue('');
+
       this.IdentityMaxNumber = 12;
       this.IdentityMinNumber = 12;
-      this.pattern = "[0-9]*";
+      this.pattern = '[0-9]*';
       this.errorMsg = 'Alphabets and special characters are not allowed';
+
+      // Apply validators dynamically
+      if(this.isMandatory){
+        this.documentForm
+        .get('documentNumber')
+        ?.setValidators([
+          Validators.required,
+          Validators.pattern(this.pattern),
+          Validators.minLength(this.IdentityMinNumber),
+          Validators.maxLength(this.IdentityMaxNumber),
+        ]);
+
+      this.documentForm.get('documentNumber')?.updateValueAndValidity();
+      }
+     
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "uan") {
       this.isMandatory = this.documentSelectFields.isMandatory;
@@ -189,6 +235,21 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       this.IdentityMinNumber = 12;
       this.pattern = "[0-9]*";
       this.errorMsg = 'Alphabets and special characters are not allowed';
+      // Set value false or clear the value if needed
+      this.documentForm.get('documentNumber')?.setValue('');
+      // Apply validators dynamically
+      if(this.isMandatory){
+        this.documentForm
+        .get('documentNumber')
+        ?.setValidators([
+          Validators.required,
+          Validators.pattern(this.pattern),
+          Validators.minLength(this.IdentityMinNumber),
+          Validators.maxLength(this.IdentityMaxNumber),
+        ]);
+
+      this.documentForm.get('documentNumber')?.updateValueAndValidity();
+      }
     }
   }
 
@@ -210,11 +271,13 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
   //to select the attached file
   onDocAttachmentSelected(event: any) {
-
-    let file = event.target.files[0];
-    let d: Date = new Date()
-    let documentType = this.documentSelectFields.documentType.replace(/\//g, ' ')
-    this.documentAttachment = this.renameFileAttchment(file, `${this.prosempdata.employeeId}_${documentType}_${d.getTime()}_${file.name}`)
+      if(event){
+        let file = event.target.files[0];
+        let d: Date = new Date()
+        let documentType = this.documentSelectFields.documentType.replace(/\//g, ' ')
+        this.documentAttachment = this.renameFileAttchment(file, `${this.prosempdata.employeeId}_${documentType}_${d.getTime()}_${file.name}`)
+      }
+    
   }
 
   private renameFileAttchment(originalFile: File, newName: string) {
@@ -258,6 +321,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
               this.openPopup.openSuccess("Document uploaded successfully");
               setTimeout(() => {
                 this.modalService.dismissAll();
+                this.documentForm.reset();
                 this.getDocuments();
               }, 2000);
             }
@@ -363,11 +427,12 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
   //function to submit the documents 
   submit() {
+    this.loadingcircle = true;
     let empId = this.prosempdata.employeeId;
     let data = { empId: this.prosempdata.employeeId };
     this.subscription = this.http.putData(`PreonboardingDocuments/submit/${empId}`, data).subscribe({
       next: (data: any) => {
-        this.loadingcircle = true;
+       
         if (data == true) {
           this.submitEmail();
         }

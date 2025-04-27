@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+ <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Education Details</span></div>
     <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
@@ -69,7 +69,7 @@
         <p class="popup-heading mb-0">Add Education Details</p>
       </div>
       <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="modal.dismiss();educationForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content p-4">
@@ -94,7 +94,7 @@
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="university" formControlName="university"
-              placeholder="Please enter university" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter university" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
               *ngIf="educationForm.get('university')?.invalid && educationForm.get('university')?.touched">
               University is required
@@ -105,7 +105,7 @@
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="specialization" formControlName="specialization"
-              placeholder="Please enter specialization" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter specialization" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
               *ngIf="educationForm.get('specialization')?.invalid && educationForm.get('specialization')?.touched">
               Specialization is required
@@ -124,21 +124,28 @@
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeStartDate"   onkeypress="return false" [max]="currentDate" class="form-control custom-input"
-              id="degreeStartDate">
-            <div class="error-msg"
-              *ngIf="educationForm.get('degreeStartDate')?.invalid && educationForm.get('degreeStartDate')?.touched">
-              From Date is required
-            </div>
+                <input type="date" formControlName="degreeStartDate"  onkeypress="return false" [max]="currentDate" class="form-control custom-input"
+                id="degreeStartDate">
+              <div class="error-msg"
+                *ngIf="educationForm.get('degreeStartDate')?.invalid && educationForm.get('degreeStartDate')?.touched">
+                From Date is required
+              </div>
+              <div class="error-msg" *ngIf="educationForm.get('degreeStartDate')?.hasError('startDateInvalid')">
+                From Date cannot be after the current date.
+              </div>
+
           </div>
           }@if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDate"  onkeypress="return false" class="form-control custom-input" id="degreeEndDate">
+            <input type="date" formControlName="degreeEndDate" [min]="getMinEndDate()"  onkeypress="return false" class="form-control custom-input" id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationForm.get('degreeEndDate')?.invalid && educationForm.get('degreeEndDate')?.touched">
               To Date is required
+            </div>
+            <div class="error-msg" *ngIf="educationForm.get('degreeEndDate')?.hasError('endDateInvalid')">
+              To Date must be after From Date.
             </div>
           </div>}
           @if(this.rbac.allowedToAccess('Education.view')){
@@ -161,7 +168,15 @@
         <div class="d-flex justify-content-end gap-3">
           <button type="reset" class="custom-btn btn-secondary"
             (click)="educationForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="educationForm.invalid">Add</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="educationForm.invalid || spinnerLoader ">
+            @if (spinnerLoader) {
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading' | translate}}...</span>
+              } @else {
+              <span>{{'Add'| translate}}</span>
+              }
+
+          </button>
         </div>
       </form>
     </div>
@@ -203,7 +218,7 @@
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="university" formControlName="universityupdate"
-              placeholder="Please enter university" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter university" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('universityupdate')?.invalid && educationupdateForm.get('universityupdate')?.touched">
               University is required
@@ -217,7 +232,7 @@
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="specialization"
               formControlName="specializationupdate" placeholder="Please enter specialization"
-              (keypress)="formValidation.restrictInput($event)">
+              (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('specializationupdate')?.invalid && educationupdateForm.get('specializationupdate')?.touched">
               Specialization is required
@@ -254,7 +269,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDateupdate"  onkeypress="return false" class="form-control custom-input"
+            <input type="date" formControlName="degreeEndDateupdate" [min]="getupdateMinEndDate()"  onkeypress="return false" class="form-control custom-input"
               id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('degreeEndDateupdate')?.invalid && educationupdateForm.get('degreeEndDateupdate')?.touched">
@@ -286,7 +301,14 @@
         <div class="d-flex justify-content-end gap-3">
           <button type="reset" class="custom-btn btn-secondary"
             (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="educationupdateForm.invalid">Update</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="educationupdateForm.invalid || spinnerLoader ">
+            @if (spinnerLoader) {
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading' | translate}}...</span>
+              } @else {
+              <span>{{'Update'| translate}}</span>
+              }
+          </button>
         </div>
       </form>
     </div>

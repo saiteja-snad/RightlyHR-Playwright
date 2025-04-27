@@ -9,10 +9,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-bank-details',
-  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent],
+  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent,TranslateModule],
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })
@@ -26,6 +27,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   subscription!: Subscription
   proofValid: boolean = true;
   bankdocument: any
+  spinnerLoader=false;
   displayblankdocument:any
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService) { }
   ngOnInit(): void {
@@ -38,7 +40,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   initializeBankDetailsForm(): void {
     this.bankDetailsForm = this.fb.group({
       bankName: ['', Validators.required],
-      accountName: ['', [Validators.required,]],
+      accountName: ['', [Validators.required,Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       accountNo: ['', [Validators.required]],
       ifscCode: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
       isPrimary: [false],
@@ -47,7 +49,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   }
   initializeBankDetailsupdateForm(): void {
     this.bankDetailsUpdateForm = this.fb.group({
-      bankNameupdate: ['', Validators.required],
+      bankNameupdate: ['',[ Validators.required,Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       accountNameupdate: ['', [Validators.required,]],
       accountNoupdate: ['', [Validators.required]],
       ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
@@ -123,6 +125,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
 
   postBankDetails(): void {
     if (this.bankDetailsForm.valid) {
+      this.spinnerLoader=true
       const payload = this.createBankDetailsPayload();
 
       if (this.bankdocument) {
@@ -156,11 +159,13 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata('BankDetail', payload).subscribe({
       next: () => {
         this.getbankempid()
+        this.spinnerLoader=false
         this.bankDetailsForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank details added successfully')
       },
       error: (err: any) => {
+        this.spinnerLoader=false
         console.error('Error saving bank details:', err);
         this.conformationPopup.openErrorModal('Bank details added failed')
       }
@@ -253,7 +258,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   updateBankDetails(): void {
     if (this.bankDetailsUpdateForm.valid) {
       const formData = this.bankDetailsUpdateForm.value;
-
+      this.spinnerLoader=true
       // Prepare the payload
       const payload = {
         bankId: this.bankid,
@@ -302,13 +307,14 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   saveUpdatedBankDetails(payload: any): void {
     this.subscription = this.http.postdata(`BankDetail/Update`, payload).subscribe({
       next: (data: any) => {
-        console.log('Bank details updated successfully:', data);
+       this.spinnerLoader=false;
         this.bankDetailsUpdateForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank details updated successfully');
         this.getbankempid(); // Refresh the bank details list
       },
       error: (reason: any) => {
+        this.spinnerLoader=false
         console.error('Error updating bank details:', reason);
         this.conformationPopup.openErrorModal('Failed to update bank details. Please check all fields.');
       }

@@ -13,21 +13,16 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
-
+import { environment } from '../../../../environments/environment';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-comp-off-entitlement',
-  imports: [ CommonModule,
-    NgbPopoverModule,
-    FormsModule,
-    PaginatorModule,
-    DropdownModule,
-    NoDataFoundComponent,
-    DateformatPipe,
-    ReactiveFormsModule,
-    TranslateModule],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, 
+    NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule],
   templateUrl: './comp-off-entitlement.component.html',
   styleUrl: './comp-off-entitlement.component.scss'
 })
+
 export class CompOffEntitlementComponent {
   totalRecords = 100;
   first: any = 0;
@@ -49,12 +44,14 @@ export class CompOffEntitlementComponent {
   @ViewChild('commentspopup') modalContent: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+
   constructor(
-    private modalService: NgbModal,
-    private fb: FormBuilder,
-    private http: HttpService,
-    private sharedModalService: OpenModalService,
+    private modalService: NgbModal, 
+    private fb: FormBuilder, 
+    private http: HttpService, 
+    private sharedModalService: OpenModalService, 
     public rbac: RbacService,
+    public formValidation:FormValidationService
   ) {
     effect(() => {
       if (this.http.trigger()) {
@@ -65,19 +62,20 @@ export class CompOffEntitlementComponent {
         } else {
           this.leaves = [];
         }
-  
         this.http.resetTriggerSignal(); // Reset after handling
       }
     });
   }
+
   ngOnInit(): void {
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     const storedEmployee = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
-      if (storedEmployee && Object.keys(storedEmployee).length > 0) {
-        this.LOGIN = storedEmployee;
-        this.getAllPendingApprovals();
-      } else {
-        this.leaves = [];
-      }
+    if (storedEmployee && Object.keys(storedEmployee).length > 0) {
+      this.LOGIN = storedEmployee;
+      this.getAllPendingApprovals();
+    } else {
+      this.leaves = [];
+    }
     this.intializeApproveForm();
   }
 
@@ -95,20 +93,14 @@ export class CompOffEntitlementComponent {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
-    console.log(EmployeeId);
-    this.http
-      .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=3&approvedType=EMP`
-      ).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          console.log(response);
-          this.leaves = response.data as AttendanceRequest[];
-          console.log(this.leaves);
-        },
-        error: (reason) => console.log(reason),
-      });
+    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.compoffModuleId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.leaves = response.data as AttendanceRequest[];
+      },
+      error: (reason) => console.log(reason),
+    });
   }
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -123,9 +115,11 @@ export class CompOffEntitlementComponent {
     this.intializeRejectForm();
     this.selectedLeaveData = request;
   }
+
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -136,24 +130,20 @@ export class CompOffEntitlementComponent {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
     };
-    this.http
-      .putData(
-        `PendingApproval/process/${request.approvalHeader.id}`,
-        requestBody
-      ).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.sharedModalService.openSuccessModal(
-            'Request Processed Successfully'
-          );
-        },
-        error: (reason: any) => {
-          this.sharedModalService.openErrorModal(reason.error.Message);
-        },
-        complete: () => {
-          this.getAllPendingApprovals();
-        },
-      });
+    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
+
+    this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.modalService.dismissAll();
+        this.sharedModalService.openSuccessModal('Request Processed Successfully');
+      },
+      error: (reason: any) => {
+        this.sharedModalService.openErrorModal(reason.error.Message);
+      },
+      complete: () => {
+        this.getAllPendingApprovals();
+      },
+    });
   }
 
   handleAccept(approveForm: FormGroup): void {
@@ -162,32 +152,25 @@ export class CompOffEntitlementComponent {
       const requestBody = {
         status: 'Approved',
         comments: formData.comments,
-        approvedBy: this.empinfo.employeeId.toString(),
+        approvedBy: this.empinfo.employeeId?.toString(),
       };
-
-      this.http
-        .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
-        ).pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response: any) => {
-            this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Request Approved Successfully'
-            );
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              compOff: true,
-            }));
-          },
-          error: (reason: any) => {
-            this.sharedModalService.openErrorModal(reason.error.Message);
-          },
-          complete: () => {
-            this.getAllPendingApprovals();
-          },
-        });
+      this.sharedModalService.openLoaderModal('Accepting Request, Please wait...');
+      this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal('Request Approved Successfully');
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            compOff: true,
+          }));
+        },
+        error: (reason: any) => {
+          this.sharedModalService.openErrorModal(reason.error.Message);
+        },
+        complete: () => {
+          this.getAllPendingApprovals();
+        },
+      });
     }
   }
 
@@ -198,43 +181,32 @@ export class CompOffEntitlementComponent {
         status: 'Rejected',
         comments: formData.comments,
       };
+      this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
 
-      this.http
-        .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
-        ).pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (response: any) => {
-            this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Request Rejcted Successfully'
-            );
-            this.rejectForm.reset();
-            this.selectedLeaveData = {} as AttendanceRequest;
-            this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-              ...status,
-              compOff: true,
-            }));
-          },
-          error: (reason: any) => {
-            this.sharedModalService.openErrorModal(reason.error.Message);
-          },
-          complete: () => {
-            this.getAllPendingApprovals();
-          },
-        });
+      this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openSuccessModal('Request Rejcted Successfully');
+          this.rejectForm.reset();
+          this.selectedLeaveData = {} as AttendanceRequest;
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            compOff: true,
+          }));
+        },
+        error: (reason: any) => {
+          this.sharedModalService.openErrorModal(reason.error.Message);
+        },
+        complete: () => {
+          this.getAllPendingApprovals();
+        },
+      });
     }
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, {
-      centered: true,
-      backdrop: 'static',
-      size: 'lg',
-    });
+    this.modalService.open(commentspopup, {centered: true, backdrop: 'static', size: 'lg'});
     this.approverComments = value;
-    console.log(this.approverComments);
   }
 
   ngOnDestroy(): void {

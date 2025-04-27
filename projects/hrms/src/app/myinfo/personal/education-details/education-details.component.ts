@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { IDegre, Ieducation } from '../../../Interfaces/personal-modal';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, delay, map, of, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
@@ -35,6 +36,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   issEndDateValid = true;
   islistedItem = true;
   buttondisable = true;
+  spinnerLoader=false;
   empinfo: any = {}
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,) { }
@@ -44,6 +46,12 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
     this.initializeupdateForm()
     this.getDegree()
     this.getEducationEmpid();
+    this.educationForm.get('degreeStartDate')?.valueChanges.subscribe(() => {
+      this.educationForm.get('degreeEndDate')?.reset();
+    });
+    this.educationupdateForm.get('degreeStartDateupdate')?.valueChanges.subscribe(() => {
+      this.educationupdateForm.get('degreeEndDateupdate')?.reset();
+    });
   }
 
   openModal(content: any) {
@@ -53,46 +61,52 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   initializeForm(): void {
     this.educationForm = this.fb.group({
       education: ['', Validators.required],
-      university: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
-      specialization: ['', [Validators.required, Validators.pattern('^[^\\s].*$')],],
+      university: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")]],
+      specialization: ['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")],],
       gpa: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
-      degreeStartDate: ['', Validators.required],
-      degreeEndDate: ['', Validators.required],
+      degreeStartDate: ['',[ Validators.required]],
+      degreeEndDate: ['', [Validators.required]],
       attachment: [null, Validators.required],
     });
-    this.validations()
+    
   }
 
   initializeupdateForm(): void {
     this.educationupdateForm = this.fb.group({
       educationupdate: ['', Validators.required],
-      universityupdate: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
-      specializationupdate: ['', [Validators.required, Validators.pattern('^[^\\s].*$')],],
+      universityupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")]],
+      specializationupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")],],
       gpaupdate: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
       degreeStartDateupdate: ['', Validators.required],
       degreeEndDateupdate: ['', Validators.required],
-      attachmentupdate: ['',],
+      attachmentupdate: ['', Validators.required],
     });
-    this.validations()
+
   }
 
-  validations() {
-    // Add validation for start and end dates
-    this.educationForm.get('degreeStartDate')?.valueChanges.subscribe((startDate) => {
-      const endDate = this.educationForm.get('degreeEndDate')?.value;
-      this.issStartDateValid = new Date(startDate) <= new Date(this.currentDate);
-      if (endDate) {
-        this.issEndDateValid = new Date(endDate) > new Date(startDate);
-      }
-    });
-    this.educationForm.get('degreeEndDate')?.valueChanges.subscribe((endDate) => {
-      const startDate = this.educationForm.get('degreeStartDate')?.value;
-      this.issEndDateValid = new Date(endDate) > new Date(startDate);
-    });
+  getMinEndDate(): string | null {
+    const startDateValue = this.educationForm.get('degreeStartDate')?.value;
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; // Return null if no start date is selected
+  }
+
+  getupdateMinEndDate(): string | null {
+    const startDateValue = this.educationupdateForm.get('degreeStartDateupdate')?.value;
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; // Return null if no start date is selected
   }
 
   postEducation(): void {
     if (this.educationForm.valid) {
+      this.spinnerLoader=true
       const payload = this.createEducationPayload();
       if (this.educationAttachment) {
         this.uploadEducationAttachment(payload);
@@ -128,8 +142,10 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Education details added successfully');
         this.getEducationEmpid();
+        this.spinnerLoader=false
       },
       error: (err: any) => {
+        this.spinnerLoader=false
         console.error('Error saving education data:', err);
         this.conformationPopup.openErrorModal(err.error.Message);
       }
@@ -205,6 +221,13 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       },
     });
   }
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
   //openupdate
   openModalupdate(content: any, educationDetails: any): void {
@@ -213,8 +236,8 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       (item) => item.degreeName === educationDetails.degree
     );
     // Convert dates to 'YYYY-MM-DD' format
-    const degreeStartDate = educationDetails.degreeStartDate ? new Date(educationDetails.degreeStartDate).toISOString().split('T')[0] : null;
-    const degreeEndDate = educationDetails.degreeEndDate ?  new Date(educationDetails.degreeEndDate).toISOString().split('T')[0] : null;
+    const degreeStartDate = this.formatDateToLocal(educationDetails.degreeStartDate) || null;
+    const degreeEndDate = this.formatDateToLocal(educationDetails.degreeEndDate) || null;
     this.educationupdateForm.patchValue({
       educationupdate: selectedEducationType,
       universityupdate: educationDetails.university,
@@ -230,6 +253,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
 
   updateEducation(): void {
     if (this.educationupdateForm.valid) {
+      this.spinnerLoader=true
       const formData = this.educationupdateForm.value;
       const payload = {
         id:this.selectedEducationId,
@@ -280,9 +304,11 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
         this.getEducationEmpid()
         this.educationupdateForm.reset()
         this.modalService.dismissAll()
+        this.spinnerLoader=false
         this.conformationPopup.openSuccessModal('Education updated successfully')
       },
       error: (reason: any) => {
+        this.spinnerLoader=false
         console.error('Error updating education:', reason);
         if (reason.error.includes('is already')) {
           this.conformationPopup.openErrorModal(reason.error);

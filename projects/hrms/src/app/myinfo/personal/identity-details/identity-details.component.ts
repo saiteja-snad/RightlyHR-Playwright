@@ -10,10 +10,11 @@ import { Iidentity, Iidentitydrop } from '../../../Interfaces/personal-modal';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-identity-details',
-  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent,TranslateModule],
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })
@@ -21,6 +22,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   unmatchedIdentityDetails: any = [];
   displayidentiydocument:any
+  spinnerLoader=false;
   selectedIdentityId: any
   getidentitydropdetails: Iidentitydrop[] = [];
   getIdentitydetails = new BehaviorSubject<Iidentity[]>([]);
@@ -47,6 +49,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
       identityType: ['', Validators.required],
       identityNumber: ['', [
         Validators.required,
+        
         Validators.minLength(this.IdentityMinNumber),
         Validators.maxLength(this.IdentityMaxNumber)
       ]],
@@ -127,6 +130,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
 
   submitIdentityForm(form: FormGroup): void {
     if (form.valid) {
+      this.spinnerLoader=true
       const payload = this.createPayload();
       if (this.IdentityAttachment) {
         this.uploadIdentityAttachment(payload);
@@ -163,6 +167,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
 
     this.subscription = this.http.postdata('IdentityTable', payload).subscribe({
       next: () => {
+        this.spinnerLoader=false
         this.modalService.dismissAll()
         this.identityForm.reset();
         this.getIdentityByEmpid()
@@ -170,6 +175,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
         console.log('Data saved successfully');
       },
       error: () => {
+        this.spinnerLoader=false
         console.error('Error saving data');
         this.conformationPopup.openErrorModal('Identity details added failed');
       }
@@ -231,7 +237,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
   updateIdentity(form: FormGroup): void {
     if (form.valid) {
       const formData = form.value;
-
+      this.spinnerLoader=true
     //payload
       const payload = {
         identityId: this.selectedIdentityId,
@@ -274,13 +280,14 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata(`IdentityTable/Update`, payload).subscribe({
       next: (data: any) => {
         console.log('Identity updated successfully:', data);
-
+        this.spinnerLoader=false
         // Close the modal and refresh the data
         this.getIdentityByEmpid();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Identity details updated successfully');
       },
       error: (err: any) => {
+        this.spinnerLoader=false
         console.error('Error updating identity:', err);
         this.conformationPopup.openErrorModal('Failed to update identity details');
       }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, effect, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { Subject } from 'rxjs';
@@ -16,28 +16,40 @@ import { HttpService } from '../../../../services/http.service';
 
 export class TraineeApprovalsTabsComponent {
   empinfo: any;
-  pendingApprovalCount = {} as ApprovalStatusCount[];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  navTabs: any[] = [
-    { label: 'Intern Details', link: '/time-off/pending-approvals/trainee-approvals' },
-  ];
+  pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
+  navTabs = computed(() => {
+    const moduleId=environment.traineeoffboardingModuleId
+    const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
+    return [
+      { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals', count:data?.forYou ?? 0}
+    ];
+  });
+  // navTabs: any[] = [
+  //   { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals' },
+  // ];
 
-  constructor(public readonly router: Router, private http: HttpService) { }
+  constructor(public readonly router: Router, private http: HttpService) { 
+    effect(() => {
+      if (this.http.tirggerPendingApprovalCountSignal().separation) {
+        this.getAllTraineePendingApprovalsCount();
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, separation: false }));
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')
-    this.getAllSeparationPendingApprovalsCount();
+    this.getAllTraineePendingApprovalsCount();
   }
 
-  getAllSeparationPendingApprovalsCount() {
+  getAllTraineePendingApprovalsCount() {
     const employeeId = parseInt(this.empinfo.employeeId);
     const moduleId = environment.traineeoffboardingModuleId;
     this.http.getAllPendingApprovalsCount(moduleId, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
-        this.pendingApprovalCount = data.find(item => item.moduleId === moduleId) ? [data.find(item => item.moduleId === moduleId)!] : [];
-        this.navTabs = [
-          { label: 'Intern Details', link: '/time-off/pending-approvals/trainee-approvals', count: this.pendingApprovalCount.at(0)?.forYou ?? 0 },
-        ];
+        const filtered = data.filter(item => item.moduleId === moduleId);
+        this.pendingApprovalCount.set(filtered);
       },
       error: (err) => console.error('Error fetching approvals:', err),
     });

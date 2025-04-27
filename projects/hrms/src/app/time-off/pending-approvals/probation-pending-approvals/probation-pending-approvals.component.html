@@ -1,100 +1,75 @@
 <div class="custom-main-component-container">
-    <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
-                    class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
-        </div>
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1">
+    </div>
 
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>Employee ID </th>
-                        <th>Employee Name</th>
-                        <th>Probation Start Date</th>
-                        <th>Probation End Date</th>
-                        <th>Approved History</th>
-                        <th class="text-center">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if (rbac.allowedToAccess('Permissions.view')) {
-                    @if ((probationDetails).length > 0) {
-                    @for (item of ((probationDetails ) ?? []) | probationdetails : searchValue; track
-                    item.approvalHeader.id){
-                    <tr>
-                        <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
-                        <td>{{item.entity?.employeeName ?? '-'}}</td>
-                        <td>{{item.entity?.probationStartDate ?? '-' | date}}</td>
-                        <td>{{item.entity?.probationEndDate ?? '-' | date}}</td>
-                        <td class="cursor">
-                            <div class="mt-2">
-                                <span *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
-                                    <span id="tooltip">
-                                        <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
-                                        <div data-bs-toggle="modal" (click)="handleData(item)"
-                                            (click)="approverComments(item.entity?.prApproverComments)">
-                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                        </div>
-                                        <!-- </div> -->
-                                    </span>
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Employee ID </th>
+                    <th>Employee Name</th>
+                    <th>Probation Start Date</th>
+                    <th>Probation End Date</th>
+                    <th>Approved History</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (rbac.allowedToAccess('Permissions.view')) {
+                @if ((probationDetails).length > 0) {
+                @for (item of ((probationDetails ) ?? []) | probationdetails : searchValue; track
+                item.approvalHeader.id){
+                <tr>
+                    <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
+                    <td>{{item.entity?.employeeName ?? '-'}}</td>
+                    <td>{{item.entity?.probationStartDate ?? '-' | date}}</td>
+                    <td>{{item.entity?.probationEndDate ?? '-' | date}}</td>
+                    <td class="cursor">
+                        <div class="mt-2">
+                            <span *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
+                                <span id="tooltip">
+                                    <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
+                                    <div data-bs-toggle="modal" (click)="handleData(item)"
+                                        (click)="approverComments(item.entity?.prApproverComments)">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    </div>
+                                    <!-- </div> -->
                                 </span>
-                                <ng-template #approvercomments>-</ng-template>
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <div>
-                                <button class="custom-btn btn-primary"
-                                    (click)="handleRequests(item); getComments(item.entity?.prApproverComments)"
-                                    *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage && rbac.allowedToAccess('Permissions.view')"
-                                    data-bs-toggle="modal" data-bs-target="#ProbationProcess">Process</button>
-                                <button class="custom-btn btn-primary"
-                                    *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage && rbac.allowedToAccess('Permissions.view')"
-                                    [routerLink]="['/time-off/pending-approvals/assessmentform']"
-                                    (click)="setData(item)">Assessment form</button>
-
-                            </div>
-                        </td>
-
-                    </tr>
-                    }
-
-                    }
-                    @else{
-                    <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
-                    </tr>
-                    }
-
+                            </span>
+                            <ng-template #approvercomments>-</ng-template>
+                        </div>
+                    </td>
+                    <td class="text-center">
+                        <div>
+                            <button class="custom-btn btn-primary"
+                                (click)="handleRequests(item); getComments(item.entity?.prApproverComments)"
+                                *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage && rbac.allowedToAccess('Permissions.view')"
+                                data-bs-toggle="modal" data-bs-target="#ProbationProcess">Process</button>
+                            <button class="custom-btn btn-primary"
+                                *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage && rbac.allowedToAccess('Permissions.view')"
+                                [routerLink]="['/time-off/pending-approvals/assessmentform']"
+                                (click)="setData(item)">Assessment form</button>
+                        </div>
+                    </td>
+                </tr>
                 }
 
-                </tbody>
-            </table>
-        </div>
-        <div class="pagination-content pt-2 w-100">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                <!-- Dropdown for Rows per Page -->
-                <div class="d-flex align-items-center gap-3 p-2">
-                    <!-- Bootstrap Select -->
-                    <select class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onRowsChange()">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-                </div>
+                }
+                @else{
+                <tr>
+                    <td>
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                }
 
-                <!-- Pagination -->
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-            </div>
-        </div>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 

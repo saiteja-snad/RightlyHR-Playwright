@@ -10,7 +10,7 @@
                     <p class="popup-heading mb-0">{{ 'Sub Location' | translate }}</p>
                 </div>
                 <div>
-                    <a (click)="close(modal)">
+                    <a (click)="modal.dismiss();AddForm.reset()">
                         <img src="icons/close.png" alt="Close Icon" class="close-icon" />
                     </a>
                 </div>
@@ -23,14 +23,19 @@
                         {{ 'Location' | translate }} <span class="error-msg">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <select title="text" class="form-control custom-input" formControlName="AddSubLocation">
+                        <select title="text" class="form-select custom-input" formControlName="AddSubLocation">
                             <option value="" disabled selected>Please select location</option>
                             <!-- <option *ngFor="let subloc of SubLocationdetails" [value]="subloc.jobLocationId">
                                 {{ locationDetail }}
                             </option> -->
                             <option *ngFor="let subloc of locationDetail"[value]="subloc.id">{{subloc.jobLocationName}}</option>
                         </select>
+                        <div *ngIf="AddForm.get('AddSubLocation')?.touched && AddForm.get('AddSubLocation')?.invalid"
+                        class="error-msg mt-2">
+                        <div *ngIf="AddForm.get('AddSubLocation')?.errors?.['required']">{{'Location is required'|translate}}</div>
+                        </div>
                     </div>
+
 
                 <!-- sublocation Field -->
                 <div class="mb-4">
@@ -135,7 +140,7 @@
                         </label>
 
                         <div class="custom-p-select-content">
-                            <select title="text" class="form-control custom-input" formControlName="updateLocation">
+                            <select title="text" class="form-select custom-input" formControlName="updateLocation">
                                 <option value="" disabled selected>Please select location</option>
                                 <option *ngFor="let subloc of SubLocationdetails" [value]="subloc.jobLocationId">
                                     {{ subloc.jobLocationName }}

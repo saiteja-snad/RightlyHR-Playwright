@@ -68,18 +68,25 @@ export class LocationComponent implements OnInit, OnDestroy {
     const input = event.target as HTMLInputElement;
     const char = event.key;
     const pattern = /^[A-Za-z ]$/;
-
+  
     // Block if the key is not a letter or space
     if (!pattern.test(char)) {
       event.preventDefault();
       return;
     }
-
-    // Block if length is already 50
+  
+    // Block space at the beginning
+    if (input.selectionStart === 0 && char === ' ') {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block if length is already 100
     if (input.value.length >= 100) {
       event.preventDefault();
     }
   }
+  
   getLocation() {
     this.http.getData('JobLocation/GetJobLocations').subscribe((data: any) => {
       this.locationDetail = data;
@@ -147,6 +154,7 @@ export class LocationComponent implements OnInit, OnDestroy {
   }
   openupdate(loc: any) {
     this.selectedId = loc.id;
+    this.locationForm.reset();
     this.updateForm.patchValue({ jobLocationName: loc.jobLocationName });
     this.modalService.open(this.updatepopup, {
       backdrop: 'static',
@@ -156,6 +164,7 @@ export class LocationComponent implements OnInit, OnDestroy {
 
   opendelete(loc: any) {
     this.selectedDeleteLoc = loc;
+    this.locationForm.reset();
     this.modalService.open(this.deletepopup, {
       backdrop: 'static',
       centered: true,

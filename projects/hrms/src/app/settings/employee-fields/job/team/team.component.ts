@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
@@ -62,12 +62,12 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.AddForm = this.fb.group({
       teamName: ['', [Validators.required, Validators.maxLength(100)]],
       departmentId: [null, [Validators.required]],
-      teamManager: ['', [Validators.required]],
+      teamManager: [null, [Validators.required]],
     });
 
     this.updateForm = this.fb.group({
       updateddepartmentId: ['', [Validators.required]],
-      UpdatedTeamName: ['', [Validators.required, Validators.maxLength(100)]],
+      UpdatedTeamName: [null, [Validators.required, Validators.maxLength(100)]],
       updatedteamManager: ['', [Validators.required]]
     });
   }
@@ -112,6 +112,25 @@ export class TeamComponent implements OnInit, OnDestroy {
       }
     });
   }
+  allowOnlyHyphenAndAlphanumeric(event: Event, control: AbstractControl | null) {
+    const input = event.target as HTMLInputElement;
+    let value = input.value;
+  
+    // Allow only alphanumeric, hyphen, and spaces
+    value = value.replace(/[^a-zA-Z0-9- ]/g, '');
+  
+    // Remove leading spaces or hyphens
+    value = value.replace(/^[\s-]+/, '');
+  
+    input.value = value;
+    
+    if (control) {
+      control.setValue(value, { emitEvent: false });
+    }
+  }
+  
+  
+  
 
   sortdepartments() {
     this.deptdetails = this.deptdetails.sort((a, b) => {
@@ -176,9 +195,8 @@ export class TeamComponent implements OnInit, OnDestroy {
           console.log('Team added successfully, response:', response);
           modal.close();
           this.conformationPopup.openSuccessModal('Team added successfully');
-          this.resetForm();
 
-          // Refresh both data sources
+          // Refresh both data sorces
           this.getDepartmentName();
           this.getTable();
         },
@@ -195,10 +213,6 @@ export class TeamComponent implements OnInit, OnDestroy {
         control?.markAsTouched();
       });
     }
-  }
-  close(modal: any) {
-    modal.close();
-    this.resetForm();
   }
 
   openupdateDialog(team: any) {
@@ -260,7 +274,7 @@ export class TeamComponent implements OnInit, OnDestroy {
           console.log('Team updated successfully, response:', response);
           modal.close();
           this.conformationPopup.openSuccessModal('Team updated successfully');
-          this.resetForm();
+         this.updateForm.reset();
           this.getTable();
         },
         error: (error: any) => {
@@ -360,21 +374,21 @@ export class TeamComponent implements OnInit, OnDestroy {
   };
 
 
-  resetForm() {
-    this.AddForm.reset({
-      teamName: '',
-      departmentId: '',
-      teamManager: ''
-    });
-    this.updateForm.reset({
-      updateddepartmentId: '',
-      UpdatedTeamName: '',
-      updatedteamManager: ''
-    });
-    this.isEditMode = false;
-    this.originalTeamValues = {}; // Reset original values
-    console.log('Forms reset');
-  }
+  // resetForm() {
+  //   this.AddForm.reset({
+  //     teamName: '',
+  //     departmentId: '',
+  //     teamManager: ''
+  //   });
+  //   this.updateForm.reset({
+  //     updateddepartmentId: '',
+  //     UpdatedTeamName: '',
+  //     updatedteamManager: ''
+  //   });
+  //   this.isEditMode = false;
+  //   this.originalTeamValues = {}; // Reset original values
+  //   console.log('Forms reset');
+  // }
 
   ngOnDestroy(): void {
     if (this.subscription) {

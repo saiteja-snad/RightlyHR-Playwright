@@ -71,18 +71,25 @@ export class SubLocationComponent {
     const input = event.target as HTMLInputElement;
     const char = event.key;
     const pattern = /^[A-Za-z ]$/;
-
+  
     // Block if the key is not a letter or space
     if (!pattern.test(char)) {
       event.preventDefault();
       return;
     }
-
+  
+    // Block space at the beginning
+    if (input.selectionStart === 0 && char === ' ') {
+      event.preventDefault();
+      return;
+    }
+  
     // Block if length is already 100
     if (input.value.length >= 100) {
       event.preventDefault();
     }
   }
+  
   getSubLocation() {
     this.subscription = this.http.getData('SubLocation/GetLocationNames').subscribe({
       next: (data: any) => {

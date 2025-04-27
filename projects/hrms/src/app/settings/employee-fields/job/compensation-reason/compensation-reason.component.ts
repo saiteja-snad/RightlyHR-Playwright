@@ -58,11 +58,18 @@ export class CompensationReasonComponent {
       return;
     }
   
-    // Block if length is already 50
+    // Block space at the beginning
+    if (input.selectionStart === 0 && char === ' ') {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block if length is already 100
     if (input.value.length >= 100) {
       event.preventDefault();
     }
   }
+  
   getReason() {
     this.http.getData('CompensationReason').subscribe((data: any) => {
       this.CompensationReason = data;
@@ -101,7 +108,7 @@ export class CompensationReasonComponent {
           this.getReason();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Compansation Reason deleted successfully');
+          this.conformationPopup.openSuccessModal('Compansation reason updated successfully');
         },
         error: (err: any) => {
           this.conformationPopup.openErrorModal('Update failed. Please try again.');
@@ -115,6 +122,7 @@ export class CompensationReasonComponent {
   }
   openupdate(reasonList: any) {
     this.selectedId = reasonList.sno;
+    this.CompensationForm.reset();
     this.updateForm.patchValue({ UpdateReason : reasonList.reason });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }

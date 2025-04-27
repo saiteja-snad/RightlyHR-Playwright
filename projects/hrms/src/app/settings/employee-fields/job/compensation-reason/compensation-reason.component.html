@@ -5,7 +5,7 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter compansation reason"
-                    formControlName="Reason" aria-label="reason" aria-describedby="reason"
+                    formControlName="Reason" aria-label="reason" aria-describedby="reason" max="100"
                     (keypress)="allowOnlyLettersAndSpace($event)">
                 <span class="input-group-text" id="reason">
                     <button type="submit" class="custom-btn btn-primary"
@@ -13,22 +13,17 @@
             </div>
             <div *ngIf="CompensationForm.get('Reason')?.touched && CompensationForm.get('Reason')?.invalid"
                 class="error-msg mt-2">
-                <div *ngIf="CompensationForm.get('Reason')?.errors?.['required']">{{'Compansation Reason Required'|translate}}</div>
+                <div *ngIf="CompensationForm.get('Reason')?.errors?.['required']">{{'Compansation Reason  Required'|translate}}</div>
             </div>
             <div *ngIf="CompensationForm.controls['Reason'].touched">
-
-
-
-                    <span class="error-msg" *ngIf="CompensationForm.controls['Reason'].errors?.['maxlength']">
-                      Maximum 100 characters are allowed.
-                    </span>
-
-
-                    <span class="error-msg" *ngIf="CompensationForm.controls['Reason'].errors?.['pattern']">
-                      Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
-                    </span>
-                  </div>
-                  </div>
+                <span class="error-msg" *ngIf="CompensationForm.controls['Reason'].errors?.['maxlength']">
+                    Maximum 100 characters are allowed.
+                </span>
+                <span class="error-msg" *ngIf="CompensationForm.controls['Reason'].errors?.['pattern']">
+                    Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
+                </span>
+            </div>
+        </div>
 
     </form>
 
@@ -85,8 +80,7 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Compensation Reason'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateReason"
-                        placeholder="Please enter compansation reason"
-                        (keypress)="allowOnlyLettersAndSpace($event)">
+                        placeholder="Please enter compansation reason" (keypress)="allowOnlyLettersAndSpace($event)">
                     <div *ngIf="updateForm.get('UpdateReason')?.touched && updateForm.get('UpdateReason')?.invalid"
                         class="error-msg mt-2">
                         <div *ngIf="updateForm.get('UpdateReason')?.errors?.['required']">{{'Compansation Reason Required'|translate}}</div>
@@ -108,10 +102,10 @@
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
 
-      <div>
-        <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-        <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-    </div>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+        </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary "
                 (click)="closeDelete(modal)">{{'No'|translate}}</button>

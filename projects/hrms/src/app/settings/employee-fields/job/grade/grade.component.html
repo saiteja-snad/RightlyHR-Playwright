@@ -11,7 +11,7 @@
           <p class="popup-heading mb-0">{{ 'Grade Details' | translate }}</p>
         </div>
         <div>
-          <a (click)="close(modal)">
+          <a (click)="modal.dismiss();AddForm.reset()">
             <img src="icons/close.png" alt="Close Icon" class="close-icon" />
           </a>
         </div>
@@ -53,10 +53,10 @@
 
         <!-- Buttons -->
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();AddForm.reset()">
             {{ 'Close' | translate }}
           </button>
-          <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)" [disabled]="!AddForm.valid">
+          <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)" [disabled]="AddForm.invalid">
             {{ 'Add' | translate }}
           </button>
         </div>
@@ -143,8 +143,7 @@
             class="error-msg">
             <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['required']">{{ 'Grade Name is required' | translate
               }}</div>
-            <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxlength']">{{ 'Grade Name cannot exceed 100
-              characters' | translate }}</div>
+            <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxlength']">{{ 'Grade Name cannot exceed 100 characters' | translate }}</div>
           </div>
         </div>
         <div class="mb-4">
@@ -157,17 +156,16 @@
             <input type="text" class="form-control custom-input" formControlName="updategraderole"
               placeholder="Please enter job grade" maxlength="100"
               (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
-
+              <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid"
+              class="error-msg ">
+              <div *ngIf="updateForm.get('updategraderole')?.errors?.['required']">{{ 'Job Grade is required' | translate }}
+              </div>
+              <div *ngIf="updateForm.get('updategraderole')?.errors?.['maxlength']">{{ 'Job Grade cannot exceed 100  characters' | translate }}</div>
+            </div>
           </div>
 
         </div>
-        <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid"
-          class="error-msg mt-2">
-          <div *ngIf="updateForm.get('updategraderole')?.errors?.['required']">{{ 'Job Grade is required' | translate }}
-          </div>
-          <div *ngIf="updateForm.get('updategraderole')?.errors?.['maxlength']">{{ 'Job Grade cannot exceed 100
-            characters' | translate }}</div>
-        </div>
+        
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close' |
             translate}}</button>

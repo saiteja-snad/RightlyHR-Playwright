@@ -10,7 +10,7 @@
           <p class="popup-heading mb-0">{{ 'Team' | translate }}</p>
         </div>
         <div>
-          <a (click)="close(modal)">
+          <a (click)="modal.dismiss();AddForm.reset()">
             <img src="icons/close.png" alt="Close Icon" class="close-icon" />
           </a>
         </div>
@@ -18,7 +18,7 @@
 
       <div class="custom-main-popup-content p-5">
         <!-- Department dropdown -->
-        <div class="mb-4">
+        <div class="mb-4 custom-select-dropdown">
           <label for="departmentId" class="form-label custom-label mb-2">
             {{ 'Department Name' | translate }} <span class="error-msg">*</span>
           </label>
@@ -41,7 +41,7 @@
           <div class="custom-p-select-content">
             <input type="text" class="form-control custom-input" formControlName="teamName"
               placeholder="Please enter team name" maxlength="100"
-              (keydown)="formValidations.restrictSpecialCharacters($event)" />
+              (input)="allowOnlyHyphenAndAlphanumeric($event, AddForm.get('teamName'))" (input)="formValidations.validateInput(AddForm.get('reason'))"  />
           </div>
           <div *ngIf="AddForm.get('teamName')?.touched && AddForm.get('teamName')?.invalid" class="error-msg mt-2">
             <div *ngIf="AddForm.get('teamName')?.errors?.['required']">{{ 'Team Name is required' | translate }}</div>
@@ -54,8 +54,8 @@
             {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select title="text" class="form-control custom-input" formControlName="teamManager" id="teamManager">
-              <option value="" disabled selected>Please select team manager</option>
+            <select title="text" class="form-select custom-input" formControlName="teamManager" id="teamManager">
+              <option [value]="null" disabled selected>Please select team manager</option>
               <option *ngFor="let manager of teamdetails" [value]="manager.employeeId">
                 {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}
               </option>
@@ -70,7 +70,7 @@
 
         <!-- Buttons -->
         <div class="d-flex gap-5 pt-4 w-100">
-          <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+          <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="modal.dismiss();AddForm.reset()">
             {{ 'Close' | translate }}
           </button>
           <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addTeam(modal)"
@@ -138,7 +138,7 @@
           <p class="popup-heading mb-0">{{ 'Update Team' | translate }}</p>
         </div>
         <div>
-          <a (click)="close(modal)">
+          <a (click)="modal.dismiss();updateForm.reset()">
             <img src="icons/close.png" alt="Close Icon" class="close-icon" />
           </a>
         </div>
@@ -172,8 +172,8 @@
           </label>
           <div class="custom-p-select-content">
             <input type="text" class="form-control custom-input" formControlName="UpdatedTeamName"
-              placeholder="Please enter team name" maxlength="100"
-              (keydown)="formValidations.restrictSpecialCharacters($event)" />
+              placeholder="Please enter team name" maxlength="100" 
+              (input)="allowOnlyHyphenAndAlphanumeric($event, updateForm.get('UpdatedTeamName'))"  (input)="formValidations.validateInput(updateForm.get('UpdatedTeamName'))" />
           </div>
           <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid"
             class="error-msg mt-2">
@@ -189,7 +189,7 @@
             {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select class="form-control custom-input" formControlName="updatedteamManager" id="updateTeamManager">
+            <select class="form-select custom-input" formControlName="updatedteamManager" id="updateTeamManager">
               <option value="" disabled selected>Please select team manager</option>
               <option *ngFor="let manager of teamdetails" [value]="manager.employeeId">
                 {{manager.firstName}} {{manager.middleName ? manager.middleName : ''}} {{manager.lastName}}
@@ -205,11 +205,11 @@
 
         <!-- Buttons -->
         <div class="d-flex gap-5 pt-4 w-100">
-          <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+          <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="modal.dismiss();updateForm.reset()">
             {{ 'Close' | translate }}
           </button>
           <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateTeam(modal)"
-            [disabled]="!updateForm.valid || !hasFormChanged()">
+            [disabled]="updateForm.invalid ">
             {{ 'Update' | translate }}
           </button>
         </div>

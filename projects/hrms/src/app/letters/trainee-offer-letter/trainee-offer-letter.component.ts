@@ -1060,7 +1060,7 @@ export class TraineeOfferLetterComponent {
   updateEndDateValidityForExpectedStartDate() {
     const dateOfJoining = new Date(this.traineeEmpData.dateOfJoining);
     const offerIssuedDate = new Date(this.traineeEmpData.offerIssuedDate);
-    if (dateOfJoining <= offerIssuedDate) {
+    if (dateOfJoining < offerIssuedDate) {
       this.isStartDateValid = false;
     } else {
       this.isStartDateValid = true;

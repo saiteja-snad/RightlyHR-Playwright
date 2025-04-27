@@ -450,6 +450,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     });
   }
   formatDateToLocal(dateString: string): string {
+   
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
@@ -457,6 +458,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     return `${year}-${month}-${day}`;
   }
   openModalupdate(content: any, data: any): void {
+    console.log(data.departmentId)
     const locationId = data?.locationId; // Get the location ID from the selected job details
     const subLocationId = data?.subLocationId; // Get the sub-location ID from the selected job details
     this.selectedjobdetailesid = data?.id;
@@ -465,7 +467,26 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.teamManagerName = data?.firstName + ' ' + data?.middleName + ' ' + data?.lastName
     const effectiveDate = this.formatDateToLocal(data.effectiveDate); // Format the effective date
     this.selectedJobRoleObj = this.JobroleDesignation.find(role => role.designationName === data.jobRole);
-    this.subscription = this.http.getData(`Subdepartments/Getnames/${data.departmentId}`).subscribe({
+    this.jobDetailsupdateForm.patchValue({
+      effectiveDate: effectiveDate,
+      jobRole: this.selectedJobRoleObj,
+      location: this.jobLocationDropDownData.find(
+        (location: { jobLocationName: any; }) => location.jobLocationName === data.locationName
+      ),
+      department: this.departmentDetails?.find(
+        dept => dept.departmentName === data?.departmentName
+      ),
+      team: this.teamDropdownValues?.find(
+        team => team.subdepartmentName === data?.subdepartmentName
+      ),
+    
+      
+      teamManager: this.teamManagerName,
+      jobType: this.JobtypeDetails.find(jt => jt.jobType1 === data.jobTypeName),
+      reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportingmanagerId),
+      grade: this.selectedJobRoleObj?.gradeName,
+    });
+    this.subscription = this.http.getData(`Subdepartments/Getnames/${data?.departmentId}`).subscribe({
       next: (teamData: any) => {
         this.teamDropdownValues = teamData || [];
         this.teamManagerDropdownValues = this.teamDropdownValues.map((manager: any) => ({
@@ -516,25 +537,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         });
         console.log(this.subLocationsDropdown);
         
-        this.jobDetailsupdateForm.patchValue({
-          effectiveDate: effectiveDate,
-          jobRole: this.selectedJobRoleObj,
-          location: this.jobLocationDropDownData.find(
-            (location: { jobLocationName: any; }) => location.jobLocationName === data.locationName
-          ),
-          department: this.departmentDetails?.find(
-            dept => dept.departmentName === data?.departmentName
-          ),
-          team: this.teamDropdownValues?.find(
-            team => team.subdepartmentName === data?.subdepartmentName
-          ),
-        
-          
-          teamManager: this.teamManagerName,
-          jobType: this.JobtypeDetails.find(jt => jt.jobType1 === data.jobTypeName),
-          reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportingmanagerId),
-          grade: this.selectedJobRoleObj?.gradeName,
-        });
+       
         
       },
       error: (err: any) => {

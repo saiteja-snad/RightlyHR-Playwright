@@ -1,7 +1,7 @@
 export interface IProbation{
-    id? : number,
-    configValueId: number,
-    noOfDays : number,
+    id? : string,
+    configValueId?: string,
+    noOfDays : string,
     value : string,
     isDeleted : boolean
 }

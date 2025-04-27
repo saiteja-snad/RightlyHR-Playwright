@@ -14,7 +14,7 @@
                       <!-- Year -->
                       <div class="mb-3">
                         <label for="year" class="form-label custom-label mb-2">
-                            {{ "Year" | translate}}
+                            {{ "Year" | translate}}<span class="text-danger">*</span>
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
@@ -29,7 +29,7 @@
                     <!-- Location -->
                     <div class="mb-3">
                         <label for="location" class="form-label custom-label mb-2">
-                            {{ "Location" | translate}}
+                            {{ "Location" | translate}}<span class="text-danger">*</span>
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
@@ -46,7 +46,7 @@
                     <!-- Sub Location -->
                     <div class="mb-3">
                         <label for="subLocation" class="form-label custom-label mb-2">
-                            {{ "Sub Location" | translate}}
+                            {{ "Sub Location" | translate}}<span class="text-danger">*</span>
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
@@ -63,7 +63,7 @@
                     <!-- Shifts -->
                     <div class="mb-3">
                         <label for="shift" class="form-label custom-label mb-2">
-                            {{ "Shift" | translate}}
+                            {{ "Shift" | translate}}<span class="text-danger">*</span>
                         </label>
                         <div class="custom-p-select-content">
                             <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true"
@@ -124,7 +124,7 @@
             </div>
             <span class="error-msg">Note: All Fields are Mandatory Fields</span>
             <div class="d-flex gap-3 justify-content-end">
-                <button class="custom-btn btn-secondary px-4" type="button" (click)="openConfirmation()" id="cancel-btn">{{'Cancel' | translate}}</button>
+                <button class="custom-btn btn-secondary px-4" type="button" (click)="openConfirmation()" id="cancel-btn">{{'Close' | translate}}</button>
                 <button class="custom-btn btn-primary px-4" id="submitButton" [disabled]="dstForm.invalid">{{'Save' | translate}}</button>
             </div>
         </form>
@@ -137,7 +137,7 @@
     <div class="result-popup-content text-center" ngbAutofocus>
         <div class="mt-2">
             <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
-            <p class="confirmation-text">{{'Are you sure want to close?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to Close?' | translate}}</p>
         </div>
         <div class="d-flex gap-5 pt-2 w-100">
             <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{'No' | translate}}</button>

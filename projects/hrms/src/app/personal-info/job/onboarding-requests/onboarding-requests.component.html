@@ -109,8 +109,8 @@
             <p class="confirmation-text">Are you sure you want to Onboard?</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="reset" class="custom-btn btn-secondary" (click)="closeonBoard()">{{'No'| translate}}</button>
-            <button type="submit" class="custom-btn btn-primary">{{ 'Yes' | translate }}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="closeonBoard()">{{'No'| translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="readyforonboardRequest()" >{{ 'Yes' | translate }}</button>
         </div>
     </div>
 </ng-template>

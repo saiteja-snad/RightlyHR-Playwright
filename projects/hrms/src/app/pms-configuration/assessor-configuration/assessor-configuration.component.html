@@ -10,13 +10,10 @@
     
     <div class="w-100">
         <!--Input search-->
-        <div class="mb-4">
-            <div class="input-group">
-                <span class="input-group-text" id="basic-addon1"><i class="bi bi-search"></i></span>
-                <input type="search" class="form-control custom-search-input" placeholder="Search"
-                    [(ngModel)]="searchText" (ngModelChange)="onSearchTextChange()" aria-label="Username"
-                    aria-describedby="basic-addon1">
-            </div>
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+            <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
+                (ngModelChange)="onSearchTextChange()" aria-label="Search">
         </div>
 
         <div class="custom-table-content w-100">
@@ -41,7 +38,6 @@
                         <td>{{ getNamesAsString(item?.subDepartmentNames, 'subDepartmentName') }}</td>
                         <td>{{ getNamesAsString(item?.locationNames, 'locationName') }}</td>
                         <td>{{ getNamesAsString(item?.subLocationNames, 'subLocationName') }}</td>
-                
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">

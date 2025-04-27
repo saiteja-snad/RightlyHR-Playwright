@@ -19,5 +19,8 @@ export class SignalsService {
   compOffForRoleTriggerSignal = signal<boolean>(false);
   compOffSidNavCountTriggerSignal = signal<boolean>(false);
 
+  //remoteLoginRequest Signal
+  remoteLoginRequestTriggerSignal = signal<boolean>(false);
+
   constructor() { }
 }

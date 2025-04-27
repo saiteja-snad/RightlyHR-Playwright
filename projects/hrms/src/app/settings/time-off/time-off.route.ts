@@ -18,6 +18,8 @@ export default [
             { path: 'permissions', loadComponent: () => import('./attendance-eligibility-criteria/permissions/permissions.component').then((m) => m.PermissionsComponent) },
             { path: 'permissions-eligibility-criteria', loadComponent: () => import('./attendance-eligibility-criteria/permission-eligibility-criteria/permission-eligibility-criteria.component').then((m) => m.PermissionEligibilityCriteriaComponent) },
             { path: 'global-permissions', loadComponent: () => import('./attendance-eligibility-criteria/global-permissions/global-permissions.component').then((m) => m.GlobalPermissionsComponent)},
+            { path: 'attendance-regularization-types', loadComponent: () => import('./attendance-eligibility-criteria/attendance-regularization-types/attendance-regularization-types.component').then((m) => m.AttendanceRegularizationTypesComponent)},
+            { path: 'attendance-regularization-eligibility-criteria', loadComponent: () => import('./attendance-eligibility-criteria/attendance-regularization-eligibility-criteria/attendance-regularization-eligibility-criteria.component').then((m) => m.AttendanceRegularizationEligibilityCriteriaComponent)},
         ]
     },
     { path: 'addleavecategory', loadComponent: () => import('./leave-categoery/add-leavecategory/add-leavecategory.component').then((m) => m.AddLeavecategoryComponent) },

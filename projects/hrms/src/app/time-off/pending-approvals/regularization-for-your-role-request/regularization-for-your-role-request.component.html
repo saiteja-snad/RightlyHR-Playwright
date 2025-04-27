@@ -3,7 +3,7 @@
         <!--Input search-->
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search">
+            <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search" #search="ngModel" [(ngModel)]="searchValue">
         </div>
 
         <div class="custom-table-content">
@@ -22,57 +22,62 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container *ngIf="regularization!.length > 0; else noDataTemplate">
-                    <tr *ngFor="let leave of regularization; let i = index">
-                        <td>{{leave.entity.fusionempId}}</td>
-                        <td>{{leave.entity.raisedForName}}</td>
-                        <td>{{leave.entity.createdDate| dateformat}}</td>
-                        <td>{{leave.entity.requestedDate| dateformat}}</td>
-                        <td>{{leave.entity.duration}}</td>
-                        <td>{{leave.entity.type}}</td>
-                        <td>
-                            <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <p class="mb-0">{{leave.entity.notes}}</p>
-                                </ng-template>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="dropdown">
-                                <a type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu py-0">
-                                    @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Regularizations.update')">
-                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
-                                    </li>
-                                    }
-                                    @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Regularizations.update')">
-                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
-                                    </li>
-                                    }
-                                    <li (click)="openRejectModal(rejectmodal,leave)">
-                                        <a class="dropdown-item" *ngIf="rbac.allowedToAccess('Regularizations.update')">
-                                        <i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </ng-container>
-
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <td colspan="4">
-                            <app-no-data-found></app-no-data-found>
-                        </td>
-                    </tr>
-                </ng-template>
+                    @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
+                        @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track leave.approvalHeader.id){
+                        <tr>
+                            <td>{{leave.entity.fusionempId}}</td>
+                            <td>{{leave.entity.raisedForName}}</td>
+                            <td>{{leave.entity.createdDate| dateformat}}</td>
+                            <td>{{leave.entity.requestedDate| dateformat}}</td>
+                            <td>{{leave.entity.duration}}</td>
+                            <td>{{leave.entity.type}}</td>
+                            <td>
+                                <div>
+                                    <a type="button"  [ngbPopover]="notes">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    </a>
+                                    <ng-template #notes>
+                                        <p class="mb-0">{{leave.entity.notes}} </p>
+                                    </ng-template>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="dropdown">
+                                    <a type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu py-0">
+                                        @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
+                                        <li (click)="openApproveModal(approval,leave)"
+                                            *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
+                                                translate}}</a>
+                                        </li>
+                                        }
+                                        @if( leave.approvalHeader.currentapprovalStage ==
+                                        leave.approvalHeader.finalapprovalStage){
+                                        <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
+                                                {{'Process' | translate}}</a>
+                                        </li>
+                                        }
+                                        <li (click)="openRejectModal(rejectmodal,leave)"
+                                            *ngIf="rbac.allowedToAccess('Permissions.delete')">
+                                            <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                        }
+                        @else{
+                        <tr>
+                            <td colospan="8">
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                        }
                 </tbody>
             </table>
         </div>

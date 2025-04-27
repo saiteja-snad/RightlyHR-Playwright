@@ -4,10 +4,11 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { DocumentHistoryOfferLetterComponent } from "../document-history-offer-letter/document-history-offer-letter.component";
 import { DocumentHistoryInternOfferLetterComponent } from "../document-history-intern-offer-letter/document-history-intern-offer-letter.component";
 import { DocumentHistoryAppointmentLetterComponent } from "../document-history-appointment-letter/document-history-appointment-letter.component";
+import { DocumentHistoryInternAppointmentComponent } from "../document-history-intern-appointment/document-history-intern-appointment.component";
 
 @Component({
   selector: 'app-document-history-layout',
-  imports: [CommonModule, NgbNavModule, DocumentHistoryOfferLetterComponent, DocumentHistoryInternOfferLetterComponent, DocumentHistoryAppointmentLetterComponent],
+  imports: [CommonModule, NgbNavModule, DocumentHistoryOfferLetterComponent, DocumentHistoryInternOfferLetterComponent, DocumentHistoryAppointmentLetterComponent, DocumentHistoryInternAppointmentComponent],
   templateUrl: './document-history-layout.component.html',
   styleUrl: './document-history-layout.component.scss',
   encapsulation:ViewEncapsulation.None

@@ -48,7 +48,7 @@
                         <td>
                             @if(trn.entity?.comments != null && trn.entity?.comments != '') {
                             <div>
-                                <a type="button" placement="top" [ngbPopover]="reason">
+                                <a type="button" [ngbPopover]="reason">
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
@@ -123,7 +123,7 @@
                     <span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                     placeholder="Please provide feedback" name="Feedback" #Feedback="ngModel" maxlength="250"
-                    [(ngModel)]="selectedLeaveData.trcomments" rows="3" required></textarea>
+                    [(ngModel)]="selectedLeaveData.trcomments" pattern="^(?!\s).*" rows="3" required></textarea>
                 <div class="textarea-count-text">{{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
                 <div class="error-msg" *ngIf="(Feedback.touched && Feedback.invalid) || (Feedback.invalid && acceptForm.submitted)">
                     Feedback is required</div>

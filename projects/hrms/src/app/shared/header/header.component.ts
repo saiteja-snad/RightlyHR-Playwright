@@ -44,16 +44,19 @@ export class HeaderComponent {
   }
 
   onSelectprofilePicDownload(employee: any) {
-    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl).subscribe({
-      next: (res: any) => {
-        let blob = new Blob([res['body']], { type: 'image/png' });
-        let objectURL = URL.createObjectURL(blob);
-        this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-      },
-      error: (reason) => {
-        //console.log(reason),
-      }
-    });
+    if(employee.profileUrl){
+
+      this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl).subscribe({
+        next: (res: any) => {
+          let blob = new Blob([res['body']], { type: 'image/png' });
+          let objectURL = URL.createObjectURL(blob);
+          this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+        },
+        error: (reason) => {
+          //console.log(reason),
+        }
+      });
+    }
   }
 
   // Define colors based on event types

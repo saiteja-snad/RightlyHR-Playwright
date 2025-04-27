@@ -12,6 +12,7 @@ import { PermissionsComponent } from "./permissions/permissions.component";
 import { CompOffEntitlementComponent } from "./comp-off-entitlement/comp-off-entitlement.component";
 import { TimeOffComponent } from "./time-off/time-off.component";
 import { Select } from 'primeng/select';
+import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -113,7 +114,7 @@ export class OnbehalfOfApprovalsComponent {
   }
 
   gettimeoffcount(employeeId: any) {
-    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=1`).subscribe({
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.leavesModuleId}`).subscribe({
       next: (data: any) => {
         this.leaves = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.timeOffCount = this.leaves.length;
@@ -125,7 +126,7 @@ export class OnbehalfOfApprovalsComponent {
   }
 
   getCompoff(employeeId: any) {
-    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=3`).subscribe({
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.compoffModuleId}`).subscribe({
       next: (data: any) => {
         this.compOff = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.compOffCount = this.compOff.length;
@@ -137,7 +138,7 @@ export class OnbehalfOfApprovalsComponent {
   }
 
   getWfhoff(employeeId: any) {
-    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=2`).subscribe({
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.wfhModuleId}`).subscribe({
       next: (data: any) => {
         this.wfh = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.wfhCount = this.wfh.length;
@@ -149,7 +150,7 @@ export class OnbehalfOfApprovalsComponent {
   }
 
   getPermissionsoff(employeeId: any) {
-    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=21`).subscribe({
+    this.subscription = this.http.getData(`PendingApproval/employee/${employeeId}?moduleId=${environment.permissionsModuleId}`).subscribe({
       next: (data: any) => {
         this.permissions = data.data.filter((item: any) => item.approvalHeader.status != 'Processed' && item.approvalHeader.status != 'Rejected');
         this.permissionsCount = this.permissions.length;

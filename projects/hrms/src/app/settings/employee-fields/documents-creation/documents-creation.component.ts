@@ -59,6 +59,7 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
             this.onFolderSelectded(this.folders[0], this.folders[0].name);
           }
         }, 100);
+        this.dataLoad = false;
       },
       error: (error) => {
         this.dataLoad = false;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -16,6 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './update-policies.component.scss'
 })
 export class UpdatePoliciesComponent {
+  @ViewChild('deletepopup') deletepopup: any;
   subscription!: Subscription;
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
@@ -57,14 +58,14 @@ export class UpdatePoliciesComponent {
     this.updatePoliciesData.orgPolicyItems.forEach((row:any) => {
       this.policies.push(
         this.fb.group({
-          policyName : row.policyName,
-          policyFile : row.policyAttachment,
-          policyDescription  : row.policyDescription
+          policyName : [row.policyName, Validators.required],
+          policyFile :[row.policyAttachment, Validators.required],
+          policyDescription  : [row.policyDescription, Validators.required],
          
         })
       );
     });
-  
+    // this.addPolicyRow();
     console.log(this.updatePoliciesData);
   }
 
@@ -121,7 +122,6 @@ export class UpdatePoliciesComponent {
         console.log(response);
         this.confirmation.openSuccessModal('Policies updated successfully');
         this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
-        
       },
       error: (err) => {
         console.log(err);
@@ -133,16 +133,37 @@ export class UpdatePoliciesComponent {
     
   }
   
-  cancel(){
-    this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
+  // cancel(){
+  //   this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
+  // }
+
+  onDelete(modal: any) {
+    modal.dismiss();
+    this.navigation();
   }
 
-  openmodel(content: any) {
-    this.modalService.open(content, { centered: true })
+  closeDelete(modal: any) {
+    modal.dismiss();
   }
 
-  clone(){
-    this.router.navigate(['/settings/employee-fields/clonepolices']);
+  Cancel() {
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+  }
+
+  clonePolicy1(): void {
+    const policyData = localStorage.getItem('viewpolicies');
+    if (policyData) {
+      const parsedPolicy = JSON.parse(policyData);
+      const id = parsedPolicy?.id;
+      localStorage.setItem('cloningPolicyId', id);
+      if (id) {
+        this.router.navigate(['/settings/employee-fields/clonepolices', id]);
+      } else {
+        console.error('ID not found in viewpolicies localStorage.');
+      }
+    } else {
+      console.error('No viewpolicies data found in localStorage.');
+    }
   }
 
   publish() {
@@ -171,7 +192,7 @@ export class UpdatePoliciesComponent {
       next: (response: any) => {
         console.log(response);
         this.confirmation.openSuccessModal('Policies published successfully');
-        this.router.navigate(['/settings/employee-fields/manage-policies/published-policies']);
+        this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
         
         
       },
@@ -278,7 +299,7 @@ export class UpdatePoliciesComponent {
     }
   }
 
-  nagvition(){
+  navigation(){
     this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
   }
 

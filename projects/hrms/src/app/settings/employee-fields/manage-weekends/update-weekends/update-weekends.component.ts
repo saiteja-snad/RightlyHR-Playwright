@@ -17,6 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './update-weekends.component.scss'
 })
 export class UpdateWeekendsComponent {
+  @ViewChild('deletepopup') deletepopup: any;
   weekendForm!: FormGroup;
   weekendDataLM!: IWeekends;
   showbtn = false;
@@ -74,7 +75,7 @@ export class UpdateWeekendsComponent {
       week3: [false],
       week4: [false],
       week5: [false]
-    }, { validators: this.atLeastOneWeekSelected()});
+    });
   }
 
   get weekends(): FormArray {
@@ -93,20 +94,22 @@ export class UpdateWeekendsComponent {
     this.weekends.removeAt(index);
   }
 
-  atLeastOneWeekSelected(): ValidatorFn {
-    return (control: AbstractControl) => {
-      const week1 = control.get('week1')?.value;
-      const week2 = control.get('week2')?.value;
-      const week3 = control.get('week3')?.value;
-      const week4 = control.get('week4')?.value;
-      const week5 = control.get('week5')?.value;
+  isAtLeastOneWeekendChecked(): boolean {
+    const weekendsArray = this.weekendForm.get('weekends') as FormArray;
+    if (!weekendsArray) return false;
   
-      const atLeastOneChecked = week1 || week2 || week3 || week4 || week5;
-  
-      return atLeastOneChecked ? null : { atLeastOneWeekRequired: true };
-    };
+    return weekendsArray.controls.some(weekendGroup => {
+      const weekendValue = weekendGroup.value;
+      return weekendValue.week1 || weekendValue.week2 || weekendValue.week3 || weekendValue.week4 || weekendValue.week5;
+    });
   }
-
+  onWeekChange(event : any,weekend: any) {
+    console.log(event);
+    console.log(weekend);
+    
+    
+    this.isAtLeastOneWeekendChecked();
+  }
   getAvailableDays(index: number): { label: string; value: string; disabled: boolean }[] {
     const selectedDays = this.weekends.controls
       .map((group, i) => i !== index ? group.get('day')?.value : null)
@@ -260,6 +263,8 @@ export class UpdateWeekendsComponent {
   }
 
   updateWeekend(form: FormGroup) {
+    console.log(form);
+    
     if (form.invalid) {
       form.markAsTouched();
       return;
@@ -292,17 +297,17 @@ export class UpdateWeekendsComponent {
         status: 'Pending for submission'
       }))
     }
-    this.http.postdata('OrgWeekendHeader/Update/OrgWeekEnd', payload).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response: any) => {
-        this.modal.openSuccessModal('Weekends Updated Successfully!')
-        setTimeout(() => {
-          this.closeWeekend();
-        }, 2000)
-      },
-      error: (err: any) => {
-        this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to update weekends!')
-      }
-    });
+    // this.http.postdata('OrgWeekendHeader/Update/OrgWeekEnd', payload).pipe(takeUntil(this.destroy$)).subscribe({
+    //   next: (response: any) => {
+    //     this.modal.openSuccessModal('Weekends Updated Successfully!')
+    //     setTimeout(() => {
+    //       this.closeWeekend();
+    //     }, 2000)
+    //   },
+    //   error: (err: any) => {
+    //     this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to update weekends!')
+    //   }
+    // });
   }
 
   publishWeekends() {
@@ -324,8 +329,21 @@ export class UpdateWeekendsComponent {
       })
   }
 
-  openModal(content: any,) {
-    this.modalService.open(content, { centered: true })
+  closeDelete(modal: any) {
+    modal.dismiss();
+  }
+
+  onDelete(modal: any) {
+    modal.dismiss();
+    this.navigation();
+  }
+
+  navigation(){
+    this.router.navigate(['/settings/employee-fields/manage-weekends/pending-for-submission']);
+  }
+
+  Cancel() {
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
 
   closeWeekend() {

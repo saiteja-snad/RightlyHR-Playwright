@@ -31,7 +31,7 @@ export class CloneWeekendsComponent {
     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
   ];
   @ViewChild('confirmation') confirmation!: TemplateRef<any>
-
+  @ViewChild('deletepopup') deletepopup: any;
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -296,6 +296,23 @@ export class CloneWeekendsComponent {
         this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to create weekends!')
       }
     });
+  }
+
+  Cancel() {
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+  }
+
+  closeDelete(modal: any) {
+    modal.dismiss();
+  }
+
+  onDelete(modal: any) {
+    modal.dismiss();
+    this.navigation();
+  }
+
+  navigation(){
+    this.router.navigate(['/settings/employee-fields/manage-weekends/published-weekends']);
   }
 
   openModal(content: any,) {

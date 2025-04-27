@@ -24,6 +24,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './add-policies.component.scss'
 })
 export class AddPoliciesComponent {
+  @ViewChild('deletepopup') deletepopup: any;
   subscription!: Subscription;
     policiesForm!: FormGroup;
     jobLocationDropDownData: any = [];
@@ -38,7 +39,7 @@ export class AddPoliciesComponent {
     ]
   
   
-    constructor(private fb: FormBuilder,public router:Router,private http: HttpService, private confirmation: OpenModalService) { }
+    constructor(private fb: FormBuilder,public router:Router,private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
 
   
     ngOnInit(): void {
@@ -46,13 +47,12 @@ export class AddPoliciesComponent {
       this.getjobLocationList();
       this.policiesForm = this.fb.group({
         year: [this.yearDetails.find(y => y.value === new Date().getFullYear()),Validators.required],
-        location: [null,Validators.required],
-        subLocation: [null,Validators.required],
-        shift : [null,Validators.required],
+        location: ['',Validators.required],
+        subLocation: [{ value: '', disabled: true },Validators.required],
+        shift : [{ value: '', disabled: true },Validators.required],
         policies: this.fb.array([]),
       });
-  
-      // this.addPolicyRow();
+      this.addMomentRow();
     }
     
     addPolicyRow() {
@@ -135,7 +135,15 @@ export class AddPoliciesComponent {
     
     }
   
-    
+    onLocationChange(locationId: any) {
+      if (locationId) {
+        this.getSubLocationByid(locationId);
+        this.policiesForm.get('subLocation')?.enable();
+      } else {
+        this.policiesForm.get('subLocation')?.disable();
+        this.policiesForm.get('shift')?.disable();
+      }
+    }
   
     getSubLocationByid(selectedLocation: any): void {
       if (selectedLocation && selectedLocation.id) {
@@ -162,7 +170,18 @@ export class AddPoliciesComponent {
         
       }
     }
-    shiftDropdown: any[] = []; // To store the dynamically fetched shifts
+
+
+    onSubLocationChange(subLocationId: any) {
+      if (subLocationId) {
+        this.getShiftBYid(subLocationId);
+        this.policiesForm.get('shift')?.enable();
+      } else {
+        this.policiesForm.get('shift')?.disable();
+      }
+    }
+
+    shiftDropdown: any[] = [];
   
     getShiftBYid(selectedSubLocation: any): void {
       const formValue = this.policiesForm.value;
@@ -200,8 +219,21 @@ export class AddPoliciesComponent {
         this.shiftDropdown = []; // Reset if no sub-location is selected
       }
     }
-    nagvition(){
+    navigation(){
       this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
+    }
+
+    closeDelete(modal: any) {
+      modal.dismiss();
+    }
+  
+    onDelete(modal: any) {
+      modal.dismiss();
+      this.navigation();
+    }
+
+    Cancel() {
+      this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
     }
   
     ngOnDestroy(){

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -16,6 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './clone-policies.component.scss'
 })
 export class ClonePoliciesComponent {
+  @ViewChild('deletepopup') deletepopup: any;
   subscription!: Subscription;
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
@@ -57,9 +58,9 @@ export class ClonePoliciesComponent {
     this.updatePoliciesData.orgPolicyItems.forEach((row:any) => {
       this.policies.push(
         this.fb.group({
-          policyName : row.policyName,
-          policyFile : row.policyAttachment,
-          policyDescription  : row.policyDescription
+          policyName : [row.policyName,Validators.required],
+          policyFile : [row.policyAttachment,Validators.required],
+          policyDescription  : [row.policyDescription,Validators.required]
          
         })
       );
@@ -132,9 +133,22 @@ export class ClonePoliciesComponent {
     console.log(payload);
     
   }
+
+  closeDelete(modal: any) {
+    modal.dismiss();
+  }
+
+  onDelete(modal: any) {
+    modal.dismiss();
+    this.navigation();
+  }
   
   cancel(){
     this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
+  }
+
+  Cancel() {
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
 
   openmodel(content: any) {
@@ -277,8 +291,8 @@ export class ClonePoliciesComponent {
     }
   }
 
-  nagvition(){
-    this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
+  navigation(){
+    this.router.navigate(['/settings/employee-fields/manage-policies/published-policies']);
   }
 
   ngOnDestroy(){

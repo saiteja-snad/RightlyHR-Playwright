@@ -53,7 +53,7 @@ export class ViewPoliciesComponent {
       year: [{value: null, disabled: true},Validators.required],
       location: [{value: null, disabled: true},Validators.required],
       subLocation: [{value: null, disabled: true},Validators.required],
-      shift : [{value: null, disabled: true},Validators.required],
+      shift : [{value: '', disabled: true},Validators.required],
       policies: this.fb.array([])
     });
     
@@ -64,9 +64,9 @@ export class ViewPoliciesComponent {
     this.updatePoliciesData.orgPolicyItems.forEach((row:any) => {
       this.policies.push(
         this.fb.group({
-          policyName : row.policyName,
-          policyFile : row.policyAttachment,
-          policyDescription  : row.policyDescription
+          policyName : [{value: row.policyName, disabled: true}],
+          policyFile : [{value: row.policyAttachment, disabled: true}],
+          policyDescription  : [{value: row.policyDescription, disabled: true}],
          
         })
         
@@ -99,9 +99,9 @@ export class ViewPoliciesComponent {
   
   addPolicyRow() {
     const policyGroup = this.fb.group({
-      policyName: [{value: '',disabled: true}],
-      policyFile: [''],
-      policyDescription: [{value: '',disabled: true}],
+      policyName: [{value: '',disabled: true}, Validators.required],
+      policyFile: [{value: '',disabled: true}, Validators.required],
+      policyDescription: [{value: '',disabled: true}, Validators.required],
     });
     this.policies.push(policyGroup);
   }
@@ -178,7 +178,7 @@ export class ViewPoliciesComponent {
 
   onDelete(modal: any) {
     modal.dismiss();
-    this.nagvition();
+    this.navigation();
   }
 
   cancel(){
@@ -288,9 +288,9 @@ export class ViewPoliciesComponent {
   getShiftBYid(selectedSubLocation: any): void {
     const formValue = this.policyForm.value;
     if (selectedSubLocation && selectedSubLocation) {
-      const locationId =  formValue.location?.id
+      const locationId =  this.updatePoliciesData.locationId ?? formValue.location.id
       const subLocationId = this.updatePoliciesData.subLocationId ?? selectedSubLocation
-
+      console.log(this.updatePoliciesData);
       console.log('Location ID:', locationId);
       console.log('Sub Location ID:', subLocationId);
 
@@ -311,7 +311,7 @@ export class ViewPoliciesComponent {
             }
             
             this.policyForm.patchValue({
-              shift : this.shiftDropdown.find((x:any) => x.id === this.updatePoliciesData.shiftID),
+              shift : this.shiftDropdown.find((x:any) => x.id === this.updatePoliciesData.shiftName),
             });
             console.log('Shift Dropdown Values:', this.shiftDropdown);
           },
@@ -325,7 +325,7 @@ export class ViewPoliciesComponent {
     }
   }
 
-  nagvition(){
+  navigation(){
     this.router.navigate(['/settings/employee-fields/manage-policies/published-policies']);
   }
 

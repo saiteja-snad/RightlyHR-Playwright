@@ -18,6 +18,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 
 export class AddWeekendComponent implements OnInit, OnDestroy {
+  @ViewChild('deletepopup') deletepopup: any;
   weekendForm!: FormGroup;
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
@@ -241,6 +242,19 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     });
   }
 
+  Cancel() {
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+  }
+
+  closeDelete(modal: any) {
+    modal.dismiss();
+  }
+  
+  onDelete(modal: any) {
+    modal.dismiss();
+    this.navigation();
+  }
+
   openModal(content: any,) {
     this.modalService.open(content, { centered: true })
   }
@@ -248,6 +262,9 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
   closeWeekend(){
     this.modalService.dismissAll();
     this.navigate();
+  }
+  navigation(){
+    this.router.navigate(['/settings/employee-fields/manage-weekends/pending-for-submission']);
   }
 
   ngOnDestroy(): void {

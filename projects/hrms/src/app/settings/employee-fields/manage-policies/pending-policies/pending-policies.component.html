@@ -27,7 +27,17 @@
             <td>{{item.applicableyear}}</td>
             <td>{{item.locationName}}</td>
             <td>{{item.subLocationName}}</td>
-            <td>{{item.shiftName}}</td>
+            <td>
+              <div class="d-flex align-items-center gap-1">
+                  <div>{{ item.orgPolicyItems.length }}</div>
+                  <div [ngbPopover]="popContent" *ngIf="getPolicyNames(item) !== null">
+                      <i class="bi bi-info-circle-fill cursor"></i>
+                  </div>
+              </div>
+              <ng-template #popContent>
+                  <div>{{ getPolicyNames(item) }}</div>
+              </ng-template>
+          </td>
             <td>{{item.status}}</td>
             <td>{{item.addedbyName}}</td>
             <td *ngIf="rbac.allowedToAccess('Manage Policies Tab.update')">

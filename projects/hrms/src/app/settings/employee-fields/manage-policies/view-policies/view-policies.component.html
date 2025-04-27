@@ -1,7 +1,7 @@
 <div class="custom-main-component-container w-100">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <p class="component-header mb-0" (click)="nagvition()">
+            <p class="component-header mb-0" (click)="Cancel()">
                 <i class="bi bi-arrow-90deg-left me-2"></i>{{'View Policy' | translate}}
             </p>
         </div>
@@ -27,7 +27,7 @@
                         (onChange)="getShiftBYid($event)" class="form-select custom-select"></p-select>
                 </div>
                 <div class="custom-p-select-content">
-                    <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="" formControlName="shift"
+                    <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="shift" formControlName="shift"
                         placeholder="Select shift" class="form-select custom-select"></p-select>
                 </div>
             </div>
@@ -37,22 +37,22 @@
                         <div class="row mb-2" *ngFor="let holiday of policies.controls; let i = index"
                             [formGroupName]="i">
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="form-label custom-label">{{'Policy Name' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="text" formControlName="policyName" class="form-control custom-input"
                                     placeholder="Please enter policy name" />
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' |
                                     translate}}<span class="text-danger">*</span></label>
-                                <input type="file" formControlName="policyFile" class="form-control custom-input" />
+                                <input title="text" type="file" formControlName="policyFile" class="form-control custom-input" />
                                 <div>
                                     <span><b>File Name:</b> {{this.policyFileName}}</span>
                                 </div>
                             </div>
 
-                            <div class="col-md-5 d-flex align-items-end">
+                            <div class="col-md-4">
                                 <label class="form-label custom-label">{{'Description' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="text" formControlName="policyDescription" class="form-control custom-input"
@@ -67,7 +67,7 @@
             </div>
             <div class=" d-flex justify-content-end gap-3 p-3">
                 <button type="button" class="custom-btn btn-secondary"
-                    (click)="Cancel()">{{'Cancel'|translate}}</button>
+                    (click)="Cancel()">{{'Close'|translate}}</button>
                 <button type="button" class="custom-btn btn-secondary" *ngIf="!hideBUTTON"
                 (click)="cloneshiftsPolicy1()"
                     [disabled]="policyForm.invalid">{{'Clone'|translate}}</button>
@@ -82,7 +82,7 @@
 
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Cancel?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to Close?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary "

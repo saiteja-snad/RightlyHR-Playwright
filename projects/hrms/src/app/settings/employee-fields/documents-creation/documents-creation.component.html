@@ -66,7 +66,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Add Folder'| translate}}</p>
+                <p class="popup-heading mb-0">{{'Add Sub-Folder'| translate}}</p>
             </div>
             <div>
                 <a (click)="onClose()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -77,10 +77,13 @@
             <form name="AddSubDirectory" #AddSubDirectory="ngForm"
                 (ngSubmit)="AddSubDirectory.valid && createSubDirectory(AddSubDirectory)">
                 <div class="mb-3">
+                    <label for="subDirName" class="form-label custom-label mb-2">
+                        {{ "File Name" | translate }}<span class="text-danger">*</span>
+                    </label>
                     <input type="text" class="form-control custom-input" name="subDirName" [(ngModel)]="subDir.subDirName" 
                     autocomplete="off" placeholder="Enter File Name" id="subDirName"  #subDirName="ngModel" required/>
                     <div *ngIf="subDirName.touched && subDirName.invalid" class="error-msg">
-                        {{'File name is required' | translate}}
+                        {{'File Name is required' | translate}}
                       </div>
                 </div>
                 <div class="custom-modal-footer">

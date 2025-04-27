@@ -201,7 +201,7 @@
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label labell">Comments<span class="required">*</span></label>
                 <textarea class="form-control" id="Reasons" placeholder="Please provide comments" name="Reasons"
-                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                    #Reasons="ngModel" maxlength="250"  (keypress)="formValidation.restrictInputallowspicalcharters($event)"[(ngModel)]="selectedLeaveData.comments"
                     (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
                 <span>{{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</span>
                 <div class="error-msg" *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
@@ -229,7 +229,7 @@
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments" name="Reasons"
-                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" (keypress)="formValidation.restrictInputallowspicalcharters($event)"
                     (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
                 <div class="form-label custom-label text-end my-1">{{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                 <div class="error-msg" *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">

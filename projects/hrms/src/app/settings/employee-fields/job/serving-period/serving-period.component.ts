@@ -29,9 +29,9 @@ export class ServingPeriodComponent {
   AddForm!: FormGroup;
   updateForm!: FormGroup;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
     public rbac: RbacService,
@@ -40,72 +40,69 @@ export class ServingPeriodComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      addServingPeriod: ['', [ Validators.required,
+      addServingPeriod: ['', [
+        Validators.required,
         Validators.pattern('^[a-zA-Z ]+$'),  // Only letters and spaces
-        Validators.maxLength(100)  ]
-      ],
-        Duration: ['', [Validators.required, Validators.maxLength(100),
-      Validators.pattern('^[a-zA-Z0-9 ]+$')]]
-
-
-      
+        Validators.maxLength(100)
+      ]],
+      Duration: ['', [
+        Validators.required,
+        Validators.maxLength(100),
+        Validators.pattern('^[a-zA-Z0-9.,/\\-\\s]+$')  // Letters, numbers, spaces, periods, commas, slashes, and hyphens
+      ]]
     });
 
     this.updateForm = this.fb.group({
-      UpdateServingPeriod:  [
-    '',
-    [
-      Validators.required,
-      Validators.pattern('^[a-zA-Z ]+$'),  // Only letters and spaces
-      Validators.maxLength(100)
-    ]
-  ],
-      UpdateDuration:[
-    '',
-    [
-      Validators.required, Validators.maxLength(100),
-      Validators.pattern('^[a-zA-Z0-9 ]+$')  // Letters, numbers, and spaces
-    ]
-  ]
-});
+      UpdateServingPeriod: ['', [
+        Validators.required,
+        Validators.pattern('^[a-zA-Z ]+$'),  // Only letters and spaces
+        Validators.maxLength(100)
+      ]],
+      UpdateDuration: ['', [
+        Validators.required,
+        Validators.maxLength(100),
+        Validators.pattern('^[a-zA-Z0-9.,/\\-\\s]+$')  // Letters, numbers, spaces, periods, commas, slashes, and hyphens
+      ]]
+    });
     this.getServingPeriod();
-   
   }
   allowOnlyLettersAndSpace1(event: KeyboardEvent): void {
     const input = event.target as HTMLInputElement;
     const char = event.key;
-     const pattern = /^[A-Za-z0-9. ]*$/;
+    // Allow letters, numbers, spaces, periods, commas, slashes and hyphens
+    const pattern = /^[A-Za-z0-9.,/\- ]$/;
 
-    if (!pattern.test(char)) {
+    // Block if the key is not in the pattern
+    if (!pattern.test(char) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(char)) {
       event.preventDefault();
       return;
     }
 
-    // Block if length is already 50 characters
-    if (input.value.length >= 100) {
+    // Block if length is already 100 characters
+    if (input.value.length >= 100 && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(char)) {
       event.preventDefault();
     }
   }
   allowOnlyLettersAndSpace(event: KeyboardEvent): void {
     const input = event.target as HTMLInputElement;
     const char = event.key;
-  
+
     // Allow only letters (a-z, A-Z) and space
     const pattern = /^[A-Za-z ]$/;
-  
+
     if (!pattern.test(char)) {
       event.preventDefault();
       return;
     }
-  
+
     // Restrict max length to 100
     if (input.value.length >= 100) {
       event.preventDefault();
     }
   }
-  
-  
-  
+
+
+
   // // Method to open the add modal dialog
   openDialog() {
     this.modalService.open(this.addpopup, {
@@ -117,7 +114,10 @@ export class ServingPeriodComponent {
     this.subscription = this.http.getData('ServingPeriods').subscribe({
       next: (data: any) => {
         console.log(data);
-        this.servingPeriodDetails = data;
+        this.servingPeriodDetails = data.sort((a: any, b: any) => {
+          // Sort by serving period type alphabetically
+          return a.servingPeriodType.localeCompare(b.servingPeriodType);
+        });
       },
     });
   }
@@ -140,22 +140,23 @@ export class ServingPeriodComponent {
       error: (error: any) => {
         const errorMessage = error.error?.message;
         this.conformationPopup.openErrorModal(errorMessage);
-         this.resetForm();
+        this.resetForm();
       }
     });
   }
 
   close(modal: any) {
+    this.resetForm();
     modal.close();
   }
-// Method to open the update modal dialog
+  // Method to open the update modal dialog
   openupdateDialog(servingPeriodList: any) {
     this.selectedId = servingPeriodList.id;
     this.updateForm.patchValue({ UpdateServingPeriod: servingPeriodList.servingPeriodType });
     this.updateForm.patchValue({ UpdateDuration: servingPeriodList.duration });
     this.modalService.open(this.updatepopup, {
-    backdrop: 'static',
-    centered: true
+      backdrop: 'static',
+      centered: true
     });
   }
   //  UPDATE
@@ -174,7 +175,7 @@ export class ServingPeriodComponent {
           this.getServingPeriod();
           modal.close();
           this.conformationPopup.openSuccessModal('Serving Period updated successfully');
-           this.resetForm();
+          this.resetForm();
         },
         error: (error: any) => {
           const errorMessage = error.error?.message;
@@ -190,28 +191,28 @@ export class ServingPeriodComponent {
     this.selectedDeleteserving = servingPeriodList;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
-   onDelete(modal: any) {
-      if (!this.selectedDeleteserving) return;
-      const deleteRequest: IServingPeriod = {
-        id: this.selectedDeleteserving.id,
-        servingPeriodType: this.selectedDeleteserving.servingPeriodType.trim(),
-        duration: this.selectedDeleteserving.duration,
-        isDeleted: true
-      };
-  
-      this.http.postdata('ServingPeriods/UPDATER', deleteRequest).subscribe({
-        next: () => {
-         this.getServingPeriod();
-          modal.close();
-          this.conformationPopup.openSuccessModal('Serving Period deleted successfully');
-        },
-        error: ( err : any) => {
-          const errorMessage = err.error?.message;
-          this.conformationPopup.openErrorModal(errorMessage);
-        }
-      });
-    }
-  
+  onDelete(modal: any) {
+    if (!this.selectedDeleteserving) return;
+    const deleteRequest: IServingPeriod = {
+      id: this.selectedDeleteserving.id,
+      servingPeriodType: this.selectedDeleteserving.servingPeriodType.trim(),
+      duration: this.selectedDeleteserving.duration,
+      isDeleted: true
+    };
+
+    this.http.postdata('ServingPeriods/UPDATER', deleteRequest).subscribe({
+      next: () => {
+        this.getServingPeriod();
+        modal.close();
+        this.conformationPopup.openSuccessModal('Serving Period deleted successfully');
+      },
+      error: (err: any) => {
+        const errorMessage = err.error?.message;
+        this.conformationPopup.openErrorModal(errorMessage);
+      }
+    });
+  }
+
   closeDelete(modal: any) {
     modal.dismiss();
   };

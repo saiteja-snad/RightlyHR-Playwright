@@ -40,6 +40,7 @@ export class UpdateShiftsComponent {
   isDuplicateCodeName1: boolean[] = [];
   Status: any;
   hoildaylist: any;
+  sublocatiodis = false;
   // navTabs: any[] = [
   //   { label: 'Update Shifts', link: '/claimsandexpenses/addexpens' },
   // ];
@@ -329,6 +330,7 @@ publish() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
         this.locations = data;
+        this.sublocatiodis = true;
         this.selectedLocation = this.locations.find(loc => loc.id === this.selectedLocationId);
         console.log(this.selectedLocation);
         console.log("Selected Location:", this.selectedLocation);

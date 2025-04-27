@@ -6,138 +6,143 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Iprobationapproval } from '../../../Interfaces/pendingapprovalsmodel';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { HttpService } from '../../../services/http.service';
-import { ProbationdetailsPipe } from "../../../Pipes/probationdetails.pipe";
+import { ProbationdetailsPipe } from '../../../Pipes/probationdetails.pipe';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
 import { RbacService } from '../../../services/rbac.service';
 import { AuthService } from '../../../services/auth.service';
-
-
 @Component({
   selector: 'app-probation-pending-approvals',
-  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule,NgbPopoverModule, PaginatorModule, DropdownModule, NoDataFoundComponent, ProbationdetailsPipe, ProbationformViewComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    NgbPopoverModule,
+    FormsModule,
+    NgbPopoverModule,
+    PaginatorModule,
+    DropdownModule,
+    NoDataFoundComponent,
+    ProbationdetailsPipe,
+    ProbationformViewComponent,
+  ],
   templateUrl: './probation-pending-approvals.component.html',
-  styleUrl: './probation-pending-approvals.component.scss'
+  styleUrl: './probation-pending-approvals.component.scss',
 })
 export class ProbationPendingApprovalsComponent {
-    subscription!: Subscription;
-    probationDetails = [] as any;
-    probationExtensionDuration!: number;
-    searchValue: any;
-    LOGIN: any;
-    totalRecords = 100
-    first: any = 0;
-    rows: any = 10;
-    isempeffectivevaild: boolean = true;
-    options = [
-      { label: 10, value: 10 },
-      { label: 15, value: 15 },
-      { label: 20, value: 20 },
-      { label: 25, value: 25 }
-    ];
-    constructor(
-      private modalService: NgbModal, 
-      private http: HttpService,
-      public rbac: RbacService,
-      private authService: AuthService,
-    ) {}
-  
-    openModal(content: any) {
-      this.modalService.open(content, {centered: true,backdrop: 'static' });
-    }
-    onRowsChange() {
-      this.first = 0;
-  
-    }
-    onPageChange(event: PaginatorState) {
-      this.first = event.first;
-      this.rows = event.rows;
-  
-    }
+  subscription!: Subscription;
+  probationDetails = [] as any;
+  probationExtensionDuration!: number;
+  searchValue: any;
+  LOGIN: any;
+  totalRecords = 100;
+  first: any = 0;
+  rows: any = 10;
+  isempeffectivevaild: boolean = true;
+  options = [
+    { label: 10, value: 10 },
+    { label: 15, value: 15 },
+    { label: 20, value: 20 },
+    { label: 25, value: 25 },
+  ];
 
-    ngOnInit(): void {
-      this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-      //console.log(this.isformsubmit);
-      this.getProbationExtendDays();
-      this.getAllPendingApprovals();
-    }
+  constructor(
+    private modalService: NgbModal,
+    private http: HttpService,
+    public rbac: RbacService,
+    private authService: AuthService
+  ) {}
 
-    getAllPendingApprovals() {
-      let loggedInUser = this.authService.getToken();
-      let EmployeeId = loggedInUser.employeeId;
-      this.subscription = this.http
-        .getData(
-          `PendingApproval/employee/${EmployeeId}?moduleId=20&approvedType=EMP`
-        )
-        .subscribe({
-          next: (data: any) => {
-            this.probationDetails = data.data.filter(
-              (item: any) =>
-                item.approvalHeader.status != 'Processed' &&
-                item.approvalHeader.status != 'Rejected'
-            );
-            // this.filterPendingApprovalsByModule();
-          },
-          error: (reason) => console.log(reason),
-        });
-    }
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
 
+  onRowsChange() {
+    this.first = 0;
+  }
 
-    requesthandler = {} as any;
-    selectedData = {} as any;
-    selectedPrRequestDataforheader = {} as any;
-    handleData(request: Iprobationapproval) {
-      this.requesthandler = request;
-      this.selectedData = request.entity;
-      this.selectedPrRequestDataforheader = request.approvalHeader;
-      console.log(this.selectedData);
-    }
+  onPageChange(event: PaginatorState) {
+    this.first = event.first;
+    this.rows = event.rows;
+  }
 
+  ngOnInit(): void {
+    this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    //console.log(this.isformsubmit);
+    this.getProbationExtendDays();
+    this.getAllPendingApprovals();
+  }
 
-    myApproverComments = [] as any;
-    approverComments(value: any) {
-      const modalElement = document.getElementById('CommentsPopup');
-      if (modalElement) {
-        modalElement.classList.add('show');
-        modalElement.style.display = 'block';
-      }
-      this.myApproverComments = value.map((ele: any) => {
-        // Parse the metaData and assign it to metadata property
-        const parsedMetaData = JSON.parse(ele.meta);
-        return {
-          ...ele, // Copy other properties from ele
-          metadata: parsedMetaData, // Assign parsed metaData to metadata property
-        };
+  getAllPendingApprovals() {
+    let loggedInUser = this.authService.getToken();
+    let EmployeeId = loggedInUser.employeeId;
+    this.subscription = this.http
+      .getData(
+        `PendingApproval/employee/${EmployeeId}?moduleId=20&approvedType=EMP`
+      )
+      .subscribe({
+        next: (data: any) => {
+          this.probationDetails = data.data.filter(
+            (item: any) =>
+              item.approvalHeader.status != 'Processed' &&
+              item.approvalHeader.status != 'Rejected'
+          );
+          // this.filterPendingApprovalsByModule();
+        },
+        error: (reason) => console.log(reason),
       });
-      console.log(this.myApproverComments);
-    }
+  }
 
+  requesthandler = {} as any;
+  selectedData = {} as any;
+  selectedPrRequestDataforheader = {} as any;
+  handleData(request: Iprobationapproval) {
+    this.requesthandler = request;
+    this.selectedData = request.entity;
+    this.selectedPrRequestDataforheader = request.approvalHeader;
+  }
 
-    closeModel() {
-      const modalElement = document.getElementById('CommentsPopup');
-      if (modalElement) {
-        modalElement.classList.remove('show');
-        modalElement.style.display = 'none';
-      }
+  myApproverComments = [] as any;
+  approverComments(value: any) {
+    const modalElement = document.getElementById('CommentsPopup');
+    if (modalElement) {
+      modalElement.classList.add('show');
+      modalElement.style.display = 'block';
     }
+    this.myApproverComments = value.map((ele: any) => {
+      // Parse the metaData and assign it to metadata property
+      const parsedMetaData = JSON.parse(ele.meta);
+      return {
+        ...ele, // Copy other properties from ele
+        metadata: parsedMetaData, // Assign parsed metaData to metadata property
+      };
+    });
+    console.log(this.myApproverComments);
+  }
 
-    openview() {
-      this.closeModel();
-      const modalElement = document.getElementById('rolereq');
-      if (modalElement) {
-        modalElement.classList.add('show');
-        modalElement.style.display = 'block';
-      }
+  closeModel() {
+    const modalElement = document.getElementById('CommentsPopup');
+    if (modalElement) {
+      modalElement.classList.remove('show');
+      modalElement.style.display = 'none';
     }
+  }
 
-    setformView(employeeId: number, responseId: number) {
-      this.http.communicationService.next({ employeeId, responseId });
+  openview() {
+    this.closeModel();
+    const modalElement = document.getElementById('rolereq');
+    if (modalElement) {
+      modalElement.classList.add('show');
+      modalElement.style.display = 'block';
     }
-     
+  }
+
+  setformView(employeeId: number, responseId: number) {
+    this.http.communicationService.next({ employeeId, responseId });
+  }
 
   handleRequests(request: Iprobationapproval) {
     this.requesthandler = request;
@@ -146,7 +151,7 @@ export class ProbationPendingApprovalsComponent {
     console.log(this.selectedData);
     this.getEmployeedatabyid(this.selectedData);
   }
-  
+
   empdata = {} as Ipersonal;
   getEmployeedatabyid(Value: any) {
     let employeeId = Value.employeeId;
@@ -173,22 +178,21 @@ export class ProbationPendingApprovalsComponent {
         metadata: parsedMetaData, // Assign parsed metaData to metadata property
       };
     });
-    console.log(this.myApproverComments);
   }
+
   setData(value: any) {
     localStorage.setItem('formdata', JSON.stringify(value) || '{}');
   }
-    getProbationExtendDays() {
+
+  getProbationExtendDays() {
     const ProbationExtensionId: number = 2;
     this.subscription = this.http
       .getData(`ProbationFlow/settingsprobationconfiggetall`)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           let duration = data.find((ele: any) => {
             return ele.configValueId === ProbationExtensionId;
           });
-          console.log(duration);
           this.probationExtensionDuration = duration.noOfDays;
         },
       });
@@ -218,12 +222,8 @@ export class ProbationPendingApprovalsComponent {
       this.clearExtendData();
       this.clearDiscontinueData();
     }
-    //  else {
-    //   // Toggle off Early Relieving
-    //   this.approve = false;
-    //   this.clearApproveData();
-    // }
   }
+
   toggleExtend() {
     this.discontinue = false;
     this.approve = false;
@@ -246,6 +246,7 @@ export class ProbationPendingApprovalsComponent {
     this.clearApproveData();
     this.clearExtendData();
   }
+
   clearApproveData() {
     this.selectedData.comments = '';
   }
@@ -265,7 +266,6 @@ export class ProbationPendingApprovalsComponent {
 
   issubmitdiable: boolean = false;
   ifreasonnull(Value: any) {
-    console.log(Value);
     if (!Value || !Value.trim()) {
       this.issubmitdiable = true;
     } else {
@@ -275,11 +275,7 @@ export class ProbationPendingApprovalsComponent {
 
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
-    if (
-      (charCode < 65 || charCode > 90) &&
-      (charCode < 97 || charCode > 122) &&
-      charCode !== 32
-    ) {
+    if ((charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) && charCode !== 32) {
       return false;
     }
     return true;
@@ -365,7 +361,6 @@ export class ProbationPendingApprovalsComponent {
         complete: () => {},
       });
   }
-
 
   reset() {
     this.clearApproveData();

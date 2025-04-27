@@ -1,94 +1,91 @@
 <div class="custom-main-component-container">
-  <div>
-    <!--Input search-->
-    <div class="input-group custom-search mb-3">
-      <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-      <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Search" />
-    </div>
+  <!--Input search-->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Search" />
+  </div>
 
-    <div class="custom-table-content">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>Employee Name</th>
-            <th>Expense Title</th>
-            <th>Applied Date</th>
-            <th>Total Amount</th>
-            <th>Status</th>
-            <th class="text-center">View Expense</th>
-            <th class="text-center">Approver Comments</th>
-            <th class="text-center">Action(s)</th>
+  <div class="custom-table-content">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Employee Name</th>
+          <th>Expense Title</th>
+          <th>Applied Date</th>
+          <th>Total Amount</th>
+          <th>Status</th>
+          <th class="text-center">View Expense</th>
+          <th class="text-center">Approver Comments</th>
+          <th class="text-center">Action(s)</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (rbac.allowedToAccess('Expenses Tab.view')) {
+        <ng-container *ngIf="expenseheaderpending!.length > 0; else noDataTemplate">
+          <tr *ngFor="let leave of expenseheaderpending; let i = index">
+            <td>{{ leave.entity.employeeName }}</td>
+            <td>{{ leave.entity.expenseType }}</td>
+            <td>{{ leave.entity.applied_date | dateformat }}</td>
+            <td>{{ leave.entity.totalExpenseAmount }}</td>
+            <td>{{ leave.entity.status }}</td>
+            <td class="text-center">
+              <div class="dropdown">
+                <a data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li>
+                    <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID)"
+                      *ngIf="rbac.allowedToAccess('Expenses Tab.view')">
+                      <i class="bi bi-paperclip me-2"></i>View</a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+
+            <td>
+              <div *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
+                <a type="button" (click)="comments(leave.entity.expenseApproverComments,commentspopup)">
+                  <img src="images\info-fill.png" alt="info icon" class="info-icon" />
+                </a>
+              </div>
+              <ng-template #NA>N/A</ng-template>
+            </td>
+
+            <td class="text-center">
+              <div class="dropdown">
+                <a type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu py-0">
+                  @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
+                  <li (click)="openApproveModal(approval, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
+                  </li>
+                  } @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
+                  <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
+                  </li>
+                  }
+                  <li (click)="openRejectModal(rejectmodal, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.delete')">
+                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
+                  </li>
+                </ul>
+              </div>
+            </td>
           </tr>
-        </thead>
-        <tbody>
-          @if (rbac.allowedToAccess('Expenses Tab.view')) {
-          <ng-container *ngIf="expenseheaderpending!.length > 0; else noDataTemplate">
-            <tr *ngFor="let leave of expenseheaderpending; let i = index">
-              <td>{{ leave.entity.employeeName }}</td>
-              <td>{{ leave.entity.expenseType }}</td>
-              <td>{{ leave.entity.applied_date | dateformat }}</td>
-              <td>{{ leave.entity.totalExpenseAmount }}</td>
-              <td>{{ leave.entity.status }}</td>
-              <td class="text-center">
-                <div class="dropdown">
-                  <a data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </a>
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    <li>
-                      <a class="dropdown-item" (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID)"
-                        *ngIf="rbac.allowedToAccess('Expenses Tab.view')">
-                        <i class="bi bi-paperclip me-2"></i>View</a>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-              
-              <td>
-                <div *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
-                  <a type="button" (click)="comments(leave.entity.expenseApproverComments,commentspopup)" >
-                    <img src="images\info-fill.png" alt="info icon" class="info-icon" />
-                  </a>
-                </div>
-                <ng-template #NA>N/A</ng-template>
-              </td>
+        </ng-container>
 
-              <td class="text-center">
-                <div class="dropdown">
-                  <a type="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </a>
-                  <ul class="dropdown-menu py-0">
-                    @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                    <li (click)="openApproveModal(approval, leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
-                      <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Approve" | translate }}</a>
-                    </li>
-                    } @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
-                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Expenses Tab.update')">
-                      <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{ "Process" | translate }}</a>
-                    </li>
-                    }
-                    <li (click)="openRejectModal(rejectmodal, leave)"
-                      *ngIf="rbac.allowedToAccess('Expenses Tab.delete')">
-                      <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{ "Reject" | translate }}</a>
-                    </li>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-          </ng-container>
-
-          <ng-template #noDataTemplate>
-            <tr>
-              <td colspan="4">
-                <app-no-data-found></app-no-data-found>
-              </td>
-            </tr>
-          </ng-template>
-          }
-        </tbody>
-      </table>
-    </div>
+        <ng-template #noDataTemplate>
+          <tr>
+            <td colspan="4">
+              <app-no-data-found></app-no-data-found>
+            </td>
+          </tr>
+        </ng-template>
+        }
+      </tbody>
+    </table>
   </div>
 </div>
 
@@ -159,11 +156,11 @@
     <div class="card p-3">
       <div *ngFor="let comment of approverComments" >
         <div class="mb-0">
-          <p> <b>Commented by:</b> {{ comment.addedName }} </p>
-          <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
-          <p> <b>Approved Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+          <p><b>Commented by:</b> {{ comment.addedName }} </p>
+          <p><b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
+          <p><b>Approved Date:</b> {{ comment.addedDate | date: 'short' }} </p>
           <p><b>Status:</b> {{ comment.action }}</p>
-          <p> <b>Comments:</b> {{ comment.comments }} </p>
+          <p><b>Comments:</b> {{ comment.comments }} </p>
         </div>
       </div>
     </div>

@@ -4,20 +4,23 @@
       <div>
         <span class="component-sub-header">Emergency Contact 1</span>
       </div>
+      @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !==
+      'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+      employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
       <div *ngIf="!buttons">
-        <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
-      </div>
-      <div class="d-flex gap-3" *ngIf="buttons">
+        <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+      </div>}
+      
+      <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
         <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
-        <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid"
+        <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid "
           (click)="saveForm()">Save</button>
       </div>
     </div>
-
+  
     <!-- Reactive Form -->
     <form [formGroup]="emergencyContactForm">
       <div class="row">
-        @if(this.rbac.allowedToAccess('Emergency Contact Details.view')){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact1Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
           <input type="text" class="form-control custom-input" id="contact1Name" formControlName="contact1Name"
@@ -26,8 +29,8 @@
             *ngIf="emergencyContactForm.get('contact1Name')?.invalid && emergencyContactForm.get('contact1Name')?.touched">
             Name is required
           </div>
-        </div>}
-        @if(this.rbac.allowedToAccess('Emergency Contact Details.view')){
+        </div>
+  
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact1Email" class="form-label custom-label mb-2">Email ID <span
               class="text-danger">*</span></label>
@@ -39,34 +42,37 @@
             <span *ngIf="emergencyContactForm.get('contact1Email')?.errors?.['email']">Invalid email format</span>
           </div>
         </div>
-        } @if(this.rbac.allowedToAccess('Emergency Contact Details.view')){
+  
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number <span
               class="text-danger">*</span></label>
-          <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-
-            <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-              [selectedCountryCode]="http.selectedCountryCodeSignal()" [countryListConfig]="countryListConfig"
-              class="country-input" (onCountryChange)="onCountryChange($event)" [ngClass]="{ 'disabled': !buttons }">
-            </lib-country-list>
-            <input type="text" class="form-control custom-input" formControlName="contact1Phone" autocomplete="off"
-              placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
-              [value]="emergencyContactForm.get('contact1Phone')?.value ? formatPhoneNumber(emergencyContactForm.get('contact1Phone')?.value) : ''"
-              required>
-          </div>
-          <div class="error-msg"
-            *ngIf="emergencyContactForm.get('contact1Phone')?.invalid && emergencyContactForm.get('contact1Phone')?.touched">
-            <div *ngIf="emergencyContactForm.get('contact1Phone')?.errors?.['required']">Phone number is
-              required</div>
-
-            <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('invalidPhoneNumber')">The phone number is
-              not
-              valid for the selected country.</div>
-
-
-          </div>
-        </div>}
-        @if(this.rbac.allowedToAccess('Emergency Contact Details.view')){
+              <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+                <div *ngIf="!loading; else loadingTemplate">
+                  <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                    [selectedCountryCode]="selectedemergencycoutrycode()" [countryListConfig]="countryListConfig"
+                    class="country-input"  [ngClass]="{ 'disabled-country-code': !buttons }" (onCountryChange)="onCountryChange($event)">
+                  </lib-country-list>
+                </div>
+                <ng-template #loadingTemplate>
+                  <p>Loading...</p>
+                </ng-template>
+                <input type="text" class="form-control custom-input" formControlName="contact1Phone"
+                  placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                  (input)="onEmergencyContact1PhoneInput()"
+                  autocomplete="off" required>
+              </div>
+              <div class="error-msg my-1"
+                *ngIf="emergencyContactForm.get('contact1Phone')?.invalid &&  (emergencyContactForm.get('contact1Phone')?.touched || emergencyContactForm.get('contact1Phone')?.dirty)">
+                <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('required')">Phone number is
+                  required</div>
+                <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('pattern')">Please enter a valid
+                  mobile number</div>
+                <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('invalidPhoneNumber')">
+                  The phone number is not valid for the selected country
+                </div>
+              </div>
+        </div>
+  
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact1Relationship" class="form-label custom-label mb-2">Relationship<span
               class="text-danger">*</span></label>
@@ -78,7 +84,7 @@
             *ngIf="emergencyContactForm.get('contact1Relationship')?.invalid && emergencyContactForm.get('contact1Relationship')?.touched">
             Relationship is required
           </div>
-        </div>}
+        </div>
       </div>
     </form>
   </div>
@@ -88,20 +94,11 @@
       <div>
         <span class="component-sub-header">Emergency Contact 2</span>
       </div>
-      <!-- <div *ngIf="!buttons2">
-          <a (click)="enableForm2()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
-        </div>
-        <div class="d-flex gap-3" *ngIf="buttons2">
-          <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="emergencyContactForm.invalid"
-            (click)="saveForm()">Save</button>
-        </div> -->
     </div>
-
+  
     <!-- Reactive Form -->
     <form [formGroup]="emergencyContactForm">
       <div class="row">
-        @if(this.rbac.allowedToAccess('Emergency Contact Details.view')){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
           <input type="text" class="form-control custom-input" id="contact2Name" formControlName="contact2Name"
@@ -110,8 +107,8 @@
             *ngIf="emergencyContactForm.get('contact2Name')?.invalid && emergencyContactForm.get('contact2Name')?.touched">
             Name is required
           </div>
-        </div>}
-        @if(this.rbac.allowedToAccess('Emergency Contact Details.view')){
+        </div>
+  
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Email" class="form-label custom-label mb-2">Email ID <span
               class="text-danger">*</span></label>
@@ -122,37 +119,40 @@
             <span *ngIf="emergencyContactForm.get('contact2Email')?.errors?.['required']">Email is required</span>
             <span *ngIf="emergencyContactForm.get('contact2Email')?.errors?.['email']">Invalid email format</span>
           </div>
-        </div>}
-        @if(this.rbac.allowedToAccess('Emergency Contact Details.view')){
+        </div>
+
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Phone" class="form-label custom-label mb-2">Phone Number <span
               class="text-danger">*</span></label>
-          <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
-            <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
-              [selectedCountryCode]="http.selectedCountryCode2Signal()" [countryListConfig]="countryListConfig"
-              class="country-input" [ngClass]="{ 'disabled': !buttons2 }" (onCountryChange)="onCountryChange1($event)">
-            </lib-country-list>
-            <input type="text" class="form-control custom-input" formControlName="contact2Phone" autocomplete="off"
-              placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
-              [value]="emergencyContactForm.get('contact2Phone')?.value ? formatPhoneNumber(emergencyContactForm.get('contact2Phone')?.value) : ''"
-              required>
-          </div>
-          <div class="error-msg"
-            *ngIf="emergencyContactForm.get('contact2Phone')?.invalid && emergencyContactForm.get('contact2Phone')?.touched">
-            <div *ngIf="emergencyContactForm.get('contact2Phone')?.errors?.['required']">Phone number is
-              required</div>
-            <div *ngIf="emergencyContactForm.get('contact2Phone')?.errors?.['pattern']">Invalid phone number
-              format</div>
-            <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('invalidPhoneNumber')">The phone number is
-              not
-              valid for the selected country.</div>
-          </div>
-        </div>}
-
-        @if(this.rbac.allowedToAccess('Emergency Contact Details.view')){
+              <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
+                <div *ngIf="!loading; else loadingTemplate">
+                  <lib-country-list [selectedCountryConfig]="selectedCountryConfig"
+                    [selectedCountryCode]="selectedemergency1coutrycode()" [countryListConfig]="countryListConfig"
+                    class="country-input"  [ngClass]="{ 'disabled-country-code': !buttons }" (onCountryChange)="onCountryChange1($event)">
+                  </lib-country-list>
+                </div>
+                <ng-template #loadingTemplate>
+                  <p>Loading...</p>
+                </ng-template>
+                <input type="text" class="form-control custom-input" formControlName="contact2Phone" (input)="onEmergencyContact2PhoneInput()"
+                  placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                 
+                  autocomplete="off" required>
+              </div>
+              <div class="error-msg my-1"
+                *ngIf="emergencyContactForm.get('contact2Phone')?.invalid &&  (emergencyContactForm.get('contact2Phone')?.touched || emergencyContactForm.get('contact2Phone')?.dirty)">
+                <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('required')">Phone number is
+                  required</div>
+                <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('pattern')">Please enter a valid
+                  mobile number</div>
+                <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('invalidPhoneNumber')">
+                  The phone number is not valid for the selected country
+                </div>
+              </div>
+        </div>
+  
         <div class="col-md-6 col-lg-4 mb-3">
-          <label for="contact2Relationship" class="form-label custom-label mb-2">Relationship<span
-              class="text-danger">*</span></label>
+          <label for="contact2Relationship" class="form-label custom-label mb-2">Relationship<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="familyRelations" optionLabel="relationship1" formControlName="contact2Relationship"
               placeholder="Please select relationship" class="form-select custom-select"></p-select>
@@ -161,7 +161,7 @@
             *ngIf="emergencyContactForm.get('contact2Relationship')?.invalid && emergencyContactForm.get('contact2Relationship')?.touched">
             Relationship is required
           </div>
-        </div>}
+        </div>
       </div>
     </form>
   </div>

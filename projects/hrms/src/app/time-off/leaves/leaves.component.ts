@@ -78,8 +78,9 @@ export class LeavesComponent {
   isLoading: boolean = false;
   isHolidaySelected = false;
   model: any;
+  disableSubmitButton : boolean = false;
   @ViewChild('leaveForm') work!: NgForm;
-
+ 
   
 
   ngOnInit(): void {
@@ -98,6 +99,7 @@ export class LeavesComponent {
     this.checkPreviousOptionalLeaves();
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+   
   }
 
   constructor(
@@ -261,6 +263,11 @@ export class LeavesComponent {
   }
   
   onstartdate(action: string) {
+    this.leaveForm.patchValue({ availing: null });
+    this.leaveForm.patchValue({ fulldayavailing: null });
+    if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
+      this.disableSubmitButton = true;
+    }
     this.isoptionalnotallowedatWorkingdate = false;
     this.isstimeoffValid = true;
     this.startdatevalid = true;
@@ -275,6 +282,10 @@ export class LeavesComponent {
     this.checkWeekends(action);
     this.dateCheckWithHolidayOrWeekend(action);
     this.issEndDategreater = true;
+    if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
+      this.disableSubmitButton = false;
+    }
+    
   }
   
   updateStartDateValidity1(): void {
@@ -505,6 +516,11 @@ export class LeavesComponent {
   }
  
   onEndDate(action: string) {
+    this.leaveForm.patchValue({ availing: null });
+    this.leaveForm.patchValue({ fulldayavailing: null });
+    if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
+      this.disableSubmitButton = true;
+    }
     this.issEndDategreater = false;
     this.isoptionalnotallowedatWorkingdate = false;
     this.isstimeoffValid = true;
@@ -519,6 +535,9 @@ export class LeavesComponent {
     this.updateStartDateValidity1();
     this.checkWeekendsEndate(action);
     this.dateCheckWithHolidayOrWeekendForEndDateChange(action);
+    if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
+      this.disableSubmitButton = false;
+    }
   }
 
   updateEndDateValidity(): void {
@@ -826,6 +845,9 @@ export class LeavesComponent {
       if(this.leaveForm.get('availing')?.value === 'secondhalf'){
         this.selectedValue = '3'
       }
+      if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
+        this.disableSubmitButton = false;
+      }
     }
     else if (daytype === 'full') {
       this.leaveFormData.isDaytype = false;
@@ -841,6 +863,9 @@ export class LeavesComponent {
       // else{
       //   this.leaveForm.get('availing')?.enable();
       // }
+      if(this.leaveForm.get('availing')?.value != null || this.leaveForm.get('fulldayavailing')?.value != null){
+        this.disableSubmitButton = false;
+      }
       this.selectedValue = '2'
     }
   }
@@ -985,6 +1010,7 @@ export class LeavesComponent {
 
   cleardata(){
     this.leaveForm.reset();
+    this.disableSubmitButton = false;
     this.modalService.dismissAll();
   }
   ngOnDestroy(): void {

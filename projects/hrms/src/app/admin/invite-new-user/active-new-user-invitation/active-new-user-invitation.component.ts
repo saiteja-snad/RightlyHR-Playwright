@@ -9,10 +9,11 @@ import { Iactive } from '../../active-employees/active-model';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-active-new-user-invitation',
-  imports: [CommonModule, Select, NewUserInvitationTabsComponent, ReactiveFormsModule],
+  imports: [CommonModule, Select, NewUserInvitationTabsComponent, ReactiveFormsModule, TranslateModule],
   templateUrl: './active-new-user-invitation.component.html',
   styleUrl: './active-new-user-invitation.component.scss'
 })
@@ -24,6 +25,9 @@ export class ActiveNewUserInvitationComponent {
   subscription!: Subscription;
   getName: any = {};
   inviteeEmployeeID: any;
+  spinnerLoader : boolean = false;
+  isSelectedEmployee : boolean = false;
+
 
   constructor(private fb: FormBuilder,private router: Router, private conformationPopup: OpenModalService,private http: HttpService) {}
 
@@ -37,6 +41,7 @@ export class ActiveNewUserInvitationComponent {
   }
 
   onChangePropesctiveEmployess(event: any): void {
+    this.isSelectedEmployee = true;
     const selectedId = event.value;
     const selected = this.Activeemployeedata.find((e: any) => e.employeeId == selectedId);
     if (selected) {
@@ -75,6 +80,7 @@ export class ActiveNewUserInvitationComponent {
   }
 
   activeInviteEmployee(): void {
+    this.spinnerLoader = true;
     if (this.inviteeEmployeeID && this.getName) {
       let loggedInUser: Iactive = JSON.parse(
         localStorage.getItem('rightlyHrUser') || '{}'
@@ -86,25 +92,33 @@ export class ActiveNewUserInvitationComponent {
       this.subscription = this.http.postdata('InviteUser', reqBody).subscribe({
         next: (response) => {
           console.log(response);
+          this.conformationPopup.openSuccessModal('Invite New User provided successfully')
           this.isSubmitDisabled = false;
           this.isCheckBoxChecked = false;
+          this.isSelectedEmployee = false;
           this.inviteeEmployeeID = null;
-          //this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Invite New User provided successfully')
-      
+          this.inviteActiveEmployeeForm.reset();
+          this.getName = {};
+          
         },
         error: (err) => {
           console.log(err);
+          this.conformationPopup.openErrorModal('Please update work email for this employee')
           this.isSubmitDisabled = false;
-          this.isCheckBoxChecked = false;
+          this.isCheckBoxChecked = true;
           this.inviteeEmployeeID = null;
-          this.conformationPopup.openErrorModal('Invite New User failed')
+          this.spinnerLoader = false
         },
         complete: () => {
+          this.spinnerLoader = false;
           this.getActiveEmployeeData();
           this.isSubmitDisabled = false;
           this.isCheckBoxChecked = false;
           this.inviteeEmployeeID = null;
+          this.inviteActiveEmployeeForm.reset();
+          this.isSelectedEmployee = false;
+          this.getName = {};
+          
         },
       });
     }

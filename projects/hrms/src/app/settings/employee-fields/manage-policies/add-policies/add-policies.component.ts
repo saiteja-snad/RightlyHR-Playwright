@@ -30,23 +30,19 @@ export class AddPoliciesComponent {
     jobLocationDropDownData: any = [];
     subLocationsDropdown: any = [];
     empinfo : any;
-    yearDetails = [
-      { name: '2024', value: 2024 },
-      { name: '2025', value: 2025 },
-      { name: '2026', value: 2026 },
-      { name: '2027', value: 2027 },
-      { name: '2028', value: 2028 },
-    ]
+    yearDetails: number[] = [];
+    currentYear: number = new Date().getFullYear();
   
   
     constructor(private fb: FormBuilder,public router:Router,private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
 
   
     ngOnInit(): void {
+      this.getAllYears();
       this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
       this.getjobLocationList();
       this.policiesForm = this.fb.group({
-        year: [this.yearDetails.find(y => y.value === new Date().getFullYear()),Validators.required],
+        year: [new Date().getFullYear(),Validators.required],
         location: ['',Validators.required],
         subLocation: [{ value: '', disabled: true },Validators.required],
         shift : [{ value: '', disabled: true },Validators.required],
@@ -57,12 +53,17 @@ export class AddPoliciesComponent {
     
     addPolicyRow() {
      return this.fb.group({
-        policyName: ['',Validators.required],
+        policyName: ['',[Validators.required, Validators.maxLength(50)]],
         policyFile: ['',Validators.required],
-        policyDescription: ['',Validators.required]
+        policyDescription: ['',[Validators.required, Validators.maxLength(50)]]
       });
     }
-
+    getAllYears() {
+      for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
+        this.yearDetails.push(i);
+      }
+    }
+  
     get policies(): FormArray {
       return this.policiesForm?.get('policies') as FormArray;
     }
@@ -83,7 +84,6 @@ export class AddPoliciesComponent {
     submit() {
       
       const formValue = this.policiesForm.value;
-      console.log(formValue);
   
       const payload = {
         locationId: formValue.location?.id,
@@ -104,20 +104,16 @@ export class AddPoliciesComponent {
       };
       this.subscription = this.http.postdata('orgPolicies/Post', payload).subscribe({
         next: (response: any) => {
-          console.log(response);
           localStorage.setItem('personaldata', JSON.stringify(response))
-          this.confirmation.openSuccessModal('Policies added successfully');
+          this.confirmation.openSuccessModal('Policy added successfully');
           this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
-          
         },
         error: (err) => {
           console.log(err);
           this.confirmation.openErrorModal('Policies added failed');
           
         }
-      });
-      console.log(payload);
-      
+      });   
     }
     groupedLocationData: any[] = [];
     getjobLocationList() {
@@ -141,6 +137,8 @@ export class AddPoliciesComponent {
         this.getSubLocationByid(locationId);
         this.policiesForm.get('subLocation')?.enable();
       } else {
+        this.jobLocationDropDownData = [];
+        this.subLocationsDropdown=[];
         this.policiesForm.get('subLocation')?.disable();
         this.policiesForm.get('shift')?.disable();
       }
@@ -159,8 +157,7 @@ export class AddPoliciesComponent {
               } else {
                 this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
               }
-    
-              console.log(this.subLocationsDropdown);
+
             },
             error: (err: any) => {
              
@@ -178,6 +175,7 @@ export class AddPoliciesComponent {
         this.getShiftBYid(subLocationId);
         this.policiesForm.get('shift')?.enable();
       } else {
+        this.subLocationsDropdown=[];
         this.policiesForm.get('shift')?.disable();
       }
     }
@@ -190,16 +188,12 @@ export class AddPoliciesComponent {
         const locationId = formValue.location?.id
         const subLocationId = selectedSubLocation
   
-        console.log('Location ID:', locationId);
-        console.log('Sub Location ID:', subLocationId);
-  
         this.subscription = this.http
           .getData(
             `orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`
           )
           .subscribe({
             next: (data: any) => {
-              console.log('Shift Data:', data);
   
               if (data.length === 0) {
                 this.shiftDropdown = []; // Reset if no shifts are found
@@ -208,8 +202,6 @@ export class AddPoliciesComponent {
                   ...data.map((element: any) => element.orgShiftsItems)
                 ); // Flatten the shift data
               }
-  
-              console.log('Shift Dropdown Values:', this.shiftDropdown);
             },
             error: (err: any) => {
               console.error('Error fetching shift data:', err);

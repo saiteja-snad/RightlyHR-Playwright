@@ -73,8 +73,7 @@ export class ViewPoliciesComponent {
       );
       this.getFileName(row.policyAttachment);
     });
-  
-    console.log(this.updatePoliciesData);
+
   }
 
   getFileName(attachmentPath: string): string {
@@ -86,7 +85,6 @@ export class ViewPoliciesComponent {
         
       }
       this.policyFileName = fileName;
-      console.log('File Name:', fileName);
       return fileName;
       
     }
@@ -154,18 +152,15 @@ export class ViewPoliciesComponent {
     };
     this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.confirmation.openSuccessModal('Policies updated successfully');
         
         
       },
       error: (err) => {
-        console.log(err);
         this.confirmation.openErrorModal('Policies update failed');
         
       }
     });
-    console.log(payload);
     
   }
   
@@ -218,7 +213,6 @@ export class ViewPoliciesComponent {
     };
     this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.confirmation.openSuccessModal('Holidays published successfully');
         
         
@@ -229,7 +223,6 @@ export class ViewPoliciesComponent {
         
       }
     });
-    console.log(payload);
     
   }
 
@@ -237,7 +230,6 @@ export class ViewPoliciesComponent {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (locations: any) => {
         this.jobLocationDropDownData = locations;
-        console.log(this.jobLocationDropDownData);
         this.policyForm.patchValue({
           location : this.jobLocationDropDownData.find((x:any) => x.jobLocationName === this.updatePoliciesData.locationName),
         });
@@ -263,8 +255,6 @@ export class ViewPoliciesComponent {
               this.subLocationsDropdown = data.jobSubLocations; 
              
             }
-
-            console.log(this.subLocationsDropdown);
             this.policyForm.patchValue({
               subLocation : this.subLocationsDropdown.find((x:any) => x.jobSubLocationName === this.updatePoliciesData.subLocationName),
             });
@@ -291,9 +281,6 @@ export class ViewPoliciesComponent {
     if (selectedSubLocation && selectedSubLocation) {
       const locationId =  this.updatePoliciesData.locationId ?? formValue.location.id
       const subLocationId = this.updatePoliciesData.subLocationId ?? selectedSubLocation
-      console.log(this.updatePoliciesData);
-      console.log('Location ID:', locationId);
-      console.log('Sub Location ID:', subLocationId);
 
       this.subscription = this.http
         .getData(
@@ -301,7 +288,6 @@ export class ViewPoliciesComponent {
         )
         .subscribe({
           next: (data: any) => {
-            console.log('Shift Data:', data);
 
             if (data.length === 0) {
               this.shiftDropdown = []; // Reset if no shifts are found
@@ -314,7 +300,6 @@ export class ViewPoliciesComponent {
             this.policyForm.patchValue({
               shift : this.shiftDropdown.find((x:any) => x.id === this.updatePoliciesData.shiftName),
             });
-            console.log('Shift Dropdown Values:', this.shiftDropdown);
           },
           error: (err: any) => {
             console.error('Error fetching shift data:', err);

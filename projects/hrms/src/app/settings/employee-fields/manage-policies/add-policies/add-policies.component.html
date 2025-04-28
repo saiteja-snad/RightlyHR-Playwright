@@ -19,9 +19,12 @@
               <label for="year" class="form-label custom-label mb-2">
                 {{ "Year" | translate }}<span class="text-danger">*</span>
               </label>
-              <p-select [options]="yearDetails" optionLabel="name" optionValue="" placeholder="Please select year" formControlName="year"
-                class="form-select custom-select">
-              </p-select>
+              <p-select [options]="yearDetails" optionLabel="year" [filter]="false" [showClear]="false"
+                                class="form-select custom-select" formControlName="year"
+                                placeholder="Please select year">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
+                                <ng-template let-year #item>{{ year }}</ng-template>
+                            </p-select>
               <div *ngIf="policiesForm.get('year')?.touched && policiesForm.get('year')?.hasError('required')"
                 class="error-msg">
                 {{'Year is required'|translate}}
@@ -85,7 +88,7 @@
               <div class="row mb-2">
                 <div class="col-md-3">
                   <label class="form-label custom-label">{{'Policy Name' | translate}}<span class="text-danger">*</span></label>
-                  <input type="text" formControlName="policyName" class="form-control custom-input" placeholder="Please enter policy name" />
+                  <input type="text" formControlName="policyName" class="form-control custom-input" placeholder="Please enter policy name" maxlength="50"/>
                   <div *ngIf="policy.get('policyName')?.touched && policy.get('policyName')?.hasError('required')" class="error-msg">
                     {{'Policy Name is required'|translate}}
                   </div>
@@ -100,7 +103,7 @@
                 <div class="col-md-5 d-flex align-items-end">
                   <div class="form-check w-100">
                     <label class="form-label custom-label">{{'Description' | translate}}<span class="text-danger">*</span></label>
-                    <input type="text" formControlName="policyDescription" class="form-control custom-input" placeholder="Please enter description" />
+                    <input type="text" formControlName="policyDescription" class="form-control custom-input" placeholder="Please enter description" maxlength="50"/>
                     <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')" class="error-msg">
                       {{'Policy Description is required'|translate}}
                     </div>

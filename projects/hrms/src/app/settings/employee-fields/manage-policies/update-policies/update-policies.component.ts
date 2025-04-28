@@ -44,10 +44,10 @@ export class UpdatePoliciesComponent {
     
     
     this.policyForm = this.fb.group({
-      year: [null,Validators.required],
-      location: [null,Validators.required],
-      subLocation: [null,Validators.required],
-      shift : [null,Validators.required],
+      year: [{value: null, disabled: true},Validators.required],
+      location: [{value: null, disabled: true},Validators.required],
+      subLocation: [{value: null, disabled: true},Validators.required],
+      shift : [{value: null, disabled: true},Validators.required],
       policies: this.fb.array([])
     });
     
@@ -55,20 +55,18 @@ export class UpdatePoliciesComponent {
     this.policyForm.patchValue({
       year: this.yearDetails.find((x:any) => x.value === this.updatePoliciesData.applicableyear),
     });
-    console.log(this.updatePoliciesData);
     this.updatePoliciesData.orgPolicyItems.forEach((row:any) => {
       this.policies.push(
         this.fb.group({
-          policyName : [row.policyName, Validators.required],
-          policyOldFile :[row.policyAttachment, Validators.required],
-          policyDescription  : [row.policyDescription, Validators.required],
+          policyName : [row.policyName, [Validators.required, Validators.maxLength(50)]],
+          policyFile :[row.policyAttachment],
+          policyDescription  : [row.policyDescription, [Validators.required, Validators.maxLength(50)]],
           policyNewFile: [''] 
          
         })
       );
     });
     // this.addPolicyRow();
-    console.log(this.updatePoliciesData);
   }
 
 
@@ -80,9 +78,9 @@ export class UpdatePoliciesComponent {
   
   addPolicyRow() {
     const policyGroup = this.fb.group({
-      policyName: ['', Validators.required],
-      policyOldFile: ['', Validators.required],
-      policyDescription: ['', Validators.required],
+      policyName: ['', [Validators.required, Validators.maxLength(50)]],
+      policyFile: [''],
+      policyDescription: ['', [Validators.required, Validators.maxLength(50)]],
       policyNewFile: [''] 
     });
     this.policies.push(policyGroup);
@@ -98,17 +96,16 @@ export class UpdatePoliciesComponent {
   hidePublishCloneButtons : boolean = false
   submit() {
     const formValue = this.policyForm.value;
-    console.log(formValue);
     const payload = {
       locationId: formValue.location?.id ?? this.updatePoliciesData.locationId,
-      subLocationId: formValue.subLocation.id ?? this.updatePoliciesData.subLocationId,
+      subLocationId: formValue.subLocation?.id ?? this.updatePoliciesData.subLocationId,
       applicableyear: formValue.year?.value ?? this.updatePoliciesData.applicableyear,
       addedby: parseInt(this.empinfo.employeeId) ?? this.updatePoliciesData.addedby,
       addedDate: new Date().toISOString() ?? this.updatePoliciesData.addedDate,
       status: this.updatePoliciesData.status,
       authorizedDate: new Date().toISOString() ?? this.updatePoliciesData.authorizedDate,
       authorizedstatus: 'string' ,
-      shiftID: formValue.shift.id ?? this.updatePoliciesData.shiftID,
+      shiftID: formValue.shift?.id ?? this.updatePoliciesData.shiftID,
       id : this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
         PolicyName: item.policyName,
@@ -123,7 +120,6 @@ export class UpdatePoliciesComponent {
     };
     this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.confirmation.openSuccessModal('Policies updated successfully');
         this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
       },
@@ -133,7 +129,6 @@ export class UpdatePoliciesComponent {
         
       }
     });
-    console.log(payload);
     
   }
 
@@ -192,7 +187,6 @@ export class UpdatePoliciesComponent {
     };
     this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.confirmation.openSuccessModal('Policies published successfully');
         this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
         
@@ -204,7 +198,6 @@ export class UpdatePoliciesComponent {
         
       }
     });
-    console.log(payload);
     
   }
 
@@ -212,7 +205,6 @@ export class UpdatePoliciesComponent {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (locations: any) => {
         this.jobLocationDropDownData = locations;
-        console.log(this.jobLocationDropDownData);
         this.policyForm.patchValue({
           location : this.jobLocationDropDownData.find((x:any) => x.jobLocationName === this.updatePoliciesData.locationName),
         });
@@ -242,7 +234,6 @@ export class UpdatePoliciesComponent {
              
             }
 
-            console.log(this.subLocationsDropdown);
             this.policyForm.patchValue({
               subLocation : this.subLocationsDropdown.find((x:any) => x.jobSubLocationName === this.updatePoliciesData.subLocationName),
             });
@@ -259,7 +250,6 @@ export class UpdatePoliciesComponent {
         });
     } else {
       this.subLocationsDropdown = [];
-
     }
   }
   shiftDropdown: any[] = []; 
@@ -267,11 +257,8 @@ export class UpdatePoliciesComponent {
   getShiftBYid(selectedSubLocation: any): void {
     const formValue = this.policyForm.value;
     if (selectedSubLocation && selectedSubLocation) {
-      const locationId =  formValue.location?.id
+      const locationId =  this.updatePoliciesData.locationId
       const subLocationId = this.updatePoliciesData.subLocationId ?? selectedSubLocation
-
-      console.log('Location ID:', locationId);
-      console.log('Sub Location ID:', subLocationId);
 
       this.subscription = this.http
         .getData(
@@ -279,7 +266,6 @@ export class UpdatePoliciesComponent {
         )
         .subscribe({
           next: (data: any) => {
-            console.log('Shift Data:', data);
 
             if (data.length === 0) {
               this.shiftDropdown = []; // Reset if no shifts are found
@@ -292,7 +278,6 @@ export class UpdatePoliciesComponent {
             this.policyForm.patchValue({
               shift : this.shiftDropdown.find((x:any) => x.id === this.updatePoliciesData.shiftID),
             });
-            console.log('Shift Dropdown Values:', this.shiftDropdown);
           },
           error: (err: any) => {
             console.error('Error fetching shift data:', err);

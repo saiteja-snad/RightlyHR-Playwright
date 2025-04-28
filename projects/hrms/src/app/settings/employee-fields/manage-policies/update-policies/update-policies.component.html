@@ -57,35 +57,33 @@
                 <label class="form-label custom-label">{{'Policy Name' | translate}}<span
                     class="text-danger">*</span></label>
                 <input type="text" formControlName="policyName" class="form-control custom-input"
-                  placeholder="Please enter policy name" />
+                  placeholder="Please enter policy name" maxlength="50"/>
                 <div *ngIf="policy.get('policyName')?.touched && policy.get('policyName')?.invalid" class="error-msg">
-                  {{'Policy Name is required'|translate}}.
+                  {{'Policy Name is required'|translate}}
                 </div>
               </div>
-              <!-- OLD Policy Attachment (readonly) -->
+
               <div class="col-md-3">
                 <label class="form-label custom-label">
                   {{'Existing Policy Attachment' | translate}}
                 </label>
 
                 <div class="d-flex align-items-center gap-2">
-                  <!-- Showing the old file name only -->
                   <input type="text" class="form-control custom-input"
-                    [value]="getPolicyAttachmentName(policy.get('policyOldFile')?.value)" readonly />
+                    [value]="getPolicyAttachmentName(policy.get('policyFile')?.value)" readonly />
                   <div [ngbPopover]="oldPopContent" triggers="click" placement="top">
                     <i class="bi bi-info-circle-fill cursor"></i>
                   </div>
                 </div>
 
                 <ng-template #oldPopContent>
-                  <div>{{ getPolicyAttachmentName(policy.get('policyOldFile')?.value) }}</div>
+                  <div>{{ getPolicyAttachmentName(policy.get('policyFile')?.value) }}</div>
                 </ng-template>
               </div>
 
-              <!-- NEW Policy Attachment (upload input) -->
               <div class="col-md-3">
                 <label class="form-label custom-label">
-                  {{'Upload New Policy Attachment (Optional)' | translate}}
+                  {{'Upload New Policy Attachment' | translate}}
                 </label>
 
                 <div class="d-flex align-items-center gap-2">
@@ -98,23 +96,16 @@
                 <ng-template #newPopContent>
                   <div>{{ getPolicyAttachmentName(policy.get('policyNewFile')?.value) }}</div>
                 </ng-template>
-
-                <!-- Optional Error Message for new file (only if you want) -->
-                <!-- 
-  <div *ngIf="policy.get('policyNewFile')?.touched && policy.get('policyNewFile')?.invalid" class="error-msg">
-    {{'New Policy File is required' | translate}}.
-  </div> 
-  -->
               </div>
               <div class="col-md-2 d-flex align-items-end">
                 <div class="form-check">
                   <label class="form-label custom-label">{{'Description' | translate}}<span
                       class="text-danger">*</span></label>
                   <input type="text" formControlName="policyDescription" class="form-control custom-input"
-                    placeholder="Please enter description" />
+                    placeholder="Please enter description" maxlength="50"/>
                   <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.invalid"
                     class="error-msg">
-                    {{'Policy Description is required'|translate}}.
+                    {{'Policy Description is required'|translate}}
                   </div>
                 </div>
                 <button title="text" type="button" class="btn btn-sm btn-danger ms-2" (click)="removePolicyRow(i)"

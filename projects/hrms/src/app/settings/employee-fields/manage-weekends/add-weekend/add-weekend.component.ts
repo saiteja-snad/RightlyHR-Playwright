@@ -53,8 +53,8 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
 
   initializeForm() {
     this.weekendForm = this.fb.group({
-      year: ['', Validators.required],
-      location: [{ value: '', disabled: true }, Validators.required],
+      year: [new Date().getFullYear(), Validators.required],
+      location: ['', Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
       weekends: this.fb.array([this.createWeekend()])

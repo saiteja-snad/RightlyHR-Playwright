@@ -85,7 +85,7 @@
                         {{ "File Name" | translate }}<span class="text-danger">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" name="subDirName" [(ngModel)]="subDir.subDirName" 
-                    autocomplete="off" placeholder="Enter File Name" id="subDirName"  #subDirName="ngModel" required/>
+                    autocomplete="off" placeholder="Enter File Name" id="subDirName"  #subDirName="ngModel" required maxlength="50" [attr.maxlength]="50"/>
                     <div *ngIf="subDirName.touched && subDirName.invalid" class="error-msg">
                         {{'File Name is required' | translate}}
                       </div>

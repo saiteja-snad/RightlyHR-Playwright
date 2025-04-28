@@ -46,8 +46,8 @@ export class ClonePoliciesComponent {
     this.policyForm = this.fb.group({
       year: [null,Validators.required],
       location: [null,Validators.required],
-      subLocation: [null,Validators.required],
-      shift : [null,Validators.required],
+      subLocation: [{ value: '', disabled: true },Validators.required],
+      shift : [{ value: '', disabled: true },Validators.required],
       policies: this.fb.array([])
     });
     
@@ -58,16 +58,14 @@ export class ClonePoliciesComponent {
     this.updatePoliciesData.orgPolicyItems.forEach((row:any) => {
       this.policies.push(
         this.fb.group({
-          policyName : [row.policyName,Validators.required],
-          policyOldFile : [row.policyAttachment,Validators.required],
-          policyDescription  : [row.policyDescription,Validators.required],
+          policyName : [row.policyName,[Validators.required, Validators.maxLength(50)]],
+          policyFile : [row.policyAttachment,Validators.required],
+          policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50)]],
           policyNewFile: ['']
          
         })
       );
     });
-  
-    console.log(this.updatePoliciesData);
   }
 
 
@@ -79,9 +77,9 @@ export class ClonePoliciesComponent {
   
   addPolicyRow() {
     const policyGroup = this.fb.group({
-      policyName: ['', Validators.required],
+      policyName: ['', [Validators.required, Validators.maxLength(50)]],
       policyFile: ['', Validators.required],
-      policyDescription: ['', Validators.required],
+      policyDescription: ['',[ Validators.required, Validators.maxLength(50)]],
       policyNewFile: ['']
     });
     this.policies.push(policyGroup);
@@ -95,8 +93,9 @@ export class ClonePoliciesComponent {
   }
 
   hidePublishCloneButtons : boolean = false
+
   submit() {
-    
+      
     const formValue = this.policyForm.value;
 
     const payload = {
@@ -105,36 +104,31 @@ export class ClonePoliciesComponent {
       applicableyear: formValue.year?.value ?? this.updatePoliciesData.applicableyear,
       addedby: parseInt(this.empinfo.employeeId) ?? this.updatePoliciesData.addedby,
       addedDate: new Date().toISOString() ?? this.updatePoliciesData.addedDate,
-      status: this.updatePoliciesData.status,
+      status: 'Pending for submission',
       authorizedDate: new Date().toISOString() ?? this.updatePoliciesData.authorizedDate,
-      authorizedstatus: 'string' ,
+      authorizedstatus: 'string',
       shiftID: formValue.shift.id ?? this.updatePoliciesData.shiftID,
-      id : this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
-        PolicyName: item.policyName,
-        PolicyAttachment: (item.policyNewFile && item.policyNewFile !== '') 
-        ? item.policyNewFile 
-        : item.policyOldFile,
-        PolicyDescription: item.policyDescription,
-        Status: 'Published',
-        // holidayColor: 'string',
-        HeaderID : this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
+        policyName: item.policyName,
+        policyDescription: item.policyDescription,
+        policyAttachment: (item.policyNewFile && item.policyNewFile !== '') 
+              ? item.policyNewFile 
+              : item.policyFile,
+        status: "Pending for submission",
       }))
     };
-    this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
+    this.subscription = this.http.postdata('orgPolicies/Post', payload).subscribe({
       next: (response: any) => {
-        console.log(response);
-        this.confirmation.openSuccessModal('Policies updated successfully');
-        
-        
+        localStorage.setItem('personaldata', JSON.stringify(response))
+        this.confirmation.openSuccessModal('Policy added successfully');
+        this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
       },
       error: (err) => {
         console.log(err);
-        this.confirmation.openErrorModal('Policies update failed');
+        this.confirmation.openErrorModal('Failed to add policy');
         
       }
     });
-    console.log(payload);
     
   }
 
@@ -159,64 +153,30 @@ export class ClonePoliciesComponent {
     this.modalService.open(content, { centered: true })
   }
 
-  clone(){
-    this.router.navigate(['/settings/employee-fields/clonepolices']);
-  }
-
-  publish() {
-    const formValue = this.policyForm.value;
-    const payload = {
-      locationId: formValue.location?.id ?? this.updatePoliciesData.locationId,
-      subLocationId: formValue.subLocation.id ?? this.updatePoliciesData.subLocationId,
-      applicableyear: formValue.year?.value ?? this.updatePoliciesData.applicableyear,
-      addedby: parseInt(this.empinfo.employeeId) ?? this.updatePoliciesData.addedby,
-      addedDate: new Date().toISOString() ?? this.updatePoliciesData.addedDate,
-      status: 'Published',
-      authorizedDate: new Date().toISOString() ?? this.updatePoliciesData.authorizedDate,
-      authorizedstatus: 'string' ,
-      shiftID: formValue.shift.id ?? this.updatePoliciesData.shiftID,
-      id : this.updatePoliciesData.id,
-      orgPolicyItems: formValue.policies.map((item: any) => ({
-        policyName: item.policyName,
-        policyAttachment: item.policyAttachment,
-        policyDescription: item.policyDescription,
-        status: 'Published',
-        holidayColor: 'string',
-        headerID : this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
-      }))
-    };
-    this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
-      next: (response: any) => {
-        console.log(response);
-        this.confirmation.openSuccessModal('Holidays published successfully');
-        
-        
-      },
-      error: (err) => {
-        console.log(err);
-        this.confirmation.openErrorModal('Holidays published failed');
-        
-      }
-    });
-    console.log(payload);
-    
-  }
-
   getjobLocationList() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (locations: any) => {
         this.jobLocationDropDownData = locations;
-        console.log(this.jobLocationDropDownData);
-        this.policyForm.patchValue({
-          location : this.jobLocationDropDownData.find((x:any) => x.jobLocationName === this.updatePoliciesData.locationName),
-        });
+        // this.policyForm.patchValue({
+        //   location : this.jobLocationDropDownData.find((x:any) => x.jobLocationName === this.updatePoliciesData.locationName),
+        // });
         this.getSubLocationByid(this.updatePoliciesData.locationId)
       }
     });
 
   }
 
-  
+  onLocationChange(locationId: any) {
+    if (locationId) {
+      this.getSubLocationByid(locationId);
+      this.policyForm.get('subLocation')?.enable();
+    } else {
+      this.jobLocationDropDownData = [];
+      this.subLocationsDropdown=[];
+      this.policyForm.get('subLocation')?.disable();
+      this.policyForm.get('shift')?.disable();
+    }
+  }
 
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation) {
@@ -233,10 +193,9 @@ export class ClonePoliciesComponent {
              
             }
 
-            console.log(this.subLocationsDropdown);
-            this.policyForm.patchValue({
-              subLocation : this.subLocationsDropdown.find((x:any) => x.jobSubLocationName === this.updatePoliciesData.subLocationName),
-            });
+            // this.policyForm.patchValue({
+            //   subLocation : this.subLocationsDropdown.find((x:any) => x.jobSubLocationName === this.updatePoliciesData.subLocationName),
+            // });
 
             const shiftdata  = {
               locid : this.updatePoliciesData.locationId,
@@ -249,20 +208,28 @@ export class ClonePoliciesComponent {
           },
         });
     } else {
+      this.jobLocationDropDownData=[];
       this.subLocationsDropdown = [];
 
     }
   }
   shiftDropdown: any[] = []; 
 
+  onSubLocationChange(subLocationId: any) {
+    if (subLocationId) {
+      this.getShiftBYid(subLocationId);
+      this.policyForm.get('shift')?.enable();
+    } else {
+      this.subLocationsDropdown=[];
+      this.policyForm.get('shift')?.disable();
+    }
+  }
+
   getShiftBYid(selectedSubLocation: any): void {
     const formValue = this.policyForm.value;
     if (selectedSubLocation && selectedSubLocation) {
-      const locationId =  formValue.location?.id
+      const locationId =  this.updatePoliciesData.locationId
       const subLocationId = this.updatePoliciesData.subLocationId ?? selectedSubLocation
-
-      console.log('Location ID:', locationId);
-      console.log('Sub Location ID:', subLocationId);
 
       this.subscription = this.http
         .getData(
@@ -270,7 +237,6 @@ export class ClonePoliciesComponent {
         )
         .subscribe({
           next: (data: any) => {
-            console.log('Shift Data:', data);
 
             if (data.length === 0) {
               this.shiftDropdown = []; // Reset if no shifts are found
@@ -280,10 +246,9 @@ export class ClonePoliciesComponent {
               ); // Flatten the shift data
             }
             
-            this.policyForm.patchValue({
-              shift : this.shiftDropdown.find((x:any) => x.id === this.updatePoliciesData.shiftID),
-            });
-            console.log('Shift Dropdown Values:', this.shiftDropdown);
+            // this.policyForm.patchValue({
+            //   shift : this.shiftDropdown.find((x:any) => x.id === this.updatePoliciesData.shiftID),
+            // });
           },
           error: (err: any) => {
             console.error('Error fetching shift data:', err);
@@ -302,7 +267,7 @@ export class ClonePoliciesComponent {
   }
 
   navigation(){
-    this.router.navigate(['/settings/employee-fields/manage-policies/published-policies']);
+    this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
   }
 
   ngOnDestroy(){

@@ -151,7 +151,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
             this.basicInfoForm.disable();
             console.log('Data updated successfully:', data);
             this.buttons = !this.buttons;
-            this.modalService.dismissAll();
           } else if (data.statusCode === 409) {
       
             console.log('Conflict:', data.message);

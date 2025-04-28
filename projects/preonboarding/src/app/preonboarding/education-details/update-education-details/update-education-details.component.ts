@@ -154,7 +154,7 @@ export class UpdateEducationDetailsComponent {
                 console.log(data);
                 this.modalService.dismissAll();
                 this.getData.getEducation.set(true);
-                this.openPopup.openSuccess("Data updated successfully");
+                this.openPopup.openSuccess("Education Details updated successfully");
                 this.educationForm.reset();
               },
               error: (reason: any) => {
@@ -170,7 +170,7 @@ export class UpdateEducationDetailsComponent {
         next: (data: any) => {
           this.modalService.dismissAll();
           this.getData.getEducation.set(true);
-          this.openPopup.openSuccess("Data updated successfully");
+          this.openPopup.openSuccess("Education Details updated successfully");
           this.educationForm.reset();
         },
         error: (reason: any) => {

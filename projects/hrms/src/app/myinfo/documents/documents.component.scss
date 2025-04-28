@@ -1,3 +1,13 @@
+.custom-setting-right-content {
+    height: calc(100dvh - 15rem);
+}
+
+.folders-container{
+    width: 22rem;
+    height: calc(100dvh - 15rem);
+    overflow: auto;
+}
+
 .folder-content {
     display: flex;
     align-items: center;
@@ -10,7 +20,20 @@
     font-weight: 500;
 }
 
-.foldder-icon {
+.folder-icon {
     font-size: xx-large;
     color: #f9b755;
+}
+
+.subfolder-container {
+    padding: 0.5rem 0.75rem;
+
+    .folder-icon {
+        font-size: x-large;
+        color: #f9b755;
+    }
+
+    .folder-name {
+        font-size: var(--fontsize14);
+    }
 }

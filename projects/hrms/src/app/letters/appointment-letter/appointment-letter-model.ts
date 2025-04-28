@@ -75,7 +75,6 @@ export interface IemployeeDetails {
   designation: any;
   Jobdetails: IJobDetailes[]
 }
-
 export interface IJobDetailes {
   employeeId: number;
   location: string;
@@ -83,8 +82,6 @@ export interface IJobDetailes {
   jobRole: string;
   department: string;
 }
-
-
 export interface IEmployeeDetails {
   accountNumber: number
   addressId: number
@@ -155,14 +152,12 @@ export interface IEmployeeDetails {
   workPhoneCountryCode: number
   zipCode: number
 }
-
 export interface IDepartment {
   sno: number,
   departmentName: string;
   isdeleted: string;
 }
 export interface IMake {
-
   sno: number,
   makeName: string,
   isDeleted: boolean
@@ -183,7 +178,6 @@ export interface IAddress {
   zipCode: string,
   country: string
 }
-
 export interface IEmployeeJobInfo {
   id: number;
   employeeId: number;
@@ -221,7 +215,6 @@ export interface IEmployeeJobInfo {
   teamManagerId: number;
   workLocation: string;
 }
-
 export interface IEmployeeAddress {
   id: number;
   empId: number;
@@ -233,7 +226,6 @@ export interface IEmployeeAddress {
   zipCode: string;
   country: string;
 }
-
 export interface IEmployeeProfile {
   firstName: string;
   lastName: string;
@@ -271,7 +263,6 @@ export interface IEmployeeProfile {
   allowWFH: boolean;
   employeeAddresses: IEmployeeAddress[];
 }
-
 export interface IEmployeeIdentity {
   identityId: number;
   empId: number;
@@ -281,11 +272,8 @@ export interface IEmployeeIdentity {
   isDeleted: boolean;
   referenceId: number;
 }
-
 export interface IAsset {
   sno: number;
   assetType1: string;
   isDeleted: boolean;
 }
-
-

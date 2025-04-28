@@ -729,6 +729,12 @@
                 @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
                 <button class="custom-btn accepted-btn px-5">Accepted</button>
                 }
+                @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
+                <button class="custom-btn rejected-btn px-5" disabled>Rejected</button>
+                }
+                @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
+                <button class="custom-btn secondary-btn px-5" (click)="navigatefirst()">Close</button>
+                }
                 <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
                 @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
                 <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>

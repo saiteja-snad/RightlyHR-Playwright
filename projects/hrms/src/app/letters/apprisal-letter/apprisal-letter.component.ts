@@ -81,8 +81,6 @@ export class ApprisalLetterComponent {
   promotion: boolean = false;
   nopromotion: boolean = true;
   currentDate: Date = new Date();
-  @ViewChild('successhide') private readonly successhide!: NgbModal;
-  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
   Status: any;
   employeeForm!: FormGroup;
   employeementType: { name: string, value: boolean }[] = [
@@ -311,7 +309,11 @@ export class ApprisalLetterComponent {
       .getData(`Compensationdata/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
-          let res = data.reverse()[0];
+          if(!data || data.length == 0){
+            this.jobErrorMessage = 'No Compensation details found for this employee.';
+            this.employeeForm.get('jobValid')?.setValue(false);
+          }else{
+            let res = data.reverse()[0];
           this.employeeCompensationData = res;
           this.appraisalData.employeeId = res.employeeId;
           this.appraisalData.bonus = res.bonusAmountData;
@@ -522,7 +524,9 @@ export class ApprisalLetterComponent {
             Employee.pfPreAnuum +
             Employee.esiPerAnnum
           );
-        },
+        }
+      }
+          
       });
   }
   getEmployeeId() {

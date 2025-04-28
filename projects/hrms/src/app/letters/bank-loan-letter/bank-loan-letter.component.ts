@@ -78,9 +78,9 @@ export class BankLoanLetterComponent {
       jobValid: [false, Validators.requiredTrue],
     });
 
-    this.employeeForm.get('dateofbankloan')?.valueChanges.subscribe((newDate) => {
-      this.DateValidation();
-    });
+    // this.employeeForm.get('dateofbankloan')?.valueChanges.subscribe((newDate) => {
+    //   this.DateValidation();
+    // });
   }
 
   async getBankLoanTemplate() {

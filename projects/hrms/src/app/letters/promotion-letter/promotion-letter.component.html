@@ -30,13 +30,13 @@
                             </small>
                         </div>
                     </div>
+
                     <div class="mb-3">
-                        <label class="form-label custom-label mb-2">{{'Date'| translate }} <span
+                        <label class="form-label custom-label mb-2">{{'Issued Date'| translate }} <span
                                 class="error-msg">*</span></label>
                         <input type="date" class="form-control custom-input" id="relievingDate"
                             formControlName="dateofpromotion" [(ngModel)]="promotiondata.dateofpromotion"
-                            placeholder="Please enter Date" (change)="DateValidation()" onkeydown="return false"
-                            [ngClass]="{ 'is-invalid': employeeForm.get('dateofpromotion')?.invalid && employeeForm.get('dateofpromotion')?.touched || !isdateofpromotion }" />
+                            placeholder="Please enter Date" (change)="DateValidation()" onkeydown="return false"/>
 
                         <!-- Error block shows for both required and custom logic -->
                         <div *ngIf="employeeForm.get('dateofpromotion')?.touched">
@@ -48,11 +48,24 @@
                             </small>
                         </div>
                     </div>
+
                     <div class="mb-3">
+                        <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="documentType" optionLabel="name" placeholder="Please select document type"
+                                formControlName="Documenttype" class="form-select custom-select">
+                            </p-select>
+                        </div>
+                        <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
+                            <div class="error-msg">Document Type is required</div>
+                        </div>
+                    </div>
+                    
+                    <!-- <div class="mb-3">
                         <label class="form-label custom-label mb-2">{{'Document Type'| translate }} <span
                                 class="error-msg">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name" optionValue="value"
+                            <p-select [options]="documentType" optionLabel="name" optionValue="value"
                                 placeholder="Please select document type" [showClear]="true"
                                 [(ngModel)]="promotiondata.Documenttype" formControlName="Documenttype"
                                 inputId="documenttype" class="form-select custom-select">
@@ -62,7 +75,8 @@
                             *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
                             <div class="error-msg">{{'Document Type is required'| translate }}</div>
                         </div>
-                    </div>
+                    </div> -->
+
                     <div class="col-xl-12 mb-4">
                         <label class="form-label custom-label mb-2">{{'Note'| translate }}</label>
                         <textarea class="form-control custom-input" formControlName="note"
@@ -122,7 +136,7 @@
                     <!--page-1-->
                     <div class="letter-page-content" id="pdfContent1">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="promotiondata.Documenttype; else doc" class="soft-copy-letter">
+                            <div *ngIf="employeeForm.get('Documenttype')?.value?.value === true; else doc" class="soft-copy-letter">
                                 <app-lettersheader></app-lettersheader>
                             </div>
                             <ng-template #doc>
@@ -159,9 +173,9 @@
                                 <table class="w-100">
                                     <thead>
                                         <tr>
-                                            <th class="p-1">Components in Salary</th>
-                                            <th class="text-end p-1">Per Month</th>
-                                            <th class="text-end p-1">Per Annum</th>
+                                            <th class="text-center">Components in Salary</th>
+                                            <th class="text-center">Per Month</th>
+                                            <th class="text-center">Per Annum</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -375,17 +389,3 @@
         </div>
     </div>
 </div>
-
-<ng-template #successhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-        <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
-    </div>
-</ng-template>
-
-<ng-template #errorhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-        <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
-    </div>
-</ng-template>

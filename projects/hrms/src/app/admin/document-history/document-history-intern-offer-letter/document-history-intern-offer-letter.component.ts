@@ -130,7 +130,7 @@ export class DocumentHistoryInternOfferLetterComponent {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.conformationPopup.openSuccessModal('Intern Offer Released Successfully');
+          this.conformationPopup.openSuccessModal('Trainee Offer Released Successfully');
           this.getTraineeOfferLetters();
           this.employeeEmailTrainee(Values)
           if (data) {
@@ -177,7 +177,7 @@ export class DocumentHistoryInternOfferLetterComponent {
          next: (data: any) => {
            console.log(data);
         
-           this.conformationPopup.openSuccessModal('Intern Offer Approved Successfully');
+           this.conformationPopup.openSuccessModal('Trainee Offer Approved Successfully');
            this.getTraineeOfferLetters();
            this.ApproveEmailTrainee(Values)
            if (data) {

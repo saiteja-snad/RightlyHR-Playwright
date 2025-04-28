@@ -84,12 +84,12 @@
           <label for="Updatejobrole" class="form-label custom-label mb-2">
             {{'Grade Name' | translate}} <span class="error-msg">*</span>
           </label>
-          <select title="text" class="form-control custom-input" formControlName="updategradeId">
-            <option value="" disabled selected>{{'Please select grade name' | translate}}</option>
-            <option *ngFor="let grade of gradedetails" [value]="grade.gradeId">
-              {{ grade.gradeName }}
-            </option>
-          </select>
+          <div class="custom-p-select-content">
+            <p-select class="form-select custom-input" [options]="gradedetails" optionLabel="gradeName"
+              optionValue="gradeId" [filter]="true" [showClear]="false" formControlName="updategradeId"
+              placeholder="{{'Please select grade name' | translate}}">
+            </p-select>
+          </div>
         </div>
         <div *ngIf="AddForm.get('updategradeId')?.touched && AddForm.get('updategradeId')?.invalid" class="error-msg">
           <div *ngIf="AddForm.get('updategradeId')?.errors?.['required']">{{'Grade Name is required'|translate}}</div>

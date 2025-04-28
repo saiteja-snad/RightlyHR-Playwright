@@ -50,14 +50,7 @@ export class DocumentsComponent {
    
     });
   }
-  ngOnChanges(changes: SimpleChanges) {
-    this.showUploadIcon = true;
-    // if (changes['folder']) {
-    //   console.log(changes['folder']);
-    // }
-    console.log(this.selectedFile);
-    this.getAllFiles();
-  }
+
 
 
   getMainFolders(dirPath?: string) {
@@ -156,14 +149,7 @@ export class DocumentsComponent {
   }
   filechange(event: any) {
     this.file = event.target.files[0];
-    const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.uploadfrom.patchValue({ filename: file.name }); // Update the filename control with the selected file name
-    } else {
-      this.uploadfrom.patchValue({ filename: '' });
-    }
+    
   }
 
   filterFolder() {

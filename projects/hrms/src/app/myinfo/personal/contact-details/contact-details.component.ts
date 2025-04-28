@@ -142,12 +142,19 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
       .subscribe({
         next: (data: any) => {
-          console.log('Data updated successfully:', data);
-          this.modalService.dismissAll();
-          this.contactForm.disable();
-          this.buttons = false; // Disable the button after successful update
-          this.getEmployeeId();
-          this.conformationPopup.openSuccessModal('Contact Details updated successfully');
+          if (data.statusCode === 200) {
+            this.conformationPopup.openSuccessModal('Contact Details updated successfully');
+            this.modalService.dismissAll();
+            this.contactForm.disable();
+            this.buttons = false; // Disable the button after successful update
+            this.getEmployeeId()
+            }else if (data.statusCode === 409) {
+              this.conformationPopup.openErrorModal(data.message,);
+              this.patchForm(this.employedata);
+            }
+    
+        
+
         },
         error: (reason: any) => {
           console.log(reason);

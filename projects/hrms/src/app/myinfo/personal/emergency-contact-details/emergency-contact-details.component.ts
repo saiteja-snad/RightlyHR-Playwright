@@ -112,7 +112,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       
       contact1Name: data.emergencyName || '', // Bind first emergency contact name
       contact1Email: data.emailId || '',      // Bind first emergency contact email
-      contact1Phone: data.mobileNumber || '', // Bind first emergency contact phone
+      contact1Phone: data.emergencynumber || '', // Bind first emergency contact phone
       contact1Relationship: contact1Relationship || '', // Bind first emergency contact relationship
       contact2Name: data.emergencyName1 || '', // Bind second emergency contact name
       contact2Email: data.emergencyEmail1 || '', // Bind second emergency contact email
@@ -132,6 +132,8 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     this.buttons = false;
     this.buttons2 = false;
     this.emergencyContactForm.disable();
+    this.emergencyContactForm.reset();
+    this.getEmployeeId(); // Refresh the employee data
   }
 
 
@@ -166,12 +168,19 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           console.log('Data updated successfully:', data);
-          this.modalService.dismissAll();
-          this.emergencyContactForm.disable();
-          this.buttons = false; // Disable the button after successful update
-          this.buttons2 = false; // Disable the button after successful update
-          this.getEmployeeId(); // Refresh the employee data
-          this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
+         
+          if (data.statusCode === 200) {
+            this.modalService.dismissAll();
+            this.emergencyContactForm.disable();
+            this.buttons = false; // Disable the button after successful update
+            this.buttons2 = false; // Disable the button after successful update
+            this.getEmployeeId(); // Refresh the employee data
+            this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
+            this.modalService.dismissAll();
+            }else if (data.statusCode === 409) {
+              this.conformationPopup.openErrorModal(data.message,);
+              this.patchForm(this.employedata);
+            }
         },
         error: (reason: any) => {
           console.log(reason);

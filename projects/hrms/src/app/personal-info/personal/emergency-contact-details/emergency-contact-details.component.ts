@@ -112,7 +112,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       
       contact1Name: data.emergencyName || '', // Bind first emergency contact name
       contact1Email: data.emailId || '',      // Bind first emergency contact email
-      contact1Phone: data.mobileNumber || '', // Bind first emergency contact phone
+      contact1Phone: data.emergencynumber || '', // Bind first emergency contact phone
       contact1Relationship: contact1Relationship || '', // Bind first emergency contact relationship
       contact2Name: data.emergencyName1 || '', // Bind second emergency contact name
       contact2Email: data.emergencyEmail1 || '', // Bind second emergency contact email

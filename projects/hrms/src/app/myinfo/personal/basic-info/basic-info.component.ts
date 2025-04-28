@@ -161,8 +161,8 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
           this.buttons = !this.buttons;
           console.log('Data updated successfully:', data);
           this.modalService.dismissAll();
-          }else if (data.statusCode === 400) {
-            this.conformationPopup.openErrorModal('Basic Information Already Exist',);
+          }else if (data.statusCode === 409) {
+            this.conformationPopup.openErrorModal(data.message,);
             this.patchForm(this.emsployedata);
           }
 

@@ -170,13 +170,13 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
           console.log('Data updated successfully:', data);
          
           if (data.statusCode === 200) {
-            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
             this.emergencyContactForm.disable();
             this.buttons = false; // Disable the button after successful update
             this.buttons2 = false; // Disable the button after successful update
             this.getEmployeeId(); // Refresh the employee data
-            this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
-            this.modalService.dismissAll();
+        
+          
             }else if (data.statusCode === 409) {
               this.conformationPopup.openErrorModal(data.message,);
               this.patchForm(this.employedata);

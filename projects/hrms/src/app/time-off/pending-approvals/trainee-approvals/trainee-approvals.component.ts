@@ -184,8 +184,12 @@ export class TraineeApprovalsComponent {
     };
     this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
-        this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal('Request Rejected Successfully')
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
       },
       error: (reason: any) => {
         this.isLoading = false
@@ -195,10 +199,7 @@ export class TraineeApprovalsComponent {
         this.isLoading = false;
         this.getAllPendingApprovals();
         this.selectedLeaveData = {};
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          separation: true,
-        }));
+        
       },
     });
   }
@@ -207,7 +208,6 @@ export class TraineeApprovalsComponent {
   handleProcess(request: Itraineeapproval) {
     let requestBody = {
       status: 'Processed',
-      comments: this.selectedLeaveData.comments,
     };
     this.subscription = this.http.putData(`PendingApproval/process/${request.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
@@ -262,7 +262,11 @@ export class TraineeApprovalsComponent {
     this.subscription = this.http.putData(`PendingApproval/process/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal('Request Extend Successfully')
+        this.conformationPopup.openSuccessModal('Request Extend Successfully');
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal(reason.error.message)
@@ -270,10 +274,7 @@ export class TraineeApprovalsComponent {
       complete: () => {
         this.getAllPendingApprovals();
         this.selectedLeaveData = {};
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          separation: true,
-        }));
+      
       },
     });
   }

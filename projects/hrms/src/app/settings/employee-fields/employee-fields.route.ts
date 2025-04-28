@@ -39,7 +39,6 @@ export default [
             { path: 'serving-period', loadComponent: () => import('./job/serving-period/serving-period.component').then((m) => m.ServingPeriodComponent) },
             { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent) },
             { path: 'interview-round', loadComponent: () => import('./job/interview-round/interview-round.component').then((m) => m.InterviewRoundComponent) },
-
             { path: 'team', loadComponent: () => import('./job/team/team.component').then((m) => m.TeamComponent) },
             { path: 'pre-on-boarding-documents', loadComponent: () => import('./job/pre-on-boarding-documents/pre-on-boarding-documents.component').then((m) => m.PreOnBoardingDocumentsComponent) }
         ]

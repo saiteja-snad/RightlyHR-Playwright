@@ -8,15 +8,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-dashboard',
-  imports: [
-    CommonModule,
-    RouterModule,
-    DocumentHistoryLayoutComponent,
-    TranslateModule,
-  ],
+  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
+
 export class DashboardComponent {
   subscription!: Subscription;
   Inactive!: number;
@@ -35,11 +31,8 @@ export class DashboardComponent {
   }
   cardItems: any[] = [];
 
-  constructor(
-    private router: Router,
-    private http: HttpService,
-    private cdr: ChangeDetectorRef, public rbac: RbacService
-  ) { }
+  constructor(private router: Router, private http: HttpService, private cdr: ChangeDetectorRef, 
+    public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.fetchData();
@@ -58,89 +51,73 @@ export class DashboardComponent {
 
   //function for prospective employee
   empdata() {
-    this.subscription = this.http
-      .getData(`Employeedata/ProspectiveEmployees`)
-      .subscribe({
-        next: (data: any) => {
-          this.ACTDATA = data.length;
-          this.updateCardItems();
-        },
-
-        error: (reason) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`Employeedata/ProspectiveEmployees`).subscribe({
+      next: (data: any) => {
+        this.ACTDATA = data.length;
+        this.updateCardItems();
+      },
+      error: (reason) => console.log(reason),
+    });
   }
 
   //   function for active Employees
   activeEmpData() {
-    this.subscription = this.http
-      .getData(`Employeedata/ActiveEmployees`)
-      .subscribe({
-        next: (data: any) => {
-          this.Active = data.length;
-          this.updateCardItems();
-        },
-
-        error: (reason) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`Employeedata/ActiveEmployees`).subscribe({
+      next: (data: any) => {
+        this.Active = data.length;
+        this.updateCardItems();
+      },
+      error: (reason) => console.log(reason),
+    });
   }
 
   // function for Inactive Employees
   InActiveEmpData() {
-    this.subscription = this.http
-      .getData(`Employeedata/InactiveEmployees`)
-      .subscribe({
-        next: (data: any) => {
-          this.Inactive = data.length;
-          this.updateCardItems();
-        },
-
-        error: (reason) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`Employeedata/InactiveEmployees`).subscribe({
+      next: (data: any) => {
+        this.Inactive = data.length;
+        this.updateCardItems();
+      },
+      error: (reason) => console.log(reason),
+    });
   }
 
   //  function for prospective employee
   empdataTrainee() {
-    this.subscription = this.http
-      .getData(`Employeedata/TrainingEmployees`)
-      .subscribe({
-        next: (data: any) => {
-          let actdat = data.filter((ele: any) => {
-            if (ele.empstatus === 'Trainee Prospective') {
-              return ele;
-            }
-          });
-          this.Trainee = actdat.length;
-          this.updateCardItems();
-        },
-
-        error: (reason) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`Employeedata/TrainingEmployees`).subscribe({
+      next: (data: any) => {
+        let actdat = data.filter((ele: any) => {
+          if (ele.empstatus === 'Trainee Prospective') {
+            return ele;
+          }
+        });
+        this.Trainee = actdat.length;
+        this.updateCardItems();
+      },
+      error: (reason) => console.log(reason),
+    });
   }
 
   //  function for Active Trainee employee
   empdataTraineeActive(status: string) {
-    this.subscription = this.http
-      .getData(`Employeedata/TraineeActiveEmployees/${status}`)
-      .subscribe({
-        next: (data: any) => {
-          this.traineeactive = data.length;
-          this.updateCardItems();
-        },
-        error: (reason: any) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
+      next: (data: any) => {
+        this.traineeactive = data.length;
+        this.updateCardItems();
+      },
+      error: (reason: any) => console.log(reason),
+    });
   }
 
   //  function for InActive Trainee employee
   empdataTraineeInActive(status: string) {
-    this.subscription = this.http
-      .getData(`Employeedata/TraineeActiveEmployees/${status}`)
-      .subscribe({
-        next: (data: any) => {
-          this.traineeInactive = data.length;
-          this.updateCardItems();
-        },
-        error: (reason: any) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
+      next: (data: any) => {
+        this.traineeInactive = data.length;
+        this.updateCardItems();
+      },
+      error: (reason: any) => console.log(reason),
+    });
   }
 
   // function to get getjobList Current Openings
@@ -174,15 +151,13 @@ export class DashboardComponent {
   }
 
   probationemployees() {
-    this.subscription = this.http
-      .getData(`ProbationFlow/getProbationEmployeesStatus`)
-      .subscribe({
-        next: (data: any) => {
-          this.PROBDATA = data.length;
-          this.updateCardItems();
-        },
-        error: (reason) => console.log(reason),
-      });
+    this.subscription = this.http.getData(`ProbationFlow/getProbationEmployeesStatus`).subscribe({
+      next: (data: any) => {
+        this.PROBDATA = data.length;
+        this.updateCardItems();
+      },
+      error: (reason) => console.log(reason),
+    });
   }
 
   generateDocument() {

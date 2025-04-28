@@ -1,6 +1,6 @@
 <div class="sidenav-main-container">
     <div class="sidenav-header text-center w-100 px-0">
-        <img src="logos/rightlyhr-logo.png" alt="company logo" class="logo-img">
+        <img src="logos/sidenav-logo.png" alt="company logo" class="logo-img">
     </div>
     <hr class="white-line">
     <div class="sidnav-main-content px-2">
@@ -82,11 +82,14 @@
 </div>
 
 <ng-template #logoutpopup let-modal>
-    <div class="result-popup-content text-center" ngbAutofocus>
-        <p class="confirmation-text mb-5">Are you sure you want to logout?</p>
-        <div class="d-flex justify-content-center w-100 gap-5">
-            <button class="custom-btn btn-secondary w-50 py-3 px-5" (click)="close()">Close</button>
-            <button class="custom-btn btn-primary w-50 py-3 px-5" (click)="onLogout()">Logout</button>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="images\logout-image.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to logout?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="close()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="onLogout()">Yes</button>
         </div>
     </div>
 </ng-template>

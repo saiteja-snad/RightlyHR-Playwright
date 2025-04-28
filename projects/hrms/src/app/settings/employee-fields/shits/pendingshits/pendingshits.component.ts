@@ -6,46 +6,42 @@ import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
-
 @Component({
   selector: 'app-pendingshits',
-  imports: [NoDataFoundComponent, CommonModule,TranslateModule,RouterModule],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule],
   templateUrl: './pendingshits.component.html',
   styleUrl: './pendingshits.component.scss'
 })
+
 export class PendingshitsComponent {
   empinfo: any
   subscription!: Subscription;
   shiftsData: any[] = [];
-  pendingsubmittedshifts:any;
-  constructor(
-    public router: Router,
-    private http: HttpService,
-    public rbac: RbacService
-  ) { }
+  pendingsubmittedshifts: any;
+
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getShifts();
   }
+
   getShiftNames(shift: any) {
     return shift.orgShiftsItems.map((item: any) => item.shiftName).join(', ');
   }
+
   getShifts(): void {
     this.subscription = this.http.getData(`orgShifts`).subscribe({
       next: (data: any) => {
         this.shiftsData = data;
-       // this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
-       this.pendingsubmittedshifts = data
-  .filter((item: any) => item.status === "Pending for Submission")
-  .map((item: any) => {
-    return {
-      ...item,
-      shiftName: item.orgShiftsItems?.[0]?.shiftName || 'N/A' // fallback if missing
-    };
-  });
-
-        console.log("pending",this.pendingsubmittedshifts);
+        // this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission");
+        this.pendingsubmittedshifts = data.filter((item: any) => item.status === "Pending for Submission")
+          .map((item: any) => {
+            return {
+              ...item,
+              shiftName: item.orgShiftsItems?.[0]?.shiftName || 'N/A' // fallback if missing
+            };
+          });
       }, error(err) {
         console.log("expensesheadererror", err)
       },
@@ -56,14 +52,13 @@ export class PendingshitsComponent {
     this.router.navigate(['/settings/employee-fields/updateshifts', id]);
   }
 
-
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
   }
 
-  nagvition(){
+  nagvition() {
     this.router.navigate(['/settings/employee-fields/addshifts']);
   }
 }

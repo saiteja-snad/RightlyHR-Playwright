@@ -154,13 +154,17 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       .postdata(`Employeedata/UPDATER`, updatePayload)
       .subscribe({
         next: (data: any) => {
+          if (data.statusCode === 200) {
           this.conformationPopup.openSuccessModal('Basic Information Updated Successfully',);
           this.getEmployeeId();
           this.basicInfoForm.disable();
           this.buttons = !this.buttons;
-          console.log('Data updated successfully:', data);
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Basic Info updated successfully')
+      
+          }else if (data.statusCode === 409) {
+            this.conformationPopup.openErrorModal(data.message,);
+            this.patchForm(this.emsployedata);
+          }
+
         },
         error: (reason: any) => {
           console.log(reason);

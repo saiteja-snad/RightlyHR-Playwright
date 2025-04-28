@@ -1,19 +1,23 @@
 <div class="profile-info-card-main-container w-100">
     <div class="d-flex justify-content-between mb-3">
-        <div class="image-content">
-            <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
-            <div class="edit-icon-content">
-                <label for="formFile" class="form-label"><img src="/icons/Edit.png" alt="edit-icon"
-                        class="edit-icon cursor"></label>
-                <input class="form-control d-none" type="file" id="formFile"  accept=".jpg" (change)="chooseNewProfile($event)">
+        <div class="d-flex gap-2">
+            <div class="image-content">
+                <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
+                <div class="edit-icon-content">
+                    <label for="formFile" class="form-label"><img src="/icons/Edit.png" alt="edit-icon"
+                            class="edit-icon cursor"></label>
+                    <input class="form-control d-none" type="file" id="formFile" accept=".jpg"
+                        (change)="chooseNewProfile($event)">
+                </div>
+            </div>
+            <div class="pt-2">
+                <p class="name mb-0">{{empdata?.firstName}} {{empdata?.middleName}} {{empdata?.lastName}}</p>
+                <p class="sub-text mb-0">{{jobRole}}</p>
+                <p class="sub-text mb-0">{{empdata?.fusionEmpId}}</p>
             </div>
         </div>
-        <div class="text-nowrap pt-2">
-            <p class="name mb-0">{{empdata?.firstName}} {{empdata?.middleName}} {{empdata?.lastName}}</p>
-            <p class="sub-text mb-0">{{jobRole}}</p>
-            <p class="sub-text mb-0">{{empdata?.fusionEmpId}}</p>
-        </div>
-        <div class="qr-content pt-5 ps-2">
+    
+        <div class="qr-content pt-5 text-end">
             <img src="/icons/qr-code.png" alt="qr icon" class="qr-icon cursor">
         </div>
     </div>

@@ -78,9 +78,11 @@
                     <label for="rejectReason">Reject Reason<span class="error-msg">*</span></label>
                     <textarea type="text" name="rejectReason" class="form-control" placeholder="Please provide reason for rejection" 
                       rows="3" maxlength="250" formControlName="comments"></textarea>
-                    <div class="mt-2"><span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }} / 250</span></div>
+                      <div class="mt-2 textarea-count-text">
+                        <span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }} / 250</span>
+                    </div>
                     <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" class="error-msg">
-                        {{'Reason'| translate}}.
+                        {{'Reject Reason is required'| translate}}.
                     </div>
                 </div>
                 <div class="custom-modal-footer">

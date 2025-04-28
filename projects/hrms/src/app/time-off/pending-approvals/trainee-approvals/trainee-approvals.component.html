@@ -187,7 +187,8 @@
                         <span class="error-msg">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide Feedback" name="Extendreason" #Extendreason="ngModel"
-                        [(ngModel)]="selectedLeaveData.trcomments" required rows="3"></textarea>
+                        [(ngModel)]="selectedLeaveData.trcomments" required rows="3" maxlength="250"></textarea>
+                        <div class="textarea-count-text">{{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptForm.submitted) || 
                     (Extendreason.errors?.['pattern']) ">Feedback for Extend is required</div>
                 </div>
@@ -196,11 +197,11 @@
                     <label for="Descriptiondetails" type="Notes" class="form-label custom-label">Reason<span
                             class="error-msg">*</span></label>
                     <textarea type="text" class="form-control custom-input" id="Descriptiondetails"
-                        name="Descriptiondetails" aria-label="Description" rows="3" maxlength="400"
+                        name="Descriptiondetails" aria-label="Description" rows="3" maxlength="250"
                         placeholder="Please provide the reason" #Descriptiondetails="ngModel" autocomplete="off"
                         [(ngModel)]="selectedLeaveData.rejectedReason" required></textarea>
                     <div class="textarea-count-text">{{selectedLeaveData.rejectedReason?.length ?
-                        selectedLeaveData.rejectedReason.length : 0}} /400</div>
+                        selectedLeaveData.rejectedReason.length : 0}} /250</div>
                     <div class="error-msg"
                         *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || (Descriptiondetails.invalid && selectedLeaveData.submitted)">
                         Reason is required

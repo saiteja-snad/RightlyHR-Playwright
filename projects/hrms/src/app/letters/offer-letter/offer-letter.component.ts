@@ -167,7 +167,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       dateOfJoining: ['', Validators.required],
       Copys: [null, Validators.required],
       offerExpiryDate: ['', Validators.required],
-      note: [''],
+      note: ['',[Validators.maxLength(250)]],
       authorityid: [null, Validators.required]
     },
     { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here
@@ -481,13 +481,11 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
 //function to patch the values in the form to the template
 pathValuesFuction(){
   const formValues = this.employeeForm.value;
-console.log(formValues);
   this.prospectiveEmpData.offerIssuedDate= formValues.offerIssuedDate,
   this.prospectiveEmpData.dateOfJoining= formValues.dateOfJoining,
   this.prospectiveEmpData.Copys=formValues.Copys,
   this.prospectiveEmpData.offerExpiryDate= formValues.offerExpiryDate
-  this.prospectiveEmpData.note= formValues.note,
-  console.log(this.prospectiveEmpData.Copys);
+  this.prospectiveEmpData.note= formValues.note
 }
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {

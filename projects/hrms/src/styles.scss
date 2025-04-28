@@ -204,7 +204,7 @@ body {
 
     .sidnav-main-content {
         width: 100%;
-        height: calc(100dvh - 12rem);
+        height: calc(100dvh - 10rem);
         overflow-y: auto;
     }
 
@@ -524,6 +524,10 @@ a {
     font-weight: 400;
     font-size: var(--fontsize14);
     vertical-align: middle;
+
+    .text-danger{
+        color: var(--error-msg-color) !important; 
+    }
 }
 
 .custom-input {

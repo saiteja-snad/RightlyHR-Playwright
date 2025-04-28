@@ -51,7 +51,8 @@ export class MonthlyAttandanceReportComponent {
   }
 
   onMonthChangeLeave(event: any): void {
-    this.selectedMonth = (event.target as HTMLSelectElement).value;
+    this.selectedMonth = event.value;
+    console.log(this.selectedMonth)
     this.isFilterGiven = true;
   }
 

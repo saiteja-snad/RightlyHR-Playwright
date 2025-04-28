@@ -602,6 +602,10 @@ export class AppointmentLetterComponent {
     console.log(event)
     this.selectedEmployee= event.value;
     this.employeeFullname = this.selectedEmployee.firstName + ' ' + (this.selectedEmployee.middleName ? this.selectedEmployee.middleName + ' ' : '') + this.selectedEmployee.lastName;
+    const doj = this.formatDatewithDate(this.selectedEmployee.dateOfJoining);
+    this.employeeForm.patchValue({
+      dateOfJoining: doj
+    });
     this.getJobdetails(this.selectedEmployee.employeeId);
     this.getEmployeeAddress(this.selectedEmployee.employeeId);
     this.getIdentityByEmpid(this.selectedEmployee.employeeId);

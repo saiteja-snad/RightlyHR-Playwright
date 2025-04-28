@@ -43,7 +43,6 @@ export class DocumentsComponent {
     this.getMainFolders()
     this.initializejobForm();
 
-
   }
   initializejobForm(): void {
     this.uploadfrom = this.fb.group({
@@ -90,27 +89,18 @@ export class DocumentsComponent {
     });
   }
 
-  // onFolderSelectded(folder: IFolders | undefined, mainFolderName: string) {
-  //   if (folder) {
-  //     folder.expanded = !folder.expanded;
-  //   }
-  //   if (!folder) {
-  //     return;
-  //   }
-  //   if (folder.subfolders && folder.subfolders?.length > 0) {
-  //     this.selectedFolder = folder.subfolders as IFolders[];
-  //   } else {
-  //     this.selectedFolder = [] as IFolders[];
-  //   }
-  //   if (folder.isDirectory) {
-  //     this.isMainfolderTouched = true;
-  //   }
-  //   this.subDir.mainDir = mainFolderName;
-  //   this.selectedMainFolder = folder;
-  // }
+  
   toggleFolder(folder: any): void {
-    folder.expanded = !folder.expanded; // Toggle the expanded state
-    this.selectedMainFolder = folder; // Set the selected folder
+    // Collapse all other folders
+    this.folders.forEach((f) => {
+      if (f !== folder) {
+        f.expanded = false; // Collapse other folders
+      }
+    });
+  
+    folder.expanded = !folder.expanded;
+ 
+    this.selectedMainFolder = folder;
   }
   onSubFolderSelected(subFolder: any): void {
     this.selectedFile = subFolder;

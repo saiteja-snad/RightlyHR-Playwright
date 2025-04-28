@@ -159,6 +159,8 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
           addressLine1: formValue.currentAddress.addressLine1 || this.currentAddress.addressLine1,
           addressLine2: formValue.currentAddress.addressLine2 || this.currentAddress.addressLine2,
           city: formValue.currentAddress.city || this.currentAddress.city,
+          type: 'C',
+          empId: this.empinfo.employeeId,
           state: formValue.currentAddress.state || this.currentAddress.state,
           country: formValue.currentAddress.country || this.currentAddress.country,
           zipCode: formValue.currentAddress.zipCode || this.currentAddress.zipCode,
@@ -171,6 +173,8 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
           addressLine1: formValue.permanentAddress.addressLine1 || this.permanentAddress.addressLine1,
           addressLine2: formValue.permanentAddress.addressLine2 || this.permanentAddress.addressLine2,
           city: formValue.permanentAddress.city || this.permanentAddress.city,
+          type: 'P',
+          empId: this.empinfo.employeeId,
           state: formValue.permanentAddress.state || this.permanentAddress.state,
           country: formValue.permanentAddress.country || this.permanentAddress.country,
           zipCode: formValue.permanentAddress.zipCode || this.permanentAddress.zipCode,
@@ -184,8 +188,8 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     // Prepare payload for employee details update
     const updatePayload = {
       ...this.employedata,
-      currentAddress: this.currentAddress, // Include current address in the payload
-      permanentAddress: this.permanentAddress, // Include permanent address in the payload
+      currentAddress: this.currentAddress, 
+      permanentAddress: this.permanentAddress,
     };
   
     // Send employee basic details update
@@ -205,10 +209,40 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   }
   
   postEmployeeAddresses(): void {
+    // Update currentAddress and permanentAddress with the latest form values
+    const formValue = this.addressForm.value;
+  
+    this.currentAddress = {
+      ...this.currentAddress,
+      addressLine1: formValue.currentAddress.addressLine1,
+      addressLine2: formValue.currentAddress.addressLine2,
+      city: formValue.currentAddress.city,
+      type: 'C',
+      empId: this.empinfo.employeeId,
+      state: formValue.currentAddress.state,
+      country: formValue.currentAddress.country,
+      zipCode: formValue.currentAddress.zipCode,
+    };
+  
+    this.permanentAddress = {
+      ...this.permanentAddress,
+      addressLine1: formValue.permanentAddress.addressLine1,
+      addressLine2: formValue.permanentAddress.addressLine2,
+      city: formValue.permanentAddress.city,
+      type: 'P',
+      empId: this.empinfo.employeeId,
+      state: formValue.permanentAddress.state,
+      country: formValue.permanentAddress.country,
+      zipCode: formValue.permanentAddress.zipCode,
+    };
+  
+    // Prepare the payload
     const payload = {
       employeeAddresses: [this.currentAddress, this.permanentAddress],
     };
+    console.log('Payload:', payload);
   
+    // Send the updated payload
     this.subscription = this.http.postdata('EmployeeAddress', payload).subscribe({
       next: (data: any) => {
         console.log('Addresses updated successfully:', data);
@@ -224,7 +258,6 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       },
     });
   }
-
   copyCurrentAddress(event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
   

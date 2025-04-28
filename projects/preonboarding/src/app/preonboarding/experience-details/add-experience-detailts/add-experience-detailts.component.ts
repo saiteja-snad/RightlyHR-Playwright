@@ -57,12 +57,12 @@ export class AddExperienceDetailtsComponent {
   initializeExperienceForm() {
     this.experienceForm = this.fb.group({
       isPresent: [false],
-      companyName: [null, Validators.required],
+      companyName: [null, [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/), Validators.maxLength(100)]],
       employmentType: [null, Validators.required],
       fromDate: [null, Validators.required],
       toDate: [null],
-      jobTitle: [null, Validators.required],
-      description: [null],
+      jobTitle: [null, [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/), Validators.maxLength(100)]],
+      description: [null,[Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
       previousContactName: [null],
       previousContactNumber: [null, [this.phoneNumberValidator()]],
       previousContactEmail: [null, [Validators.email]],
@@ -145,7 +145,7 @@ export class AddExperienceDetailtsComponent {
       this.subscription = this.http.postData("PreonboardingExperience", finalPayload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.openPopup.openSuccess("Data Added Successfully");
+          this.openPopup.openSuccess("Experience Details added successfully");
           this.getData.getExperience.set(true);
           this.experienceForm.reset();
         },

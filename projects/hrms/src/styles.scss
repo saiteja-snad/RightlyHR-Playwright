@@ -180,7 +180,6 @@ body {
         border-radius: 50%;
     }
 }
-
 //header stylings Ends
 
 //Side Bar Stylings
@@ -199,7 +198,7 @@ body {
 
     .logo-img {
         width: 4rem;
-        height: 3rem;
+        height: 2.25rem;
         border-radius: 0.2rem;
     }
 
@@ -546,10 +545,11 @@ a {
     color: #A1A1A1;
 }
 
-input:focus {
+input:focus, textarea:focus, select:focus {
     outline: none !important;
     box-shadow: none !important;
 }
+
 // custom search field
 .custom-search {
     border: 1px solid #CCDAEC;
@@ -583,7 +583,6 @@ input:focus {
     vertical-align: middle;
     color: #222222;
 }
-
 // Select Styling 
 
 // p select stylings
@@ -688,7 +687,6 @@ input:focus {
         background-color: #F0F4F8;
     }
 }
-
 // Select Styling 
 
 // table stylings
@@ -707,8 +705,7 @@ input:focus {
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -745,8 +742,8 @@ input:focus {
         padding: 0.75rem;
     }
 }
-
 // My Info Stylings
+
 // User Profile Card Stylings
 .profile-info-card-main-container {
     .image-content {
@@ -808,7 +805,6 @@ input:focus {
         color: #06274F;
     }
 }
-
 // My Info Stylings Ends
 
 // letter main content
@@ -894,17 +890,13 @@ input:focus {
 
 // salary details table
 .salary-details-table {
-
-    table,
-    th,
-    td {
+    table, th, td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,
-    td {
+    th, td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -966,7 +958,6 @@ input:focus {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
-
 // letter stylings
 
 // note text stylings
@@ -980,7 +971,6 @@ input:focus {
         font-weight: 700;
     }
 }
-
 // note text stylings
 
 // events component stylings
@@ -1117,10 +1107,8 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first,
-        .p-paginator-prev,
-        .p-paginator-next,
-        .p-paginator-last {
+        .p-paginator-first, .p-paginator-prev,
+        .p-paginator-next, .p-paginator-last {
             border-radius: 50%;
             width: 1.25rem;
             height: 1.25rem;
@@ -1129,17 +1117,14 @@ input[type="file"] {
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,
-        .p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,
-        .p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled, .p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled, .p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 
 }
-
 //pagenation stylings
 
 // login components stylings
@@ -1161,7 +1146,6 @@ input[type="file"] {
         font-weight: 500;
     }
 }
-
 // login components stylings
 
 // custom phone number input with country code stylings
@@ -1216,7 +1200,6 @@ input[type="file"] {
         min-width: 350px !important;
     }
 }
-
 // custom phone number input with country code stylings
 
 //ERROR MESSAGE
@@ -1342,13 +1325,7 @@ input[type="file"] {
     line-height: 30px;
     color: #06274F;
 }
-
-input:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-// popup stylings
+// popup stylings ends
 
 // download text
 .dowload-text {
@@ -1362,7 +1339,7 @@ input:focus {
     color: rgba(6, 39, 79, 1);
 }
 
-//plusbutton
+// plusbutton
 .plus-text {
     font-weight: 700;
     font-size: 15px;
@@ -1371,7 +1348,7 @@ input:focus {
     color: rgba(48, 88, 137, 1);
 }
 
-//text-area count
+// text-area count
 .textarea-container {
     position: relative;
     margin-bottom: 1rem;
@@ -1382,30 +1359,8 @@ input:focus {
         text-align: right;
     }
 }
-
-input:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-.settings-common-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    cursor: pointer;
-}
-
-.confirmation-icon {
-    width: 3rem;
-}
-
-.confirmation-text {
-    font-weight: 500;
-    font-size: var(--fontsize20);
-    line-height: 30px;
-    color: #06274F;
-}
-
 //styles for popup table
+
 // styles for expenses
 .custom-table {
     width: 100%;
@@ -1420,8 +1375,7 @@ input:focus {
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1512,7 +1466,6 @@ input:focus {
         }
     }
 }
-
 // Settings Stylings Ends
 
 // red trash icon
@@ -1611,7 +1564,7 @@ input[type="checkbox"] {
 // Action buttons stylings Ends
 
 // component loader
-.custom-compoent-data-loader{
+.custom-compoent-data-loader {
     position: relative;
     width: 100%;
     height: calc(100dvh - 20rem);

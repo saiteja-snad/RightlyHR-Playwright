@@ -1,1 +1,28 @@
-<p>monthly-attandance-report works!</p>
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <!--header-->
+        <div class="component-header">Monthly Attandance Report</div>
+
+        <!--right data-->
+        <div class="d-flex gap-3">
+            <div class="d-flex gap-2 align-items-center">
+                <div class="custom-p-select-content">
+                    <p-select [options]="months" optionLabel="name" optionValue="value" placeholder="Select Month"
+                        class="custom-select" (onChange)="onMonthChangeLeave($event)"></p-select>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 align-items-center">
+                <div class="custom-p-select-content">
+                    <p-select [options]="years" optionLabel="label" optionValue="value" placeholder="Select Year"
+                        class="custom-select">
+                    </p-select>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="custom-btn btn-primary" (click)="generateReport()" [disabled]="!isFilterGiven">Generate</button>
+            </div>
+        </div>
+    </div>
+</div>

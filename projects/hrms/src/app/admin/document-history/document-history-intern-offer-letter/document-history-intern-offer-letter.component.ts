@@ -176,7 +176,6 @@ export class DocumentHistoryInternOfferLetterComponent {
        .subscribe({
          next: (data: any) => {
            console.log(data);
-        
            this.conformationPopup.openSuccessModal('Trainee Offer Approved Successfully');
            this.getTraineeOfferLetters();
            this.ApproveEmailTrainee(Values)
@@ -223,8 +222,9 @@ export class DocumentHistoryInternOfferLetterComponent {
 
     this.subscription = this.http.postdata(`CustomEmail/offerApproval`, emailData).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.conformationPopup.openSuccessModal('Email Sent Successfully');
+        setTimeout(() => {
+          this.conformationPopup.openSuccessModal('Email Sent Successfully');
+        }, 3000);
         this.getTraineeOfferLetters();
         this.ApprovedTaineenotification(datas);
         if (data) {
@@ -289,8 +289,9 @@ export class DocumentHistoryInternOfferLetterComponent {
   
     this.subscription = this.http.postdata(`CustomEmail/offerletter`, emaildetails).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.conformationPopup.openSuccessModal('Email Sent Successfully');
+        setTimeout(() => {
+          this.conformationPopup.openSuccessModal('Email Sent Successfully');
+        }, 3000);
         if (data) {
           this.getTraineeOfferLetters();
         }
@@ -407,7 +408,9 @@ export class DocumentHistoryInternOfferLetterComponent {
       next: (data: any) => {
         console.log(data);
         if (data) {
-          this.conformationPopup.openSuccessModal('Email Sent Successfully');
+          setTimeout(() => {
+            this.conformationPopup.openSuccessModal('Email Sent Successfully');
+          }, 3000);
           this.getTraineeOfferLetters();
         }
         

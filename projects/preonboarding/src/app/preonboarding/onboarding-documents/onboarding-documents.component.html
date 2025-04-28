@@ -53,16 +53,18 @@
                                 </ng-template>
                             </ng-template>
                         </td>
-                        <td class="text-nowrap" *ngIf="item.status!='Not Submitted'">
-                            <div *ngIf="item.status == null || item.status == 'Requested' || item.status =='Not Submitted'">
-                                <button type="button" class="custom-btn btn-primary py-2"
-                                    (click)="onClickEditDocument(item);openModal(item)">
-                                    <i class="bi bi-upload me-2"></i>Upload</button>
-                            </div>
-                            <div *ngIf="item.status == 'Rejected' ||  item.status == 'Waiting for submission'">
-                                <button type="button" class="custom-btn btn-primary py-2"
-                                    (click)="onClickEditDocument(item);openModal(item)">
-                                    <i class="bi bi-upload me-2"></i>Re-Upload</button>
+                        <td class="text-nowrap">
+                            <div *ngIf="item.status!='Not Submitted'">
+                                <div *ngIf="item.status == null || item.status == 'Requested' || item.status =='Not Submitted'">
+                                    <button type="button" class="custom-btn btn-primary py-2"
+                                        (click)="onClickEditDocument(item);openModal(item)">
+                                        <i class="bi bi-upload me-2"></i>Upload</button>
+                                </div>
+                                <div *ngIf="item.status == 'Rejected' ||  item.status == 'Waiting for submission'">
+                                    <button type="button" class="custom-btn btn-primary py-2"
+                                        (click)="onClickEditDocument(item);openModal(item)">
+                                        <i class="bi bi-upload me-2"></i>Re-Upload</button>
+                                </div>
                             </div>
                         </td>
                     </tr>

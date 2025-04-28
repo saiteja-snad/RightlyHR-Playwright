@@ -75,7 +75,15 @@
                 </div>
 
                 <div class="d-flex flex-wrap gap-3 pt-3">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || addressErrorMessage">Generate Document</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || addressErrorMessage || spinnerLoader">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                          </ng-container>
+                          <ng-template #addText>
+                            <span>{{'Generate Document' | translate}}</span>
+                          </ng-template>
+                    </button>
                 </div>
             </form>
         </div>

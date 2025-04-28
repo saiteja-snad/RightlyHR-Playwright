@@ -15,9 +15,11 @@ import { IAddress, IemployeeDetails } from '../appointment-letter/appointment-le
 import { IAuthority } from '../../Interfaces/letters-model';
 import { LetterFooterComponent } from "../../shared/letters-shared-content/letter-footer/letter-footer.component";
 import { LettersheaderComponent } from "../../shared/letters-shared-content/lettersheader/lettersheader.component";
+import { OpenModalService } from '../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent, TranslateModule],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })
@@ -85,9 +87,7 @@ export class AddressProofLetterComponent {
   address = {} as IAddress;
   addressFlag = false;
   addressErrorMessage = ''; 
-  @ViewChild('successhide') private readonly successhide!: NgbModal;
-  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
-  @ViewChild('success') success: any;
+  spinnerLoader= false;
 
   constructor(
     private http: HttpService,
@@ -96,6 +96,7 @@ export class AddressProofLetterComponent {
     // private _userAcessService:UserAccessService,
     private elementRef: ElementRef,
     config: NgbModalConfig, private modalService: NgbModal, private fb: FormBuilder,
+      private conformationPopup: OpenModalService, 
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -117,7 +118,6 @@ export class AddressProofLetterComponent {
     this.initializeForm();
     this.getEmployeeId();
     this.getAddressTemplate();
-    this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
 
     this.addressdata = this.employeeaddress?.employeeAddresses && Array.isArray(this.employeeaddress.employeeAddresses)
@@ -162,29 +162,6 @@ export class AddressProofLetterComponent {
     // })
   }
 
-  openmodel(content: any) {
-    this.modalService.open(content, { centered: true })
-  }
-
-  dataSuccessMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.successhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
-
-  dataFailureMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.errorhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
-
-  getIssuedEmployeebyId() {
-    this.employeedata = this.Employeeinfo.firstName + " " + this.Employeeinfo.lastName
-  }
 
   //function to disable the submit button when we select the incorrect id 
   Onclickemployyeid(Value: any) {
@@ -470,6 +447,7 @@ export class AddressProofLetterComponent {
   }
 
   async postAddressLetterFormSubmit(f: FormGroup) {
+    this.spinnerLoader= true;
     const data = await this.addressLetterData;
     data.dateofaddress = this.formatDate(data.dateofaddress);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);
@@ -512,13 +490,20 @@ export class AddressProofLetterComponent {
       .subscribe({
         next: (data: any) => {
           if (data) {
-            this.dataSuccessMsg('Address Proof Letter Generated Successfully')
-            this.router.navigate(['/admin/active']);
+            this.conformationPopup.openSuccessModal('Address Proof Letter Generated Successfully');
+            setTimeout(()=>{
+              this.navigateDashboard();
+            }, 2000)
+            // this.router.navigate(['/admin/active']);
           }
         },
         error: (reason: any) => {
-          this.dataFailureMsg('file upload  is failed');
+          this.spinnerLoader= false;
+          this.conformationPopup.openErrorModal('file upload  is failed');
         },
+        complete: ()=>{
+          this.spinnerLoader= false;
+        }
       });
   }
   //to fromat Date

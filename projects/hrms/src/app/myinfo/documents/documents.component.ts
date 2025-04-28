@@ -1,24 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, SimpleChanges } from '@angular/core';
 import { DocumentService } from '../../services/document/document.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { ICreateSubDir, IFolders } from '../../Interfaces/document.model';
 import { Subscription } from 'rxjs';
 import { LastValuePipe } from '../../Pipes/last-value/last-value.pipe';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { HttpService } from '../../services/http.service';
+import { FileSizePipe } from "../../Pipes/file-size.pipe";
+
 
 @Component({
   selector: 'app-documents',
-  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, CommonModule],
+  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, TranslateModule, CommonModule, FileSizePipe],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })
 export class DocumentsComponent {
   subscription!: Subscription;
+  spinnerLoader=false;
   selectedMainFolder = {} as IFolders
   isMainfolderTouched: boolean = false;
   folders = [] as IFolders[];
@@ -28,15 +31,35 @@ export class DocumentsComponent {
   Files = [] as IFolders[];
   empdata: any;
   searchfolder!: string;
-
+  uploadfrom!: FormGroup;
+  file: any;
+  showUploadIcon: boolean = false;
   subDir = {} as ICreateSubDir;
-  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.empdata = JSON.parse(localStorage.getItem('employeeData') || '{}');
+    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getMainFolders()
+    this.initializejobForm();
+
 
   }
+  initializejobForm(): void {
+    this.uploadfrom = this.fb.group({
+      filename: ['',Validators.required],
+   
+    });
+  }
+  ngOnChanges(changes: SimpleChanges) {
+    this.showUploadIcon = true;
+    // if (changes['folder']) {
+    //   console.log(changes['folder']);
+    // }
+    console.log(this.selectedFile);
+    this.getAllFiles();
+  }
+
+
   getMainFolders(dirPath?: string) {
     dirPath = dirPath ? dirPath : '/FusionDocuments';
     this.subscription = this.documentService.getMainFolders(dirPath).subscribe({
@@ -66,20 +89,27 @@ export class DocumentsComponent {
     });
   }
 
-  onFolderSelectded(folder: IFolders | undefined, mainFolderName: string) {
-    if (!folder) {
-      return;
-    }
-    if (folder.subfolders && folder.subfolders?.length > 0) {
-      this.selectedFolder = folder.subfolders as IFolders[];
-    } else {
-      this.selectedFolder = [] as IFolders[];
-    }
-    if (folder.isDirectory) {
-      this.isMainfolderTouched = true;
-    }
-    this.subDir.mainDir = mainFolderName;
-    this.selectedMainFolder = folder;
+  // onFolderSelectded(folder: IFolders | undefined, mainFolderName: string) {
+  //   if (folder) {
+  //     folder.expanded = !folder.expanded;
+  //   }
+  //   if (!folder) {
+  //     return;
+  //   }
+  //   if (folder.subfolders && folder.subfolders?.length > 0) {
+  //     this.selectedFolder = folder.subfolders as IFolders[];
+  //   } else {
+  //     this.selectedFolder = [] as IFolders[];
+  //   }
+  //   if (folder.isDirectory) {
+  //     this.isMainfolderTouched = true;
+  //   }
+  //   this.subDir.mainDir = mainFolderName;
+  //   this.selectedMainFolder = folder;
+  // }
+  toggleFolder(folder: any): void {
+    folder.expanded = !folder.expanded; // Toggle the expanded state
+    this.selectedMainFolder = folder; // Set the selected folder
   }
   onSubFolderSelected(subFolder: any): void {
     this.selectedFile = subFolder;
@@ -127,6 +157,24 @@ export class DocumentsComponent {
     }
   }
 
+  openModal(content: any) {
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+  filechange(event: any) {
+    this.file = event.target.files[0];
+    const input = event.target as HTMLInputElement;
+
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.uploadfrom.patchValue({ filename: file.name }); // Update the filename control with the selected file name
+    } else {
+      this.uploadfrom.patchValue({ filename: '' });
+    }
+  }
+
   filterFolder() {
     const value: string = this.searchfolder.toLowerCase();
     const filteredData = this.Files.filter((o) =>
@@ -146,6 +194,40 @@ export class DocumentsComponent {
         element.isNotVisible = true;
       }
     });
+  }
+
+
+  fileUploaded() {
+    if (this.selectedFile.name) {
+        this.spinnerLoader=true;
+      let filePath = `${this.selectedFile.name}/${this.empdata.employeeId}`;
+
+      this.subscription = this.http
+        .uploadFileWithQuery(
+          'FileSystem/uploadfiletodirectory',
+          filePath,
+          this.file
+        )
+        .subscribe({
+          next: (data: any) => {
+      
+              this.spinnerLoader=false;
+              this.getAllFiles();
+              this.uploadfrom.reset();
+              this.conformationPopup.openSuccessModal(
+                'File uploaded successfully',
+              );
+              this.modalService.dismissAll();
+            
+          },
+          error: (reason: any) => {
+            this.spinnerLoader=false;
+            this.conformationPopup.openErrorModal(reason.error.message,)
+          },
+
+        });
+
+    }
   }
 
   onSelectDownload(file: IFolders) {
@@ -170,5 +252,8 @@ export class DocumentsComponent {
       });
   }
 
+
+
+ 
 
 }

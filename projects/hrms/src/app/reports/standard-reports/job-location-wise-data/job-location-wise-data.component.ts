@@ -15,15 +15,17 @@ import * as XLSX from "xlsx";
 import { IJob } from '../../../Interfaces/letters-model';
 import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-job-location-wise-data',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent, NoDataFoundComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './job-location-wise-data.component.html',
   styleUrls: ['./job-location-wise-data.component.scss']
 })
 
 export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
+  dataload = false;
   locationReportsForm!: FormGroup;
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   locationDetails = [] as ILocation[];
@@ -44,9 +46,9 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
 
   initializeForm() {
     this.locationReportsForm = this.fb.group({
-      dateOfJoining: [null, Validators.required],
-      location: ['', Validators.required],
-      subLocation: [{value: '', disabled:true}, Validators.required]
+      dateOfJoining: [null],
+      location: [''],
+      subLocation: ['']
     });
   }
 
@@ -84,18 +86,18 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     console.log(this.locationReportsForm.get('dateOfJoining')?.value);
     if (this.locationReportsForm.get('dateOfJoining')?.value) {
       this.getAllLocations();
-      this.locationReportsForm.get('location')?.enable();
+      // this.locationReportsForm.get('location')?.enable();
     }
   }
 
   onLocationChange(location: ILocation): void {
     if (location?.jobSubLocations?.length) {
       this.getSubLocations(location);
-      this.locationReportsForm.get('subLocation')?.enable();
+      // this.locationReportsForm.get('subLocation')?.enable();
     } else {
       this.subLocationDetails = [];
-      this.locationReportsForm.get('subLocation')?.enable();
-      this.locationReportsForm.get('subLocation')?.reset();
+      // this.locationReportsForm.get('subLocation')?.enable();
+      // this.locationReportsForm.get('subLocation')?.reset();
     }
   }
 
@@ -108,16 +110,18 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
 
   private handleFormValueChanges(): void {
     const form = this.locationReportsForm;
+
     const resetAndDisable = (controls: string[]) => {
       controls.forEach(control => {
         form.get(control)?.reset();
-        form.get(control)?.disable();
+        // form.get(control)?.disable();
       });
     };
-    form.get('dateOfJoining')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      form.get('location')?.reset();
-      resetAndDisable(['subLocation']);
-    });
+
+    // form.get('dateOfJoining')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    //   form.get('location')?.reset();
+    //   resetAndDisable(['subLocation']);
+    // });
 
     form.get('location')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
       resetAndDisable(['subLocation']);
@@ -136,6 +140,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   }
 
   getStandardReports() {
+    this.dataload = true;
     const params = new URLSearchParams();
     const endpoint = params.toString() ? `Reports/standardReportsWithoutPagination?${params.toString()}` : 'Reports/standardReportsWithoutPagination';
     this.http.getData(endpoint).pipe(takeUntil(this.destroy$)).subscribe({
@@ -144,11 +149,16 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         console.log(err);
+        this.dataload = false;
+      },
+      complete: ()=>{
+        this.dataload = false;
       }
     });
   }
 
   onSubmit(form: FormGroup) {
+    this.dataload = true;
     if (form.valid) {
       const formData = form.value;
       const request: IStandardReportRequest = {
@@ -156,8 +166,8 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
           startDate: formData.dateOfJoining.startDate,
           endDate: formData.dateOfJoining.endDate,
         },
-        selectedJobLocation: formData.location.jobLocationName.toString(),
-        selectedJobSubLocation: formData.subLocation.jobSubLocationName.toString()
+        selectedJobLocation: formData.location?.jobLocationName,
+        selectedJobSubLocation: formData.subLocation?.jobSubLocationName
       };
       this.reports.getStandardReports(request).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
@@ -166,9 +176,14 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
-          console.log(err);
+          this.dataload = false;
         },
+        complete: () => {
+          this.dataload = false;
+        }
       });
+    }else{
+      console.log('invalid')
     }
   }
 

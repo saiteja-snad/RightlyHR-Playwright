@@ -12,24 +12,32 @@ import jsPDF from 'jspdf';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { IEmployee } from '../probation-confirmation-letter/probation.modal';
+import { IEmployeeSignatures } from '../letters.modal';
 @Component({
   selector: 'app-probation-extension-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule],
   templateUrl: './probation-extension-letter.component.html',
   styleUrl: './probation-extension-letter.component.scss'
 })
 
 export class ProbationExtensionLetterComponent {
   subscription!: Subscription;
-  employeedetails = [] as any;
+  employeedetails :IEmployee[]=[];
   probationExtensionLetterData = {} as any;
   probationFile!: File;
   Employeeinfo = {} as any;
-  authorityDetails = [] as any;
+  authorityDetails: IEmployeeSignatures[]=[];
   disableFieldsForApproval: boolean = true;
   loading: boolean = false;
   Status: any;
   probationExtensionForm!: FormGroup;
+
+  enableBtn= false;
+  spinnerLoader= false;
+  releaseLoader= false;
+
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
@@ -38,7 +46,6 @@ export class ProbationExtensionLetterComponent {
   constructor(private http: HttpService, private router: Router, private fb: FormBuilder, private openModalService: OpenModalService) { }
 
   ngOnInit(): void {
-    this.Employeeinfo = JSON.parse(localStorage.getItem("fusionuser") || '{}');
     this.initializeForm();
     this.getProbationEmployees();
     this.getAuthorityDetails();
@@ -64,13 +71,10 @@ export class ProbationExtensionLetterComponent {
         let filteredData = data.filter((ele: any) => {
           return ele.status?.toLowerCase() == 'extended'
         })
-        console.log(filteredData);
         filteredData.forEach((ele: any) => {
           Employee.probationExtendedDate = ele.probationExtendedDate
           Employee.probationmonths = this.convertDaysToMonths(ele.probationEndDate, ele.probationExtendedDate)
         });
-        console.log(Employee.probationExtendedDate)
-        console.log(Employee.probationmonths)
       }
     })
   }
@@ -101,7 +105,6 @@ export class ProbationExtensionLetterComponent {
           ...employee,
           fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
-        this.pathValuesFuction();
       },
       error: (reason: any) => {
         console.log(reason);
@@ -122,16 +125,25 @@ export class ProbationExtensionLetterComponent {
     })
   }
 
+  onClickEmployee(event: any){
+    const empId= event.value.employeeId;
+    this.getProbationRequest(empId);
+    this.pathValuesFuction();
+  }
+
+  preventTyping(event: KeyboardEvent) {
+    event.preventDefault();
+  } 
+
   //function to patch the values in the form to the template
   pathValuesFuction() {
     const formValues = this.probationExtensionForm.value;
-    console.log(formValues);
     this.probationExtensionLetterData.firstName = formValues.employeeId?.firstName,
     this.probationExtensionLetterData.middleName = formValues.employeeId?.middleName,
     this.probationExtensionLetterData.lastName = formValues.employeeId?.lastName,
     this.probationExtensionLetterData.fusionEmpId = formValues.employeeId?.fusionEmpId,
     this.probationExtensionLetterData.jobRole = formValues.employeeId?.jobDetails?.jobRole,
-    this.probationExtensionLetterData.department = formValues.employeeId?.firstName,
+    this.probationExtensionLetterData.department = formValues.employeeId?.departmentName,
     this.probationExtensionLetterData.workLocation = formValues.employeeId?.jobDetails?.subLocation+ ', '+formValues.employeeId?.jobDetails?.lopcation,
     this.probationExtensionLetterData.dateofprobationextension = formValues?.issuedDate,
     this.probationExtensionLetterData.Documenttype = formValues?.Documenttype;
@@ -142,25 +154,21 @@ export class ProbationExtensionLetterComponent {
   }
 
   async postProbationExtensionLetterFormSubmit() {
+    this.spinnerLoader= true;
     const data = await this.probationExtensionLetterData;
     data.dateofaddress = this.formatDate(data.dateofaddress);
     data.dateOfJoining = this.formatDate(data.dateOfJoining);
-    console.log(data);
     const pdfContent = document.getElementById('pdfContent');
     if (pdfContent) {
       html2canvas(pdfContent, { scale: 3 }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         const imgWidth = pdf.internal.pageSize.getWidth();
-        console.log(imgWidth);
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
-        console.log(imgHeight)
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
         const fileName = `${data.firstName}_${data.middleName ?? ""}_${data.lastName ?? ""}_${new Date().getTime()}_ProbationExtensionLetter.pdf`;
         pdf.save(fileName);
         const blob = pdf.output('blob');
-        console.log(blob);
-        //creating form file to upload into AZure
         let d: Date = new Date()
         this.probationFile = new File(
           [blob], fileName, {
@@ -177,11 +185,9 @@ export class ProbationExtensionLetterComponent {
   getProbationRequest(EmployeeId: any) {
     this.subscription = this.http.getData(`ProbationFlow/getbyemployeeId/${EmployeeId}`).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.getProbationDetails = response.find((ele: any) => {
           return (ele.status?.toLowerCase() === 'extended');
         });
-        console.log(this.getProbationDetails);
       }
     })
   }
@@ -191,13 +197,17 @@ export class ProbationExtensionLetterComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {
         if (data) {
+          this.enableBtn= true;
           this.postProbationDetails(data.path);
         }
       },
       error: (reason: any) => {
-        console.log(reason);
+        this.spinnerLoader= false;
         this.openModalService.openErrorModal('file upload is failed');
       },
+      complete: () =>{
+        this.spinnerLoader= false;
+      }
     });
   }
 
@@ -226,15 +236,17 @@ export class ProbationExtensionLetterComponent {
     this.getProbationDetails.documentURL = docurl;
     this.subscription = this.http.postdata('ProbationFlow/updateProbationActivationEmployees', payload).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.Documenturlresult = data.documentURL;
         this.disableFieldsForApproval = false;
         this.loading = false;
         this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
       },
       error: (reason: any) => {
-        console.log(reason);
+        this.spinnerLoader= false;
       },
+      complete: () =>{
+        this.spinnerLoader= false;
+      }
     });
   }
 
@@ -248,6 +260,7 @@ export class ProbationExtensionLetterComponent {
   }
 
   probationExtendeEmail() {
+    this.releaseLoader= true;
     let pdata =
     {
       employeeId: this.probationExtensionLetterData.employeeId,
@@ -255,13 +268,17 @@ export class ProbationExtensionLetterComponent {
     }
     this.subscription = this.http.postdata(`CustomEmail/ExtensionofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.openModalService.openSuccessModal("Email Sent Successfully");
-        this.router.navigate(['/admin/probation-employees']);
-        this.probationExtensionForm.reset();
+        setTimeout(() =>{
+          this.naviagte();
+        }, 2000)
       },
       error: (err: any) => {
-        console.log(err);
+        this.releaseLoader= false;
+      },
+      complete: ()=>{
+        this.releaseLoader= false;
+        this.probationExtensionForm.reset();
       }
     })
   }

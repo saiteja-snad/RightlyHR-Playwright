@@ -169,7 +169,7 @@ export class TraineeOfferLetterComponent {
       offerSentDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
       offerExpiryDate: ['', Validators.required],
-      note: [''],
+      note: ['',[Validators.maxLength(250)]],
       authorityid: [null, Validators.required],
       reportingmanagerId: [null, Validators.required],
       documentType: ['', Validators.required],

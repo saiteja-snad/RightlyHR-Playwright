@@ -167,7 +167,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       dateOfJoining: ['', Validators.required],
       Copys: [null, Validators.required],
       offerExpiryDate: ['', Validators.required],
-      note: [''],
+      note: ['',[Validators.maxLength(250)]],
       authorityid: [null, Validators.required]
     },
     { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here

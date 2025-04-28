@@ -84,7 +84,7 @@
           </label>
           <input type="text" class="form-control custom-input" formControlName="jobgrade" placeholder="Please enter job grade"
             maxlength="100" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
-          <div *ngIf="AddForm.get('jobgrade')?.touched && AddForm.get('jobgrade')?.invalid" class="error-msg mt-2">
+          <div *ngIf="AddForm.get('jobgrade')?.touched && AddForm.get('jobgrade')?.invalid" class="error-msg">
             <div *ngIf="AddForm.get('jobgrade')?.errors?.['required']">{{ 'Job Grade is required' | translate }}</div>
             <div *ngIf="AddForm.get('jobgrade')?.errors?.['maxlength']">{{ 'Job Grade cannot exceed 100 characters' | translate }}</div>
           </div>
@@ -126,8 +126,7 @@
           <input type="text" class="form-control custom-input" formControlName="Updatejobrole"
             placeholder="Please enter grade name" maxlength="100"
             (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
-          <div *ngIf="updateForm.get('Updatejobrole')?.invalid && updateForm.get('Updatejobrole')?.touched"
-            class="error-msg">
+          <div *ngIf="updateForm.get('Updatejobrole')?.invalid && updateForm.get('Updatejobrole')?.touched" class="error-msg">
             <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['required']">{{ 'Grade Name is required' | translate }}</div>
             <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxlength']">{{ 'Grade Name cannot exceed 100 characters' | translate }}</div>
           </div>
@@ -140,8 +139,7 @@
           <input type="text" class="form-control custom-input" formControlName="updategraderole"
             placeholder="Please enter job grade" maxlength="100" (keydown)="formValidations.restrictInput($event); 
             formValidations.blockNonAlphabets($event)" />
-          <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid"
-            class="error-msg ">
+          <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid" class="error-msg">
             <div *ngIf="updateForm.get('updategraderole')?.errors?.['required']">{{ 'Job Grade is required' | translate }}</div>
             <div *ngIf="updateForm.get('updategraderole')?.errors?.['maxlength']">{{ 'Job Grade cannot exceed 100 characters' | translate }}</div>
           </div>

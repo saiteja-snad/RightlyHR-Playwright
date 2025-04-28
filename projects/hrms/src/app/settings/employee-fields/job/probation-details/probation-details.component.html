@@ -1,94 +1,18 @@
-<button type="button" (click)="openDialog()" class="custom-btn btn-primary" *ngIf="rbac.allowedToAccess('Probation Details.create')">{{'Add' | translate}}</button>
-
-<!-- Add Popup Modal -->
-
-<ng-template #addpopup let-modal>
-  <form [formGroup]="AddForm">
-    <div class="custom-main-popup-container" ngbAutofocus>
-      <div class="custom-poup-header-content popup-header-border">
-        <div >
-          <p class="popup-heading mb-0">{{ 'Probation Details' | translate }}</p>
-        </div>
-        <div>
-          <a (click)="close(modal)">
-            <img src="icons/close.png" alt="Close Icon" class="close-icon" />
-          </a>
-        </div>
-      </div>
-
-      <div class="custom-main-popup-content ">
-
-        <!--Type -->
-        <div class="mb-4">
-          <label for="Type" class="form-label custom-label mb-2">
-            {{ 'Probation  Type' | translate }} <span class="error-msg">*</span>
-          </label>
-          <!-- <div class="custom-p-select-content">
-            <select title="type" class="form-control custom-input" formControlName="Type" placeholder="Please select type"  [(ngModel)]="postProbationData.configValueId">
-              <option value="" disabled selected>Please select type</option>
-              <option *ngFor="let pro of getProbationconfigValues" [value]="pro.id">
-                {{ pro.value }}
-              </option>
-            </select>
-          </div> -->
-          <div class="custom-p-select-content">
-            <p-select 
-              [options]="getProbationconfigValues"
-              optionLabel="value" 
-              optionValue="id"
-              placeholder="Please select type"
-              [(ngModel)]="postProbationData.configValueId"
-              formControlName="Type"
-              class="form-control custom-input">
-            </p-select>
-          </div>
-          
-          <div *ngIf="AddForm.get('Type')?.touched && AddForm.get('Type')?.invalid" class="error-msg mt-2">
-            <div *ngIf="AddForm.get('Type')?.errors?.['required']">{{'Probation type is required'|translate}}</div>
-        </div>
-
-        </div>
-        <!-- Duration -->
-        <div class="mb-4">
-          <label for="Duration" class="form-label custom-label mb-2">
-            {{ 'Duration' | translate }} <span class="error-msg">*</span>
-          </label>
-          <div class="custom-settings-add-input input-group">
-              <input type="text" class="form-control custom-input"  maxlength="3" placeholder="Please enter duration"
-                  formControlName="Duration" aria-label="duration" aria-describedby="duration"
-                 >
-          </div>
-          <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid" class="error-msg mt-2">
-              <div *ngIf="AddForm.get('Duration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
-              <div *ngIf="AddForm.get('Duration')?.errors?.['pattern']">
-                {{ 'Only numbers are allowed' | translate }}
-              </div>
-          </div>
-      </div>
-
-        <!-- Buttons -->
-        <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
-            {{ 'Close' | translate }}
-          </button>
-          <button type="button" class="custom-btn btn-primary" (click)="addPtobationDetails(modal)"
-            [disabled]="AddForm.invalid">
-            {{ 'Add' | translate }}
-          </button>
-        </div>
-      </div>
-    </div>
-  </form>
-</ng-template>
-  
 <div class="custom-main-component-container">
-    <div class="custom-table-content mt-2">
+  <div class="mb-3">
+    <button type="button" (click)="openDialog()" class="custom-btn btn-primary"
+      *ngIf="rbac.allowedToAccess('Probation Details.create')">{{'Add' | translate}}</button>
+  </div>
+
+  <div class="custom-main-component-container">
+    <div class="custom-table-content">
       <table class="w-100">
         <thead>
           <tr>
             <th>Type</th>
             <th>Duration</th>
-            <th class="text-center" *ngIf="rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')">Actions</th>
+            <th class="text-center" *ngIf="rbac.allowedToAccess('Probation Details.update') || 
+              rbac.allowedToAccess('Probation Details.delete')">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -96,7 +20,8 @@
             <tr *ngFor="let pro of ProbationDetails">
               <td>{{pro.value}}</td>
               <td>{{pro.noOfDays}}</td>
-              <td class="text-center" *ngIf="rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')">
+              <td class="text-center"
+                *ngIf="rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
@@ -120,89 +45,144 @@
         </tbody>
       </table>
     </div>
-  
   </div>
-  
+</div>
+
+
+<!-- Add Popup Modal -->
+<ng-template #addpopup let-modal>
+  <form [formGroup]="AddForm">
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div>
+          <p class="popup-heading mb-0">{{ 'Probation Details' | translate }}</p>
+        </div>
+        <div>
+          <a (click)="close(modal)">
+            <img src="icons/close.png" alt="Close Icon" class="close-icon" />
+          </a>
+        </div>
+      </div>
+
+      <div class="custom-main-popup-content">
+        <!--Type -->
+        <div class="mb-3">
+          <label for="Type" class="form-label custom-label mb-2">
+            {{ 'Probation Type' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <p-select [options]="getProbationconfigValues" optionLabel="value" optionValue="id"
+              placeholder="Please select type" [(ngModel)]="postProbationData.configValueId" formControlName="Type"
+              class="form-control custom-input">
+            </p-select>
+          </div>
+          <div *ngIf="AddForm.get('Type')?.touched && AddForm.get('Type')?.invalid" class="error-msg">
+            <div *ngIf="AddForm.get('Type')?.errors?.['required']">{{'Probation type is required'|translate}}</div>
+          </div>
+        </div>
+
+        <!-- Duration -->
+        <div class="mb-3">
+          <label for="Duration" class="form-label custom-label mb-2">
+            {{ 'Duration' | translate }} <span class="error-msg">*</span>
+          </label>
+          <input type="text" class="form-control custom-input" maxlength="3" placeholder="Please enter duration"
+            formControlName="Duration" aria-label="duration" aria-describedby="duration">
+          <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid" class="error-msg">
+            <div *ngIf="AddForm.get('Duration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
+            <div *ngIf="AddForm.get('Duration')?.errors?.['pattern']">{{ 'Only numbers are allowed' | translate }}</div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{ 'Close' | translate }}</button>
+          <button type="button" class="custom-btn btn-primary" (click)="addPtobationDetails(modal)"
+            [disabled]="AddForm.invalid">
+            {{ 'Add' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
-    <form [formGroup]="updateForm">
-        <div class="custom-main-popup-container" ngbAutofocus>
-            <div class="custom-poup-header-content popup-header-border">
-                <div >
-                    <p class="popup-heading mb-0">{{'Edit Probation Type' | translate}}</p>
-                </div>
-                <div>
-                    <a (click)="close(modal)">
-                        <img src="icons/close.png" alt="Close Icon" class="close-icon">
-                    </a>
-                </div>
-            </div>
-            <div class="custom-main-popup-content">
-                  <!--Type -->
-          <div class="mb-4">
-            <label for="Type" class="form-label custom-label mb-2">
-              {{ 'Probation Type' | translate }} <span class="error-msg">*</span>
-            </label>
-            <div class="custom-p-select-content" >
-              <select title="value" class="form-control custom-input" formControlName="Type"  [disabled]="isUserViewOnly">
-                <option [value]="updateForm.get('Type')?.value" *ngIf="updateForm.get('Type')?.value"readonly>
-                    {{ updateForm.get('Type')?.value }}
-                  </option>
-                  <!-- <option value="" disabled selected>Please select designation</option> -->
-                <!-- <option *ngFor="let pro of getProbationconfigValues" [value]="pro.id">
-                    {{pro.value}}
-                  </option> -->
-              </select>
-            </div>
-            <div *ngIf="updateForm.get('Type')?.touched && updateForm.get('Type')?.invalid" class="error-msg mt-2">
-              <div *ngIf="updateForm.get('Type')?.errors?.['required']">{{'Type is required'|translate}}</div>
-          </div>
+  <form [formGroup]="updateForm">
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div>
+          <p class="popup-heading mb-0">{{'Edit Probation Type' | translate}}</p>
+        </div>
+        <div>
+          <a (click)="close(modal)">
+            <img src="icons/close.png" alt="Close Icon" class="close-icon">
+          </a>
+        </div>
+      </div>
 
+      <div class="custom-main-popup-content">
+        <!--Type -->
+        <div class="mb-3">
+          <label for="Type" class="form-label custom-label mb-2">
+            {{ 'Probation Type' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-p-select-content">
+            <select title="value" class="form-control custom-input" formControlName="Type" [disabled]="isUserViewOnly">
+              <option [value]="updateForm.get('Type')?.value" *ngIf="updateForm.get('Type')?.value" readonly>
+                {{ updateForm.get('Type')?.value }}
+              </option>
+              <!-- <option value="" disabled selected>Please select designation</option> -->
+              <!-- <option *ngFor="let pro of getProbationconfigValues" [value]="pro.id">
+                                {{pro.value}}
+                              </option> -->
+            </select>
           </div>
-          <!-- Duration -->
-          <div class="mb-4">
-            <label for="Duration" class="form-label custom-label mb-2">
-              {{ 'Duration' | translate }} <span class="error-msg">*</span>
-            </label>
-            <div class="custom-settings-add-input input-group">
-                <input type="text" class="form-control custom-input"  maxlength="3" placeholder="Please enter duration"
-                    formControlName="Duration" aria-label="duration" aria-describedby="duration"
-                    >
-            </div>
-            <div *ngIf="updateForm.get('Duration')?.touched && updateForm.get('Duration')?.invalid" class="error-msg mt-2">
-                <div *ngIf="updateForm.get('Duration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
-                <div *ngIf="updateForm.get('Duration')?.errors?.['pattern']">
-                  {{ 'Only numbers are allowed' | translate }}
-                </div>
-            </div>
-            
+          <div *ngIf="updateForm.get('Type')?.touched && updateForm.get('Type')?.invalid" class="error-msg mt-2">
+            <div *ngIf="updateForm.get('Type')?.errors?.['required']">{{'Type is required'|translate}}</div>
+          </div>
         </div>
-            <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close' |
-                        translate}}</button>
-                    <button type="button" class="custom-btn btn-primary " (click)="updateJobroletype(modal)"
-                        [disabled]="updateForm.invalid">
-                        {{'Update' | translate}}
-                    </button>
-                </div>
+
+        <!-- Duration -->
+        <div class="mb-3">
+          <label for="Duration" class="form-label custom-label mb-2">
+            {{ 'Duration' | translate }} <span class="error-msg">*</span>
+          </label>
+          <div class="custom-settings-add-input input-group">
+            <input type="text" class="form-control custom-input" maxlength="3" placeholder="Please enter duration"
+              formControlName="Duration" aria-label="duration" aria-describedby="duration">
+          </div>
+          <div *ngIf="updateForm.get('Duration')?.touched && updateForm.get('Duration')?.invalid"
+            class="error-msg mt-2">
+            <div *ngIf="updateForm.get('Duration')?.errors?.['required']">{{'Duration is required'|translate}}</div>
+            <div *ngIf="updateForm.get('Duration')?.errors?.['pattern']">
+              {{ 'Only numbers are allowed' | translate }}
             </div>
+          </div>
         </div>
-    </form>
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close' | translate}}</button>
+          <button type="button" class="custom-btn btn-primary" (click)="updateJobroletype(modal)"
+            [disabled]="updateForm.invalid">
+            {{'Update' | translate}}
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
 </ng-template>
   
-
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-      
-            <div >
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-            </div>
-            <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-            </div>
-        </div>
- 
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+    </div>
+  </div>
 </ng-template>

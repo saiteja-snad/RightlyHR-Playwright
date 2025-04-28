@@ -12,7 +12,7 @@
     <div class="card letter-fields-content p-4">
       <form [formGroup]="employeeForm" (ngSubmit)="postAppraisalLetterFormSubmit(employeeForm)">
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">{{'Search Employee'| translate }} <span
+          <label class="form-label custom-label mb-2">{{'Select Employee'| translate }} <span
               class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="employeeiddetails" optionLabel="fullName" [(ngModel)]="fusionEmpId" [filter]="true"
@@ -42,12 +42,12 @@
           </div>
         </div>
     
+        <!-- Issued Date -->
         <div class="mb-3">
-          <label class="form-label custom-label mb-2"> {{'Date'| translate }}<span class="text-danger">*</span></label>
+          <label class="form-label custom-label mb-2"> {{'Issued Date'| translate }}<span class="text-danger">*</span></label>
           <input type="date" placeholder="Please enter Date" formControlName="dateofAppraisal"
             [(ngModel)]="appraisalData.dateofAppraisal" class="form-control input-field" id="appraisalDate" required
-            (change)="DateValidation()" onkeydown="return false"
-            [ngClass]="{ 'is-invalid': employeeForm.get('dateofAppraisal')?.invalid && employeeForm.get('dateofAppraisal')?.touched || !isdateofAppraisal}" />
+            (change)="DateValidation()" onkeydown="return false" />
           <div *ngIf="employeeForm.get('dateofAppraisal')?.touched">
             <div *ngIf="employeeForm.get('dateofAppraisal')?.hasError('required')" class="error-msg">
               {{'Date is required'| translate }}
@@ -58,12 +58,12 @@
           </div>
         </div>
     
+        <!-- Next Compensation Review Date -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2"> {{'Next Compensation Review Date'| translate }}<span
               class="text-danger">*</span></label>
           <input type="date" formControlName="reviewdate" [(ngModel)]="appraisalData.reviewdate"
-            class="form-control input-field" id="reviewdate" required (change)="DateValidation2()"
-            [ngClass]="{ 'is-invalid': !isNextApprisal}">
+            class="form-control input-field" id="reviewdate" required (change)="DateValidation2()">
           <div *ngIf="employeeForm.get('reviewdate')?.invalid && employeeForm.get('reviewdate')?.touched">
             <div class="error-msg">{{'Compensation Review Date is required '| translate }}</div>
           </div>
@@ -92,11 +92,12 @@
             <div class="error-msg">{{'Performance Variable Bonus is required'| translate }}</div>
           </div>
         </div>
+
+        <!-- Varibale Pay -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">
             {{ 'Variable Pay' | translate }} <span class="error-msg">*</span>
           </label>
-    
           <p-select [options]="variablePayOptions" optionLabel="name" optionValue="value" formControlName="isVariablePay"
             placeholder="Please select Variable Pay" (onChange)="onVariablePayChange()" [showClear]="true"
             [autoDisplayFirst]="false" [styleClass]="'input-field w-100'" id="variablePay"></p-select>
@@ -123,7 +124,7 @@
             translate }}<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId"
-              placeholder="Please Select Authority Name" class="form-select custom-select" formControlName="authorityid"
+              placeholder="Please select signature authority name" class="form-select custom-select" formControlName="authorityid"
               [(ngModel)]="appraisalData.authorityid" (onChange)="onclickDesignation()" />
           </div>
           <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
@@ -136,10 +137,22 @@
             Compensation
             Effective Date in Job Tab Before Generating the Document.</p>
         </div>
+
+        <div *ngIf="jobErrorMessage" class="error-msg">
+          {{ jobErrorMessage }}
+        </div>
+
         <div class="d-flex flex-wrap gap-3 pt-4">
           <button type="submit" class="custom-btn btn-primary"
-            [disabled]="!isdateofAppraisal||!disablebuttonforemployeeid||!disablebuttonforauthority">
-            {{'Generate Document'| translate }}</button>
+            [disabled]="employeeForm.invalid || spinnerLoader">
+            <ng-container *ngIf="spinnerLoader; else addText">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading..' | translate}}...</span>
+          </ng-container>
+          <ng-template #addText>
+              <span>{{'Generate Document' | translate}}</span>
+          </ng-template>
+          </button>
         </div>
       </form>
     </div>
@@ -161,7 +174,7 @@
               <div class="mb-2 mt-2">
                 <div class="text-center letter-header"><b>{{'Appraisal Letter' | translate }}</b></div>
               </div>
-              <div class="text-end mb-3 mt-2"><span class="">Date:</span><span
+              <div class="text-end mb-3 mt-2"><span class="letter-sub-header">Date:</span><span
                   class="letter-sub-header">{{appraisalData.dateofAppraisal| dateformat}}</span>
               </div>
               <!-- start of paragraphs -->
@@ -185,8 +198,8 @@
                 contributions to the organization. Your hard work and commitment have made a significant impact on our
                 success.</p>
 
-              <p *ngIf="promotion">We are happy with your performance and are equally pleased to
-                share that you have been promoted to <u><b><span>{{appraisalData.designation}}</span></b></u> With immediate
+              <p *ngIf="employeeForm.get('JobRole')?.value?.value">We are happy with your performance and are equally pleased to
+                share that you have been promoted to <u><b><span>{{employeeForm.get('JobRole')?.value?.value}}</span></b></u> With immediate
                 effect.
               </p>
 
@@ -452,17 +465,3 @@
     </div>
   </div>
 </div>
-
-<ng-template #successhide let-model>
-  <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-    <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
-    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
-  </div>
-</ng-template>
-
-<ng-template #errorhide let-model>
-  <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-    <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
-    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
-  </div>
-</ng-template>

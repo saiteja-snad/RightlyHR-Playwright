@@ -18,7 +18,7 @@
                     <div *ngIf="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched" class="error-msg">
                         <div *ngIf="employeeForm.get('firstName')?.hasError('required')">{{'First Name is required'|translate }}</div>
                         <div *ngIf="employeeForm.get('firstName')?.hasError('maxlength')">First Name cannot be more than 50 characters long</div>
-                        <div *ngIf="employeeForm.get('firstName')?.hasError('pattern')">First Name can only contain letters and spaces</div>
+                        <div *ngIf="employeeForm.get('firstName')?.hasError('pattern')">First Name should not contain any spaces and numbers</div>
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -28,7 +28,7 @@
                     <input type="text" class="form-control custom-input" formControlName="middleName" placeholder="Please enter middle name">
                     <div *ngIf="employeeForm.get('middleName')?.invalid && employeeForm.get('middleName')?.touched" class="error-msg">
                         <div *ngIf="employeeForm.get('middleName')?.hasError('maxlength')">Middle Name cannot be more than 50 characters long</div>
-                        <div *ngIf="employeeForm.get('middleName')?.hasError('pattern')">Middle Name can only contain letters and spaces</div>
+                        <div *ngIf="employeeForm.get('middleName')?.hasError('pattern')">Middle Name should not contain any spaces and numbers</div>
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
@@ -39,7 +39,7 @@
                     <div *ngIf="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched" class="error-msg">
                         <div *ngIf="employeeForm.get('lastName')?.hasError('required')">{{'Last Name is required'|translate}}</div>
                         <div *ngIf="employeeForm.get('lastName')?.hasError('maxlength')">Last Name cannot be more than 50 characters long</div>
-                        <div *ngIf="employeeForm.get('lastName')?.hasError('pattern')">Last Name can only contain letters and spaces</div>
+                        <div *ngIf="employeeForm.get('lastName')?.hasError('pattern')">Last Name should not contain any spaces and numbers</div>
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">

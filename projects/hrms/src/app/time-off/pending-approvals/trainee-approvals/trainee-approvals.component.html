@@ -19,7 +19,7 @@
                     <th class="text-nowrap">{{'Employee Name'|translate}}</th>
                     <th class="text-nowrap">{{'Training Start Date'|translate}}</th>
                     <th class="text-nowrap">{{'Training End Date'|translate}}</th>
-                    <th class="text-nowrap">{{'Approved Comments'|translate}}</th>
+                    <th class="text-nowrap">{{'Approver Comments'|translate}}</th>
                     <th class="text-nowrap"></th>
                 </tr>
             </thead>
@@ -49,12 +49,9 @@
                     <td>
                         @if(trn.entity?.comments != null && trn.entity?.comments != '') {
                         <div>
-                            <a type="button" [ngbPopover]="reason">
+                            <a type="button" (click)="commentsFunction(trn.entity?.comments,commentspopup)">
                                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </a>
-                            <ng-template #reason>
-                                <p class="mb-0">{{trn.entity?.comments}}</p>
-                            </ng-template>
                         </div>
                         }@else {
                         <div>
@@ -153,9 +150,9 @@
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
         </div>
-        <form name="acceptForm" class="ps-5 w-100" #acceptForm="ngForm">
+        <form name="acceptForm"  #acceptForm="ngForm">
             <div class="custom-main-popup-content">
-                <div class="form-outline gap-3 mb-3">
+                <div class="form-outline d-flex justify-content-center  gap-3 mb-3 ">
                     <div class="form-check form-check-inline">
                         <label class="form-check-label" for="flexRadioDefault1">
                             <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"
@@ -222,5 +219,40 @@
                     translate}}</button>
             </div>
         </form>
+    </div>
+</ng-template>
+<ng-template #commentspopup let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">{{'Comments' | translate}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <div class="custom-table-content">
+                <table class="w-100">
+                    <thead>
+                        <tr>
+                            <th>{{'Comments' | translate}}</th>
+                            <th>{{'Commented By'|translate}}</th>
+                            <th>{{"Date" | translate}}</th>
+                            <th>{{'Commented By ID' | translate}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let comment of comment">
+                            <td>{{ comment.comments }}</td>
+                            <td>{{ comment.addedName }}</td>
+                            <td>{{ comment.addedDate | dateformat }}</td>
+                            <td>{{ comment.addedByFusionEmpId }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </ng-template>

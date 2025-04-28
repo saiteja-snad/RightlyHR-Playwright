@@ -12,87 +12,83 @@
         <div class="card letter-fields-content p-4">
             <form [formGroup]="employeeForm" (ngSubmit)="postRelievingLetterFormSubmit(employeeForm)">
                 <div class="row">
-                    <div class="col-md-12 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Search Employee'|
-                            translate }}
-                            <span class="text-danger">*</span></label>
+
+                     <!-- Employee -->
+                    <div class="mb-3">
+                        <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="allinactiveemployes" optionLabel="employee" [filter]="true"
-                                filterBy="employee" [showClear]="true" placeholder="Please select employee"
-                                class="custom-select w-100" formControlName="searchEmployee" class="custom-select w-100"
-                                (onChange)="Onclick($event)">
+                            <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                                [showClear]="false" placeholder="Please select employee" formControlName="employee"
+                                class="custom-select w-100" (onChange)="onClickEmployee($event)">
                             </p-select>
-                            <div
-                                *ngIf="employeeForm.get('searchEmployee')?.invalid && employeeForm.get('searchEmployee')?.touched">
-                                <div class="error-msg">{{'Employee is required'| translate }}</div>
-                            </div>
+                        </div>
+                        <div *ngIf="employeeForm.get('employee')?.invalid && employeeForm.get('employee')?.touched">
+                            <div class="error-msg">Employee is required</div>
                         </div>
                     </div>
-    
+
+                    <!-- Date -->
                     <div class="col-md-12 mb-4">
                         <label class="form-label custom-label mb-2">
                             {{'Date'| translate }} <span class="error-msg">*</span>
                         </label>
-    
-                        <input type="date" class="form-control custom-input" id="relievingDate"
-                            formControlName="dateofRelieving" [(ngModel)]="relievingLetterData.dateofRelieving"
-                            placeholder="Please enter Date" (change)="DateValidation()" onkeydown="return false"
-                            [ngClass]="{ 'is-invalid': employeeForm.get('dateofRelieving')?.invalid && employeeForm.get('dateofRelieving')?.touched || !isdateofRelieving }" />
-    
-                        <!-- Error block shows for both required and custom logic -->
-                        <div *ngIf="employeeForm.get('dateofRelieving')?.touched">
-                            <div *ngIf="employeeForm.get('dateofRelieving')?.hasError('required')" class="error-msg">
-                                {{'Date is required'| translate }}
-                            </div>
-                            <small *ngIf="!isdateofRelieving" class="error-msg">
-                                {{'Date should be after the date of probition end date'| translate }}
-                            </small>
+                        <input type="date" class="form-control custom-input" formControlName="dateofRelieving"
+                        placeholder="Please enter Date" (change)="DateValidation()" (keydown)="preventTyping($event)" />
+
+                        <div *ngIf="employeeForm.get('dateofRelieving')?.invalid && employeeForm.get('dateofRelieving')?.touched">
+                            <div class="error-msg">Date is required</div>
                         </div>
                     </div>
     
-                    <div class="col-md-12 mb-4">
-                        <label class="form-label custom-label mb-2">{{'Document Type'| translate }} <span
-                                class="error-msg">*</span></label>
+                    <!-- Document Type -->
+                    <div class="mb-3">
+                        <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeementType" optionLabel="name" optionValue="value"
-                                placeholder="Please select document type" [showClear]="true"
-                                [(ngModel)]="relievingLetterData.Documenttype" formControlName="documentType"
-                                inputId="documenttype" class="form-select custom-select">
+                            <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
+                                formControlName="documentType" class="form-select custom-select">
                             </p-select>
                         </div>
                         <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
-                            <div class="error-msg">{{'Document Type is required'| translate }}</div>
+                            <div class="error-msg">Document Type is required</div>
                         </div>
                     </div>
-                    <div class="col-md-12 mb-4">
-                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
-                            {{'Signature Authority Name'| translate }}<span class="error-msg">*</span>
-                        </label>
+
+                    <!-- Signature Authority -->
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
+                            Authority Name<span class="error-msg">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId"
-                                placeholder="Signature Authority Name" class="form-select custom-select"
-                                formControlName="signatureAuthority" [(ngModel)]="relievingLetterData.authorityid"
-                                (onChange)="onclickDesignation()">
-                            </p-select>
-    
+                            <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
+                                class="form-select custom-select" formControlName="signatureAuthority"
+                                (onChange)="onclickDesignation($event)" />
                         </div>
-                        <div
-                            *ngIf="employeeForm.get('signatureAuthority')?.invalid && employeeForm.get('signatureAuthority')?.touched">
-                            <div class="error-msg">{{'Signature Authority Name is required'| translate }}</div>
+                        <div *ngIf="employeeForm.get('signatureAuthority')?.invalid && employeeForm.get('signatureAuthority')?.touched">
+                            <div class="error-msg">Signature Authority Name is required</div>
                         </div>
-    
                     </div>
+
+                    <div *ngIf="jobErrorMessage" class="error-msg">
+                        {{ jobErrorMessage }}
+                    </div>
+                    
                     <div>
                         <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>Please Update Employee
                             Full Name,
                             Designation, Joining Date, Address, in Personal and Job Tabs before Generating the
                             Document.</p>
                     </div>
+
                 </div>
                 <div class="d-flex flex-wrap gap-3 pt-4">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="!isdateofRelieving||!disablebuttonforauthority">{{'Generate Document'| translate
-                        }}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || spinnerLoader">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Generate Document' | translate}}</span>
+                        </ng-template>
+                    </button>
                 </div>
             </form>
         </div>
@@ -102,7 +98,7 @@
                 <div>
                     <div class="letter-page-content" id="pdfContent">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="relievingLetterData.Documenttype; else doc" class="soft-copy-letter">
+                            <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                                 <app-lettersheader></app-lettersheader>
                             </div>
                             <ng-template #doc>
@@ -110,44 +106,43 @@
                             </ng-template>
                             <div class="d-flex justify-content-end mb-3">
                                 <div>
-                                    <span>Date: </span>
-                                    <span>{{relievingLetterData.dateofRelieving|dateformat}}</span>
+                                    <span class="letter-sub-header">Date: </span>
+                                    <span>{{employeeForm.get('dateofRelieving')?.value | dateformat}}</span>
                                 </div>
                             </div>
                             <div class="letter-header text-center mb-4">RELIEVING & EXPERIENCE LETTER </div>
-                            <p>We hereby certify that <b>{{gender3}}{{relievingLetterData.firstName}}
-                                    {{relievingLetterData.middleName}} {{relievingLetterData.lastName}}</b>
-                                was employed with RightlyHR as a <b>{{relievingLetterData.jobRole}}</b> from
-                                <b>{{relievingLetterData.dateOfJoining |dateformat}}</b> to <b>
-                                    {{relievingLetterData.lastworkingday|dateformat}}.</b>
-                            </p>
+                            <p>
+                                We hereby certify that 
+                                <b>{{ employeeFullname }}</b>
+                                was employed with RightlyHR as a 
+                                <b>{{ selectedEmployeeJobDetails?.jobRole || '' }}</b> from
+                                <b>{{ employeeForm.get('employee')?.value?.dateOfJoining | dateformat }}</b> to
+                                <b>{{ selectedEmployee?.lastworkingday | dateformat }}.</b>
+                                
+                              </p>                              
                             <p>During <span>{{gender}}</span> tenure with our organization,
-                                <b>{{relievingLetterData.firstName}} {{relievingLetterData.middleName}}
-                                    {{relievingLetterData.lastName}}</b> exhibited commendable dedication, professionalism, and
+                                <b>{{employeeFullname}}</b> exhibited commendable dedication, professionalism, and
                                 competence in
                                 <span>{{gender}}</span> role.
                             </p>
         
-                            <p>We deeply appreciate <b>{{relievingLetterData.firstName}} {{relievingLetterData.middleName}}
-                                    {{relievingLetterData.lastName}}</b> contributions during {{gender}}
+                            <p>We deeply appreciate <b>{{employeeFullname}}</b> contributions during {{gender}}
                                 employment with Rightly HR, and we believe {{gender}} commitment and expertise will be an
                                 asset to any organization they choose to join in the future.
                             </p>
         
-                            <p>We wish <b>{{relievingLetterData.firstName}}
-                                    {{relievingLetterData.middleName}}
-                                    {{relievingLetterData.lastName}}</b> the very best for {{gender}}
+                            <p>We wish <b>{{employeeFullname}}</b> the very best for {{gender}}
                                 future endeavors, and we
                                 trust that {{gender2}} will achieve continued success in {{gender}}
                                 professional journey.
                             </p>
                             <p>Sincerely,</p>
                             <p class="letter-sub-header">for RightlyHR,</p>
-                            <p class="m-0" *ngIf="relievingLetterData.authorityName?.trim()"
-                                style="font-family: Segoe script; font-size: large;">{{relievingLetterData.authorityName}}</p>
+                            <p class="m-0" *ngIf="authorityFullName"
+                                style="font-family: Segoe script; font-size: large;">{{authorityFullName}}</p>
                             <p class="m-0">Authorized Signatory</p>
-                            <p class="m-0">{{relievingLetterData.authorityName}}</p>
-                            <p class="letter-sub-header">{{authorityDesignation}}</p>
+                            <p class="m-0">{{authorityFullName}}</p>
+                            <p class="letter-sub-header">{{selectedAuthority?.designation}}</p>
                         </div>
                         <div class="letter-footer">
                             <app-letter-footer />

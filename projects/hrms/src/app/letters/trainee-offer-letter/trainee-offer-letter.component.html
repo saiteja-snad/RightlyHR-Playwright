@@ -16,17 +16,17 @@
         <div class="card letter-fields-content p-4">
             <form [formGroup]="employeeForm" (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Search Employee'|translate}}<span
+                    <label class="form-label custom-label mb-2">{{'Select Employee'|translate}}<span
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                            filterBy="fullName" [showClear]="true" placeholder="Select employee"
+                            filterBy="fullName" [showClear]="true" placeholder="Select employee" placeholder="Please select employee"
                             (onChange)="onClickValidation($event)" formControlName="fusionEmpId"
                             class="custom-select w-100">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
-                        <div class="error-msg">Search Employee is required</div>
+                        <div class="error-msg">Employee is required</div>
                     </div>
                 </div>
         

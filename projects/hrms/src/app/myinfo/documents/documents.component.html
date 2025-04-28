@@ -11,12 +11,25 @@
          
          <!-- Subfolders -->
          <div *ngIf="folder.expanded" class="subfolder-container">
-            <div *ngFor="let subFolder of folder.subfolders" class="folder-content sub-folders cursor px-2"
-               (click)="onSubFolderSelected(subFolder)">
-               <i class="bi bi-folder-fill folder-icon"></i>
-               <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
-            </div>
-         </div>
+            <!-- Check if there are subfolders -->
+            <ng-container *ngIf="(folder?.subfolders ?? []).length > 0; else noSubfoldersTemplate">
+              <div
+                *ngFor="let subFolder of folder.subfolders"
+                class="folder-content sub-folders cursor px-2"
+                (click)="onSubFolderSelected(subFolder)"
+              >
+                <i class="bi bi-folder-fill folder-icon"></i>
+                <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
+              </div>
+            </ng-container>
+          
+            <!-- No Data Found Template -->
+            <ng-template #noSubfoldersTemplate>
+              <div class="text-center text-muted">
+                <p>No Subfolders Found</p>
+              </div>
+            </ng-template>
+          </div>
          }
       </div>
 
@@ -66,7 +79,7 @@
                   </ng-container>
                   <ng-template #noDataTemplate>
                      <tr>
-                        <td colspan="4" class="text-center"></td>
+                        <td colspan="4" class="text-center"><app-no-data-found></app-no-data-found></td>
                      </tr>
                   </ng-template>
                </tbody>
@@ -95,8 +108,8 @@
                <div class="col-12">
                   <label class="form-label custom-label mb-2">Upload <span class="text-danger">*</span></label>
                   <input type="file" placeholder="Choose file" class="form-control custom-input"
-                     (change)="filechange($event)" accept=".pdf, .jpg, .png">
-                  <div *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">
+                     (change)="filechange($event)" formControlName="filename" accept=".pdf, .jpg, .png">
+                  <div class="error-msg" *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">
                      File is required
                   </div>
                </div>

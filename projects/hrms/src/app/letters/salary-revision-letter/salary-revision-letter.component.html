@@ -13,7 +13,7 @@
             <form [formGroup]="employeeForm" (ngSubmit)="postAppraisalLetterFormSubmit(employeeForm)">
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
-                        {{'Search Employee'| translate }}<span class="text-danger">*</span></label>
+                        {{'Select Employee'| translate }}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="true" placeholder="Please select employee" formControlName="fusionEmpId"
@@ -27,12 +27,12 @@
                         <p>{{'No results found'| translate }}</p>
                     </div>
                 </div>
+                <!-- Date -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Date'| translate }} <span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Issued Date'| translate }} <span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" id="relievingDate" formControlName="dateofAppraisal"
                         [(ngModel)]="appraisalData.dateofAppraisal" placeholder="Please enter Date" (change)="DateValidation()"
-                        onkeydown="return false"
-                        [ngClass]="{ 'is-invalid': employeeForm.get('dateofAppraisal')?.invalid && employeeForm.get('dateofAppraisal')?.touched || !isdateofAppraisal }" />
+                        onkeydown="return false"/>
                     <!-- Error block shows for both required and custom logic -->
                     <div *ngIf="employeeForm.get('dateofAppraisal')?.touched">
                         <div *ngIf="employeeForm.get('dateofAppraisal')?.hasError('required')" class="error-msg">
@@ -44,6 +44,7 @@
                     </div>
                 </div>
 
+                <!-- Document Type -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Document Type'| translate }} <span
                             class="error-msg">*</span></label>
@@ -58,12 +59,13 @@
                     </div>
                 </div>
 
+                <!-- Signature Authority -->
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
                         {{'Signature Authority Name' | translate }}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId"
-                            placeholder="Signature Authority Name" class="form-select custom-select" formControlName="authorityid"
+                            placeholder="Please select signature authority name" class="form-select custom-select" formControlName="authorityid"
                             [(ngModel)]="appraisalData.authorityid" (onChange)="onclickDesignation()">
                         </p-select>
                     </div>
@@ -72,6 +74,10 @@
                     </div>
                 </div>
 
+                <div *ngIf="jobErrorMessage" class="error-msg">
+                    {{ jobErrorMessage }}
+                </div>
+                
                 <div>
                     <p class="note-text"><span class="note me-2">Note:</span>Please update the Employee Name,
                         Address, Mobile Number, Email ID, Designation, PT, PF, ESIC, Place(work location),
@@ -79,8 +85,17 @@
                 </div>
                 <div class="d-flex flex-wrap gap-3 pt-4">
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="!isdateofAppraisal||!disablebuttonforemployeeid||!disablebuttonforauthority">
-                        {{'Generate Document'| translate }}</button>
+                        [disabled]="employeeForm.invalid || spinnerLoader">
+
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..' | translate}}...</span>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Generate Document' | translate}}</span>
+                        </ng-template>
+
+                    </button>
                 </div>
             </form>
         </div>
@@ -361,14 +376,23 @@
                             <p class="letter-sub-header">for RightlyHR</p>
                             <div class="img-space "></div>
                             <div class="d-flex justify-content-between">
+
                                 <div>
+                                    <div style="font-family: Segoe script; font-size: large;" class="mt-4">{{appraisalData.authorityName}}</div>
+                                    <div>
+                                        <p class="letter-sub-header">{{appraisalData.authorityName}}</p>
+                                        <p class="letter-sub-header">{{authorityDesignation}}</p>
+                                    </div>
+                                </div>
+
+                                <!-- <div>
                                     <p class="m-0" *ngIf="appraisalData.authorityName?.trim()"
                                         style="font-family: Segoe script; font-size: large;">
                                         {{appraisalData.authorityName}}</p>
-                                    <p class="m-0 letter-sub-header">Authorized Signatory</p>
+                                    <p class="m-0 letter-sub-header">Authorized Signature</p>
                                     <p class="m-0 letter-sub-header">{{appraisalData.authorityName}}</p>
                                     <p class="m-0 letter-sub-header">{{authorityDesignation}}</p>
-                                </div>
+                                </div> -->
                                 <div>
                                     <p class="letter-sub-header">Employee Name: {{appraisalData.firstName}}
                                         {{appraisalData.middleName}} {{appraisalData.lastName}}
@@ -387,17 +411,3 @@
         </div>
     </div>
 </div>
-
-<ng-template #successhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-        <i class="bi bi-check-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{ Status }}</h4>
-    </div>
-</ng-template>
-
-<ng-template #errorhide let-model>
-    <div class="d-flex flex-column justify-content-center align-items-center pb-5">
-        <i class="bi bi-x-circle-fill mt-4 mb-3"></i>
-        <h4 class="text-center ps-3 pe-3 inactive-poptext">{{Status}}</h4>
-    </div>
-</ng-template>

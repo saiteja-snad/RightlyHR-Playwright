@@ -15,9 +15,24 @@
   <!--letter content-->
   <div class="main-letter-content gap-4 d-flex w-100">
     <div class="card letter-fields-content p-4">
-      <form [formGroup]="employeeForm">
+      <form [formGroup]="employeeForm" (ngSubmit)="onAppointmentLetterSubmit(employeeForm)">
+
+        <!-- Employee Name -->
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+              [showClear]="false" placeholder="Please select employee" formControlName="fusionEmployeeId"
+              class="custom-select w-100" (onChange)="onClickEmployee($event)">
+            </p-select>
+          </div>
+          <div *ngIf="employeeForm.get('fusionEmployeeId')?.invalid && employeeForm.get('fusionEmployeeId')?.touched">
+            <div class="error-msg">Employee is required</div>
+          </div>
+        </div>
+
+        <!-- <div class="mb-3">
+          <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="employeeiddetails" [filter]="true" filterBy="firstName" [showClear]="true"
               optionLabel="fullName" optionValue="fusionEmpId" placeholder="Please select employee"
@@ -30,18 +45,20 @@
           <div *ngIf="employeeForm.get('fusionEmployeeId')?.invalid && employeeForm.get('fusionEmployeeId')?.touched">
             <div class="error-msg">Employee is required</div>
           </div>
-        </div>
+        </div> -->
 
+        <!-- Appointment Sent Date -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Appointment Sent Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" formControlName="appointmentdate"
-            (change)="onDataClick(employeeForm.get('appointmentdate')?.value)"
-            placeholder="Please enter appointment sent date" onkeydown="return false;" />
+            placeholder="Please enter appointment sent date" [min]="todayDate" onkeydown="return false;" />
+
           <div *ngIf="employeeForm.get('appointmentdate')?.invalid && employeeForm.get('appointmentdate')?.touched">
             <div class="error-msg">Appointment Sent Date is required</div>
           </div>
         </div>
 
+        <!-- Address -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
@@ -55,31 +72,39 @@
           </div>
         </div>
 
+        <!-- joining Date -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Joining Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
             placeholder="Please enter joining date" onkeydown="return false;" />
+
           <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
             <div class="error-msg">Joining Date is required</div>
           </div>
+          <div *ngIf="!JoinDateValid">
+            <div class="error-msg">Date of Joining must be after Appointment Date</div>
+          </div>
         </div>
 
+        <!-- Department -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Department<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="departmentDetails" optionLabel="departmentName" placeholder="Please select department"
-              formControlName="department" class="form-select custom-select"></p-select>
+            <p-select [options]="departmentDetails" optionLabel="departmentName" [filter]="true"
+              filterBy="departmentName" placeholder="Please select department" formControlName="department"
+              class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
             <div class="error-msg">Department is required</div>
           </div>
         </div>
 
+        <!-- Branch Location -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Branch Location/Code<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="issueLocationdata" optionLabel="branchLocation1"
-              placeholder="Please select branch location" formControlName="branchCode"
+            <p-select [options]="branchLocations" placeholder="Please select branch location"
+              formControlName="branchCode" optionLabel="branchLocation1" [filter]="true" filterBy="branchLocation1"
               class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="employeeForm.get('branchCode')?.invalid && employeeForm.get('branchCode')?.touched">
@@ -87,6 +112,40 @@
           </div>
         </div>
 
+        <div class="my-3">
+          <label for="laptop" class="form-label custom-label mb-2"><b>Laptop/Desktop Information: </b></label>
+        </div>
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Asset Type<span class="error-msg">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="assestDetails" optionLabel="assetType1" [filter]="true" filterBy="assetType1"
+              placeholder="Please select asset type" formControlName="assertType"
+              class="form-select custom-select"></p-select>
+          </div>
+          <div *ngIf="employeeForm.get('assertType')?.invalid && employeeForm.get('assertType')?.touched">
+            <div class="error-msg">Asset Type is required</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Model<span class="error-msg">*</span></label>
+          <input type="text" class="form-control custom-input" formControlName="model"
+            placeholder="Please enter model" />
+          <div *ngIf="employeeForm.get('model')?.invalid && employeeForm.get('model')?.touched">
+            <div class="error-msg">Model is required</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Serial Number<span class="error-msg">*</span></label>
+          <input type="text" class="form-control custom-input" formControlName="serial"
+            placeholder="Please enter serial number" />
+          <div *ngIf="employeeForm.get('serial')?.invalid && employeeForm.get('serial')?.touched">
+            <div class="error-msg">Serial Number is required</div>
+          </div>
+        </div>
+
+        <!-- Document Type -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
@@ -100,30 +159,27 @@
           </div>
         </div>
 
+        <!-- Note -->
         <div class="mb-3">
           <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Note
           </label>
-          <textarea class="form-control custom-input" placeholder="Leave a comment here"
-            formControlName="notes"></textarea>
+          <textarea class="form-control custom-input" placeholder="Leave a comment here" formControlName="notes"
+            maxlength="250"></textarea>
+          <span>{{ employeeForm.get('notes')?.value?.length || 0 }}/250</span>
+
           <div *ngIf="employeeForm.get('notes')?.invalid && employeeForm.get('notes')?.touched">
             <div class="error-msg">Note is required</div>
           </div>
         </div>
 
+        <!-- Siganture Authority -->
         <div class="mb-3">
           <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
             Authority Name<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
-              (onChange)="onclickDesignation($event)" class="form-select custom-select" formControlName="authorityid">
-              <ng-template let-emp pTemplate="item">
-                {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
-              </ng-template>
-
-              <ng-template let-emp pTemplate="selectedItem">
-                {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
-              </ng-template>
-            </p-select>
+            <p-select [options]="authorityDetails" optionLabel="fullName"
+              placeholder="Please select signature authority name" class="form-select custom-select"
+              formControlName="authorityid" (onChange)="onclickDesignation($event)" />
           </div>
           <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
             <div class="error-msg">Signature Authority Name is required</div>
@@ -135,9 +191,20 @@
             Effective Date in Job Tab Before Generating the Document.</p>
         </div>
 
+        <div *ngIf="errorMsg" class="error-msg">
+          {{ errorMsg }}
+        </div>
+
         <div class="d-flex flex-wrap gap-3 pt-4">
-          <button type="button" class="custom-btn btn-primary" (click)="onAppointmentLetterSubmit()">Generate
-            Document</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid" >
+            <ng-container *ngIf="spinnerLoader; else addText">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading..' | translate}}...</span>
+            </ng-container>
+            <ng-template #addText>
+              <span>{{'Generate Document' | translate}}</span>
+            </ng-template>
+          </button>
         </div>
       </form>
     </div>
@@ -148,27 +215,36 @@
           <!--page-1-->
           <div class="letter-page-content my-4" id="pdfContent1">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="soft-copy-letter">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                 <app-lettersheader></app-lettersheader>
               </div>
               <ng-template #doc>
                 <div class="hard-copy-letter"></div>
               </ng-template>
               <div class="text-center letter-header mb-3">Appointment letter</div>
-              <div class="d-flex justify-content-end mb-3">Date:{{ appointmentletter.appointmentdate | dateformat }}</div>
+              <div class="d-flex justify-content-end mb-3">Date: {{ employeeForm.get('appointmentdate')?.value |
+                dateformat }}</div>
               <div>
-                <p class="mt-1 letter-sub-header"><b>Dear {{ appointmentletter.firstName }}
-                      {{appointmentletter.middleName}} {{ appointmentletter.lastName }},</b>
+                <p class="mt-1 letter-sub-header"><b>Dear {{employeeFullname}},</b>
                 </p>
                 <p class="mb-1">Current Address:</p>
-                <p class="mb-3" *ngIf="appointmentletter.addressLine1"> {{ appointmentletter.addressLine1 }},
+                <p *ngIf="employeeForm.value.addressLine1">
+                  {{ employeeForm.value.addressLine1 }},
+                  {{ employeeForm.value.addressLine2 }},
+                  {{ employeeForm.value.city }},
+                  {{ employeeForm.value.state }},
+                  {{ employeeForm.value.country }} -
+                  {{ employeeForm.value.pinCode }}.
+                </p>
+
+                <!-- <p class="mb-3" *ngIf="appointmentletter.addressLine1"> {{ appointmentletter.addressLine1 }},
                   {{ appointmentletter.addressLine2 }}, {{ appointmentletter.city }},{{ appointmentletter.state }}, {{
                   appointmentletter.zipCode }}.
-                </p>
+                </p> -->
                 <p class="letter-sub-header">Welcome to RightlyHR!</p>
                 <p>
                   Pursuant to your application for employment with us, and the subsequent selection process, it gives
-                  us great pleasure to appoint you as <b>{{appointmentletter.jobRole}}</b> with RightlyHR at
+                  us great pleasure to appoint you as <b>{{employeeJobDetails?.jobRole}}</b> with RightlyHR at
                   the location that will be informed to you separately.
                 </p>
                 <p>We hope your association with us will be challenging and rewarding to your
@@ -177,7 +253,8 @@
               </div>
               <div>
                 <p class="letter-sub-header">1. Compensation:</p>
-                <p><b>a)</b> Your total annual cost to the Company (CTC) will be as detailed in your Offer Letter. Your CTC shall
+                <p><b>a)</b> Your total annual cost to the Company (CTC) will be as detailed in your Offer Letter. Your
+                  CTC shall
                   be due for revision as per the Company policy. Your compensation and benefits may be amended at the
                   sole discretion of the Company. </p>
                 <p><b>b)</b> Your salary is personal and confidential information and should not be discussed
@@ -225,9 +302,11 @@
                 <p class="letter-sub-header">3. Right to Transfer/Depute:</p>
                 <p> As part of your duties’, you may be required to travel outside of the Company's premises. Pursuant
                   to any business requirement, the Company may also transfer or depute you to any other office or
-                  location of the Company or any of its subsidiaries or affiliates or group companies or to the worksite or office
+                  location of the Company or any of its subsidiaries or affiliates or group companies or to the worksite
+                  or office
                   of the Company’s customer within or outside of India or as part a business arrangement or, sale of
-                  assets, merger, takeover, acquisition, or hive-off, the transfer you onto the rolls of another entity and
+                  assets, merger, takeover, acquisition, or hive-off, the transfer you onto the rolls of another entity
+                  and
                   you shall accept such transfer or deputation without demur.
                 </p>
               </div>
@@ -240,48 +319,54 @@
           <!--page-2-->
           <div class="letter-page-content my-4" id="pdfContent2">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="soft-copy-letter">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                 <app-lettersheader></app-lettersheader>
               </div>
-             <ng-template #doc>
+              <ng-template #doc>
                 <div class="hard-copy-letter"></div>
               </ng-template>
               <p class="letter-sub-header">4. Probation:</p>
               <p>
                 <b>a)</b> Your probation period will start from the date of joining
-                  and will continue up to three months from DOJ. At the discretion of the Company, your probation period
-                  may be extended if it is found that the services provided by you are interrupted or not satisfactory.
+                and will continue up to three months from DOJ. At the discretion of the Company, your probation period
+                may be extended if it is found that the services provided by you are interrupted or not satisfactory.
               </p>
               <p>
                 <b>b)</b> On successful completion of the probation period, if in
-                  the opinion of the Company, you are found suitable for the appointed post, your appointment will be
-                  confirmed and communicated to you in writing by the Company.
+                the opinion of the Company, you are found suitable for the appointed post, your appointment will be
+                confirmed and communicated to you in writing by the Company.
               </p>
 
               <div>
                 <p class="letter-sub-header">5. Background Verification:</p>
 
                 <p>All documents submitted by you to the Company with reference to the above are
-                  subject to verification by the Company at any time during your employment with the Company. You hereby specifically
+                  subject to verification by the Company at any time during your employment with the Company. You hereby
+                  specifically
                   authorize the Company, or any external agency appointed by the Company to verify your educational and
-                  employment antecedents, your conduct and any other background checks prior to your joining the Company or
+                  employment antecedents, your conduct and any other background checks prior to your joining the Company
+                  or
                   thereafter. You are expected to extend your full cooperation during such verification.</p>
 
                 <p>This Appointment Letter is subject to you clearing the Background Check as
-                  conducted by the Company In the event you fail to cooperate or clear the background check, your employment may be 
-                  terminated by the Company forthwith and without providing any prior notice or salary in lieu thereof. </p>
+                  conducted by the Company In the event you fail to cooperate or clear the background check, your
+                  employment may be
+                  terminated by the Company forthwith and without providing any prior notice or salary in lieu thereof.
+                </p>
               </div>
 
               <div>
                 <p class="letter-sub-header">6. Medical Examination:</p>
                 <p>You agree to submit yourself for medical examination as requested by the
-                  Company for the purpose of examining your physical/psychological suitability for the selected post.</p>
+                  Company for the purpose of examining your physical/psychological suitability for the selected post.
+                </p>
               </div>
 
               <div>
                 <p class="letter-sub-header">7. Expenses:</p>
                 <p>You shall be reimbursed, in accordance with the Company’s policies as
-                  amended from time, for eligible expenses incurred in the course your employment land for which you have
+                  amended from time, for eligible expenses incurred in the course your employment land for which you
+                  have
                   received prior written authorization from the Company. For all such expenses, you shall furnish to the
                   Company original receipts, statements and vouchers. </p>
               </div>
@@ -298,10 +383,13 @@
                 <p class="letter-sub-header">9. Information and security:</p>
                 <p>The role assigned during your employment with the Company includes the
                   Information Security responsibilities as required by organization and customer. This includes
-                  adhering, maintaining information security artefact as required by policy of the organization and customer.
-                  During your employment with the Company, you shall not disclose any information to anyone including but not
+                  adhering, maintaining information security artefact as required by policy of the organization and
+                  customer.
+                  During your employment with the Company, you shall not disclose any information to anyone including
+                  but not
                   limited to Company’s customers, prospective customers, people or entities outside the Company or to
-                  any Company’s employee which is confidential or trade secret under your previous employment contract or
+                  any Company’s employee which is confidential or trade secret under your previous employment contract
+                  or
                   disclosure of which is in violation of any law or third-party intellectual property rights. If you
                   disclose any such information, you shall be solely liable at your own cost and you agree to hold
                   harmless the Company from and against any claims, actions, suits, demands, damages, claims for fees,
@@ -324,8 +412,8 @@
 
               <p>
                 <b>a)</b> You agree that the Company may assign you additional
-                  tasks or to a new manager; modify or remove your assigned duties; or change the place of your
-                  employment. Compensation change in such situations, if any, will be at the discretion of the Company.
+                tasks or to a new manager; modify or remove your assigned duties; or change the place of your
+                employment. Compensation change in such situations, if any, will be at the discretion of the Company.
               </p>
             </div>
             <div class="letter-footer">
@@ -336,18 +424,18 @@
           <!--page-3-->
           <div class="letter-page-content my-4" id="pdfContent3">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="mb-5">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="mb-5">
                 <app-lettersheader></app-lettersheader>
               </div>
-             <ng-template #doc>
+              <ng-template #doc>
                 <div class="hard-copy-letter"></div>
               </ng-template>
               <p>
                 <b>b)</b> You agree to use all tools provided by the Company for
-                  professional purposes only. Internet and email access are provided to you as business communication
-                  tools for appropriate internal and external business uses. Generation, transmission, or storage of
-                  potentially offensive information is not allowed. You also agree to always act in the interest of the
-                  Company.
+                professional purposes only. Internet and email access are provided to you as business communication
+                tools for appropriate internal and external business uses. Generation, transmission, or storage of
+                potentially offensive information is not allowed. You also agree to always act in the interest of the
+                Company.
               </p>
 
               <p class="letter-sub-header">12. No Dual Employment:</p>
@@ -368,28 +456,35 @@
                 consideration, the receipt of which is hereby acknowledged, during the term of the employment with the
                 Company and for a period of twelve (12) months following the termination, you shall not, directly or
                 indirectly, either as an individual on your own account or as a partner, employee, consultant,
-                advisor, agent, contractor, director, trustee, committee member, office bearer, or shareholder (or in a similar
+                advisor, agent, contractor, director, trustee, committee member, office bearer, or shareholder (or in a
+                similar
                 capacity or function);
               </p>
               <p><b>a)</b> Own or operate a business in competition with the business of the Company.</p>
-              <p><b>b)</b> Solicit employment with a competitor or with any existing/prospective client (in any manner whatsoever);</p>
-              <p><b>c)</b> Solicit employment of or advise any other employee of the Company to terminate his contract or relationship 
-                with the Company or accept any contract (directly or indirectly) or other arrangements for providing services to any other person or organization; or,
+              <p><b>b)</b> Solicit employment with a competitor or with any existing/prospective client (in any manner
+                whatsoever);</p>
+              <p><b>c)</b> Solicit employment of or advise any other employee of the Company to terminate his contract
+                or relationship
+                with the Company or accept any contract (directly or indirectly) or other arrangements for providing
+                services to any other person or organization; or,
               </p>
-              <p><b>d)</b> Contact any of the existing or prospective clients of the Company, to entice such clients away from the Company or 
+              <p><b>d)</b> Contact any of the existing or prospective clients of the Company, to entice such clients
+                away from the Company or
                 to damage in any way their business relationship with Company.
               </p>
               <p>
                 You agree that the restrictions set forth in this clause are reasonable and necessary to protect the
                 proprietary and business interests of the Company and constitute a material inducement to the Company
-                to employ you. You further agree that the Company would not employ you in the absence of such inducement.
+                to employ you. You further agree that the Company would not employ you in the absence of such
+                inducement.
               </p>
 
               <p class="letter-sub-header">15. Consent Regarding Personal Data:</p>
 
               <p>This clause relates to the Personal Data that you may be requested to provide
                 in connection with your employment. Personal Data includes any information related to a natural person
-                that is, in combination of other information or otherwise, is capable of identifying such person notably including financial
+                that is, in combination of other information or otherwise, is capable of identifying such person notably
+                including financial
                 information such as Bank account or credit card or debit card or other payment instrument details,
                 physical, physiological and mental health condition, sexual orientation, medical records and history,
                 biometric information, any information or detail relating to previous employment details, educational
@@ -397,22 +492,23 @@
 
               <p>
                 <b>a)</b> You hereby understand and consent to Company, without
-                  any reservations, to (i) collect any of your Personal Data or other data from your last employer or
-                  through any internal or external agencies appointed for this purpose, (ii) use or process such data in
-                  connection with your employment with the Company or any matters arising from such employment, and
-                  (iii) sharing such data with any outside agencies or third parties including Company’s client for
-                  verification and validation of this information, processing in relation to employment or matters arising from such
-                  employment, or in compliance with the Company’s contractual or statutory obligations.
+                any reservations, to (i) collect any of your Personal Data or other data from your last employer or
+                through any internal or external agencies appointed for this purpose, (ii) use or process such data in
+                connection with your employment with the Company or any matters arising from such employment, and
+                (iii) sharing such data with any outside agencies or third parties including Company’s client for
+                verification and validation of this information, processing in relation to employment or matters arising
+                from such
+                employment, or in compliance with the Company’s contractual or statutory obligations.
               </p>
 
               <p>
                 <b>b)</b> You understand that you may withdraw the consent by
-                  informing in writing to Company’s designated representative for this purpose. You also consent and
-                  accept that if such withdrawal of consent affects the purpose for which your Personal Data was sought,
-                  Company reserves the right to take steps as it deems appropriate. You understand that this consent is
-                  obtained by the Company to ensure compliance of The Information Technology (Reasonable Security
-                  Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011 and any successor
-                  laws regarding the subject.
+                informing in writing to Company’s designated representative for this purpose. You also consent and
+                accept that if such withdrawal of consent affects the purpose for which your Personal Data was sought,
+                Company reserves the right to take steps as it deems appropriate. You understand that this consent is
+                obtained by the Company to ensure compliance of The Information Technology (Reasonable Security
+                Practices and Procedures and Sensitive Personal Data or Information) Rules, 2011 and any successor
+                laws regarding the subject.
               </p>
             </div>
             <div class="letter-footer">
@@ -423,7 +519,7 @@
           <!--page-4-->
           <div class="letter-page-content my-4" id="pdfContent4">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="soft-copy-letter">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                 <app-lettersheader></app-lettersheader>
               </div>
               <ng-template #doc>
@@ -431,15 +527,18 @@
               </ng-template>
               <div>
                 <p class="letter-sub-header">16. Changes in Personal Details:</p>
-                <p>Any change in your residential address, telephone numbers, marital status, and academic qualifications
+                <p>Any change in your residential address, telephone numbers, marital status, and academic
+                  qualifications
                   should be notified in writing to the Company with three (3) days of such change.
                 </p>
                 <p>communication will be addressed to you on the last address notified by you
                   and it will be presumed that you have received such communication addressed to you. </p>
                 <p class="letter-sub-header">17. Retirement:</p>
                 <p>The age of retirement from the Company shall be on attainment of fifty-eight
-                  (58) years of age. For this purpose, the date of birth considered will be as per the certificate of proof of age
-                  submitted by you at the date of joining the Company. In case the last day of your employment falls on a
+                  (58) years of age. For this purpose, the date of birth considered will be as per the certificate of
+                  proof of age
+                  submitted by you at the date of joining the Company. In case the last day of your employment falls on
+                  a
                   non-working day, your last day of employment shall be the immediately the preceding working day.
                 </p>
               </div>
@@ -447,15 +546,20 @@
               <p class="letter-sub-header">a) Resignation by the Employee:</p>
               <p>During the probation period, you may resign from your services by providing a
                 prior written notice of Thirty (30) days or payment of gross salary in lieu thereof. After completion
-                of your probation period, if you voluntarily resign from the services of the Company, you will be required to give
-                ninety (90) days of written notice or gross salary in lieu of the notice period Three Months (90 days), subject to
+                of your probation period, if you voluntarily resign from the services of the Company, you will be
+                required to give
+                ninety (90) days of written notice or gross salary in lieu of the notice period Three Months (90 days),
+                subject to
                 the Company’s discretion. Any shortfall in the Notice Period shall be recovered from your full and
                 final settlement. In case of resignation, the Company reserves the right to:</p>
               <ol style="list-style: upper-roman;">
                 <li>Relieve you earlier than the Notice Period</li>
-                <li>Extend your Notice Period for a satisfactory handover of charge and completing the pending assignments</li>
-                <li>Decide whether the Notice Period shall run concurrently with the period of any leave which may be granted to you;</li>
-                <li>Direct you not to perform any of your duties and to remain away from the Company premises and/or not to contact
+                <li>Extend your Notice Period for a satisfactory handover of charge and completing the pending
+                  assignments</li>
+                <li>Decide whether the Notice Period shall run concurrently with the period of any leave which may be
+                  granted to you;</li>
+                <li>Direct you not to perform any of your duties and to remain away from the Company premises and/or not
+                  to contact
                   clients or other employees of the Company for all or part of the Notice Period.</li>
               </ol>
               <p class="letter-sub-header">b) Termination by Company:</p>
@@ -470,15 +574,21 @@
                   without any notice period or without any salary in lieu thereof, if you: </p>
                 <ol style="list-style: upper-roman;">
                   <li>Breach any confidentiality or IP related obligations:</li>
-                  <li>Commit any serious or persistent breach of any of the terms and conditions of this Appointment Letter or 
-                    any of the provisions of the employee handbook or other documents incorporated by reference in this document; </li>
+                  <li>Commit any serious or persistent breach of any of the terms and conditions of this Appointment
+                    Letter or
+                    any of the provisions of the employee handbook or other documents incorporated by reference in this
+                    document; </li>
                   <li>Do or cause to be done any act, deed, matter or thing adverse to the Company’s interests; </li>
-                  <li> Are guilty of any misconduct or neglect in the discharge of your duties or exercise of your powers hereunder or otherwise
-                     vested in you from time to time; </li>
-                  <li> Fail to or neglect in observing and complying fully with all resolutions, regulations,instructions and directions from time
-                     to time made or given to you by the Company </li>
-                  <li>If any information furnished by you or representation made by you is found to be incorrect or if any material information
-                     is detected by the Company to have been suppressed by you or any action on your part is found to be in contravention to the terms and conditions herein:</li>
+                  <li> Are guilty of any misconduct or neglect in the discharge of your duties or exercise of your
+                    powers hereunder or otherwise
+                    vested in you from time to time; </li>
+                  <li> Fail to or neglect in observing and complying fully with all resolutions,
+                    regulations,instructions and directions from time
+                    to time made or given to you by the Company </li>
+                  <li>If any information furnished by you or representation made by you is found to be incorrect or if
+                    any material information
+                    is detected by the Company to have been suppressed by you or any action on your part is found to be
+                    in contravention to the terms and conditions herein:</li>
                   <li>Become of unsound mind; </li>
                   <li>Are accused or convicted of any criminal offense: </li>
                 </ol>
@@ -488,11 +598,11 @@
               <app-letter-footer />
             </div>
           </div>
-          
+
           <!--page-5-->
           <div class="letter-page-content my-4" id="pdfContent5">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="soft-copy-letter">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                 <app-lettersheader></app-lettersheader>
               </div>
               <ng-template #doc>
@@ -521,18 +631,22 @@
                 to the Company or its client, which is your possession or control, without retaining any copies thereof.
               </p>
               <p>
-                <b>b)</b> You must not make any statements (whether oral or written) or do anything which might damage the
+                <b>b)</b> You must not make any statements (whether oral or written) or do anything which might damage
+                the
                 reputation of the Company
                 or interfere with the Company’s relationship with its clients and customers.
               </p>
               <p>
-                <b>c)</b> Without prejudice to Company’s other rights and remedies, the Company shall be entitled to deduct from
+                <b>c)</b> Without prejudice to Company’s other rights and remedies, the Company shall be entitled to
+                deduct from
                 your emoluments,
-                the amount of any claims which the Company may have against you either under the terms of your employment or
+                the amount of any claims which the Company may have against you either under the terms of your
+                employment or
                 otherwise.
               </p>
               <p>
-                <b>d)</b> You understand that the Service and Experience Certificate will be issued only if you have served the
+                <b>d)</b> You understand that the Service and Experience Certificate will be issued only if you have
+                served the
                 entire Notice Period or have paid compensation
                 to the Company in lieu of the Notice Period.
               </p>
@@ -541,18 +655,21 @@
                 In addition to the terms and conditions of this Agreement, your employment
                 with the Company shall be subject to the policies and procedures set forth in the Company and/or the
                 client's Policy (the "Policies"), the current version of which will be electronically accessible by
-                you at all times during your employment.You agree that the Policies may be modified by the Company at any time,
+                you at all times during your employment.You agree that the Policies may be modified by the Company at
+                any time,
                 and that any such modifications shall apply to all the employees, including yourself. Violation of the
                 Policies could lead to disciplinary actions up to and including termination of your employment.
                 Additionally, while performing onsite work duties for any client of the Company, you are expected to
-                adhere to the specific workplace policies of those clients and to familiarize yourself with those policies.
+                adhere to the specific workplace policies of those clients and to familiarize yourself with those
+                policies.
               </p>
               <div>
                 <p class="letter-sub-header">22. Indemnification:</p>
                 <p>
                   You shall, at all times, indemnify and keep indemnified the Company against all sums whether by way
                   of claims, demands, damages, costs, charges or expenses paid or incurred by the Company in or in
-                  connection with any action, claim proceedings or demand instituted or made against the Company caused or
+                  connection with any action, claim proceedings or demand instituted or made against the Company caused
+                  or
                   occasioned by your breach, failure, default or neglect.
                 </p>
               </div>
@@ -562,7 +679,8 @@
                   This Appointment Letter shall be governed under the laws of India and subject to the exclusive
                   jurisdiction of courts in Hyderabad, India. Any dispute between you and the Company shall be settled
                   by a sole arbitrator to be appointed by the Company, the place of arbitration shall be Hyderabad and
-                  the language of the arbitration shall be English. The arbitration shall be conducted in accordance with
+                  the language of the arbitration shall be English. The arbitration shall be conducted in accordance
+                  with
                   the Arbitration and Conciliation Act, 1996".
                 </p>
               </div>
@@ -570,7 +688,8 @@
                 <p class="letter-sub-header">24. Invention Assignment and Confidentiality Agreement:</p>
                 <p>
                   You shall also be required to execute the Invention Assignment and Confidentiality Agreement (NDA)
-                  with the Company in Annexure A. The terms and conditions of this NDA shall survive perpetually even after
+                  with the Company in Annexure A. The terms and conditions of this NDA shall survive perpetually even
+                  after
                   the termination of your employment.
                 </p>
               </div>
@@ -583,67 +702,78 @@
           <!--page-6-->
           <div class="letter-page-content my-4" id="pdfContent6">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="soft-copy-letter">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                 <app-lettersheader></app-lettersheader>
               </div>
-             <ng-template #doc>
+              <ng-template #doc>
                 <div class="hard-copy-letter"></div>
               </ng-template>
               <div>
                 <p class="letter-sub-header">25. Other terms and conditions:</p>
                 <p>
-                  <b>a) Serviceability:</b> You shall, at all times, indemnify and keep indemnified the Company against all sums whether by way of
-                    claims, demands, damages, costs, charges or expenses paid or incurred by the Company in or in
-                    connection with any action, claim proceedings or demand instituted or made against the Company caused or
-                    occasioned by your breach, failure, default or neglect.
+                  <b>a) Serviceability:</b> You shall, at all times, indemnify and keep indemnified the Company against
+                  all sums whether by way of
+                  claims, demands, damages, costs, charges or expenses paid or incurred by the Company in or in
+                  connection with any action, claim proceedings or demand instituted or made against the Company caused
+                  or
+                  occasioned by your breach, failure, default or neglect.
                 </p>
 
                 <p>
                   <b>b) Successors and Assigns:</b> The Company will have the right
-                    to transfer and assign this Appointment Letter and all covenants and agreements herein will inure to
-                    the benefit of and be enforceable by such successors and assigns. This Appointment Letter is personal to
-                    you and you will not be entitled to transfer or assign it in whole or in part.
+                  to transfer and assign this Appointment Letter and all covenants and agreements herein will inure to
+                  the benefit of and be enforceable by such successors and assigns. This Appointment Letter is personal
+                  to
+                  you and you will not be entitled to transfer or assign it in whole or in part.
                 </p>
 
                 <p>
                   <b>c) Independent Legal Advice:</b> By signing this Appointment
-                    Letter you agree that you have: (a) been given two (2) days time to review this Appointment Letter;
-                    (b) read and understands the terms of this Appointment Letter; (c) has been advised of the right, and
-                    has been provided with a reasonable opportunity, to obtain independent legal advice in connection with
-                    the execution of this Appointment Letter prior to his/her execution hereof; and (d) obtained or freely
-                    chosen not to obtain such independent legal advice.
+                  Letter you agree that you have: (a) been given two (2) days time to review this Appointment Letter;
+                  (b) read and understands the terms of this Appointment Letter; (c) has been advised of the right, and
+                  has been provided with a reasonable opportunity, to obtain independent legal advice in connection with
+                  the execution of this Appointment Letter prior to his/her execution hereof; and (d) obtained or freely
+                  chosen not to obtain such independent legal advice.
                 </p>
 
                 <p>
                   <b>d) Equitable Remedies:</b> You acknowledge and agree that a
-                    breach by you of any of the provisions of Sections 14 (Non-Solicitation), 14 (Non-Competition)
-                    hereof or terms of NDA would cause substantial and irreparable harm to the Company, which could not be
-                    adequately compensated for by damages, and in the event of such a breach ( or the reasonable apprehension of
-                    such a breach) by the Company of any such provisions, you agree that the Company shall be entitled to
-                    temporary and permanent injunctive relief against any breach or further breach of the said provisions, without
-                    bond or security, and without a requirement that the Company prove actual damages or establish the
-                    adequacy of any of the remedies available to it. The provisions of this section shall be in addition to and
-                    not substitution for any other remedy which the Company may have in respect of any such breach.
+                  breach by you of any of the provisions of Sections 14 (Non-Solicitation), 14 (Non-Competition)
+                  hereof or terms of NDA would cause substantial and irreparable harm to the Company, which could not be
+                  adequately compensated for by damages, and in the event of such a breach ( or the reasonable
+                  apprehension of
+                  such a breach) by the Company of any such provisions, you agree that the Company shall be entitled to
+                  temporary and permanent injunctive relief against any breach or further breach of the said provisions,
+                  without
+                  bond or security, and without a requirement that the Company prove actual damages or establish the
+                  adequacy of any of the remedies available to it. The provisions of this section shall be in addition
+                  to and
+                  not substitution for any other remedy which the Company may have in respect of any such breach.
                 </p>
 
                 <p>
                   <b>e) Headings:</b> Headings are for ease of reference only and do
-                    not affect the meaning of the agreement set out in this Appointment Letter. Unless expressly
-                    indicated otherwise, references to monetary amounts are references to an amount expressed in the currency of
-                    India.
+                  not affect the meaning of the agreement set out in this Appointment Letter. Unless expressly
+                  indicated otherwise, references to monetary amounts are references to an amount expressed in the
+                  currency of
+                  India.
                 </p>
 
                 <p>
                   <b>f) Amendment & Waiver:</b> The terms of this Appointment Letter
-                    may not be amended or revised except by an instrument in writing signed by both parties. No waiver
-                    of any provision of this Agreement shall be binding unless in writing and signed by the party entitled to
-                    grant the waiver. No failure to exercise or delay in exercising any right or remedy under this Agreement
-                    will be deemed to be a waiver of that right or remedy. No waiver of any breach of any provision of this
-                    Agreement will be deemed to be a waiver of any subsequent breach of that provision.
-                    This Appointment Letter contains the entire understanding between you and the Company concerning the
-                    subject matter and includes the Annexure(s) referred to herein and attached hereto, and supersedes
-                    any and all prior and contemporaneous negotiations, correspondence, understandings and agreements, whether
-                    oral or written, respecting that subject matter.
+                  may not be amended or revised except by an instrument in writing signed by both parties. No waiver
+                  of any provision of this Agreement shall be binding unless in writing and signed by the party entitled
+                  to
+                  grant the waiver. No failure to exercise or delay in exercising any right or remedy under this
+                  Agreement
+                  will be deemed to be a waiver of that right or remedy. No waiver of any breach of any provision of
+                  this
+                  Agreement will be deemed to be a waiver of any subsequent breach of that provision.
+                  This Appointment Letter contains the entire understanding between you and the Company concerning the
+                  subject matter and includes the Annexure(s) referred to herein and attached hereto, and supersedes
+                  any and all prior and contemporaneous negotiations, correspondence, understandings and agreements,
+                  whether
+                  oral or written, respecting that subject matter.
                 </p>
               </div>
             </div>
@@ -655,7 +785,8 @@
           <!--page-7-->
           <div class="letter-page-content my-4" id="pdfContent7">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="soft-copy-lettermb-5">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc"
+                class="soft-copy-lettermb-5">
                 <app-lettersheader></app-lettersheader>
               </div>
               <ng-template #doc>
@@ -669,12 +800,13 @@
               <p>Yours Sincerely,</p>
               <p class="letter-sub-header">For RightlyHR</p>
               <p style="font-family: Segoe script; font-size: large;">
-                {{appointmentletter.authorityName}}
+                {{authorityFullName}}
               </p>
               <p class="letter-sub-header">Authorized Signatory</p>
-              <p class="letter-sub-header">{{appointmentletter.authorityName}}</p>
-              <p class="letter-sub-header">{{authorityDesignation}}</p>
-              <p class="letter-sub-header text-end">Date of Joining: {{ appointmentletter.dateOfJoining | dateformat }}</p>
+              <p class="letter-sub-header">{{authorityFullName}}</p>
+              <p class="letter-sub-header">{{selectedAuthority?.designation}}</p>
+              <p class="letter-sub-header text-end">Date of Joining: {{ employeeForm.get('dateOfJoining')?.value |
+                dateformat }}</p>
               <div class="pt-2">
                 <div class="mb-3 d-flex justify-content-center">
                   <p class="letter-sub-header">ACCEPTANCE </p>
@@ -703,66 +835,76 @@
           <!--page-8-->
           <div class="letter-page-content my-4" id="pdfContent8">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="soft-copy-letter">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                 <app-lettersheader></app-lettersheader>
               </div>
               <ng-template #doc>
                 <div class="hard-copy-letter"></div>
               </ng-template>
               <div class="letter-header text-center mb-3">Annexure A</div>
-          
-              <div class="letter-sub-header text-center mb-3">Non-Disclosure Agreement and Invention Assignment Agreement</div>
-          
+
+              <div class="letter-sub-header text-center mb-3">Non-Disclosure Agreement and Invention Assignment
+                Agreement</div>
+
               <p>This Non-Disclosure Agreement and Invention Assignment Agreement (hereinafter “Agreement”) is
                 effective as of by and between
               </p>
-          
-              <p><b>RightlyHR</b>, with its office at Vijay Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli, HYD -
+
+              <p><b>RightlyHR</b>, with its office at Vijay Krishna Towers, Floor#16, Madhava Reddy Colony, Gachibowli,
+                HYD -
                 500032
                 (hereinafter referred to as the “Company”)
               </p>
-          
+
               <p>And</p>
-          
+
               <p>
-                <span class="letter-sub-header"> {{ appointmentletter.firstName }}
-                  {{appointmentletter.middleName}} {{ appointmentletter.lastName }}, PAN No:
+                <span class="letter-sub-header"> {{ employeeFullname }}, PAN No:
                   <span *ngFor="let p of panDetails">{{p.identityNumber }}</span>
                 </span> ,
-                <span *ngIf="appointmentletter.addressLine1">
-                  {{ appointmentletter.addressLine1 }}, {{ appointmentletter.addressLine2 }}, {{ appointmentletter.city }},
-                  {{ appointmentletter.state }}, {{ appointmentletter.country }} - {{ appointmentletter.zipCode }}.
+                <span *ngIf="employeeForm.value.addressLine1">
+                  {{ employeeForm.value.addressLine1 }},
+                  {{ employeeForm.value.addressLine2 }},
+                  {{ employeeForm.value.city }},
+                  {{ employeeForm.value.state }},
+                  {{ employeeForm.value.country }} -
+                  {{ employeeForm.value.pinCode }}.
                 </span>
               </p>
-          
-              <p>The Company and the Receiving Party shall collectively be referred to as “Parties” and individually as a “Party”.
+
+              <p>The Company and the Receiving Party shall collectively be referred to as “Parties” and individually as
+                a “Party”.
               </p>
-          
+
               <p class="letter-sub-header">RECITALS:</p>
-          
+
               <p>
-                <b>a)</b> As per the Appointment Letter dated <b>{{ appointmentletter.appointmentdate | dateformat }}</b>, the
+                <b>a)</b> As per the Appointment Letter dated <b>{{ employeeForm.get('appointmentdate')?.value |
+                  dateformat }}</b>, the
                 Receiving Party is working with the Company as [RightlyHR] (“Engagement”). During
                 the course of Engagement, the Receiving Party may be exposed to the Confidential Information (as
                 defined below) of the Company and/or the Company’s affiliates, clients, customers, consultants, vendors,
                 partners, agents or suppliers etc. The Receiving Party may also generate, create or receive, possess,
                 oversee information that is confidential in nature.
               </p>
-          
+
               <p>
-                <b>b)</b> Whereas the Receiving Party undertakes to protect all such information from any unauthorized use or
+                <b>b)</b> Whereas the Receiving Party undertakes to protect all such information from any unauthorized
+                use or
                 disclosure
-                and undertakes to handover all intellectual property rights in the Developments (as defined below), on the terms
+                and undertakes to handover all intellectual property rights in the Developments (as defined below), on
+                the terms
                 agreed between the Parties.
               </p>
-          
+
               <p>The Parties agree as follows:</p>
-          
+
               <p class="letter-sub-header">1.Confidential Information and Exclusion:</p>
               <p>
                 Confidential information, includes but is not limited to, any and all technical and non- technical
                 information including patent, copyright, trade secret, and proprietary information, technique,
-                sketches, drawings, models, inventions, Innovations, know-how, processes, apparatus, equipment, algorithms,
+                sketches, drawings, models, inventions, Innovations, know-how, processes, apparatus, equipment,
+                algorithms,
                 software programs, software source documents, and formulae related to the current, future and proposed
                 services and products of the Company or its clients, details of the Company and its clients suppliers
                 and customers, and includes, without limitation, the Company or its clients Innovations, property and
@@ -772,13 +914,15 @@
                 or its clients are necessarily confidential and form valuable property of the Company or its clients. If
                 any information is disclosed orally, it shall at the time of disclosure be identified as confidential
                 or shall be summarized and designated in writing by the Company and delivered within 30 days of
-                disclosure to the Receiving Party to qualify it as Confidential Information. Confidential Information shall
-                however exclude any information which (a) is in the public domain; (b) was known to the Receiving Party of
+                disclosure to the Receiving Party to qualify it as Confidential Information. Confidential Information
+                shall
+                however exclude any information which (a) is in the public domain; (b) was known to the Receiving Party
+                of
                 such disclosure or becomes known to the Receiving Party without breach of any confidentiality agreement.
               </p>
-          
+
               <p class="letter-sub-header">2.Definition of Developments:</p>
-          
+
               <p>
                 <b>“Development(s)”</b>
                 shall mean and include all inventions, improvements, discoveries, methods,
@@ -787,7 +931,8 @@
                 plans, technology, computer programs, software, test, concept, idea, mechanism, equipment, machinery,
                 process, formula, or technique, algorithm), whether or not granted protection under intellectual
                 property laws, which are created, made, conceived or reduced to practice by the Receiving Party or
-                under the Receiving Party’s direction or jointly with others during the Engagement, whether or not during
+                under the Receiving Party’s direction or jointly with others during the Engagement, whether or not
+                during
                 normal working hours or on the premises of the Company.
               </p>
             </div>
@@ -799,7 +944,7 @@
           <!--page-9-->
           <div class="letter-page-content my-4" id="pdfContent9">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="soft-copy-letter">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                 <app-lettersheader></app-lettersheader>
               </div>
               <ng-template #doc>
@@ -816,77 +961,86 @@
                 other source to any third parties and shall restrict disclosure of Confidential Information only to the
                 Company’s concerned officers, employees, attorneys, subcontractors or professional advisors who need
                 to have access to the Confidential Information and each of whom shall be informed by Receiving Party of
-                the confidential nature of Confidential Information and agree to observe the same terms and conditions set
+                the confidential nature of Confidential Information and agree to observe the same terms and conditions
+                set
                 forth herein as if specifically named a party hereto.
               </p>
-          
+
               <p>
-                <b>b)</b> The Receiving Party shall not make copies of Confidential Information unless the same are reasonably
+                <b>b)</b> The Receiving Party shall not make copies of Confidential Information unless the same are
+                reasonably
                 necessary.
               </p>
-          
+
               <p>
-                <b>c)</b> The Receiving Party shall immediately notify the Company in the event of any unauthorized use or
+                <b>c)</b> The Receiving Party shall immediately notify the Company in the event of any unauthorized use
+                or
                 disclosure of the Confidential Information and reasonably support the Company in taking necessary
                 remedial action.
               </p>
-          
+
               <p>
-                <b>d)</b> The Receiving Party shall protect the Confidential Information by using the same degree of care to
+                <b>d)</b> The Receiving Party shall protect the Confidential Information by using the same degree of
+                care to
                 prevent unauthorized use, dissemination, or publication of the Confidential Information as the
-                Receiving Party would use to protect his/her own confidential information of a like nature, but no less than a
+                Receiving Party would use to protect his/her own confidential information of a like nature, but no less
+                than a
                 reasonable degree of care.
               </p>
-          
+
               <p>
-                <b>e)</b> The Receiving Party shall not use, modify, reverse engineer, decompile, create other works from or
+                <b>e)</b> The Receiving Party shall not use, modify, reverse engineer, decompile, create other works
+                from or
                 disassemble anything in the Company’s Confidential Information unless permitted in writing by the
                 Company.
               </p>
-          
+
               <p>
                 <b>f)</b>
                 The Receiving Party agrees and undertakes to not make copies or duplicates of the Confidential
                 Information, without prior written consent for the same from the Company.
               </p>
-          
+
               <p>
                 <b>g)</b>
                 The Receiving Party further agrees to notify the Company in writing of any actual or suspected
                 misuse, misappropriation or unauthorized disclosure of the Company’s Confidential Information, which
                 may come to the Receiving Party’s attention.
               </p>
-          
+
               <p>
                 <b>h)</b>
                 The Receiving Party shall not interact with the press or any third party with respect to the Company’s
                 business, customers, competitors or anything related to the Company without the Company’s prior
-                written approval. The Receiving Party shall not publicize or disclose the presence of this Agreement nor use
+                written approval. The Receiving Party shall not publicize or disclose the presence of this Agreement nor
+                use
                 in any manner the name or logos of the Company without the prior written permission of the Company.
               </p>
-          
+
               <p>
                 <b>i)</b>
                 During the tenure of the Engagement, the Receiving Party shall not bring any media storage devices
-                such as external hard drives, USB drives, external hard discs, or any other devices that can store data, to
+                such as external hard drives, USB drives, external hard discs, or any other devices that can store data,
+                to
                 the Company office premises without prior written permission of the Company.
               </p>
-          
+
               <p>
                 <b>j)</b>
                 The Receiving Party shall not, during his/her Engagement with the Company or otherwise, use or
-                disclose to the Company any confidential, trade secret, or other proprietary information or material of any
+                disclose to the Company any confidential, trade secret, or other proprietary information or material of
+                any
                 previous employer or other person and will not bring into the Company's premises any unpublished
                 document or any other property belonging to any former employer without the written consent of that
                 former employer.
               </p>
-          
+
               <p>
                 <b>k)</b>
                 The Receiving Party hereby undertakes not to, under any circumstances disclose, destroy, delete,
                 alter, steal, or cause to disclose, destroy, delete, alter, steal the Confidential Information.
               </p>
-          
+
               <p>
                 <b>l)</b>
                 The Company’s Property: All works, programs, papers, records, data, notes, drawings, files, documents,
@@ -896,7 +1050,7 @@
                 of the engagement with the Company, whether or not confidential, are and shall remain the sole and
                 exclusive property of the Company.
               </p>
-          
+
               <p class="letter-sub-header">4. Disclosure and Assignment of Developments: </p>
               <p>
                 <b>a)</b>
@@ -913,14 +1067,15 @@
           <!--page-10-->
           <div class="letter-page-content my-4" id="pdfContent10">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="soft-copy-letter">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                 <app-lettersheader></app-lettersheader>
               </div>
               <ng-template #doc>
                 <div class="hard-copy-letter"></div>
               </ng-template>
               <p>
-                <b>b)</b> The Receiving Party understands and acknowledges that no license is granted to the Receiving Party in
+                <b>b)</b> The Receiving Party understands and acknowledges that no license is granted to the Receiving
+                Party in
                 and to the Confidential Information and/or the Developments, nor is any intellectual property right
                 implied to be granted by this Agreement. The Receiving Party understands and acknowledges that the
                 Company shall be the exclusive owner of all rights pertaining to the Developments created or developed
@@ -930,49 +1085,57 @@
                 Developments shall be the property of the Company and, to the greatest extent permitted by law, shall
                 be ‘works made for hire.
               </p>
-          
+
               <p>
-                <b>c)</b> The Receiving Party shall give the Company all assistance it reasonably requires to perfect, protect,
+                <b>c)</b> The Receiving Party shall give the Company all assistance it reasonably requires to perfect,
+                protect,
                 and use its rights to the Developments. In particular, the Receiving Party shall sign all documents,
                 do all things, and supply all information that the Company considers necessary or desirable to transfer
                 or record the transfer of entire rights, title and interest in the Developments; and to enable the
                 Company to obtain patent, copyright, or other legal protection to the Developments.
               </p>
-          
+
               <p>
                 <b>d)</b> Receiving Party acknowledges and agrees that the assignment set forth herein is worldwide and
-                perpetual, and that he/she will have no rights to reversion of the Developments, even if the Company does not
+                perpetual, and that he/she will have no rights to reversion of the Developments, even if the Company
+                does not
                 exploit them.
               </p>
-          
-              <p><b>e)</b> Receiving Party hereby permanently waives all paternity, integrity, special, moral or similar rights,
+
+              <p><b>e)</b> Receiving Party hereby permanently waives all paternity, integrity, special, moral or similar
+                rights,
                 if any, that vest or may vest in Receiving Party as of the date in any Developments. Receiving Party
                 further acknowledges and agrees that through the complete and permanent waiver contained herein
-                neither do Receiving Party's legal heirs retain any paternity, integrity, moral, special or similar rights in
+                neither do Receiving Party's legal heirs retain any paternity, integrity, moral, special or similar
+                rights in
                 and to any Developments. Receiving Party hereby agrees, at the request and expense of the Company, to
                 provide any assistance as may be necessary to confirm Receiving Party's waiver of any paternity,
                 integrity, special, moral or similar rights associated with the Developments that may vest in the
                 Receiving Party.
               </p>
-          
+
               <p>
                 <b>f)</b>
                 Inventions, if any, patented or unpatented, made by the Receiving Party prior to the commencement of
                 his/her Engagement with the Company are excluded from the scope of this Agreement. To preclude any
                 possible uncertainty, the Receiving Party sets forth on Exhibit A (Previous Inventions) attached
                 hereto a complete list of all inventions that the Receiving Party has, alone or jointly with others,
-                conceived, developed or reduced to practice or caused to be conceived, developed or reduced to practice prior to
+                conceived, developed or reduced to practice or caused to be conceived, developed or reduced to practice
+                prior to
                 the commencement of his/her Engagement, that the Receiving Party considers to be his/her property or
-                the property of third parties and that the Receiving Party wishes to have excluded from the scope of this
+                the property of third parties and that the Receiving Party wishes to have excluded from the scope of
+                this
                 Agreement (collectively referred to as "Prior Inventions"). If, the Receiving Party incorporates a
-                Prior Invention into the Company product, process or machine, the Company is hereby granted and shall have a
+                Prior Invention into the Company product, process or machine, the Company is hereby granted and shall
+                have a
                 nonexclusive, royalty-free, irrevocable, perpetual, worldwide license (with rights to sub license
                 through multiple tiers of sub licensees) to make, have made, modify, use and sell such Prior
                 Invention. Notwithstanding the foregoing, the Receiving Party agrees that the Receiving Party will not
-                incorporate, or permit to be incorporated, Prior Inventions in any the Company’s products without the Company's
+                incorporate, or permit to be incorporated, Prior Inventions in any the Company’s products without the
+                Company's
                 prior written consent.
               </p>
-          
+
               <p>
                 <b>g)</b>
                 In the event the Company is unable for any reason, after reasonable effort, to secure the Receiving
@@ -983,13 +1146,13 @@
                 any such documents and to do all other lawfully permitted acts to further the purposes of the preceding
                 paragraphs with the same legal force and effect as if executed by the Receiving Party.
               </p>
-          
+
               <p>
                 <b>h)</b>
                 The Receiving Party further represents that he/she has no other employment(s), consultancies or
                 undertakings which would restrict and impair his/her performance of this Agreement.
               </p>
-          
+
               <p class="letter-sub-header">Return:</p>
               <p>
                 In the event of termination of Engagement, or upon request by the Company, the Receiving Party agrees
@@ -997,7 +1160,7 @@
                 the Company, and any computer files and other materials incorporating any such Confidential Information
                 and all copies thereof.
               </p>
-          
+
               <p class="letter-sub-header">5.Indemnity: </p>
               <p>
                 The Receiving Party agrees to indemnify and save harmless the Company and its employees, successors
@@ -1013,7 +1176,7 @@
           <!--page-11-->
           <div class="letter-page-content my-4" id="pdfContent11">
             <div class="letter-page-sub-content">
-              <div *ngIf="appointmentletter.Copys; else doc" class="soft-copy-letter">
+              <div *ngIf="employeeForm.get('documentType')?.value?.value === true; else doc" class="soft-copy-letter">
                 <app-lettersheader></app-lettersheader>
               </div>
               <ng-template #doc>
@@ -1039,56 +1202,60 @@
                 of posting a bond or other security and in addition to and without prejudice to any other right and
                 remedies that the Company may have under the applicable law for a breach of this Agreement
               </p>
-          
+
               <p class="letter-sub-header">9. Governing Law and Jurisdiction: </p>
               <p>
                 "This Agreement shall be governed by and construed in accordance with the laws of India and shall be
                 subject to jurisdiction of courts at Hyderabad, Telangana"
               </p>
-          
+
               <p class="letter-sub-header">10. Miscellaneous: </p>
-              <p><b>a)</b> Enforcement. If any provision of this Agreement shall be determined to be invalid or unenforceable for
+              <p><b>a)</b> Enforcement. If any provision of this Agreement shall be determined to be invalid or
+                unenforceable for
                 any reason, it shall be adjusted rather than voided, if possible, in order to achieve the intent of
                 the parties to the extent possible. In any event, all other provisions of this Agreement shall be deemed
                 valid and enforceable to the full extent possible.
               </p>
-          
-              <p><b>b)</b> Waiver. The waiver by the Company of a breach of any provision of this Agreement shall not operate or
+
+              <p><b>b)</b> Waiver. The waiver by the Company of a breach of any provision of this Agreement shall not
+                operate or
                 be construed as a waiver of any subsequent breach of the same or any other provision hereof.
               </p>
-          
-              <p><b>c)</b> Attorneys’ Fees. If either party seeks to enforce its rights under this Agreement by legal proceedings
+
+              <p><b>c)</b> Attorneys’ Fees. If either party seeks to enforce its rights under this Agreement by legal
+                proceedings
                 or otherwise, the non-prevailing party shall pay all costs and expenses of the prevailing Party.
               </p>
-          
+
               <p><b>d)</b>
                 Entire Agreement. This Agreement contains the entire understanding between the Company and the
-                Receiving Party concerning the subject matter hereof and is in addition to any and all prior and contemporaneous
+                Receiving Party concerning the subject matter hereof and is in addition to any and all prior and
+                contemporaneous
                 negotiations, correspondence, understandings and agreements, whether oral or written, respecting that
                 subject matter.
               </p>
-          
+
               <p class="mt-3">Thank You!!</p>
-          
+
               <p>Yours Sincerely,</p>
-          
+
               <p class="letter-sub-header mb-5">FOR RightlyHR</p>
-          
+
               <div class="mb-3"></div>
-          
-              <p style="font-family: Segoe script; font-size: large;">{{appointmentletter.authorityName}}</p>
+
+              <p style="font-family: Segoe script; font-size: large;">{{authorityFullName}}</p>
               <p class="letter-sub-header">Authorized Signatory</p>
-              <p class="letter-sub-header">{{appointmentletter.authorityName}}</p>
-              <p class="letter-sub-header">{{authorityDesignation}}</p>
-          
+              <p class="letter-sub-header">{{authorityFullName}}</p>
+              <p class="letter-sub-header">{{selectedAuthority?.designation}}</p>
+
               <p class="letter-sub-header text-end my-2">
-                Date of Joining: {{ appointmentletter.dateOfJoining | dateformat }}
+                Date of Joining: {{ employeeForm.get('dateOfJoining')?.value | dateformat }}
               </p>
-          
+
               <p class="letter-sub-header">Employee Name :</p>
-          
+
               <p class="letter-sub-header">Sign :</p>
-          
+
               <p class="letter-sub-header">Date :</p>
             </div>
             <div class="letter-footer">

@@ -350,7 +350,7 @@
       
           <div class="d-flex align-items-center flex-wrap gap-3 pt-4">
             <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading">{{buttonValue}}</button>
-            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading"
+            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading||disableFieldsForApproval"
               (click)="emailSendingforApprover()">Request
               For Approval</button>
             @if(loading){
@@ -560,7 +560,7 @@
                     <p>Yours Sincerely,</p>
                     <p class="mb-5 letter-sub-header">For RightlyHR </p>
                     <div class="stamp"></div>
-                    <p class="m-0" *ngIf="prospectiveEmpData.authorityName?.trim()" style="font-family: Segoe script; font-size: large;">{{prospectiveEmpData.authorityName}}</p>
+                    <p class="m-0 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">{{prospectiveEmpData.authorityName}}</p>
                     <p class="m-0"> Authorized Signatory, </p>
                     <p class="m-0">{{prospectiveEmpData.authorityName}} </p>
                     <p class="m-0">{{authorityDesignation}} </p>

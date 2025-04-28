@@ -1,7 +1,16 @@
+.custom-setting-right-content {
+    height: calc(100dvh - 15rem);
+}
+
+.folders-container{
+    width: 22rem;
+    height: calc(100dvh - 15rem);
+    overflow: auto;
+}
+
 .folder-content {
     display: flex;
     align-items: center;
-    
     font-size: var(--fontsize16);
 }
 
@@ -9,19 +18,22 @@
     background-color: var(--body-bg-color);
     border-radius: 0.5rem;
     font-weight: 500;
-    color: var(--primary-color);
 }
 
-.foldder-icon {
+.folder-icon {
     font-size: xx-large;
     color: #f9b755;
 }
+
 .subfolder-container {
-    margin-left: 20px;
-    border-left: 2px solid #ddd;
-    padding-left: 10px;
-  }
-  
-  .subfolder-container .folder-content {
-    margin-bottom: 2px;
-  }
+    padding: 0.5rem 0.75rem;
+
+    .folder-icon {
+        font-size: x-large;
+        color: #f9b755;
+    }
+
+    .folder-name {
+        font-size: var(--fontsize14);
+    }
+}

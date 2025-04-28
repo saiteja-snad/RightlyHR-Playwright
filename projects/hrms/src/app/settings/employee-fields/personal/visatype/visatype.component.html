@@ -6,13 +6,13 @@
                 <input type="text" class="form-control custom-input" placeholder="Please enter visa type"
                     formControlName="Visatype" aria-label="visa" aria-describedby="visa" maxlength="50">
                 <span class="input-group-text" id="visa">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="VisaForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="VisaForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
-            <div *ngIf="VisaForm.get('Visatype')?.touched && VisaForm.get('Visatype')?.invalid" class="error-msg mt-2">
+            <div *ngIf="VisaForm.get('Visatype')?.touched && VisaForm.get('Visatype')?.invalid" class="error-msg">
                 <div *ngIf="VisaForm.get('Visatype')?.errors?.['required']">{{'Visa Type is required'|translate}}</div>
             </div>
-            <div *ngIf="VisaForm.get('Visatype')?.errors?.['pattern']" class="error-msg mt-2">
+            <div *ngIf="VisaForm.get('Visatype')?.errors?.['pattern']" class="error-msg">
                 {{ 'Spaces at start and special character are not allowed' | translate }}
             </div>
         </div>
@@ -34,13 +34,15 @@
                         <div class="d-flex gap-4">
                             <!--Update-->
                             <div>
-                                <a (click)="openupdate(visa)" *ngIf="rbac.allowedToAccess('Visa Type.update')"><img src="/settings-icon/edit.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="openupdate(visa)" *ngIf="rbac.allowedToAccess('Visa Type.update')">
+                                    <img src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                             <!--Delete-->
                             <div>
-                                <a (click)="opendelete(visa)" *ngIf="rbac.allowedToAccess('Visa Type.delete')"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
+                                <a (click)="opendelete(visa)" *ngIf="rbac.allowedToAccess('Visa Type.delete')">
+                                    <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                </a>
                             </div>
                         </div>
                     </td>
@@ -56,7 +58,7 @@
     <form [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
-                <div >
+                <div>
                     <p class="popup-heading mb-0">{{'Update Visa Type'|translate}}</p>
                 </div>
                 <div>
@@ -69,16 +71,16 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Visatype"
                         placeholder="Please enter visa type" maxlength="50">
-                    <div *ngIf="updateForm.get('Visatype')?.touched && updateForm.get('Visatype')?.invalid" class="error-msg mt-2">
+                    <div *ngIf="updateForm.get('Visatype')?.touched && updateForm.get('Visatype')?.invalid" class="error-msg">
                         <div *ngIf="updateForm.get('Visatype')?.errors?.['required']">{{'Visa Type is required'|translate}}</div>
                     </div>
-                    <div *ngIf="updateForm.get('Visatype')?.errors?.['pattern']" class="error-msg mt-2">
+                    <div *ngIf="updateForm.get('Visatype')?.errors?.['pattern']" class="error-msg">
                         {{ 'Spaces at start and special character are not allowed' | translate }}
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary " (click)="updateVisa(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateVisa(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -88,15 +90,13 @@
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
-      
-            <div >
-                <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-            </div>
-            <div class="custom-modal-footer">
-                <button type="button" class="custom-btn btn-secondary "(click)="closeDelete(modal)">{{'No'|translate}}</button>
-                <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-            </div>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
         </div>
-  
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+        </div>
+    </div>
 </ng-template>

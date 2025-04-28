@@ -49,8 +49,8 @@ export class AddEducationDetailsComponent {
   initializeEducationForm() {
     this.educationForm = this.fb.group({
       education: ['', Validators.required],
-      university: ['', [Validators.required,Validators.maxLength(100)]],
-      specialization: ['', [Validators.required, Validators.pattern(/^[A-Za-z ,._-]+$/),Validators.maxLength(100)]],
+      university: ['', [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/),Validators.maxLength(100)]],
+      specialization: ['', [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/),Validators.maxLength(100)]],
       // specialization: ['', Validators.required,Validators.pattern('^[A-Za-z,.\-_\s]+$')],
       gpa: ['', [
         Validators.required,
@@ -122,7 +122,7 @@ export class AddEducationDetailsComponent {
             next: (data: any) => {
               this.postEducationdata = data as Ieducation;
               this.modalService.dismissAll();
-              this.openPopup.openSuccess("Data Added Successfully");
+              this.openPopup.openSuccess("Education Details added successfully");
               this.getData.getEducation.set(true);
               this.educationForm.reset();
             },

@@ -34,7 +34,7 @@ export class TraineeOfferLetterComponent {
   generatingEmployeeId: any;
   documentUrl = {} as any; //variable to store docurl path
   jobRoleDetails: any;
-  disableFieldsForApproval: boolean = true; //variable to disable the fields for approval
+  disableFieldsForApproval= true; //variable to disable the fields for approval
   SignatureAuthorityValue: any;
   addressType: any;
   employeeaddress = [] as any;
@@ -169,7 +169,7 @@ export class TraineeOfferLetterComponent {
       offerSentDate: ['', Validators.required],
       dateOfJoining: ['', Validators.required],
       offerExpiryDate: ['', Validators.required],
-      note: [''],
+      note: ['',[Validators.maxLength(250)]],
       authorityid: [null, Validators.required],
       reportingmanagerId: [null, Validators.required],
       documentType: ['', Validators.required],
@@ -878,7 +878,65 @@ export class TraineeOfferLetterComponent {
       error: (Reason) => console.log(Reason),
     });
   }
-
+  updateEmployeeData(employeeData: any) {
+    if (employeeData.substatus == 'Offer Letter Rejected By Manager') {
+      employeeData.substatus = 'Offer Letter Generated';
+      (employeeData.generateOffer = false),
+        (employeeData.esic = this.traineeEmpData.esic),
+        (employeeData.pf = this.traineeEmpData.pf);
+      this.subscription = this.http
+        .postdata('Employeedata/UPDATER', employeeData)
+        .subscribe({
+          next: (res: any) => {
+            console.log(res);
+            this.result = res;
+            if (res.statusCode == 409) {
+            } else if (res.statusCode == 200) {
+              this.UpdateFieldsToRespectiveTables();
+              this.downLoadDocument(this.traineeEmpData);
+            } else if (res.statusCode == 1002) {
+              this.confirmation_Msg=res.message;
+                this.modalService.open(this.approveModal1, {
+                  centered: true,
+                  backdrop: 'static',
+                  keyboard: false
+                });
+            }
+          },
+          error: (err: any) => {
+            console.log(err);
+          },
+        });
+    } else {
+      (employeeData.substatus = 'Offer Letter Regenerated'),
+        (employeeData.generateOffer = false);
+      this.subscription = this.http
+        .postdata('Employeedata/UPDATER', employeeData)
+        .subscribe({
+          next: (res: any) => {
+            console.log(res);
+            this.result = res;
+            if (res.statusCode == 409) {
+                this.conformationPopup.openErrorModal(res.message);
+                this.employeeForm.reset();
+            } else if (res.statusCode == 200) {
+              this.UpdateFieldsToRespectiveTables();
+              this.downLoadDocument(this.traineeEmpData);
+            } else if (res.statusCode == 1002) {
+              this.confirmation_Msg=res.message;
+                this.modalService.open(this.approveModal1, {
+                  centered: true,
+                  backdrop: 'static',
+                  keyboard: false
+                });
+            }
+          },
+          error: (err: any) => {
+            console.log(err);
+          },
+        });
+    }
+  }
   //function to send the email to employeee
   emailSendingforApprover() {
     if (this.traineeEmpData.isEmployeevalid === true) {
@@ -922,7 +980,7 @@ export class TraineeOfferLetterComponent {
       next: (data: any) => {
         //this.Approvednotification();
         if (data) {
-          this.conformationPopup.openSuccessModal('Email sent successfully');
+          this.conformationPopup.openSuccessModal('Request For Approval Sent Successfully');
         }
         this.loading = false;
         setTimeout(() => {
@@ -937,113 +995,6 @@ export class TraineeOfferLetterComponent {
     });
   }
 
-  // function for Manger to approve notification
-  // Approvednotification() {
-  //   const currentDate = new Date();
-  //   this.traineeEmpData;
-  //   console.log(this.traineeEmpData.empid);
-  //   let loggedInUser = this.authService.getToken();
-  //   let senddata = {
-  //     message: `Offer Letter Approve Request`,
-  //     sentTo: this.traineeEmpData.OffersentbyEmailaddress,
-  //     isRead: false,
-  //     isDelete: false,
-  //     notificationDate: currentDate,
-  //     notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''} ${loggedInUser.lastName}  requested you for the approval of the offer letter of employee
-  //        ${this.traineeEmpData?.firstName} ${this.traineeEmpData?.middleName ?? ''} ${this.traineeEmpData?.lastName} Offer Letter`,
-  //     empId: loggedInUser.employeeId,
-  //   };
-  //   this.subscription = this.http
-  //     .postdata(`Notification/Notify/Manager`, senddata)
-  //     .subscribe({
-  //       next: (data: any) => {
-  //         console.log(data);
-  //         this.loading = false;
-  //         setTimeout(() => {
-  //           this.router.navigate(['/admin/dashboard']);
-  //         }, 3000);
-  //       },
-  //       error: (err: any) => {
-  //         console.log(err);
-  //       },
-  //     });
-  // }
-
-  updateEmployeeData(employeeData: any) {
-    if (employeeData.substatus == 'Offer Letter Rejected By Manager') {
-      employeeData.substatus = 'Offer Letter Generated'
-      employeeData.generateOffer = false
-      this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
-        next: (res: any) => {
-          console.log(res);
-          this.result = res;
-          if (res.statusCode == 409) {
-            this.conformationPopup.openErrorModal(res.message);
-          } else if (res.statusCode == 200) {
-            this.UpdateFieldsToRespectiveTables();
-            this.downLoadDocument(this.traineeEmpData);
-          } else if (res.statusCode == 1002) {
-            const acceptfield = window.confirm(res.message);
-            if (acceptfield) {
-              this.UpdateFieldsToRespectiveTables();
-              this.downLoadDocument(this.traineeEmpData);
-            }
-          }
-        },
-        error: (err: any) => {
-          console.log(err);
-        },
-      });
-    }
-    else {
-      employeeData.substatus = 'Offer Letter Regenerated',
-      employeeData.generateOffer = false;
-      this.subscription = this.http.postdata('Employeedata/UPDATER', employeeData).subscribe({
-        next: (res: any) => {
-          this.result = res;
-          if (res.statusCode == 409) {
-            this.conformationPopup.openErrorModal(res.message);
-          } else if (res.statusCode == 200) {
-            this.UpdateFieldsToRespectiveTables();
-            this.downLoadDocument(this.traineeEmpData);
-          } else if (res.statusCode == 1002) {
-            const acceptfield = window.confirm(res.message);
-            if (acceptfield) {
-              this.UpdateFieldsToRespectiveTables();
-              this.downLoadDocument(this.traineeEmpData);
-            }
-          }
-        },
-        error: (err: any) => {
-          console.log(err);
-        },
-      });
-    }
-  }
-
-  //toggledropdown to open and close the dropdown list
-  toggleDropdown(dropcategory: any) {
-    if (dropcategory == 'job') {
-      this.isDropdownOpenjob = !this.isDropdownOpenjob;
-      if (this.isDropdownOpenjob) {
-      } else {
-        this.filteredOptions = [];
-      }
-    } else if (dropcategory == 'empid') {
-      this.isDropdownOpen = !this.isDropdownOpen;
-      if (this.isDropdownOpen) {
-      } else {
-        this.filteredOptions = [];
-      }
-    } else if (dropcategory == 'authority') {
-      this.isDropdownOpenauthority = !this.isDropdownOpenauthority;
-      if (this.isDropdownOpen) {
-      } else {
-        this.filteredOptions = [];
-      }
-    }
-
-  }
 
   //function to validate the offer expiry date and offer issued date
   updateEndDateValidity(): void {
@@ -1060,7 +1011,7 @@ export class TraineeOfferLetterComponent {
   updateEndDateValidityForExpectedStartDate() {
     const dateOfJoining = new Date(this.traineeEmpData.dateOfJoining);
     const offerIssuedDate = new Date(this.traineeEmpData.offerIssuedDate);
-    if (dateOfJoining <= offerIssuedDate) {
+    if (dateOfJoining < offerIssuedDate) {
       this.isStartDateValid = false;
     } else {
       this.isStartDateValid = true;
@@ -1068,32 +1019,12 @@ export class TraineeOfferLetterComponent {
   }
   
   updateEndDateValidityupdate(): void {
-    if (this.traineeEmpData.dateOfJoining > this.traineeEmpData.offerExpiryDate) {
+    const offerstartDate=moment(this.employeeForm.get('dateOfJoining')?.value);
+    const offerExpiryDate = moment(this.employeeForm.get('offerExpiryDate')?.value);
+    if (offerstartDate.isAfter(offerExpiryDate)) {
       this.isStartDateValidofexpected = false;
     } else {
       this.isStartDateValidofexpected = true;
-    }
-  }
-
-  shouldShowError(): boolean {
-    return false; 
-  }
-
-  optionsFound!: boolean;
-  updateOptionsFound(found: boolean) {
-    this.optionsFound = found;
-  }
-
-  islistedItem: boolean = true;
-  isItemIntheList(isitem: boolean) {
-    this.islistedItem = isitem;
-  }
-
-  onOptionSelected(option: string, dropdownCategory: string) {
-    this.islistedItem = true;
-    this.optionsFound = true;
-    if (dropdownCategory === 'mobilePhoneCountryCode') {
-      this.traineeEmpData.mobilePhoneCountryCode = option
     }
   }
 

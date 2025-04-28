@@ -46,10 +46,10 @@ export class UpdateEducationDetailsComponent {
   initializeEducationForm() {
     this.educationForm = this.fb.group({
       education: [this.educationData?.degree || '', Validators.required],
-      university: [this.educationData?.university || '', [Validators.required,Validators.maxLength(100)]],
+      university: [this.educationData?.university || '', [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/),Validators.maxLength(100)]],
       // specialization: [this.educationData?.specialization || '', Validators.required],
       // gpa: [this.educationData?.gpa || '', Validators.required],
-      specialization: [this.educationData?.specialization || '', [Validators.required,Validators.pattern(/^[A-Za-z ,._-]+$/),Validators.maxLength(100)]],
+      specialization: [this.educationData?.specialization || '', [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/),Validators.maxLength(100)]],
       // gpa: [this.educationData?.gpa || '', [Validators.required,Validators.pattern(/^([0-3](\.\d{1,2})?|4(\.00?)?)$/)]],
       gpa: [this.educationData?.gpa || '', [
         Validators.required,
@@ -154,7 +154,7 @@ export class UpdateEducationDetailsComponent {
                 console.log(data);
                 this.modalService.dismissAll();
                 this.getData.getEducation.set(true);
-                this.openPopup.openSuccess("Data updated successfully");
+                this.openPopup.openSuccess("Education Details updated successfully");
                 this.educationForm.reset();
               },
               error: (reason: any) => {
@@ -170,7 +170,7 @@ export class UpdateEducationDetailsComponent {
         next: (data: any) => {
           this.modalService.dismissAll();
           this.getData.getEducation.set(true);
-          this.openPopup.openSuccess("Data updated successfully");
+          this.openPopup.openSuccess("Education Details updated successfully");
           this.educationForm.reset();
         },
         error: (reason: any) => {

@@ -7,10 +7,10 @@
                     formControlName="IdentityType" aria-label="identitytype" aria-describedby="identitytype"
                     (keydown)="formValidations.restrictInput($event)" maxlength="50">
                 <span class="input-group-text" id="identitytype">
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="IdentityForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="IdentityForm.invalid">{{'Add'|translate}}</button>
+                </span>
             </div>
-            <div *ngIf="IdentityForm.get('IdentityType')?.touched && IdentityForm.get('IdentityType')?.invalid" class="error-msg mt-2">
+            <div *ngIf="IdentityForm.get('IdentityType')?.touched && IdentityForm.get('IdentityType')?.invalid" class="error-msg">
                 <div *ngIf="IdentityForm.get('IdentityType')?.errors?.['required']">{{'Identity Type is required'|translate}}</div>
             </div>
         </div>

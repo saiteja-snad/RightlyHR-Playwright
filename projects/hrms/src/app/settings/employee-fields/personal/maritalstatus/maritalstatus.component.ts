@@ -39,15 +39,40 @@ export class MaritalstatusComponent {
   }
   ngOnInit(): void {
     this.MaritalStatusForm = this.fb.group({
-      MaritalStatus: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      MaritalStatus: ['', [
+        Validators.required,
+        Validators.maxLength(50),
+        Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
+      ]]
     });
     this.updateForm = this.fb.group({
-      MaritalStatus: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      MaritalStatus: ['',[
+        Validators.required,
+        Validators.maxLength(50),
+        Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
+      ]]
     });
 
     this.getMaritialStatus();
   }
- 
+  
+
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
+    const pattern = /^[A-Za-z ]$/;
+  
+    // Block if the key is not a letter or space
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Block if length is already 50
+    if (input.value.length >= 50) {
+      event.preventDefault();
+    }
+  }
   getMaritialStatus() {
     this.http.getData('Maritalstatus').subscribe((data: any) => {
       this.MaritalStatusDetail = data;

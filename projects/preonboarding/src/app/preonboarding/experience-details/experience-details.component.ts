@@ -149,7 +149,7 @@ export class ExperienceDetailsComponent {
     this.subscription = this.http.getData(`PreonboardingExperience/Deletebyid/${item.id}`).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-        this.openPopup.openSuccess("Data Deleted Successfully!");
+        this.openPopup.openSuccess("Experience Details deleted successfully");
       },
       error: (err: any) => {
         this.modalService.dismissAll();

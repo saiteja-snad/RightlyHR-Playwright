@@ -74,7 +74,7 @@ export class StatusComponent {
   openupdate(status: any): void {
     this.statusDeletedata = status;
     this.updateForm?.patchValue({
-      statusname: status.statusname // assuming this is the field you edit
+      statusname: status.statusname
     });
     this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
   }

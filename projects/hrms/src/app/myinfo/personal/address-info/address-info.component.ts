@@ -159,6 +159,8 @@ export class AddressInfoComponent {
           addressLine1: formValue.currentAddress.addressLine1 || this.currentAddress.addressLine1,
           addressLine2: formValue.currentAddress.addressLine2 || this.currentAddress.addressLine2,
           city: formValue.currentAddress.city || this.currentAddress.city,
+          type: 'C',
+          empId: this.empinfo.employeeId,
           state: formValue.currentAddress.state || this.currentAddress.state,
           country: formValue.currentAddress.country || this.currentAddress.country,
           zipCode: formValue.currentAddress.zipCode || this.currentAddress.zipCode,
@@ -170,6 +172,8 @@ export class AddressInfoComponent {
           ...this.permanentAddress,
           addressLine1: formValue.permanentAddress.addressLine1 || this.permanentAddress.addressLine1,
           addressLine2: formValue.permanentAddress.addressLine2 || this.permanentAddress.addressLine2,
+          type: 'P',
+          empId: this.empinfo.employeeId,
           city: formValue.permanentAddress.city || this.permanentAddress.city,
           state: formValue.permanentAddress.state || this.permanentAddress.state,
           country: formValue.permanentAddress.country || this.permanentAddress.country,
@@ -204,27 +208,55 @@ export class AddressInfoComponent {
     });
   }
 
-  postEmployeeAddresses() {
+  postEmployeeAddresses(): void {
+    // Update currentAddress and permanentAddress with the latest form values
+    const formValue = this.addressForm.value;
+  
+    this.currentAddress = {
+      ...this.currentAddress,
+      addressLine1: formValue.currentAddress.addressLine1,
+      addressLine2: formValue.currentAddress.addressLine2,
+      city: formValue.currentAddress.city,
+      type: 'C',
+      empId: this.empinfo.employeeId,
+      state: formValue.currentAddress.state,
+      country: formValue.currentAddress.country,
+      zipCode: formValue.currentAddress.zipCode,
+    };
+  
+    this.permanentAddress = {
+      ...this.permanentAddress,
+      addressLine1: formValue.permanentAddress.addressLine1,
+      addressLine2: formValue.permanentAddress.addressLine2,
+      city: formValue.permanentAddress.city,
+      type: 'P',
+      empId: this.empinfo.employeeId,
+      state: formValue.permanentAddress.state,
+      country: formValue.permanentAddress.country,
+      zipCode: formValue.permanentAddress.zipCode,
+    };
+  
+    // Prepare the payload
     const payload = {
       employeeAddresses: [this.currentAddress, this.permanentAddress],
     };
+    console.log('Payload:', payload);
   
-    this.subscription = this.http.postdata('EmployeeAddress', payload)
-      .subscribe({
-        next: (data: any) => {
-          console.log('Addresses updated successfully:', data);
-          this.addressForm.disable();
-          this.getEmployeeId();
-          this.buttons = false;
-          this.buttons2 = false;
-          this.conformationPopup.openSuccessModal('Address Info updated successfully');
-        },
-        error: (reason) => {
-          console.log(reason);
-          this.conformationPopup.openErrorModal('Address Info update failed');
-
-        },
-      });
+    // Send the updated payload
+    this.subscription = this.http.postdata('EmployeeAddress', payload).subscribe({
+      next: (data: any) => {
+        console.log('Addresses updated successfully:', data);
+        this.addressForm.disable();
+        this.getEmployeeId();
+        this.buttons = false;
+        this.buttons2 = false;
+        this.conformationPopup.openSuccessModal('Address Info updated successfully');
+      },
+      error: (reason) => {
+        console.log(reason);
+        this.conformationPopup.openErrorModal('Address Info update failed');
+      },
+    });
   }
   copyCurrentAddress(event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;

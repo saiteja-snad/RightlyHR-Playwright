@@ -17,7 +17,7 @@
         <div class="card letter-fields-content p-4">
             <form [formGroup]="employeeForm">
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" [filter]="true" filterBy="firstName" [showClear]="true"
                             optionLabel="fullName" optionValue="employeeId" placeholder="Please select employee"
@@ -26,14 +26,14 @@
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched"
-                        class="error-msg">Search Employee is required
+                        class="error-msg">Employee is required
                     </div>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Appointment Sent Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="appointmentdate"
-                       
+                       (change)="onDataClick(employeeForm.get('appointmentdate')?.value)"
                         placeholder="Please enter appointment sent date" [min]="todayDate" onkeydown="return false;" />
                         <div *ngIf="employeeForm.get('appointmentdate')?.invalid && employeeForm.get('appointmentdate')?.touched">
                             <div class="error-msg" *ngIf="employeeForm.get('appointmentdate')?.errors?.['required']">
@@ -259,8 +259,8 @@
                                     </p>
                                     <p>We eagerly anticipate your contribution and growth as a Trainee at RightlyHR.</p>
                                     <p>Sincerely,</p>
-                                    <p><b>for RightlyHR</b></p>
-                                    <div class="mb-3" style="font-family: Segoe script; font-size: large;">
+                                    <p><b>FOR RightlyHR</b></p>
+                                    <div class="mb-3 letter-signature" >
                                         {{traineeAppointmentletterData.authorityName}}</div>
                                     <div class="row">
                                         <div class="col-md-7">

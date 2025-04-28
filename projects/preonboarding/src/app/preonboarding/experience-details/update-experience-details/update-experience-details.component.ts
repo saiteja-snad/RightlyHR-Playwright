@@ -57,15 +57,15 @@ export class UpdateExperienceDetailsComponent {
   initializeExperienceForm() {
     this.experienceForm = this.fb.group({
       isPresent: [this.experienceData?.isPresent || false],
-      companyName: [this.experienceData?.companyName || '', Validators.required],
-      employmentType: [this.experienceData?.employmentType || '', Validators.required],
-      fromDate: [this.formatDate(this.experienceData?.fromDate) || '', Validators.required],
-      toDate: [this.formatDate(this.experienceData?.toDate) || ''],
-      jobTitle: [this.experienceData?.jobTitle || '', Validators.required],
-      description: [this.experienceData?.description || ''],
-      previousContactName: [this.experienceData?.previousContactName || ''],
-      previousContactNumber: [this.experienceData?.previousContactNumber || '', [this.phoneNumberValidator()]],
-      previousContactEmail: [this.experienceData?.previousContactEmail || '', [Validators.email]],
+      companyName: [this.experienceData?.companyName || null, [Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/), Validators.maxLength(100)]],
+      employmentType: [this.experienceData?.employmentType || null, Validators.required],
+      fromDate: [this.formatDate(this.experienceData?.fromDate) || null, Validators.required],
+      toDate: [this.formatDate(this.experienceData?.toDate) || null],
+      jobTitle: [this.experienceData?.jobTitle || null, [ Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/), Validators.maxLength(100)]],
+      description: [this.experienceData?.description || null,[Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
+      previousContactName: [this.experienceData?.previousContactName || null],
+      previousContactNumber: [this.experienceData?.previousContactNumber ||null, [this.phoneNumberValidator()]],
+      previousContactEmail: [this.experienceData?.previousContactEmail || null, [Validators.email]],
       attachment: [this.experienceData?.attachment || null, Validators.required]
     });
     // Disable toDate if isPresent is true
@@ -172,39 +172,57 @@ export class UpdateExperienceDetailsComponent {
       isDeleted: this.experienceData?.isDeleted,
       attachment: formData.attachment ?? this.experienceData?.attachment,
     };
-    this.subscription = this.http.postData("PreonboardingExperience/Update", payload).subscribe({
-      next: (data: any) => {
-        this.modalService.dismissAll();
-        this.openPopup.openSuccess("Data Added Successfully!");
-        this.getData.getExperience.set(true);
-        this.experienceForm.reset();
-      },
-      error: (error: any) => {
-        console.log('Save failed:', error);
-        if (error.status == 409) {
-          this.openPopup.openError(error.error);
-        } else if (error.status == 400) {
-          this.openPopup.openError(error.error.message);
-        } else {
-          this.openPopup.openError("Insertion of data is failed");
-        }
-      },
-      complete: () => { }
-    });
+
     if (this.file) {
       const filepath = `/FusionDocuments/Employee Documents/Previous Experience Documents/${this.prosempdata.employeeId}`;
       this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filepath, this.file)
         .subscribe({
           next: (data: any) => {
             payload.attachment = data.path;
-            // submitData(payload);
+            this.subscription = this.http.postData("PreonboardingExperience/Update", payload).subscribe({
+              next: (data: any) => {
+                this.modalService.dismissAll();
+                this.openPopup.openSuccess("Experience Details updated successfully");
+                this.getData.getExperience.set(true);
+                this.experienceForm.reset();
+              },
+              error: (error: any) => {
+                console.log('Save failed:', error);
+                if (error.status == 409) {
+                  this.openPopup.openError(error.error);
+                } else if (error.status == 400) {
+                  this.openPopup.openError(error.error.message);
+                } else {
+                  this.openPopup.openError("Insertion of data is failed");
+                }
+              },
+              complete: () => { }
+            });
           },
           error: (error: any) => {
             this.openPopup.openError("File upload failed");
           }
         });
     } else {
-      // submitData(payload);
+      this.subscription = this.http.postData("PreonboardingExperience/Update", payload).subscribe({
+        next: (data: any) => {
+          this.modalService.dismissAll();
+          this.openPopup.openSuccess("Experience Details updated successfully");
+          this.getData.getExperience.set(true);
+          this.experienceForm.reset();
+        },
+        error: (error: any) => {
+          console.log('Save failed:', error);
+          if (error.status == 409) {
+            this.openPopup.openError(error.error);
+          } else if (error.status == 400) {
+            this.openPopup.openError(error.error.message);
+          } else {
+            this.openPopup.openError("Insertion of data is failed");
+          }
+        },
+        complete: () => { }
+      });
     }
   }
 

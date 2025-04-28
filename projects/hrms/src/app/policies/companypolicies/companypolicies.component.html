@@ -1,188 +1,76 @@
-<div class="custom-main-component-container  ">
-  <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="custom-main-component-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-      <p class="component-header cursor mb-0"><i></i> Policies</p>
+      <p class="component-header cursor mb-0"><i></i>Policies</p>
     </div>
-  <div class="d-flex align-items-center ms-2">
-    <span class="me-2">Select year:</span>
-    <form [formGroup]="policiesform" class="m-0">
-      
-      <p-select formControlName="selectedYear" [options]="years" 
-       [style]="{ width: 'auto' }" class="form-select form-select-sm">
-      </p-select>
-    </form>
+
+    <div class="d-flex align-items-center gap-2">
+      <label class="form-label custom-label pt-2">Select year:</label>
+      <form [formGroup]="policiesform" class="m-0">
+        <div class="custom-p-select-content">
+          <p-select formControlName="selectedYear" [options]="years" class="custom-select w-100">
+          </p-select>
+        </div>
+      </form>
+    </div>
+  </div>
+   
+  <div class="custom-table-content">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Policy Name</th>
+          <th>Description</th>
+          <th>Attachment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="((orgPolicyItemsArray) ?? []).length > 0; else noDataTemplate">
+          <tr *ngFor="let item of orgPolicyItemsArray">
+            <td>{{item.policyName}}</td>
+            <td>{{item.policyDescription}}</td>
+            <td>
+              <a type="button" class="view-btn text-nowrap" (click)="onViewAttachement(item.policyAttachment)">
+                <i class="bi bi-paperclip"></i>View
+              </a>
+            </td>
+          </tr>
+        </ng-container>
+        <!-- No Data Found Template -->
+        <ng-template #noDataTemplate>
+          <tr>
+            <td>
+              <app-no-data-found />
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
   </div>
 </div>
-    <!-- <div class="mt-4 mb-4" > -->
-      <!-- <div class="d-flex">
-        <div class="col-6 d-flex align-items-center">
-            <span class="selectpo me-2">Select year :</span>
-            <form [formGroup]="policiesform" class="mb-0">
-              
-              <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year" optionLabel="label"
-               class="form-select custom-select">
-              </p-select>
-            </form>
-        </div>
-          
-      </div> -->
-  
-      <!-- <div class="custom-table-content">
-        <table class="w-100">
-          <thead>
-            <tr>
-              <th>Policy Name</th>
-              <th>Description</th>
-              <th>Attachment</th>
-            </tr>
-            
-          </thead>
-          <tbody>
-            <ng-container *ngIf="(orgPolicyItemsArray).length; else noResults">
-            <tr *ngFor="let item of orgPolicyItemsArray
-            ">
-              <td>{{item.policyName}}</td>
-              <td>{{item.policyDescription}}</td>
-              <td data-bs-toggle="modal" data-bs-target="#exampleModal">
-                <a class="dropdown-item" (click)="onViewClick(item.policyAttachment)">
-                  <i class="bi bi-paperclip me-2"></i>View
-                </a>
-              </td>
-          </tr>
-            </ng-container>
-            <ng-template #noResults>
-              <tr>
-                  <td class="text-center noresults" colspan="11">No data found</td>
-              </tr>
-          </ng-template>
-          </tbody>
-        </table>
-      </div> -->
-    <!-- </div> -->
-    <!-- <ng-template #viewDetailsModal let-modal> -->
-    <div class="custom-table-content">
-      <table class="w-100">
-          <thead>
-              <tr>
-                <th>Policy Name</th>
-                <th>Description</th>
-                <th>Attachment</th>
 
-              </tr>
-          </thead>
-          <tbody>
-              <ng-container *ngIf="((orgPolicyItemsArray) ?? []).length > 0; else noDataTemplate">
-                  <tr *ngFor="let item of orgPolicyItemsArray">
-                    <td>{{item.policyName}}</td>
-                    <td>{{item.policyDescription}}</td>
-                    <td>
-                      <a type="button" class="view-text text-nowrap" (click)="onViewClick(item.policyAttachment)">
-                        <i class="bi bi-paperclip"></i>View
-                      </a>
-                    </td>
-                    
-                  </tr>
-              </ng-container>
-              <!-- No Data Found Template -->
-              <ng-template #noDataTemplate>
-                  <tr>
-                      <td>
-                          <app-no-data-found />
-                      </td>
-                  </tr>
-              </ng-template>
-          </tbody>
-      </table>
-  </div>
-<!-- </ng-template> -->
-  <!-- </div> -->
-  
-  <!-- Modal -->
-  <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Policy</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
-        </div>
-        <div class="modal-body" style="text-align: center;">
-            <div class="spinner-border text-primary d-inline-block ms-3" style="width: 2rem;height: 2rem;"
-            role="status">
-            <span class="sr-only"></span>
-          </div>
-        </div>
-          
-         
-        <p *ngIf="!EduImageUrl; else imageView">
-            <ngx-doc-viewer [url]="EduViewURL" viewer="google" style="width:100%;height:100vh;"></ngx-doc-viewer>
-          </p>
-          
-            
-            <ng-template #imageView>
-              <img [src]="EduImageUrl" alt="My Image" class="modal-image">
-            </ng-template> 
-         
-        </div>
-        <div class="modal-footer">
-        </div>
+<!--View Popup-->
+<ng-template #viewattamchment let-modal>
+  <div class="custom-main-popup-container">
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'Policy Details' | translate}}</p>
       </div>
-    </div> -->
-  <!-- </div> -->
-  <ng-template #viewDetailsModal let-modal>
-    <div class="custom-main-popup-container">
-      <div class="d-flex justify-content-between popup-header-border p-4">
-        <div class="pt-2">
-          <p class="popup-heading mb-0">Expenses Details</p>
-        </div> 
-        <div>
-          <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-        </div>
-      </div>
-
-      <div class="custom-table">
-        <table class="w-100">
-          <tbody>
-            <tr *ngFor="let item of orgPolicyItemsArray">
-              <td>
-                <div class="d-flex gap-2">
-                  <a type="button" class="view-text text-nowrap" (click)="onViewClick(item.policyAttachment)">
-                    <i class="bi bi-paperclip"></i>View
-                  </a>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-
-        </table>
+      <div>
+        <a (click)="modal.dismiss(); ExpenseViewURL = null; ExpenseImageUrl = null"><img src="icons/close.png"
+            alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-  </ng-template>
-  <ng-template #viewattamchment let-modal>
-    <div class="custom-main-popup-container">
-      <div class="d-flex justify-content-between popup-header-border p-4">
-        <div class="pt-2">
-          <p class="popup-heading mb-0">Policy Details</p>
+
+    <div class="custom-main-popup-content text-center">
+      <div class="Image-content-view">
+        <div *ngIf="!ExpenseImageUrl; else imageView">
+          <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google"></ngx-doc-viewer>
         </div>
-        <div>
-          <a (click)="modal.dismiss(); EduViewURL = null; EduImageUrl = null">
-            <img src="icons/close.png" alt="Close Icon" class="close-icon">
-          </a>
-        </div>
-      </div>
-      <div class="modal-body" style="text-align: center; overflow-x: auto;">
-        <p *ngIf="!EduImageUrl; else imageView">
-          <ngx-doc-viewer
-            [url]="EduViewURL"
-            viewer="google"
-            style="width: 100%; height: 80vh; max-width: 100%;">
-          </ngx-doc-viewer>
-        </p>
-      
         <ng-template #imageView>
-          <img [src]="EduImageUrl" alt="My Image"
-               style="max-width: 100%; height: auto; max-height: 80vh; object-fit: contain;" />
+          <img [src]="ExpenseImageUrl" alt="My Image" class="modal-image" />
         </ng-template>
       </div>
-      
     </div>
-  </ng-template>
+  </div>
+</ng-template>

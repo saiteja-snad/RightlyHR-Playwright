@@ -109,6 +109,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ];
+  disableFieldsForApproval=true;
   @ViewChild('approveModal') approveModal: any;
   @ViewChild('approveModal1') approveModal1: any;
   confirmation_Msg: any;
@@ -166,7 +167,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       dateOfJoining: ['', Validators.required],
       Copys: [null, Validators.required],
       offerExpiryDate: ['', Validators.required],
-      note: [''],
+      note: ['',[Validators.maxLength(250)]],
       authorityid: [null, Validators.required]
     },
     { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here
@@ -227,6 +228,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     this.generatedfile = file;
     this.generatingEmployeeId=this.prospectiveEmpData.empId;
     this.loading=false
+    this.disableFieldsForApproval=false;
     this.conformationPopup.openSuccessModal(
       'Offer Letter Generated Successfully'	);
   }
@@ -1247,7 +1249,7 @@ console.log(formValues);
         next: (data: any) => {
           console.log(data);
           this.Approvednotification();
-          this.conformationPopup.openSuccessModal('Email Sent Successfully');
+          this.conformationPopup.openSuccessModal('Request For Approval Sent Successfully');
           this.loading = false;
         },
         error: (err: any) => {

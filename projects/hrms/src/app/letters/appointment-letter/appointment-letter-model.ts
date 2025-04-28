@@ -1,227 +1,279 @@
 
 export interface IemployeeDetails {
-    middleName: any;
-    fusionEmpId: any;
-    fusionEmployeeId:any;
-    employeeId: any;
-    accountNumber:number
-    addressId:number
-    addressLine1:any
-    addressLine2:any
-    backgroundCheckStatus:string
-    bankName:string
-   
-    city:string
-    comments:string
-    confirmPassword:any
-  
-    contactnumber:number
-    country:string
-
-
-
-    dateOfJoining:any
-    dob:any
-    documentUrl:any
-   
-    
-    eligibleforrehire:string
-    emailId:number
-    emailaddress:any
-    
-    
-    emergencyEmail1:string
-  
-    emergencyName:string
-   
-    emergencyName1: string
-    emergencyNumber1: number
-    emergencycode: any
-    emergencycode1: any
-    emergencynumber: any
-
-    employementstatus: string
-    empstatus: string
-    firstName: string
-    gender: string
-    gradeId: number
-    homeEmail: string
-    ifscCode: any
-    img: any
-    immigrationstatus: any
-    isManager: boolean
-    lastName: string
-    //middleName: string
-    lastworkingday: any
-    location: any
-    maritalStatus: string
-    mobileNumber: number
-    mobilePhone: number
-    mobilePhoneCountryCode: number
-    nationalId: any
-    noticePeriod: any
-    offerIssueddate: any
-    offerstatus: string
-    password: any
-    probationEndDate: any
-    probationStatus: string
-    profilePic: any
-    proof:any
-    relationShip: string
-    relationship1:string
-    reportsto:string
-    secondaryLanguage:string
-    ssn:string
-    
-    state:string
-   
-    supervisor:string
-   
-    taxFileNumber:number
-   
-    termreasonoffboard:string
-  
-    termtypeoffboard:string
-   
-    title:string
-   
-    updatedby:any
-   
-    userName:string
-   
-    workEmail:string
-    
-    workPhone:number
-  
-    workPhoneCountryCode:number
-    
-    zipCode:number
-    designation:any;
-    Jobdetails:IJobDetailes[]
+  middleName: any;
+  fusionEmpId: any;
+  fusionEmployeeId: any;
+  employeeId: any;
+  accountNumber: number
+  addressId: number
+  addressLine1: any
+  addressLine2: any
+  backgroundCheckStatus: string
+  bankName: string
+  city: string
+  comments: string
+  confirmPassword: any
+  contactnumber: number
+  country: string
+  dateOfJoining: any
+  dob: any
+  documentUrl: any
+  eligibleforrehire: string
+  emailId: number
+  emailaddress: any
+  emergencyEmail1: string
+  emergencyName: string
+  emergencyName1: string
+  emergencyNumber1: number
+  emergencycode: any
+  emergencycode1: any
+  emergencynumber: any
+  employementstatus: string
+  empstatus: string
+  firstName: string
+  gender: string
+  gradeId: number
+  homeEmail: string
+  ifscCode: any
+  img: any
+  immigrationstatus: any
+  isManager: boolean
+  lastName: string
+  //middleName: string
+  lastworkingday: any
+  location: any
+  maritalStatus: string
+  mobileNumber: number
+  mobilePhone: number
+  mobilePhoneCountryCode: number
+  nationalId: any
+  noticePeriod: any
+  offerIssueddate: any
+  offerstatus: string
+  password: any
+  probationEndDate: any
+  probationStatus: string
+  profilePic: any
+  proof: any
+  relationShip: string
+  relationship1: string
+  reportsto: string
+  secondaryLanguage: string
+  ssn: string
+  state: string
+  supervisor: string
+  taxFileNumber: number
+  termreasonoffboard: string
+  termtypeoffboard: string
+  title: string
+  updatedby: any
+  userName: string
+  workEmail: string
+  workPhone: number
+  workPhoneCountryCode: number
+  zipCode: number
+  designation: any;
+  Jobdetails: IJobDetailes[]
 }
-
-  export interface IJobDetailes {
-    employeeId: number;
-    location: string;
-    subLocation: string;
-    jobRole: string;
-    department: string;
-  }
-
-
-export interface IEmployeeDetails{
-    accountNumber:number
-
-    addressId:number
- 
-    addressLine1:any
-
-    addressLine2:any
-
-    backgroundCheckStatus:string
-   
-    bankName:string
-   
-    city:string
-    comments:string
-    confirmPassword:any
-  
-    contactnumber:number
-    country:string
-
-
-
-    dateOfJoining:any
-    dob:any
-    documentUrl:any
-   
-    
-    eligibleforrehire:string
-    emailId:number
-    emailaddress:any
-    
-    
-    emergencyEmail1:string
-  
-    emergencyName:string
-   
-    emergencyName1: string
-    emergencyNumber1: number
-    emergencycode: any
-    emergencycode1: any
-    emergencynumber: any
-
-    employementstatus: string
-    empstatus: string
-    firstName: string
-    gender: string
-    gradeId: number
-    homeEmail: string
-    ifscCode: any
-    img: any
-    immigrationstatus: any
-    isManager: boolean
-    lastName: string
-    middleName:string
-    lastworkingday: any
-    location: any
-    maritalStatus: string
-    mobileNumber: number
-    mobilePhone: number
-    mobilePhoneCountryCode: number
-    nationalId: any
-    noticePeriod: any
-    offerIssueddate: any
-    offerstatus: string
-    password: any
-    probationEndDate: any
-    probationStatus: string
-    profilePic: any
-    proof:any
-    relationShip: string
-    relationship1:string
-    reportsto:string
-    secondaryLanguage:string
-    ssn:string    
-    state:string   
-   supervisor:string 
-    taxFileNumber:number 
-    termreasonoffboard:string 
-    termtypeoffboard:string  
-    title:string   
-    updatedby:any  
-    userName:string  
-    workEmail:string    
-    workPhone:number
-    workPhoneCountryCode:number  
-    zipCode:number   
+export interface IJobDetailes {
+  employeeId: number;
+  location: string;
+  subLocation: string;
+  jobRole: string;
+  department: string;
 }
-
+export interface IEmployeeDetails {
+  accountNumber: number
+  addressId: number
+  addressLine1: any
+  addressLine2: any
+  backgroundCheckStatus: string
+  bankName: string
+  city: string
+  comments: string
+  confirmPassword: any
+  contactnumber: number
+  country: string
+  dateOfJoining: any
+  dob: any
+  documentUrl: any
+  eligibleforrehire: string
+  emailId: number
+  emailaddress: any
+  emergencyEmail1: string
+  emergencyName: string
+  emergencyName1: string
+  emergencyNumber1: number
+  emergencycode: any
+  emergencycode1: any
+  emergencynumber: any
+  employementstatus: string
+  empstatus: string
+  firstName: string
+  gender: string
+  gradeId: number
+  homeEmail: string
+  ifscCode: any
+  img: any
+  immigrationstatus: any
+  isManager: boolean
+  lastName: string
+  middleName: string
+  lastworkingday: any
+  location: any
+  maritalStatus: string
+  mobileNumber: number
+  mobilePhone: number
+  mobilePhoneCountryCode: number
+  nationalId: any
+  noticePeriod: any
+  offerIssueddate: any
+  offerstatus: string
+  password: any
+  probationEndDate: any
+  probationStatus: string
+  profilePic: any
+  proof: any
+  relationShip: string
+  relationship1: string
+  reportsto: string
+  secondaryLanguage: string
+  ssn: string
+  state: string
+  supervisor: string
+  taxFileNumber: number
+  termreasonoffboard: string
+  termtypeoffboard: string
+  title: string
+  updatedby: any
+  userName: string
+  workEmail: string
+  workPhone: number
+  workPhoneCountryCode: number
+  zipCode: number
+}
 export interface IDepartment {
-    sno: number,
-    departmentName: string;
-    isdeleted: string;
-  }
-  export interface IMake{
-
-    sno: number,
-    makeName: string,
-    isDeleted: boolean
-  }
-  export interface IIssuelocation{
-    sno: number,
-    issuedLocation: string,
-    isDeleted: boolean
-  }
-  export interface IAddress {
-    id: number,
-    empId: number,
-    type: string,
-    addressLine1: string,
-    addressLine2: string,
-    city: string,
-    state: string,
-    zipCode: string,
-    country: string
-  
-  }
+  sno: number,
+  departmentName: string;
+  isdeleted: string;
+}
+export interface IMake {
+  sno: number,
+  makeName: string,
+  isDeleted: boolean
+}
+export interface IIssuelocation {
+  sno: number,
+  issuedLocation: string,
+  isDeleted: boolean
+}
+export interface IAddress {
+  id: number,
+  empId: number,
+  type: string,
+  addressLine1: string,
+  addressLine2: string,
+  city: string,
+  state: string,
+  zipCode: string,
+  country: string
+}
+export interface IEmployeeJobInfo {
+  id: number;
+  employeeId: number;
+  shiftEndTime: string;
+  shiftStartTime: string;
+  effectiveDate: string;
+  gradeId: number;
+  lopcation: string;
+  jobRole: string;
+  status: string;
+  gradeName: string;
+  subLocation: string;
+  subdepartmentId: number;
+  subdepartmentName: string;
+  departmentId: number;
+  reportingmanagerId: number;
+  departmentName: string;
+  locationId: number;
+  subLocationId: number;
+  jobTypeId: number;
+  jobTypeName: string;
+  locationName: string;
+  sublocationName: string;
+  shiftName: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  createddate: string;
+  updateddate: string;
+  reportsto: number;
+  fName: string;
+  lName: string;
+  mName: string;
+  shiftId: number;
+  teamManagerId: number;
+  workLocation: string;
+}
+export interface IEmployeeAddress {
+  id: number;
+  empId: number;
+  type: string; // 'C' for current, 'P' for permanent
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+}
+export interface IEmployeeProfile {
+  firstName: string;
+  lastName: string;
+  empstatus: string;
+  emailaddress: string;
+  gender: string;
+  dob: string;
+  contactnumber: number;
+  emergencynumber: number;
+  title: string;
+  password: string;
+  dateOfJoining: string;
+  probationEndDate: string;
+  emergencyName: string;
+  relationShip: string;
+  isManager: boolean;
+  mobilePhoneCountryCode: string;
+  employeeId: number;
+  fusionEmpId: string;
+  emergencycode: string;
+  emergencyName1: string;
+  emergencycode1: string;
+  emergencyNumber1: number;
+  relationship1: string;
+  issalaryhold: boolean;
+  pf: boolean;
+  esic: boolean;
+  pt: boolean;
+  insurance: boolean;
+  bloodGroup: string;
+  substatus: string;
+  experienceType: string;
+  bgc: boolean;
+  isCredentialExpired: boolean;
+  allowWFH: boolean;
+  employeeAddresses: IEmployeeAddress[];
+}
+export interface IEmployeeIdentity {
+  identityId: number;
+  empId: number;
+  identityType: string;
+  identityNumber: string;
+  attachment: string;
+  isDeleted: boolean;
+  referenceId: number;
+}
+export interface IAsset {
+  sno: number;
+  assetType1: string;
+  isDeleted: boolean;
+}

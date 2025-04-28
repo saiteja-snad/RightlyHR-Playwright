@@ -1,0 +1,121 @@
+<div class="custom-main-component-container">
+   <div class="employee-fields-main-container d-flex gap-3 w-100">
+      <div class="folders-container">
+         @for(folder of folders; track $index){
+         <!-- Loop through main folders -->
+         <div (click)="toggleFolder(folder)" class="folder-content cursor px-2"
+            [ngClass]="{'active': selectedMainFolder === folder}">
+            <i class="bi bi-folder-fill folder-icon"></i>
+            <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
+         </div>
+         
+         <!-- Subfolders -->
+         <div *ngIf="folder.expanded" class="subfolder-container">
+            <div *ngFor="let subFolder of folder.subfolders" class="folder-content sub-folders cursor px-2"
+               (click)="onSubFolderSelected(subFolder)">
+               <i class="bi bi-folder-fill folder-icon"></i>
+               <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
+            </div>
+         </div>
+         }
+      </div>
+
+      <div class="custom-setting-right-content p-3">
+         <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="input-group custom-search">
+               <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+               <input type="search" [(ngModel)]="searchfolder" (input)="filterFolder()"
+                  class="form-control custom-search-input" placeholder="Username" aria-label="Username"
+                  aria-describedby="basic-addon1">
+            </div>
+
+            <div>
+               <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
+                     class="bi bi-upload me-2"></i>Upload</button>
+            </div>
+         </div>
+      
+         <div class="mb-3" *ngIf="selectedFile?.name">
+            <span class="component-sub-header">{{selectedFile.name | lastValue}}</span>
+         </div>
+      
+         <div class="custom-table-content">
+            <table class="w-100">
+               <thead>
+                  <th>FILE NAME</th>
+                  <th>CREATED DATE</th>
+                  <th>SIZE</th>
+                  <th class="text-center">ACTION</th>
+               </thead>
+               <tbody>
+                  <ng-container *ngIf="getVisibleFiles().length > 0; else noDataTemplate">
+                     <ng-container *ngFor="let file of getVisibleFiles()">
+                        <tr>
+                           <td>{{ file.name | lastValue }}</td>
+                           <td>{{ file.createdOn | dateformat }}</td>
+                           <td>{{ file.contentLength | fileSize }}</td>
+                           <td class="text-center">
+                              <div>
+                                 <span class="dowload-text cursor" (click)="onSelectDownload(file)">
+                                    <i class="bi bi-download clip-icon me-2"></i>Download
+                                 </span>
+                              </div>
+                           </td>
+                        </tr>
+                     </ng-container>
+                  </ng-container>
+                  <ng-template #noDataTemplate>
+                     <tr>
+                        <td colspan="4" class="text-center"></td>
+                     </tr>
+                  </ng-template>
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+</div>
+
+<!--Add-->
+<ng-template #adddocumentmodal let-modal>
+   <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+         <div>
+            <p class="popup-heading mb-0">Upload Document</p>
+         </div>
+         <div>
+            <a (click)="modal.dismiss();uploadfrom.reset()"><img src="icons/close.png" alt="Close Icon"
+                  class="close-icon"></a>
+         </div>
+      </div>
+
+      <div class="custom-main-popup-content">
+         <form [formGroup]="uploadfrom" (ngSubmit)="fileUploaded()">
+            <div class="row mb-3">
+               <div class="col-12">
+                  <label class="form-label custom-label mb-2">Upload <span class="text-danger">*</span></label>
+                  <input type="file" placeholder="Choose file" class="form-control custom-input"
+                     (change)="filechange($event)" accept=".pdf, .jpg, .png">
+                  <div *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">
+                     File is required
+                  </div>
+               </div>
+            </div>
+
+            <div class="custom-modal-footer">
+               <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+               <button type="submit" class="custom-btn btn-primary" [disabled]="uploadfrom.invalid || spinnerLoader">
+                  @if (spinnerLoader) {
+                  <div class="button-loader-content">
+                     <div class="spinner-border button-spinner text-light" role="status"></div>
+                     <div>{{'Loading' | translate}}...</div>
+                  </div>
+                  } @else {
+                  <span>{{'Add'| translate}}</span>
+                  }
+               </button>
+            </div>
+         </form>
+      </div>
+   </div>
+</ng-template>

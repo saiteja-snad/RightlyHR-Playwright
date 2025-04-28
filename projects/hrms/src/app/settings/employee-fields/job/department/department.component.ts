@@ -1,6 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -14,7 +19,7 @@ import { RbacService } from '../../../../services/rbac.service';
   selector: 'app-department',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './department.component.html',
-  styleUrl: './department.component.scss'
+  styleUrl: './department.component.scss',
 })
 export class DepartmentComponent {
   @ViewChild('deletepopup') deletepopup: any;
@@ -27,26 +32,54 @@ export class DepartmentComponent {
   selectedDeleteDep: any = null;
   subscription!: Subscription;
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
     private conformationPopup: OpenModalService,
     public formValidations: FormValidationsService,
-    public rbac: RbacService,
-  ) {
-
-  }
+    public rbac: RbacService
+  ) {}
   ngOnInit(): void {
     this.DepartmentForm = this.fb.group({
-      Department: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Department: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
+        ],
+      ],
     });
     this.updateForm = this.fb.group({
-      Department: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Department: [
+        '',
+        [
+          Validators.required,
+          Validators.maxLength(100),
+          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
+        ],
+      ],
     });
 
     this.getDepartment();
   }
 
+  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
+    const input = event.target as HTMLInputElement;
+    const char = event.key;
+    const pattern = /^[A-Za-z ]$/;
+
+    // Block if the key is not a letter or space
+    if (!pattern.test(char)) {
+      event.preventDefault();
+      return;
+    }
+
+    // Block if length is already 50
+    if (input.value.length >= 100) {
+      event.preventDefault();
+    }
+  }
   getDepartment() {
     this.http.getData('Department').subscribe((data: any) => {
       this.DepartmentDetail = data;
@@ -56,19 +89,21 @@ export class DepartmentComponent {
   addDepartment() {
     const request: DepartmentData = {
       departmentName: this.DepartmentForm.value.Department.trim(),
-      isdeleted: "Active"
+      isdeleted: 'Active',
     };
 
     this.subscription = this.http.postdata('Department', request).subscribe({
       next: () => {
         this.getDepartment();
-        this.conformationPopup.openSuccessModal('Department added successfully');
+        this.conformationPopup.openSuccessModal(
+          'Department added successfully'
+        );
         this.resetForm();
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal('Insertion of data failed');
         this.resetForm();
-      }
+      },
     });
   }
   // UPDATE
@@ -76,21 +111,27 @@ export class DepartmentComponent {
     if (this.updateForm.valid && this.selectedId) {
       const request: DepartmentData = {
         departmentName: this.updateForm.value.Department.trim(),
-        isdeleted: "Active",
-        sno: this.selectedId
+        isdeleted: 'Active',
+        sno: this.selectedId,
       };
 
-      this.subscription = this.http.postdata('Department/UPDATER', request).subscribe({
-        next: () => {
-          this.getDepartment();
-          modal.close();
-          this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Department updated successfully');
-        },
-        error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
-        }
-      });
+      this.subscription = this.http
+        .postdata('Department/UPDATER', request)
+        .subscribe({
+          next: () => {
+            this.getDepartment();
+            modal.close();
+            this.updateForm.reset();
+            this.conformationPopup.openSuccessModal(
+              'Department updated successfully'
+            );
+          },
+          error: (err: any) => {
+            this.conformationPopup.openErrorModal(
+              'Update failed. Please try again.'
+            );
+          },
+        });
     }
   }
   close(modal: any) {
@@ -99,32 +140,42 @@ export class DepartmentComponent {
   }
   openupdate(departmentlist: any) {
     this.selectedId = departmentlist.sno;
+    this.DepartmentForm.reset();
     this.updateForm.patchValue({ Department: departmentlist.departmentName });
-    this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
+    this.modalService.open(this.updatepopup, {
+      backdrop: 'static',
+      centered: true,
+    });
   }
   // DELETE
   opendelete(bussinessdetails: any) {
     this.selectedDeleteDep = bussinessdetails;
-    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+    this.DepartmentForm.reset();
+    this.modalService.open(this.deletepopup, {
+      backdrop: 'static',
+      centered: true,
+    });
   }
   onDelete(modal: any) {
     if (!this.selectedDeleteDep) return;
 
     const deleteRequest: DepartmentData = {
       departmentName: this.selectedDeleteDep.departmentName,
-      isdeleted: "void",
-      sno: this.selectedDeleteDep.sno
+      isdeleted: 'void',
+      sno: this.selectedDeleteDep.sno,
     };
 
     this.http.postdata('Department/UPDATER', deleteRequest).subscribe({
       next: () => {
         this.getDepartment();
         modal.close();
-        this.conformationPopup.openSuccessModal('Department deleted successfully');
+        this.conformationPopup.openSuccessModal(
+          'Department deleted successfully'
+        );
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Failed to delete the location');
-      }
+      },
     });
   }
 

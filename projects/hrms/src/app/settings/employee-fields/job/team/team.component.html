@@ -1,77 +1,132 @@
-<button type="button" (click)="openDialog()"  class="custom-btn btn-primary me-2" *ngIf="rbac.allowedToAccess('Team.create')">{{'Add' | translate}}</button>
- 
+<div class="custom-main-component-container">
+  <div class="mb-3">
+    <button type="button" (click)="openDialog()" class="custom-btn btn-primary me-2"
+    *ngIf="rbac.allowedToAccess('Team.create')">{{'Add' | translate}}</button>
+  </div>
+  
+  <div class="custom-main-component-container">
+    <div class="custom-table-content">
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>Department Name</th>
+            <th>Team Name</th>
+            <th>Team Manager</th>
+            <th class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || 
+              rbac.allowedToAccess('Team.delete')">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container>
+            <tr *ngFor="let teams of teamdetailsdata">
+              <td>{{teams.departmentName}}</td>
+              <td>{{teams.subdepartmentName}}</td>
+              <td>{{teams.firstName}} {{teams.middleName}} {{teams.lastName}}</td>
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || rbac.allowedToAccess('Team.delete')">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openupdateDialog(teams)" *ngIf="rbac.allowedToAccess('Team.update')">
+                      <a class="dropdown-item">
+                        <i class="bi bi-pencil me-2"></i>Update
+                      </a>
+                    </li>
+                    <li (click)="opendelete(teams)" *ngIf="rbac.allowedToAccess('Team.delete')">
+                      <a class="dropdown-item">
+                        <i class="bi bi-trash3 me-2"></i>Delete
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- Add Popup Modal  -->
 <ng-template #addpopup let-modal>
   <form [formGroup]="AddForm">
     <div class="custom-main-popup-container" ngbAutofocus>
-      <div class="d-flex justify-content-between popup-header-border p-4">
+      <div class="custom-poup-header-content popup-header-border">
         <div class="pt-2">
           <p class="popup-heading mb-0">{{ 'Team' | translate }}</p>
         </div>
         <div>
-          <a (click)="close(modal)">
+          <a (click)="modal.dismiss();AddForm.reset()">
             <img src="icons/close.png" alt="Close Icon" class="close-icon" />
           </a>
         </div>
       </div>
 
-      <div class="custom-main-popup-content p-5">
+      <div class="custom-main-popup-content">
         <!-- Department dropdown -->
-        <div class="mb-4">
+        <div class="mb-3">
           <label for="departmentId" class="form-label custom-label mb-2">
-            {{ 'Department Names' | translate }} <span class="error-msg">*</span>
+            {{ 'Department Name' | translate }} <span class="error-msg">*</span>
           </label>
-          <p-select formControlName="departmentId" optionValue="departmentId" [options]="deptdetails" id="departmentId"
-            optionLabel="departmentName" placeholder="Search Department" class="w-100" [filter]="true"
-            filterBy="departmentId">
-          </p-select>
-          <div *ngIf="AddForm.get('departmentId')?.touched && AddForm.get('departmentId')?.invalid">
-            <small class="error-msg">
-              {{ 'Department name is required' | translate }}
-            </small>
+          <div class="custom-p-select-content">
+            <p-select formControlName="departmentId" optionValue="sno" [options]="deptdetails" id="departmentId"
+              optionLabel="departmentName" placeholder="Select department" class="custom-select w-100" [filter]="true"
+              filterBy="departmentName">
+            </p-select>
+          </div>
+          <div *ngIf="AddForm.get('departmentId')?.touched && AddForm.get('departmentId')?.invalid" class="error-msg">
+            {{ 'Department Name is required' | translate }}
           </div>
         </div>
 
         <!-- Team Name field -->
-        <div class="mb-4">
+        <div class="mb-3">
           <label for="teamName1" class="form-label custom-label mb-2">
             {{ 'Team Name' | translate }} <span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="teamName"
-            placeholder="Please Enter Team name"
-            (keydown)="formValidations.restrictInput($event)" />
+            placeholder="Please enter team name" maxlength="100"
+            (input)="allowOnlyHyphenAndAlphanumeric($event, AddForm.get('teamName'))"
+            (input)="formValidations.validateInput(AddForm.get('teamName'))" />
           <div *ngIf="AddForm.get('teamName')?.touched && AddForm.get('teamName')?.invalid" class="error-msg">
-            {{ 'Team name is required' | translate }}
+            <div *ngIf="AddForm.get('teamName')?.errors?.['required']">{{ 'Team Name is required' | translate }}</div>
           </div>
         </div>
 
         <!-- Team Manager dropdown -->
-        <div class="mb-4">
+        <div class="mb-3">
           <label for="teammangar" class="form-label custom-label mb-2">
             {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select title="text" class="form-control custom-input" formControlName="teamManager" id="teamManager">
-              <option value="" disabled>Please select team manager</option>
-              <option *ngFor="let manager of teamdetails" [value]="manager.employeeId">
-                {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}
-              </option>
-            </select>
+            <p-select formControlName="teamManager" optionValue="employeeId" [options]="teamdetails"
+              placeholder="Select team manager" class="custom-select w-100" [filter]="true"
+              filterBy="firstName,middleName,lastName">
+              <!-- Template to show selected value -->
+              <ng-template pTemplate="selectedItem" let-manager>
+                <span *ngIf="manager">
+                  {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+                </span>
+              </ng-template>
+              <!-- Template to show items in dropdown -->
+              <ng-template pTemplate="item" let-manager>
+                {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+              </ng-template>
+            </p-select>
           </div>
-          <div *ngIf="AddForm.get('teamManager')?.touched && AddForm.get('teamManager')?.invalid">
-            <small class="error-msg">
-              {{ 'Team Manager is required' | translate }}
-            </small>
+          <div *ngIf="AddForm.get('teamManager')?.touched && AddForm.get('teamManager')?.invalid" class="error-msg">
+            {{ 'Team Manager is required' | translate }}
           </div>
         </div>
 
         <!-- Buttons -->
-        <div class="d-flex gap-5 pt-4 w-100">
-          <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();AddForm.reset()">
             {{ 'Close' | translate }}
           </button>
-          <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="addTeam(modal)"
-            [disabled]="AddForm.invalid">
+          <button type="button" class="custom-btn btn-primary" (click)="addTeam(AddForm)" [disabled]="!AddForm.valid">
             {{ 'Add' | translate }}
           </button>
         </div>
@@ -80,127 +135,88 @@
   </form>
 </ng-template>
 
- 
-<div class="custom-main-component-container">
-  <div class="custom-table-content mt-2">
-    <table class="w-100">
-      <thead>
-        <tr>
-          <th>Department Name</th>
-          <th>Team Name</th>
-          <th>Team Manager</th>
-          <th class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || rbac.allowedToAccess('Team.delete')">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container>
-          <tr *ngFor="let teams of teamdetailsdata">
-            <td>{{teams.departmentName}}</td>
-            <td>{{teams.subdepartmentName}}</td>
-            <td>{{teams.firstName}} {{teams.middleName}} {{teams.lastName}}</td>
-            <td class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || rbac.allowedToAccess('Team.delete')">
-              <div class="dropdown">
-                <span type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </span>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li (click)="openupdateDialog(teams)" *ngIf="rbac.allowedToAccess('Team.update')">
-                    <a class="dropdown-item">
-                      <i class="bi bi-pencil me-2"></i>Update
-                    </a>
-                  </li>
-                  <li (click)="opendelete(teams)" *ngIf="rbac.allowedToAccess('Team.delete')">
-                    <a class="dropdown-item">
-                      <i class="bi bi-trash3 me-2"></i>Delete
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </ng-container>
- 
-      </tbody>
-    </table>
-  </div>
-</div>
- 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
   <form [formGroup]="updateForm">
     <div class="custom-main-popup-container" ngbAutofocus>
-      <div class="d-flex justify-content-between popup-header-border p-4">
+      <div class="custom-poup-header-content popup-header-border">
         <div class="pt-2">
-          <p class="popup-heading mb-0">{{ 'Edit Team' | translate }}</p>
+          <p class="popup-heading mb-0">{{ 'Update Team' | translate }}</p>
         </div>
         <div>
-          <a (click)="close(modal)">
+          <a (click)="modal.dismiss();updateForm.reset()">
             <img src="icons/close.png" alt="Close Icon" class="close-icon" />
           </a>
         </div>
       </div>
 
-      <div class="custom-main-popup-content p-5">
+      <div class="custom-main-popup-content">
         <!-- Department dropdown -->
-        <div class="mb-4">
+        <div class="mb-3">
           <label for="departmentId" class="form-label custom-label mb-2">
-            {{ 'Department Names' | translate }} <span class="error-msg">*</span>
+            {{ 'Department Name' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select class="form-control custom-input" formControlName="updateddepartmentId" id="departmentId">
-              <option value="" disabled>Please select department</option>
-              <option *ngFor="let dept of deptdetails" [value]="dept.departmentId">
-                {{ dept.departmentName }}
-              </option>
-            </select>
+            <p-select formControlName="updateddepartmentId" optionValue="sno" [options]="deptdetails" id="departmentId"
+              optionLabel="departmentName" placeholder="Select department" class="custom-select w-100" [filter]="true"
+              filterBy="departmentName">
+            </p-select>
           </div>
-          <div *ngIf="updateForm.get('updateddepartmentId')?.touched && updateForm.get('updateddepartmentId')?.invalid">
-            <small class="error-msg">
-              {{ 'Department name is required' | translate }}
-            </small>
+          <div *ngIf="updateForm.get('updateddepartmentId')?.touched && updateForm.get('updateddepartmentId')?.invalid"
+            class="error-msg">
+            {{ 'Department Name is required' | translate }}
           </div>
         </div>
 
         <!-- Team Name field -->
-        <div class="mb-4">
-          <label for="updateTeamName" class="form-label custom-label mb-2">
+        <div class="mb-3">
+          <label for="teamName1" class="form-label custom-label mb-2">
             {{ 'Team Name' | translate }} <span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="UpdatedTeamName"
-            placeholder="Please Enter Team name"
-            (keydown)="formValidations.restrictInput($event)" />
-          <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid" class="error-msg">
-            {{ 'Team name is required' | translate }}
+            placeholder="Please enter team name" maxlength="100"
+            (input)="allowOnlyHyphenAndAlphanumeric($event, updateForm.get('UpdatedTeamName'))"
+            (input)="formValidations.validateInput(updateForm.get('UpdatedTeamName'))" />
+          <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid"
+            class="error-msg">
+            <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['required']">{{ 'Team Name is required' | translate }}
+            </div>
           </div>
         </div>
 
         <!-- Team Manager dropdown -->
-        <div class="mb-4">
+        <div class="mb-3">
           <label for="updateTeamManager" class="form-label custom-label mb-2">
             {{ 'Team Manager' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select class="form-control custom-input" formControlName="updatedteamManager" id="updateTeamManager">
-              <option value="" disabled>Please select team manager</option>
-              <option *ngFor="let manager of teamdetails" [value]="manager.reportingmanagerId">
-                {{manager.firstName}} {{manager.middleName}} {{manager.lastName}}
-              </option>
-            </select>
+            <p-select formControlName="updatedteamManager" optionValue="employeeId" [options]="teamdetails"
+              placeholder="Select team manager" class="custom-select w-100" [filter]="true"
+              filterBy="firstName,middleName,lastName" [styleClass]="'white-dropdown'">
+              <!-- Template to show selected value -->
+              <ng-template pTemplate="selectedItem" let-manager>
+                <span *ngIf="manager">{{ manager.firstName }} {{ manager.middleName }}
+                  {{ manager.lastName }}</span>
+              </ng-template>
+        
+              <!-- Template to show items in dropdown -->
+              <ng-template pTemplate="item" let-manager>
+                {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
+              </ng-template>
+            </p-select>
           </div>
-          <div *ngIf="updateForm.get('updatedteamManager')?.touched && updateForm.get('updatedteamManager')?.invalid">
-            <small class="error-msg">
-              {{ 'Team Manager is required' | translate }}
-            </small>
+          <div *ngIf="updateForm.get('updatedteamManager')?.touched && updateForm.get('updatedteamManager')?.invalid"
+            class="error-msg">
+            {{ 'Team Manager is required' | translate }}
           </div>
         </div>
 
         <!-- Buttons -->
-        <div class="d-flex gap-5 pt-4 w-100">
-          <button type="button" class="custom-btn btn-secondary w-50 py-3" (click)="close(modal)">
+        <div class="custom-modal-footer">
+          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();updateForm.reset()">
             {{ 'Close' | translate }}
           </button>
-          <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="updateTeam(modal)"
-            [disabled]="updateForm.invalid">
+          <button type="button" class="custom-btn btn-primary" (click)="updateTeam(modal)" [disabled]="updateForm.invalid ">
             {{ 'Update' | translate }}
           </button>
         </div>
@@ -211,16 +227,15 @@
 
 <!--Delete Confirmation popup-->
 <ng-template #deletepopup let-modal>
-  <div class="modal-body" ngbAutofocus>
-      <div class="custom-main-popup-content text-center p-4">
-          <div class="py-5">
-              <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-icon mb-5">
-              <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
-          </div>
-          <div class="d-flex gap-5 pt-2 w-100">
-              <button type="button" class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'|translate}}</button>
-              <button type="button" class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-          </div>
-      </div>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+    </div>
+    <!-- <div class="custom-modal-footer"> -->
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+    </div>
   </div>
 </ng-template>

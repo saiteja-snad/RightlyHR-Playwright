@@ -258,7 +258,7 @@ export interface ApprovalStatusCount {
 export interface ILeavePolicyData{
   id:number
   year :number
-  locationId :number
+  locationId :any
   subLocationId :number
   shiftId :number
   categoryId :number

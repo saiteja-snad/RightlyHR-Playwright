@@ -16,5 +16,6 @@ export interface INoDue {
 export interface IDepartment {
   sno: number,
   departmentName: string,
-  isdeleted: string
+  isdeleted: string,
+  departmentId:string
 }

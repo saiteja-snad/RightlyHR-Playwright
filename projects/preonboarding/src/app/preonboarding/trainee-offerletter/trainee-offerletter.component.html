@@ -168,7 +168,9 @@
                 @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
                 <button class="custom-btn accepted-btn px-5">Accepted</button>
                 }
-                <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                @if(this.updatedOfferLetterDetails.candidateStatus!=='Offer Letter Rejected'){
+                    <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                }
                 @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
                 <button class="custom-btn rejected-btn px-5" disabled>Rejected</button>
                 }
@@ -185,7 +187,7 @@
 
 <!--Reject popup-->
 <ng-template #rejectpopup let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-main-popup-container p-4" ngbAutofocus>
         <form [formGroup]="rejectForm" (ngSubmit)="submitRejectReason(rejectForm)">
             <div class="custom-main-popup-content">
                 <div class="text-center mb-4">

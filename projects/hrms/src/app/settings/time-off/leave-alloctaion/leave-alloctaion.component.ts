@@ -7,6 +7,7 @@ import { EmployeeService } from '../../../services/employee.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RbacService } from '../../../services/rbac.service';
+import { OpenModalService } from '../../../services/open-modal.service';
 @Component({
   selector: 'app-leave-alloctaion',
   imports: [CommonModule, FormsModule],
@@ -27,7 +28,7 @@ export class LeaveAlloctaionComponent {
   shiftDetails = [] as any[];
   yearsList: number[] = [];
 
-  constructor(private _employeeService: EmployeeService, private http: HttpService, public rbac: RbacService) { }
+  constructor(private _employeeService: EmployeeService, private http: HttpService, public rbac: RbacService, private confirmation: OpenModalService) { }
 
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -37,6 +38,7 @@ export class LeaveAlloctaionComponent {
     this.Leavescat.subLocationId = -1;
     this.Leavescat.shiftId = -1;
     this.Leavescat.categoryId = -1;
+    console.log(this.accessLevels);
   }
 
   getLocationDetails(): void {
@@ -58,6 +60,7 @@ export class LeaveAlloctaionComponent {
 
   enableShift = false;
   getShiftDetailsBySubLocationId(policy: ILeavePolicyData) {
+    
     let date = new Date();
     let params = {
       locationId: policy.locationId,
@@ -76,6 +79,7 @@ export class LeaveAlloctaionComponent {
 
   enableCategory = false;
   getLeaves(policy: ILeavePolicyData) {
+    
     let params = {
       locationId: policy.locationId,
       subLocationId: policy.subLocationId,
@@ -101,7 +105,30 @@ export class LeaveAlloctaionComponent {
       },
     });
   }
-
+  onYearChanges(){
+    this.Leavescat.subLocationId = -1;
+    this.Leavescat.shiftId = -1;
+    this.Leavescat.locationId = undefined;
+    this.Leavescat.categoryId = -1;
+    this.accessLevels = {};
+  }
+  isFormValid() {
+    return (
+      this.Leavescat.year &&
+      this.Leavescat.locationId &&
+      this.Leavescat.subLocationId &&
+      this.Leavescat.shiftId &&
+      this.Leavescat.categoryId &&
+      this.grade.length > 0 &&
+      this.grade.some((gr:any) => 
+      this.accessLevels[gr.gradeId] !== null &&
+      this.accessLevels[gr.gradeId] !== undefined &&
+      this.accessLevels[gr.gradeId] !== null
+    )
+    );
+    
+  }
+  
   onCategoryName(categoryId: number) {
     console.log(categoryId);
     this.selectedCategory = this.Leaves.find((c) => c.id == categoryId) as Iorgcategoryleaves;
@@ -111,6 +138,8 @@ export class LeaveAlloctaionComponent {
 
   policyDays: {[field: number]: { allowedDays: number; id: number | null; };} = {};
   getbycategoryid(categoryId: number) {
+    this.accessLevels = {};
+    
     let requestData = {
       year: this.Leavescat.year,
       locationId: this.Leavescat.locationId,
@@ -132,16 +161,19 @@ export class LeaveAlloctaionComponent {
               // this.policyDays[element.entityReferenceId].id = element.id;
               //this.policyDays[element.entityReferenceId].allowedDays =
               //element.allowedDays;
+              
             } else {
-              this.accessLevels[element.allowedDays] = 0;
+              this.accessLevels[element.allowedDays] = 0; 
               // this.policyDays = {
               //   //  element.gradeId
               // }
               //this.policyDays[element.gradeId].lpId = null
             }
           });
+          
         } else {
-          this.accessLevels = {};
+          this.accessLevels = [];
+          
         }
       },
     });
@@ -172,19 +204,12 @@ export class LeaveAlloctaionComponent {
     this.subscription = this.http.postdata('LeavePolicy', rres).subscribe({
       next: (res: any) => {
         console.log(res);
-        // alert('Policy added successfully');
-        // this.toaster.success({ detail: 'Data added', summary: 'Data added successfully', duration: 3000 })
-        const modalElement = document.getElementById('successhide');
-        if (modalElement) {
-          modalElement.classList.add('show');
-          modalElement.style.display = 'block';
-          this.Status = 'Data added successfully'
-        }
+        this.confirmation.openSuccessModal('Data updated successfully');
         setTimeout(function () {
           window.location.reload();
         }, 2000);
       },
-      error: (reason) => console.log(reason),
+      error: (reason) => this.confirmation.openSuccessModal(reason.error.message)
     });
   }
 }

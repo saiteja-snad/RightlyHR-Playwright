@@ -86,16 +86,16 @@
                                 <table class="w-100">
                                     <thead>
                                         <tr>
-                                            <th scope="col">EDUCATION</th>
-                                            <th scope="col">UNIVERSITY</th>
-                                            <th scope="col">SPECILIZATION</th>
-                                            <th scope="col">FROM DATE</th>
-                                            <th scope="col">TO DATE</th>
-                                            <th scope="col">GPA</th>
-                                            <th scope="col">ATTACHMENT</th>
+                                            <th>EDUCATION</th>
+                                            <th>UNIVERSITY</th>
+                                            <th>SPECILIZATION</th>
+                                            <th>FROM DATE</th>
+                                            <th>TO DATE</th>
+                                            <th>GPA</th>
+                                            <th>ATTACHMENT</th>
                                         </tr>
                                     </thead>
-                                    <tbody class=" bg-white">
+                                    <tbody class="bg-white">
                                         <tr *ngFor="let ed of eduDetails">
                                             <td>{{ed.degree}}</td>
                                             <td>{{ed.university}}</td>
@@ -104,11 +104,10 @@
                                             <td>{{ed.degreeEndDate | dateFormat}}</td>
                                             <td>{{ed.gpa }}</td>
                                             <td>{{ed.attachment ? '' : '-'}}
-                                                <a class="text-view" (click)="onViewClick(ed.attachment);openModal(myModall)"><i
-                                                        class="bi bi-paperclip"></i>View</a>
+                                                <a class="view-btn" (click)="onViewClick(ed.attachment);openModal(myModall)">
+                                                    <i class="bi bi-paperclip"></i>View</a>
                                                 <ng-template #downloadView>
-                                                    <button class="view-btn"
-                                                        (click)="onSelectDownload(ed.attachment)">Download</button>
+                                                    <button class="view-btn" (click)="onSelectDownload(ed.attachment)">Download</button>
                                                 </ng-template>
                                             </td>
                                         </tr>
@@ -133,15 +132,15 @@
                                 <table class="w-100">
                                     <thead>
                                         <tr>
-                                            <th scope="col">COMPANY NAME</th>
-                                            <th scope="col">EMPLOYEMENT TYPE</th>
-                                            <th scope="col">JOB ROLE</th>
-                                            <th scope="col">FROM DATE</th>
-                                            <th scope="col">TO DATE</th>
-                                            <th scope="col">ATTACHMENT</th>
+                                            <th>COMPANY NAME</th>
+                                            <th>EMPLOYEMENT TYPE</th>
+                                            <th>JOB ROLE</th>
+                                            <th>FROM DATE</th>
+                                            <th>TO DATE</th>
+                                            <th>ATTACHMENT</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="bg-white">
+                                    <tbody>
                                         <tr *ngFor="let exp of experiance">
                                             <td>{{exp.companyName}}</td>
                                             <td> {{exp.employmentType}}</td>
@@ -149,22 +148,20 @@
                                             <td>{{exp.fromDate | dateFormat}}</td>
                                             <td><span *ngIf="exp.toDate !=null;else todate">{{exp.toDate | dateFormat}}</span>
                                                 <ng-template #todate>
-                                                    <div class="centerhypen">-</div>
+                                                    <div>-</div>
                                                 </ng-template>
                                             </td>
                                             <td>{{exp.attachment ? "" : ''}}
-                                                <a class="view-text" type="button"
-                                                    *ngIf="exp.attachment.endsWith('jpg')||exp.attachment.toLowerCase().endsWith('jpeg')||exp.attachment.toLowerCase().endsWith('png') ;else downloadView"
-                                                    (click)="onViewClick(exp.attachment);openModal(myModall)"><i
-                                                        class="bi bi-paperclip">View</i></a>
+                                                <a class="view-btn" *ngIf="exp.attachment.endsWith('jpg') || exp.attachment.toLowerCase().endsWith('jpeg') || 
+                                                exp.attachment.toLowerCase().endsWith('png') ;else downloadView"
+                                                   (click)="onViewClick(exp.attachment);openModal(myModall)">
+                                                    <i class="bi bi-paperclip"></i>View</a>
                                                 <ng-template #downloadView>
-                                                    <div *ngIf="exp.attachment =='' ;else documentdownload" class="centerhypen">
-                                                        -</div>
+                                                    <div *ngIf="exp.attachment =='' ;else documentdownload" class="centerhypen">-</div>
                                                     <ng-template #documentdownload>
-                                                        <a type="button" (click)="onSelectDownload(exp.attachment)">
-                                                            <i class="bi bi-download  me-1"></i>Download</a>
+                                                        <a class="view-btn" (click)="onSelectDownload(exp.attachment)">
+                                                            <i class="bi bi-paperclip"></i>View</a>
                                                     </ng-template>
-                                                    <!-- <a type="button" style="color: blue" (click)="onSelectDownload(exp.attachment)"> <i class="bi bi-download me-1"></i>Download</a> -->
                                                 </ng-template>
                                             </td>
                                         </tr>
@@ -188,7 +185,6 @@
                     Experience Details
                 </button>
             }
-           
             <div>
                 <div *ngIf="loadingcircle" class="spinner-border text-primary me-3" role="status">
                     <span class="visually-hidden">Loading...</span>

@@ -30,7 +30,7 @@
                     <!-- Date -->
                     <div class="col-md-12 mb-4">
                         <label class="form-label custom-label mb-2">
-                            {{'Date'| translate }} <span class="error-msg">*</span>
+                            {{'Issued Date'| translate }} <span class="error-msg">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" formControlName="dateofRelieving"
                         placeholder="Please enter Date" (change)="DateValidation()" (keydown)="preventTyping($event)" />
@@ -106,7 +106,7 @@
                             </ng-template>
                             <div class="d-flex justify-content-end mb-3">
                                 <div>
-                                    <span class="letter-sub-header">Date: </span>
+                                    <span class="letter-sub-header">Issued Date: </span>
                                     <span>{{employeeForm.get('dateofRelieving')?.value | dateformat}}</span>
                                 </div>
                             </div>

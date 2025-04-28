@@ -11,11 +11,12 @@ import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { HttpService } from '../../services/http.service';
 import { FileSizePipe } from "../../Pipes/file-size.pipe";
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 
 
 @Component({
   selector: 'app-documents',
-  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, TranslateModule, CommonModule, FileSizePipe],
+  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })

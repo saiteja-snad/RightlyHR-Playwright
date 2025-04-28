@@ -323,7 +323,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
                 this.modalService.dismissAll();
                 this.documentForm.reset();
                 this.getDocuments();
-              }, 2000);
+              }, 3000);
             }
           })
         },

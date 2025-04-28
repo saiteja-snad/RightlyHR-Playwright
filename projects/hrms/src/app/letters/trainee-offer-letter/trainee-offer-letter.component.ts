@@ -1021,11 +1021,14 @@ export class TraineeOfferLetterComponent {
   updateEndDateValidityupdate(): void {
     const offerstartDate=moment(this.employeeForm.get('dateOfJoining')?.value);
     const offerExpiryDate = moment(this.employeeForm.get('offerExpiryDate')?.value);
-    if (offerstartDate.isAfter(offerExpiryDate)) {
-      this.isStartDateValidofexpected = false;
-    } else {
-      this.isStartDateValidofexpected = true;
+    if(offerstartDate&&offerExpiryDate){
+      if (offerstartDate.isAfter(offerExpiryDate)) {
+        this.isStartDateValidofexpected = false;
+      } else {
+        this.isStartDateValidofexpected = true;
+      }
     }
+    
   }
 
   onclickSelectAddress(Value: any) {
@@ -1050,7 +1053,10 @@ export class TraineeOfferLetterComponent {
       pinCode: this.address.zipCode,
     })
   }
-
+  pathValuesFuction(){
+    const formValues = this.employeeForm.value;
+    this.traineeEmpData.note= formValues.note
+  }
   trainingempadress: any
   getTraineeEmployeeAddress(Value: any) {
     let EmployeeId = Value;

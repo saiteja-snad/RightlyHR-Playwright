@@ -104,12 +104,14 @@ export class FrequencyComponent {
 
   openUpdate(freq: any) {
     this.selectedId = freq.sno;
+    this.FrequencyForm.reset();
     this.updateForm.patchValue({ frequency: freq.frequency1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
 
   openDelete(freq: any) {
     this.selectedDeletefreq = freq;
+    this.FrequencyForm.reset();
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
 

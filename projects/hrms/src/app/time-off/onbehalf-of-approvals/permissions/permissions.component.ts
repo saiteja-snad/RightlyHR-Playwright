@@ -143,10 +143,7 @@ export class PermissionsComponent {
           this.sharedModalService.openSuccessModal('Request Approved Successfully');
           this.approveForm.reset();
           this.selectedLeaveData = {} as PermissionRequestResponse;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            permission: true,
-          }));
+          this.http.triggerActionSignal();
         },
         error: (reason: any) => {
           this.sharedModalService.openErrorModal(reason.error.Message);
@@ -168,10 +165,7 @@ export class PermissionsComponent {
       next: (respone: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          permission: true,
-        }));
+        this.http.triggerActionSignal();
       },
       error: (reason: any) => {
         this.modalService.dismissAll();
@@ -201,10 +195,7 @@ export class PermissionsComponent {
           );
           this.rejectForm.reset();
           this.selectedLeaveData = {} as PermissionRequestResponse;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            permission: true,
-          }));
+          this.http.triggerActionSignal();
         },
         error: (reason: any) => {
           this.sharedModalService.openErrorModal(reason.error.Message);

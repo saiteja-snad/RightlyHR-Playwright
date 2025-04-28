@@ -540,13 +540,13 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
           this.headerName = "Inactive Employees"
           break;
         case 'Trainee Prospective':
-          this.headerName = "Prospective Interns"
+          this.headerName = "Prospective Trainee"
           break;
         case 'Trainee Active':
-          this.headerName = "Active Interns"
+          this.headerName = "Active Trainee"
           break;
         case 'Trainee Inactive':
-          this.headerName = "Inactive Interns"
+          this.headerName = "Inactive Trainee"
           break;
         case 'External Prospective':
           this.headerName = "External Prospective "

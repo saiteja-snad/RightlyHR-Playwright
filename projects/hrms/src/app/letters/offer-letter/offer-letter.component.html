@@ -18,10 +18,10 @@
       <div class="card letter-fields-content p-4">
         <form [formGroup]="employeeForm" (ngSubmit)="onOfferLetterFormSubmitForGenerateDoc(employeeForm)">
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                filterBy="fullName" [showClear]="true" placeholder="Select employee" (onChange)="onClickValidation($event)"
+                filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="onClickValidation($event)"
                 formControlName="fusionEmpId" class="custom-select w-100">
               </p-select>
             </div>
@@ -275,7 +275,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Offer Issued Date <span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
-              placeholder="Please enter offer issued date" (click)="pathValuesFuction()" />
+              placeholder="Please enter offer issued date" (click)="pathValuesFuction()" onkeydown="return false;" />
             <div *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
               <div class="error-msg">Offer Issued Date is required</div>
               <div *ngIf="employeeForm.hasError('offerDateInvalid') && employeeForm.get('offerIssuedDate')?.touched"
@@ -287,7 +287,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Expected Start Date <span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="dateOfJoining" (click)="pathValuesFuction()"
-              placeholder="Please enter expected start date" />
+              placeholder="Please enter expected start date" onkeydown="return false;" />
             <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
               <div class="error-msg">Expected Start Date is required</div>
             </div>
@@ -304,7 +304,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Offer Expiry Date <span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-              (click)="pathValuesFuction()" placeholder="Please enter offer expiry date" />
+              (click)="pathValuesFuction()" onkeydown="return false;" placeholder="Please enter offer expiry date" />
             <div class="error-msg">
               <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                 Offer Expiry Date is required
@@ -396,7 +396,7 @@
                       </ul>
                     </div>
                     <div class="col-md-4 letter-sub-header">
-                      <p class="text-end p-0">{{prospectiveEmpData.offerIssuedDate | dateformat}}</p>
+                      <p class="text-end p-0">Date: {{prospectiveEmpData.offerIssuedDate | dateformat}}</p>
                     </div>
                   </div>
                 </div>
@@ -408,7 +408,7 @@
                 <p>Congratulations and Welcome to RightlyHR!!!</p>
     
                 <p>Further to your application for employment with us, and the subsequent selection process, we are
-                  delighted to offer you the role of <b>{{jobDesignation}}</b> in our organization and your
+                  delighted to offer you the role of <b>{{prospectiveEmpData?.jobRole}}</b> in our organization and your
                   <b>CTC</b> will be <b>INR {{(+prospectiveEmpData.amount || 0) + (+prospectiveEmpData.variablePayAmount || 0)}}</b> per annum.
                 </p>
     
@@ -689,7 +689,7 @@
                     <div class="p-2">{{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
                       {{prospectiveEmpData.lastName}}</div>
                     <div class="p-2">Designation</div>
-                    <div class="p-2">{{jobDesignation}}</div>
+                    <div class="p-2">{{prospectiveEmpData?.jobRole}}</div>
                   </div>
                   <p class="text-center letter-sub-header my-3">Compensation Details <span class="boldnone">(All figures in
                       Rs.)</span></p>

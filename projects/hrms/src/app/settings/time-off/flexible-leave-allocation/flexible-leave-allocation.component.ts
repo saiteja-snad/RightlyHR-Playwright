@@ -19,7 +19,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 })
 export class FlexibleLeaveAllocationComponent implements OnInit, OnDestroy {
   leaveAllocationForm!: FormGroup;
-  selectedEmployee!: string;
+  selectedEmployee!: string | null;
   isSubmitting = false;
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
@@ -28,7 +28,7 @@ export class FlexibleLeaveAllocationComponent implements OnInit, OnDestroy {
   categoryDetails = [] as ICategoryDetails[];
   employeeDetails = [] as IEmployees[];
   destroy$: Subject<boolean> = new Subject<boolean>();
-  @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
+  // @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
   constructor(
     private fb: FormBuilder,
@@ -250,7 +250,7 @@ export class FlexibleLeaveAllocationComponent implements OnInit, OnDestroy {
 
   publishLeaveAllocation(form: FormGroup): void {
     if (form.invalid) return;
-    this.modalService.open(this.stagingLoadingModal, { centered: true });
+    // this.modalService.open(this.stagingLoadingModal, { centered: true });
     const formData = form.value;
     const payload = [{
       year: formData.year,
@@ -267,14 +267,25 @@ export class FlexibleLeaveAllocationComponent implements OnInit, OnDestroy {
 
     this.http.postdata("LeavePolicy", payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
+        this.leaveAllocationForm.get('subLocation')?.disable();
+        this.leaveAllocationForm.get('location')?.disable();
+        this.leaveAllocationForm.get('shiftName')?.disable();
+        this.leaveAllocationForm.get('categoryName')?.disable();
+        this.leaveAllocationForm.get('shift')?.disable();
+
+        this.selectedEmployee = null;
         this.modal.openSuccessModal('Leave allocation published successfully!');
+        
+
+
+
       },
       error: (err: any) => {
         this.modalService.dismissAll();
         this.modal.openErrorModal(err.error.message? err.error.message: 'Failed to publish leave allocation!');
       },
       complete: () => {
-        this.modalService.dismissAll();
+        // this.modalService.dismissAll();
         form.reset();
       }
     });

@@ -168,7 +168,10 @@
                 @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
                 <button class="custom-btn accepted-btn px-5">Accepted</button>
                 }
-                <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                @if(this.updatedOfferLetterDetails.candidateStatus!=='Offer Letter Rejected'){
+                    <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                }
+               
                 @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
                 <button class="custom-btn rejected-btn px-5" disabled>Rejected</button>
                 }

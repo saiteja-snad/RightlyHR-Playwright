@@ -264,7 +264,7 @@ export class TraineeOfferLetterComponent {
   //function to get reporting manager name
   selectReportingname(Value: any) {
     if (Value) {
-      const details = this.getAllEmployeeInfo.find((ele: any) => ele.employeeId == Value.employeeId);
+      const details = this.getAllEmployeeInfo.find((ele: any) => ele.employeeId == Value);
       this.traineeEmpData.reportingmanagerName = `${details.firstName} ${details.middleName ? details.middleName + ' ' : ''}${details.lastName}`;
       this.traineeEmpData.reportingcontactnumber = details.workPhone;
       this.traineeEmpData.reportingworkemail = details.workEmail;
@@ -1060,7 +1060,7 @@ export class TraineeOfferLetterComponent {
   updateEndDateValidityForExpectedStartDate() {
     const dateOfJoining = new Date(this.traineeEmpData.dateOfJoining);
     const offerIssuedDate = new Date(this.traineeEmpData.offerIssuedDate);
-    if (dateOfJoining <= offerIssuedDate) {
+    if (dateOfJoining < offerIssuedDate) {
       this.isStartDateValid = false;
     } else {
       this.isStartDateValid = true;

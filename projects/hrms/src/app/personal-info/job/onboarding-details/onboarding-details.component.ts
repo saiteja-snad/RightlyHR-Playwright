@@ -153,6 +153,17 @@ export class OnboardingDetailsComponent {
       }
     });
   }
+  formatDateToLocal(dateString: string) {
+    if(dateString){
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    return null; // Return null or handle the case when dateString is empty or invalid
+  }
+
   
   patchForm(data: any): void {
     // Patching values for onboardingForm
@@ -160,9 +171,9 @@ export class OnboardingDetailsComponent {
     console.log(workLocation);
     this.onboardingForm.patchValue({
       status: this.Statusdetails?.find((item: any) => item?.statusname === data?.empstatus),
-      dateOfJoining: moment(data.dateOfJoining).format('yyyy-MM-DD'),
+      dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
       branchLocation: this.branchLocations.find((item: any) => item.branchCode === data?.branchCode),
-      probationEndDate: data.probationEndDate ? moment(data.probationEndDate).format('yyyy-MM-DD') : null,
+      probationEndDate: this.formatDateToLocal(data.probationEndDate),
       probationStatus: this.probation.find((item: any) => item.probationstatus1 === data?.probationStatus),
       noticePeriodStatus: this.noticePeriod.find((item: any) => item.name === data.noticePeriod),
       backgroundCheckStatus: this.backgroundDetails.find((item: any) => item.backgroundcheckstatus1 === data?.backgroundCheckStatus),
@@ -345,13 +356,17 @@ export class OnboardingDetailsComponent {
       this.onboardingForm.markAllAsTouched();
       return;
     }
-    
+    const probationEndDate = this.onboardingForm.get('probationEndDate')?.value 
+  ? this.formatDateToLocal(this.onboardingForm.get('probationEndDate')?.value)
+  : this.empdata.probationEndDate 
+  ? this.formatDateToLocal(this.empdata.probationEndDate)
+  : null;
     const payload = {
      ...this.empdata,
       empstatus: this.onboardingForm.get('status')?.value?.statusname ?? this.empdata.empstatus,
       dateOfJoining: this.onboardingForm.get('dateOfJoining')?.value ?? this.empdata.dateOfJoining,
-      branchCode: this.onboardingForm.get('dateOfJoining')?.value ?? this.empdata.branchCode,
-      probationEndDate: this.onboardingForm.get('probationEndDate')?.value ?? this.empdata.probationEndDate,
+      branchCode: this.onboardingForm.get('branchLocation')?.value ?? this.empdata.branchCode,
+      probationEndDate: probationEndDate,
       probationStatus: this.empdata.probationStatus ?? this.onboardingForm.get('probationStatus')?.value?.probationstatus1,
       noticePeriod: this.onboardingForm.get('noticePeriodStatus')?.value?.name ?? this.empdata.noticePeriod,
       backgroundCheckStatus: this.onboardingForm.get('backgroundCheckStatus')?.value?.backgroundcheckstatus1 ?? this.empdata.backgroundCheckStatus,

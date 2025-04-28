@@ -1,22 +1,20 @@
 <div class="profile-info-card-main-container w-100">
     <div class="d-flex justify-content-between mb-3">
-        <div class="d-flex gap-2">
-            <div class="image-content">
-                <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
-                <div class="edit-icon-content">
-                    <label for="formFile" class="form-label"><img src="/icons/Edit.png" alt="edit-icon"
-                            class="edit-icon cursor"></label>
-                    <input class="form-control d-none" type="file" id="formFile" (change)="chooseNewProfile($event)">
-                </div>
-            </div>
-    
-            <div class="pt-2">
-                <p class="name mb-0">{{empinfo.firstName}} {{empinfo.middleName}} {{empinfo.lastName}}</p>
-                <p class="sub-text mb-0">{{jobRole}}</p>
-                <p class="sub-text mb-0">{{this.empinfo.fusionEmpId}}</p>
+        <div class="image-content">
+            <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
+
+            <div class="edit-icon-content">
+                <label for="formFile" class="form-label"><img src="/icons/Edit.png" alt="edit-icon"
+                        class="edit-icon cursor"></label>
+                <input class="form-control d-none" type="file" id="formFile" accept=".jpg" (change)="chooseNewProfile($event)">
             </div>
         </div>
-        <div class="qr-content text-end pt-5">
+        <div class="text-nowrap pt-2">
+            <p class="name mb-0">{{empdata.firstName}} {{empdata.middleName}} {{empdata.lastName}}</p>
+            <p class="sub-text mb-0">{{jobRole}}</p>
+            <p class="sub-text mb-0">{{empdata.fusionEmpId}}</p>
+        </div>
+        <div class="qr-content pt-5 ps-2">
             <img src="/icons/qr-code.png" alt="qr icon" class="qr-icon cursor">
         </div>
     </div>
@@ -24,20 +22,26 @@
     <!--user additional details-->
     <div class="text-nowrap py-4">
         <div class="align-middle text-truncate mb-3">
-            <i class="bi bi-telephone profile-data-icon me-2"></i><span class="details-text">+91
-                {{this.empinfo?.workPhone || 'N/A'}} </span>
+            <i class="bi bi-telephone profile-data-icon me-2"></i><span class="details-text">
+                {{empdata?.workPhoneCountryCode}}  {{empdata?.workPhone || 'N/A'}} </span>
         </div>
         <div class="mb-3 text-truncate">
-            <i class="bi bi-geo-alt profile-data-icon me-2"></i><span class="details-text">{{jobdata?.locationName}},
+            <i class="bi bi-geo-alt profile-data-icon me-2"></i><span class="details-text">{{jobdata?.locationName}}
                 {{jobdata?.sublocationName || 'N/A' }}</span>
         </div>
         <div class="mb-3 text-truncate">
             <i class="bi bi-envelope profile-data-icon me-2"></i><span
-                class="details-text">{{this.empinfo?.workEmail}}</span>
+                class="details-text">{{empdata?.workEmail}}</span>
         </div>
         <div class="mb-3 text-truncate">
-            <i class="bi bi-suitcase-lg profile-data-icon me-2"></i><span
-                class="details-text"><b>{{jobdata?.jobTypeName}}</b> ({{jobdata?.shiftName }})</span>
+            <i class="bi bi-suitcase-lg profile-data-icon me-2"></i>  <span class="details-text">
+                <b *ngIf="jobdata?.jobTypeName; else noData">{{jobdata?.jobTypeName}}</b>
+                <span *ngIf="jobdata?.jobTypeName && jobdata?.shiftName"> || </span>
+                <span *ngIf="jobdata?.shiftName">{{jobdata?.shiftName}}</span>
+                <span *ngIf="(jobdata?.shiftName || jobdata?.jobTypeName) && (jobdata?.shiftStartTime && jobdata?.shiftEndTime)"> || </span>
+                <span *ngIf="jobdata?.shiftStartTime && jobdata?.shiftEndTime">{{jobdata?.shiftStartTime}}-{{jobdata?.shiftEndTime}}</span>
+                <ng-template #noData>N/A</ng-template>
+              </span>
         </div>
         <div class="mb-3 text-truncate">
             <i class="bi bi-person-circle profile-data-icon me-2"></i><span class="details-text"><b>Team Manager</b> :

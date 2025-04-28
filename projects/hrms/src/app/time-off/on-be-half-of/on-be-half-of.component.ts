@@ -114,9 +114,14 @@ export class OnBeHalfOfComponent {
   isNonOptionalHolidaySelected: boolean = false;
   isHolidaySelectedEndate: boolean = false;
 
-  constructor(private conformationPopup: OpenModalService, private modalService: NgbModal,
-    private fb: FormBuilder, private authService: AuthService, private router: Router,
-    private http: HttpService,) {
+  constructor(
+    private conformationPopup: OpenModalService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder, 
+    private authService: AuthService, 
+    private router: Router,
+    private http: HttpService,
+  ) {
     const today = new Date();
     this.minStartDate = today.toISOString().split('T')[0];
     let currentYear = new Date().getFullYear();
@@ -128,7 +133,7 @@ export class OnBeHalfOfComponent {
   ngOnInit(): void {
     this.initializeForm();
     this.getEmployeeId();
-    this.getallpolicy();
+    localStorage.removeItem('onbehalfof')
     this.getgradedata = JSON.parse(localStorage.getItem("getGradedata") || '{}');
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getEmployementTypeByempId(this.empdata.employeeId)
@@ -171,12 +176,14 @@ export class OnBeHalfOfComponent {
     this.disablebuttonforemployeeid = true;
     this.leaveapplication.dateOfJoining = this.formatDatewithDate(this.leaveapplication?.dateOfJoining);
     this.getCategoryDetails(fusionemployeeId.value);
-    this.getDataByLPID(fusionemployeeId.value);
+    // this.getDataByLPID(fusionemployeeId.value);
     this.cadidateEmployeeId = fusionemployeeId.value;
     this.getOrgHolidaysByEmpId(fusionemployeeId.value)
     this.getholidaybyempid(fusionemployeeId.value)
     this.getcustompolicybyempid(fusionemployeeId.value);
     this.getLeavesData(fusionemployeeId.value);
+    localStorage.setItem('onbehalfof',fusionemployeeId.value)
+    this.http.triggerActionSignal();
   }
 
   onleaveSelect(categoryId: number) {
@@ -233,11 +240,9 @@ export class OnBeHalfOfComponent {
         this.employeeiddetails = data.filter((element: any) => element.employeeId != loggedInUser.employeeId)
           .map((employee: any) => ({
             ...employee,
-            fullName: `${
-              employee.employeeId ? employee.employeeId + ' - ' : ''
-            }${employee.firstName} ${
-              employee.middleName ? employee.middleName + ' ' : ''
-            }${employee.lastName}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+            }${employee.firstName ? employee.firstName : '' } ${employee.middleName ? employee.middleName + ' ' : ''
+            }${employee.lastName ? employee.lastName : ''}`,
         }));
       },
       error: (reason: any) => {
@@ -312,40 +317,38 @@ export class OnBeHalfOfComponent {
     })
   }
 
-  getDataByLPID(empId: any) {
-    let loggedInUser = this.authService.getToken();
-    let empid = this.empdata.employeeId;
-    this.subscription = this.http.getData(`Timeoff/${empId}`).subscribe({
-      next: (response: any) => {
-        this.lpdata = response;
-        this.waitingforapprovalCount = this.lpdata.filter((element: any) => {
-          return element.status === 'Waiting for Approval';
-        }).length;
+  // getDataByLPID(empId: any) {
+  //   this.subscription = this.http.getData(`Timeoff/${empId}`).subscribe({
+  //     next: (response: any) => {
+  //       this.lpdata = response;
+  //       this.waitingforapprovalCount = this.lpdata.filter((element: any) => {
+  //         return element.status === 'Waiting for Approval';
+  //       }).length;
 
-        this.draftsCount = this.lpdata.filter((element: any) => {
-          return element.status === 'Draft';
-        }).length;
+  //       this.draftsCount = this.lpdata.filter((element: any) => {
+  //         return element.status === 'Draft';
+  //       }).length;
 
-        this.approvedCount = this.lpdata.filter((element: any) => {
-          return element.status === 'Approved';
-        }).length;
+  //       this.approvedCount = this.lpdata.filter((element: any) => {
+  //         return element.status === 'Approved';
+  //       }).length;
 
-        this.rejectedCount = this.lpdata.filter((element: any) => {
-          return element.status === 'Rejected';
-        }).length;
+  //       this.rejectedCount = this.lpdata.filter((element: any) => {
+  //         return element.status === 'Rejected';
+  //       }).length;
 
-        this.processedCount = this.lpdata.filter((element: any) => {
-          return element.status === 'Processed'
-        }).length;
+  //       this.processedCount = this.lpdata.filter((element: any) => {
+  //         return element.status === 'Processed'
+  //       }).length;
 
-        this.cancelledCount = this.lpdata.filter((element: any) => {
-          return element.status === 'Cancelled';
-        }).length;
+  //       this.cancelledCount = this.lpdata.filter((element: any) => {
+  //         return element.status === 'Cancelled';
+  //       }).length;
 
-      },
-      error: (reason: any) => console.log(reason)
-    });
-  }
+  //     },
+  //     error: (reason: any) => console.log(reason)
+  //   });
+  // }
 
   blockDates: any;
   blockedData: any;
@@ -362,17 +365,7 @@ export class OnBeHalfOfComponent {
     })
   }
 
-  allPolicy = {} as any;
-  getallpolicy() {
-    this.subscription = this.http.getData("LeavePolicy/getall").subscribe({
-      next: (data: any) => {
-        this.allPolicy = data as ILeaves[];
-        localStorage.setItem("getGradedata", JSON.stringify(data));
 
-      },
-      error: reason => console.log(reason)
-    });
-  }
 
   getEmployementTypeByempId(empid: number) {
     this.subscription = this.http.getData(`Employementtype/${empid}`).subscribe({
@@ -471,7 +464,7 @@ export class OnBeHalfOfComponent {
       next: (response: any) => {
 
         this.leavedatatimeoff = response;
-        this.getDataByLPID(this.leaveapplication.employeeId)
+        // this.getDataByLPID(this.leaveapplication.employeeId)
       },
       error: (reason: any) => console.log(reason)
     })
@@ -541,7 +534,7 @@ export class OnBeHalfOfComponent {
       this.leaveFormData.notes = this.leaveForm.get('reason')?.value
       if (this.leaveapplication.probationEndDate) {
         // Check if the employee is still on probation
-        this.getDataByLPID(this.leaveapplication.employeeId);
+        // this.getDataByLPID(this.leaveapplication.employeeId);
         let currentDate = moment();
         let probationEndDate = moment(this.leaveapplication.probationEndDate);
         // Create new Moment objects without time information
@@ -665,7 +658,7 @@ export class OnBeHalfOfComponent {
     this.subscription = this.http.postdata(`LeaveBalance`, data).subscribe({
       next: (data: any) => {
         this.getCategoryDetails(data.empId);
-        this.getDataByLPID(data.empId);
+        // this.getDataByLPID(data.empId);
       }
 
     })

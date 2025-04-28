@@ -99,16 +99,18 @@ export class EmergencyContactDetailsComponent {
   initializeForm() {
     this.contactForm = this.fb.group({
       contact1: this.fb.group({
-        name: ['', Validators.required],
+        name: ['', [Validators.required,Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         email: ['', [Validators.email]],
         mobile: ['', Validators.required],
         relationship: ['', Validators.required],
+        // countyCode1:[null, [Validators.required]],
       }),
       contact2: this.fb.group({
-        name: ['', Validators.required],
+        name: ['', [Validators.required,Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         email: ['', [Validators.email]],
         mobile: ['', Validators.required],
         relationship: ['', Validators.required],
+        // countyCode2:[null, [Validators.required]],
       })
     });
   }
@@ -169,6 +171,8 @@ export class EmergencyContactDetailsComponent {
 
   // mobile number 1 functions
   onCountryChange(country: any) {
+    this.contactForm.get('countyCode1')?.setValue(country.dialling_code);
+    this.contactForm.get('countyCode1')?.markAsTouched();
     this.selectedCountryCode.set(country.code);
     this.selectedDialCode = country.code;
     if( this.selectedDialCode ){
@@ -206,6 +210,8 @@ export class EmergencyContactDetailsComponent {
 
   // mobile number 2 functions
   onCountryChange1(country: any) {
+    this.contactForm.get('countyCode2')?.setValue(country.dialling_code);
+    this.contactForm.get('countyCode2')?.markAsTouched();
     this.selectedCountryCode1.set(country.code);
     this.selectedDialCode1 = country.dialling_code;
     this.contactForm.get('contact2.mobile')?.setValidators([Validators.required, this.phoneNumberValidator()]);

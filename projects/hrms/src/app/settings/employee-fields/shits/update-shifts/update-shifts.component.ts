@@ -19,6 +19,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class UpdateShiftsComponent {
   @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('deleterowpopup') deleterowpopup: any;
   shiftForm!: FormGroup;
   years: { label: string; value: number }[] = [];
   id:any;
@@ -83,12 +84,25 @@ export class UpdateShiftsComponent {
   }
   isDeleteDisabled: boolean = false;
 
-  deleteShift(index: number) {
+  deleteShift(index:number) {
+    if (this.shifts.length > 1) {
+      this.modalService.open(this.deleterowpopup, { backdrop: 'static', centered: true });
+    }
+   
+    // if (this.shifts.length > 1) {
+    //   this.shifts.removeAt(index);
+    //   this.isDeleteDisabled = false; // allow delete if more than 1
+    // } else {
+    //   this.isDeleteDisabled = true; // disable delete button
+    // }
+  }
+  onDeleterow(index:any){
     if (this.shifts.length > 1) {
       this.shifts.removeAt(index);
-      this.isDeleteDisabled = false; // allow delete if more than 1
+      index.dismiss();
+      this.isDeleteDisabled = false; 
     } else {
-      this.isDeleteDisabled = true; // disable delete button
+      this.isDeleteDisabled = true; 
     }
   }
   initializeForm() {

@@ -1,4 +1,9 @@
-input:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
+// input:focus {
+//     outline: none !important;
+//     box-shadow: none !important;
+// }
+.readonly-style[readonly] {
+    background-color: #e9ecef !important;
+    opacity: 1; 
+    cursor: not-allowed;
+  }

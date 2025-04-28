@@ -247,3 +247,18 @@
         </div>
   
   </ng-template>
+  <!--Delete Confirmation popup2-->
+<ng-template #deleterowpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+      
+            <div >
+                <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+                <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            </div>
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary "(click)="closeDelete(modal)">{{'No'|translate}}</button>
+                <button type="button" class="custom-btn btn-primary " (click)="onDeleterow(modal)">{{'Yes'|translate}}</button>
+            </div>
+        </div>
+  
+  </ng-template>

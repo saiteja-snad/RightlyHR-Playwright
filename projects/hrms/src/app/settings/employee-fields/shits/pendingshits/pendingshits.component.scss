@@ -8,3 +8,8 @@
     border-right: 1px solid #ffffff; /* Thick white vertical separator */
   }
   
+  .readonly-style[readonly] {
+    background-color: #e9ecef !important;
+    opacity: 1; /* make sure it's not faded like disabled */
+    cursor: not-allowed;
+  }

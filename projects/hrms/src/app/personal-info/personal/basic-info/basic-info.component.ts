@@ -19,6 +19,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 export class BasicInfoComponent implements OnInit, OnDestroy {
   basicInfoForm!: FormGroup;
   subscription!: Subscription
+  salutationValidationcheck: boolean = false
   empinfo = {} as IJob;
   bloodGroups = [
     { name: 'A+' },
@@ -35,6 +36,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   Maritaldetails: IMarital[] = [];
   empyployeedata = {} as any;
   buttons = false
+  dateofbirth: any
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
 
@@ -46,6 +48,13 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.getMaritaldetails()
     this.getTitle()
     this.basicInfoForm.disable();
+    this.basicInfoForm.get('salutation')?.valueChanges.subscribe(() => {
+      this.onsalutationvalidation();
+    });
+
+    this.basicInfoForm.get('gender')?.valueChanges.subscribe(() => {
+      this.onsalutationvalidation();
+    });
   }
 
   initializeForm(): void {
@@ -59,6 +68,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: [null, [Validators.required, this.validateAge.bind(this)]],
       bloodGroup: [null],
       maritalStatus: [null, Validators.required],
+      marriageDate: [null],
     });
   }
 
@@ -81,16 +91,45 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
     return null; // Return null if validation passes
   }
+  onsalutationvalidation(): void {
+    const gender = this.basicInfoForm.get('gender')?.value;
+    const title = this.basicInfoForm.get('salutation')?.value;
+
+    const genderLower = typeof gender === 'string' ? gender.toLowerCase() : '';
+    const titleLower = typeof title === 'string' ? title.toLowerCase() : '';
+
+    if (
+      (genderLower === 'male' && titleLower === 'mr.') ||
+      (genderLower === 'female' && ['ms.', 'miss.', 'mrs.'].includes(titleLower)) ||
+      ((genderLower === 'other' || genderLower === 'others') && (titleLower === 'other' || titleLower === 'others')) ||
+      ((genderLower === 'male' || genderLower === 'female') && (titleLower == null || titleLower === ''))
+    ) {
+      this.salutationValidationcheck = false; // Valid combination
+    } else {
+      this.salutationValidationcheck = true; // Invalid combination
+    }
+  }
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empyployeedata = data;
         this.patchForm(data);
+        this.dateofbirth =this.formatDateToLocal(this.empinfo.dob)
+
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
+  }
+    getdateofbirth(): string | null {
+    const startDateValue = this.formatDateToLocal(this.empinfo.dob)
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; 
   }
   formatDateToLocal(dateString: string): string {
     const date = new Date(dateString);
@@ -104,11 +143,12 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.patchValue({
       employeeId: data.fusionEmpId,
       fusionEmpId: data.fusionEmpId,
-      salutation: this.titledetails.find((item: any) => item.titlename === data.title),
+      salutation: this.titledetails.find((item: any) => item.titlename === data.title) || data.title,
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
       gender: data.gender,
+      marriageDate: this.formatDateToLocal(data.marriedDate) || null,
       dob: this.formatDateToLocal(data.dob),
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
       maritalStatus: this.Maritaldetails.find(((item: any) => item.maritalstatus1 === data.maritalStatus)) || data.maritalStatus,
@@ -127,7 +167,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     const updatePayload = {
       ...this.empyployeedata,
       employeeId: this.empinfo.employeeId,
-      title: formValue.salutation?.titlename,
+      title: formValue.salutation.titlename,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
       lastName: formValue.lastName,
@@ -135,7 +175,8 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
-      empstatus: 'Active', 
+      empStatus: 'Active',
+      marriageDate: formValue.marriageDate,
     };
 
     console.log(updatePayload);
@@ -188,6 +229,21 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         this.Maritaldetails = data as IMarital[];
       },
     });
+  }
+  changemaritalstatus(): void {
+    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'  || this.empyployeedata?.maritalStatus === 'Married';
+  
+    if (maritalStatus) {
+      // Add the required validator to the marriageDate field
+      this.basicInfoForm.get('marriageDate')?.setValidators([Validators.required]);
+    } else {
+      // Clear the validators if marital status is not "Married"
+      this.basicInfoForm.get('marriageDate')?.clearValidators();
+      this.basicInfoForm.get('marriageDate')?.setValue(null); // Reset the marriage date field
+    }
+  
+    // Update the validation state of the marriageDate field
+    this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
   }
 
   showButtons(): void {

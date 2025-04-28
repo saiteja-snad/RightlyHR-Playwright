@@ -1,6 +1,7 @@
 <div class="custom-main-component-container">
    <div class="employee-fields-main-container d-flex gap-3 w-100">
       <div class="folders-container">
+         <p class="component-sub-header">Folders</p>
          @for(folder of folders; track $index){
          <!-- Loop through main folders -->
          <div (click)="toggleFolder(folder)" class="folder-content cursor px-2"
@@ -42,7 +43,7 @@
                   aria-describedby="basic-addon1">
             </div>
 
-            <div>
+            <div *ngIf="selectedFile">
                <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
                      class="bi bi-upload me-2"></i>Upload</button>
             </div>

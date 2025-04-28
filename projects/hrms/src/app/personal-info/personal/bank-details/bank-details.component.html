@@ -16,7 +16,7 @@
                     <th>Account Number</th>
                     <th>IFSC Code</th>
                     <th>Proof</th>
-                    <th>Primary Bank</th>
+                    <th class="text-center">Primary Bank</th>
                     @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' )){
                     <th class="text-center">Actions</th>}
                 </tr>
@@ -32,7 +32,7 @@
                             <span *ngIf="bankiteams.docUrl;else noData" class="dowload-text cursor" (click)="onSelectBankProofDownload(bankiteams)">
                                 <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
                         </td>
-                        <td>{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
+                        <td class="text-center">{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">

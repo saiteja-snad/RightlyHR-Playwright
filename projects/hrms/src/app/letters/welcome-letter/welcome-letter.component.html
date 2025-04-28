@@ -17,7 +17,7 @@
             <form [formGroup]="employeeForm" (ngSubmit)="postBankLoanLetterFormSubmit(employeeForm)">
                 <!-- Employee Name -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="false" placeholder="Please select employee" formControlName="fusionEmpId"
@@ -44,7 +44,7 @@
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                        <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
                             class="form-select custom-select" formControlName="authorityid" (onChange)="onclickDesignation($event)">
                         </p-select>
                     </div>

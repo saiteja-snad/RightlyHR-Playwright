@@ -330,7 +330,10 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Note</label>
             <textarea class="form-control custom-input" formControlName="note" (ngModelChange)="pathValuesFuction()"
-              placeholder="Leave a comment here"></textarea>
+              placeholder="Please enter note" maxlength="250"></textarea>
+              <div class="mt-2 textarea-count-text">
+                <span class="color">{{ employeeForm.get('note')?.value?.length || 0 }} / 250</span>
+            </div>
             <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched" class="error-msg">
               Note is required
             </div>
@@ -350,7 +353,7 @@
       
           <div class="d-flex align-items-center flex-wrap gap-3 pt-4">
             <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading">{{buttonValue}}</button>
-            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading"
+            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading||disableFieldsForApproval"
               (click)="emailSendingforApprover()">Request
               For Approval</button>
             @if(loading){
@@ -560,7 +563,7 @@
                     <p>Yours Sincerely,</p>
                     <p class="mb-5 letter-sub-header">For RightlyHR </p>
                     <div class="stamp"></div>
-                    <p class="m-0" *ngIf="prospectiveEmpData.authorityName?.trim()" style="font-family: Segoe script; font-size: large;">{{prospectiveEmpData.authorityName}}</p>
+                    <p class="m-0 letter-signature" *ngIf="prospectiveEmpData.authorityName?.trim()">{{prospectiveEmpData.authorityName}}</p>
                     <p class="m-0"> Authorized Signatory, </p>
                     <p class="m-0">{{prospectiveEmpData.authorityName}} </p>
                     <p class="m-0">{{authorityDesignation}} </p>

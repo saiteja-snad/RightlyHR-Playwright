@@ -122,7 +122,7 @@ export class AddEducationDetailsComponent {
             next: (data: any) => {
               this.postEducationdata = data as Ieducation;
               this.modalService.dismissAll();
-              this.openPopup.openSuccess("Data Added Successfully");
+              this.openPopup.openSuccess("Education Details added successfully");
               this.getData.getEducation.set(true);
               this.educationForm.reset();
             },

@@ -165,7 +165,8 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
 
   //function to reload the page
   reload() {
-    window.location.reload();
+    this.OnbViewURL=null;
+   this.modalService.dismissAll();
   }
 
   //function to approve the document

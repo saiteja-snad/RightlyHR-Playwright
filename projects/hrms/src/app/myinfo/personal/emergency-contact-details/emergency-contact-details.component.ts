@@ -100,11 +100,11 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   }
   patchForm(data: any): void {
     const contact1Relationship = this.familyRelations.find(
-      (relation) => relation.relationship1 === data.relationShip
+      (relation) => relation.relationship1 === data?.relationShip
     ) || null;
 
     const contact2Relationship = this.familyRelations.find(
-      (relation) => relation.relationship1 === data.relationship1
+      (relation) => relation.relationship1 === data?.relationship1
     ) || null;
 
 
@@ -112,7 +112,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       
       contact1Name: data.emergencyName || '', // Bind first emergency contact name
       contact1Email: data.emailId || '',      // Bind first emergency contact email
-      contact1Phone: data.mobileNumber || '', // Bind first emergency contact phone
+      contact1Phone: data.emergencynumber || '', // Bind first emergency contact phone
       contact1Relationship: contact1Relationship || '', // Bind first emergency contact relationship
       contact2Name: data.emergencyName1 || '', // Bind second emergency contact name
       contact2Email: data.emergencyEmail1 || '', // Bind second emergency contact email
@@ -132,6 +132,8 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     this.buttons = false;
     this.buttons2 = false;
     this.emergencyContactForm.disable();
+    this.emergencyContactForm.reset();
+    this.getEmployeeId(); // Refresh the employee data
   }
 
 
@@ -152,7 +154,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       emergencycode1: this.selectedDialCode1,
       emergencyName: formValue.contact1Name || this.employedata.emergencyName,
       relationShip: this.emergencyContactForm.get('contact1Relationship')?.value?.relationship1 || this.employedata.relationShip,
-      mobileNumber: contact1Phone,
+      emergencynumber: contact1Phone,
       emergencyName1: formValue.contact2Name || this.employedata.emergencyName1,
       emergencyEmail1: formValue.contact2Email || this.employedata.emergencyEmail1,
       emergencyNumber1: contact2Phone,
@@ -166,12 +168,19 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           console.log('Data updated successfully:', data);
-          this.modalService.dismissAll();
-          this.emergencyContactForm.disable();
-          this.buttons = false; // Disable the button after successful update
-          this.buttons2 = false; // Disable the button after successful update
-          this.getEmployeeId(); // Refresh the employee data
-          this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
+         
+          if (data.statusCode === 200) {
+            this.modalService.dismissAll();
+            this.emergencyContactForm.disable();
+            this.buttons = false; // Disable the button after successful update
+            this.buttons2 = false; // Disable the button after successful update
+            this.getEmployeeId(); // Refresh the employee data
+            this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
+            this.modalService.dismissAll();
+            }else if (data.statusCode === 409) {
+              this.conformationPopup.openErrorModal(data.message,);
+              this.patchForm(this.employedata);
+            }
         },
         error: (reason: any) => {
           console.log(reason);

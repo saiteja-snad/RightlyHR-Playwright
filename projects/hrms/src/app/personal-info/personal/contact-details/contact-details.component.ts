@@ -81,9 +81,11 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
   disableForm(): void {
     this.buttons = false;
-
+    this.contactForm.reset();
+    this.getEmployeeId();
     this.contactForm.disable();
   }
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -141,11 +143,19 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           console.log('Data updated successfully:', data);
-          this.modalService.dismissAll();
+          if (data.statusCode === 200) {
+            this.modalService.dismissAll();
           this.contactForm.disable();
           this.buttons = false; // Disable the button after successful update
           this.getEmployeeId();
-          this.conformationPopup.openSuccessModal('Contact Details updated successfully');
+            this.conformationPopup.openSuccessModal('Contact Details updated successfully');
+          } else if (data.statusCode === 409) {
+          
+            this.conformationPopup.openErrorModal(data.message);
+            this.patchForm(data); // Bind the data in case of conflict
+          }
+          
+          
         },
         error: (reason: any) => {
           console.log(reason);

@@ -110,7 +110,6 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   updateOfferDetailsforAccept(updatedData: Iofferletter) {
     this.subscription = this.http.postData('PreOnboardingTraineeOfferLetter/UPDATE', updatedData).subscribe({
       next: (respone: any) => {
-        this.rejectEmailSubmit(respone);
       },
       error: (err) => {
         console.log(err);
@@ -437,7 +436,10 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         if (data) {
           localStorage.setItem('offerletterurl', data.path);
-          this.openPopup.openSuccess("Accepted Successfully");
+          setTimeout(() => {
+            this.openPopup.openSuccess("Offer Letter Accepted Successfully");
+          }, 3000);
+          
           this.loadingcircle = false;
           //this.updateOfferDetails(data.path);
         }
@@ -508,8 +510,9 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postData(`PreonboardingEmail/EmployeeOfferRejection`, emaildata).subscribe({
       next: (data: any) => {
         this.loadingcircle = false;
-        this.openPopup.openSuccess("Email Sent Successfully");
-        location.reload();
+        this.modalService.dismissAll();
+        this.getOfferLetterDetails();
+          this.openPopup.openSuccess("Offer Letter Rejected Successfully");
       },
       error: (err: any) => {
         console.log(err);

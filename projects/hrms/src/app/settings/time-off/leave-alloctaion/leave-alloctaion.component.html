@@ -6,7 +6,7 @@
     <div class="col-lg-4 col-md-6 mb-3">
       <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Year</label>
       <select class="form-select custom-input" id="year" name="year" aria-label="Default select example" #year="ngModel"
-        [(ngModel)]="Leavescat.year" required>
+        [(ngModel)]="Leavescat.year" (change)="onYearChanges()" required>
         <option [ngValue]="undefined" disabled>Select Year</option>
         <option *ngFor="let item of yearsList" [value]="item">{{item}}</option>
       </select>

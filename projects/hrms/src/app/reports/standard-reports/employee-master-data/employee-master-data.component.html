@@ -19,13 +19,6 @@
         <div class="d-flex align-items-center gap-2">
           <label class="custom-label text-nowrap">Employee Status</label>
           <div class="custom-p-select-content">
-            <!-- <p-select [options]="branchLocations" optionLabel="branchLocation1" optionValue="branchLocation1"
-                            [filter]="false" [showClear]="false" class="form-select custom-select" formControlName="location"
-                            placeholder="Please select branch">
-                            <ng-template let-option pTemplate="item">{{ option.branchLocation1 }}</ng-template>
-                            <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption.branchLocation1 }}</ng-template>
-                        </p-select> -->
-
             <p-select [options]="employeeStatusOptions" formControlName="empStatus" optionLabel="label"
               placeholder="Select employee status" class="w-100">
               <ng-template let-option pTemplate="item">

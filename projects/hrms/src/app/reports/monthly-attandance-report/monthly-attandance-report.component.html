@@ -5,24 +5,38 @@
 
         <!--right data-->
         <div class="d-flex gap-3">
-            <div class="d-flex gap-2 align-items-center">
-                <div class="custom-p-select-content">
-                    <p-select [options]="months" optionLabel="name" optionValue="value" placeholder="Select Month"
-                        class="custom-select" (onChange)="onMonthChangeLeave($event)"></p-select>
+            <form [formGroup]="monthlyReportForm" (ngSubmit)="generateReport(monthlyReportForm)">
+                <div class="d-flex gap-2 align-items-center">
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="custom-label text-nowrap">{{ "Month" | translate }}<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="months" optionLabel="name" filterBy="name" [filter]="true"
+                                [showClear]="false" formControlName="month" placeholder="Please select month"
+                                class="form-select custom-select">
+                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+                                <ng-template let-location #item>{{ location.name }}</ng-template>
+                            </p-select>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="d-flex gap-2 align-items-center">
-                <div class="custom-p-select-content">
-                    <p-select [options]="years" optionLabel="label" optionValue="value" placeholder="Select Year"
-                        class="custom-select">
-                    </p-select>
+                <div class="d-flex align-items-center gap-2">
+                    <label class="custom-label text-nowrap">{{ "Year" | translate }}<span class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="years" optionLabel="value" filterBy="value" [filter]="true"
+                            [showClear]="false" formControlName="year" placeholder="Please select year"
+                            class="form-select custom-select">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.value }}</ng-template>
+                            <ng-template let-location #item>{{ location.value }}</ng-template>
+                        </p-select>
+                    </div>
                 </div>
-            </div>
-
-            <div>
-                <button type="submit" class="custom-btn btn-primary" (click)="generateReport()">Generate</button>
-            </div>
+    
+                <div>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="monthlyReportForm.invalid">Generate</button>
+                </div>
+            </form>
+           
         </div>
     </div>
 </div>

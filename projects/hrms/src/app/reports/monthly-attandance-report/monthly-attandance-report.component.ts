@@ -3,18 +3,20 @@ import { HttpService } from '../../services/http.service';
 import { Router, RouterModule } from '@angular/router';
 import moment from 'moment';
 import { Select } from 'primeng/select';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-monthly-attandance-report',
-  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule],
+  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule],
   templateUrl: './monthly-attandance-report.component.html',
   styleUrl: './monthly-attandance-report.component.scss'
 })
 
 export class MonthlyAttandanceReportComponent {
+  monthlyReportForm!: FormGroup;
   years: { label: string; value: number }[] = [];
   selectedMonth: string | null = null;
   currentYear: number = moment().year();
@@ -38,9 +40,20 @@ export class MonthlyAttandanceReportComponent {
     { value: 12, name: 'December' }
   ];
 
-  constructor(private http: HttpService, private router: Router, private openmodalservice:OpenModalService,private modalService:NgbModal) { }
+  constructor(
+    private http: HttpService, 
+    private router: Router,
+    private openmodalservice:OpenModalService,
+    private modalService:NgbModal,
+    private fb: FormBuilder
+  ) { }
 
   ngOnInit(): void {
+    this.generateYear();
+    this.initializeForm();
+  }
+
+  generateYear(){
     this.currentYear = moment().year();
     this.years = [];  // Reset the array
     const pastYears = 2;
@@ -50,25 +63,38 @@ export class MonthlyAttandanceReportComponent {
     }
   }
 
+  initializeForm(){
+    this.monthlyReportForm= this.fb.group({
+      month: ['', Validators.required],
+      year: ['', Validators.required]
+    })
+  }
+
   onMonthChangeLeave(event: any): void {
     this.selectedMonth = event.value;
     console.log(this.selectedMonth)
-    this.isFilterGiven = true;
   }
 
-  generateReport() {
+  generateReport(f: FormGroup) {
+    const formData= f.value;
+    const month= formData.month.value;
+    const year= formData.year.label;
     this.isLoading = true
-    this.http.downloadMonthlyAttendanceReport(`Reports/MonthlyAttendanceReport`, this.selectedMonth, this.selectedYear).subscribe(response => {
-      const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `Monthly_Attendance_${this.selectedMonth}_${this.selectedYear}.xlsx`;
-      link.click();
-      this.openmodalservice.openSuccessModal("Data Generated Sucessfully");
-    },
-    error => {
-      console.error('Error downloading the file', error);
+    this.http.downloadMonthlyAttendanceReport(`Reports/MonthlyAttendanceReport`, month, year).subscribe({
+      next: (response: any) => {
+        const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `Monthly_Attendance_${month}_${year}.xlsx`;
+        link.click();
+        this.openmodalservice.openSuccessModal("Data Generated Sucessfully");
+      },
+      error:(err: any) => {
+        console.log(err)
+        this.openmodalservice.openErrorModal(err)
+        // console.error('Error downloading the file', error);
+      }
     });
   }
 

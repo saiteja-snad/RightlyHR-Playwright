@@ -80,6 +80,7 @@ export class ProbationConfirmationLetterComponent {
       effectiveDate: [null, Validators.required],
       Documenttype: [null, Validators.required],
       authorityid: [null, Validators.required],
+      jobValid: [false, Validators.requiredTrue],
     });
   }
 
@@ -156,7 +157,6 @@ export class ProbationConfirmationLetterComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {
         if (data) {
-          debugger
           this.postProbationDetails(data.path);
         }
       },
@@ -165,6 +165,7 @@ export class ProbationConfirmationLetterComponent {
         this.openModalService.openErrorModal('file upload  is failed');
       },
       complete: () =>{
+        this.enableBtn= true;
         this.spinnerLoader= false;
       }
     });
@@ -172,19 +173,27 @@ export class ProbationConfirmationLetterComponent {
 
   //function to get the probation request details
   getProbationDetails = {} as any;
+  jobErrorMessage!: string;
   getProbationRequest(EmployeeId: number) {
     this.subscription = this.http.getData(`ProbationFlow/getbyemployeeId/${EmployeeId}`).subscribe({
-      next: (response: any) => {
-        this.getProbationDetails = response.find((ele: any) => {
-          return (ele.status === 'Processed');
-        });
+      next: (data: any) => {
+        if (!data || data.length === 0) {
+          this.jobErrorMessage = 'No probation details found for this employee.';
+          this.probationConfirmationForm.get('jobValid')?.setValue(false);
+        }else{
+          this.getProbationDetails = data.find((ele: any) => {
+            return (ele.status === 'Processed');
+          });
+          this.jobErrorMessage = '';
+          this.probationConfirmationForm.get('jobValid')?.setValue(true);
+        }
+        
       }
     })
   }
 
   Documenturlresult: any;
   postProbationDetails(path:any) {
-    debugger
     let payload = {
       probationId : this.getProbationDetails.probationId,
       formId : this.getProbationDetails.formId,
@@ -245,8 +254,8 @@ export class ProbationConfirmationLetterComponent {
   probationConfirmationemail() {
     this.releaseLoader= true;
     let pdata = {
-      "employeeId": this.probationLetterData.employeeId,
-      "documentUrl": this.Documenturlresult
+      employeeId: this.probationLetterData.employeeId,
+      documentUrl: this.Documenturlresult
     }
     this.subscription = this.http.postdata(`CustomEmail/ConfirmationofProbationPeriod`, pdata).subscribe({
       next: (data: any) => {

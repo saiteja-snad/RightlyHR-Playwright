@@ -100,11 +100,11 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   }
   patchForm(data: any): void {
     const contact1Relationship = this.familyRelations.find(
-      (relation) => relation.relationship1 === data.relationShip
+      (relation) => relation.relationship1 === data?.relationShip
     ) || null;
 
     const contact2Relationship = this.familyRelations.find(
-      (relation) => relation.relationship1 === data.relationship1
+      (relation) => relation.relationship1 === data?.relationship1
     ) || null;
 
 
@@ -152,7 +152,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       emergencycode1: this.selectedDialCode1,
       emergencyName: formValue.contact1Name || this.employedata.emergencyName,
       relationShip: this.emergencyContactForm.get('contact1Relationship')?.value?.relationship1 || this.employedata.relationShip,
-      mobileNumber: contact1Phone,
+      emergencynumber: contact1Phone,
       emergencyName1: formValue.contact2Name || this.employedata.emergencyName1,
       emergencyEmail1: formValue.contact2Email || this.employedata.emergencyEmail1,
       emergencyNumber1: contact2Phone,

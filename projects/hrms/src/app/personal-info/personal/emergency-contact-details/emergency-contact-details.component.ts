@@ -132,6 +132,9 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     this.buttons = false;
     this.buttons2 = false;
     this.emergencyContactForm.disable();
+    this.emergencyContactForm.markAsUntouched(); 
+    this.emergencyContactForm.reset(); 
+    this.getEmployeeId(); 
   }
 
 
@@ -152,7 +155,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       emergencycode1: this.selectedDialCode1,
       emergencyName: formValue.contact1Name || this.employedata.emergencyName,
       relationShip: this.emergencyContactForm.get('contact1Relationship')?.value?.relationship1 || this.employedata.relationShip,
-      mobileNumber: contact1Phone,
+      emergencynumber: contact1Phone,
       emergencyName1: formValue.contact2Name || this.employedata.emergencyName1,
       emergencyEmail1: formValue.contact2Email || this.employedata.emergencyEmail1,
       emergencyNumber1: contact2Phone,
@@ -166,12 +169,21 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           console.log('Data updated successfully:', data);
-          this.modalService.dismissAll();
-          this.emergencyContactForm.disable();
-          this.buttons = false; // Disable the button after successful update
-          this.buttons2 = false; // Disable the button after successful update
-          this.getEmployeeId(); // Refresh the employee data
-          this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
+          if (data.status === 200) {
+            this.modalService.dismissAll();
+            this.emergencyContactForm.disable();
+            this.buttons = false; 
+            this.buttons2 = false;
+            this.getEmployeeId(); 
+            this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
+          }
+          else if (data.status === 409) {
+            console.log('Conflict:', data.message);
+            this.conformationPopup.openErrorModal(data.message);
+            this.patchForm(data); 
+          }
+
+        
         },
         error: (reason: any) => {
           console.log(reason);

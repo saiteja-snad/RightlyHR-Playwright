@@ -1,27 +1,32 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header cursor mb-0">Attendance</p>
-        </div>
+        <div class="d-flex gap-2">
+            <p class="component-header cursor mb-0">Attendance Log</p>
+            
+            @if(empName){
+            ( {{empName}} )
+            }
+            
+            </div>
         <div class="d-flex align-items-center gap-3">
             <label class="form-label custom-label pt-2" for="">Select</label>
 
             <div>
                 <p-dropdown [options]="yearOptions" optionValue="value" [(ngModel)]="selectedYear" placeholder="Year"
-                    optionLabel="name" (onChange)="getAttendnaceData(selectedEmployee)" class="custom-select">
+                    optionLabel="name"  (onChange)="getAttendnaceData(getSelectedEmployee())" class="custom-select">
                 </p-dropdown>
             </div>
 
             <div>
                 <p-dropdown [options]="monthOptions" optionValue="value" [(ngModel)]="selectedMonth" placeholder="Month"
-                    (onChange)="getAttendnaceData(selectedEmployee)" optionLabel="name" class="custom-select">
+                (onChange)="getAttendnaceData(getSelectedEmployee())" optionLabel="name" class="custom-select">
                 </p-dropdown>
             </div>
             <!-- select all employees drop down for HR code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
             <label class="form-label custom-label pt-2" for="">Select Employee</label>
             <div>
-                <p-dropdown [options]="getAllEmployeeInfo" optionValue="employeeId" [filter]="true" filterBy="fullName"
+                <p-dropdown [options]="getAllEmployeeInfo"  [filter]="true" filterBy="fullName"
                     [showClear]="false" [(ngModel)]="selectedEmployee" placeholder="Select Employee"
                     (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null" optionLabel="fullName" class="custom-select">
                 </p-dropdown>
@@ -32,13 +37,13 @@
             @if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')){
             <label class="form-label custom-label pt-2" for="">Select Employee</label>
             <div>
-                <p-dropdown [options]="get_Employeelist_forTM" optionValue="employeeId" [filter]="true"
+                <p-dropdown [options]="get_Employeelist_forTM"  [filter]="true"
                     filterBy="fullName" [showClear]="false" [(ngModel)]="selectedEmployeeOfHr" placeholder="Select Employee"
                     (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null" optionLabel="fullName" class="custom-select">
                 </p-dropdown>
             </div>
             }
-            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata.employeeId);this.selectedEmployee=null;this.selectedEmployeeOfHr=null">
+            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata);this.selectedEmployee=null;this.selectedEmployeeOfHr=null">
                 <i class="bi bi-plus me-2"></i>My Attendance
             </button>
         </div>
@@ -66,9 +71,18 @@
                                 @for (item of attendanceData|async; track $index) {
                                     <tr>
                                         <td>{{(item.date|dateformat)??'-'}}</td>
-                                        <td>{{ item.firstLogin ? (item.firstLogin | date:'shortTime') : '-' }}</td>
-                                        <td>{{ item.lastLogout ? (item.lastLogout | date:'shortTime') : '-' }}</td>                                        
-                                        <td>{{item.duration?.totalDuration??'-'}}</td>
+                                        <td>{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
+                                        <td>{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>                                        
+                                        <td>
+                                            {{item.duration?.totalDuration??'-'}}
+                                            <span *ngIf="item?.duration?.totalDuration&&(item?.duration?.permissionDuration!=='00:00:00'||item?.duration?.regularizationDuration!=='00:00:00')">
+                                                <a
+                                                    (click)="onclickDuration(durationPopup,item.duration.biometricDuration,item?.duration?.totalDuration,item?.duration?.permissionDuration,item?.duration?.regularizationDuration)">
+                                                    <i class="bi bi-info-circle-fill ms-2"></i> </a>
+                                            </span>
+
+
+                                        </td>
                                          <td [ngClass]="getStatusClass(item.status)">
                                             {{item?.status ??'-'}} 
                                             @if((item?.tags ?? []).length > 0){
@@ -77,9 +91,6 @@
                                             @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdata.employeeId){
                                                <a  class="ms-2" (click)="navigateToLeave()"><u>Leave</u> </a>
                                             } 
-                                            <div *ngIf="(item?.status ==='Weekend') && (item?.duration > '00:00:00')">
-                                                <a  >Comp Off</a>
-                                            </div>
 
                                              @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && 
                                             (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs) && currentMonth == selectedMonth && 
@@ -268,6 +279,60 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+
+
+<ng-template #durationPopup let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Duration Details</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content" >
+            <div class="modal-body">
+                <div class="d-block">
+                    <div class="d-flex flex-column">
+    
+                        <p class="m-0 p-2 rounded popupcomments">
+                            Total Duration: <span *ngIf="totalDurationHours;else durationtotal"> {{totalDurationHours}}
+    
+                            </span>
+                            <ng-template #durationtotal>{{logsDuration}}</ng-template>
+                        </p>
+                        <p class="m-0 p-2 rounded popupcomments">
+                            <span> Logs Duration: {{logsDuration}} </span>
+    
+                        </p>
+                        <p class="m-0 p-2 rounded popupcomments">
+    
+                            Permissions Duration: <span *ngIf="permissionsDuration;else permisiondur">
+                                {{permissionsDuration}}
+    
+                            </span>
+                            <ng-template #permisiondur>NA</ng-template>
+                        </p>
+                        <p class="m-0 p-2 rounded popupcomments">
+                            Regularization Duration:
+                            <span *ngIf="regularizationAttendDuration;else regularization">
+    
+                                {{regularizationAttendDuration}}
+    
+                            </span>
+                            <ng-template #regularization>NA</ng-template>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
             </div>
         </div>
     </div>

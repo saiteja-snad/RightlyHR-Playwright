@@ -174,7 +174,7 @@ export class EducationDetailsComponent {
     }
     this.subscription = this.http.postData("PreonboardingEducation/UPDATER", edudata).subscribe({
       next: (data: any) => {
-        this.openPopup.openSuccess("Data Deleted successfully");
+        this.openPopup.openSuccess("Education Details deleted successfully");
         this.getEducationEmpid();
       },
     })

@@ -1,53 +1,46 @@
 <div class="custom-main-component-container">
    <div class="employee-fields-main-container d-flex gap-3 w-100">
-      <div class="custom-component-left-content p-3">
+      <div class="folders-container">
+         @for(folder of folders; track $index){
          <!-- Loop through main folders -->
-         <div *ngFor="let folder of folders; let i = index" class="folder-content cursor px-2">
-           <div
-             (click)="toggleFolder(folder)"
-             [ngClass]="{ 'active': selectedMainFolder === folder }"
-           >
-             <i
-               class="bi bi-folder-fill foldder-icon"
-               [ngClass]="{ 'fa-caret-right': !folder.expanded, 'fa-caret-down': folder.expanded }"
-             ></i>
-             <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
-           </div>
-       
-           <!-- Subfolders -->
-           <div *ngIf="folder.expanded" class="subfolder-container">
-             <div
-               *ngFor="let subFolder of folder.subfolders"
-               class="folder-content cursor px-2"
-               (click)="onSubFolderSelected(subFolder)"
-             >
-               <i class="bi bi-folder-fill foldder-icon"></i>
-               <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
-             </div>
-           </div>
+         <div (click)="toggleFolder(folder)" class="folder-content cursor px-2"
+            [ngClass]="{'active': selectedMainFolder === folder}">
+            <i class="bi bi-folder-fill folder-icon"></i>
+            <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
          </div>
-       </div>
+         
+         <!-- Subfolders -->
+         <div *ngIf="folder.expanded" class="subfolder-container">
+            <div *ngFor="let subFolder of folder.subfolders" class="folder-content sub-folders cursor px-2"
+               (click)="onSubFolderSelected(subFolder)">
+               <i class="bi bi-folder-fill folder-icon"></i>
+               <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
+            </div>
+         </div>
+         }
+      </div>
+
       <div class="custom-setting-right-content p-3">
-         <div class="d-flex gap-3  mb-3">
-            <div class="input-group custom-search mb-3">
-               <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
-                     class="bi bi-search"></i></span>
-               <input type="search" class="form-control custom-input custom-search-input" placeholder="search Here"
-                  aria-label="Username" [(ngModel)]="searchfolder" (input)="filterFolder()"
+         <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="input-group custom-search">
+               <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+               <input type="search" [(ngModel)]="searchfolder" (input)="filterFolder()"
+                  class="form-control custom-search-input" placeholder="Username" aria-label="Username"
                   aria-describedby="basic-addon1">
             </div>
+
             <div>
                <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
                      class="bi bi-upload me-2"></i>Upload</button>
             </div>
          </div>
-         <div class="mt-3 mb-3" *ngIf="selectedFile?.name">
-            <span class="subfolder-name">{{selectedFile.name | lastValue}}</span>
+      
+         <div class="mb-3" *ngIf="selectedFile?.name">
+            <span class="component-sub-header">{{selectedFile.name | lastValue}}</span>
          </div>
-
+      
          <div class="custom-table-content">
             <table class="w-100">
-
                <thead>
                   <th>FILE NAME</th>
                   <th>CREATED DATE</th>
@@ -62,12 +55,10 @@
                            <td>{{ file.createdOn | dateformat }}</td>
                            <td>{{ file.contentLength | fileSize }}</td>
                            <td class="text-center">
-
                               <div>
-                                 <span class="dowload-text" (click)="onSelectDownload(file)" style="cursor: pointer;">
-                                    <i class="bi bi-download clip-icon px-2"></i>Download
+                                 <span class="dowload-text cursor" (click)="onSelectDownload(file)">
+                                    <i class="bi bi-download clip-icon me-2"></i>Download
                                  </span>
-
                               </div>
                            </td>
                         </tr>
@@ -85,9 +76,7 @@
    </div>
 </div>
 
-
-
-
+<!--Add-->
 <ng-template #adddocumentmodal let-modal>
    <div class="custom-main-popup-container" ngbAutofocus>
       <div class="custom-poup-header-content popup-header-border">
@@ -99,28 +88,28 @@
                   class="close-icon"></a>
          </div>
       </div>
-      <div class="custom-main-popup-content p-3">
+
+      <div class="custom-main-popup-content">
          <form [formGroup]="uploadfrom" (ngSubmit)="fileUploaded()">
-            <div class="row  mb-3">
+            <div class="row mb-3">
                <div class="col-12">
                   <label class="form-label custom-label mb-2">Upload <span class="text-danger">*</span></label>
                   <input type="file" placeholder="Choose file" class="form-control custom-input"
                      (change)="filechange($event)" accept=".pdf, .jpg, .png">
-
-                     <div *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">
-                        File is required
-                      </div>
+                  <div *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">
+                     File is required
+                  </div>
                </div>
             </div>
-
 
             <div class="custom-modal-footer">
                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                <button type="submit" class="custom-btn btn-primary" [disabled]="uploadfrom.invalid || spinnerLoader">
-
                   @if (spinnerLoader) {
-                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  <span>{{'Loading' | translate}}...</span>
+                  <div class="button-loader-content">
+                     <div class="spinner-border button-spinner text-light" role="status"></div>
+                     <div>{{'Loading' | translate}}...</div>
+                  </div>
                   } @else {
                   <span>{{'Add'| translate}}</span>
                   }

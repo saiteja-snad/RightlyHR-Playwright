@@ -29,13 +29,17 @@ export class EmployeeFieldsLayoutComponent {
   }
 
   shouldShowSection(): boolean {
-    const excludedRoutes = [
+    const excludedRoutes: (string | RegExp)[] =[
       '/settings/employee-fields/addholidays',
+      '/settings/employee-fields/updateholidays',
+      '/settings/employee-fields/viewholidays',
       '/settings/employee-fields/addshifts',
-      '/settings/employee-fields/updateshifts/:id',
-      '/settings/employee-fields/cloneshifts/:id',
-      '/settings/employee-fields/viewshifts/:id',
+      /^\/settings\/employee-fields\/updateshifts\/\d+$/,
+      /^\/settings\/employee-fields\/cloneshifts\/\d+$/,
+      /^\/settings\/employee-fields\/viewshifts\/\d+$/,
       '/settings/employee-fields/addpolices',
+      '/settings/employee-fields/updatepolices',
+      '/settings/employee-fields/viewpolices',
       '/settings/employee-fields/add-weekends',
       '/settings/employee-fields/update-weekends',
       '/settings/employee-fields/clone-weekends',
@@ -44,10 +48,15 @@ export class EmployeeFieldsLayoutComponent {
       '/settings/employee-fields/update-dst',
       '/settings/employee-fields/clone-dst',
       '/settings/employee-fields/view-dst',
-      '/settings/employee-fields/updateholidays',
-      '/settings/employee-fields/viewholidays',
       '/settings/employee-fields/documents',
     ];
-    return !excludedRoutes.includes(this.router.url);
+    return !excludedRoutes.some((pattern) => {
+      if (typeof pattern === 'string') {
+        return pattern === this.router.url;
+      } else if (pattern instanceof RegExp) {
+        return pattern.test(this.router.url);
+      }
+      return false;
+    });
   }
 }

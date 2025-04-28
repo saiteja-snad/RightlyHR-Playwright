@@ -148,21 +148,19 @@
                                             <td>{{exp.fromDate | dateFormat}}</td>
                                             <td><span *ngIf="exp.toDate !=null;else todate">{{exp.toDate | dateFormat}}</span>
                                                 <ng-template #todate>
-                                                    <div class="centerhypen">-</div>
+                                                    <div>-</div>
                                                 </ng-template>
                                             </td>
                                             <td>{{exp.attachment ? "" : ''}}
-                                                <a class="view-btn" type="button" *ngIf="exp.attachment.endsWith('jpg') || exp.attachment.toLowerCase().endsWith('jpeg') || 
-                                                 exp.attachment.toLowerCase().endsWith('png') ;else downloadView"
-                                                    (click)="onViewClick(exp.attachment);openModal(myModall)">
-                                                    <i class="bi bi-paperclip">View</i>
-                                                </a>
+                                                <a class="view-btn" *ngIf="exp.attachment.endsWith('jpg') || exp.attachment.toLowerCase().endsWith('jpeg') || 
+                                                exp.attachment.toLowerCase().endsWith('png') ;else downloadView"
+                                                   (click)="onViewClick(exp.attachment);openModal(myModall)">
+                                                    <i class="bi bi-paperclip"></i>View</a>
                                                 <ng-template #downloadView>
                                                     <div *ngIf="exp.attachment =='' ;else documentdownload" class="centerhypen">-</div>
                                                     <ng-template #documentdownload>
-                                                        <a type="button" class="view-btn" (click)="onSelectDownload(exp.attachment)">
-                                                            <i class="bi bi-download me-1"></i>Download
-                                                        </a>
+                                                        <a class="view-btn" (click)="onSelectDownload(exp.attachment)">
+                                                            <i class="bi bi-paperclip"></i>View</a>
                                                     </ng-template>
                                                 </ng-template>
                                             </td>

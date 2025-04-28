@@ -38,6 +38,7 @@ export class LeaveAlloctaionComponent {
     this.Leavescat.subLocationId = -1;
     this.Leavescat.shiftId = -1;
     this.Leavescat.categoryId = -1;
+    console.log(this.accessLevels);
   }
 
   getLocationDetails(): void {
@@ -104,7 +105,13 @@ export class LeaveAlloctaionComponent {
       },
     });
   }
-
+  onYearChanges(){
+    this.Leavescat.subLocationId = -1;
+    this.Leavescat.shiftId = -1;
+    this.Leavescat.locationId = undefined;
+    this.Leavescat.categoryId = -1;
+    this.accessLevels = {};
+  }
   isFormValid() {
     return (
       this.Leavescat.year &&
@@ -112,9 +119,16 @@ export class LeaveAlloctaionComponent {
       this.Leavescat.subLocationId &&
       this.Leavescat.shiftId &&
       this.Leavescat.categoryId &&
-      Object.keys(this.accessLevels).length > 0
+      this.grade.length > 0 &&
+      this.grade.some((gr:any) => 
+      this.accessLevels[gr.gradeId] !== null &&
+      this.accessLevels[gr.gradeId] !== undefined &&
+      this.accessLevels[gr.gradeId] !== null
+    )
     );
+    
   }
+  
   onCategoryName(categoryId: number) {
     console.log(categoryId);
     this.selectedCategory = this.Leaves.find((c) => c.id == categoryId) as Iorgcategoryleaves;

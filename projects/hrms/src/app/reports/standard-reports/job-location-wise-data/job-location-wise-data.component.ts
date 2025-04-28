@@ -145,11 +145,13 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     const endpoint = params.toString() ? `Reports/standardReportsWithoutPagination?${params.toString()}` : 'Reports/standardReportsWithoutPagination';
     this.http.getData(endpoint).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
-        this.dataload = false;
         this.locationReportList = res.standardReports || [];
       },
       error: (err: any) => {
         console.log(err);
+        this.dataload = false;
+      },
+      complete: ()=>{
         this.dataload = false;
       }
     });

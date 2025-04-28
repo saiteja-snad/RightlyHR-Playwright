@@ -25,10 +25,13 @@
 
 <ng-template #logoutpopup let-modal>
     <div class="result-popup-content text-center" ngbAutofocus>
-        <p class="confirmation-text mb-5">Are you sure you want to logout?</p>
+        <div>
+            <img src="images\logout-image.png" alt="failure icon" class="logout-image mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to Logout?</p>
+        </div>
         <div class="d-flex justify-content-center w-100 gap-5">
-            <button class="custom-btn btn-secondary w-50 py-2 px-5" (click)="close()">Close</button>
-            <button class="custom-btn btn-primary w-50 py-2 px-5" (click)="logOut()">Logout</button>
+            <button class="custom-btn btn-secondary w-100 py-2 px-5" (click)="close()">Close</button>
+            <button class="custom-btn btn-primary w-100 py-2 px-5" (click)="logOut()">Logout</button>
         </div>
     </div>
 </ng-template>

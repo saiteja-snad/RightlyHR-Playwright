@@ -7,6 +7,7 @@ import { environment } from '../../../../../environments/environment';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount, AttendanceRequest } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
+import { SignalsService } from '../../../../services/signals.service';
 @Component({
   selector: 'app-attendance-regularization-request-tabs',
   imports: [CommonModule, RouterModule, TabsModule],
@@ -26,11 +27,19 @@ export class AttendanceRegularizationRequestTabsComponent implements OnInit, OnD
     this.getAllRegularizationPendingApprovalsCount();
   }
   
-  constructor(public readonly router: Router, private http: HttpService,) {
+  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService) {
     effect(() => {
-      if (this.http.tirggerPendingApprovalCountSignal().permission) {
+      if (this.signalService.regularizationForYouTriggerSignal() ||
+               this.signalService.regularizationForRoleTriggerSignal()) 
+      {
+        // Call the function to fetch the pending approvals count
         this.getAllRegularizationPendingApprovalsCount();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, permission: false }));
+        if (this.signalService.regularizationForRoleTriggerSignal()) {
+          this.signalService.regularizationForRoleTriggerSignal.set(false);
+        }
+        if (this.signalService.regularizationForYouTriggerSignal()) {
+          this.signalService.regularizationForYouTriggerSignal.set(false);
+        }
       }
     });
   }

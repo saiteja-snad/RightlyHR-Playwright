@@ -98,7 +98,7 @@ export class CompOffEntitlementCriteriaComponent implements OnInit, OnDestroy {
         break;
 
       default:
-        if (isNaN(value) || value < 0) {
+        if (isNaN(value) || (value == "0" && value <= 0)) {
           return `Invalid Value for ${criteria.name}.`;
         }
     }
@@ -111,7 +111,6 @@ export class CompOffEntitlementCriteriaComponent implements OnInit, OnDestroy {
     const validationError = this.validateCompOffValue(this.valueId, value);
     if (validationError) {
       this.sharedModalService.openErrorModal(validationError)
-     
       return;
     }
     const data = {

@@ -21,6 +21,7 @@ import { LeaveType } from '../../Interfaces/timoff-model';
 import { Select } from 'primeng/select';
 import { environment } from '../../../environments/environment';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationsService } from '../../services/form-validations.service';
 
 @Component({
   selector: 'app-attendance',
@@ -69,6 +70,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   selectedYear: any;
   selectedMonth: any;
   selectedEmployee: any;
+  selectedEmployeeOfHr: any;
   empdata = {} as Ipersonal;
   statusCounts$ = new BehaviorSubject<any[]>([]);
   shiftDetails = {} as any;
@@ -91,7 +93,8 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
     public rbac: RbacService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public formsValidation:FormValidationsService
   ) {}
 
   ngOnInit(): void {
@@ -178,48 +181,54 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   }
   //function to post the regularization
   applyRgularization(regularizationForm: FormGroup) {
-    if(regularizationForm.valid) {
+    if (regularizationForm.valid) {
       const formData = regularizationForm.value;
       const payLoad = {
-    raisedFor: this.empdata.employeeId,
-    requestedBy: this.empdata.employeeId,
-    requestedDate: formData.permissionDate,
-    createdDate: moment().format('YYYY-MM-DD'), // current date
-    type: formData.leaveType.name,
-    status:'Waiting for Approval',
-    referenceTypeId: formData.leaveType.id,
-    duration: formData.duration.value.toString(),
-    notes:formData.reason,
-    processedComment: formData.processedComment,
-    moduleId:environment.attendanceRegularizationModuleId,
-  };
-  this.spinnerLoader = true;
-  this.http.postData('RegularizationRequests/create',payLoad,{
-    responseType: 'text',
-  }).subscribe({
-    next: (res:any) => {
-     // this.getCompOffRequest();
-     this.modalService.dismissAll();
-     this.conformationPopup.openSuccessModal(
-       'Request submitted successfully'
-     );
-    this.regularizationForm.reset();
-    },
-    error: (err: any) => {
-      this.spinnerLoader = false;
-      console.error(err);
-      this.conformationPopup.openErrorModal(err.error)
-  
-    },
-    complete: () => { 
-      this.spinnerLoader = false;
-      this.regularizationForm.reset();
-    }
-  })
-  
-
+        raisedFor: this.empdata.employeeId,
+        requestedBy: this.empdata.employeeId,
+        requestedDate: formData.permissionDate,
+        createdDate: moment().format('YYYY-MM-DD'), // current date
+        type: formData.leaveType.name,
+        status: 'Waiting for Approval',
+        referenceTypeId: formData.leaveType.id,
+        duration: formData.duration.value.toString(),
+        notes: formData.reason,
+        processedComment: formData.processedComment,
+        moduleId: environment.attendanceRegularizationModuleId,
+      };
+      this.spinnerLoader = true;
+      this.http
+        .postData('RegularizationRequests/create', payLoad, {
+          responseType: 'text',
+        })
+        .subscribe({
+          next: (res: any) => {
+            // this.getCompOffRequest();
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Request submitted successfully'
+            );
+            this.regularizationForm.reset();
+          },
+          error: (err: any) => {
+            this.spinnerLoader = false;
+            console.error(err);
+            this.conformationPopup.openErrorModal(err.error);
+          },
+          complete: () => {
+            this.spinnerLoader = false;
+            this.regularizationForm.reset();
+          },
+        });
     }
   }
+
+  navigateToLeave(){
+    console.log("Hello");
+    
+    this.router.navigate(['/time-off/leaves/waiting-for-approval'])
+  }
+
   //function to get the attendance data
   getAttendnaceData(employeeId: number) {
     this.dataLoader=true;

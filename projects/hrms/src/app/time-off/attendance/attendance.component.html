@@ -23,7 +23,7 @@
             <div>
                 <p-dropdown [options]="getAllEmployeeInfo" optionValue="employeeId" [filter]="true" filterBy="fullName"
                     [showClear]="false" [(ngModel)]="selectedEmployee" placeholder="Select Employee"
-                    (onChange)="getAttendnaceData(selectedEmployee)" optionLabel="fullName" class="custom-select">
+                    (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null" optionLabel="fullName" class="custom-select">
                 </p-dropdown>
             </div>
             }
@@ -33,12 +33,12 @@
             <label class="form-label custom-label pt-2" for="">Select Employee</label>
             <div>
                 <p-dropdown [options]="get_Employeelist_forTM" optionValue="employeeId" [filter]="true"
-                    filterBy="fullName" [showClear]="false" [(ngModel)]="selectedEmployee" placeholder="Select Employee"
-                    (onChange)="getAttendnaceData(selectedEmployee)" optionLabel="fullName" class="custom-select">
+                    filterBy="fullName" [showClear]="false" [(ngModel)]="selectedEmployeeOfHr" placeholder="Select Employee"
+                    (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null" optionLabel="fullName" class="custom-select">
                 </p-dropdown>
             </div>
             }
-            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata.employeeId);this.selectedEmployee=null">
+            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata.employeeId);this.selectedEmployee=null;this.selectedEmployeeOfHr=null">
                 <i class="bi bi-plus me-2"></i>My Attendance
             </button>
         </div>
@@ -66,18 +66,27 @@
                                 @for (item of attendanceData|async; track $index) {
                                     <tr>
                                         <td>{{(item.date|dateformat)??'-'}}</td>
-                                        <td>{{(item.firstLogin|dateformat)??'-'}}</td>
-                                        <td>{{(item.lastLogout|dateformat)??'-'}}</td>
+                                        <td>{{ item.firstLogin ? (item.firstLogin | date:'shortTime') : '-' }}</td>
+                                        <td>{{ item.lastLogout ? (item.lastLogout | date:'shortTime') : '-' }}</td>                                        
                                         <td>{{item.duration?.totalDuration??'-'}}</td>
-                                         <td [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}} @if((item?.tags ?? []).length > 0){<span>({{item?.tags}}) </span>} 
-                                            @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdata.employeeId){
-                                               <a  class="ms-2"><u>Leave</u> </a>
+                                         <td [ngClass]="getStatusClass(item.status)">
+                                            {{item?.status ??'-'}} 
+                                            @if((item?.tags ?? []).length > 0){
+                                                <span>({{item?.tags}}) </span>
                                             } 
+                                            @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdata.employeeId){
+                                               <a  class="ms-2" (click)="navigateToLeave()"><u>Leave</u> </a>
+                                            } 
+                                            <div *ngIf="(item?.status ==='Weekend') && (item?.duration > '00:00:00')">
+                                                <a  >Comp Off</a>
+                                            </div>
+
                                              @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && 
                                             (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs) && currentMonth == selectedMonth && 
                                             this.rbac.allowedToAccess('Attendance Regularization Button.view')){ 
                                                 <a class="ms-2" (click)="openModal(raiseregularization); onclickRegularization(item.date)"><u>Regularization</u> </a>
                                             } 
+                                            
                                        </td>
                                         <td>
                                             @if((item?.dayLogs??[]).length>0){
@@ -199,7 +208,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="reason" class="form-label custom-label pt-2 mb-2">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
-                            placeholder="Type here" maxlength="250" placeholder="Type Here"></textarea>
+                            placeholder="Type here" maxlength="250" placeholder="Reason for regularization" (input)="formsValidation.validateInput(regularizationForm.get('reason'))" ></textarea>
                         <div class="text-end my-1">
                             {{ regularizationForm.get('reason')?.value?.length || 0 }}/250
                         </div>

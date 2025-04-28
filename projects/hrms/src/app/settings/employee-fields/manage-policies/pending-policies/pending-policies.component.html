@@ -29,7 +29,7 @@
             <td>{{item.subLocationName}}</td>
             <td>
               <div class="d-flex align-items-center gap-1">
-                  <div>{{ item.orgPolicyItems.length }}</div>
+                  <!-- <div>{{ item.orgPolicyItems.length }}</div> -->
                   <div [ngbPopover]="popContent" *ngIf="getPolicyNames(item) !== null">
                       <i class="bi bi-info-circle-fill cursor"></i>
                   </div>

@@ -231,7 +231,7 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     }
     this.http.postdata('OrgWeekendHeader/Post/OrgWeekEnd', payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        this.modal.openSuccessModal('Weekends Created Successfully!')
+        this.modal.openSuccessModal('Weekends Created Successfully')
         setTimeout(() => {
          this.closeWeekend();
         }, 2000)

@@ -49,6 +49,15 @@ export class FormValidationsService {
     };
   }
 
+  restrictInitialSpace(event: KeyboardEvent) {
+    const inputElement = event.target as HTMLInputElement;
+    
+    // Prevent the first character from being a space
+    if (event.key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+    }
+  }
+
   restrictInput(event: KeyboardEvent) {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;

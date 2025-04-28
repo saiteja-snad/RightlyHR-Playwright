@@ -50,7 +50,7 @@
                         <div *ngIf="weekendForm.get('location')?.touched && weekendForm.get('location')?.invalid"
                             class="error-msg">
                             <div *ngIf="weekendForm.get('location')?.errors?.['required']">
-                                {{"Please select location" | translate}}
+                                {{"Location is required" | translate}}
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                         <div *ngIf="weekendForm.get('subLocation')?.touched && weekendForm.get('subLocation')?.invalid"
                             class="error-msg">
                             <div *ngIf="weekendForm.get('subLocation')?.errors?.['required']">
-                                {{"Please select sub location" | translate}}
+                                {{"Sub Location is required" | translate}}
                             </div>
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                         <div *ngIf="weekendForm.get('shift')?.touched && weekendForm.get('shift')?.invalid"
                             class="error-msg">
                             <div *ngIf="weekendForm.get('shift')?.errors?.['required']">
-                                {{"Please select shift" | translate}}
+                                {{"Shift is required" | translate}}
                             </div>
                         </div>
                     </div>
@@ -143,7 +143,7 @@
                                         <div *ngIf="weekend.get('day')?.touched && weekend.get('day')?.invalid"
                                             class="error-msg">
                                             <div *ngIf="weekend.get('day')?.errors?.['required']">
-                                                {{"Please select day" | translate}}
+                                                {{"Day is required" | translate}}
                                             </div>
                                         </div>
                                     </div>
@@ -193,7 +193,7 @@
     <div class="result-popup-content" ngbAutofocus>
 
         <div>
-            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to close?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">

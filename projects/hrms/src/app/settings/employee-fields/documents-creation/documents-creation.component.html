@@ -32,7 +32,7 @@
             </div>
 
             <div class="custom-table-content">
-                @if(!dataLoad){
+                @if(!dataLoad && selectedFolder?.length && selectedFolder.length > 0){
                 <table class="w-100">
 
                     <thead>
@@ -59,7 +59,7 @@
                     </tbody>
                 </table>
             }@else{ 
-                <app-data-loader-content />
+                <app-no-data-found/>
             }
             </div>
         </div>
@@ -85,7 +85,8 @@
                         {{ "File Name" | translate }}<span class="text-danger">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" name="subDirName" [(ngModel)]="subDir.subDirName" 
-                    autocomplete="off" placeholder="Enter File Name" id="subDirName"  #subDirName="ngModel" required maxlength="50" [attr.maxlength]="50"/>
+                    autocomplete="off" placeholder="Please enter file name" id="subDirName"  #subDirName="ngModel" required maxlength="50" [attr.maxlength]="50"
+                    (keydown)="formValidations.restrictInitialSpace($event)"/>
                     <div *ngIf="subDirName.touched && subDirName.invalid" class="error-msg">
                         {{'File Name is required' | translate}}
                       </div>

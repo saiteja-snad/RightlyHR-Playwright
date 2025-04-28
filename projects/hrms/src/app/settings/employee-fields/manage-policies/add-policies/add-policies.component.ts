@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-add-policies',
   imports: [RouterModule,
@@ -25,6 +26,8 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class AddPoliciesComponent {
   @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('deletepopup1') deletepopup1: any;
+  deleteIndex: number | null = null;
   subscription!: Subscription;
     policiesForm!: FormGroup;
     jobLocationDropDownData: any = [];
@@ -34,7 +37,10 @@ export class AddPoliciesComponent {
     currentYear: number = new Date().getFullYear();
   
   
-    constructor(private fb: FormBuilder,public router:Router,private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
+    constructor(private fb: FormBuilder,public router:Router,private http: HttpService,
+       private confirmation: OpenModalService, private modalService: NgbModal,
+       public formValidations: FormValidationsService
+      ) { }
 
   
     ngOnInit(): void {
@@ -88,7 +94,7 @@ export class AddPoliciesComponent {
       const payload = {
         locationId: formValue.location?.id,
         subLocationId: formValue.subLocation,
-        applicableyear: formValue.year?.value,
+        applicableyear: formValue.year?.value ?? new Date().getFullYear(),
         addedby: parseInt(this.empinfo.employeeId),
         addedDate: new Date().toISOString(),
         status: 'Pending for submission',
@@ -212,6 +218,19 @@ export class AddPoliciesComponent {
         this.shiftDropdown = []; // Reset if no sub-location is selected
       }
     }
+
+    deleteRow(i: any){
+      this.deleteIndex = i;
+      this.modalService.open(this.deletepopup1, { backdrop: 'static', centered: true });
+    }
+
+    onDeleteClose(modal: any) {
+      modal.dismiss();
+      if (this.deleteIndex !== null) {
+        this.removePolicyRow(this.deleteIndex);
+      }
+    }
+
     navigation(){
       this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
     }

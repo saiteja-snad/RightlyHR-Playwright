@@ -97,7 +97,7 @@
 
                 <div>
                     <button type="button" class="custom-btn btn-primary" (click)="addWeekend()"
-                        [disabled]="weekends.length >= 3">{{"+ Add Row" | translate}}</button>
+                        [disabled]="weekends.length >= 3 || weekendForm.invalid">{{"+ Add Row" | translate}}</button>
                 </div>
             </div>
 
@@ -187,8 +187,8 @@
     <div class="result-popup-content" ngbAutofocus>
 
         <div>
-            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Close?'|translate}}</p>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to close?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary "

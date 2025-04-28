@@ -19,12 +19,11 @@
               <label for="year" class="form-label custom-label mb-2">
                 {{ "Year" | translate }}<span class="text-danger">*</span>
               </label>
-              <p-select [options]="yearDetails" optionLabel="year" [filter]="false" [showClear]="false"
-                                class="form-select custom-select" formControlName="year"
+              <p-select [options]="yearDetails" optionLabel="year" [filter]="false" [showClear]="false" class="form-select custom-select" formControlName="year"
                                 placeholder="Please select year">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
-                                <ng-template let-year #item>{{ year }}</ng-template>
-                            </p-select>
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
+              <ng-template let-year #item>{{ year }}</ng-template>
+              </p-select>
               <div *ngIf="policiesForm.get('year')?.touched && policiesForm.get('year')?.hasError('required')"
                 class="error-msg">
                 {{'Year is required'|translate}}
@@ -88,7 +87,8 @@
               <div class="row mb-2">
                 <div class="col-md-3">
                   <label class="form-label custom-label">{{'Policy Name' | translate}}<span class="text-danger">*</span></label>
-                  <input type="text" formControlName="policyName" class="form-control custom-input" placeholder="Please enter policy name" maxlength="50"/>
+                  <input type="text" formControlName="policyName" class="form-control custom-input" placeholder="Please enter policy name" maxlength="50"
+                  (keydown)="formValidations.restrictInitialSpace($event)"/>
                   <div *ngIf="policy.get('policyName')?.touched && policy.get('policyName')?.hasError('required')" class="error-msg">
                     {{'Policy Name is required'|translate}}
                   </div>
@@ -103,14 +103,20 @@
                 <div class="col-md-5 d-flex align-items-end">
                   <div class="form-check w-100">
                     <label class="form-label custom-label">{{'Description' | translate}}<span class="text-danger">*</span></label>
-                    <input type="text" formControlName="policyDescription" class="form-control custom-input" placeholder="Please enter description" maxlength="50"/>
+                    <input type="text" formControlName="policyDescription" class="form-control custom-input" placeholder="Please enter description" maxlength="50"
+                    (keydown)="formValidations.restrictInitialSpace($event)"/>
                     <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')" class="error-msg">
                       {{'Policy Description is required'|translate}}
                     </div>
                   </div>
-                  <button type="button" class="btn btn-sm btn-danger ms-2" (click)="removePolicyRow(i)" *ngIf="policies.length > 1">
+                  <!-- <button title="text" type="button" class="btn btn-sm btn-danger ms-2" (click)="removePolicyRow(i)" *ngIf="policies.length > 1">
                     <i class="bi bi-trash"></i>
+                  </button> -->
+                  @if(i>0){
+                  <button title="Delete" type="button" (click)="deleteRow(i)" *ngIf="policies.length > 1" class="btn p-0 border-0 bg-transparent">
+                    <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
                   </button>
+                }
                 </div>
               </div>
             </div>
@@ -131,8 +137,8 @@
     <div class="result-popup-content" ngbAutofocus>
 
         <div>
-            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Close?'|translate}}</p>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to close?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary "
@@ -140,5 +146,20 @@
             <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>
+
+</ng-template>
+
+<ng-template #deletepopup1 let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+
+    <div>
+      <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary " (click)="closeDelete(modal)">{{'No'|translate}}</button>
+      <button type="button" class="custom-btn btn-primary " (click)="onDeleteClose(modal)">{{'Yes'|translate}}</button>
+    </div>
+  </div>
 
 </ng-template>

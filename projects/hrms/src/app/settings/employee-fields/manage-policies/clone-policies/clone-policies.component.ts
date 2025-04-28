@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 
 @Component({
   selector: 'app-clone-policies',
@@ -17,7 +18,10 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class ClonePoliciesComponent {
   @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('deletepopup1') deletepopup1: any;
+  deleteIndex: number | null = null;
   subscription!: Subscription;
+  isFormEdited: boolean = false;
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
   updatePoliciesData : any;
@@ -32,7 +36,10 @@ export class ClonePoliciesComponent {
   ]
 
 
-  constructor(private fb: FormBuilder,public router:Router,private http: HttpService, private confirmation: OpenModalService,private modalService: NgbModal) { }
+  constructor(private fb: FormBuilder,public router:Router,private http: HttpService,
+     private confirmation: OpenModalService,private modalService: NgbModal,
+     public formValidations: FormValidationsService
+    ) { }
 
 
   ngOnInit(): void {
@@ -40,9 +47,6 @@ export class ClonePoliciesComponent {
     this.updatePoliciesData = JSON.parse(localStorage.getItem('updatepolicies') ?? '{}');
 
     this.getjobLocationList();
-
-    
-    
     this.policyForm = this.fb.group({
       year: [null,Validators.required],
       location: [null,Validators.required],
@@ -59,16 +63,54 @@ export class ClonePoliciesComponent {
       this.policies.push(
         this.fb.group({
           policyName : [row.policyName,[Validators.required, Validators.maxLength(50)]],
-          policyFile : [row.policyAttachment,Validators.required],
+          policyFile : [row.policyAttachment],
           policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50)]],
           policyNewFile: ['']
          
         })
       );
     });
+
+    
+    this.policyForm.valueChanges.subscribe(() => {
+      this.checkIfFormEdited();
+    });
   }
 
 
+  checkIfFormEdited() {
+    const formValue = this.policyForm.value;
+    
+    const hasChanged = 
+      formValue.year?.value !== this.updatePoliciesData.applicableyear ||
+      formValue.location?.id !== this.updatePoliciesData.locationId ||
+      formValue.subLocation?.id !== this.updatePoliciesData.subLocationId ||
+      formValue.shift?.id !== this.updatePoliciesData.shiftID ||
+      this.isPoliciesChanged(formValue.policies, this.updatePoliciesData.orgPolicyItems);
+  
+    this.isFormEdited = hasChanged;
+  }
+
+  isPoliciesChanged(formPolicies: any[], originalPolicies: any[]): boolean {
+    if (formPolicies.length !== originalPolicies.length) {
+      return true;
+    }
+  
+    for (let i = 0; i < formPolicies.length; i++) {
+      const formPolicy = formPolicies[i];
+      const originalPolicy = originalPolicies[i];
+  
+      if (
+        formPolicy.policyName !== originalPolicy.policyName ||
+        formPolicy.policyDescription !== originalPolicy.policyDescription ||
+        (formPolicy.policyNewFile && formPolicy.policyNewFile !== '')
+      ) {
+        return true;
+      }
+    }
+  
+    return false;
+  }
 
   get policies(): FormArray {
     return this.policyForm.get('policies') as FormArray;
@@ -78,13 +120,24 @@ export class ClonePoliciesComponent {
   addPolicyRow() {
     const policyGroup = this.fb.group({
       policyName: ['', [Validators.required, Validators.maxLength(50)]],
-      policyFile: ['', Validators.required],
+      policyFile: [''],
       policyDescription: ['',[ Validators.required, Validators.maxLength(50)]],
-      policyNewFile: ['']
+      policyNewFile: ['', Validators.required]
     });
     this.policies.push(policyGroup);
   }
 
+  deleteRow(i: any){
+    this.deleteIndex = i;
+    this.modalService.open(this.deletepopup1, { backdrop: 'static', centered: true });
+  }
+
+  onDeleteClose(modal: any) {
+    modal.dismiss();
+    if (this.deleteIndex !== null) {
+      this.removePolicyRow(this.deleteIndex);
+    }
+  }
   
   removePolicyRow(index: number) {
     if (this.policies.length > 1) {
@@ -170,10 +223,16 @@ export class ClonePoliciesComponent {
     if (locationId) {
       this.getSubLocationByid(locationId);
       this.policyForm.get('subLocation')?.enable();
+      this.policyForm.get('subLocation')?.setValue(null);
+      this.policyForm.get('shift')?.setValue(null);
+      this.policyForm.get('shift')?.disable();
     } else {
       this.jobLocationDropDownData = [];
-      this.subLocationsDropdown=[];
+      this.subLocationsDropdown = [];
+      this.shiftDropdown = [];
+      this.policyForm.get('subLocation')?.setValue(null);
       this.policyForm.get('subLocation')?.disable();
+      this.policyForm.get('shift')?.setValue(null);
       this.policyForm.get('shift')?.disable();
     }
   }
@@ -182,7 +241,7 @@ export class ClonePoliciesComponent {
     if (selectedLocation && selectedLocation) {
       this.subscription = this.http
         .getData(
-          `JobLocation/sub-location-by-joblocation/${selectedLocation}`
+          `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
         )
         .subscribe({
           next: (data: any) => {
@@ -213,15 +272,46 @@ export class ClonePoliciesComponent {
 
     }
   }
+
+  // getSubLocationByid(selectedLocation: any): void {
+  //   if (selectedLocation && selectedLocation.id) {
+  //     this.subscription = this.http
+  //       .getData(
+  //         `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
+  //       )
+  //       .subscribe({
+  //         next: (data: any) => {
+  //           if (data.length === 0) {
+  //             this.subLocationsDropdown = [];
+  //           } else {
+  //             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+  //           }
+
+  //         },
+  //         error: (err: any) => {
+           
+  //         },
+  //       });
+  //   } else {
+  //     this.subLocationsDropdown = [];
+      
+  //   }
+  // }
   shiftDropdown: any[] = []; 
 
   onSubLocationChange(subLocationId: any) {
     if (subLocationId) {
+      // Get shift data based on selected sublocation
       this.getShiftBYid(subLocationId);
+      // Enable shift dropdown
       this.policyForm.get('shift')?.enable();
+      // Reset the shift value to null (allow user to select again)
+      this.policyForm.get('shift')?.setValue(null);
     } else {
-      this.subLocationsDropdown=[];
-      this.policyForm.get('shift')?.disable();
+      // Clear shift data and reset shift field if no sublocation is selected
+      this.shiftDropdown = [];
+      this.policyForm.get('shift')?.setValue(null); // Reset shift value
+      this.policyForm.get('shift')?.disable(); // Disable shift dropdown
     }
   }
 

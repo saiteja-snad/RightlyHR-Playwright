@@ -3,7 +3,7 @@ import { NgxDaterangepickerBootstrapDirective } from "ngx-daterangepicker-bootst
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { IemployeeDetails } from '../../../Interfaces/job-model';
@@ -29,7 +29,6 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   subscription!: Subscription
   loggedInUser = {} as IemployeeDetails
-  isLoading: boolean = false;
   selectedEmployeeStatus: string | undefined = undefined;
   selectedBranchLocation: string | undefined = undefined;
   selectedJobLocation: string | undefined = undefined;
@@ -37,6 +36,8 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   employeeMasterData = [] as any[];
   masterDataForm!: FormGroup;
   dataload = false;
+  spinnerLoader1= false;
+  spinnerLoader2= false;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -61,15 +62,24 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     applyLabel: 'ok',
     format: environment.dateformat.toUpperCase(),
     direction: 'ltr',
-    clearLabel: 'Clear', // could be rtl
+    clearLabel: 'Clear',
   };
 
-  constructor(private authService: AuthService, private reportsService: ReportsService, private fb: FormBuilder, private http: HttpService) { }
+  constructor(
+    private authService: AuthService, 
+    private reportsService: ReportsService, 
+    private fb: FormBuilder, 
+    private http: HttpService
+  ) { }
 
   ngOnInit(): void {
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
-    this.getStandardReports()
+    this.getStandardReports();
+
+    this.masterDataForm.patchValue({
+      empStatus: 'All Employees',
+    });
   }
 
   initializeForm() {
@@ -77,6 +87,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       dateOfJoining: [null],
       empStatus: [''],
     });
+    
   }
 
   //method to get All the reports
@@ -88,48 +99,59 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         if (res) {
           this.employeeMasterData = res.standardReports;
-          // this.maxPageNumber = res.maxPageNumber;
         }
       },
       error: (err: any) => {
         this.dataload = false;
-        console.log(err);
       },
       complete: ()=>{
         this.dataload = false;
+        
       }
     });
   }
 
   onSubmit(form: FormGroup) {
-    this.dataload = true;
-    if (form.valid) {
-      const formData = form.value;
-      const request: IStandardReportRequest = {
-        dateRange: {
-          startDate: formData.dateOfJoining.startDate,
-          endDate: formData.dateOfJoining.endDate,
-        },
-        employeeStatus: formData.empStatus.value
-      };
-      this.subscription = this.reportsService.getStandardReports(request).subscribe({
-        next: (res: any) => {
-          if (res) {
-            this.employeeMasterData = res.standardReports || [];
-            this.isLoading = false;
-          }
-        },
-        error: (err: any) => {
-          this.dataload = false;
-        },
-        complete: ()=>{
-        this.dataload = false;
-        }
-      });
+    this.spinnerLoader1= true;
+    const formData = form.value;
+  
+    const isEmptyStatus = !formData.empStatus;
+    const isEmptyDateRange = !formData.dateOfJoining;
+  
+    if (isEmptyStatus && isEmptyDateRange) {
+      return;
     }
-  }
+  
+    this.dataload = true;
+  
+    const request: IStandardReportRequest = {
+      dateRange: {
+        startDate: formData.dateOfJoining?.startDate || null,
+        endDate: formData.dateOfJoining?.endDate || null
+      },
+      employeeStatus: formData.empStatus.value 
+    };
+  
+    this.subscription = this.reportsService.getStandardReports(request).subscribe({
+      next: (res: any) => {
+        if (res) {
+          this.employeeMasterData = res.standardReports || [];
+        }
+      },
+      error: (err: any) => {
+        this.dataload = false;
+        this.spinnerLoader1= false;
+        this.employeeMasterData = [];
+      },
+      complete: () => {
+        this.dataload = false;
+        this.spinnerLoader1= false;
+      }
+    });
+  }  
 
   onClickEmpMasterExport() {
+    this.spinnerLoader2= true;
     let { arrayBuffer, fileName } = this.exportTableToExcel("employeeMasterData", "Employee_master_data")
 
     this.uploadReports(arrayBuffer, fileName)
@@ -180,11 +202,10 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.ReportEmail(data.path, fileName);
         },
         error: (reason: any) => {
-          console.log(reason);
+          this.spinnerLoader2= false;
           alert('file upload  is failed');
         },
       });
@@ -231,9 +252,11 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
         console.log(res);
       },
       error: (err) => {
-        console.log(err);
+        this.spinnerLoader2= false;
       },
-      complete: () => { }
+      complete: () => { 
+        this.spinnerLoader2= false;
+      }
     })
   }
 

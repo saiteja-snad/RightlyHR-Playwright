@@ -74,7 +74,8 @@ export interface IFamilyDetails{
   memberName:string,
   relation:string,
   memberDateOfBirth:any,
-  dependent:any
+  dependent:any;
+  fusionEmpId: string;
 }
 
 
@@ -96,18 +97,18 @@ export interface EmployeeDetails {
   gender: string;
   dob: string;
   maritalStatus: string;
-  permanentAddressLine1: string;
-  permanentAddressLine2: string;
-  permanentCity: string;
-  permanentState: string;
-  permanentCountry: string;
-  permanentZipCode: string;
-  currentAddressLine1: string;
-  currentAddressLine2: string;
-  currentCity: string;
-  currentState: string;
-  currentCountry: string;
-  currentZipCode: string;
+  permanentaddressline1: string;
+  permanentaddressline2: string;
+  permanentcity: string;
+  permanentstate: string;
+  permanentcountry: string;
+  permanentzipcode: string;
+  currentaddressline1: string;
+  currentaddressline2: string;
+  currentcity: string;
+  currentstate: string;
+  currentcountry: string;
+  currentzipcode: string;
   teamManager: string;
   reportFirstName: string;
   reportLastName: string;
@@ -144,11 +145,11 @@ export interface EmployeeDetails {
   reportingManager: string;
   jobSubLocationId: number;
   jobLocationId: number;
-  jobLocationName: string;
-  jobSubLocationName: string;
-  shiftName: string;
+  joblocationname: string;
+  jobsublocationname: string;
+  shiftname: string;
   shiftId: number;
-  shiftCode: string;
+  shiftcode: string;
   compeffectivedate: string;
   overtimeeligibility: string;
   reason: string;

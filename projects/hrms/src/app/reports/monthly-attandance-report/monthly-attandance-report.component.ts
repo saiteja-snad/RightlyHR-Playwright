@@ -24,6 +24,7 @@ export class MonthlyAttandanceReportComponent {
   isFilterGiven = false;
   StatusMsg: any;
   isLoading = false;
+  spinnerLoader= false;
   // Months
   months = [
     { value: 1, name: 'January' },
@@ -76,10 +77,11 @@ export class MonthlyAttandanceReportComponent {
   }
 
   generateReport(f: FormGroup) {
+    this.spinnerLoader= true;
     const formData= f.value;
     const month= formData.month.value;
     const year= formData.year.label;
-    this.isLoading = true
+    
     this.http.downloadMonthlyAttendanceReport(`Reports/MonthlyAttendanceReport`, month, year).subscribe({
       next: (response: any) => {
         const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -91,9 +93,12 @@ export class MonthlyAttandanceReportComponent {
         this.openmodalservice.openSuccessModal("Data Generated Sucessfully");
       },
       error:(err: any) => {
-        console.log(err)
-        this.openmodalservice.openErrorModal(err)
-        // console.error('Error downloading the file', error);
+        this.spinnerLoader= false;
+        // err.error.message? err.error.message : 'Error downloading the file'
+        this.openmodalservice.openErrorModal('Error downloading the file');
+      },
+      complete: ()=>{
+        this.spinnerLoader= false;
       }
     });
   }

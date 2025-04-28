@@ -19,19 +19,31 @@
         <div class="d-flex align-items-center gap-2">
           <label class="custom-label text-nowrap">Employee Status</label>
           <div class="custom-p-select-content">
-            <p-select [options]="employeeStatusOptions" formControlName="empStatus" optionLabel="label"
+            <p-select [options]="employeeStatusOptions" formControlName="empStatus" optionLabel="label" optionValue="label"
               placeholder="Select employee status" class="w-100">
-              <ng-template let-option pTemplate="item">
-                <div>{{ option.label }}</div>
-              </ng-template>
             </p-select>
           </div>
         </div>
 
         <div class="d-flex gap-2">
-          <button type="submit" class="custom-btn btn-secondary" [disabled]="masterDataForm.invalid">Generate</button>
+          <button type="submit" class="custom-btn btn-secondary"
+            [disabled]="!masterDataForm.get('empStatus')?.value && !masterDataForm.get('dateOfJoining')?.value">
+            @if(spinnerLoader1){
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading..'}}</span>
+              }@else {
+              <span>{{'Generate'}}</span>
+            }
+          </button>
           <button type="button" [disabled]="this.employeeMasterData.length === 0" (click)="onClickEmpMasterExport()"
-            class="custom-btn btn-primary">Export</button>
+            class="custom-btn btn-primary">
+            @if(spinnerLoader2){
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading..'}}</span>
+              }@else {
+              <span>{{'Export'}}</span>
+              }
+          </button>
         </div>
       </div>
     </form>
@@ -63,6 +75,7 @@
           <th>Middle Name</th>
           <th>Last Name</th>
           <th>Status</th>
+          <th>Date Of Joining</th>
           <th>Marital Status</th>
           <th>Gender</th>
           <th>Date of Birth</th>
@@ -117,7 +130,7 @@
           <th>Appointment Sent Date</th>
           <th>Appointment Sent By</th>
           <th>Appointment Sent Status</th>
-          <th>Date Of Joining</th>
+         
           <th>Probation End Date</th>
           <th>Probation Status</th>
           <th>Branch Location/Code</th>
@@ -170,23 +183,24 @@
             <td>{{ emp.middleName || '-' }}</td>
             <td>{{ emp.lastName || '-' }}</td>
             <td>{{ emp.empstatus || '-' }}</td>
+            <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | dateformat) : '-' }}</td>
             <td>{{ emp.maritalStatus || '-' }}</td>
             <td>{{ emp.gender || '-' }}</td>
             <td>{{ emp.dob ? (emp.dob | dateformat) : '-' }}</td>
             <td>{{ emp.bloodGroup || '-' }}</td>
             <!-- <td>{{ emp.secondaryLanguage || '-' }}</td> -->
-            <td>{{ emp.currentAddressLine1 || '-' }}</td>
-            <td>{{ emp.currentAddressLine2 || '-' }}</td>
-            <td>{{ emp.currentCity || '-' }}</td>
-            <td>{{ emp.currentState || '-' }}</td>
-            <td>{{ emp.currentCountry || '-' }}</td>
-            <td>{{ emp.currentZipCode || '-' }}</td>
-            <td>{{ emp.permanentAddressLine1 || '-' }}</td>
-            <td>{{ emp.permanentAddressLine2 || '-' }}</td>
-            <td>{{ emp.permanentCity || '-' }}</td>
-            <td>{{ emp.permanentState || '-' }}</td>
-            <td>{{ emp.permanentCountry || '-' }}</td>
-            <td>{{ emp.permanentZipCode || '-' }}</td>
+            <td>{{ emp.currentaddressline1 || '-' }}</td>
+            <td>{{ emp.currentaddressline2 || '-' }}</td>
+            <td>{{ emp.currentcity || '-' }}</td>
+            <td>{{ emp.currentstate || '-' }}</td>
+            <td>{{ emp.currentcountry || '-' }}</td>
+            <td>{{ emp.currentzipcode || '-' }}</td>
+            <td>{{ emp.permanentaddressline1 || '-' }}</td>
+            <td>{{ emp.permanentaddressline2 || '-' }}</td>
+            <td>{{ emp.permanentcity || '-' }}</td>
+            <td>{{ emp.permanentstate || '-' }}</td>
+            <td>{{ emp.permanentcountry || '-' }}</td>
+            <td>{{ emp.permanentzipcode || '-' }}</td>
             <td>{{ emp.workPhone || '-' }}</td>
             <td>{{ emp.contactnumber || '-' }}</td>
             <td>{{ emp.workEmail || '-' }}</td>
@@ -197,8 +211,8 @@
             <td>{{ emp.relationShip || '-' }}</td>
             <td>{{ emp.emergencyName1 || '-' }}</td>
             <td>{{ emp.emergencyEmail1 || '-' }}</td>
-            <td>{{ emp.emergencynumber1 || '-' }}</td>
-            <td>{{ emp.relationShip1 || '-' }}</td>
+            <td>{{ emp.emergencyNumber1 || '-' }}</td>
+            <td>{{ emp.relationship1 || '-' }}</td>
             <td>{{ emp.degree || '-' }}</td>
             <td>{{ emp.university || '-' }}</td>
             <td>{{ emp.specialization || '-' }}</td>
@@ -224,7 +238,7 @@
             <td>{{ emp.appointmentSentDate ? (emp.appointmentSentDate | dateformat) : '-' }}</td>
             <td>{{ emp.appointmentSenyBy || '-' }}</td>
             <td>{{ emp.appointmentSentStatus || '-' }}</td>
-            <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | dateformat) : '-' }}</td>
+           
             <td>{{ emp.probationEndDate ? (emp.probationEndDate | dateformat) : '-' }}</td>
             <td>{{ emp.probationStatus || '-' }}</td>
             <td>{{ emp.branchCode || '-' }}</td>
@@ -242,7 +256,7 @@
             <td>{{ emp.jobType || '-' }}</td>
             <td>{{ emp.gradeName || '-' }}</td>
             <td>{{ emp.jobGrade || '-' }}</td>
-            <td>{{ emp.jobEffectiveDate ? (emp.jobEffectiveDate | dateformat) : '-' }}</td>
+            <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | dateformat) : '-' }}</td>
             <td>{{ emp.jobRole || '-' }}</td>
             <td>{{ emp.departmentName || '-' }}</td>
             <td>{{ emp.subdepartment_name || '-' }}</td>

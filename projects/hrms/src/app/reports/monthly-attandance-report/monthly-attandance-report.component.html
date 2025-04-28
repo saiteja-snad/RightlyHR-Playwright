@@ -2,41 +2,44 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <!--header-->
         <div class="component-header">Monthly Attandance Report</div>
+    </div>
 
+    <div class="card custom-component-right-content p-3">
         <!--right data-->
-        <div class="d-flex gap-3">
-            <form [formGroup]="monthlyReportForm" (ngSubmit)="generateReport(monthlyReportForm)">
-                <div class="d-flex gap-2 align-items-center">
-                    <div class="d-flex align-items-center gap-2">
-                        <label class="custom-label text-nowrap">{{ "Month" | translate }}<span class="text-danger">*</span></label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="months" optionLabel="name" filterBy="name" [filter]="true"
-                                [showClear]="false" formControlName="month" placeholder="Please select month"
-                                class="form-select custom-select">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
-                                <ng-template let-location #item>{{ location.name }}</ng-template>
-                            </p-select>
-                        </div>
-                    </div>
+        <form [formGroup]="monthlyReportForm" (ngSubmit)="generateReport(monthlyReportForm)" class="custom-width">
+            <div class="mb-3">
+                <label class="form-label custom-label mb-2">{{ "Month" | translate }}<span class="text-danger">*</span></label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="months" optionLabel="name" filterBy="name" [filter]="true" [showClear]="false"
+                        formControlName="month" placeholder="Please select month" class="form-select custom-select">
+                        <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+                        <ng-template let-location #item>{{ location.name }}</ng-template>
+                    </p-select>
                 </div>
-
-                <div class="d-flex align-items-center gap-2">
-                    <label class="custom-label text-nowrap">{{ "Year" | translate }}<span class="text-danger">*</span></label>
-                    <div class="custom-p-select-content">
-                        <p-select [options]="years" optionLabel="value" filterBy="value" [filter]="true"
-                            [showClear]="false" formControlName="year" placeholder="Please select year"
-                            class="form-select custom-select">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.value }}</ng-template>
-                            <ng-template let-location #item>{{ location.value }}</ng-template>
-                        </p-select>
-                    </div>
+            </div>
+        
+            <div class="mb-4">
+                <label class="form-label custom-label mb-2">{{ "Year" | translate }}<span class="text-danger">*</span></label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="years" optionLabel="value" filterBy="value" [filter]="true" [showClear]="false"
+                        formControlName="year" placeholder="Please select year" class="form-select custom-select">
+                        <ng-template #selectedItem let-selectedOption>{{ selectedOption.value }}</ng-template>
+                        <ng-template let-location #item>{{ location.value }}</ng-template>
+                    </p-select>
                 </div>
-    
-                <div>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="monthlyReportForm.invalid">Generate</button>
-                </div>
-            </form>
-           
-        </div>
+            </div>
+        
+            <div>
+                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="monthlyReportForm.invalid || spinnerLoader">
+                    <ng-container *ngIf="spinnerLoader; else addText">
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading..' | translate}}...</span>
+                    </ng-container>
+                    <ng-template #addText>
+                        <span>{{'Generate' | translate}}</span>
+                    </ng-template>
+                </button>
+            </div>
+        </form>
     </div>
 </div>

@@ -8,8 +8,6 @@ import {
 } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
-import { OpenModalService } from '../../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { IFamilyDetails } from '../../../Interfaces/reports.model';
 import { Subject, takeUntil } from 'rxjs';
@@ -17,6 +15,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import * as XLSX from 'xlsx';
 import { StandardReportTabsComponent } from '../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-family-members-data',
@@ -28,21 +27,24 @@ import { StandardReportTabsComponent } from '../../../shared/reports-tabs/standa
     NoDataFoundComponent,
     StandardReportTabsComponent,
     DateformatPipe,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './family-members-data.component.html',
   styleUrl: './family-members-data.component.scss',
 })
 export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   empStatusList: string[] = ['All Employees', 'Active', 'Inactive'];
   reportForm!: FormGroup;
+  dataload = false;
+  spinnerLoader1= false;
+  spinnerLoader2= false;
   familydata = [] as IFamilyDetails[];
   destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService,
-    private modalService: NgbModal
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -56,6 +58,9 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   }
 
   getFamilyDetails(status?: string) {
+    this.dataload = true;
+    this.spinnerLoader1= true;
+
     const queryParams = new URLSearchParams();
     const endpoint = status
       ? `familyMemberDetails/getAllFamilyMembersDetails?EmpStatus=${status}`
@@ -69,8 +74,14 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
           console.log(this.familydata);
         },
         error: (err: any) => {
+          this.spinnerLoader1= false;
+          this.dataload = false;
           this.familydata = [];
         },
+        complete: ()=>{
+          this.spinnerLoader1= false;
+          this.dataload = false;
+        }
       });
   }
 
@@ -82,6 +93,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   }
 
   exportAsExcelFile(): void {
+    this.spinnerLoader2= true;
     // Define header mappings
     const HEADER_MAPPINGS: { [key: string]: string } = {
       employeeId: 'EMPLOYEE ID',
@@ -277,6 +289,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
       SheetNames: ['data'],
     };
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
+    this.spinnerLoader2= false;
   }
 
   getFileName(name: string | undefined) {

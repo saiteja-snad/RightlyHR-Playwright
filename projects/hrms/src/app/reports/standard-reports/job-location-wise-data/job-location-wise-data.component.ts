@@ -26,6 +26,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   dataload = false;
+  spinnerLoader1= false;
   locationReportsForm!: FormGroup;
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   locationDetails = [] as ILocation[];
@@ -58,8 +59,24 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
 
   getAllLocations(): void {
     this.reports.getJobLocations().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => this.locationDetails = res.jobLocations || [],
-      error: err => console.error('Error fetching locations:', err)
+      next: (res: any) => {
+        this.locationDetails = res.jobLocations || [];
+        if (this.locationDetails.length > 0) {
+          const allLocationsOption: ILocation = {
+            id: -1,
+            jobLocationName: 'All Locations',
+            isDeleted: false,
+            jobSubLocations: []
+          };
+    
+          this.locationDetails.unshift(allLocationsOption);
+    
+          this.locationReportsForm.patchValue({
+            location: allLocationsOption
+          });
+        }
+      },
+      error: err => console.error('Error fetching locations:', err),
     });
   }
 
@@ -148,7 +165,6 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
         this.locationReportList = res.standardReports || [];
       },
       error: (err: any) => {
-        console.log(err);
         this.dataload = false;
       },
       complete: ()=>{
@@ -158,34 +174,55 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(form: FormGroup) {
-    this.dataload = true;
-    if (form.valid) {
-      const formData = form.value;
-      const request: IStandardReportRequest = {
-        dateRange: {
-          startDate: formData.dateOfJoining.startDate,
-          endDate: formData.dateOfJoining.endDate,
-        },
-        selectedJobLocation: formData.location?.jobLocationName,
-        selectedJobSubLocation: formData.subLocation?.jobSubLocationName
-      };
-      this.reports.getStandardReports(request).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          if (res) {
-            this.locationReportList = res.standardReports || [];
-          }
-        },
-        error: (err: any) => {
-          this.dataload = false;
-        },
-        complete: () => {
-          this.dataload = false;
-        }
-      });
-    }else{
-      console.log('invalid')
+    const formData = form.value;
+    
+    if (formData.location.jobLocationName === 'All Locations' && formData.dateOfJoining == null){
+      this.getStandardReports();
+    } else{
+      const isEmptyDate = !formData.dateOfJoining;
+      const isEmptyLocation = !formData.location;
+      const isEmptySubLocation = !formData.subLocation;
+    
+      if (isEmptyDate && isEmptyLocation && isEmptySubLocation) {
+        console.log('No filters provided — skipping API call');
+        return;
+      }
+    
+      this.getFilterReports(formData); 
     }
+
   }
+    
+
+  getFilterReports(formData: any): void {
+    this.dataload = true;
+    this.spinnerLoader1 = true;
+  
+    const request: IStandardReportRequest = {
+      dateRange: {
+        startDate: formData.dateOfJoining?.startDate || null,
+        endDate: formData.dateOfJoining?.endDate || null,
+      },
+      selectedJobLocation: formData.location?.jobLocationName === 'All Locations'? '' : formData.location?.jobLocationName,
+      selectedJobSubLocation: formData.subLocation?.jobSubLocationName || null
+    };
+  
+    this.reports.getStandardReports(request).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.locationReportList = res?.standardReports || [];
+      },
+      error: (err: any) => {
+        this.spinnerLoader1 = false;
+        this.dataload = false;
+        console.error('API Error:', err);
+      },
+      complete: () => {
+        this.spinnerLoader1 = false;
+        this.dataload = false;
+      }
+    });
+  }
+  
 
   onClickJobLocationExport() {
     this.spinnerLoader = true;
@@ -241,7 +278,6 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, reportFile).subscribe({
       next: (data: any) => {
         this.ReportEmail(data.path, fileName);
-        //window.location.reload();
       },
       error: (reason: any) => {
         this.spinnerLoader = false;

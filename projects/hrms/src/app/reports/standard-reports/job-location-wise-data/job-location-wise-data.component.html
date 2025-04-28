@@ -8,7 +8,7 @@
                 <div class="d-flex align-items-center gap-3">
                     <!-- Date of Joining -->
                     <div class="d-flex align-items-center gap-2">
-                        <label class="custom-label text-nowrap">{{"Date of Joining" | translate}}<span class="text-danger">*</span></label>
+                        <label class="custom-label text-nowrap">{{"Date of Joining" | translate}}</label>
                         <div>
                             <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
                                 [locale]="localeOptions" [showClearButton]="true" formControlName="dateOfJoining"
@@ -19,7 +19,7 @@
         
                     <!-- Location -->
                     <div class="d-flex align-items-center gap-2">
-                        <label class="custom-label text-nowrap">{{ "Location" | translate }}<span class="text-danger">*</span></label>
+                        <label class="custom-label text-nowrap">{{ "Location" | translate }}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="locationDetails" optionLabel="jobLocationName" filterBy="jobLocationName" [filter]="true"
                                 [showClear]="false" formControlName="location" placeholder="Please select location"
@@ -32,7 +32,7 @@
         
                     <!-- Sub Location -->
                     <div class="d-flex align-items-center gap-2">
-                        <label for="subLocation" class="custom-label text-nowrap">{{ "Sub Location" | translate }}<span class="text-danger">*</span></label>
+                        <label for="subLocation" class="custom-label text-nowrap">{{ "Sub Location" | translate }}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                                 class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
@@ -44,12 +44,20 @@
                     </div>
         
                     <div class="d-flex gap-2">
-                        <button type="submit" class="custom-btn btn-secondary">Generate</button>
-                        <!-- <button type="button" class="btn btn-primary mt-1" (click)="getStandardReports()">Generate</button> -->
-                        <button class="custom-btn btn-primary" [disabled]="locationReportList.length === 0 || spinnerLoader" (click)="onClickJobLocationExport() ">
-                            @if(spinnerLoader){
+                        <button type="submit" class="custom-btn btn-secondary"
+                            [disabled]="!locationReportsForm.get('dateOfJoining')?.value && !locationReportsForm.get('location')?.value && !locationReportsForm.get('subLocation')?.value">
+                            @if(spinnerLoader1){
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                             <span>{{'Loading..'}}...</span>
+                            }@else {
+                            <span>{{'Generate'}}</span>
+                            }
+                        </button>
+                        <button type="button" class="custom-btn btn-primary" [disabled]="locationReportList.length === 0 || spinnerLoader"
+                            (click)="onClickJobLocationExport() ">
+                            @if(spinnerLoader){
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading..'}}</span>
                             }@else {
                             <span>{{'Export'}}</span>
                             }
@@ -84,6 +92,7 @@
                         <th>Middle Name</th>
                         <th>Last Name</th>
                         <th>Status</th>
+                        <th>Date Of Joining</th>
                         <th>Address Line 1(current)</th>
                         <th>Address Line 2(current)</th>
                         <th>City(current)</th>
@@ -99,7 +108,7 @@
                         <th>Work Number</th>
                         <th>Mobile Number</th>
                         <th>Work Email</th>
-                        <th>Date Of Joining</th>
+                       
                         <th>Job Effective Date</th>
                         <th>Job Role</th>
                         <th>Grade Name</th>
@@ -124,32 +133,33 @@
                           <td>{{ emp.middleName ? emp.middleName : '-' }}</td>
                           <td>{{ emp.lastName ? emp.lastName : '-' }}</td>
                           <td>{{ emp.empstatus ? emp.empstatus : '-' }}</td>
-                          <td>{{ emp.currentAddressLine1 ? emp.currentAddressLine1 : '-' }}</td>
-                          <td>{{ emp.currentAddressLine2 ? emp.currentAddressLine2 : '-' }}</td>
-                          <td>{{ emp.currentCity ? emp.currentCity : '-' }}</td>
-                          <td>{{ emp.currentState ? emp.currentState : '-' }}</td>
-                          <td>{{ emp.currentCountry ? emp.currentCountry : '-' }}</td>
-                          <td>{{ emp.currentZipCode ? emp.currentZipCode : '-' }}</td>
-                          <td>{{ emp.permanentAddressLine1 ? emp.permanentAddressLine1 : '-' }}</td>
-                          <td>{{ emp.permanentAddressLine2 ? emp.permanentAddressLine2 : '-' }}</td>
-                          <td>{{ emp.permanentCity ? emp.permanentCity : '-' }}</td>
-                          <td>{{ emp.permanentState ? emp.permanentState : '-' }}</td>
-                          <td>{{ emp.permanentCountry ? emp.permanentCountry : '-' }}</td>
-                          <td>{{ emp.permanentZipCode ? emp.permanentZipCode : '-' }}</td>
+                          <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | date:'MM-dd-yyyy') : '-' }}</td>
+                          <td>{{ emp.currentaddressline1 ? emp.currentaddressline1 : '-' }}</td>
+                          <td>{{ emp.currentaddressline2 ? emp.currentaddressline2 : '-' }}</td>
+                          <td>{{ emp.currentcity ? emp.currentcity : '-' }}</td>
+                          <td>{{ emp.currentstate ? emp.currentstate : '-' }}</td>
+                          <td>{{ emp.currentcountry ? emp.currentcountry : '-' }}</td>
+                          <td>{{ emp.currentzipcode ? emp.currentzipcode : '-' }}</td>
+                          <td>{{ emp.permanentaddressline1 ? emp.permanentaddressline1 : '-' }}</td>
+                          <td>{{ emp.permanentaddressline2 ? emp.permanentaddressline2 : '-' }}</td>
+                          <td>{{ emp.permanentcity ? emp.permanentcity : '-' }}</td>
+                          <td>{{ emp.permanentstate ? emp.permanentstate : '-' }}</td>
+                          <td>{{ emp.permanentcountry ? emp.permanentcountry : '-' }}</td>
+                          <td>{{ emp.permanentzipcode ? emp.permanentzipcode : '-' }}</td>
                           <td>{{ emp.workPhone ? emp.workPhone : '-' }}</td>
                           <td>{{ emp.contactnumber ? emp.contactnumber : '-' }}</td>
                           <td>{{ emp.workEmail ? emp.workEmail : '-' }}</td>
-                          <td>{{ emp.dateOfJoining ? (emp.dateOfJoining | date:'MM-dd-yyyy') : '-' }}</td>
-                          <td>{{ emp.jobEffectiveDate ? (emp.jobEffectiveDate | date:'MM-dd-yyyy') : '-' }}</td>
+                         
+                          <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | date:'MM-dd-yyyy') : '-' }}</td>
                           <td>{{ emp.jobRole ? emp.jobRole : '-' }}</td>
                           <td>{{ emp.gradeName ? emp.gradeName : '-' }}</td>
                           <td>{{ emp.departmentName ? emp.departmentName : '-' }}</td>
                           <td>{{ emp.subdepartment_name ? emp.subdepartment_name : '-' }}</td>
-                          <td>{{ emp.reportingManager ? emp.reportingManager : '-' }}</td>
-                          <td>{{ emp.jobLocationName ? emp.jobLocationName : '-' }}</td>
-                          <td>{{ emp.jobSubLocationName ? emp.jobSubLocationName : '-' }}</td>
-                          <td>{{ emp.shiftName ? emp.shiftName : '-' }}</td>
-                          <td>{{ emp.shiftCode ? emp.shiftCode : '-' }}</td>
+                          <td>{{ emp.reportingmanager ? emp.reportingmanager : '-' }}</td>
+                          <td>{{ emp.joblocationname ? emp.joblocationname : '-' }}</td>
+                          <td>{{ emp.jobsublocationname ? emp.jobsublocationname : '-' }}</td>
+                          <td>{{ emp.shiftname ? emp.shiftname : '-' }}</td>
+                          <td>{{ emp.shiftcode ? emp.shiftcode : '-' }}</td>
                           <td>{{ emp.jobType ? emp.jobType : '-' }}</td>
                         </tr>
                         }

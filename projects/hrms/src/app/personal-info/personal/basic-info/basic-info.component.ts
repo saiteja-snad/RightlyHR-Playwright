@@ -123,7 +123,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     const formValue = this.basicInfoForm.value;
     console.log(formValue);
 
-    
+
     const updatePayload = {
       ...this.empyployeedata,
       employeeId: this.empinfo.employeeId,
@@ -144,16 +144,22 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       .postdata(`Employeedata/UPDATER`, updatePayload)
       .subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Basic Information Updated Successfully',);
-          this.getEmployeeId();
-          this.basicInfoForm.disable();
-          this.getEmployeeId()
-          console.log('Data updated successfully:', data);
-          this.buttons = !this.buttons;
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Basic Info updated successfully')
+          if (data.statusCode === 200) {
+            // Success case
+            this.conformationPopup.openSuccessModal('Basic Information Updated Successfully');
+            this.getEmployeeId();
+            this.basicInfoForm.disable();
+            console.log('Data updated successfully:', data);
+            this.buttons = !this.buttons;
+          } else if (data.statusCode === 409) {
+      
+            console.log('Conflict:', data.message);
+            this.conformationPopup.openErrorModal(data.message );
+            this.patchForm(this.empyployeedata); 
+          }
         },
         error: (reason: any) => {
+
           console.log(reason);
           this.conformationPopup.openErrorModal('Basic Info update failed')
         },

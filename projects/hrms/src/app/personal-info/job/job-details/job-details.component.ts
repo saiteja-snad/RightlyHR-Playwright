@@ -258,7 +258,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
           id: manager.reportingmanagerId,
           name: manager.middleName ? `${manager.firstName} ${manager.middleName} ${manager.lastName}`
-            : `${manager.firstName} ${manager.lastName}`,
+            : `${manager.firstName} ${manager.lastName}` || '',
         }));
         this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
         // Reset the team manager selection
@@ -281,8 +281,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         // Update the team manager dropdown values
         this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
           id: manager.reportingmanagerId,
-          name: manager.middleName ? `${manager.firstName} ${manager.middleName} ${manager.lastName}`
-            : `${manager.firstName} ${manager.lastName}`,
+          name: manager.middleName ? `${manager.firstName || ''} ${manager.middleName || ''} ${manager.lastName || ''}`
+            : `${manager.firstName} ${manager.lastName}` || '',
         }));
         this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
         // Reset the team manager selection

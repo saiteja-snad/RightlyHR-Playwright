@@ -15,7 +15,7 @@ input[type="checkbox"].custom-check:checked {
     /* Optional: matches background */
 }
 
-input {
+input[type="text"] {
     text-transform: capitalize;
 }
 

@@ -1,27 +1,34 @@
 <div class="custom-main-component-container">
    <div class="employee-fields-main-container d-flex gap-3 w-100">
       <div class="custom-component-left-content p-3">
-         @for(folder of folders; track $index){
-         <div (click)="onFolderSelectded(folder, folder.name)" class="folder-content cursor px-2"
-            [ngClass]="{'active': selectedMainFolder === folder}">
-            <i class="bi bi-folder-fill foldder-icon"
-               [ngClass]="{'fa-caret-right': !folder.expanded, 'fa-caret-down': folder.expanded}"></i>
-            <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
+         <!-- Loop through main folders -->
+         <div *ngFor="let folder of folders; let i = index" class="folder-content cursor px-2">
+           <div
+             (click)="toggleFolder(folder)"
+             [ngClass]="{ 'active': selectedMainFolder === folder }"
+           >
+             <i
+               class="bi bi-folder-fill foldder-icon"
+               [ngClass]="{ 'fa-caret-right': !folder.expanded, 'fa-caret-down': folder.expanded }"
+             ></i>
+             <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
+           </div>
+       
+           <!-- Subfolders -->
+           <div *ngIf="folder.expanded" class="subfolder-container">
+             <div
+               *ngFor="let subFolder of folder.subfolders"
+               class="folder-content cursor px-2"
+               (click)="onSubFolderSelected(subFolder)"
+             >
+               <i class="bi bi-folder-fill foldder-icon"></i>
+               <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
+             </div>
+           </div>
          </div>
-         }
-
-         @for(subFolder of selectedFolder; track $index){
-
-         @if(!subFolder.isNotVisible){
-
-         <div (click)="onSubFolderSelected(subFolder)" class="folder-content  cursor px-2">
-            <i class="bi bi-folder-fill foldder-icon"></i>
-            <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
-         </div>}
-         }
-      </div>
+       </div>
       <div class="custom-setting-right-content p-3">
-         <div class="d-flex justify-content-between align-items-center mb-3">
+         <div class="d-flex gap-3  mb-3">
             <div class="input-group custom-search mb-3">
                <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
                      class="bi bi-search"></i></span>
@@ -29,12 +36,14 @@
                   aria-label="Username" [(ngModel)]="searchfolder" (input)="filterFolder()"
                   aria-describedby="basic-addon1">
             </div>
-            <!-- <div>
-               <button class="custom-btn btn-primary" type="button" (click)="openModal(adddocumentmodal)"><i
-                     class="bi bi-upload pe-2"></i>Upload</button>
-            </div> -->
+            <div>
+               <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
+                     class="bi bi-upload me-2"></i>Upload</button>
+            </div>
          </div>
-
+         <div class="mt-3 mb-3" *ngIf="selectedFile?.name">
+            <span class="subfolder-name">{{selectedFile.name | lastValue}}</span>
+         </div>
 
          <div class="custom-table-content">
             <table class="w-100">
@@ -43,7 +52,7 @@
                   <th>FILE NAME</th>
                   <th>CREATED DATE</th>
                   <th>SIZE</th>
-                  <th>ACTION</th>
+                  <th class="text-center">ACTION</th>
                </thead>
                <tbody>
                   <ng-container *ngIf="getVisibleFiles().length > 0; else noDataTemplate">
@@ -51,8 +60,8 @@
                         <tr>
                            <td>{{ file.name | lastValue }}</td>
                            <td>{{ file.createdOn | dateformat }}</td>
-                           <td>{{ file.contentLength }}</td>
-                           <td>
+                           <td>{{ file.contentLength | fileSize }}</td>
+                           <td class="text-center">
 
                               <div>
                                  <span class="dowload-text" (click)="onSelectDownload(file)" style="cursor: pointer;">
@@ -66,7 +75,7 @@
                   </ng-container>
                   <ng-template #noDataTemplate>
                      <tr>
-                        <td colspan="4" class="text-center">No Data Found</td>
+                        <td colspan="4" class="text-center"></td>
                      </tr>
                   </ng-template>
                </tbody>
@@ -77,20 +86,47 @@
 </div>
 
 
-<!-- <ng-template #adddocumentmodal let-modal>
+
+
+<ng-template #adddocumentmodal let-modal>
    <div class="custom-main-popup-container" ngbAutofocus>
-      <div class="d-flex justify-content-between popup-header-border p-3">
-         <div class="pt-2">
-            <p class="popup-heading mb-0">Add Job Details</p>
+      <div class="custom-poup-header-content popup-header-border">
+         <div>
+            <p class="popup-heading mb-0">Upload Document</p>
          </div>
          <div>
-            <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            <a (click)="modal.dismiss();uploadfrom.reset()"><img src="icons/close.png" alt="Close Icon"
+                  class="close-icon"></a>
          </div>
       </div>
       <div class="custom-main-popup-content p-3">
-      <from>
+         <form [formGroup]="uploadfrom" (ngSubmit)="fileUploaded()">
+            <div class="row  mb-3">
+               <div class="col-12">
+                  <label class="form-label custom-label mb-2">Upload <span class="text-danger">*</span></label>
+                  <input type="file" placeholder="Choose file" class="form-control custom-input"
+                     (change)="filechange($event)" accept=".pdf, .jpg, .png">
 
-      </from>
+                     <div *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">
+                        File is required
+                      </div>
+               </div>
+            </div>
+
+
+            <div class="custom-modal-footer">
+               <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+               <button type="submit" class="custom-btn btn-primary" [disabled]="uploadfrom.invalid || spinnerLoader">
+
+                  @if (spinnerLoader) {
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <span>{{'Loading' | translate}}...</span>
+                  } @else {
+                  <span>{{'Add'| translate}}</span>
+                  }
+               </button>
+            </div>
+         </form>
       </div>
    </div>
-</ng-template> -->
+</ng-template>

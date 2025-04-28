@@ -16,9 +16,11 @@ import { HttpService } from '../../../services/http.service';
 import * as XLSX from "xlsx";
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-employee-master-data',
-  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent, SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent],
+  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent, 
+    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss'
 })
@@ -34,6 +36,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   selectedJobSubLocation: string | undefined = undefined;
   employeeMasterData = [] as any[];
   masterDataForm!: FormGroup;
+  dataload = false;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -71,14 +74,14 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
 
   initializeForm() {
     this.masterDataForm = this.fb.group({
-      dateOfJoining: [null, Validators.required],
-      empStatus: ['', Validators.required],
+      dateOfJoining: [null],
+      empStatus: [''],
     });
   }
 
   //method to get All the reports
   getStandardReports() {
-    this.isLoading = true;
+    this.dataload = true;
     const params = new URLSearchParams();
     const endpoint = params.toString() ? `Reports/standardReportsWithoutPagination?${params.toString()}` : 'Reports/standardReportsWithoutPagination';
     this.subscription = this.http.getData(endpoint).subscribe({
@@ -86,18 +89,20 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
         if (res) {
           this.employeeMasterData = res.standardReports;
           // this.maxPageNumber = res.maxPageNumber;
-          this.isLoading = false;
         }
       },
       error: (err: any) => {
+        this.dataload = false;
         console.log(err);
       },
-      complete: () => { },
+      complete: ()=>{
+        this.dataload = false;
+      }
     });
   }
 
   onSubmit(form: FormGroup) {
-    this.isLoading = true;
+    this.dataload = true;
     if (form.valid) {
       const formData = form.value;
       const request: IStandardReportRequest = {
@@ -115,9 +120,11 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
-          this.isLoading = true;
-          console.log(err);
+          this.dataload = false;
         },
+        complete: ()=>{
+        this.dataload = false;
+        }
       });
     }
   }

@@ -3,9 +3,10 @@
     <!--header-->
     <div class="component-header">Reports</div>
     <form [formGroup]="masterDataForm" (ngSubmit)="onSubmit(masterDataForm)">
+      <!-- DOJ -->
       <div class="d-flex gap-3">
         <div class="d-flex align-items-center gap-2">
-          <label class="custom-label text-nowrap">Date of Joining<span class="text-danger">*</span></label>
+          <label class="custom-label text-nowrap">Date of Joining</label>
           <div>
             <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
               [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
@@ -14,10 +15,18 @@
           </div>
         </div>
 
+        <!-- Employee Status -->
         <div class="d-flex align-items-center gap-2">
-          <label class="custom-label text-nowrap">Employee Status<span class="text-danger">*</span></label>
+          <label class="custom-label text-nowrap">Employee Status</label>
           <div class="custom-p-select-content">
-            <p-select formControlName="empStatus" [options]="employeeStatusOptions" optionLabel="label"
+            <!-- <p-select [options]="branchLocations" optionLabel="branchLocation1" optionValue="branchLocation1"
+                            [filter]="false" [showClear]="false" class="form-select custom-select" formControlName="location"
+                            placeholder="Please select branch">
+                            <ng-template let-option pTemplate="item">{{ option.branchLocation1 }}</ng-template>
+                            <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption.branchLocation1 }}</ng-template>
+                        </p-select> -->
+
+            <p-select [options]="employeeStatusOptions" formControlName="empStatus" optionLabel="label"
               placeholder="Select employee status" class="w-100">
               <ng-template let-option pTemplate="item">
                 <div>{{ option.label }}</div>
@@ -40,10 +49,16 @@
     <app-standard-report-tabs />
   </div>
 
-  @if(isLoading){
+  <ng-container *ngIf="dataload; else maincontent">
+    <ng-template #loadingSpinner>
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+    </div>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+</ng-container>
 
-  }
-  @else {
+<ng-template #maincontent>
   <div class="custom-table-content">
     <table id="employeeMasterData" class="content w-100">
       <thead>
@@ -59,7 +74,7 @@
           <th>Gender</th>
           <th>Date of Birth</th>
           <th>Blood Group</th>
-          <th>Secondary Language</th>
+          <!-- <th>Secondary Language</th> -->
           <th>Address Line 1(current)</th>
           <th>Address Line 2(current)</th>
           <th>City(current)</th>
@@ -147,7 +162,7 @@
       <tbody>
         @if(employeeMasterData.length === 0){
         <tr>
-          <td colspan="8">
+          <td colspan="93">
             <app-no-data-found></app-no-data-found>
           </td>
         </tr>
@@ -166,7 +181,7 @@
             <td>{{ emp.gender || '-' }}</td>
             <td>{{ emp.dob ? (emp.dob | dateformat) : '-' }}</td>
             <td>{{ emp.bloodGroup || '-' }}</td>
-            <td>{{ emp.secondaryLanguage || '-' }}</td>
+            <!-- <td>{{ emp.secondaryLanguage || '-' }}</td> -->
             <td>{{ emp.currentAddressLine1 || '-' }}</td>
             <td>{{ emp.currentAddressLine2 || '-' }}</td>
             <td>{{ emp.currentCity || '-' }}</td>
@@ -255,5 +270,6 @@
       </tbody>
     </table>
   </div>
-  }
+</ng-template>
+
 </div>

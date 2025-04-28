@@ -52,7 +52,7 @@
                     <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true" 
-                          placeholder="Please select authoruty" formControlName="authorityid" class="custom-select w-100" (onChange)="pathValuesFuction()">
+                          placeholder="Please select signature authority name" formControlName="authorityid" class="custom-select w-100" (onChange)="pathValuesFuction()">
                         </p-select>
                     </div>
                     <div *ngIf="probationExtensionForm.get('authorityid')?.invalid && probationExtensionForm.get('authorityid')?.touched">
@@ -115,7 +115,7 @@
                                     </ul>
                                 </div>
                                 <div>
-                                    <p>Issued Date:{{probationExtensionLetterData.dateofprobationextension | dateformat}}</p>
+                                    <p class="letter-sub-header">Issued Date:{{probationExtensionLetterData.dateofprobationextension | dateformat}}</p>
                                 </div>
                             </div>
     

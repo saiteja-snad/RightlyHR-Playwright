@@ -267,12 +267,14 @@
                     <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                        placeholder="Please enter offer expiry date" onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
+                        placeholder="Please enter offer expiry date" (change)="updateEndDateValidityupdate()" onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
                     <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                         <div class="error-msg">Offer Expiry Date is required</div>
                     </div>
                     <div *ngIf="!isExpiryDateValid" class="error-msg">Offer Expiry Date should be after the
                         Offer Issued Date</div>
+                        <div *ngIf="!isStartDateValidofexpected" class="error-msg">Offer Expiry Date should be after the
+                            Expected Start Date</div>
                 </div>
 
                 <div class="mb-3">
@@ -286,7 +288,7 @@
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
-                        <div class="error-msg">Internship Period is required</div>
+                        <div class="error-msg">Training Period is required</div>
                     </div>
                 </div>
 
@@ -350,7 +352,7 @@
                 <div class="d-flex flex-wrap gap-3 pt-4">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid ||loading"
                         (click)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">{{buttonValue}}</button>
-                    <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading"
+                    <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading||disableFieldsForApproval"
                         (click)="emailSendingforApprover()">{{'Request For Approval'|translate}}</button>
                         @if(loading){
                             <div class="spinner-border text-primary" role="status"></div>
@@ -459,10 +461,9 @@
                                     <p class="mb-2"><b>for RightlyHR</b></p>
                                 </div>
                                 <div class="pt-3">
-                                    <p class="letter-sub-header">{{traineeEmpData.authorityName}}</p>
+                                    <p class="letter-signature">{{traineeEmpData.authorityName}}</p>
                                     <p class="letter-sub-header"> Authorized Signatory, </p>
-                                    <p class="letter-sub-header" *ngIf="traineeEmpData.authorityName?.trim()"
-                                        style="font-family: Segoe script; font-size: large;">
+                                    <p class="letter-sub-header" *ngIf="traineeEmpData.authorityName?.trim()">
                                         {{traineeEmpData.authorityName}}</p>
                                     <p class="letter-sub-header">{{authorityDesignation}} </p>
                                     <br>

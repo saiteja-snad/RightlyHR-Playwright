@@ -210,11 +210,12 @@ export class OfferLetterComponent implements OnInit {
     this.subscription = this.http.postData(`PreonboardingEmail/EmployeeOfferRejection`, emaildata).subscribe({
       next: (data: any) => {
         this.loadingcircle = false;
-        this.confiramtionpopups.openSuccess('Offer Letter Rejected Successfully');
         this.modalService.dismissAll();
-        setTimeout(() => {
-          this.router.navigate(['']);
-        }, 300); // Adjust delay if needed
+        this.getOfferLetterDetails();
+        this.confiramtionpopups.openSuccess('Offer Letter Rejected Successfully');
+        
+       
+        
       },
       error: (err: any) => {
         console.log(err);
@@ -419,13 +420,12 @@ export class OfferLetterComponent implements OnInit {
       }
     })
   }
-
-  okreload() {
-    location.reload();
-  }
-
   redirectToNextPage() {
     this.router.navigate(['preonboarding/education']);
+  }
+  navigatefirst() {
+    localStorage.clear();
+    this.router.navigate(['']);
   }
 
   Loading: boolean = false;

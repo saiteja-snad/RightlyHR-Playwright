@@ -100,7 +100,7 @@ export class TraineeApprovalsComponent {
 
   comment = [] as any;
   commentsFunction(Value: any,content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
     this.comment = Value;
   }
 

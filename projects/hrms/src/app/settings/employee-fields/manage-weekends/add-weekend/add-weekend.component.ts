@@ -19,6 +19,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 export class AddWeekendComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('deletepopup1') deletepopup1: any;
+  deleteIndex: number | null = null;
   weekendForm!: FormGroup;
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
@@ -81,6 +83,19 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
       this.weekends.push(this.createWeekend());
     } else {
       console.warn('Maximum of 7 weekends can be added.');
+    }
+  }
+
+  
+  deleteRow(i: any){
+    this.deleteIndex = i;
+    this.modalService.open(this.deletepopup1, { backdrop: 'static', centered: true });
+  }
+
+  onDeleteClose(modal: any) {
+    modal.dismiss();
+    if (this.deleteIndex !== null) {
+      this.removeWeekend(this.deleteIndex);
     }
   }
 

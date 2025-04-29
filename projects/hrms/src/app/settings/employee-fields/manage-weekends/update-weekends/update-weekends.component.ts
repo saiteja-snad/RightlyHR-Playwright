@@ -18,6 +18,8 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class UpdateWeekendsComponent {
   @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('deletepopup1') deletepopup1: any;
+  deleteIndex: number | null = null;
   weekendForm!: FormGroup;
   weekendDataLM!: IWeekends;
   showbtn = false;
@@ -173,6 +175,19 @@ export class UpdateWeekendsComponent {
     }
   }
 
+  
+  deleteRow(i: any){
+    this.deleteIndex = i;
+    this.modalService.open(this.deletepopup1, { backdrop: 'static', centered: true });
+  }
+
+  onDeleteClose(modal: any) {
+    modal.dismiss();
+    if (this.deleteIndex !== null) {
+      this.removeWeekend(this.deleteIndex);
+    }
+  }
+
   getAllYears() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
       this.yearsList.push(i);
@@ -264,6 +279,7 @@ export class UpdateWeekendsComponent {
   }
 
   updateWeekend(form: FormGroup) {
+    debugger
     console.log(form);
     
     if (form.invalid) {
@@ -298,17 +314,17 @@ export class UpdateWeekendsComponent {
         status: 'Pending for submission'
       }))
     }
-    // this.http.postdata('OrgWeekendHeader/Update/OrgWeekEnd', payload).pipe(takeUntil(this.destroy$)).subscribe({
-    //   next: (response: any) => {
-    //     this.modal.openSuccessModal('Weekends Updated Successfully!')
-    //     setTimeout(() => {
-    //       this.closeWeekend();
-    //     }, 2000)
-    //   },
-    //   error: (err: any) => {
-    //     this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to update weekends!')
-    //   }
-    // });
+    this.http.postdata('OrgWeekendHeader/Update/OrgWeekEnd', payload).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.modal.openSuccessModal('Weekends Updated Successfully')
+        setTimeout(() => {
+          this.closeWeekend();
+        }, 2000)
+      },
+      error: (err: any) => {
+        this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to update weekends')
+      }
+    });
   }
 
   publishWeekends() {
@@ -319,13 +335,13 @@ export class UpdateWeekendsComponent {
     this.http.postdata(`CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`, { params: publishItem }).
       pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
-          this.modal.openSuccessModal('Weekends Published Successfully!')
+          this.modal.openSuccessModal('Weekends Published Successfully')
           setTimeout(() => {
             this.closeWeekend();
           }, 2000)
         },
         error: (err: any) => {
-          this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to publish weekends!')
+          this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to publish weekends')
         }
       })
   }

@@ -17,6 +17,8 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './clone-weekends.component.scss'
 })
 export class CloneWeekendsComponent {
+  @ViewChild('deletepopup1') deletepopup1: any;
+  deleteIndex: number | null = null;
   weekendForm!: FormGroup;
   weekendDataLM!: IWeekends;
   showbtn= false;
@@ -114,6 +116,19 @@ export class CloneWeekendsComponent {
       value: day,
       disabled: selectedDays.includes(day)
     }));
+  }
+
+  
+  deleteRow(i: any){
+    this.deleteIndex = i;
+    this.modalService.open(this.deletepopup1, { backdrop: 'static', centered: true });
+  }
+
+  onDeleteClose(modal: any) {
+    modal.dismiss();
+    if (this.deleteIndex !== null) {
+      this.removeWeekend(this.deleteIndex);
+    }
   }
 
   patchWeekendForm(data: any) {
@@ -287,13 +302,13 @@ export class CloneWeekendsComponent {
 
     this.http.postdata('OrgWeekendHeader/Post/OrgWeekEnd', payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        this.modal.openSuccessModal('Weekends Created Successfully!')
+        this.modal.openSuccessModal('Weekends Created Successfully')
         setTimeout(() => {
          this.closeWeekend();
         }, 2000)
       },
       error: (err: any) => {
-        this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to create weekends!')
+        this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to create weekends')
       }
     });
   }

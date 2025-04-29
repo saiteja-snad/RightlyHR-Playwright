@@ -41,7 +41,8 @@ export class ServingPeriodComponent {
   ngOnInit(): void {
     this.AddForm = this.fb.group({
       addServingPeriod: ['', [
-        Validators.required
+        Validators.required,
+        this.formValidations.maxCharactersValidator(101)
       ]],
       Duration: ['', [
         Validators.required, 
@@ -51,7 +52,7 @@ export class ServingPeriodComponent {
     this.updateForm = this.fb.group({ 
       UpdateServingPeriod: ['', [
         Validators.required, // Only letters and spaces
-
+        this.formValidations.maxCharactersValidator(101)
       ]],
       UpdateDuration: ['', [
         Validators.required

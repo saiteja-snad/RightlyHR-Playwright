@@ -60,14 +60,14 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.getTable();
 
     this.AddForm = this.fb.group({
-      teamName: ['', [Validators.required, Validators.maxLength(100)]],
+      teamName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
       departmentId: [null, [Validators.required]],
       teamManager: [null, [Validators.required]],
     });
 
     this.updateForm = this.fb.group({
       updateddepartmentId: ['', [Validators.required]],
-      UpdatedTeamName: [null, [Validators.required, Validators.maxLength(100)]],
+      UpdatedTeamName: [null, [Validators.required, this.formValidations.maxCharactersValidator(101)]],
       updatedteamManager: ['', [Validators.required]]
     });
   }
@@ -111,25 +111,6 @@ export class TeamComponent implements OnInit, OnDestroy {
       }
     });
   }
-  allowOnlyHyphenAndAlphanumeric(event: Event, control: AbstractControl | null) {
-    const input = event.target as HTMLInputElement;
-    let value = input.value;
-  
-    // Allow only alphanumeric, hyphen, and spaces
-    value = value.replace(/[^a-zA-Z0-9- ]/g, '');
-  
-    // Remove leading spaces or hyphens
-    value = value.replace(/^[\s-]+/, '');
-  
-    input.value = value;
-    
-    if (control) {
-      control.setValue(value, { emitEvent: false });
-    }
-  }
-  
-  
-  
 
   sortdepartments() {
     this.deptdetails = this.deptdetails.sort((a, b) => {
@@ -166,11 +147,10 @@ export class TeamComponent implements OnInit, OnDestroy {
             return (a.subdepartmentName || '').localeCompare(b.subdepartmentName || '');
           });
 
-        console.log('Team data processed and sorted:', this.teamdetailsdata);
       },
       error: (reason: any) => {
-        console.error('Error fetching team data:', reason);
-        this.conformationPopup.openErrorModal('Failed to load teams');
+        const errorMessage = reason.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }
@@ -196,7 +176,8 @@ export class TeamComponent implements OnInit, OnDestroy {
           this.getTable();
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal('Failed to add team: ' + (error.error?.message || 'Unknown error'));
+          const errorMessage = error.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     } 
@@ -260,8 +241,8 @@ export class TeamComponent implements OnInit, OnDestroy {
           this.getTable();
         },
         error: (error: any) => {
-          console.error('Error updating team:', error);
-          this.conformationPopup.openErrorModal('Failed to update team');
+          const errorMessage = error.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     } else {
@@ -302,7 +283,6 @@ export class TeamComponent implements OnInit, OnDestroy {
   onUpdateManagerChange(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
     const selectedValue = selectElement.value;
-    console.log('Update Form - Selected Team Manager value (raw):', selectedValue);
 
     // Convert to number if it's a numeric string and not "null" or empty
     let managerId: string | number = selectedValue;
@@ -310,14 +290,11 @@ export class TeamComponent implements OnInit, OnDestroy {
       managerId = Number(selectedValue);
     }
 
-    console.log('Update Form - Selected Team Manager value (processed):', managerId);
-
     // Set the value directly to ensure it's properly recognized
     this.updateForm.get('teamManagerId')?.setValue(managerId);
     this.updateForm.get('teamManagerId')?.markAsDirty();
     this.updateForm.get('teamManagerId')?.updateValueAndValidity();
 
-    console.log('Update form after manager change:', this.updateForm.value);
   }
 
   // DELETE
@@ -330,14 +307,12 @@ export class TeamComponent implements OnInit, OnDestroy {
     console.log('Deleting team:', this.updateDepartmentDetails);
 
     if (!this.updateDepartmentDetails || !this.updateDepartmentDetails.subdepartmentId) {
-      console.error('No valid team selected for deletion');
       this.conformationPopup.openErrorModal('Cannot delete: No valid team selected');
       return;
     }
 
     this.subscription = this.http.getData(`Subdepartments/deletebyid/${this.updateDepartmentDetails.subdepartmentId}`).subscribe({
       next: () => {
-        console.log('Team deleted successfully');
         modal.close();
         this.conformationPopup.openSuccessModal('Team deleted successfully');
 
@@ -346,8 +321,8 @@ export class TeamComponent implements OnInit, OnDestroy {
         this.getTable();
       },
       error: (error: any) => {
-        console.error('Error deleting team:', error);
-        this.conformationPopup.openErrorModal('Failed to delete team: ' + (error.error?.message || 'Unknown error'));
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

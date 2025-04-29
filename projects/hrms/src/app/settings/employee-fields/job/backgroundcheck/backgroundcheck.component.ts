@@ -39,11 +39,11 @@ export class BackgroundcheckComponent {
 
   ngOnInit(): void {
     this.BackgroundCheckForm = this.fb.group({
-      BackgroundCheck: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      BackgroundCheck: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
 
     this.updateForm = this.fb.group({
-      BackgroundCheck: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      BackgroundCheck: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
 
     this.BackgroundChecktype();
@@ -72,9 +72,10 @@ export class BackgroundcheckComponent {
         this.conformationPopup.openSuccessModal('Background Check Status added successfully');
         this.resetForm();
       },
-      error: () => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
+      error: (error : any) => {
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+        // this.resetForm();
       }
     });
   }

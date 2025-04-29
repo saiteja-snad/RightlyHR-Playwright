@@ -32,7 +32,7 @@
             </div>
 
             <div class="custom-table-content">
-                @if(!dataLoad && selectedFolder?.length && selectedFolder.length > 0){
+                @if(!dataLoad){
                 <table class="w-100">
 
                     <thead>
@@ -41,6 +41,7 @@
                         <th>ACTION</th>
                     </thead>
                     <tbody>
+                        @if(selectedFolder?.length && selectedFolder.length > 0){
                         @for(subFolder of selectedFolder; track $index){
                         <tr>
                             @if(!subFolder.isNotVisible){
@@ -56,10 +57,14 @@
                             }
                         </tr>
                         }
+                    }
+                    @else{
+                        <tr>
+                          <td colspan="3"><app-no-data-found /></td>
+                        </tr>
+                      }
                     </tbody>
                 </table>
-            }@else{ 
-                <app-no-data-found/>
             }
             </div>
         </div>

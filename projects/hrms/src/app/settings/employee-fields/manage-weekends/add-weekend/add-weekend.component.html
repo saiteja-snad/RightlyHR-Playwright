@@ -102,7 +102,7 @@
                 </div>
                 <div>
                     <button type="button" class="custom-btn btn-primary" (click)="addWeekend()"
-                        [disabled]="weekends.length >= 3">{{"+ Add Row" | translate}}</button>
+                        [disabled]="weekends.length >= 3 || (weekendForm?.get('year')?.invalid || weekendForm?.get('location')?.invalid || weekendForm?.get('subLocation')?.invalid || weekendForm?.get('shift')?.invalid)">{{"+ Add Row" | translate}}</button>
                 </div>
             </div>
 
@@ -156,7 +156,7 @@
                             <td><input type="checkbox" class="form-check-input" formControlName="week5"></td>
                             @if(i>0){
                             <td>
-                                <a (click)="weekends.length > 1 && removeWeekend(i)">
+                                <a (click)="weekends.length > 1 && deleteRow(i)">
                                     <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
                                 </a>
                             </td>
@@ -176,18 +176,20 @@
     </div>
 </div>
 
-<!-- <ng-template #confirmation let-modal>
-    <div class="result-popup-content text-center" ngbAutofocus>
-        <div class="mt-2">
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
-            <p class="confirmation-text">{{'Are you sure want to close?'|translate}}</p>
-        </div>
-        <div class="d-flex gap-5 pt-2 w-100">
-            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{"No" | translate}}</button>
-            <button class="custom-btn btn-primary w-50  py-2" (click)="closeWeekend()">{{"Yes" | translate}}</button>
-        </div>
+<ng-template #deletepopup1 let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+  
+      <div>
+        <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+        <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary " (click)="closeDelete(modal)">{{'No'|translate}}</button>
+        <button type="button" class="custom-btn btn-primary " (click)="onDeleteClose(modal)">{{'Yes'|translate}}</button>
+      </div>
     </div>
-</ng-template> -->
+  
+  </ng-template>
 
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>

@@ -47,11 +47,10 @@ export class GradeComponent {
         '',
         [
           Validators.required,
-          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
-          Validators.maxLength(100),
+          this.formValidations.maxCharactersValidator(101),
         ],
       ],
-      jobgrade: ['', [Validators.required, Validators.maxLength(100)]],
+      jobgrade: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
     });
 
     this.updateForm = this.fb.group({
@@ -59,11 +58,10 @@ export class GradeComponent {
         '',
         [
           Validators.required,
-          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
-          Validators.maxLength(100),
+          this.formValidations.maxCharactersValidator(101),
         ],
       ],
-      updategraderole: ['', [Validators.required, Validators.maxLength(100)]],
+      updategraderole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
     });
     this.getgradeid();
   }
@@ -96,14 +94,15 @@ export class GradeComponent {
         this.getgradeid();
         modal.close();
         this.conformationPopup.openSuccessModal(
-          'Grade details  added successfully'
+          'Grade Details added successfully'
         );
 
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+        // this.resetForm();
       },
     });
   }
@@ -143,8 +142,9 @@ export class GradeComponent {
             this.resetForm();
           },
           error: (error: any) => {
-            this.conformationPopup.openErrorModal('Insertion of data failed');
-            this.resetForm();
+            const errorMessage = error.error?.Message;
+            this.conformationPopup.openErrorModal(errorMessage);
+            // this.resetForm();
           },
         });
     }
@@ -175,8 +175,9 @@ export class GradeComponent {
           'Grade Details deleted successfully '
         );
       },
-      error: () => {
-        this.conformationPopup.openErrorModal('Failed to delete the frequency');
+      error: (err : any) => {
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       },
     });
   }

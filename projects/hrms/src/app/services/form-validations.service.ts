@@ -72,28 +72,84 @@ export class FormValidationsService {
       return;
     }
 
-    const isAlphabetic = /^[A-Za-z\s]$/.test(key);
+    const isAlphabetic = /^[A-Za-z0-9\s]$/.test(key);
     if (!isAlphabetic) {
       event.preventDefault();
     }
   }
+
+  restrictInputAllowSpecialChars(event: KeyboardEvent) {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+  
+    // Allow navigation and control keys
+    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' ||
+      key === 'ArrowRight' || key === 'Tab'
+    ) {
+      return;
+    }
+  
+    const cursorPosition = inputElement.selectionStart || 0;
+    
+    // Prevent the first character from being a space
+    if ((key === ' ' || /^[0-9]$/.test(key)) && cursorPosition === 0) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Regex allows letters, numbers, space, and common special characters
+    const isAllowed = /^[A-Za-z0-9\s.-]$/.test(key);
+    if (!isAllowed) {
+      event.preventDefault();
+    }
+  }
+
+  maxCharactersValidator(max: number) {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (value && value.length >= max) {
+        return { maxCharacters: true };
+      }
+      return null;
+    };
+  }
+
+  restrictInputAllowDot(event: KeyboardEvent) {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+  
+    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
+      return;
+    }
+  
+    // Prevent the first character from being a space or dot
+    if ((key === ' ' || key === '.') && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+  
+    const isAllowed = /^[A-Za-z0-9.\s]$/.test(key);
+    if (!isAllowed) {
+      event.preventDefault();
+    }
+  }
+
+  
   
   blockNonAlphabets(event: KeyboardEvent): void {
     const key = event.key;
     const input = (event.target as HTMLInputElement).value;
-  
-    // Allow control keys: Backspace, Tab, Arrow keys, Delete, etc.
+ 
     if (
       key === 'Backspace' || key === 'Delete' ||  key === 'Tab' ||
       key === 'ArrowLeft' || key === 'ArrowRight' || key === 'ArrowUp' ||
       key === 'ArrowDown' ||
       key === 'Home' || key === 'End'
     ) {
-      return; // Allow these keys
+      return;
     }
-  
-    // Only allow letters and space (but not space as first character)
-    const pattern = /^[a-zA-Z ]$/;
+
+    const pattern =  /^[a-zA-Z. ]$/;
     if (!pattern.test(key) || (key === ' ' && input.length === 0)) {
       event.preventDefault();
     }
@@ -101,7 +157,7 @@ export class FormValidationsService {
 
   restrictSpecialCharacters(event: KeyboardEvent) {
     const key = event.key;
-    const regex = /^[a-zA-Z0-9 ]*$/; // Allow only alphanumeric characters and spaces
+    const regex = /^[a-zA-Z0-9 ]*$/;
     if (!regex.test(key)) {
       event.preventDefault();  
     }

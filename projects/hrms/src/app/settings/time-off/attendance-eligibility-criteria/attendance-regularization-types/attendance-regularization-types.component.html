@@ -16,22 +16,24 @@
             </div>
         </form>
     </div>
-
+    
+    @if(!dataLoad){
     <div class="custom-table-content w-50">
         <ng-container *ngIf="permissionsType!.length > 0; else noDataTemplate">
             <table class="w-100">
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th class="text-center" >Actions</th>
+                        <th class="text-center">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let permission of permissionsType">
                         <td>{{permission.name}}</td>
-                        <td class="text-center" >
+                        <td class="text-center">
                             <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></span>
+                                <span type="button" data-bs-toggle="dropdown"><i
+                                        class="bi bi-three-dots-vertical"></i></span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li>
                                         <a class="dropdown-item" (click)="openModal(updatePermissionModal,permission)">
@@ -39,7 +41,8 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" (click)="openDeleteModal(deletePermissionModal,permission)">
+                                        <a class="dropdown-item"
+                                            (click)="openDeleteModal(deletePermissionModal,permission)">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
                                     </li>
@@ -51,6 +54,9 @@
             </table>
         </ng-container>
     </div>
+    } @else { <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+    </div>}
 </div>
 
 <ng-template #noDataTemplate>

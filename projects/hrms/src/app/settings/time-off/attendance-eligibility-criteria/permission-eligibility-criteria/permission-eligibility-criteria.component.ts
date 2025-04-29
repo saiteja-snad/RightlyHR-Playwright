@@ -7,11 +7,12 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 
 @Component({
   selector: 'app-permission-eligibility-criteria',
-  imports: [CommonModule, NoDataFoundComponent,FormsModule],
+  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent],
   templateUrl: './permission-eligibility-criteria.component.html',
   styleUrl: './permission-eligibility-criteria.component.scss'
 })
@@ -23,7 +24,7 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
   currentEntity!:string;
   validationError!:any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  dataLoad = false;
   constructor(private http: HttpService,private sharedModalService: OpenModalService,public rbac: RbacService) {}
 
   ngOnInit(): void {
@@ -35,12 +36,15 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
   getdatabyentriy() {
     this.disableEdit();
     const params = 'Permissions'
-    const param = ["maxHoursPerDay", 'maxHoursPerMonth','globalPermissionsDuration','futureDatesAllowed','pastDatesAllowed','allowedPerDay','allowedPerMonth']
+    const param = ["maxHoursPerDay", 'maxHoursPerMonth','globalPermissionsDuration','futureDatesAllowed','pastDatesAllowed','allowedPerDay','allowedPerMonth'];
+    this.dataLoad = true;
     this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        this.permissionsvalue = data as IPermissionsvalue[];
-      }, error(err) {
-        console.log("errors", err)
+        this.permissionsvalue = (data as IPermissionsvalue[])?.sort((a, b) => a.id - b.id);
+        this.dataLoad = false;
+      }, error:(err) =>{
+        console.log("errors", err);
+        this.dataLoad = false;
       },
     });
   }
@@ -86,11 +90,6 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
     
     if (this.validationError) {
       this.sharedModalService.openErrorModal(this.validationError);
-      // this.toaster.error({
-      //   detail: 'ERROR',
-      //   summary: this.validationError,
-      //   duration: 5000,
-      // });
       return; 
     }
     const data = {
@@ -99,22 +98,14 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
     }
     this.http.updatePermissionEligibilityValues(`entityAttributeValues/update`, data).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-  
+        this.sharedModalService.openSuccessModal("Data updated successfully");
         this.getdatabyentriy();
        
-        // this.toaster.success({
-        //   detail: 'SUCCESS',
-        //   summary: 'Data Updated Successfully',
-        //   duration: 2000,
-        // });
       },
       error: (err) => {
+        console.log(err);
         
-        // this.toaster.error({
-        //   detail: 'ERROR',
-        //   summary: 'Some Thing Went Wrong',
-        //   duration: 3000,
-        // });
+        this.sharedModalService.openErrorModal("Data updated failed");
       }
     })
   }

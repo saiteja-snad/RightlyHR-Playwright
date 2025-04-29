@@ -9,10 +9,11 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-attendance-regularization-types',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, DataLoaderContentComponent],
   templateUrl: './attendance-regularization-types.component.html',
   styleUrl: './attendance-regularization-types.component.scss'
 })
@@ -22,7 +23,7 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
   permissionsForm!: FormGroup;
   permissionUpdateForm!: FormGroup;
   selectedPermission = {} as IPermissionType;
-
+  dataLoad = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -46,16 +47,19 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
 
   getPermissionTypes(): void {
     const params = 'Regularization';
+    this.dataLoad = true;
     this.http
       .getDatabytype(`PermissionTypes`, params)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.permissionsType = data as IPermissionType[];
+          this.permissionsType = (data as IPermissionType[])?.sort((a, b) => a.id - b.id);
+          this.dataLoad = false;
         },
-        error(err) {
+        error:(err) => {
           console.log('errors', err);
+          this.dataLoad = false;
         },
       });
   }

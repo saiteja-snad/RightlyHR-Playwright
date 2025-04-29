@@ -48,7 +48,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.handleFormValueChanges();
-    this.getStandardReports();
+    // this.getStandardReports();
     this.getAllLocations();
 
     this.locationReportsForm.valueChanges.subscribe(()=>{

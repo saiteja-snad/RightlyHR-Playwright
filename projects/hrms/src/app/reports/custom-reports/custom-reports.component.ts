@@ -45,7 +45,7 @@ export class CustomReportsComponent {
     basicInfo: {
       name: 'Basic Information',
       fields: [
-        'ID', 'Employee ID', 'Salutation', 'First Name', 'Last Name', 'Middle Name',
+        'ID', 'Employee ID', 'First Name', 'Last Name', 'Middle Name', 'Salutation',
         'Status', 'Marital Status', 'Gender', 'Date of Birth', 'Blood Group'
       ],
       selectedFields: ['Employee ID','First Name','Middle Name','Last Name'],
@@ -191,7 +191,7 @@ export class CustomReportsComponent {
     this.JobShowCard = true;
     this.selectedFields = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
     if (this.fieldGroups['basicInfo']) {
-      this.fieldGroups['basicInfo'].selectedFields = [...this.selectedFields]; // Spread to ensure immutability
+      this.fieldGroups['basicInfo'].selectedFields = [...this.selectedFields]; 
     }
   }
 
@@ -227,8 +227,6 @@ export class CustomReportsComponent {
   }
 
   toggleFieldSelection(field: string, groupKey: string): void {
- 
-    
     const group = this.fieldGroups[groupKey];
     const index = group.selectedFields.indexOf(field);
     console.log(

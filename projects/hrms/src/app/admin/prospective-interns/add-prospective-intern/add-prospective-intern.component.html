@@ -90,7 +90,7 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
-                        placeholder="Select Location" class="form-select custom-select"  formControlName="location"
+                        placeholder="Please select location" class="form-select custom-select"  formControlName="location"
                         (onChange)="OnClickLocation($event)">  
                     </p-select>
                     </div>
@@ -104,7 +104,7 @@
                     </label>
                     <div class="custom-p-select-content">  
                         <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
-                        placeholder="Select Sub Location" class="form-select custom-select"  formControlName="subLocation">  
+                        placeholder="Please select sub location" class="form-select custom-select"  formControlName="subLocation">  
                     </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('subLocation')?.invalid && employeeForm.get('subLocation')?.touched" class="error-msg">

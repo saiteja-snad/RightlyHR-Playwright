@@ -39,7 +39,7 @@
             <ng-template #loadingTemplate>
               <p>Loading...</p>
             </ng-template>
-            <input type="text" class="form-control custom-input" formControlName="workNumber"  (input)="onWorkNumberInput()"
+            <input type="text" class="form-control custom-input" formControlName="workNumber"  (input)="onWorkNumberInput()" (keypress)="formValidation.restrictAlphabets($event)"
               placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
             
               autocomplete="off" required>
@@ -69,7 +69,7 @@
             <ng-template #loadingTemplate>
               <p>Loading...</p>
             </ng-template>
-            <input type="text" class="form-control custom-input" formControlName="phoneNumber"   (input)="onPhoneNumberInput()"
+            <input type="text" class="form-control custom-input" formControlName="phoneNumber"   (input)="onPhoneNumberInput()" (keypress)="formValidation.restrictAlphabets($event)"
               placeholder="Please enter your phone number" id="phonenumbers" aria-describedby="phonenumbers"
             
               autocomplete="off" required>

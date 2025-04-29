@@ -51,12 +51,7 @@ export class RemoteLoginComponent {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.intializewfhForm();
-    this.halfDayValue = JSON.parse(
-      localStorage.getItem('filterHalfDayData') || '{}'
-    );
-    this.fullDayValue = JSON.parse(
-      localStorage.getItem('filterFullDayData') || '{}'
-    );
+
     this.handleAvailingChange();
   }
 

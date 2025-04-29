@@ -9,6 +9,7 @@ import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { RbacService } from '../../../services/rbac.service';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-contact-details',
@@ -44,7 +45,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
    selectedworkcoutrycode = signal<any>('');
    selectedpersonalnumbercode = signal<any>('');
 
-  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder, private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService) {
+  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService ,private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService) {
     effect(() => {
       this.selectedworkcoutrycode.set(this.selectedDialCode);
       this.selectedpersonalnumbercode.set(this.selectedDialphoneCode);
@@ -81,9 +82,11 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
   disableForm(): void {
     this.buttons = false;
-
+    this.contactForm.reset();
+    this.getEmployeeId();
     this.contactForm.disable();
   }
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -141,11 +144,19 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           console.log('Data updated successfully:', data);
-          this.modalService.dismissAll();
+          if (data.statusCode === 200) {
+            this.conformationPopup.openSuccessModal('Contact Details updated successfully');
           this.contactForm.disable();
           this.buttons = false; // Disable the button after successful update
           this.getEmployeeId();
-          this.conformationPopup.openSuccessModal('Contact Details updated successfully');
+        
+          } else if (data.statusCode === 409) {
+          
+            this.conformationPopup.openErrorModal(data.message);
+            this.patchForm(data); // Bind the data in case of conflict
+          }
+          
+          
         },
         error: (reason: any) => {
           console.log(reason);

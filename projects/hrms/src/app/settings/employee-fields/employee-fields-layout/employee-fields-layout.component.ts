@@ -33,6 +33,7 @@ export class EmployeeFieldsLayoutComponent {
       '/settings/employee-fields/addholidays',
       '/settings/employee-fields/updateholidays',
       '/settings/employee-fields/viewholidays',
+      '/settings/employee-fields/cloneholidays',
       '/settings/employee-fields/addshifts',
       /^\/settings\/employee-fields\/updateshifts\/\d+$/,
       /^\/settings\/employee-fields\/cloneshifts\/\d+$/,

@@ -128,8 +128,8 @@
             {{ 'Probation Type' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <input type="text" class="form-control custom-input readonly-style" [value]="updateForm.get('Type')?.value"
-              formControlName="Type" [readonly]="isUserViewOnly" />
+            <input type="text" class="form-control custom-input" [value]="updateForm.get('Type')?.value"
+              formControlName="Type" readonly/>
           </div>
           <div *ngIf="updateForm.get('Type')?.touched && updateForm.get('Type')?.invalid" class="error-msg mt-2">
             <div *ngIf="updateForm.get('Type')?.errors?.['required']">{{'Type is required'|translate}}</div>

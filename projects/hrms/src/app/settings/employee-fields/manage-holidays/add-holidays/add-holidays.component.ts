@@ -7,6 +7,7 @@ import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } fr
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-add-holidays',
   imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule],
@@ -23,14 +24,14 @@ export class AddHolidaysComponent {
   yearDetails: any[] = [];
   previousTab: string = '';
 selectedYear: any = null;
-  constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService) { }
+  constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService,private modalService: NgbModal) { }
 
   ngOnInit(): void {
     
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getjobLocationList();
     this.holidayForm = this.fb.group({
-      year: [null, Validators.required],
+      year: ['', Validators.required],
       location: [null, Validators.required],
       subLocation: [null, Validators.required],
       shift: [null, Validators.required],
@@ -64,9 +65,16 @@ selectedYear: any = null;
     return  this.fb.group({
       holidayName: ['',Validators.required],
       holidayDate: ['',Validators.required],
-      isOptional: [false,Validators.required]
+      isOptional: [false,Validators.required],
+
     });
   }
+  // get isSubmitDisabled(): boolean {
+  //   const subLocationControl = this.holidayForm.get('subLocation');
+  //   const shiftControl = this.holidayForm.get('shift');
+  //   const locationControl = this.holidayForm.get('location');
+  //   return !locationControl?.value || !subLocationControl?.value || !shiftControl?.value || this.holidayForm.invalid;
+  // }
   addMomentRow() {
     // if (this.policies.length < 4) {
       this.holidays.push(this.addHolidayRow());
@@ -92,7 +100,12 @@ selectedYear: any = null;
     }
   }
   
-  submit() {
+  submit(holidayForm: FormGroup) {
+    if (holidayForm.invalid) {
+      this.holidayForm.markAllAsTouched();
+      return;
+    }
+
     const formValue = this.holidayForm.value;
     const payload = {
       locationId: formValue.location?.id,
@@ -146,14 +159,40 @@ selectedYear: any = null;
     });
   }
 
+  // getSubLocationByid(selectedLocation: any): void {
+  //   if (selectedLocation && selectedLocation.id) {
+  //     this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
+  //       next: (data: any) => {
+  //         if (data.length === 0) {
+  //           this.subLocationsDropdown = [];
+  //         } else {
+  //           this.subLocationsDropdown = data.jobSubLocations;
+  //           this.shiftDropdown = []; // Update the sub-location dropdown values
+  //         }
+  //       },
+  //       error: (err: any) => {
+  //       },
+  //     });
+  //   } else {
+  //     this.subLocationsDropdown = [];
+  //   }
+  // }
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation.id) {
+      // Reset subLocation and shift fields when location changes
+      this.holidayForm.patchValue({
+        subLocation: null,
+        shift: null
+      });
+      this.subLocationsDropdown = [];
+      this.shiftDropdown = [];
+  
       this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
         next: (data: any) => {
           if (data.length === 0) {
             this.subLocationsDropdown = [];
           } else {
-            this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+            this.subLocationsDropdown = data.jobSubLocations;
           }
         },
         error: (err: any) => {
@@ -161,9 +200,10 @@ selectedYear: any = null;
       });
     } else {
       this.subLocationsDropdown = [];
+      this.shiftDropdown = [];
     }
   }
-
+  
   shiftDropdown: any[] = []; // To store the dynamically fetched shifts
   getShiftBYid(selectedSubLocation: any): void {
     const formValue = this.holidayForm.value;
@@ -188,7 +228,12 @@ selectedYear: any = null;
       this.shiftDropdown = []; // Reset if no sub-location is selected
     }
   }
-
+  openmodel(content: any) {
+    this.modalService.open(content, { centered: true })
+  }
+  cancel(){
+    this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+  }
   nagvition() {
     this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
   }

@@ -22,6 +22,7 @@ export class UpdateHolidaysComponent {
   jobLocationDropDownData: any = [];
   updateHolidaysData : any;
   subLocationsDropdown: any = [];
+  hidePublishCloneButtons : boolean = false;
   empinfo : any;
   yearDetails = [
     { name: '2024', value: 2024 },
@@ -44,10 +45,10 @@ export class UpdateHolidaysComponent {
     
     
     this.holidayForm = this.fb.group({
-      year: [null,Validators.required],
-      location: [null,Validators.required],
-      subLocation: [null,Validators.required],
-      shift : [null,Validators.required],
+      year: ['',Validators.required],
+      location: ['',Validators.required],
+      subLocation: ['',Validators.required],
+      shift : ['',Validators.required],
       holidays: this.fb.array([])
     });
     
@@ -77,11 +78,12 @@ export class UpdateHolidaysComponent {
   
   addHolidayRow() {
     const holidayGroup = this.fb.group({
-      holidayName: [''],
-      holidayDate: [''],
+      holidayName: ['',Validators.required],
+      holidayDate: ['',Validators.required],
       isOptional: [false]
     });
     this.holidays.push(holidayGroup);
+   this.hidePublishCloneButtons = true;
   }
 
   removeHolidayRow(index: number): void {
@@ -90,8 +92,49 @@ export class UpdateHolidaysComponent {
     }
   }
   
+  onLocationChange(selectedLocation: any): void {
+    if (selectedLocation) {
+      // Clear subLocation and shift
+      this.holidayForm.patchValue({
+        subLocation: '',
+        shift: ''
+      });
+      this.subLocationsDropdown = [];
+      this.shiftDropdown = [];
+  
+      // Get sublocations for selected location
+      this.getSubLocationByid(selectedLocation.id);
+    } else {
+      this.subLocationsDropdown = [];
+      this.shiftDropdown = [];
+      this.holidayForm.patchValue({
+        subLocation: '',
+        shift: ''
+      });
+    }
+  }
+  onsubLocationChange(selectedsubLocation: any): void {
+    if (selectedsubLocation) {
+      // Clear subLocation and shift
+      this.holidayForm.patchValue({
+       // subLocation: '',
+        shift: ''
+      });
+      //this.subLocationsDropdown = [];
+      this.shiftDropdown = [];
+  
+      // Get sublocations for selected location
+      this.getShiftBYid(selectedsubLocation.id);
+    } else {
+    //  this.subLocationsDropdown = [];
+      this.shiftDropdown = [];
+      this.holidayForm.patchValue({
+      //  subLocation: '',
+        shift: ''
+      });
+    }
+  }
 
-  hidePublishCloneButtons : boolean = false
   submit() {
     
     const formValue = this.holidayForm.value;
@@ -192,13 +235,12 @@ export class UpdateHolidaysComponent {
         this.holidayForm.patchValue({
           location : this.jobLocationDropDownData.find((x:any) => x.jobLocationName === this.updateHolidaysData.locationName),
         });
+       // this.subLocationsDropdown = [];
         this.getSubLocationByid(this.updateHolidaysData.locationId)
       }
     });
 
   }
-
-  
 
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation) {

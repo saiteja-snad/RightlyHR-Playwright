@@ -44,10 +44,10 @@ export class CloneHolidaysComponent {
     
     
     this.holidayForm = this.fb.group({
-      year: [null,Validators.required],
-      location: [null,Validators.required],
-      subLocation: [null,Validators.required],
-      shift : [null,Validators.required],
+      year: ['',Validators.required],
+      location: ['',Validators.required],
+      subLocation: ['',Validators.required],
+      shift : ['',Validators.required],
       holidays: this.fb.array([])
     });
     
@@ -77,8 +77,8 @@ export class CloneHolidaysComponent {
   
   addHolidayRow() {
     const holidayGroup = this.fb.group({
-      holidayName: [''],
-      holidayDate: [''],
+      holidayName: ['',Validators.required],
+      holidayDate: ['',Validators.required],
       isOptional: [false]
     });
     this.holidays.push(holidayGroup);
@@ -120,6 +120,7 @@ export class CloneHolidaysComponent {
       next: (response: any) => {
         console.log(response);
         this.confirmation.openSuccessModal('Holidays updated successfully');
+        this.nagvition();
         
         
       },
@@ -186,8 +187,10 @@ export class CloneHolidaysComponent {
         this.jobLocationDropDownData = locations;
         console.log(this.jobLocationDropDownData);
         this.holidayForm.patchValue({
-          location : this.jobLocationDropDownData.find((x:any) => x.jobLocationName === this.updateHolidaysData.locationName),
+       //   location : this.jobLocationDropDownData.find((x:any) => x.jobLocationName === this.updateHolidaysData.locationName),
+          location : this.jobLocationDropDownData.jobLocationName
         });
+      //  this.getSubLocationByid(this.updateHolidaysData.locationId)
         this.getSubLocationByid(this.updateHolidaysData.locationId)
       }
     });
@@ -198,9 +201,16 @@ export class CloneHolidaysComponent {
 
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation) {
+        // Reset subLocation and shift fields when location changes
+        this.holidayForm.patchValue({
+          subLocation: null,
+          shift: null
+        });
+        this.subLocationsDropdown = [];
+        this.shiftDropdown = [];
       this.subscription = this.http
         .getData(
-          `JobLocation/sub-location-by-joblocation/${selectedLocation}`
+          `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
         )
         .subscribe({
           next: (data: any) => {
@@ -208,19 +218,21 @@ export class CloneHolidaysComponent {
               this.subLocationsDropdown = [];
             } else {
               this.subLocationsDropdown = data.jobSubLocations; 
+              this. shiftDropdown = []; 
              
             }
 
             console.log(this.subLocationsDropdown);
-            this.holidayForm.patchValue({
-              subLocation : this.subLocationsDropdown.find((x:any) => x.jobSubLocationName === this.updateHolidaysData.subLocationName),
-            });
+           // this.holidayForm.patchValue({
+             // subLocation : this.subLocationsDropdown.find((x:any) => x.jobSubLocationName === this.updateHolidaysData.subLocationName),
+            //  subLocation : this.subLocationsDropdown,
+          //  });
 
-            const shiftdata  = {
-              locid : this.updateHolidaysData.locationId,
-              sublocid : this.updateHolidaysData.subLocationId
-            }
-            this.getShiftBYid(shiftdata);
+            // const shiftdata  = {
+            //   locid : this.updateHolidaysData.locationId,
+            //   sublocid : this.updateHolidaysData.subLocationId
+            // }
+            // this.getShiftBYid(shiftdata);
           },
           error: (err: any) => {
 
@@ -228,6 +240,7 @@ export class CloneHolidaysComponent {
         });
     } else {
       this.subLocationsDropdown = [];
+      this.shiftDropdown = [];
 
     }
   }
@@ -237,8 +250,8 @@ export class CloneHolidaysComponent {
     const formValue = this.holidayForm.value;
     if (selectedSubLocation && selectedSubLocation) {
       const locationId =  formValue.location?.id
-      const subLocationId = this.updateHolidaysData.subLocationId ?? selectedSubLocation
-
+      // const subLocationId = this.updateHolidaysData.subLocationId ?? selectedSubLocation
+      const subLocationId = formValue.subLocation.id ?? selectedSubLocation
       console.log('Location ID:', locationId);
       console.log('Sub Location ID:', subLocationId);
 
@@ -258,10 +271,10 @@ export class CloneHolidaysComponent {
               ); // Flatten the shift data
             }
             
-            this.holidayForm.patchValue({
-              shift : this.shiftDropdown.find((x:any) => x.id === this.updateHolidaysData.shiftID),
-            });
-            console.log('Shift Dropdown Values:', this.shiftDropdown);
+            // this.holidayForm.patchValue({
+            //   shift : this.shiftDropdown.find((x:any) => x.id === this.updateHolidaysData.shiftID),
+            // });
+            // console.log('Shift Dropdown Values:', this.shiftDropdown);
           },
           error: (err: any) => {
             console.error('Error fetching shift data:', err);

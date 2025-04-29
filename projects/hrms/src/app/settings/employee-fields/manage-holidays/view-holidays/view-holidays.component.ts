@@ -23,6 +23,7 @@ export class ViewHolidaysComponent {
   updateHolidaysData: any;
   subLocationsDropdown: any = [];
   empinfo: any;
+  isDisabled = false;
   yearDetails = [
     { name: '2024', value: 2024 },
     { name: '2025', value: 2025 },
@@ -47,15 +48,26 @@ export class ViewHolidaysComponent {
     this.holidayForm.patchValue({
       year: this.yearDetails.find((x: any) => x.value === this.updateHolidaysData.applicableyear),
     });
+    // this.updateHolidaysData.orgHolidaysItems.forEach((row: any) => {
+    //   this.holidays.push(
+    //     this.fb.group({
+    //       holidayName: row.holidayName,
+    //       holidayDate: moment(row.holidayDate).format('YYYY-MM-DD'),
+    //       isOptional: row.isOptional
+          
+    //     })
+    //   );
+    // });
     this.updateHolidaysData.orgHolidaysItems.forEach((row: any) => {
       this.holidays.push(
         this.fb.group({
-          holidayName: row.holidayName,
-          holidayDate: moment(row.holidayDate).format('YYYY-MM-DD'),
-          isOptional: row.isOptional
+          holidayName: [{ value: row.holidayName, disabled: true }],
+          holidayDate: [{ value: moment(row.holidayDate).format('YYYY-MM-DD'), disabled: true }],
+          isOptional: [{ value: row.isOptional, disabled: true }]
         })
       );
     });
+    
   }
 
   get holidays(): FormArray {
@@ -111,7 +123,7 @@ export class ViewHolidaysComponent {
   }
 
   cancel() {
-    this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+    this.router.navigate(['/settings/employee-fields/manage-holidays/published-holidays']);
   }
 
   openmodel(content: any) {
@@ -215,7 +227,9 @@ export class ViewHolidaysComponent {
       this.shiftDropdown = []; // Reset if no sub-location is selected
     }
   }
-
+  clone(){
+    this.router.navigate(['/settings/employee-fields/cloneholidays']);
+  }
   nagvition() {
     this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
   }

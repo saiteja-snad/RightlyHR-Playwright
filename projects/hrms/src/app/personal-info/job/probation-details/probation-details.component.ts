@@ -140,11 +140,7 @@ export class ProbationDetailsComponent implements OnInit {
     })
   }
   closeModel() {
-    const modalElement = document.getElementById('probationCommentsPopup');
-    if (modalElement) {
-      modalElement.classList.remove('show');
-      modalElement.style.display = 'none';
-    }
+   this.modalService.dismissAll();
   }
   openview(content:any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -155,8 +151,8 @@ export class ProbationDetailsComponent implements OnInit {
   setformView(employeeId: number, responseId: number) {
     this.http.communicationService.next({ employeeId, responseId });
   }
-  probationCommentsFunction(Value: any) {
-    
+  probationCommentsFunction(Value: any,content : any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
     console.log(Value)
     this.appcomment = Value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property

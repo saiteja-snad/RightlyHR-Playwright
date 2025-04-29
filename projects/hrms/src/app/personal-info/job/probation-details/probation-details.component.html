@@ -25,7 +25,7 @@
                     <td>{{probation.probationExtendedDate ? (probation.probationExtendedDate | dateformat) : '-'}}</td>
                     <td class="cursor">
                         @if(probation.approvers && probation.approvers.length > 0;){
-                        <div (click)="probationCommentsFunction(probation.approvers)">
+                        <div (click)="probationCommentsFunction(probation.approvers,approverhistory)">
                             <i class="bi bi-info-circle-fill"></i>
                         </div>
                         } @else {
@@ -45,7 +45,7 @@
                                 probation.status!='Extended'){
                                 <li>
                                     <a (click)="requestForProbation(probation)" class="dropdown-item">
-                                        <i class="bi bi-repeat me-2"></i>Request for probation Confirmation</a>
+                                        <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
                                 </li>
                                 }
                                 <!--status Rejected-->
@@ -53,7 +53,7 @@
                                 shouldprobationShowButton(empdata.probationEndDate)){
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
-                                        <i class="bi bi-repeat me-2"></i>Request for probation Confirmation</a>
+                                        <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
                                 </li>
                                 }
                                 <!--status extended-->
@@ -61,7 +61,7 @@
                                 shouldprobationShowButton(empdata.probationEndDate) &&
                                 probation.probationExtendCount<probationExtendTimes){ <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
-                                        <i class="bi bi-repeat me-2"></i>Request for probation Confirmation</a>
+                                        <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
                                     </li>
                                     }
                             </ul>

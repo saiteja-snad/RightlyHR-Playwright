@@ -535,7 +535,7 @@ export class AssessmentformComponent {
   postProbationDetails() { }
 
   close() {
-    this.router.navigate(['/timeoffleaves/probation-approvals']);
+    this.router.navigate(['/time-off/pending-approvals/probation-request']);
   }
 
   reset() {
@@ -678,7 +678,7 @@ export class AssessmentformComponent {
           this.dataSuccessMsg('Probation Request Submitted Successfully');
           setTimeout(() => {
             this.modalService.dismissAll();
-            this.router.navigate(['/timeoffleaves/probation-approvals']);
+            this.router.navigate(['/time-off/pending-approvals/probation-request']);
           }, 2000);
         },
         error: (reason: any) => {

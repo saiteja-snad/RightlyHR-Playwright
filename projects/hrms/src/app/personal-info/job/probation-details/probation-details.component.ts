@@ -97,25 +97,17 @@ export class ProbationDetailsComponent implements OnInit {
   }
 
   requestForProbation(Value: any) {
-    this.openModalService.openLoaderModal('Requesting...');
     const employeeId = parseInt(this.empinfo.employeeId);
     const referenceId = Value.probationId;
     const raisedbyempId = this.loggedinuser.employeeId;
     this.http.postProbation(`ProbationFlow/raiseprobationrequest`, employeeId, referenceId, raisedbyempId).subscribe({
       next: (response: any) => {
-        this.modalService.dismissAll();
+        
         this.getProbationRequest();
         this.openModalService.openSuccessModal('Probation Request Raised Successfully');
       },
       error: (reason: any) => {
-        if (reason.status == 500) {
-          this.modalService.dismissAll();
-          this.openModalService.openErrorModal(reason.error);
-        }
-        else {
-          this.modalService.dismissAll();
-          this.openModalService.openErrorModal(reason.error.Message);
-        }
+        this.openModalService.openErrorModal(reason.error.Message);
       }
     })
   }
@@ -154,13 +146,8 @@ export class ProbationDetailsComponent implements OnInit {
       modalElement.style.display = 'none';
     }
   }
-  openview() {
-    this.closeModel();
-    const modalElement = document.getElementById('probationformView');
-    if (modalElement) {
-      modalElement.classList.add('show');
-      modalElement.style.display = 'block';
-    }
+  openview(content:any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
   close(){
     window.location.reload();
@@ -169,11 +156,7 @@ export class ProbationDetailsComponent implements OnInit {
     this.http.communicationService.next({ employeeId, responseId });
   }
   probationCommentsFunction(Value: any) {
-    const modalElement = document.getElementById('probationCommentsPopup');
-    if (modalElement) {
-      modalElement.classList.add('show');
-      modalElement.style.display = 'block';
-    }
+    
     console.log(Value)
     this.appcomment = Value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property

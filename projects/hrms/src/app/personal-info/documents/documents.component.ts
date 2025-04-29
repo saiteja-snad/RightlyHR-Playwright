@@ -118,7 +118,7 @@ export class DocumentsComponent {
   getAllFiles() {
     if (!this.selectedFile.isEmpDir) {
       this.subscription = this.http
-        .getDataWithQuery('FileSystem/Files', this.selectedFile.name)
+        .getDataWithQuery('FileSystem/Files', `${this.selectedFile.name}/${this.empdata.employeeId}`)
         .subscribe({
           next: (data: any) => {
             console.log(data);

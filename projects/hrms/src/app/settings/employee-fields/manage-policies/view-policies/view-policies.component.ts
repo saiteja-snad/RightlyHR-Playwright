@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -11,69 +11,88 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-view-policies',
-  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule, NgbPopoverModule],
+  imports: [
+    CommonModule,
+    Select,
+    ReactiveFormsModule,
+    TranslateModule,
+    NgbPopoverModule,
+  ],
   templateUrl: './view-policies.component.html',
-  styleUrl: './view-policies.component.scss'
+  styleUrl: './view-policies.component.scss',
 })
-export class ViewPoliciesComponent {
+export class ViewPoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   subscription!: Subscription;
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
-  updatePoliciesData : any;
+  updatePoliciesData: any;
   subLocationsDropdown: any = [];
-  empinfo : any;
+  empinfo: any;
   hideBUTTON = false;
   policyFileName: string = '';
+  policyFileNames: string[] = [];
   yearDetails = [
     { name: '2024', value: 2024 },
     { name: '2025', value: 2025 },
     { name: '2026', value: 2026 },
     { name: '2027', value: 2027 },
     { name: '2028', value: 2028 },
-  ]
+  ];
 
-
-  constructor(private fb: FormBuilder,
-    public router:Router,private http: HttpService, private confirmation: OpenModalService,
+  constructor(
+    private fb: FormBuilder,
+    public router: Router,
+    private http: HttpService,
+    private confirmation: OpenModalService,
     private modalService: NgbModal,
-    private route: ActivatedRoute,
-  ) { }
-
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.updatePoliciesData = JSON.parse(localStorage.getItem('viewpolicies') ?? '{}');
+    this.updatePoliciesData = JSON.parse(
+      localStorage.getItem('viewpolicies') ?? '{}'
+    );
 
     this.getjobLocationList();
 
-    
-    
     this.policyForm = this.fb.group({
-      year: [{value: null, disabled: true},Validators.required],
-      location: [{value: null, disabled: true},Validators.required],
-      subLocation: [{value: null, disabled: true},Validators.required],
-      shift : [{value: '', disabled: true},Validators.required],
-      policies: this.fb.array([])
+      year: [{ value: null, disabled: true }, Validators.required],
+      location: [{ value: null, disabled: true }, Validators.required],
+      subLocation: [{ value: null, disabled: true }, Validators.required],
+      shift: [{ value: '', disabled: true }, Validators.required],
+      policies: this.fb.array([]),
     });
-    
 
     this.policyForm.patchValue({
-      year: this.yearDetails.find((x:any) => x.value === this.updatePoliciesData.applicableyear),
+      year: this.yearDetails.find(
+        (x: any) => x.value === this.updatePoliciesData.applicableyear
+      ),
     });
-    this.updatePoliciesData.orgPolicyItems.forEach((row:any) => {
-      this.policies.push(
-        this.fb.group({
-          policyName : [{value: row.policyName, disabled: true}],
-          policyFile : [row.policyAttachment],
-          policyDescription  : [{value: row.policyDescription, disabled: true}],
-         
-        })
+    this.updatePoliciesData.orgPolicyItems.forEach(
+      (row: any, index: number) => {
+        this.policies.push(
+          this.fb.group({
+            policyName: [{ value: row.policyName, disabled: true }],
+            policyFile: [row.policyAttachment],
+            policyDescription: [
+              { value: row.policyDescription, disabled: true },
+            ],
+          })
+        );
+        const fileName = this.getFileName(row.policyAttachment);
+        this.policyFileNames[index] = fileName;
+      }
+    );
 
-      );
-      this.getFileName(row.policyAttachment);
+    this.policyForm.patchValue({
+      location: { jobLocationName: this.updatePoliciesData.locationName },
+      subLocation: {
+        jobSubLocationName: this.updatePoliciesData.subLocationName,
+      },
+      shift: { id: this.updatePoliciesData.shiftName }, // Or use shiftName if that's the display value
     });
-
   }
 
   getFileName(attachmentPath: string): string {
@@ -82,11 +101,9 @@ export class ViewPoliciesComponent {
       let fileName = splitPath[splitPath.length - 1];
       if (fileName.length > 12) {
         fileName = fileName.substring(12);
-        
       }
       this.policyFileName = fileName;
       return fileName;
-      
     }
     return '';
   }
@@ -95,12 +112,11 @@ export class ViewPoliciesComponent {
     return this.policyForm.get('policies') as FormArray;
   }
 
-  
   addPolicyRow() {
     const policyGroup = this.fb.group({
-      policyName: [{value: '',disabled: true}, Validators.required],
-      policyFile: [{value: '',disabled: true}, Validators.required],
-      policyDescription: [{value: '',disabled: true}, Validators.required],
+      policyName: [{ value: '', disabled: true }, Validators.required],
+      policyFile: [{ value: '', disabled: true }, Validators.required],
+      policyDescription: [{ value: '', disabled: true }, Validators.required],
     });
     this.policies.push(policyGroup);
   }
@@ -125,47 +141,51 @@ export class ViewPoliciesComponent {
     }
   }
 
-  hidePublishCloneButtons : boolean = false
+  hidePublishCloneButtons: boolean = false;
   submit() {
-    
     const formValue = this.policyForm.value;
 
     const payload = {
       locationId: formValue.location?.id ?? this.updatePoliciesData.locationId,
-      subLocationId: formValue.subLocation.id ?? this.updatePoliciesData.subLocationId,
-      applicableyear: formValue.year?.value ?? this.updatePoliciesData.applicableyear,
-      addedby: parseInt(this.empinfo.employeeId) ?? this.updatePoliciesData.addedby,
+      subLocationId:
+        formValue.subLocation.id ?? this.updatePoliciesData.subLocationId,
+      applicableyear:
+        formValue.year?.value ?? this.updatePoliciesData.applicableyear,
+      addedby:
+        parseInt(this.empinfo.employeeId) ?? this.updatePoliciesData.addedby,
       addedDate: new Date().toISOString() ?? this.updatePoliciesData.addedDate,
       status: this.updatePoliciesData.status,
-      authorizedDate: new Date().toISOString() ?? this.updatePoliciesData.authorizedDate,
-      authorizedstatus: 'string' ,
+      authorizedDate:
+        new Date().toISOString() ?? this.updatePoliciesData.authorizedDate,
+      authorizedstatus: 'string',
       shiftID: formValue.shift.id ?? this.updatePoliciesData.shiftID,
-      id : this.updatePoliciesData.id,
+      id: this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
         policyName: item.policyName,
         policyAttachment: item.policyAttachment,
         policyDescription: item.policyDescription,
         status: 'Published',
         holidayColor: 'string',
-        headerID : this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
-      }))
+        headerID: this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
+      })),
     };
-    this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
-      next: (response: any) => {
-        this.confirmation.openSuccessModal('Policies updated successfully');
-        
-        
-      },
-      error: (err) => {
-        this.confirmation.openErrorModal('Policies update failed');
-        
-      }
-    });
-    
+    this.subscription = this.http
+      .postdata('orgPolicies/Update', payload)
+      .subscribe({
+        next: (response: any) => {
+          this.confirmation.openSuccessModal('Policies updated successfully');
+        },
+        error: (err) => {
+          this.confirmation.openErrorModal('Policies update failed');
+        },
+      });
   }
-  
+
   Cancel() {
-    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+    this.modalService.open(this.deletepopup, {
+      backdrop: 'static',
+      centered: true,
+    });
   }
 
   closeDelete(modal: any) {
@@ -177,15 +197,17 @@ export class ViewPoliciesComponent {
     this.navigation();
   }
 
-  cancel(){
-    this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
+  cancel() {
+    this.router.navigate([
+      '/settings/employee-fields/manage-policies/pending-for-submit',
+    ]);
   }
 
   openmodel(content: any) {
-    this.modalService.open(content, { centered: true })
+    this.modalService.open(content, { centered: true });
   }
 
-  clone(){
+  clone() {
     this.router.navigate(['/settings/employee-fields/clonepolices']);
   }
 
@@ -193,94 +215,98 @@ export class ViewPoliciesComponent {
     const formValue = this.policyForm.value;
     const payload = {
       locationId: formValue.location?.id ?? this.updatePoliciesData.locationId,
-      subLocationId: formValue.subLocation.id ?? this.updatePoliciesData.subLocationId,
-      applicableyear: formValue.year?.value ?? this.updatePoliciesData.applicableyear,
-      addedby: parseInt(this.empinfo.employeeId) ?? this.updatePoliciesData.addedby,
+      subLocationId:
+        formValue.subLocation.id ?? this.updatePoliciesData.subLocationId,
+      applicableyear:
+        formValue.year?.value ?? this.updatePoliciesData.applicableyear,
+      addedby:
+        parseInt(this.empinfo.employeeId) ?? this.updatePoliciesData.addedby,
       addedDate: new Date().toISOString() ?? this.updatePoliciesData.addedDate,
       status: 'Published',
-      authorizedDate: new Date().toISOString() ?? this.updatePoliciesData.authorizedDate,
-      authorizedstatus: 'string' ,
+      authorizedDate:
+        new Date().toISOString() ?? this.updatePoliciesData.authorizedDate,
+      authorizedstatus: 'string',
       shiftID: formValue.shift.id ?? this.updatePoliciesData.shiftID,
-      id : this.updatePoliciesData.id,
+      id: this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
         policyName: item.policyName,
         policyAttachment: item.policyAttachment,
         policyDescription: item.policyDescription,
         status: 'Published',
         holidayColor: 'string',
-        headerID : this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
-      }))
+        headerID: this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
+      })),
     };
-    this.subscription = this.http.postdata('orgPolicies/Update', payload).subscribe({
-      next: (response: any) => {
-        this.confirmation.openSuccessModal('Holidays published successfully');
-        
-        
-      },
-      error: (err) => {
-        console.log(err);
-        this.confirmation.openErrorModal('Holidays published failed');
-        
-      }
-    });
-    
+    this.subscription = this.http
+      .postdata('orgPolicies/Update', payload)
+      .subscribe({
+        next: (response: any) => {
+          this.confirmation.openSuccessModal('Holidays published successfully');
+        },
+        error: (err) => {
+          console.log(err);
+          this.confirmation.openErrorModal('Holidays published failed');
+        },
+      });
   }
 
   getjobLocationList() {
-    this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
-      next: (locations: any) => {
-        this.jobLocationDropDownData = locations;
-        this.policyForm.patchValue({
-          location : this.jobLocationDropDownData.find((x:any) => x.jobLocationName === this.updatePoliciesData.locationName),
-        });
-        this.getSubLocationByid(this.updatePoliciesData.locationId)
-      }
-    });
-
+    this.subscription = this.http
+      .getData(`JobLocation/getAllLocations`)
+      .subscribe({
+        next: (locations: any) => {
+          this.jobLocationDropDownData = locations;
+          this.policyForm.patchValue({
+            location: this.jobLocationDropDownData.find(
+              (x: any) =>
+                x.jobLocationName === this.updatePoliciesData.locationName
+            ),
+          });
+          this.getSubLocationByid(this.updatePoliciesData.locationId);
+        },
+      });
   }
-
-  
 
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation) {
       this.subscription = this.http
-        .getData(
-          `JobLocation/sub-location-by-joblocation/${selectedLocation}`
-        )
+        .getData(`JobLocation/sub-location-by-joblocation/${selectedLocation}`)
         .subscribe({
           next: (data: any) => {
             if (data.length === 0) {
               this.subLocationsDropdown = [];
             } else {
-              this.subLocationsDropdown = data.jobSubLocations; 
-             
+              this.subLocationsDropdown = data.jobSubLocations;
             }
             this.policyForm.patchValue({
-              subLocation : this.subLocationsDropdown.find((x:any) => x.jobSubLocationName === this.updatePoliciesData.subLocationName),
+              subLocation: this.subLocationsDropdown.find(
+                (x: any) =>
+                  x.jobSubLocationName ===
+                  this.updatePoliciesData.subLocationName
+              ),
             });
 
-            const shiftdata  = {
-              locid : this.updatePoliciesData.locationId,
-              sublocid : this.updatePoliciesData.subLocationId
-            }
+            const shiftdata = {
+              locid: this.updatePoliciesData.locationId,
+              sublocid: this.updatePoliciesData.subLocationId,
+            };
             this.getShiftBYid(shiftdata);
           },
-          error: (err: any) => {
-
-          },
+          error: (err: any) => {},
         });
     } else {
       this.subLocationsDropdown = [];
-
     }
   }
-  shiftDropdown: any[] = []; 
+  shiftDropdown: any[] = [];
 
   getShiftBYid(selectedSubLocation: any): void {
     const formValue = this.policyForm.value;
     if (selectedSubLocation && selectedSubLocation) {
-      const locationId =  this.updatePoliciesData.locationId ?? formValue.location.id
-      const subLocationId = this.updatePoliciesData.subLocationId ?? selectedSubLocation
+      const locationId =
+        this.updatePoliciesData.locationId ?? formValue.location.id;
+      const subLocationId =
+        this.updatePoliciesData.subLocationId ?? selectedSubLocation;
 
       this.subscription = this.http
         .getData(
@@ -288,7 +314,6 @@ export class ViewPoliciesComponent {
         )
         .subscribe({
           next: (data: any) => {
-
             if (data.length === 0) {
               this.shiftDropdown = []; // Reset if no shifts are found
             } else {
@@ -296,9 +321,11 @@ export class ViewPoliciesComponent {
                 ...data.map((element: any) => element.orgShiftsItems)
               ); // Flatten the shift data
             }
-            
+
             this.policyForm.patchValue({
-              shift : this.shiftDropdown.find((x:any) => x.id === this.updatePoliciesData.shiftName),
+              shift: this.shiftDropdown.find(
+                (x: any) => x.id === this.updatePoliciesData.shiftName
+              ),
             });
           },
           error: (err: any) => {
@@ -316,11 +343,16 @@ export class ViewPoliciesComponent {
     return fullPath.split('\\').pop() || fullPath;
   }
 
-  navigation(){
-    this.router.navigate(['/settings/employee-fields/manage-policies/published-policies']);
+  navigation() {
+    this.router.navigate([
+      '/settings/employee-fields/manage-policies/published-policies',
+    ]);
   }
 
-  ngOnDestroy(){
-    
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    // localStorage.removeItem('viewpolicies');
   }
 }

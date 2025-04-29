@@ -58,7 +58,7 @@
                     class="text-danger">*</span></label>
                 <input type="text" formControlName="policyName" class="form-control custom-input"
                   placeholder="Please enter policy name" maxlength="50"
-                  (keydown)="formValidations.restrictInitialSpace($event)"/>
+                  (keydown)="formValidations.restrictInitialSpace($event)" />
                 <div *ngIf="policy.get('policyName')?.touched && policy.get('policyName')?.invalid" class="error-msg">
                   {{'Policy Name is required'|translate}}
                 </div>
@@ -104,19 +104,20 @@
                       class="text-danger">*</span></label>
                   <input type="text" formControlName="policyDescription" class="form-control custom-input"
                     placeholder="Please enter description" maxlength="50"
-                    (keydown)="formValidations.restrictInitialSpace($event)"/>
+                    (keydown)="formValidations.restrictInitialSpace($event)" />
                   <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.invalid"
                     class="error-msg">
                     {{'Policy Description is required'|translate}}
                   </div>
                 </div>
-               <div>
-                @if(i>0){
-                <button title="Delete" type="button" (click)="deleteRow(i)" *ngIf="policies.length > 1" class="btn p-0 border-0 bg-transparent">
-                  <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
-                </button>
-              }
-               </div>
+                <div>
+                  @if(i>0){
+                  <button title="Delete" type="button" (click)="deleteRow(i)" *ngIf="policies.length > 1"
+                    class="btn p-0 border-0 bg-transparent">
+                    <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
+                  </button>
+                  }
+                </div>
               </div>
             </div>
           </div>

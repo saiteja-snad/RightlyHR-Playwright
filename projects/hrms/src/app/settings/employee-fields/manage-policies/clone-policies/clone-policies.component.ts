@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -16,7 +16,7 @@ import { FormValidationsService } from '../../../../services/form-validations.se
   templateUrl: './clone-policies.component.html',
   styleUrl: './clone-policies.component.scss'
 })
-export class ClonePoliciesComponent {
+export class ClonePoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('deletepopup1') deletepopup1: any;
   deleteIndex: number | null = null;
@@ -89,8 +89,10 @@ export class ClonePoliciesComponent {
       this.isPoliciesChanged(formValue.policies, this.updatePoliciesData.orgPolicyItems);
   
     this.isFormEdited = hasChanged;
-  }
 
+    console.log(formValue.shift?.id, this.updatePoliciesData.shiftID)
+  }
+  
   isPoliciesChanged(formPolicies: any[], originalPolicies: any[]): boolean {
     if (formPolicies.length !== originalPolicies.length) {
       return true;
@@ -100,9 +102,15 @@ export class ClonePoliciesComponent {
       const formPolicy = formPolicies[i];
       const originalPolicy = originalPolicies[i];
   
+      const formName = formPolicy.policyName?.trim();
+      const originalName = originalPolicy.policyName?.trim();
+  
+      const formDescription = formPolicy.policyDescription?.trim();
+      const originalDescription = originalPolicy.policyDescription?.trim();
+  
       if (
-        formPolicy.policyName !== originalPolicy.policyName ||
-        formPolicy.policyDescription !== originalPolicy.policyDescription ||
+        formName !== originalName ||
+        formDescription !== originalDescription ||
         (formPolicy.policyNewFile && formPolicy.policyNewFile !== '')
       ) {
         return true;
@@ -177,8 +185,8 @@ export class ClonePoliciesComponent {
         this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
       },
       error: (err) => {
-        console.log(err);
-        this.confirmation.openErrorModal('Failed to add policy');
+        const errorMessage = err.error?.Message || 'Failed to add policy';
+        this.confirmation.openErrorModal(errorMessage);
         
       }
     });
@@ -318,8 +326,8 @@ export class ClonePoliciesComponent {
   getShiftBYid(selectedSubLocation: any): void {
     const formValue = this.policyForm.value;
     if (selectedSubLocation && selectedSubLocation) {
-      const locationId =  this.updatePoliciesData.locationId
-      const subLocationId = this.updatePoliciesData.subLocationId ?? selectedSubLocation
+      const locationId =  formValue.location?.id ?? this.updatePoliciesData.locationId;
+      const subLocationId = formValue.subLocation.id;
 
       this.subscription = this.http
         .getData(
@@ -361,6 +369,8 @@ export class ClonePoliciesComponent {
   }
 
   ngOnDestroy(){
-    
+    if(this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

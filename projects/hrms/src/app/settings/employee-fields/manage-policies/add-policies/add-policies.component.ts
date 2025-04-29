@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, FormBuilder,Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import moment from 'moment';
@@ -24,7 +24,7 @@ import { FormValidationsService } from '../../../../services/form-validations.se
   templateUrl: './add-policies.component.html',
   styleUrl: './add-policies.component.scss'
 })
-export class AddPoliciesComponent {
+export class AddPoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('deletepopup1') deletepopup1: any;
   deleteIndex: number | null = null;
@@ -249,7 +249,9 @@ export class AddPoliciesComponent {
     }
   
     ngOnDestroy(){
-      
+      if (this.subscription) {
+        this.subscription.unsubscribe();
+      }
     }
 
 }

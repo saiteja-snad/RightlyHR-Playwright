@@ -1,151 +1,167 @@
 <div class="custom-main-component-container w-100">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div>
-        <p class="component-header mb-0" (click)="navigation()">
-          <i class="bi bi-arrow-90deg-left me-2"></i>{{'Add Policy'| translate}}
-        </p>
-      </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <p class="component-header mb-0" (click)="navigation()">
+        <i class="bi bi-arrow-90deg-left me-2"></i>{{'Add Policy'| translate}}
+      </p>
     </div>
+  </div>
 
-    <div class="card custom-card">
-      <div class="p-3">
-    <form [formGroup]="policiesForm" (ngSubmit)="submit()">
-      <div class="custom-setting-right-content w-100 p-3">
-        <!--Select Fields-->
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="d-flex gap-3">
-            <!-- Year -->
-            <div class="custom-p-select-content">
-              <label for="year" class="form-label custom-label mb-2">
-                {{ "Year" | translate }}<span class="text-danger">*</span>
-              </label>
-              <p-select [options]="yearDetails" optionLabel="year" [filter]="false" [showClear]="false" class="form-select custom-select" formControlName="year"
-                                placeholder="Please select year">
-              <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
-              <ng-template let-year #item>{{ year }}</ng-template>
-              </p-select>
-              <div *ngIf="policiesForm.get('year')?.touched && policiesForm.get('year')?.hasError('required')"
-                class="error-msg">
-                {{'Year is required'|translate}}
+  <div class="card custom-card">
+    <div class="p-3">
+      <form [formGroup]="policiesForm" (ngSubmit)="submit()">
+        <div class="custom-setting-right-content w-100 p-3">
+          <!--Select Fields-->
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex gap-3">
+              <!-- Year -->
+              <div class="custom-p-select-content">
+                <label for="year" class="form-label custom-label mb-2">
+                  {{ "Year" | translate }}<span class="text-danger">*</span>
+                </label>
+                <p-select [options]="yearDetails" optionLabel="year" [filter]="false" [showClear]="false"
+                  class="form-select custom-select" formControlName="year" placeholder="Please select year">
+                  <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
+                  <ng-template let-year #item>{{ year }}</ng-template>
+                </p-select>
+                <div *ngIf="policiesForm.get('year')?.touched && policiesForm.get('year')?.hasError('required')"
+                  class="error-msg">
+                  {{'Year is required'|translate}}
+                </div>
+              </div>
+
+              <!-- Location -->
+              <div class="custom-p-select-content">
+                <label for="location" class="form-label custom-label mb-2">
+                  {{ "Location" | translate }}<span class="text-danger">*</span>
+                </label>
+                <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="location"
+                  placeholder="Please select location" class="form-select custom-select"
+                  (onChange)="onLocationChange($event.value)">
+                </p-select>
+                <div *ngIf="policiesForm.get('location')?.touched && policiesForm.get('location')?.hasError('required')"
+                  class="error-msg">
+                  {{'Location is required' | translate}}
+                </div>
+              </div>
+
+              <!-- Sub Location -->
+              <div class="custom-p-select-content">
+                <label for="subLocation" class="form-label custom-label mb-2">
+                  {{ "Sub Location" | translate }}<span class="text-danger">*</span>
+                </label>
+                <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue="id"
+                  formControlName="subLocation" placeholder="Please select sub location"
+                  (onChange)="onSubLocationChange($event.value)" class="form-select custom-select">
+                </p-select>
+                <div
+                  *ngIf="policiesForm.get('subLocation')?.touched && policiesForm.get('subLocation')?.hasError('required')"
+                  class="error-msg">
+                  {{'Sub Location is required' | translate}}
+                </div>
+              </div>
+
+              <!-- Shift -->
+              <div class="custom-p-select-content">
+                <label for="shift" class="form-label custom-label mb-2">
+                  {{ "Shift" | translate }}<span class="text-danger">*</span>
+                </label>
+                <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id" formControlName="shift"
+                  placeholder="Please select shift" class="form-select custom-select">
+                </p-select>
+                <div *ngIf="policiesForm.get('shift')?.touched && policiesForm.get('shift')?.hasError('required')"
+                  class="error-msg">
+                  {{'Shift is required' | translate}}
+                </div>
               </div>
             </div>
-        
-            <!-- Location -->
-            <div class="custom-p-select-content">
-              <label for="location" class="form-label custom-label mb-2">
-                {{ "Location" | translate }}<span class="text-danger">*</span>
-              </label>
-              <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="location"
-                placeholder="Please select location" class="form-select custom-select" (onChange)="onLocationChange($event.value)">
-              </p-select>
-              <div *ngIf="policiesForm.get('location')?.touched && policiesForm.get('location')?.hasError('required')"
-                class="error-msg">
-                {{'Location is required' | translate}}
-              </div>
-            </div>
-        
-            <!-- Sub Location -->
-            <div class="custom-p-select-content">
-              <label for="subLocation" class="form-label custom-label mb-2">
-                {{ "Sub Location" | translate }}<span class="text-danger">*</span>
-              </label>
-              <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue="id"
-                formControlName="subLocation" placeholder="Please select sub location" (onChange)="onSubLocationChange($event.value)"
-                class="form-select custom-select">
-              </p-select>
-              <div *ngIf="policiesForm.get('subLocation')?.touched && policiesForm.get('subLocation')?.hasError('required')"
-                class="error-msg">
-                {{'Sub Location is required' | translate}}
-              </div>
-            </div>
-        
-            <!-- Shift -->
-            <div class="custom-p-select-content">
-              <label for="shift" class="form-label custom-label mb-2">
-                {{ "Shift" | translate }}<span class="text-danger">*</span>
-              </label>
-              <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id" formControlName="shift"
-                placeholder="Please select shift" class="form-select custom-select">
-              </p-select>
-              <div *ngIf="policiesForm.get('shift')?.touched && policiesForm.get('shift')?.hasError('required')"
-                class="error-msg">
-                {{'Shift is required' | translate}}
-              </div>
+
+            <!-- Add New Button aligned right -->
+            <div>
+              <button type="button"
+                [disabled]="policiesForm?.get('year')?.invalid || policiesForm?.get('location')?.invalid || policiesForm?.get('subLocation')?.invalid || policiesForm?.get('shift')?.invalid"
+                class="custom-btn btn-primary mt-4" (click)="addMomentRow()">
+                <i class="bi bi-plus"></i>{{'Add New' | translate}}
+              </button>
             </div>
           </div>
-        
-          <!-- Add New Button aligned right -->
-          <div >
-            <button type="button" [disabled]="policiesForm?.get('year')?.invalid || policiesForm?.get('location')?.invalid || policiesForm?.get('subLocation')?.invalid || policiesForm?.get('shift')?.invalid" class="custom-btn btn-primary mt-4" (click)="addMomentRow()">
-              <i class="bi bi-plus"></i>{{'Add New' | translate}} 
-            </button>
-          </div>
-        </div>
-        <div class="card custom-background-card p-3 mt-2">
-          <div formArrayName="policies">
-            <div *ngFor="let policy of policies.controls; let i = index" [formGroupName]="i" class="card p-3 mb-4 custom-shift-item-card">
-              <div class="row mb-2">
-                <div class="col-md-3">
-                  <label class="form-label custom-label">{{'Policy Name' | translate}}<span class="text-danger">*</span></label>
-                  <input type="text" formControlName="policyName" class="form-control custom-input" placeholder="Please enter policy name" maxlength="50"
-                  (keydown)="formValidations.restrictInitialSpace($event)"/>
-                  <div *ngIf="policy.get('policyName')?.touched && policy.get('policyName')?.hasError('required')" class="error-msg">
-                    {{'Policy Name is required'|translate}}
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' | translate}}<span class="text-danger">*</span></label>
-                  <input type="file" formControlName="policyFile" class="form-control custom-input" />
-                  <div *ngIf="policy.get('policyFile')?.touched && policy.get('policyFile')?.hasError('required')" class="error-msg">
-                    {{'Policy File is required'|translate}}
-                  </div>
-                </div>
-                <div class="col-md-5 d-flex align-items-end">
-                  <div class="form-check w-100">
-                    <label class="form-label custom-label">{{'Description' | translate}}<span class="text-danger">*</span></label>
-                    <input type="text" formControlName="policyDescription" class="form-control custom-input" placeholder="Please enter description" maxlength="50"
-                    (keydown)="formValidations.restrictInitialSpace($event)"/>
-                    <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')" class="error-msg">
-                      {{'Policy Description is required'|translate}}
+          <div class="card custom-background-card p-3 mt-2">
+            <div formArrayName="policies">
+              <div *ngFor="let policy of policies.controls; let i = index" [formGroupName]="i"
+                class="card p-3 mb-4 custom-shift-item-card">
+                <div class="row mb-2">
+                  <div class="col-md-3">
+                    <label class="form-label custom-label">{{'Policy Name' | translate}}<span
+                        class="text-danger">*</span></label>
+                    <input type="text" formControlName="policyName" class="form-control custom-input"
+                      placeholder="Please enter policy name" maxlength="50"
+                      (keydown)="formValidations.restrictInitialSpace($event)" />
+                    <div *ngIf="policy.get('policyName')?.touched && policy.get('policyName')?.hasError('required')"
+                      class="error-msg">
+                      {{'Policy Name is required'|translate}}
                     </div>
                   </div>
-                  <!-- <button title="text" type="button" class="btn btn-sm btn-danger ms-2" (click)="removePolicyRow(i)" *ngIf="policies.length > 1">
+                  <div class="col-md-3">
+                    <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' | translate}}<span
+                        class="text-danger">*</span></label>
+                    <input type="file" formControlName="policyFile" class="form-control custom-input" />
+                    <div *ngIf="policy.get('policyFile')?.touched && policy.get('policyFile')?.hasError('required')"
+                      class="error-msg">
+                      {{'Policy File is required'|translate}}
+                    </div>
+                  </div>
+                  <div class="col-md-5 d-flex align-items-end">
+                    <div class="form-check w-100">
+                      <label class="form-label custom-label">{{'Description' | translate}}<span
+                          class="text-danger">*</span></label>
+                      <input type="text" formControlName="policyDescription" class="form-control custom-input"
+                        placeholder="Please enter description" maxlength="50"
+                        (keydown)="formValidations.restrictInitialSpace($event)" />
+                      <div
+                        *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')"
+                        class="error-msg">
+                        {{'Policy Description is required'|translate}}
+                      </div>
+                    </div>
+                    <!-- <button title="text" type="button" class="btn btn-sm btn-danger ms-2" (click)="removePolicyRow(i)" *ngIf="policies.length > 1">
                     <i class="bi bi-trash"></i>
                   </button> -->
-                  @if(i>0){
-                  <button title="Delete" type="button" (click)="deleteRow(i)" *ngIf="policies.length > 1" class="btn p-0 border-0 bg-transparent">
-                    <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
-                  </button>
-                }
+                    @if(i>0){
+                    <button title="Delete" type="button" (click)="deleteRow(i)" *ngIf="policies.length > 1"
+                      class="btn p-0 border-0 bg-transparent">
+                      <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
+                    </button>
+                    }
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <div class="d-flex gap-3 justify-content-end mt-2 ">
+            <button type="button" class="custom-btn btn-secondary mt-3" (click)="Cancel()" id="submitButton">{{'Close' |
+              translate}}</button>
+            <button class="custom-btn btn-primary mt-3" [disabled]="policiesForm.invalid" type="submit">{{'Submit' |
+              translate}}</button>
+          </div>
         </div>
-       <div class="d-flex gap-3 justify-content-end mt-2 ">
-        <button type="button" class="custom-btn btn-secondary mt-3" (click)="Cancel()" id="submitButton">{{'Close' | translate}}</button>
-        <button class="custom-btn btn-primary mt-3" [disabled]="policiesForm.invalid" type="submit">{{'Submit' | translate}}</button>
-       </div>
-      </div>
-      
-    </form>
-  </div>
-  </div>
-  </div>
 
-  <ng-template #deletepopup let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-
-        <div>
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to close?'|translate}}</p>
-        </div>
-        <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary "
-                (click)="closeDelete(modal)">{{'No'|translate}}</button>
-            <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-        </div>
+      </form>
     </div>
+  </div>
+</div>
+
+<ng-template #deletepopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+
+    <div>
+      <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to close?'|translate}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary " (click)="closeDelete(modal)">{{'No'|translate}}</button>
+      <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+    </div>
+  </div>
 
 </ng-template>
 

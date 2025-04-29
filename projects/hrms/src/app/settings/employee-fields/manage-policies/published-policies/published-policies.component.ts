@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
@@ -16,7 +16,7 @@ import { IPolicy } from '../pending-policies/policies.model';
   templateUrl: './published-policies.component.html',
   styleUrl: './published-policies.component.scss'
 })
-export class PublishedPoliciesComponent {
+export class PublishedPoliciesComponent implements OnInit, OnDestroy {
   
   subscription!: Subscription
   allPolicies: IPolicy[] = [];
@@ -64,5 +64,11 @@ export class PublishedPoliciesComponent {
 
   getPolicyNames(policy: any) {
     return policy.shiftName || '';
+ }
+
+ ngOnDestroy(): void {
+  if (this.subscription) {
+    this.subscription.unsubscribe();
+  }
  }
 }

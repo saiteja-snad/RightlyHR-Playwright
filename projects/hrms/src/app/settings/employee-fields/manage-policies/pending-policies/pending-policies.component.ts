@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../../services/http.service';
 import { CommonModule } from '@angular/common';
@@ -17,7 +17,7 @@ import { IPolicy } from './policies.model';
   templateUrl: './pending-policies.component.html',
   styleUrl: './pending-policies.component.scss'
 })
-export class PendingPoliciesComponent {
+export class PendingPoliciesComponent implements OnInit, OnDestroy {
 
   subscription!: Subscription
   allPolicies: IPolicy[] = [];
@@ -54,5 +54,11 @@ export class PendingPoliciesComponent {
 
   getPolicyNames(policy: any) {
     return policy.shiftName || '';
+ }
+
+ ngOnDestroy(): void {
+  if (this.subscription) {
+    this.subscription.unsubscribe();
+  }
  }
 }

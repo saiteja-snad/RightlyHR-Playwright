@@ -9,6 +9,7 @@ import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { RbacService } from '../../../services/rbac.service';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-contact-details',
@@ -40,11 +41,11 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   formattedPhoneNumber: string = '';
   placeholderPhoneNumber: string = '';
   mobileNumberData: IphoneNumberData | null = null;
- 
-   selectedworkcoutrycode = signal<any>('');
-   selectedpersonalnumbercode = signal<any>('');
 
-  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder, private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService) {
+  selectedworkcoutrycode = signal<any>('');
+  selectedpersonalnumbercode = signal<any>('');
+
+  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService, private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService) {
     effect(() => {
       this.selectedworkcoutrycode.set(this.selectedDialCode);
       this.selectedpersonalnumbercode.set(this.selectedDialphoneCode);
@@ -56,20 +57,20 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.initializeForm();
     this.contactForm.disable();
-  
+
   }
 
   initializeForm(): void {
     this.contactForm = this.fb.group({
       personalEmail: ['', [Validators.required, Validators.email]],
-      workMail: ['', [Validators.required, Validators.email]], 
+      workMail: ['', [Validators.required, Validators.email]],
       countyCode1: [null, [Validators.required]],
-       countyCode2: [null, [Validators.required]],
+      countyCode2: [null, [Validators.required]],
       phoneNumber: [null, [Validators.required,]], // Required and 10-digit phone number
       workNumber: [null, [Validators.required,]], // Required and 10-digit phone number
 
     });
-   
+
 
   }
 
@@ -94,15 +95,15 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
         this.patchForm(data);
         this.loading = false;
         this.selectedworkcoutrycode.set(data.workphonecountryflag);
-    
+
         this.selectedpersonalnumbercode.set(data.mobilephonecountryflag);
-       
+
       },
-      error: (reason) =>{
+      error: (reason) => {
         console.log(reason);
         this.loading = false;
         console.error('Error fetching employee data:', reason)
-      } 
+      }
     });
   }
 
@@ -127,33 +128,30 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
     const updatePayload = {
       ...this.employedata,
-     
+
       emailaddress: formValue.personalEmail,
       workEmail: formValue.workMail,
       contactnumber: contactnumber,
       workPhone: worknumber,
       mobilePhoneCountryCode: this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode,
       workPhoneCountryCode: this.selectedDialCode || this.employedata.workPhoneCountryCode,
-      mobilephonecountryflag:this.selectedCountryCodephoneflag  || this.employedata.mobilephonecountryflag,
-      workPhoneCountryFlag:this.selectedCountryCodegflag ||  this.employedata.workPhoneCountryFlag
-     };
+      mobilephonecountryflag: this.selectedCountryCodephoneflag || this.employedata.mobilephonecountryflag,
+      workPhoneCountryFlag: this.selectedCountryCodegflag || this.employedata.workPhoneCountryFlag
+    };
 
 
     this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
       .subscribe({
         next: (data: any) => {
-          if (data.statusCode === 200) {
+          if (data) {
             this.conformationPopup.openSuccessModal('Contact Details updated successfully');
-            this.modalService.dismissAll();
             this.contactForm.disable();
             this.buttons = false; // Disable the button after successful update
             this.getEmployeeId()
-            }else if (data.statusCode === 409) {
-              this.conformationPopup.openErrorModal(data.message,);
-              this.patchForm(this.employedata);
-            }
-    
-        
+          } else if (data.statusCode === 409) {
+            this.conformationPopup.openErrorModal(data.message,);
+            this.patchForm(this.employedata);
+          }
 
         },
         error: (reason: any) => {
@@ -178,7 +176,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       workNumberControl.setValue(formattedValue, { emitEvent: false });
     }
   }
- 
+
   onCountryChange(country: any) {
     this.selectedDialCode = country.dialling_code;
     this.selectedCountryCodegflag = country.code;
@@ -201,10 +199,10 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.contactForm.get('phoneNumber')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodephoneflag)]);
     this.contactForm.get('phoneNumber')?.updateValueAndValidity();
     this.employedata.mobilePhoneCountryCode = country.dialling_code;
-    this.employedata.mobilephonecountryflag = country.code; 
+    this.employedata.mobilephonecountryflag = country.code;
   }
 
-  formatPhoneNumber(value: any,countryCode:any) {
+  formatPhoneNumber(value: any, countryCode: any) {
     if (!countryCode || !value) return value;
     const stringValue = String(value); // Make sure it's a string
     const phoneNumber = parsePhoneNumberFromString(stringValue, countryCode);
@@ -215,13 +213,13 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     return stringValue;
   }
 
- phoneNumberValidator(countryCode:any) {
+  phoneNumberValidator(countryCode: any) {
     return (control: AbstractControl) => {
       const value = String(control.value);
       if (!countryCode || !value) {
         return null;
       }
-      const phoneNumber = parsePhoneNumberFromString(value,countryCode);
+      const phoneNumber = parsePhoneNumberFromString(value, countryCode);
       if (phoneNumber && phoneNumber.isValid()) {
         return null;
       } else {

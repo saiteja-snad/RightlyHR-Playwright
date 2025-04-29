@@ -101,7 +101,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
       return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
     }
-    return null; // Return null if no start date is selected
+    return null; 
   }
 
   postEducation(): void {

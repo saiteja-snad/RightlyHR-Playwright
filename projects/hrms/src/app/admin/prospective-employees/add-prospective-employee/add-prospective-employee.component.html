@@ -91,7 +91,7 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
-                            placeholder="Select Location" class="form-select custom-select" id="location" name="location"
+                            placeholder="Please select location" class="form-select custom-select" id="location" name="location"
                             formControlName="location" (onChange)="OnClickLocation($event)" required>
                         </p-select>
                     </div>
@@ -105,7 +105,7 @@
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
-                            placeholder="Select Sub Location" class="form-select custom-select" id="sublocation"
+                            placeholder="Please select sub location" class="form-select custom-select" id="sublocation"
                             name="sublocation" (change)="onClickValue()" formControlName="subLocation" required>
                         </p-select>
                     </div>

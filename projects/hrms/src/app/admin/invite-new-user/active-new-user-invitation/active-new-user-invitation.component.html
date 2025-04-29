@@ -19,7 +19,7 @@
             class="text-danger">*</span></label>
         <div class="custom-p-select-content">
           <p-select [options]="Activeemployeedata" optionLabel="name" optionValue="employeeId" [filter]="true"
-            filterBy="name" [showClear]="true" placeholder="Please select employee" class="custom-select w-100" formControlName = "EmployeeID"
+            filterBy="name" placeholder="Please select employee" class="custom-select w-100" formControlName = "EmployeeID"
             (onChange)="onChangePropesctiveEmployess($event)">
             <!-- Template for selected item -->
             <ng-template #selectedItem let-selectedOption>{{ selectedOption.firstName }} {{ selectedOption.middleName }} 

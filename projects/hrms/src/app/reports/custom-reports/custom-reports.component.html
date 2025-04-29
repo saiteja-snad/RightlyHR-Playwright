@@ -76,7 +76,8 @@
               <td>
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox"
-                    [checked]="fieldGroups['basicInfo'].selectedFields.includes(field)"
+                    [checked]="fieldGroups['basicInfo'].selectedFields.includes(field)" 
+                    [disabled]="isFieldLocked(field)"
                     (change)="toggleFieldSelection(field, 'basicInfo')">
                   <label class="form-check-label check-name">{{ field }}</label>
                 </div>

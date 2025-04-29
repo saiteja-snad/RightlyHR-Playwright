@@ -33,9 +33,13 @@ export class CustomReportsComponent {
   // Data arrays
   empStatusList = ['All Employees', 'Active', 'Inactive'];
   selectedData: any[] = [];
-  selectedFields: string[] = [];
+  selectedFields: string[] = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
   emp: Ipersonal[] = [];
   reportdata: any[] = [];
+  // Define locked fields per group (if needed)
+  lockedFields: string[] = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
+
+
   // Field groups
   fieldGroups: { [key: string]: FieldGroup } = {
     basicInfo: {
@@ -44,7 +48,7 @@ export class CustomReportsComponent {
         'ID', 'Employee ID', 'Salutation', 'First Name', 'Last Name', 'Middle Name',
         'Status', 'Marital Status', 'Gender', 'Date of Birth', 'Blood Group'
       ],
-      selectedFields: [],
+      selectedFields: ['Employee ID','First Name','Middle Name','Last Name'],
       selectAll: false
     },
     currentAddress: {
@@ -178,9 +182,17 @@ export class CustomReportsComponent {
     this.JobShowCard = false;
   }
 
+  isFieldLocked(field: string): boolean {
+    return this.lockedFields.includes(field);
+  }
+
   showJobData() {
     this.showCard = false;
     this.JobShowCard = true;
+    this.selectedFields = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
+    if (this.fieldGroups['basicInfo']) {
+      this.fieldGroups['basicInfo'].selectedFields = [...this.selectedFields]; // Spread to ensure immutability
+    }
   }
 
   getCustomReportDetails(): void {
@@ -215,8 +227,14 @@ export class CustomReportsComponent {
   }
 
   toggleFieldSelection(field: string, groupKey: string): void {
+ 
+    
     const group = this.fieldGroups[groupKey];
     const index = group.selectedFields.indexOf(field);
+    console.log(
+      group
+    );
+    
     if (index === -1) {
       group.selectedFields.push(field);
     } else {
@@ -230,10 +248,20 @@ export class CustomReportsComponent {
   toggleSelectAll(event: Event, groupKey: string): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     const group = this.fieldGroups[groupKey];
+  
     group.selectAll = isChecked;
-    group.selectedFields = isChecked ? [...group.fields] : [];
+  
+    if (isChecked) {
+      // Include all fields (including locked)
+      group.selectedFields = [...group.fields];
+    } else {
+      // Deselect all EXCEPT locked fields
+      group.selectedFields = group.fields.filter(field => this.isFieldLocked(field));
+    }
+  
     this.updateSelectedFields();
   }
+  
 
   private updateSelectedFields(): void {
     this.selectedFields = Object.values(this.fieldGroups).reduce((acc: string[], group) => [...acc, ...group.selectedFields], []);

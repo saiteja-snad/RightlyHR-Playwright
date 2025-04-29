@@ -18,32 +18,36 @@
           </div>
         </div>
 
-        <div class="d-flex gap-2 align-items-center" *ngIf="employeeStatus?.toLowerCase() == 'active'">
-          <div class="custom-label text-nowrap">Date of Joining</div>
+        <!-- Date Picker -->
+        <div class="d-flex gap-2 align-items-center" *ngIf="isActiveOrInactive()">
+          <div class="custom-label text-nowrap">
+            {{ getDateLabel() }}
+          </div>
+
           <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
-                        [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
-                        formControlName="dateOfJoining" [placeholder]="'Please Select Date of Joining'"
-                        class="form-control custom-input" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
+            [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
+            formControlName="dateOfJoining" [placeholder]="getDatePlaceholder()" class="form-control custom-input"
+            [startKey]="'startDate'" [endKey]="'endDate'" readonly />
         </div>
 
-        
-
         <div class="d-flex gap-2">
-          <button type="submit" class="custom-btn btn-secondary" [disabled]="selectedFields.length == 0 || spinnerLoader1">
+          <button type="submit" class="custom-btn btn-secondary"
+            [disabled]="selectedFields.length == 0 || spinnerLoader1">
             @if(spinnerLoader1){
-              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{'Loading...'}}</span>
-              }@else {
-              <span>{{'Generate'}}</span>
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Generate'}}</span>
             }
           </button>
-          <button type="button" class="custom-btn btn-primary" [disabled]="selectedData.length == 0" (click)="generateExcel()">
+          <button type="button" class="custom-btn btn-primary" [disabled]="selectedData.length == 0"
+            (click)="generateExcel()">
             @if(spinnerLoader2){
-              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{'Loading...'}}</span>
-              }@else {
-              <span>{{'Export'}}</span>
-              }
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading...'}}</span>
+            }@else {
+            <span>{{'Export'}}</span>
+            }
           </button>
         </div>
       </div>
@@ -55,12 +59,12 @@
       <div class="card custom-background-card p-2 mb-3">
         <div class="d-flex gap-2">
           <button class="custom-btn  custom-btn-width" [ngClass]="{'btn-secondary': !showCard,'btn-primary': showCard}"
-           (click)="showPersonalData()">Personal</button>
-          <button class="custom-btn custom-btn-width" [ngClass]="{'btn-secondary': !JobShowCard,'btn-primary': JobShowCard}"
-           (click)="showJobData()">Job</button>
+            (click)="showPersonalData()">Personal</button>
+          <button class="custom-btn custom-btn-width"
+            [ngClass]="{'btn-secondary': !JobShowCard,'btn-primary': JobShowCard}" (click)="showJobData()">Job</button>
         </div>
       </div>
-    
+
       <!--Personal Data-->
       <div [hidden]="!showCard" class="custom-fields-content">
         <!-- Basic Info -->
@@ -79,16 +83,15 @@
               <td>
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox"
-                    [checked]="fieldGroups['basicInfo'].selectedFields.includes(field)" 
-                    [disabled]="isFieldLocked(field)"
-                    (change)="toggleFieldSelection(field, 'basicInfo')">
+                    [checked]="fieldGroups['basicInfo'].selectedFields.includes(field)"
+                    [disabled]="isFieldLocked(field)" (change)="toggleFieldSelection(field, 'basicInfo')">
                   <label class="form-check-label check-name">{{ field }}</label>
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
-    
+
         <!-- Current Address -->
         <table class="w-100 mb-3">
           <thead>
@@ -111,7 +114,7 @@
             </td>
           </tr>
         </table>
-    
+
         <!-- Permanent Address -->
         <table class="w-100 mb-3">
           <thead>
@@ -134,7 +137,7 @@
             </td>
           </tr>
         </table>
-    
+
         <!-- Contact Details -->
         <table class="w-100 mb-3">
           <thead>
@@ -157,7 +160,7 @@
             </td>
           </tr>
         </table>
-    
+
         <!-- Emergency Contact 1 -->
         <table class="w-100 mb-3">
           <thead>
@@ -180,7 +183,7 @@
             </td>
           </tr>
         </table>
-    
+
         <!-- Emergency Contact 2 -->
         <table class="w-100 mb-3">
           <thead>
@@ -203,7 +206,7 @@
             </td>
           </tr>
         </table>
-    
+
         <!-- Education Details -->
         <table class="w-100 mb-3">
           <thead>
@@ -226,7 +229,7 @@
             </td>
           </tr>
         </table>
-    
+
         <!-- Visa Details -->
         <table class="w-100 mb-3">
           <thead>
@@ -249,7 +252,7 @@
             </td>
           </tr>
         </table>
-    
+
         <!-- Identity Details -->
         <table class="w-100 mb-3">
           <thead>
@@ -272,7 +275,7 @@
             </td>
           </tr>
         </table>
-    
+
         <!-- Bank Details -->
         <table class="w-100 mb-3">
           <thead>
@@ -321,7 +324,7 @@
             </td>
           </tr>
         </table>
-      
+
         <!-- Onboarding -->
         <table class="w-100 mb-3">
           <thead>
@@ -344,7 +347,7 @@
             </td>
           </tr>
         </table>
-      
+
         <!-- Offboarding -->
         <table class="w-100 mb-3">
           <thead>
@@ -367,7 +370,7 @@
             </td>
           </tr>
         </table>
-      
+
         <!-- Employment Type -->
         <table class="w-100 mb-3">
           <thead>
@@ -390,7 +393,7 @@
             </td>
           </tr>
         </table>
-      
+
         <!-- Job Details -->
         <table class="w-100 mb-3">
           <thead>
@@ -413,7 +416,7 @@
             </td>
           </tr>
         </table>
-      
+
         <!-- Compensation -->
         <table class="w-100 mb-3">
           <thead>
@@ -439,7 +442,7 @@
       </div>
     </div>
 
-      <!--selected Fields-->
+    <!--selected Fields-->
     <div class="custom-setting-right-content p-3">
       <div class="custom-table-content selected-fields-table">
         <table class="w-100">
@@ -458,27 +461,27 @@
     </div>
   </div>
 
-     <!--table content-->
+  <!--table content-->
   @if(selectedData.length > 0 && selectedFields.length > 0){
-    <div class="custom-setting-right-content custom-data-table p-3 mb-3">
-      <div class="custom-table-content">
-        <table class="w-100">
-          <thead>
-            <tr>
-              <th *ngFor="let field of selectedFields" scope="col">
-                {{ field }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let data of selectedData">
-              <td *ngFor="let field of selectedFields" scope="row">
-                {{ data[field] || '-' }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="custom-setting-right-content custom-data-table p-3 mb-3">
+    <div class="custom-table-content">
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th *ngFor="let field of selectedFields" scope="col">
+              {{ field }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of selectedData">
+            <td *ngFor="let field of selectedFields" scope="row">
+              {{ data[field] || '-' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
   }
 </div>

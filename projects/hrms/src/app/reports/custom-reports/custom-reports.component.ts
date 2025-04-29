@@ -54,14 +54,13 @@ export class CustomReportsComponent {
   JobShowCard = false;
   loggedInUser: any = {};
   // Data arrays
-  empStatusList = ['All Employees', 'Active', 'Inactive'];
+  empStatusList = ['All Employees', 'Active', 'Inactive', 'Prospective'];
   selectedData: any[] = [];
   selectedFields: string[] = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
   emp: Ipersonal[] = [];
   reportdata: any[] = [];
   // Define locked fields per group (if needed)
   lockedFields: string[] = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
-
 
   // Field groups
   fieldGroups: { [key: string]: FieldGroup } = {
@@ -187,20 +186,31 @@ export class CustomReportsComponent {
   spinnerLoader1= false;
   spinnerLoader2= false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private http: HttpService) {
-    
-  }
+  constructor(
+    private fb: FormBuilder, 
+    private authService: AuthService, 
+    private http: HttpService
+  ) { }
 
   ngOnInit(): void {
     this.loggedInUser = this.authService.getToken();
+    this.inititalizeForm();
     this.getCustomReportDetails();
     this.getStatus();
     this.showPersonalData();
+   
+  }
+
+  inititalizeForm() {
     this.reportForm = this.fb.group({
       status: ['All Employees'],
       dateOfJoining: [null],
     });
-  }
+  
+    this.reportForm.get('status')?.valueChanges.subscribe(() => {
+      this.reportForm.get('dateOfJoining')?.reset();
+    });
+  }  
 
   showPersonalData() {
     this.showCard = true;
@@ -432,7 +442,7 @@ export class CustomReportsComponent {
         else if (field === 'Frequency') data[field] = user.frequency;
       });
       this.selectedData.push(data);
-        this.spinnerLoader1= false;
+      this.spinnerLoader1= false;
     });
   }
 
@@ -482,6 +492,23 @@ export class CustomReportsComponent {
     } else {
       this.selectedFieldsOption = [];
     }
+  }
+
+  isActiveOrInactive(): boolean {
+    const status = this.employeeStatus?.toLowerCase();
+    return status === 'active' || status === 'inactive';
+  }
+  
+  getDateLabel(): string {
+    const status = this.reportForm.get('status')?.value?.toLowerCase();
+    return status === 'active' ? 'Date of Joining' : 'Last Working Day';
+  }
+  
+  getDatePlaceholder(): string {
+    const status = this.employeeStatus?.toLowerCase();
+    return status === 'active'
+      ? 'Please select date of joining'
+      : 'Please select last working day';
   }
 
   generateExcel(): void {

@@ -81,7 +81,7 @@ export interface Ipersonal {
   workEmail: string;
   workPhone: string;
   subLocation: string;
-  branchCode: string
+  branchcode: string
   jobLocationName: string;
   jobSubLocationName: string;
   shiftName: string;

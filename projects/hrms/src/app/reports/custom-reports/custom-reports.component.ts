@@ -353,7 +353,7 @@ export class CustomReportsComponent {
         else if (field === 'Date Of Joining') data[field] = this.formatDate(user.dateOfJoining);
         else if (field === 'Probation End Date') data[field] = this.formatDate(user.probationEndDate);
         else if (field === 'Probation Status') data[field] = user.probationStatus;
-        else if (field === 'Branch Code') data[field] = user.branchCode;
+        else if (field === 'Branch Code') data[field] = user.branchcode;
         else if (field === 'Notice Period') data[field] = user.noticePeriod;
         else if (field === 'Background Check Status') data[field] = user.backgroundCheckStatus;
         else if (field === 'Salary Hold') data[field] = user.salaryHold;

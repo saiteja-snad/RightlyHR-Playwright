@@ -6,24 +6,23 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
-import { IPendingApprovals, LeaveApproval, LeaveApproverComment } from '../../../../Interfaces/pendingapprovalsmodel';
+import { LeaveApproval, LeaveApproverComment } from '../../../../Interfaces/pendingapprovalsmodel';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
 import moment from 'moment';
 import { ICategoryDetails } from '../../../../Interfaces/timoff-model';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { LeavesPendingapprovalsPipe } from "../../../../Pipes/leaves-pendingapprovals.pipe";
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { WfhsearchfilterPipe } from "../../../../Pipes/wfhsearchfilter.pipe";
 import { TimeoffsearchPipe } from "../../../../Pipes/timeoffsearch.pipe";
 
 @Component({
   selector: 'app-time-off-for-you-request',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, TranslateModule, DropdownModule, DateformatPipe, LeavesPendingapprovalsPipe, NoDataFoundComponent, WfhsearchfilterPipe, TimeoffsearchPipe],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, TranslateModule, DropdownModule, DateformatPipe, NoDataFoundComponent, TimeoffsearchPipe],
   templateUrl: './time-off-for-you-request.component.html',
   styleUrl: './time-off-for-you-request.component.scss'
 })
+
 export class TimeOffForYouRequestComponent {
   totalRecords = 100
   first: any = 0;

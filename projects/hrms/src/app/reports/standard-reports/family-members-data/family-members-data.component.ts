@@ -51,7 +51,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.getFamilyDetails();
+    // this.getFamilyDetails();
 
     this.reportForm.valueChanges.subscribe(()=>{
       this.disableBtn= true;

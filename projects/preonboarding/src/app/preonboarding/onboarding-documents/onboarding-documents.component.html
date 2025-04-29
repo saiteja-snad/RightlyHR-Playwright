@@ -31,9 +31,15 @@
                             item.lastName ? item.lastName : '' }}</td>
                         <td>{{ item.status ? item.status : '-' }}</td>
                         <td>
-                            <span *ngIf="item.reason" [ngbTooltip]="tipContent"><i class="bi bi-info-circle-fill"></i></span>
-                            <span *ngIf="!item.reason">-</span>
-                            <ng-template #tipContent>{{item.reason}}</ng-template>
+                            <div>
+                                <a *ngIf="item.reason" [ngbPopover]="tipContent">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                </a>
+                                <span *ngIf="!item.reason">-</span>
+                                <ng-template #tipContent>
+                                    <p class="mb-0">{{item.reason}}</p>
+                                </ng-template>
+                            </div>
                         </td>
                         <td class="text-nowrap">
                             <span *ngIf="item.documentUrl == null || item.documentUrl == ''; else attachment">

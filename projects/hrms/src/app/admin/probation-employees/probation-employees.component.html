@@ -36,53 +36,63 @@
                 <thead>
                     <tr>
                         <th>{{'ID'|translate}}</th>
-                        <th>{{'EmployeeName'|translate}}</th>
-                        <th>{{'Personal Email'|translate}}</th>
-                        <th>{{'Phone Number'|translate}}</th>
-                        <th>{{'Location'|translate}}</th>
-                        <th>{{'Sub Location'|translate}}</th>
-                        <th>{{'Designation'|translate}}</th>
-                        <th>{{'Sub Status'|translate}}</th>
+                        <th>{{'EMPLOYEE NAME'|translate}}</th>
+                        <th>{{'PERSONAL EMAIL'|translate}}</th>
+                        <th>{{'PHONE NUMBER'|translate}}</th>
+                        <th>{{'PROBATION START DATE '|translate}}</th>
+                        <th>{{'PROBATION END DATE'|translate}}</th>
+                        <th>{{'PROBATION EXTENDED DATE'|translate}}</th>
+                        <th>{{'DESIGNATION'|translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let item of probationemp | probationpipe : searchValue">
-                        <td>
-                            <span *ngIf="item.fusionEmpId;else fusionid"> {{item.fusionEmpId}}</span>
-                            <ng-template #fusionid> - </ng-template>
-                        </td>
-                        <td>
-                           
-                            <span *ngIf="item.firstName;else fistname"> </span>
-                            <a class="select-item cursor" (click)="select(item)">
-                            {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</a>
-                            <ng-template #fistname> - </ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.workEmail;else workemail"> {{item.workEmail}}</span>
-                            <ng-template #workemail> - </ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item?.contactnumber;else contactnumb"> {{item.contactnumber}}</span>
-                            <ng-template #contactnumb> - </ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.dateOfJoining;else prostartdate"> {{item.dateOfJoining | date }}</span>
-                            <ng-template #prostartdate> - </ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.probationEndDate;else proenddate"> {{item?.probationEndDate | date}}</span>
-                            <ng-template #proenddate> - </ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.probationExtendedDate;else proextenddate"> {{item.probationExtendedDate | date}}</span>
-                            <ng-template #proextenddate> - </ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.jobDetails;else designation"> {{item.jobDetails.jobRole}}</span>
-                            <ng-template #designation> - </ng-template>
-                        </td>
-                    </tr>
+                    @if(probationemp.length > 0){
+                        <tr *ngFor="let item of probationemp | probationpipe : searchValue">
+                            <td>
+                                <span *ngIf="item.fusionEmpId;else fusionid"> {{item.fusionEmpId}}</span>
+                                <ng-template #fusionid> - </ng-template>
+                            </td>
+                            <td>
+                               
+                                <span *ngIf="item.firstName;else fistname"> </span>
+                                <a class="select-item cursor" (click)="select(item)">
+                                {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</a>
+                                <ng-template #fistname> - </ng-template>
+                            </td>
+                            <td>
+                                <span *ngIf="item.workEmail;else workemail"> {{item.workEmail}}</span>
+                                <ng-template #workemail> - </ng-template>
+                            </td>
+                            <td>
+                                <span *ngIf="item?.contactnumber;else contactnumb"> {{item.contactnumber}}</span>
+                                <ng-template #contactnumb> - </ng-template>
+                            </td>
+                            <td>
+                                <span *ngIf="item.dateOfJoining;else prostartdate"> {{item.dateOfJoining | date }}</span>
+                                <ng-template #prostartdate> - </ng-template>
+                            </td>
+                            <td>
+                                <span *ngIf="item.probationEndDate;else proenddate"> {{item?.probationEndDate | date}}</span>
+                                <ng-template #proenddate> - </ng-template>
+                            </td>
+                            <td>
+                                <span *ngIf="item.probationExtendedDate;else proextenddate"> {{item.probationExtendedDate | date}}</span>
+                                <ng-template #proextenddate> - </ng-template>
+                            </td>
+                            <td>
+                                <span *ngIf="item.jobDetails;else designation"> {{item.jobDetails.jobRole}}</span>
+                                <ng-template #designation> - </ng-template>
+                            </td>
+                        </tr>
+                    }
+                    @else{
+                        <tr>
+                          <td>
+                            <app-no-data-found />
+                          </td>
+                        </tr>
+                        }
+                
                 </tbody>
             </table>
             } @else {

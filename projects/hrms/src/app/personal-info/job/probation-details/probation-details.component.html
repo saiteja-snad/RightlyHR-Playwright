@@ -53,13 +53,13 @@
                                 shouldprobationShowButton(empdata.probationEndDate)){
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
-                                        <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
+                                        <i class="bi bi-repeat me-2"></i>Re-Request for Probation Confirmation</a>
                                 </li>
                                 }
                                 <!--status extended-->
                                 @if(probation.status === 'Extended' &&
                                 shouldprobationShowButton(empdata.probationEndDate) &&
-                                probation.probationExtendCount<probationExtendTimes){ <li>
+                                probation.probationExtendCount < probationExtendTimes){ <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
                                     </li>

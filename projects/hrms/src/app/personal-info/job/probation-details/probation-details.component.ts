@@ -79,6 +79,8 @@ export class ProbationDetailsComponent implements OnInit {
           return ele.configValueId === probtimesextended;
         })
         this.probationExtendTimes = probExtendTimes.noOfDays;
+        console.log(this.probationExtendTimes);
+        
       }
     })
   }

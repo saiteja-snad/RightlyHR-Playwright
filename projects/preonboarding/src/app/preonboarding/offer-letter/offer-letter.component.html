@@ -35,7 +35,9 @@
                                         <div *ngIf="! offerLetterData.addressLine1;else address">Address:</div>
                                         <ng-template #address>
                                             <li>{{ offerLetterData.addressLine1}},</li>
-                                            <li>{{ offerLetterData.addressLine2}},</li>
+                                            @if(offerLetterData.addressLine2){
+                                                <li>{{ offerLetterData.addressLine2}},</li>
+                                            }
                                             <li>{{ offerLetterData.city}}, {{ offerLetterData.state}},</li>
                                             <li>{{ offerLetterData.country}} - {{ offerLetterData.zipCode}}.</li>
                                         </ng-template>
@@ -735,7 +737,10 @@
                 @if(this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Rejected'){
                 <button class="custom-btn secondary-btn px-5" (click)="navigatefirst()">Close</button>
                 }
-                <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                @if(this.updatedOfferLetterDetails.candidateStatus!=='Offer Letter Rejected'){
+                    <button class="custom-btn rejected-btn px-5" (click)="openReject()">Reject</button>
+                }
+                
                 @if (this.updatedOfferLetterDetails.candidateStatus=='Offer Letter Accepted') {
                 <button class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
                 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -37,7 +37,8 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   reRequestForm!: FormGroup;
   rerequestdisplayforrejected: boolean = false;
   modelref!: NgbModal;
-
+  @ViewChild('viewmodel') viewmodel!: NgbModal;
+  
   constructor(private authService: AuthService, private fb: FormBuilder, private http: HttpService, private router: Router,
     private conformationPopup: OpenModalService, private modalService: NgbModal,) { this.intitalizeForm(); }
 
@@ -134,7 +135,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   }
 
   //function to view the doc
-  onViewClick(url: string, viewmodel: any) {
+  onViewClick(url: string) {
     const isImage = url.match(/\.(jpg|jpeg|png)$/i);
     const isPDF = url.toLowerCase().endsWith('pdf');
     if (isImage) {
@@ -145,7 +146,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
       this.handlePDF(url);
     } else {
     }
-    this.openModal(viewmodel)
+    this.modalService.open(this.viewmodel, { centered: true, backdrop: 'static', size: 'xl' });
   }
 
   //function to download the doc

@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { SelectModule } from 'primeng/select';
 import * as XLSX from 'xlsx';
 import { AuthService } from '../../services/auth.service';
-import { Subject, takeUntil } from 'rxjs';
+import { every, Subject, takeUntil } from 'rxjs';
 import { Ipersonal, IStatus } from './custom-model';
 import { CalendarModule } from 'primeng/calendar';
 interface FieldGroup {
@@ -33,18 +33,22 @@ export class CustomReportsComponent {
   // Data arrays
   empStatusList = ['All Employees', 'Active', 'Inactive'];
   selectedData: any[] = [];
-  selectedFields: string[] = [];
+  selectedFields: string[] = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
   emp: Ipersonal[] = [];
   reportdata: any[] = [];
+  // Define locked fields per group (if needed)
+  lockedFields: string[] = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
+
+
   // Field groups
   fieldGroups: { [key: string]: FieldGroup } = {
     basicInfo: {
       name: 'Basic Information',
       fields: [
-        'ID', 'Employee ID', 'Salutation', 'First Name', 'Last Name', 'Middle Name',
-        'Status', 'Marital Status', 'Gender', 'Date of Birth', 'Blood Group', 'Secondary Language'
+        'ID', 'Employee ID', 'First Name', 'Last Name', 'Middle Name', 'Salutation',
+        'Status', 'Marital Status', 'Gender', 'Date of Birth', 'Blood Group'
       ],
-      selectedFields: [],
+      selectedFields: ['Employee ID','First Name','Middle Name','Last Name'],
       selectAll: false
     },
     currentAddress: {
@@ -157,9 +161,12 @@ export class CustomReportsComponent {
     }
   };
 
+  spinnerLoader1= false;
+  spinnerLoader2= false;
+
   constructor(private fb: FormBuilder, private authService: AuthService, private http: HttpService) {
     this.reportForm = this.fb.group({
-      status: ['All Employees', Validators.required]
+      status: ['All Employees']
     });
   }
 
@@ -175,9 +182,17 @@ export class CustomReportsComponent {
     this.JobShowCard = false;
   }
 
+  isFieldLocked(field: string): boolean {
+    return this.lockedFields.includes(field);
+  }
+
   showJobData() {
     this.showCard = false;
     this.JobShowCard = true;
+    this.selectedFields = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
+    if (this.fieldGroups['basicInfo']) {
+      this.fieldGroups['basicInfo'].selectedFields = [...this.selectedFields]; 
+    }
   }
 
   getCustomReportDetails(): void {
@@ -214,6 +229,10 @@ export class CustomReportsComponent {
   toggleFieldSelection(field: string, groupKey: string): void {
     const group = this.fieldGroups[groupKey];
     const index = group.selectedFields.indexOf(field);
+    console.log(
+      group
+    );
+    
     if (index === -1) {
       group.selectedFields.push(field);
     } else {
@@ -227,16 +246,30 @@ export class CustomReportsComponent {
   toggleSelectAll(event: Event, groupKey: string): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     const group = this.fieldGroups[groupKey];
+  
     group.selectAll = isChecked;
-    group.selectedFields = isChecked ? [...group.fields] : [];
+  
+    if (isChecked) {
+      // Include all fields (including locked)
+      group.selectedFields = [...group.fields];
+    } else {
+      // Deselect all EXCEPT locked fields
+      group.selectedFields = group.fields.filter(field => this.isFieldLocked(field));
+    }
+  
     this.updateSelectedFields();
   }
+  
 
   private updateSelectedFields(): void {
     this.selectedFields = Object.values(this.fieldGroups).reduce((acc: string[], group) => [...acc, ...group.selectedFields], []);
+    if(this.selectedFields.length == 0){
+      this.selectedData=[];
+    }
   }
 
   onSubmit(): void {
+    this.spinnerLoader1= true;
     if (this.reportForm.invalid) return;
     this.selectedData = [];
     this.emp.forEach((user: Ipersonal) => {
@@ -254,21 +287,21 @@ export class CustomReportsComponent {
         else if (field === 'Gender') data[field] = user.gender;
         else if (field === 'Date of Birth') data[field] = this.formatDate(user.dob);
         else if (field === 'Blood Group') data[field] = user.bloodGroup;
-        else if (field === 'Secondary Language') data[field] = user.secondaryLanguage;
+        // else if (field === 'Secondary Language') data[field] = user.secondaryLanguage;
         // Current Address
-        else if (field === 'Address Line 1(current)') data[field] = user.currentAddressLine1;
-        else if (field === 'Address Line 2(current)') data[field] = user.currentAddressLine2;
-        else if (field === 'City(current)') data[field] = user.currentCity;
-        else if (field === 'State(current)') data[field] = user.currentState;
-        else if (field === 'Country(current)') data[field] = user.currentCountry;
-        else if (field === 'Zip Code/Post Code(current)') data[field] = user.currentZipCode;
+        else if (field === 'Address Line 1(current)') data[field] = user.currentaddressline1;
+        else if (field === 'Address Line 2(current)') data[field] = user.currentaddressline2;
+        else if (field === 'City(current)') data[field] = user.currentcity;
+        else if (field === 'State(current)') data[field] = user.currentstate;
+        else if (field === 'Country(current)') data[field] = user.currentcountry;
+        else if (field === 'Zip Code/Post Code(current)') data[field] = user.currentzipcode;
         // Permanent Address
-        else if (field === 'Address Line 1(permanemt)') data[field] = user.permanentAddressLine1;
-        else if (field === 'Address Line 2(permanemt)') data[field] = user.permanentAddressLine2;
-        else if (field === 'City(permanemt)') data[field] = user.permanentCity;
-        else if (field === 'State(permanemt)') data[field] = user.permanentState;
-        else if (field === 'Country(permanemt)') data[field] = user.permanentCountry;
-        else if (field === 'Zip Code/Post Code(permanemt)') data[field] = user.permanentZipCode;
+        else if (field === 'Address Line 1(permanemt)') data[field] = user.permanentaddressline1;
+        else if (field === 'Address Line 2(permanemt)') data[field] = user.permanentaddressline2;
+        else if (field === 'City(permanemt)') data[field] = user.permanentcity;
+        else if (field === 'State(permanemt)') data[field] = user.permanentstate;
+        else if (field === 'Country(permanemt)') data[field] = user.permanentcountry;
+        else if (field === 'Zip Code/Post Code(permanemt)') data[field] = user.permanentzipcode;
         // Contact Details
         else if (field === 'Work Number') data[field] = user.workPhone;
         else if (field === 'Mobile Phone') data[field] = user.contactnumber;
@@ -309,23 +342,23 @@ export class CustomReportsComponent {
         else if (field === 'IFSC Code') data[field] = user.ifscCode;
         // Pre Onboarding
         else if (field === 'Offer Sent Date') data[field] = this.formatDate(user.offerSentDate);
-        else if (field === 'Offer Sent By') data[field] = user.offerSentBy;
+        else if (field === 'Offer Sent By') data[field] = user.offersentby;
         else if (field === 'Offer Sent Status') data[field] = user.offerSentStatus;
         else if (field === 'Appointment Sent Date') data[field] = this.formatDate(user.appointmentSentDate);
-        else if (field === 'Appointment Sent By') data[field] = user.appointmentSenyBy;
+        else if (field === 'Appointment Sent By') data[field] = user.appointmentsentby;
         else if (field === 'Appointment Sent Status') data[field] = user.appointmentSentStatus;
         // Onboarding
         else if (field === 'Date Of Joining') data[field] = this.formatDate(user.dateOfJoining);
         else if (field === 'Probation End Date') data[field] = this.formatDate(user.probationEndDate);
         else if (field === 'Probation Status') data[field] = user.probationStatus;
-        else if (field === 'Branch Code') data[field] = user.branchCode;
+        else if (field === 'Branch Code') data[field] = user.branchcode;
         else if (field === 'Notice Period') data[field] = user.noticePeriod;
         else if (field === 'Background Check Status') data[field] = user.backgroundCheckStatus;
-        else if (field === 'Salary Hold') data[field] = user.salaryHold;
+        else if (field === 'Salary Hold') data[field] = user.salaryhold;
         else if (field === 'PT') data[field] = user.pt;
-        else if (field === 'PF') data[field] = user.pfApplicable;
-        else if (field === 'ESIC') data[field] = user.esicApplicable;
-        else if (field === 'Insurance') data[field] = user.healthInsurance;
+        else if (field === 'PF') data[field] = user.pfapplicable;
+        else if (field === 'ESIC') data[field] = user.esicapplicable;
+        else if (field === 'Insurance') data[field] = user.healthinsurance;
         // Offboarding
         else if (field === 'Last Working Day') data[field] = this.formatDate(user.lastworkingday);
         else if (field === 'Exit Reason') data[field] = user.termreasonoffboard;
@@ -334,16 +367,16 @@ export class CustomReportsComponent {
         else if (field === 'Job Type') data[field] = user.jobType;
         else if (field === 'Grade Name') data[field] = user.gradeName;
         // Job Details
-        else if (field === 'Job Effective Date') data[field] = this.formatDate(user.jobEffectiveDate);
+        else if (field === 'Job Effective Date') data[field] = this.formatDate(user.jobeffectivedate);
         else if (field === 'Job Role') data[field] = user.jobRole;
         else if (field === 'Department') data[field] = user.departmentName;
         else if (field === 'Team') data[field] = user.subdepartment_name;
-        else if (field === 'Team Manager') data[field] = user.teamManager;
-        else if (field === 'Reporting Manager') data[field] = user.reportingManager;
-        else if (field === 'Location') data[field] = user.jobLocationName;
-        else if (field === 'Sub Location') data[field] = user.jobSubLocationName;
-        else if (field === 'Shift') data[field] = user.shiftName;
-        else if (field === 'Shift Code') data[field] = user.shiftCode;
+        else if (field === 'Team Manager') data[field] = user.teammanager;
+        else if (field === 'Reporting Manager') data[field] = user.reportingmanager;
+        else if (field === 'Location') data[field] = user.joblocationname;
+        else if (field === 'Sub Location') data[field] = user.jobsublocationname;
+        else if (field === 'Shift') data[field] = user.shiftname;
+        else if (field === 'Shift Code') data[field] = user.shiftcode;
         // Compensation
         else if (field === 'Compensation Effective Date') data[field] = this.formatDate(user.compeffectivedate);
         else if (field === 'Overtime Eligibility') data[field] = user.overtimeeligibility;
@@ -353,6 +386,7 @@ export class CustomReportsComponent {
         else if (field === 'Frequency') data[field] = user.frequency;
       });
       this.selectedData.push(data);
+        this.spinnerLoader1= false;
     });
   }
 
@@ -405,9 +439,10 @@ export class CustomReportsComponent {
 
   generateExcel(): void {
     if (this.selectedData.length === 0) {
-      alert('No data to export. Please generate the report first.');
+      console.log('No data to export. Please generate the report first.');
       return;
     }
+    this.spinnerLoader2= true;
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.selectedData);
     this.convertHeadersToUpperCase(ws);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -443,7 +478,7 @@ export class CustomReportsComponent {
       `${this.loggedInUser.employeeId}_${new Date().getTime()}__custom_reports.xlsx`,
       { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
     );
-    // You can use reportFile for upload if needed
+    this.spinnerLoader2= false;
   }
 
   private formatDate(dateString: string): string {

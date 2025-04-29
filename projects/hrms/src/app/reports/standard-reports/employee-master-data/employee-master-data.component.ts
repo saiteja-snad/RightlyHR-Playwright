@@ -78,7 +78,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loggedInUser = this.authService.getToken();
     this.initializeForm();
-    this.getStandardReports();
+    // this.getStandardReports();
 
     this.masterDataForm.patchValue({
       empStatus: 'All Employees',
@@ -97,25 +97,25 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   }
 
   //method to get All the reports
-  getStandardReports() {
-    this.dataload = true;
-    const params = new URLSearchParams();
-    const endpoint = params.toString() ? `Reports/standardReportsWithoutPagination?${params.toString()}` : 'Reports/standardReportsWithoutPagination';
-    this.subscription = this.http.getData(endpoint).subscribe({
-      next: (res: any) => {
-        if (res) {
-          this.employeeMasterData = res.standardReports;
-        }
-      },
-      error: (err: any) => {
-        this.dataload = false;
-      },
-      complete: ()=>{
-        this.dataload = false;
+  // getStandardReports() {
+  //   this.dataload = true;
+  //   const params = new URLSearchParams();
+  //   const endpoint = params.toString() ? `Reports/standardReportsWithoutPagination?${params.toString()}` : 'Reports/standardReportsWithoutPagination';
+  //   this.subscription = this.http.getData(endpoint).subscribe({
+  //     next: (res: any) => {
+  //       if (res) {
+  //         this.employeeMasterData = res.standardReports;
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       this.dataload = false;
+  //     },
+  //     complete: ()=>{
+  //       this.dataload = false;
         
-      }
-    });
-  }
+  //     }
+  //   });
+  // }
 
   onSubmit(form: FormGroup) {
     this.spinnerLoader1= true;

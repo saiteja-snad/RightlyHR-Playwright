@@ -985,7 +985,7 @@ export class TraineeOfferLetterComponent {
         this.loading = false;
         setTimeout(() => {
           this.router.navigate(['/admin/dashboard']);
-        }, 3000);
+        }, 1000);
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Email sent failed');

@@ -1129,7 +1129,7 @@ pathValuesFuction(){
       .postdata(`Notification/Notify/Manager`, senddata)
       .subscribe({
         next: (data: any) => {
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/admin/dashboard']);
         },
         error: (err: any) => {
           console.log(err);

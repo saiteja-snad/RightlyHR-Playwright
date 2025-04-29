@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -14,11 +20,17 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 
 @Component({
   selector: 'app-document-history-offer-letter',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, FormsModule, DateformatPipe, OfferletterdashboardpipePipe],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    TranslateModule,
+    FormsModule,
+    DateformatPipe,
+    OfferletterdashboardpipePipe,
+  ],
   templateUrl: './document-history-offer-letter.component.html',
-  styleUrl: './document-history-offer-letter.component.scss'
+  styleUrl: './document-history-offer-letter.component.scss',
 })
-
 export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   searchValue: any;
@@ -28,13 +40,20 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   selectedValuesOfOffer = {} as any;
   employeedata = {} as any;
 
-  constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService
-  ) { this.initializeForm(); }
+  constructor(
+    private router: Router,
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private authService: AuthService,
+    private conformationPopup: OpenModalService
+  ) {
+    this.initializeForm();
+  }
 
   ngOnInit(): void {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
-    this.loginuserdata = this.authService.getToken()
+    this.loginuserdata = this.authService.getToken();
     this.initializeForm();
     this.getOfferLetters();
   }
@@ -43,7 +62,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
     this.modalService.open(content, {
       centered: true,
       backdrop: 'static',
-      keyboard: false
+      keyboard: false,
     });
   }
   //functio to inialize the form
@@ -54,15 +73,17 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   }
   //to get all offer Letters
   getOfferLetters() {
-    this.subscription = this.http.getData('OfferLetter/getAllNames/approverNames').subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.offerLetters = data;
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      },
-    });
+    this.subscription = this.http
+      .getData('OfferLetter/getAllNames/approverNames')
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.offerLetters = data;
+        },
+        error: (reason: any) => {
+          console.log(reason);
+        },
+      });
   }
   //function to download the document
   onSelectDownload(file: any) {
@@ -90,7 +111,6 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   //function to release the document
   releaseOfferletter(Values: any) {
     let loggedInUser = this.authService.getToken();
-    console.log(loggedInUser);
     let updateOfferLetterDetails = {
       id: Values.id,
       empId: Values.empId,
@@ -99,8 +119,8 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       offerSentBy: Values.offerSentBy,
       documentUrl: Values.documentUrl,
       isdeleted: false,
-      status: "Released",
-      approvedDate: new Date,
+      status: 'Released',
+      approvedDate: new Date(),
       approvedBy: loggedInUser.employeeId,
       approver: Values.approver,
       comments: null,
@@ -109,16 +129,13 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       offerStartDate: Values.offerStartDate,
       authoritySignature: Values.authoritySignature,
       addressType: Values.addressType,
-      note: Values.note
+      note: Values.note,
     };
-    console.log(updateOfferLetterDetails);
-
     this.subscription = this.http
       .postdata('OfferLetter/UPDATE', updateOfferLetterDetails)
       .subscribe({
         next: (data: any) => {
           this.employeeEmail(Values);
-
         },
         error: (reason: any) => {
           console.log(reason);
@@ -127,33 +144,33 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   }
   employeeEmail(Values: any) {
     const loggedInUser = this.authService.getToken();
-    //console.log(loggedInUser.middleName);
-
     let emaildetails = {
       personEmail: Values.emailaddress,
       senderEmail: loggedInUser.workEmail,
-      senderName: "",
+      senderName: `${loggedInUser.firstName ?? ''} ${
+        loggedInUser.middleName ?? ''
+      } ${loggedInUser.lastName ?? ''}`,
       personName: Values.employeeName,
       personRole: Values.jobRole,
       employeeId: Values.empId,
       documentUrl: Values.documentUrl,
       workLocation: Values.workLocation,
       offerStartDat: Values.offerStartDate,
-      offerExpiryDate: Values.offerExpiryDate
-    }
-    if (loggedInUser.middleName) {
-      emaildetails.senderName = `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''} ${loggedInUser.lastName ?? ''}`
-    }
-
-    this.subscription = this.http.postdata(`CustomEmail/offerletter`, emaildetails).subscribe({
-      next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Offer Released Successfully ');
-        this.getOfferLetters();
-      },
-      error: (err: any) => {
-        console.log(err);
-      }
-    })
+      offerExpiryDate: Values.offerExpiryDate,
+    };
+    this.subscription = this.http
+      .postdata(`CustomEmail/offerletter`, emaildetails)
+      .subscribe({
+        next: (data: any) => {
+          this.conformationPopup.openSuccessModal(
+            'Offer Released Successfully '
+          );
+          this.getOfferLetters();
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
   }
   //function to update OfferLetter Details When Approve
   updateOfferDetails(Values: any) {
@@ -167,17 +184,15 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       offerSentBy: Values.offerSentBy,
       documentUrl: Values.documentUrl,
       isdeleted: false,
-      status: "Approved",
-      approvedDate: new Date,
+      status: 'Approved',
+      approvedDate: new Date(),
       approvedBy: loggedInUser.employeeId,
       approver: Values.approver,
-      comments: null,
-      requestedDate: null,
       offerExpiryDate: Values.offerExpiryDate,
       offerStartDate: Values.offerStartDate,
       authoritySignature: Values.authoritySignature,
       addressType: Values.addressType,
-      note: Values.note
+      note: Values.note,
     };
     console.log(updateOfferLetterDetails);
     this.subscription = this.http
@@ -196,7 +211,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
 
   //function for Approve email
   ApproveEmail(personValues: any) {
-    let datas = personValues
+    let datas = personValues;
     console.log(datas);
     let loggedInUser = this.authService.getToken();
     let emailData = {
@@ -206,22 +221,27 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       employeeId: datas.offerSentBy,
       documentUrl: personValues.documentUrl,
       workLocation: datas.workLocation,
-      senderName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''}  ${loggedInUser.lastName ?? ''}`,
+      senderName: `${loggedInUser.firstName ?? ''} ${
+        loggedInUser.middleName ?? ''
+      }  ${loggedInUser.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: loggedInUser.employeeId,
-      approvedByName: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''} ${loggedInUser.lastName ?? ''}`,
+      approvedByName: `${loggedInUser.firstName ?? ''} ${
+        loggedInUser.middleName ?? ''
+      } ${loggedInUser.lastName ?? ''}`,
       firstName: datas.employeeName,
-      comments: null
-    }
+    };
     console.log(emailData);
-    this.subscription = this.http.postdata(`CustomEmail/offerApproval`, emailData).subscribe({
-      next: (data: any) => {
-        console.log(data);
-
-        this.Approvednotification(datas);
-        this.conformationPopup.openSuccessModal('Offer Approved Successfully ');
-      }
-    })
+    this.subscription = this.http
+      .postdata(`CustomEmail/offerApproval`, emailData)
+      .subscribe({
+        next: (data: any) => {
+          this.Approvednotification(datas);
+          this.conformationPopup.openSuccessModal(
+            'Offer Approved Successfully '
+          );
+        },
+      });
   }
 
   //function for approved notification
@@ -234,10 +254,12 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${loggedInUser?.middleName ?? ''} ${loggedInUser?.lastName} Approved 
+      notificationType: `${loggedInUser?.firstName} ${
+        loggedInUser?.middleName ?? ''
+      } ${loggedInUser?.lastName} Approved 
          ${personname.employeeName} Offer Letter`,
-      empId: personname.offerSentBy
-    }
+      empId: personname.offerSentBy,
+    };
     this.subscription = this.http.postdata(`Notification`, senddata).subscribe({
       next: (data: any) => {
         console.log(data);
@@ -245,44 +267,45 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
 
   //function to get the data of selected
   SelectData(value: any) {
-    this.selectedValuesOfOffer = value
+    this.selectedValuesOfOffer = value;
     console.log(this.selectedValuesOfOffer);
-    this.getEmployeeId(value.empId)
+    this.getEmployeeId(value.empId);
   }
 
   //function to get the employee details based on the employee id
   getEmployeeId(Values: any) {
-    let employeeId = Values
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        console.log(data);
-        this.employeedata = data
-
-      },
-      error: reason => console.log(reason)
-    });
+    let employeeId = Values;
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.employeedata = data;
+        },
+        error: (reason) => console.log(reason),
+      });
   }
 
-  //post reason to offerletter table 
+  //post reason to offerletter table
   PostReasonandUpdateOfferDetails() {
-    let currentDate = new Date
+    let currentDate = new Date();
     let loggedInUser = this.authService.getToken();
     console.log(loggedInUser);
     let updateOfferLetterDetails = {
       id: this.selectedValuesOfOffer.id,
       empId: this.selectedValuesOfOffer.empId,
       offerSentDate: this.selectedValuesOfOffer.offerSentDate,
-      offerSentStatus: "Obsolete",
+      offerSentStatus: 'Obsolete',
       offerSentBy: this.selectedValuesOfOffer.offerSentBy,
       documentUrl: this.selectedValuesOfOffer.documentUrl,
       isdeleted: false,
-      status: "Rejected",
+      status: 'Rejected',
       approvedDate: this.selectedValuesOfOffer.approvedDate,
       approvedBy: this.selectedValuesOfOffer.approvedBy,
       approver: this.selectedValuesOfOffer.approver,
@@ -292,7 +315,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       offerStartDate: this.selectedValuesOfOffer.offerStartDate,
       authoritySignature: this.selectedValuesOfOffer.authoritySignature,
       addressType: this.selectedValuesOfOffer.addressType,
-      note: this.selectedValuesOfOffer.note
+      note: this.selectedValuesOfOffer.note,
     };
     console.log(updateOfferLetterDetails);
     this.subscription = this.http
@@ -300,7 +323,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.updateemployeestatus(data)
+          this.updateemployeestatus(data);
           this.rejectEmail();
           this.Rejectnotification();
           this.getOfferLetters();
@@ -315,14 +338,16 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   //function to update the employee substatus
   updateemployeestatus(Value: any) {
     console.log(Value.empId);
-    this.employeedata.employeeId = Value.empId,
-    this.employeedata.empstatus = 'Prospective'
-    this.employeedata.substatus = "Offer Letter Rejected By Manager"
-    this.subscription = this.http.postdata('Employeedata/UPDATER', this.employeedata).subscribe({
-      next: (data: any) => {
-        console.log(data);
-      }
-    })
+    (this.employeedata.employeeId = Value.empId),
+      (this.employeedata.empstatus = 'Prospective');
+    this.employeedata.substatus = 'Offer Letter Rejected By Manager';
+    this.subscription = this.http
+      .postdata('Employeedata/UPDATER', this.employeedata)
+      .subscribe({
+        next: (data: any) => {
+          console.log(data);
+        },
+      });
   }
 
   //Function for Reject Email
@@ -335,26 +360,31 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       employeeId: this.selectedValuesOfOffer.offerSentBy,
       documentUrl: this.selectedValuesOfOffer.documentUrl,
       workLocation: this.selectedValuesOfOffer.workLocation,
-      senderName: `${loggedInUser?.firstName ?? ''} ${loggedInUser?.middleName ?? ''} ${loggedInUser?.lastName ?? ''}`,
+      senderName: `${loggedInUser?.firstName ?? ''} ${
+        loggedInUser?.middleName ?? ''
+      } ${loggedInUser?.lastName ?? ''}`,
       senderEmail: loggedInUser.workEmail,
       approvedBy: this.selectedValuesOfOffer.approvedBy,
       approvedByName: this.selectedValuesOfOffer.approvedByName,
       firstName: this.selectedValuesOfOffer.employeeName,
       // lastName: string,
       comments: this.rejectDocument.value.comments,
-    }
-    this.subscription = this.http.postdata(`CustomEmail/OfferRejection`, emaildate).subscribe({
-      next: (data: any) => {
-        if (data) {
-          this.conformationPopup.openSuccessModal('Rejected Email Sent Successfully')
-          this.modalService.dismissAll();
-        }
-      },
-      error: (err: any) => {
-        console.log(err);
-
-      }
-    })
+    };
+    this.subscription = this.http
+      .postdata(`CustomEmail/OfferRejection`, emaildate)
+      .subscribe({
+        next: (data: any) => {
+          if (data) {
+            this.conformationPopup.openSuccessModal(
+              'Rejected Email Sent Successfully'
+            );
+            this.modalService.dismissAll();
+          }
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
   }
 
   //function for reject notification
@@ -367,18 +397,20 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser?.firstName} ${loggedInUser.middleName ?? ''} ${loggedInUser?.lastName} Rejected 
+      notificationType: `${loggedInUser?.firstName} ${
+        loggedInUser.middleName ?? ''
+      } ${loggedInUser?.lastName} Rejected 
            ${this.selectedValuesOfOffer.employeeName} Offer Letter`,
-      empId: this.selectedValuesOfOffer.offerSentBy
-    }
+      empId: this.selectedValuesOfOffer.offerSentBy,
+    };
     this.subscription = this.http.postdata(`Notification`, senddata).subscribe({
       next: (data: any) => {
         console.log(data);
       },
       error: (err: any) => {
         console.log(err);
-      }
-    })
+      },
+    });
   }
 
   ngOnDestroy(): void {

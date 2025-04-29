@@ -38,6 +38,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
   dataload = false;
   spinnerLoader1= false;
   spinnerLoader2= false;
+  disableBtn= false;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -80,6 +81,10 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     this.masterDataForm.patchValue({
       empStatus: 'All Employees',
     });
+
+    this.masterDataForm.valueChanges.subscribe(()=>{
+      this.disableBtn= true;
+    })
   }
 
   initializeForm() {
@@ -87,7 +92,6 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       dateOfJoining: [null],
       empStatus: [''],
     });
-    
   }
 
   //method to get All the reports
@@ -141,11 +145,13 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         this.dataload = false;
         this.spinnerLoader1= false;
+        this.disableBtn= true;
         this.employeeMasterData = [];
       },
       complete: () => {
         this.dataload = false;
         this.spinnerLoader1= false;
+        this.disableBtn= false;
       }
     });
   }  

@@ -38,7 +38,7 @@
                         <span>{{'Generate'}}</span>
                         }
                     </button>
-                    <button type="button" class="custom-btn btn-primary" [disabled]="standardReportData.length === 0 || spinnerLoader"
+                    <button type="button" class="custom-btn btn-primary" [disabled]="standardReportData.length === 0 || disableBtn"
                         (click)="onClickBranchLocationExport() ">
                         @if(spinnerLoader){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

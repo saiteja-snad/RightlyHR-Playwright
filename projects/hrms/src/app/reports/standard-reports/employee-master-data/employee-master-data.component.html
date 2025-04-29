@@ -35,7 +35,7 @@
               <span>{{'Generate'}}</span>
             }
           </button>
-          <button type="button" [disabled]="this.employeeMasterData.length === 0" (click)="onClickEmpMasterExport()"
+          <button type="button" [disabled]="this.employeeMasterData.length === 0 || disableBtn" (click)="onClickEmpMasterExport()"
             class="custom-btn btn-primary">
             @if(spinnerLoader2){
               <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -58,7 +58,7 @@
     <ng-template #loadingSpinner>
       <div class="custom-compoent-data-loader">
         <app-data-loader-content />
-    </div>
+      </div>
     </ng-template>
     <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
 </ng-container>
@@ -130,7 +130,6 @@
           <th>Appointment Sent Date</th>
           <th>Appointment Sent By</th>
           <th>Appointment Sent Status</th>
-         
           <th>Probation End Date</th>
           <th>Probation Status</th>
           <th>Branch Location/Code</th>
@@ -238,17 +237,16 @@
             <td>{{ emp.appointmentSentDate ? (emp.appointmentSentDate | dateformat) : '-' }}</td>
             <td>{{ emp.appointmentSenyBy || '-' }}</td>
             <td>{{ emp.appointmentSentStatus || '-' }}</td>
-           
             <td>{{ emp.probationEndDate ? (emp.probationEndDate | dateformat) : '-' }}</td>
             <td>{{ emp.probationStatus || '-' }}</td>
             <td>{{ emp.branchCode || '-' }}</td>
             <td>{{ emp.noticePeriod || '-' }}</td>
             <td>{{ emp.backgroundCheckStatus || '-' }}</td>
-            <td>{{ emp.salaryHold || '-' }}</td>
+            <td>{{ emp.salaryhold || '-' }}</td>
             <td>{{ emp.pt || '-' }}</td>
-            <td>{{ emp.esicApplicable || '-' }}</td>
-            <td>{{ emp.pfApplicable || '-' }}</td>
-            <td>{{ emp.healthInsurance || '-' }}</td>
+            <td>{{ emp.esicapplicable || '-' }}</td>
+            <td>{{ emp.pfapplicable || '-' }}</td>
+            <td>{{ emp.healthinsurance || '-' }}</td>
             <td>{{ emp.lastworkingday ? (emp.lastworkingday | dateformat) : '-' }}</td>
             <td>{{ emp.eligibleforrehire || '-' }}</td>
             <td>{{ emp.termreasonoffboard || '-' }}</td>
@@ -260,11 +258,11 @@
             <td>{{ emp.jobRole || '-' }}</td>
             <td>{{ emp.departmentName || '-' }}</td>
             <td>{{ emp.subdepartment_name || '-' }}</td>
-            <td>{{ emp.reportingManager || '-' }}</td>
-            <td>{{ emp.jobLocationName || '-' }}</td>
-            <td>{{ emp.jobSubLocationName || '-' }}</td>
-            <td>{{ emp.shiftName || '-' }}</td>
-            <td>{{ emp.shiftCode || '-' }}</td>
+            <td>{{ emp.reportingmanager || '-' }}</td>
+            <td>{{ emp.joblocationname || '-' }}</td>
+            <td>{{ emp.jobsublocationname || '-' }}</td>
+            <td>{{ emp.shiftname || '-' }}</td>
+            <td>{{ emp.shiftcode || '-' }}</td>
             <td>{{ emp.compeffectivedate ? (emp.compeffectivedate | dateformat) : '-' }}</td>
             <td>{{ emp.overtimeeligibility || '-' }}</td>
             <td>{{ emp.reason || '-' }}</td>

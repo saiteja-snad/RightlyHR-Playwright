@@ -26,7 +26,7 @@
                         <span>{{'Generate'}}</span>
                         }
                     </button>
-                    <button type="button" class="custom-btn btn-primary" [disabled]="familydata.length === 0 || spinnerLoader2" (click)="exportAsExcelFile()">
+                    <button type="button" class="custom-btn btn-primary" [disabled]="familydata.length === 0 || disableBtn" (click)="exportAsExcelFile()">
                         @if(spinnerLoader2){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading..'}}</span>

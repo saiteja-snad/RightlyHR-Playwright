@@ -51,6 +51,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     direction: 'ltr',
     clearLabel: 'Clear', // could be rtl
   };
+
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -66,6 +67,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   spinnerLoader1 = false;
   dataload = false;
+  disableBtn= false;
 
   constructor(
     private fb: FormBuilder,
@@ -78,6 +80,10 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.getBranchLocations();
+
+    this.reportForm.valueChanges.subscribe(()=>{
+      this.disableBtn= true;
+    })
   }
 
   initializeForm() {
@@ -85,6 +91,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       location: [''],
       dateOfJoining: [null],
     });
+
   }
 
   onSubmit(form: FormGroup) {
@@ -110,10 +117,12 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
           error: (err: any) => {
             this.spinnerLoader1 = false;
             this.dataload = false;
+            this.disableBtn= true;
           },
           complete: () => {
             this.spinnerLoader1 = false;
             this.dataload = false;
+            this.disableBtn= false;
           }
         });
     }

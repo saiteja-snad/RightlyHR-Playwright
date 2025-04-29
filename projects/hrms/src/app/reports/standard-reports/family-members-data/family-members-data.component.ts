@@ -38,6 +38,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   dataload = false;
   spinnerLoader1= false;
   spinnerLoader2= false;
+  disableBtn= false;
   familydata = [] as IFamilyDetails[];
   destroy$: Subject<boolean> = new Subject<boolean>();
 
@@ -49,6 +50,10 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initializeForm();
     this.getFamilyDetails();
+
+    this.reportForm.valueChanges.subscribe(()=>{
+      this.disableBtn= true;
+    })
   }
 
   initializeForm() {
@@ -76,11 +81,13 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
         error: (err: any) => {
           this.spinnerLoader1= false;
           this.dataload = false;
+          this.disableBtn= true;
           this.familydata = [];
         },
         complete: ()=>{
           this.spinnerLoader1= false;
           this.dataload = false;
+          this.disableBtn= false;
         }
       });
   }

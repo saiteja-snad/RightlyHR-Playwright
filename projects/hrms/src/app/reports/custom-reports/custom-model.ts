@@ -3,8 +3,8 @@ export interface Ipersonal {
   accountName: string;
   accountNo: number;
   appointmentSentDate: string;
-  esicApplicable: any;
-  pfApplicable: any
+  esicapplicable: any;
+  pfapplicable: any
   appointmentSentStatus: string;
   appointmentsentby: string;
   backgroundCheckStatus: string;
@@ -39,11 +39,11 @@ export interface Ipersonal {
   gender: string;
   gpa: number;
   gradeName: string;
-  healthInsurance: string;
+  healthinsurance: string;
   ifscCode: string;
   issuedcountry: string;
   issueddate: string;
-  jobEffectiveDate: string;
+  jobeffectivedate: string;
   jobGrade: string;
   jobRole: string;
   jobType: string;
@@ -68,8 +68,8 @@ export interface Ipersonal {
   reason: string;
   relationShip: string;
   relationship1: string;
-  reportingManager: string;
-  salaryHold: string;
+  reportingmanager: string;
+  salaryhold: string;
   // secondaryLanguage: string;
   specialization: string;
   subdepartment_name: string;
@@ -82,11 +82,11 @@ export interface Ipersonal {
   workPhone: string;
   subLocation: string;
   branchcode: string
-  jobLocationName: string;
-  jobSubLocationName: string;
-  shiftName: string;
-  shiftCode: string;
-  teamManager: string;
+  joblocationname: string;
+  jobsublocationname: string;
+  shiftname: string;
+  shiftcode: string;
+  teammanager: string;
   totalYearsOfExperience: string;
   permanentzipcode: any;
   permanentcountry: string;

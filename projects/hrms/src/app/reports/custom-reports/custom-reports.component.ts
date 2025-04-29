@@ -328,11 +328,11 @@ export class CustomReportsComponent {
         else if (field === 'Branch Code') data[field] = user.branchcode;
         else if (field === 'Notice Period') data[field] = user.noticePeriod;
         else if (field === 'Background Check Status') data[field] = user.backgroundCheckStatus;
-        else if (field === 'Salary Hold') data[field] = user.salaryHold;
+        else if (field === 'Salary Hold') data[field] = user.salaryhold;
         else if (field === 'PT') data[field] = user.pt;
-        else if (field === 'PF') data[field] = user.pfApplicable;
-        else if (field === 'ESIC') data[field] = user.esicApplicable;
-        else if (field === 'Insurance') data[field] = user.healthInsurance;
+        else if (field === 'PF') data[field] = user.pfapplicable;
+        else if (field === 'ESIC') data[field] = user.esicapplicable;
+        else if (field === 'Insurance') data[field] = user.healthinsurance;
         // Offboarding
         else if (field === 'Last Working Day') data[field] = this.formatDate(user.lastworkingday);
         else if (field === 'Exit Reason') data[field] = user.termreasonoffboard;
@@ -341,16 +341,16 @@ export class CustomReportsComponent {
         else if (field === 'Job Type') data[field] = user.jobType;
         else if (field === 'Grade Name') data[field] = user.gradeName;
         // Job Details
-        else if (field === 'Job Effective Date') data[field] = this.formatDate(user.jobEffectiveDate);
+        else if (field === 'Job Effective Date') data[field] = this.formatDate(user.jobeffectivedate);
         else if (field === 'Job Role') data[field] = user.jobRole;
         else if (field === 'Department') data[field] = user.departmentName;
         else if (field === 'Team') data[field] = user.subdepartment_name;
-        else if (field === 'Team Manager') data[field] = user.teamManager;
-        else if (field === 'Reporting Manager') data[field] = user.reportingManager;
-        else if (field === 'Location') data[field] = user.jobLocationName;
-        else if (field === 'Sub Location') data[field] = user.jobSubLocationName;
-        else if (field === 'Shift') data[field] = user.shiftName;
-        else if (field === 'Shift Code') data[field] = user.shiftCode;
+        else if (field === 'Team Manager') data[field] = user.teammanager;
+        else if (field === 'Reporting Manager') data[field] = user.reportingmanager;
+        else if (field === 'Location') data[field] = user.joblocationname;
+        else if (field === 'Sub Location') data[field] = user.jobsublocationname;
+        else if (field === 'Shift') data[field] = user.shiftname;
+        else if (field === 'Shift Code') data[field] = user.shiftcode;
         // Compensation
         else if (field === 'Compensation Effective Date') data[field] = this.formatDate(user.compeffectivedate);
         else if (field === 'Overtime Eligibility') data[field] = user.overtimeeligibility;

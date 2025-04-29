@@ -20,10 +20,13 @@
 
         <div class="d-flex gap-2 align-items-center" *ngIf="employeeStatus?.toLowerCase() == 'active'">
           <div class="custom-label text-nowrap">Date of Joining</div>
-          <p-calendar formControlName="dateOfJoining" selectionMode="range" [readonlyInput]="true"
-            (onChange)="dateofJoiningRangeFilter($event)">
-          </p-calendar>
+          <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
+                        [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
+                        formControlName="dateOfJoining" [placeholder]="'Please Select Date of Joining'"
+                        class="form-control custom-input" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
         </div>
+
+        
 
         <div class="d-flex gap-2">
           <button type="submit" class="custom-btn btn-secondary" [disabled]="selectedFields.length == 0 || spinnerLoader1">

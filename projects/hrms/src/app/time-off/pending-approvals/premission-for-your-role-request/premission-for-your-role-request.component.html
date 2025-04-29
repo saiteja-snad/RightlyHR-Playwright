@@ -18,6 +18,7 @@
                     <th>{{'Duration(InHours)' | translate}}</th>
                     <th>{{'Permission Type' | translate}}</th>
                     <th>{{'Reason' | translate}}</th>
+                    <th>{{'Approver Comments' | translate}}</th>
                     <th>{{'Action(s)' | translate}}</th>
                 </tr>
             </thead>
@@ -42,6 +43,14 @@
                                 <p class="mb-0">{{leave.entity.notes}} </p>
                             </ng-template>
                         </div>
+                    </td>
+                    <td>
+                        <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
+                            <a type="button" (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                        </div>
+                        <ng-template #permissionComments>-</ng-template>
                     </td>
                     <td>
                         <div class="dropdown">
@@ -163,7 +172,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">{{'Comments' | translate}}</p>
+                <p class="popup-heading mb-0">{{'Approver Comments' | translate}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>

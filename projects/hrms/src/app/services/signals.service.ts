@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SignalsService {
   // WFH PendingApprovals Signals
@@ -19,8 +19,13 @@ export class SignalsService {
   compOffForRoleTriggerSignal = signal<boolean>(false);
   compOffSidNavCountTriggerSignal = signal<boolean>(false);
 
-  //remoteLoginRequest Signal
+  // RemoteLoginRequest Signal
   remoteLoginRequestTriggerSignal = signal<boolean>(false);
 
-  constructor() { }
+  // Regularization PendingApprovals Signals
+  regularizationForYouTriggerSignal = signal<boolean>(false);
+  regularizationForRoleTriggerSignal = signal<boolean>(false);
+  regularizationSidNavCountTriggerSignal = signal<boolean>(false);
+
+  constructor() {}
 }

@@ -32,8 +32,8 @@
                 <div class="mb-3">
                     <label for="note" class="form-label custom-label mb-2">Key Responsibility<span class="error-msg">*</span></label>
                     <textarea formControlName="note" placeholder="Please enter key responsibility" maxlength="250"
-                        autocomplete="off" class="form-control custom-textarea" id="note" rows="2" required></textarea>
-                    <span>{{ employeeForm.get('note')?.value?.length || 0 }}/250</span>
+                        autocomplete="off" class="form-control custom-input" id="note" rows="2" required></textarea>
+                    <div class="textarea-count-text">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
                     <div class="error-msg">
                         <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">Key Responsibility is required</div>
                         <div *ngIf="employeeForm.get('note')?.errors?.['maxlength']">Roles and Responsibilities cannot exceed 250 characters</div>
@@ -72,7 +72,7 @@
         </div>
 
         <div class="card letter-data-content p-4">
-            <div class="d-flex justify-content-center">
+            <div class="letter-sub-data-content">
                 <div>
                     <!--page-1-->
                     <div class="letter-page-content" id="pdfContent">

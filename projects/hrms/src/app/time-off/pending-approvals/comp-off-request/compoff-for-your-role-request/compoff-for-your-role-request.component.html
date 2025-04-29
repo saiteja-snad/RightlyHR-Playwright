@@ -151,7 +151,7 @@
                     <span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection" 
                 formControlName="comments" maxlength="250"></textarea>
-                <div class="text-end my-1">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
+                <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                     <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Rejected Reason is required.</div>
                     <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reason cannot exceed 250 characters.

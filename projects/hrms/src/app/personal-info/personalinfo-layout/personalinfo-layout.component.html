@@ -13,13 +13,12 @@
                 <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
             </button>
             }
-            @if(getOfferDetails.status === 'Released' || getTraineeOfferDetails.status==='Released'){
             <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus == 'Prospective' || emppersonalinfo.empstatus == 'Trainee Prospective') 
             && (emppersonalinfo?.substatus == 'Employee Created' || emppersonalinfo?.substatus=='Requested Documents' || emppersonalinfo?.substatus == 'Documents Submitted' || 
             emppersonalinfo?.substatus == 'Documents Rejected'|| emppersonalinfo?.substatus == 'Documents Accepted' || emppersonalinfo?.substatus == 'Documents Verified')" (click)="openModal(archivedbtn)">
                 {{'Archive'|translate}}
             </button>
-            }
+            
             <!-- <div *ngIf=""> -->
             @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'){
             <button class="custom-btn btn-secondary me-3" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' || 
@@ -142,7 +141,7 @@
                 <p class="popup-heading mb-0">{{'Revoke Offer'|translate}}</p>
             </div>
             <div>
-                <a (click)="onclose()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="onclose();this.revokeForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -150,17 +149,17 @@
                 <div class="mb-3">
                     <label for="comments" class="form-label custom-label mb-2">{{'Revoke Reason'|translate}}
                         <span class="error-msg">*</span></label>
-                    <textarea class="form-control custom-input" formControlName="revokeComments"
+                    <textarea class="form-control custom-input" formControlName="revokeComments" maxlength="250"
                         placeholder="Please provide reason"></textarea>
-                    <div class="my-1">
-                        <span class="color">{{ revokeForm.get('revokeComments')?.value?.length || 0 }}/250</span>
-                    </div>
+                        <div class="mt-2 textarea-count-text">
+                            <span class="color">{{ revokeForm.get('revokeComments')?.value?.length || 0 }}/250</span>
+                        </div>
                     <div *ngIf="revokeForm.get('revokeComments')?.invalid && revokeForm.get('revokeComments')?.touched">
-                        <div class="error-msg">Reason is required</div>
+                        <div class="error-msg">{{'Revoke Reason is required'|translate}}</div>
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="close()">{{'Close'|translate}}</button>
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="close();this.revokeForm.reset()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary px-4" [disabled]="!revokeForm.valid">{{'Submit'|translate}}</button>
                 </div>
             </form>

@@ -57,7 +57,7 @@
                                 <p>Loading...</p>
                             </ng-template>
                             <input type="number" class="form-control custom-input no-arrows" formControlName="mobile"
-                                placeholder="Please enter mobile number" id="phonenumbers"
+                                placeholder="Please enter mobile number" id="phonenumbers"(input)="formatPhoneNumber(contactForm.get('contact1.mobile')?.value)"
                                 aria-describedby="phonenumbers" [value]="contactForm.get('contact1.mobile')?.value"
                                 autocomplete="off" required>
                         </div>
@@ -141,7 +141,7 @@
 
                             <input type="number" class="form-control custom-input no-arrows" formControlName="mobile"
                                 placeholder="Please enter mobile number" id="phonenumbers"
-                                aria-describedby="phonenumbers"
+                                aria-describedby="phonenumbers"(input)="formatPhoneNumber1(contactForm.get('contact2.mobile')?.value)"
                                 [value]="contactForm.get('contact2.mobile')?.value"
                                 autocomplete="off" required>
                         </div>

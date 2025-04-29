@@ -175,7 +175,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     
   }
   onclickCTC(Value: any) {
-    console.log(Value);
     this.prospectiveEmpData.amount = Value;
     this.ctcCalculation();
   }
@@ -183,8 +182,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   //download document
   async downLoadDocument(EmpValue: any) {
     const data = this.prospectiveEmpData;
-    console.log(data);
-
     const pdf = new jsPDF('p', 'mm', 'a4');
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
@@ -218,13 +215,11 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     const fileName = `${data.firstName}_${data.middleName ??""}_${data.lastName ??""}_${new Date().getTime()}_OfferLetter.pdf`;
     pdf.save(fileName);
     const blob = pdf.output('blob');
-    console.log(blob);
     //creating form file to upload into AZure
     let d: Date = new Date();
     const file = new File([blob], fileName, {
       type: 'application/pdf',
     });
-    console.log(file);
     this.generatedfile = file;
     this.generatingEmployeeId=this.prospectiveEmpData.empId;
     this.loading=false
@@ -269,7 +264,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       .getData('Employeedata/GetProspectiveAndVerified')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           //this.employeeiddetails = data as IemployeeDetails[];
           this.employeeiddetails = data.map((employee: any) => {
             return {
@@ -289,17 +283,11 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   }
   getEmployeeAddress(Value: any) {
     let EmployeeId = Value;
-    console.log(Value);
-
-    console.log(EmployeeId);
-
     this.subscription = this.http
       .getData(`Employeedata/getProspectiveEmployeedata/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.employeeaddress = data as IAddress[];
-          console.log(this.employeeaddress.password);
           if (
             this.employeeaddress.substatus == 'Documents Verified' ||
             this.employeeaddress.substatus == 'Trainee Onboarded'
@@ -312,24 +300,18 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
           ) {
             this.buttonValue = 'Regenerate Offer Letter';
           }
-          console.log(this.buttonValue);
         },
       });
   }
 
   onclickSelectAddress(Value:any){
-    console.log(Value);
     this.addresFlag= true;
     this.addressType=Value.value;
-    console.log(this.addressType);
-
-    console.log(this.employeeaddress.employeeAddresses);
     if (this.employeeaddress?.employeeAddresses.length > 0) {
       this.address = this.employeeaddress?.employeeAddresses.find(
         (address: IAddress) => address?.type?.toLowerCase() == Value?.value?.toLowerCase()
       );
     }
-    console.log(this.address);
     this.prospectiveEmpData.addressLine1 = this.address?.addressLine1;
     this.prospectiveEmpData.addressLine2 = this.address?.addressLine2;
     this.prospectiveEmpData.city = this.address?.city;
@@ -349,7 +331,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   getAllWorkLocation() {
     this.subscription = this.http.getData(`JobLocation`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.LocationDropDownData = data.jobLocations;
       },
     });
@@ -363,7 +344,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       )
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.subLocationsDropdown = data.jobSubLocations;
         },
         error: (err: any) => {
@@ -377,7 +357,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     let signatureAuthorityDetails = this.authorityDetails.find(
       (c: any) => c.employeeId == empId
     );
-    console.log(signatureAuthorityDetails);
     this.SignatureAuthorityValue = signatureAuthorityDetails;
     if (signatureAuthorityDetails) {
         this.authorityDesignation = signatureAuthorityDetails.designation;
@@ -390,12 +369,10 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     let offertype = 'Offer Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
-        console.log(data);
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
           fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
         }));
-        console.log(this.authorityDetails); 
       },
       error: (error: any) => {
         console.error(error);
@@ -406,7 +383,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   getJobrole() {
     this.subscription = this.http.getData('JobRole').subscribe({
       next: (data: any) => {
-        console.log(data);
         this.JobroleDetails = data as IRole[];
       },
     });
@@ -416,7 +392,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     this.subscription = this.http.getData('Gender').subscribe({
       next: (data: any) => {
         this.genderDetails = data as IGender[];
-        console.log(this.genderDetails);
       },
       error: (reason) => console.log(reason),
     });
@@ -426,7 +401,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
     this.subscription = this.http.getData('Title').subscribe({
       next: (data: any) => {
         this.titleDetails = data as ITitle[];
-        console.log(this.titleDetails);
       },
       error: (reason) => console.log(reason),
     });
@@ -443,30 +417,6 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
   //coverting date time to the date formate
   formatDateForOfferIssedandExpiry(date: Date): string {
     return moment(date).format('YYYY-MM-DD');
-  }
-  //checking function if it is new or existing
-  onClickOfferCreate(checkValue: any) {
-    if (checkValue === 'New') {
-      this.buttonValue = 'Generate Offer Letter';
-      if (
-        this.prospectiveEmpData.personalEmail != null ||
-        this.jobRoleDetails != null ||
-        this.prospectiveEmpData.title
-      ) {
-        window.location.reload();
-      }
-    } else if (checkValue === 'Existing') {
-      this.buttonValue = 'Regenerate Offer Letter';
-      if (
-        this.prospectiveEmpData.personalEmail != null ||
-        this.jobRoleDetails != null ||
-        this.prospectiveEmpData.title
-      ) {
-        window.location.reload();
-      }
-    } else {
-      this.buttonValue = 'Generate Offer Letter';
-    }
   }
   //function to reset the feilds
   resetInputFields() {
@@ -490,9 +440,7 @@ pathValuesFuction(){
   //employeeid validation to check we have the mail already exist or not
   onClickValidation(Empidvalue: any) {
     this.loadingCode= true;
-    console.log(Empidvalue);
     if ( Empidvalue.value) {
-      console.log(Empidvalue);
       this.fusionEmpId = Empidvalue.value;
       this.subscription = this.http
         .getData(
@@ -500,7 +448,6 @@ pathValuesFuction(){
         )
         .subscribe({
           next: (data: any) => {
-            console.log(data.checkofferletter);
             if (data.isEmployeevalid === true) {
               if (Empidvalue) {
                 this.prospectiveEmpData = data.checkofferletter;
@@ -528,9 +475,9 @@ pathValuesFuction(){
                   authorityid: this.prospectiveEmpData?.signatureAuthority,
                   phoneNumber:this.prospectiveEmpData?.phoneNumber
                 })
+                this.prospectiveEmpData.note=this.employeeForm?.get('note')?.value;
                 this.selectedCountryCode=this.prospectiveEmpData?.contactnumbercountryflag;
                 this.loadingCode = false;
-                console.log(this.prospectiveEmpData.values);
                 this.getEmployeeAddress(data.checkofferletter.empId);
                 if (this.prospectiveEmpData.approver) {
                   this.prospectiveEmpData.reportingmanagerId =
@@ -541,8 +488,6 @@ pathValuesFuction(){
                 }
                 this.prospectiveEmpData.jobLocationName =data.checkofferletter.workLocation;
                 this.prospectiveEmpData.jobSubLocationName =data.checkofferletter.subLocation;
-                console.log(this.prospectiveEmpData.jobLocationName);
-                console.log(this.prospectiveEmpData.jobSubLocationName);
                 this.getSubLocationByid(this.prospectiveEmpData?.locationId);
                 if(this.prospectiveEmpData.amount){
                   this.ctcCalculation();
@@ -567,13 +512,11 @@ pathValuesFuction(){
   }
   //Function to generate offer letter
   onOfferLetterFormSubmitForGenerateDoc(f: FormGroup) {
-    console.log(f);
       this.updateOfferLetterFieldsDetails(f.value); 
   }
   //ctc Calculation in offer letter
   esicshouldbecometrue!: any;
   ctcCalculation() {
-    console.log(this.prospectiveEmpData.amount);
     this.prospectiveEmpData.pf=this.employeeForm?.get('pf')?.value;
     this.prospectiveEmpData.esic=this.employeeForm?.get('esic')?.value;
     //CTC calculation stated
@@ -582,10 +525,7 @@ pathValuesFuction(){
     Employee.grossSalary = Math.round(
       this.prospectiveEmpData.amount / Employee.grossby
     );
-    console.log(Employee.grossby);
-    console.log(Employee.grossSalary);
     //Calculation condition for pf contribution of an employee]
-    console.log(this.prospectiveEmpData.pf);
     if (
       this.prospectiveEmpData.pf == true ||
       this.prospectiveEmpData.pf == false
@@ -600,7 +540,6 @@ pathValuesFuction(){
             if (Employee.pfContribution >= 1800) {
               Employee.pfContribution = 1800;
             }
-            console.log(Employee.pfContribution);
           } else if (Employee.grossSalary >= 23195) {
             Employee.pfContribution = Math.round(
               Employee.grossSalary * (6.717 / 100)
@@ -609,7 +548,6 @@ pathValuesFuction(){
             if (Employee.pfContribution >= 1800) {
               Employee.pfContribution = 1800;
             }
-            console.log(Employee.pfContribution);
           } else if (Employee.grossSalary <= 23194) {
             Employee.pfContribution = Math.round(
               Employee.grossSalary * (6.519 / 100)
@@ -617,17 +555,14 @@ pathValuesFuction(){
             if (Employee.pfContribution >= 1800) {
               Employee.pfContribution = 1800;
             }
-            console.log(Employee.pfContribution);
           } else {
             if (Employee.grossSalary <= 15000) {
               Employee.pfContribution = Math.round(
                 Employee.grossSalary * (6.519 / 100)
               );
-              console.log(Employee.pfContribution);
               if (Employee.pfContribution >= 1800) {
                 Employee.pfContribution = 1800;
               }
-              console.log(Employee.pfContribution);
             } else if (Employee.grossSalary <= 23194) {
               Employee.pfContribution = Math.round(
                 Employee.grossSalary * (6.519 / 100)
@@ -635,7 +570,6 @@ pathValuesFuction(){
               if (Employee.pfContribution >= 1800) {
                 Employee.pfContribution = 1800;
               }
-              console.log(Employee.pfContribution);
             } else if (Employee.grossSalary >= 23195) {
               Employee.pfContribution = Math.round(
                 Employee.grossSalary * (6.717 / 100)
@@ -644,14 +578,12 @@ pathValuesFuction(){
               if (Employee.pfContribution >= 1800) {
                 Employee.pfContribution = 1800;
               }
-              console.log(Employee.pfContribution);
             }
           }
 
           break;
         case false:
           Employee.pfContribution = 0;
-          console.log(Employee.pfContribution);
 
           break;
         default:
@@ -661,20 +593,16 @@ pathValuesFuction(){
     }
     //==============================================================================================================================
     //Calculation conditions for esic contribution of an employeer
-    console.log(this.prospectiveEmpData.esic);
     if (this.prospectiveEmpData?.esic?.toString() == 'true') {
       let condition1 = Employee.grossSalary >= 23195;
       if (!condition1) {
         Employee.esicContribution = Math.round(
           Employee.grossSalary * (2.94 / 100)
         );
-        console.log(Employee.esicContribution);
         this.prospectiveEmpData.esic = true;
       } else {
         Employee.esicContribution = 0;
         this.prospectiveEmpData.esic = false;
-
-        console.log(Employee.esicContribution);
       }
     } else {
       Employee.esicContribution = 0;
@@ -684,7 +612,6 @@ pathValuesFuction(){
       if (Input) {
         Input.value = 'false';
       }
-      console.log(Employee.esicContribution);
     }
 
     //===================================================================================================================================
@@ -695,28 +622,23 @@ pathValuesFuction(){
       Employee.grossSalary - Employee.pfContribution - Employee.esicContribution
     );
 
-    console.log(Employee.totalGrossSalary);
     //===============================================================================================================================
     //Calculation conditions for pt contrubution of an employee
     if (Employee.totalGrossSalary <= 15000) {
       Employee.professionalTax = 0;
       this.prospectiveEmpData.pt = false;
-      console.log(Employee.professionalTax);
     } else if (
       Employee.totalGrossSalary >= 15001 &&
       Employee.totalGrossSalary <= 20000
     ) {
       Employee.professionalTax = 150;
       this.prospectiveEmpData.pt = true;
-      console.log(Employee.professionalTax);
     } else if (Employee.totalGrossSalary >= 20001) {
       Employee.professionalTax = 200;
-      console.log(Employee.professionalTax);
       this.prospectiveEmpData.pt = true;
     } else {
       Employee.professionalTax = 0;
       this.prospectiveEmpData.pt = false;
-      console.log(Employee.professionalTax);
     }
     //==============================================================================================================================
     //Calculation conditions for esic contrubution of an employee
@@ -725,17 +647,12 @@ pathValuesFuction(){
         Employee.employeeEsi = Math.round(
           Employee.totalGrossSalary * (0.75 / 100)
         );
-        console.log(Employee.employeeEsi);
         this.prospectiveEmpData.esic = true;
       } else {
         Employee.employeeEsi = 0;
         if (this.prospectiveEmpData.pf === undefined) {
           this.prospectiveEmpData.esic = true;
         }
-
-        // else if (this.prospectiveEmpData.pf==true){
-        //   this.prospectiveEmpData.esic = true;
-        // }
         else {
           this.prospectiveEmpData.esic = false;
         }
@@ -754,113 +671,80 @@ pathValuesFuction(){
     //===========================================================================================================
     // calculation for the basicsalary
     Employee.basicSalary = Math.round(Employee.totalGrossSalary * (60 / 100));
-    console.log(Employee.basicSalary);
-
     //calculation for the hraSalary
     Employee.hraSalary = Math.round(Employee.basicSalary * (40 / 100));
-    console.log(Employee.hraSalary);
-
     //calculation for the educationAllowances
     Employee.educationAllowances = Math.round(
       Employee.totalGrossSalary * (2 / 100)
     );
-    console.log(Employee.educationAllowances);
 
     //calculation for the conveyance
     Employee.Conveyance = Math.round(Employee.totalGrossSalary * (4 / 100));
-    console.log(Employee.Conveyance);
 
     //total deductions per month
     Employee.totalDeduction = Math.round(
       Employee.pfContribution + Employee.employeeEsi + Employee.professionalTax
     );
-    console.log(Employee.totalDeduction);
-
     //total net salary  per month
     Employee.netSalary = Math.round(
       Employee.totalGrossSalary - Employee.totalDeduction
     );
-    console.log(Employee.netSalary);
-
     //calculation for the otherallowances
     Employee.otherAllowances = Math.round(
       Employee.totalGrossSalary * (10 / 100)
     );
-    console.log(Employee.otherAllowances);
-
     //pfcontribution per annum
     Employee.pfPreAnuum = Math.round(
       Employee.pfContribution * Employee.grossby
     );
-    console.log(Employee.pfPreAnuum);
-
     //totalGrossPerAnnum calculation
     Employee.totalGrossPerAnnum = Math.round(
       Employee.totalGrossSalary * Employee.grossby
     );
-    console.log(Employee.totalGrossPerAnnum);
-
     //basicsalaryperannum
     Employee.basicPerannum = Math.round(
       Employee.basicSalary * Employee.grossby
     );
-    console.log(Employee.basicPerannum);
-
     //HRA per annum
     Employee.hraPerAnnum = Math.round(Employee.hraSalary * Employee.grossby);
-    console.log(Employee.hraPerAnnum);
-
     //esiper anuum
     Employee.esiPerAnnum = Math.round(
       Employee.esicContribution * Employee.grossby
     );
-    console.log(Employee.esiPerAnnum);
     //esiper anuum for employee
     Employee.esiPerAnnumemployee = Math.round(
       Employee.employeeEsi * Employee.grossby
     );
-    console.log(Employee.esiPerAnnumemployee);
     //educationper annum
     Employee.educationallowancesPerAnnum = Math.round(
       Employee.educationAllowances * Employee.grossby
     );
-    console.log(Employee.educationallowancesPerAnnum);
     //conveyance per annum
     Employee.conveyancePerAnnum = Math.round(
       Employee.Conveyance * Employee.grossby
     );
-    console.log(Employee.conveyancePerAnnum);
-
     //otherAllowancesper annum
     Employee.otherAllowancesPerAnnum = Math.round(
       Employee.otherAllowances * Employee.grossby
     );
-    console.log(Employee.otherAllowancesPerAnnum);
-
     //professional per annum
     Employee.professionalPerAnnum = Math.round(
       Employee.professionalTax * Employee.grossby
     );
-    console.log(Employee.professionalPerAnnum);
-
     //salary deductions per annum
     Employee.totalDeductionsPerAnnum = Math.round(
       Employee.pfPreAnuum +
         Employee.esiPerAnnumemployee +
         Employee.professionalPerAnnum
     );
-    console.log(Employee.totalDeductionsPerAnnum);
-
     //net salary per annum
     Employee.netSalaryPerAnnum = Math.round(
       Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum
     );
-    console.log(Employee.netSalaryPerAnnum);
     //Ctc per annum
     Employee.ctcperannum = Math.round(
       Employee.totalGrossPerAnnum + Employee.pfPreAnuum + Employee.esiPerAnnum
     );
-    console.log(Employee.ctcperannum);
   }
   onVariablePayChange(isVariablePay: any){
     console.log(isVariablePay);
@@ -877,7 +761,6 @@ pathValuesFuction(){
   
   }
   onVariablePayChangeAmount(Value:any){
-    console.log(Value);
     this.prospectiveEmpData.variablePayAmount=Value;
   }
   //to store file to the azure and return to the url
@@ -891,7 +774,6 @@ pathValuesFuction(){
             this.result.documentUrl = data.path;
             this.documentUrl = data.path;
             this.postOfferDetails(empId, data.path);
-            console.log(data);
           }
         },
         error: (reason: any) => {
@@ -926,7 +808,6 @@ pathValuesFuction(){
       .postdata('OfferLetter', postOfferLetterDetails)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.emailToSendManager()
         },
         error: (reason: any) => {
@@ -959,13 +840,10 @@ pathValuesFuction(){
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';
     } else {this.prospectiveEmpData.substatus = 'Offer Letter Generated';}
-    console.log(this.prospectiveEmpData);
-    console.log(this.prospectiveEmpData.empId);
     this.subscription = this.http
       .postdata('Employeedata/UPDATER', this.prospectiveEmpData)
       .subscribe({
         next: (res: any) => {
-          console.log(res);
           this.result = res;
           if (res.statusCode == 409) {
             this.conformationPopup.openErrorModal(res.message);
@@ -1032,7 +910,6 @@ pathValuesFuction(){
         .postdata('Employeedata/UPDATER', employeeData)
         .subscribe({
           next: (res: any) => {
-            console.log(res);
             this.result = res;
             if (res.statusCode == 409) {
                 this.conformationPopup.openErrorModal(res.message);
@@ -1068,12 +945,10 @@ pathValuesFuction(){
   getJobtype() {
     this.subscription = this.http.getData('Jobtype').subscribe({
       next: (data: any) => {
-        console.log(data);
         this.JobtypeDetails = data as IJobtype[];
         let filteredData = this.JobtypeDetails.find(
           (item: any) => item?.jobType1?.toLowerCase() === 'contract'
         );
-        console.log(filteredData);
         this.jobtypeId = filteredData?.sno;
       },
     });
@@ -1082,8 +957,6 @@ pathValuesFuction(){
   jobdetailsupdate!: any;
   UpdateFieldsToRespectiveTables() {
     let data = this.prospectiveEmpData;
-    console.log(data);
-    console.log(this.result);
     const jobdata = {
       id: data.jobId,
       employeeId: data.empId,
@@ -1099,14 +972,10 @@ pathValuesFuction(){
       shiftId: data.shiftId,
       jobTypeId: this.jobtypeId,
     };
-
-    // console.log(jobdata);
     this.subscription = this.http
       .postdata('JobDetails/UPDATER', jobdata)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-          // alert("JobDetails data successfully added")
         },
         error: (Reason) => console.log(Reason),
         complete: () => {
@@ -1115,17 +984,14 @@ pathValuesFuction(){
           } else {
             this.generatepostingtorepectivefields();
           }
-
         },
       });
 
-  
   }
+  //function to posting to respective fields data of job,compensation,employment
   generatepostingtorepectivefields() {
     let data = this.prospectiveEmpData;
-    console.log(data);
     const Compensationdata = {
-      // id: data.compensationId,
       employeeId: data.empId,
       compeffectivedate: data.dateOfJoining,
       overtimeeligibility: null,
@@ -1139,10 +1005,7 @@ pathValuesFuction(){
       status: 'Active',
       compensationcomments: null,
     };
-    console.log(Compensationdata);
-
     const employmentdata = {
-      //id: data.employemnttypeId,
       empid: data.empId,
       jobType: 'Contract',
       empEffectiveDate: data.dateOfJoining,
@@ -1154,8 +1017,6 @@ pathValuesFuction(){
       .postdata('Compensationdata', Compensationdata)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-          //alert("comp data successfully added")
         },
         error: (Reason) => console.log(Reason),
       });
@@ -1171,7 +1032,6 @@ pathValuesFuction(){
   }
   regenerateUpdate() {
     let data = this.prospectiveEmpData;
-    console.log(data);
     const Compensationdataupdate = {
       id: data.compensationId,
       employeeId: data.empId,
@@ -1187,8 +1047,6 @@ pathValuesFuction(){
       status: 'Active',
       compensationcomments: null,
     };
-    console.log(Compensationdataupdate);
-
     const employmentdataupdate = {
       id: data.employemnttypeId,
       empid: data.empId,
@@ -1202,8 +1060,6 @@ pathValuesFuction(){
       .postdata('Compensationdata/UPDATER', Compensationdataupdate)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-          //alert("comp data successfully added")
         },
         error: (Reason) => console.log(Reason),
       });
@@ -1211,7 +1067,6 @@ pathValuesFuction(){
       .postdata('Employementtype/UPDATER', employmentdataupdate)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
         },
         error: (Reason) => console.log(Reason),
       });
@@ -1239,13 +1094,10 @@ pathValuesFuction(){
       senderEmail: loggedInUser.workEmail,
 
     };
-    console.log(emaildetails);
-
     this.subscription = this.http
       .postdata(`CustomEmail/offerManagerEmail`, emaildetails)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.Approvednotification();
           this.conformationPopup.openSuccessModal('Request For Approval Sent Successfully');
           this.loading = false;
@@ -1261,8 +1113,6 @@ pathValuesFuction(){
   Approvednotification() {
     const currentDate = new Date();
     this.prospectiveEmpData;
-    console.log(this.prospectiveEmpData.empid);
-
     let loggedInUser = this.authService.getToken();
     let senddata = {
       message: `Offer Letter Approve Request`,
@@ -1280,8 +1130,7 @@ pathValuesFuction(){
       .postdata(`Notification/Notify/Manager`, senddata)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/admin/dashboard']);
         },
         error: (err: any) => {
           console.log(err);

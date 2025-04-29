@@ -90,6 +90,7 @@
                         <th>{{ "Country(permanent)" }}</th>
                         <th>{{ "ZipCode(permanent)" }}</th>
                         <th>{{ "Work Number" }}</th>
+                        <th>{{ 'Work Mail-Id'}}</th>
                         <th>{{ "Mobile Phone" }}</th>
                         <th>{{ "Branch Location/Code" }}</th>
                         <th>{{ "Grade Name" }}</th>
@@ -125,6 +126,7 @@
                             <td>{{ emp.permanentcountry }}</td>
                             <td>{{ emp.permanentzipcode }}</td>
                             <td>{{ emp.workPhone }}</td>
+                            <td>{{ emp.workEmail || '-' }}</td>
                             <td>{{ emp.contactnumber }}</td>
                             <td>{{ emp.branchcode }}</td>
                             <td>{{ emp.gradeName }}</td>

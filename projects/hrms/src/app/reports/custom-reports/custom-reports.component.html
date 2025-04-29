@@ -26,8 +26,22 @@
         </div>
 
         <div class="d-flex gap-2">
-          <button type="submit" class="custom-btn btn-secondary" [disabled]="reportForm.invalid">Generate</button>
-          <button type="button" class="custom-btn btn-primary" (click)="generateExcel()">Export</button>
+          <button type="submit" class="custom-btn btn-secondary" [disabled]="selectedFields.length == 0 || spinnerLoader1">
+            @if(spinnerLoader1){
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading...'}}</span>
+              }@else {
+              <span>{{'Generate'}}</span>
+            }
+          </button>
+          <button type="button" class="custom-btn btn-primary" [disabled]="selectedData.length == 0" (click)="generateExcel()">
+            @if(spinnerLoader2){
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading...'}}</span>
+              }@else {
+              <span>{{'Export'}}</span>
+              }
+          </button>
         </div>
       </div>
     </form>
@@ -62,7 +76,8 @@
               <td>
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox"
-                    [checked]="fieldGroups['basicInfo'].selectedFields.includes(field)"
+                    [checked]="fieldGroups['basicInfo'].selectedFields.includes(field)" 
+                    [disabled]="isFieldLocked(field)"
                     (change)="toggleFieldSelection(field, 'basicInfo')">
                   <label class="form-check-label check-name">{{ field }}</label>
                 </div>
@@ -421,8 +436,8 @@
       </div>
     </div>
 
-    <div class="custom-setting-right-content p-3">
       <!--selected Fields-->
+    <div class="custom-setting-right-content p-3">
       <div class="custom-table-content selected-fields-table">
         <table class="w-100">
           <thead>
@@ -440,25 +455,27 @@
     </div>
   </div>
 
-  <div class="custom-setting-right-content custom-data-table p-3 mb-3" *ngIf="selectedData.length > 0">
-    <!--table content-->
-    <div class="custom-table-content">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th *ngFor="let field of selectedFields" scope="col">
-              {{ field }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let data of selectedData">
-            <td *ngFor="let field of selectedFields" scope="row">
-              {{ data[field] || '-' }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+     <!--table content-->
+  @if(selectedData.length > 0 && selectedFields.length > 0){
+    <div class="custom-setting-right-content custom-data-table p-3 mb-3">
+      <div class="custom-table-content">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th *ngFor="let field of selectedFields" scope="col">
+                {{ field }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of selectedData">
+              <td *ngFor="let field of selectedFields" scope="row">
+                {{ data[field] || '-' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-  </div>
+  }
 </div>

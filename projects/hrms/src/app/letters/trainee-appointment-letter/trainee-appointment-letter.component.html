@@ -19,7 +19,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeeiddetails" [filter]="true" filterBy="firstName" [showClear]="true"
+                        <p-select [options]="employeeiddetails" [filter]="true" filterBy="firstName"
                             optionLabel="fullName" optionValue="employeeId" placeholder="Please select employee"
                             formControlName="fusionEmpId" class="custom-select w-100" [dataKey]="'employeeId'"
                             (onChange)="Onclick($event)">
@@ -170,7 +170,7 @@
         </div>
 
         <div class="card letter-data-content p-4">
-            <div class="d-flex justify-content-center">
+            <div class="letter-sub-data-content">
                 <div>
                     <!--page-1-->
                     <div class="letter-page-content my-4" id="pdfContent1">

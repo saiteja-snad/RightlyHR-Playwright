@@ -220,10 +220,10 @@
                         <label for="reason" class="form-label custom-label pt-2 mb-2">Reason<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
                             placeholder="Type here" maxlength="250" placeholder="Reason for regularization" (input)="formsValidation.validateInput(regularizationForm.get('reason'))" ></textarea>
-                        <div class="text-end my-1">
+                        <div class="textarea-count-text">
                             {{ regularizationForm.get('reason')?.value?.length || 0 }}/250
                         </div>
-                        <div class="error-msg"  *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
+                        <div class="error-msg" *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
                                 Reason is required.
                             </div>

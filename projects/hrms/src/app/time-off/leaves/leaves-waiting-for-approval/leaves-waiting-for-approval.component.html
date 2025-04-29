@@ -28,16 +28,12 @@
                     <td>{{item.enddate| dateformat}}</td>
                     <td>
                         <div>
-                            <span>
-                                <a type="button" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">{{item.notes}}</p>
-                                    </div>
-                                </ng-template>
-                            </span>
+                            <a type="button" [ngbPopover]="reason">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #reason>
+                                <p class="mb-0">{{item.notes}}</p>
+                            </ng-template>
                         </div>
                     </td>
                     <td>{{item.status}}</td>

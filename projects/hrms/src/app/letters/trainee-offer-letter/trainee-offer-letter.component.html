@@ -324,9 +324,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Note'|translate}}</label>
                     <textarea class="form-control custom-input" formControlName="note" (ngModelChange)="pathValuesFuction()"  placeholder="Please enter note" maxlength="250"></textarea>
-                    <div class="mt-2 textarea-count-text">
-                        <span class="color">{{ employeeForm.get('note')?.value?.length || 0 }} / 250</span>
-                    </div>
+                    <div class="textarea-count-textt">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
                     <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                         <div class="error-msg">Note is required</div>
                     </div>
@@ -365,7 +363,7 @@
         </div>
 
         <div class="card letter-data-content p-4">
-            <div class="d-flex justify-content-center">
+            <div class="letter-sub-data-content">
                 <div>
                     <!--page-1-->
                     <div class="letter-page-content my-4" id="pdfContent1">

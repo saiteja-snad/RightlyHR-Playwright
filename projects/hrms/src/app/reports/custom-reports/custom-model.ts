@@ -6,7 +6,7 @@ export interface Ipersonal {
   esicApplicable: any;
   pfApplicable: any
   appointmentSentStatus: string;
-  appointmentSenyBy: string;
+  appointmentsentby: string;
   backgroundCheckStatus: string;
   bankName: string;
   bloodGroup: string;
@@ -54,7 +54,7 @@ export interface Ipersonal {
   m: number;
   maritalStatus: string;
   noticePeriod: string;
-  offerSentBy: string;
+  offersentby: string;
   offerSentDate: string;
   offerSentStatus: string;
   overtimeeligibility: string;
@@ -70,7 +70,7 @@ export interface Ipersonal {
   relationship1: string;
   reportingManager: string;
   salaryHold: string;
-  secondaryLanguage: string;
+  // secondaryLanguage: string;
   specialization: string;
   subdepartment_name: string;
   termreasonoffboard: string;
@@ -88,18 +88,18 @@ export interface Ipersonal {
   shiftCode: string;
   teamManager: string;
   totalYearsOfExperience: string;
-  permanentZipCode: any;
-  permanentCountry: string;
-  permanentState: string;
-  permanentCity: string;
-  permanentAddressLine2: string;
-  permanentAddressLine1: string;
-  currentZipCode: any;
-  currentState: string;
-  currentCity: string;
-  currentAddressLine2: string;
-  currentAddressLine1: string;
-  currentCountry: string;
+  permanentzipcode: any;
+  permanentcountry: string;
+  permanentstate: string;
+  permanentcity: string;
+  permanentaddressline2: string;
+  permanentaddressline1: string;
+  currentzipcode: any;
+  currentstate: string;
+  currentcity: string;
+  currentaddressline2: string;
+  currentaddressline1: string;
+  currentcountry: string;
 }
 export interface IStatus {
   sno: number;

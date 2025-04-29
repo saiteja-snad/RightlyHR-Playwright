@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { SelectModule } from 'primeng/select';
 import * as XLSX from 'xlsx';
 import { AuthService } from '../../services/auth.service';
-import { Subject, takeUntil } from 'rxjs';
+import { every, Subject, takeUntil } from 'rxjs';
 import { Ipersonal, IStatus } from './custom-model';
 import { CalendarModule } from 'primeng/calendar';
 interface FieldGroup {
@@ -42,7 +42,7 @@ export class CustomReportsComponent {
       name: 'Basic Information',
       fields: [
         'ID', 'Employee ID', 'Salutation', 'First Name', 'Last Name', 'Middle Name',
-        'Status', 'Marital Status', 'Gender', 'Date of Birth', 'Blood Group', 'Secondary Language'
+        'Status', 'Marital Status', 'Gender', 'Date of Birth', 'Blood Group'
       ],
       selectedFields: [],
       selectAll: false
@@ -157,9 +157,12 @@ export class CustomReportsComponent {
     }
   };
 
+  spinnerLoader1= false;
+  spinnerLoader2= false;
+
   constructor(private fb: FormBuilder, private authService: AuthService, private http: HttpService) {
     this.reportForm = this.fb.group({
-      status: ['All Employees', Validators.required]
+      status: ['All Employees']
     });
   }
 
@@ -234,9 +237,13 @@ export class CustomReportsComponent {
 
   private updateSelectedFields(): void {
     this.selectedFields = Object.values(this.fieldGroups).reduce((acc: string[], group) => [...acc, ...group.selectedFields], []);
+    if(this.selectedFields.length == 0){
+      this.selectedData=[];
+    }
   }
 
   onSubmit(): void {
+    this.spinnerLoader1= true;
     if (this.reportForm.invalid) return;
     this.selectedData = [];
     this.emp.forEach((user: Ipersonal) => {
@@ -254,21 +261,21 @@ export class CustomReportsComponent {
         else if (field === 'Gender') data[field] = user.gender;
         else if (field === 'Date of Birth') data[field] = this.formatDate(user.dob);
         else if (field === 'Blood Group') data[field] = user.bloodGroup;
-        else if (field === 'Secondary Language') data[field] = user.secondaryLanguage;
+        // else if (field === 'Secondary Language') data[field] = user.secondaryLanguage;
         // Current Address
-        else if (field === 'Address Line 1(current)') data[field] = user.currentAddressLine1;
-        else if (field === 'Address Line 2(current)') data[field] = user.currentAddressLine2;
-        else if (field === 'City(current)') data[field] = user.currentCity;
-        else if (field === 'State(current)') data[field] = user.currentState;
-        else if (field === 'Country(current)') data[field] = user.currentCountry;
-        else if (field === 'Zip Code/Post Code(current)') data[field] = user.currentZipCode;
+        else if (field === 'Address Line 1(current)') data[field] = user.currentaddressline1;
+        else if (field === 'Address Line 2(current)') data[field] = user.currentaddressline2;
+        else if (field === 'City(current)') data[field] = user.currentcity;
+        else if (field === 'State(current)') data[field] = user.currentstate;
+        else if (field === 'Country(current)') data[field] = user.currentcountry;
+        else if (field === 'Zip Code/Post Code(current)') data[field] = user.currentzipcode;
         // Permanent Address
-        else if (field === 'Address Line 1(permanemt)') data[field] = user.permanentAddressLine1;
-        else if (field === 'Address Line 2(permanemt)') data[field] = user.permanentAddressLine2;
-        else if (field === 'City(permanemt)') data[field] = user.permanentCity;
-        else if (field === 'State(permanemt)') data[field] = user.permanentState;
-        else if (field === 'Country(permanemt)') data[field] = user.permanentCountry;
-        else if (field === 'Zip Code/Post Code(permanemt)') data[field] = user.permanentZipCode;
+        else if (field === 'Address Line 1(permanemt)') data[field] = user.permanentaddressline1;
+        else if (field === 'Address Line 2(permanemt)') data[field] = user.permanentaddressline2;
+        else if (field === 'City(permanemt)') data[field] = user.permanentcity;
+        else if (field === 'State(permanemt)') data[field] = user.permanentstate;
+        else if (field === 'Country(permanemt)') data[field] = user.permanentcountry;
+        else if (field === 'Zip Code/Post Code(permanemt)') data[field] = user.permanentzipcode;
         // Contact Details
         else if (field === 'Work Number') data[field] = user.workPhone;
         else if (field === 'Mobile Phone') data[field] = user.contactnumber;
@@ -309,10 +316,10 @@ export class CustomReportsComponent {
         else if (field === 'IFSC Code') data[field] = user.ifscCode;
         // Pre Onboarding
         else if (field === 'Offer Sent Date') data[field] = this.formatDate(user.offerSentDate);
-        else if (field === 'Offer Sent By') data[field] = user.offerSentBy;
+        else if (field === 'Offer Sent By') data[field] = user.offersentby;
         else if (field === 'Offer Sent Status') data[field] = user.offerSentStatus;
         else if (field === 'Appointment Sent Date') data[field] = this.formatDate(user.appointmentSentDate);
-        else if (field === 'Appointment Sent By') data[field] = user.appointmentSenyBy;
+        else if (field === 'Appointment Sent By') data[field] = user.appointmentsentby;
         else if (field === 'Appointment Sent Status') data[field] = user.appointmentSentStatus;
         // Onboarding
         else if (field === 'Date Of Joining') data[field] = this.formatDate(user.dateOfJoining);
@@ -353,6 +360,7 @@ export class CustomReportsComponent {
         else if (field === 'Frequency') data[field] = user.frequency;
       });
       this.selectedData.push(data);
+        this.spinnerLoader1= false;
     });
   }
 
@@ -405,9 +413,10 @@ export class CustomReportsComponent {
 
   generateExcel(): void {
     if (this.selectedData.length === 0) {
-      alert('No data to export. Please generate the report first.');
+      console.log('No data to export. Please generate the report first.');
       return;
     }
+    this.spinnerLoader2= true;
     const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.selectedData);
     this.convertHeadersToUpperCase(ws);
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -443,7 +452,7 @@ export class CustomReportsComponent {
       `${this.loggedInUser.employeeId}_${new Date().getTime()}__custom_reports.xlsx`,
       { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
     );
-    // You can use reportFile for upload if needed
+    this.spinnerLoader2= false;
   }
 
   private formatDate(dateString: string): string {

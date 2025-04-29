@@ -7,9 +7,10 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-wfh-entitlemen-criteria',
-  imports: [CommonModule, NoDataFoundComponent,FormsModule],
+  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent],
   templateUrl: './wfh-entitlemen-criteria.component.html',
   styleUrl: './wfh-entitlemen-criteria.component.scss'
 })
@@ -21,7 +22,7 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
   valueId!: number
   currentEntity!:string;
   validationError!:any;
-
+  dataLoad = false;
   constructor(private http: HttpService,private sharedModalService: OpenModalService,public rbac: RbacService) {}
 
   ngOnInit(): void {
@@ -29,11 +30,16 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
   }
 
   WorkFromHomeEligibilityCriteria(eligibilityType: string) {
+    this.dataLoad = true;
     this.http.getData(eligibilityType).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
-        this.eligibilityCriterias = data as unknown as IEligibilityCriteria[];
+        this.eligibilityCriterias = (data as unknown as IEligibilityCriteria[])?.sort((a, b) => a.id - b.id);
+        this.dataLoad = false;
       },
-      error: (reason) => console.log(reason),
+      error: (reason) =>{ 
+        console.log(reason)
+        this.dataLoad = false;
+      },
       complete: () => {},
     });
   }

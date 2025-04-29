@@ -17,6 +17,7 @@
         </form>
     </div>
 
+    @if(!dataLoad){
     <div class="custom-table-content w-50">
         <ng-container *ngIf="permissionsType!.length > 0; else noDataTemplate">
             <table class="w-100">
@@ -51,6 +52,9 @@
             </table>
         </ng-container>
     </div>
+} @else { <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
+</div>}
 </div>
 
 <ng-template #noDataTemplate>

@@ -58,7 +58,7 @@
                 </ng-template>
                 <input type="text" class="form-control custom-input" formControlName="contact1Phone"
                   placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
-                  (input)="onEmergencyContact1PhoneInput()"
+                  (input)="onEmergencyContact1PhoneInput()" (keypress)="formValidation.restrictAlphabets($event)"
                   autocomplete="off" required>
               </div>
               <div class="error-msg my-1"
@@ -134,7 +134,7 @@
                 <ng-template #loadingTemplate>
                   <p>Loading...</p>
                 </ng-template>
-                <input type="text" class="form-control custom-input" formControlName="contact2Phone" (input)="onEmergencyContact2PhoneInput()"
+                <input type="text" class="form-control custom-input" formControlName="contact2Phone" (input)="onEmergencyContact2PhoneInput()" (keypress)="formValidation.restrictAlphabets($event)"
                   placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
                  
                   autocomplete="off" required>

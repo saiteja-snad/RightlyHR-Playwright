@@ -60,7 +60,6 @@ export class RemoteWaitingForApprovalComponent implements OnInit,OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    console.log(this.empinfo);
     this.getRemoteRequests();
   }
 

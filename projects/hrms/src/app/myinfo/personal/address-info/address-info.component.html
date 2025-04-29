@@ -22,7 +22,7 @@
                   <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                       class="text-danger">*</span></label>
                   <input type="text" class="form-control custom-input" id="currentAddressLine1" formControlName="addressLine1"
-                    placeholder="Please enter address line"
+                    placeholder="Please enter address line 1"
                     (keypress)="formValidation.restrictInputallowspicalcharters($event)">
                   <div class="error-msg"
                     *ngIf="addressForm.get('currentAddress.addressLine1')?.invalid && addressForm.get('currentAddress.addressLine1')?.touched">
@@ -32,13 +32,13 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                   <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
                   <input type="text" class="form-control custom-input" id="currentAddressLine2" formControlName="addressLine2"
-                    placeholder="Please enter address line"
+                    placeholder="Please enter address line 2"
                     (keypress)="formValidation.restrictInputallowspicalcharters($event)">
                 </div>
                 <div class="col-md-6 col-lg-4 mb-3">
                   <label for="currentCity" class="form-label custom-label mb-2">City<span class="text-danger">*</span></label>
                   <input type="text" class="form-control custom-input" id="currentCity" formControlName="city"
-                    placeholder="Please enter city">
+                    placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
                   <div class="error-msg"
                     *ngIf="addressForm.get('currentAddress.city')?.invalid && addressForm.get('currentAddress.city')?.touched">
                     City is required
@@ -58,7 +58,7 @@
                   <label for="currentCountry" class="form-label custom-label mb-2">Country<span
                       class="text-danger">*</span></label>
                   <input type="text" class="form-control custom-input" id="currentCountry" formControlName="country"
-                    placeholder="Please enter country">
+                    placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
                   <div class="error-msg"
                     *ngIf="addressForm.get('currentAddress.country')?.invalid && addressForm.get('currentAddress.country')?.touched">
                     Country is required
@@ -99,7 +99,7 @@
                   <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                       class="text-danger">*</span></label>
                   <input type="text" class="form-control custom-input" id="permanentAddressLine1"
-                    formControlName="addressLine1" placeholder="Please enter address line">
+                    formControlName="addressLine1" placeholder="Please enter address line 1"  (keypress)="formValidation.restrictInputallowspicalcharters($event)">
                   <div class="error-msg"
                     *ngIf="addressForm.get('permanentAddress.addressLine1')?.invalid && addressForm.get('permanentAddress.addressLine1')?.touched">
                     Address Line 1 is required
@@ -108,13 +108,13 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                   <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
                   <input type="text" class="form-control custom-input" id="permanentAddressLine2"
-                    formControlName="addressLine2" placeholder="Please enter address line">
+                    formControlName="addressLine2" placeholder="Please enter address line 2"  (keypress)="formValidation.restrictInputallowspicalcharters($event)">
                 </div>
                 <div class="col-md-6 col-lg-4 mb-3">
                   <label for="permanentCity" class="form-label custom-label mb-2">City<span
                       class="text-danger">*</span></label>
                   <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
-                    placeholder="Please enter city">
+                    placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)" >
                   <div class="error-msg"
                     *ngIf="addressForm.get('permanentAddress.city')?.invalid && addressForm.get('permanentAddress.city')?.touched">
                     City is required
@@ -124,7 +124,7 @@
                   <label for="permanentState" class="form-label custom-label mb-2">State<span
                       class="text-danger">*</span></label>
                   <input type="text" class="form-control custom-input" id="permanentState" formControlName="state"
-                    placeholder="Please enter state">
+                    placeholder="Please enter state" (keypress)="formValidation.restrictInputallowspoint($event)">
                   <div class="error-msg"
                     *ngIf="addressForm.get('permanentAddress.state')?.invalid && addressForm.get('permanentAddress.state')?.touched">
                     State is required
@@ -134,7 +134,7 @@
                   <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
                       class="text-danger">*</span></label>
                   <input type="text" class="form-control custom-input" id="permanentCountry" formControlName="country"
-                    placeholder="Please enter country">
+                    placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
                   <div class="error-msg"
                     *ngIf="addressForm.get('permanentAddress.country')?.invalid && addressForm.get('permanentAddress.country')?.touched">
                     Country is required

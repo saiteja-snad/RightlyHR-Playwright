@@ -9,6 +9,7 @@ import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { RbacService } from '../../../services/rbac.service';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-contact-details',
@@ -44,7 +45,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   selectedworkcoutrycode = signal<any>('');
   selectedpersonalnumbercode = signal<any>('');
 
-  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder, private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService) {
+  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService, private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService) {
     effect(() => {
       this.selectedworkcoutrycode.set(this.selectedDialCode);
       this.selectedpersonalnumbercode.set(this.selectedDialphoneCode);

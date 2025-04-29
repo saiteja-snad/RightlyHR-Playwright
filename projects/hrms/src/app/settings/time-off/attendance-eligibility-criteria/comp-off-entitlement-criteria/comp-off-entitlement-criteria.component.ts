@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-comp-off-entitlement-criteria',
-  imports: [CommonModule, NoDataFoundComponent,FormsModule],
+  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent],
   templateUrl: './comp-off-entitlement-criteria.component.html',
   styleUrl: './comp-off-entitlement-criteria.component.scss',
 })
@@ -19,7 +20,7 @@ export class CompOffEntitlementCriteriaComponent implements OnInit, OnDestroy {
   editingIndex: number | null = null;
   temporaryValue: any;
   valueId!: number
-
+  dataLoad = false;
   constructor(private http: HttpService,private sharedModalService:OpenModalService) {}
 
   ngOnInit(): void {
@@ -27,11 +28,16 @@ export class CompOffEntitlementCriteriaComponent implements OnInit, OnDestroy {
   }
 
   getCompOffEligibitlyCriterias(eligibilityType: string) {
+    this.dataLoad = true;
     this.http.getData(eligibilityType).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
-        this.eligibilityCriterias = data as unknown as IEligibilityCriteria[];
+        this.eligibilityCriterias = (data as unknown as IEligibilityCriteria[])?.sort((a, b) => a.id - b.id); // Sort by id ascending
+        this.dataLoad = false;
       },
-      error: (reason) => console.log(reason),
+      error: (reason) => {
+        console.log(reason);
+        this.dataLoad = false;
+      },
       complete: () => {},
     });
   }
@@ -122,8 +128,11 @@ export class CompOffEntitlementCriteriaComponent implements OnInit, OnDestroy {
         this.sharedModalService.openSuccessModal('Data Updated Successfully')
       },
       error: (err) => {
+        console.log(err);
         this.sharedModalService.openErrorModal("Some Thing Went Wrong");
-      }
+      },complete: () =>{
+        this.getCompOffEligibitlyCriterias('CompOffEligibilityCriteria');
+      },
     })
   }
 

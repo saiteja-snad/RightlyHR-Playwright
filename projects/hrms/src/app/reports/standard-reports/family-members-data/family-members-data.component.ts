@@ -16,6 +16,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import * as XLSX from 'xlsx';
 import { StandardReportTabsComponent } from '../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-family-members-data',
@@ -45,6 +46,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
+    private modal: OpenModalService
   ) { }
 
   ngOnInit(): void {
@@ -76,7 +78,6 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.familydata = data as IFamilyDetails[];
-          console.log(this.familydata);
         },
         error: (err: any) => {
           this.spinnerLoader1= false;
@@ -297,6 +298,7 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     };
     XLSX.writeFile(workbook, `${fileName}.xlsx`);
     this.spinnerLoader2= false;
+    this.modal.openSuccessModal('Family Members data downloaded successfully');
   }
 
   getFileName(name: string | undefined) {

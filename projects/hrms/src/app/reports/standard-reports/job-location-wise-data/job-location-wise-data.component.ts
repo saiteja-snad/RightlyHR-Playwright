@@ -3,7 +3,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { ILocation, ILocationReportData, ISubLocation } from './location-reports.model';
@@ -16,6 +16,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { OpenModalService } from '../../../services/open-modal.service';
 @Component({
   selector: 'app-job-location-wise-data',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent, NoDataFoundComponent, DataLoaderContentComponent],
@@ -36,7 +37,12 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private reports: ReportsService,private http: HttpService,private fb: FormBuilder) { }
+  constructor(
+    private reports: ReportsService,
+    private http: HttpService,
+    private fb: FormBuilder,
+    private modal: OpenModalService
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -62,6 +68,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     return this.locationReportsForm.get('dateOfJoining') as FormControl;
   }
 
+  // Function to get All the lcoations
   getAllLocations(): void {
     this.reports.getJobLocations().pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -78,6 +85,21 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
           this.locationReportsForm.patchValue({
             location: allLocationsOption
           });
+          
+          const allSubLocationOption: ISubLocation = {
+            id: -1,
+            jobLocationId: -1,
+            jobSubLocationName: 'All Sub Locations',
+            isDeleted: false,
+            jobLocationName: 'All Locations'
+          };
+  
+          this.subLocationDetails = [allSubLocationOption];
+  
+          this.locationReportsForm.patchValue({
+            subLocation: allSubLocationOption
+          });
+        
         }
       },
       error: err => console.error('Error fetching locations:', err),
@@ -103,24 +125,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     clearLabel: 'Clear',
   };
 
-  enableLocation(): void {
-    if (this.locationReportsForm.get('dateOfJoining')?.value) {
-      this.getAllLocations();
-      // this.locationReportsForm.get('location')?.enable();
-    }
-  }
-
-  onLocationChange(location: ILocation): void {
-    if (location?.jobSubLocations?.length) {
-      this.getSubLocations(location);
-      // this.locationReportsForm.get('subLocation')?.enable();
-    } else {
-      this.subLocationDetails = [];
-      // this.locationReportsForm.get('subLocation')?.enable();
-      // this.locationReportsForm.get('subLocation')?.reset();
-    }
-  }
-
+  // Function to get All the Sub Locations based on the Job lcocation id 
   getSubLocations(location: ILocation) {
     this.http.getData(`JobLocation/sub-location-by-joblocation/${location.id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -143,14 +148,13 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Function to handle field changes
   private handleFormValueChanges(): void {
     const form = this.locationReportsForm;
 
-    form.get('location')?.valueChanges
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((location: ILocation) => {
+    form.get('location')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((location: ILocation) => {
       if (location?.id === -1) {
-        // this.getAllSubLocations(); // You need this if "All Locations" is handled differently
+        // this.getSubLocations(location);
       } else if (location?.id) {
         this.getSubLocations(location);
       } else {
@@ -173,6 +177,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     return `${year}-${month}-${day}`;
   }
 
+  // Function to get the reports with out filter
   getStandardReports() {
     this.dataload = true;
     const params = new URLSearchParams();
@@ -191,6 +196,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Function to get the data after click on Generat button
   onSubmit(form: FormGroup) {
     const formData = form.value;
     
@@ -202,7 +208,6 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       const isEmptySubLocation = !formData.subLocation;
     
       if (isEmptyDate && isEmptyLocation && isEmptySubLocation) {
-        console.log('No filters provided — skipping API call');
         return;
       }
     
@@ -211,6 +216,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   }
     
 
+// Function to get the report data based on filters selection
   getFilterReports(formData: any): void {
     this.dataload = true;
     this.spinnerLoader1 = true;
@@ -232,7 +238,6 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         this.spinnerLoader1 = false;
         this.dataload = false;
-        console.error('API Error:', err);
       },
       complete: () => {
         this.spinnerLoader1 = false;
@@ -240,7 +245,6 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
 
   onClickJobLocationExport() {
     this.spinnerLoader = true;
@@ -281,8 +285,8 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
       let cell = ws[cellAddress];
       if (cell && cell.v) {
-        cell.v = cell.v.toString().toUpperCase(); // Convert to uppercase
-        cell.w = cell.v; // Ensure display is updated
+        cell.v = cell.v.toString().toUpperCase(); 
+        cell.w = cell.v; 
       }
     }
   }
@@ -305,8 +309,6 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
 
   ReportEmail(docUrl: string, fileName: string) {
     let loggedInUser = this.empinfo;
-    //let filetitle = this.fileName.reports;
-    //console.log(filetitle);
     const date = new Date();
     let reportdata = {
       employeeId: loggedInUser.employeeId,
@@ -322,9 +324,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
     }
     this.http.postdata(`CustomEmail/Reports`, reportdata).subscribe({
-      next: (data: any) => {
-        console.log(data);
-      }, error: (err: any) => {
+      next: (data: any) => { }, error: (err: any) => {
         this.spinnerLoader = false;
       }
     });
@@ -338,12 +338,15 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     }
     this.http.postdata("ReportsLog", req).subscribe({
       next: (res: any) => {
-        this.spinnerLoader = false;
+       this.modal.openSuccessModal('Job Location Wise Data downloaded successfully');
       },
       error: (err) => {
         this.spinnerLoader = false;
+        this.modal.openErrorModal("Failed to download job location wise data");
       },
-      complete: () => { }
+      complete: () => {
+        this.spinnerLoader = false;
+       }
     })
   }
 

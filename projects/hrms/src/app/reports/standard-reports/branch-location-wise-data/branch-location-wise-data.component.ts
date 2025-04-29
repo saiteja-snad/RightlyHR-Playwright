@@ -72,8 +72,8 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService,
-    private reportService: ReportsService
+    private modal: OpenModalService,
+    private reportService: ReportsService,
   ) { }
 
   ngOnInit(): void {
@@ -156,9 +156,8 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
           this.ReportEmail(data.path, fileName);
         },
         error: (reason: any) => {
-          console.log(reason);
           this.spinnerLoader = false;
-          this.sharedModalService.openErrorModal('file upload  is failed');
+          this.modal.openErrorModal('file upload  is failed');
         },
       });
   }
@@ -202,13 +201,15 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.spinnerLoader = false;
+          this.modal.openSuccessModal('Branch Location Wise Data downloaded successfully');
         },
         error: (err: any) => {
-          console.log(err);
           this.spinnerLoader = false;
+          this.modal.openErrorModal('Failed to download branch location wise data');
         },
-        complete: () => { },
+        complete: () => {
+          this.spinnerLoader = false;
+         }
       });
   }
 

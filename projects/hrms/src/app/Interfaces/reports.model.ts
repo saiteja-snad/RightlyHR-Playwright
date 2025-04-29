@@ -157,7 +157,7 @@ export interface EmployeeDetails {
   paytype: string;
   compensationamount: number;
   title: string;
-  branchCode: string;
+  branchcode: string;
   jobType: string;
   gradeName: string;
 }

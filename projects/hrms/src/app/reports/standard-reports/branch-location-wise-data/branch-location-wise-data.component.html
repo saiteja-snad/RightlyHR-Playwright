@@ -7,7 +7,7 @@
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
             <div class="d-flex align-items-center gap-3">
                 <div class="d-flex gap-2 align-items-center">
-                    <label class="custom-label text-nowrap">Date Of Joining<span class="text-danger">*</span></label>
+                    <label class="custom-label text-nowrap">Date Of Joining</label>
                     <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
                         [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
                         formControlName="dateOfJoining" [placeholder]="'Please Select Date of Joining'"
@@ -15,7 +15,7 @@
                 </div>
 
                 <div class="d-flex gap-2 align-items-center">
-                    <label class="custom-label text-nowrap">Branch Location<span class="text-danger">*</span></label>
+                    <label class="custom-label text-nowrap">Branch Location</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="branchLocations" optionLabel="branchLocation1"
                             optionValue="branchLocation1" [filter]="false" [showClear]="false"
@@ -33,7 +33,7 @@
                         [disabled]="!reportForm.get('location')?.value && !reportForm.get('dateOfJoining')?.value || spinnerLoader1">
                         @if(spinnerLoader1){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}</span>
+                        <span>{{'Loading...'}}</span>
                         }@else {
                         <span>{{'Generate'}}</span>
                         }
@@ -42,7 +42,7 @@
                         (click)="onClickBranchLocationExport() ">
                         @if(spinnerLoader){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}</span>
+                        <span>{{'Loading...'}}</span>
                         }@else {
                         <span>{{'Export'}}</span>
                         }
@@ -126,7 +126,7 @@
                             <td>{{ emp.permanentzipcode }}</td>
                             <td>{{ emp.workPhone }}</td>
                             <td>{{ emp.contactnumber }}</td>
-                            <td>{{ emp.branchCode }}</td>
+                            <td>{{ emp.branchcode }}</td>
                             <td>{{ emp.gradeName }}</td>
                             <td>{{ emp.departmentName }}</td>
                             <td>{{ emp.joblocationname }}</td>

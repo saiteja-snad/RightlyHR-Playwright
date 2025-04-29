@@ -33,7 +33,7 @@
                 <button type="submit" class="custom-btn btn-primary px-4" [disabled]="monthlyReportForm.invalid || spinnerLoader">
                     <ng-container *ngIf="spinnerLoader; else addText">
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..' | translate}}...</span>
+                        <span>{{'Loading...' | translate}}</span>
                     </ng-container>
                     <ng-template #addText>
                         <span>{{'Generate' | translate}}</span>

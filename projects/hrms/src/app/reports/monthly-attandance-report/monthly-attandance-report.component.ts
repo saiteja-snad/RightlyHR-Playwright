@@ -90,7 +90,7 @@ export class MonthlyAttandanceReportComponent {
         link.href = url;
         link.download = `Monthly_Attendance_${month}_${year}.xlsx`;
         link.click();
-        this.openmodalservice.openSuccessModal("Data Generated Sucessfully");
+        this.openmodalservice.openSuccessModal("Monthly Attendance Report Generated Sucessfully");
       },
       error:(err: any) => {
         this.spinnerLoader= false;

@@ -23,7 +23,7 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="locationDetails" optionLabel="jobLocationName" filterBy="jobLocationName" [filter]="true"
                                 [showClear]="false" formControlName="location" placeholder="Please select location"
-                                class="form-select custom-select" (onChange)="onLocationChange($event.value)">
+                                class="form-select custom-select">
                                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
                                 <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                             </p-select>
@@ -48,7 +48,7 @@
                             [disabled]="!locationReportsForm.get('dateOfJoining')?.value && !locationReportsForm.get('location')?.value && !locationReportsForm.get('subLocation')?.value">
                             @if(spinnerLoader1){
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading..'}}...</span>
+                            <span>{{'Loading...'}}</span>
                             }@else {
                             <span>{{'Generate'}}</span>
                             }
@@ -57,7 +57,7 @@
                             (click)="onClickJobLocationExport() ">
                             @if(spinnerLoader){
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading..'}}</span>
+                            <span>{{'Loading...'}}</span>
                             }@else {
                             <span>{{'Export'}}</span>
                             }

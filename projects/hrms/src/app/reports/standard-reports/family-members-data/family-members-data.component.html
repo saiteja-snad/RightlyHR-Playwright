@@ -21,7 +21,7 @@
                     <button type="submit" class="custom-btn btn-secondary" [disabled]="reportForm.invalid || spinnerLoader1">
                         @if(spinnerLoader1){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}</span>
+                        <span>{{'Loading...'}}</span>
                         }@else {
                         <span>{{'Generate'}}</span>
                         }
@@ -29,7 +29,7 @@
                     <button type="button" class="custom-btn btn-primary" [disabled]="familydata.length === 0 || disableBtn" (click)="exportAsExcelFile()">
                         @if(spinnerLoader2){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}</span>
+                        <span>{{'Loading...'}}</span>
                         }@else {
                         <span>{{'Export'}}</span>
                         }

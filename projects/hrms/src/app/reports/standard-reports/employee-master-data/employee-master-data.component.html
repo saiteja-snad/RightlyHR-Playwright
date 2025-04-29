@@ -30,7 +30,7 @@
             [disabled]="!masterDataForm.get('empStatus')?.value && !masterDataForm.get('dateOfJoining')?.value">
             @if(spinnerLoader1){
               <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{'Loading..'}}</span>
+              <span>{{'Loading...'}}</span>
               }@else {
               <span>{{'Generate'}}</span>
             }
@@ -39,7 +39,7 @@
             class="custom-btn btn-primary">
             @if(spinnerLoader2){
               <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              <span>{{'Loading..'}}</span>
+              <span>{{'Loading...'}}</span>
               }@else {
               <span>{{'Export'}}</span>
               }
@@ -151,6 +151,7 @@
           <th>Job Role</th>
           <th>Department</th>
           <th>Team</th>
+          <th>Team Manager</th>
           <th>Reporting To</th>
           <th>Location</th>
           <th>Sub Location</th>
@@ -232,14 +233,14 @@
             <td>{{ emp.accountNo || '-' }}</td>
             <td>{{ emp.ifscCode || '-' }}</td>
             <td>{{ emp.offerSentDate ? (emp.offerSentDate | dateformat) : '-' }}</td>
-            <td>{{ emp.offerSentBy || '-' }}</td>
+            <td>{{ emp.offersentby || '-' }}</td>
             <td>{{ emp.offerSentStatus || '-' }}</td>
             <td>{{ emp.appointmentSentDate ? (emp.appointmentSentDate | dateformat) : '-' }}</td>
-            <td>{{ emp.appointmentSenyBy || '-' }}</td>
+            <td>{{ emp.appointmentsentby || '-' }}</td>
             <td>{{ emp.appointmentSentStatus || '-' }}</td>
             <td>{{ emp.probationEndDate ? (emp.probationEndDate | dateformat) : '-' }}</td>
             <td>{{ emp.probationStatus || '-' }}</td>
-            <td>{{ emp.branchCode || '-' }}</td>
+            <td>{{ emp.branchcode || '-' }}</td>
             <td>{{ emp.noticePeriod || '-' }}</td>
             <td>{{ emp.backgroundCheckStatus || '-' }}</td>
             <td>{{ emp.salaryhold || '-' }}</td>
@@ -258,6 +259,7 @@
             <td>{{ emp.jobRole || '-' }}</td>
             <td>{{ emp.departmentName || '-' }}</td>
             <td>{{ emp.subdepartment_name || '-' }}</td>
+            <td>{{ emp.teammanager}}</td>
             <td>{{ emp.reportingmanager || '-' }}</td>
             <td>{{ emp.joblocationname || '-' }}</td>
             <td>{{ emp.jobsublocationname || '-' }}</td>

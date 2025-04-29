@@ -17,6 +17,7 @@ import * as XLSX from "xlsx";
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { OpenModalService } from '../../../services/open-modal.service';
 @Component({
   selector: 'app-employee-master-data',
   imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent, 
@@ -70,7 +71,8 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     private authService: AuthService, 
     private reportsService: ReportsService, 
     private fb: FormBuilder, 
-    private http: HttpService
+    private http: HttpService,
+    private modal: OpenModalService
   ) { }
 
   ngOnInit(): void {
@@ -236,13 +238,10 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
 
     }
-    console.log(reportdata);
     this.subscription = this.http
       .postdata(`CustomEmail/Reports`, reportdata)
       .subscribe({
-        next: (data: any) => {
-          console.log(data);
-        },
+        next: (data: any) => { },
       });
   }
 
@@ -254,11 +253,12 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     }
 
     this.subscription = this.http.postdata("ReportsLog", req).subscribe({
-      next: (res: any) => {
-        console.log(res);
+      next: (res: any) => { 
+        this.modal.openSuccessModal('Employee Master Data downlaoded successfully');
       },
       error: (err) => {
         this.spinnerLoader2= false;
+        this.modal.openErrorModal('Failed to download employee masted data');
       },
       complete: () => { 
         this.spinnerLoader2= false;

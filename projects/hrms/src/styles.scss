@@ -1329,6 +1329,13 @@ input[type="file"] {
     line-height: 30px;
     color: #06274F;
 }
+
+.popup-image-view-container{
+    width: 100%;
+    height: calc(100dvh - 20rem);
+    padding: 1rem;
+    overflow: auto;
+}
 // popup stylings ends
 
 // download text

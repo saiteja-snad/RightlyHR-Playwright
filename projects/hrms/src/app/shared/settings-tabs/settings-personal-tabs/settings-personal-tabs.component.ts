@@ -10,8 +10,8 @@ import { RbacService } from '../../../services/rbac.service';
 })
 
 export class SettingsPersonalTabsComponent {
-
   public navLinks: any[] = [];
+
   constructor(public rbac: RbacService) {
     this.navLinks = this.allNavLinks.filter(link =>
       link.permission &&

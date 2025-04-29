@@ -687,12 +687,12 @@
                   </ng-template>
                   <h5 class="text-center letter-header mb-3"><strong>ANNEXURE - 2</strong> </h5>
                   <h6 class="text-center letter-sub-header mb-3">STRICTLY PRIVATE & CONFIDENTIAL</h6>
-                  <div class="d-flex justify-content-between border-box mb-3">
-                    <div class="p-2">NAME</div>
-                    <div class="p-2">{{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
+                  <div class="row">
+                    <div class="p-2 border-box col-md-2">NAME</div>
+                    <div class="p-2 border-box col-md-4">{{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
                       {{prospectiveEmpData.lastName}}</div>
-                    <div class="p-2">Designation</div>
-                    <div class="p-2">{{prospectiveEmpData?.jobRole}}</div>
+                    <div class="p-2 border-box col-md-2">Designation</div>
+                    <div class="p-2 border-box col-md-4">{{prospectiveEmpData?.jobRole}}</div>
                   </div>
                   <p class="text-center letter-sub-header my-3">Compensation Details <span class="boldnone">(All figures in
                       Rs.)</span></p>
@@ -899,27 +899,28 @@
 
 <!-- offerletter generation popup -->
 <ng-template #approveModal let-modal>
-  <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
-    <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
-    <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{this.confirmation_Msg??''}} </h4>
-    <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{this.confirmation_Msg ?? ''}}</p>
+    </div>
+    <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-      <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
-        (click)="confimationfuction('yes')">{{'Yes'|translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confimationfuction('yes')">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>
 
 <!-- offerletter generation popup 2 -->
 <ng-template #approveModal1 let-modal>
-  <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
-    <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
-    <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{this.confirmation_Msg ?? ''}}</h4>
-    <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();this.loading=false">{{'No'|translate}}</button>
-      <button type="button" class="custom-btn btn-primary" (click)="confimationfuction1('yes')">{{'Yes'|translate}}</button>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{this.confirmation_Msg ?? ''}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confimationfuction1('yes')">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>

@@ -9,9 +9,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule } from '@angular/forms';
 import { ActiveEmployeePipe } from '../../Pipes/active-employee.pipe';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-inactive-interns',
-  imports: [CommonModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent],
+  imports: [CommonModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './inactive-interns.component.html',
   styleUrl: './inactive-interns.component.scss'
 })

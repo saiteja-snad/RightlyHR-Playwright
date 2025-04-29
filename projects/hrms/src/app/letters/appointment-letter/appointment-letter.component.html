@@ -230,7 +230,7 @@
                 <p class="mb-1">Current Address:</p>
                 <p *ngIf="employeeForm.value.addressLine1">
                   {{ employeeForm.value.addressLine1 }},
-                  {{ employeeForm.value.addressLine2 }},
+                <span *ngIf="employeeForm.value.addressLine2"> {{ employeeForm.value.addressLine2 }},</span>  
                   {{ employeeForm.value.city }},
                   {{ employeeForm.value.state }},
                   {{ employeeForm.value.country }} -

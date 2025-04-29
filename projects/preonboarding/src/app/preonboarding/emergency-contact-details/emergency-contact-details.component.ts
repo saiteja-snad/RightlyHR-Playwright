@@ -31,6 +31,8 @@ export class EmergencyContactDetailsComponent {
   selectedDialCode: any;
   selectedCountryCode=signal<string>('');
   selectedCountryCode1= signal<string>('');
+  selectedCountryCodegflag:any; // mobile number1
+  selectedCountryCodegflag1:any; // mobile number2
   // mobile number2
   selectedDialCode1: any;
   formattedPhoneNumber: string = '';
@@ -76,8 +78,8 @@ export class EmergencyContactDetailsComponent {
     this.subscription = this.http.getData(`PreonboardingEmployeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empdata = data as Ipersonal;
-        this.selectedCountryCode?.set(this.empdata.emergencycode);
-        this.selectedCountryCode1?.set(this.empdata.emergencycode1);
+        this.selectedCountryCode?.set(this.empdata.emergencynumbercountryflag);
+        this.selectedCountryCode1?.set(this.empdata.emergencyphonecountryflag);
         this.patchForm();
         this.loading = false;
       },
@@ -137,12 +139,12 @@ export class EmergencyContactDetailsComponent {
       let formEmployeeData = this.contactForm.value;
       this.empdata.emergencyName=formEmployeeData.contact1.name,
       this.empdata.emailId= formEmployeeData.contact1.email,
-      this.empdata.emergencycode= this.selectedCountryCode(),
+      this.empdata.emergencycode= this.selectedDialCode1,
       this.empdata.emergencynumber=formEmployeeData.contact1.mobile,
       this.empdata.relationShip= formEmployeeData.contact1.relationship,
       this.empdata.emergencyName1= formEmployeeData.contact2.name,
       this.empdata.emergencyEmail1= formEmployeeData.contact2.email,
-      this.empdata.emergencycode1= this.selectedCountryCode1(),
+      this.empdata.emergencycode1= this.selectedDialCode,
       this.empdata.emergencyNumber1= formEmployeeData.contact2.mobile,
       this.empdata.relationship1= formEmployeeData.contact2.relationship
       this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, this.empdata).subscribe({
@@ -174,32 +176,43 @@ export class EmergencyContactDetailsComponent {
     this.contactForm.get('countyCode1')?.setValue(country.dialling_code);
     this.contactForm.get('countyCode1')?.markAsTouched();
     this.selectedCountryCode.set(country.code);
-    this.selectedDialCode = country.code;
+    this.selectedCountryCodegflag = country.code;
+    this.selectedDialCode = country.dialling_code;
+    this.empdata.emergencynumbercountryflag = country.code;
     if( this.selectedDialCode ){
-      this.contactForm.get('contact1.mobile')?.setValidators([Validators.required, this.phoneNumberValidator()]);
+      this.contactForm.get('contact1.mobile')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodegflag)]);
       this.contactForm.get('contact1.mobile')?.updateValueAndValidity();
     }
    
   }
 
   formatPhoneNumber(value: string): string {
-    if (!this.selectedDialCode || !value) return value;
+   if (!this.selectedCountryCodegflag || !value) return value;
     const stringValue = String(value); // Make sure it's a string
-    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedDialCode);
+    const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedCountryCodegflag);
     if (phoneNumber && phoneNumber.isValid()) {
       this.formattedPhoneNumber = phoneNumber.formatInternational();
       return phoneNumber.formatNational();
     }
     return stringValue;
   }
-
-  phoneNumberValidator() {
+  formatPhoneNumber1(value: string): string {
+    if (!this.selectedCountryCodegflag1 || !value) return value;
+     const stringValue = String(value); // Make sure it's a string
+     const phoneNumber = parsePhoneNumberFromString(stringValue, this.selectedCountryCodegflag1);
+     if (phoneNumber && phoneNumber.isValid()) {
+       this.formattedPhoneNumber = phoneNumber.formatInternational();
+       return phoneNumber.formatNational();
+     }
+     return stringValue;
+   }
+  phoneNumberValidator(ValueSelected:any) {
     return (control: AbstractControl) => {
       const value = String(control.value);
-      if (!this.selectedDialCode || !value) {
+      if (!ValueSelected || !value) {
         return null;
       }
-      const phoneNumber = parsePhoneNumberFromString(value, this.selectedDialCode);
+      const phoneNumber = parsePhoneNumberFromString(value, ValueSelected);
       if (phoneNumber && phoneNumber.isValid()) {
         return null;
       } else {
@@ -213,8 +226,10 @@ export class EmergencyContactDetailsComponent {
     this.contactForm.get('countyCode2')?.setValue(country.dialling_code);
     this.contactForm.get('countyCode2')?.markAsTouched();
     this.selectedCountryCode1.set(country.code);
+    this.selectedCountryCodegflag1 = country.code;
     this.selectedDialCode1 = country.dialling_code;
-    this.contactForm.get('contact2.mobile')?.setValidators([Validators.required, this.phoneNumberValidator()]);
+    this.empdata.emergencyphonecountryflag = country.code;
+    this.contactForm.get('contact2.mobile')?.setValidators([Validators.required, this.phoneNumberValidator(this.selectedCountryCodegflag1)]);
     this.contactForm.get('contact2.mobile')?.updateValueAndValidity();
   }
 

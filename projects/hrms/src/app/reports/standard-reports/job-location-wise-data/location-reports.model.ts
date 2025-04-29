@@ -25,19 +25,19 @@ export interface ILocationReportData {
     dob: string;
     bloodGroup?: string;
   
-    currentAddressLine1?: string;
-    currentAddressLine2?: string;
-    currentCity?: string;
-    currentState?: string;
-    currentCountry?: string;
-    currentZipCode?: string;
+    currentaddressline1?: string;
+    currentaddressline2?: string;
+    currentcity?: string;
+    currentstate?: string;
+    currentcountry?: string;
+    currentzipcode?: string;
   
-    permanentAddressLine1?: string;
-    permanentAddressLine2?: string;
-    permanentCity?: string;
-    permanentState?: string;
-    permanentCountry?: string;
-    permanentZipCode?: string;
+    permanentaddressline1?: string;
+    permanentaddressline2?: string;
+    permanentcity?: string;
+    permanentstate?: string;
+    permanentcountry?: string;
+    permanentzipcode?: string;
   
     workPhone: number;
     contactnumber: number;
@@ -96,17 +96,17 @@ export interface ILocationReportData {
   
     jobType?: string;
     gradeName?: string;
-    jobEffectiveDate?: string;
+    jobeffectivedate?: string;
     jobRole?: string;
     departmentName?: string;
     subdepartment_name?: string;
-    reportingManager?: string;
+    reportingmanager?: string;
   
-    jobLocationName?: string;
-    jobSubLocationName?: string;
+    joblocationname?: string;
+    jobsublocationname?: string;
   
-    shiftName?: string;
-    shiftCode?: string;
+    shiftname?: string;
+    shiftcode?: string;
   
     compeffectivedate: string;
     overtimeeligibility: string;

@@ -3,8 +3,7 @@ import {
   FormBuilder,
   FormGroup,
   FormsModule,
-  ReactiveFormsModule,
-  Validators,
+  ReactiveFormsModule
 } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
@@ -21,6 +20,7 @@ import { environment } from '../../../../environments/environment';
 import dayjs from 'dayjs';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { IJob } from '../../../Interfaces/letters-model';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-branch-location-wise-data',
@@ -33,6 +33,7 @@ import { IJob } from '../../../Interfaces/letters-model';
     StandardReportTabsComponent,
     DateformatPipe,
     NgxDaterangepickerBootstrapDirective,
+    DataLoaderContentComponent
   ],
   templateUrl: './branch-location-wise-data.component.html',
   styleUrl: './branch-location-wise-data.component.scss',
@@ -50,6 +51,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     direction: 'ltr',
     clearLabel: 'Clear', // could be rtl
   };
+
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -61,42 +63,51 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
-  spinnerLoader=false;
+
+  spinnerLoader = false;
+  spinnerLoader1 = false;
+  dataload = false;
+  disableBtn= false;
+
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
-    private sharedModalService: OpenModalService,
-    private reportService: ReportsService
-  ) {}
+    private modal: OpenModalService,
+    private reportService: ReportsService,
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.getBranchLocations();
+
+    this.reportForm.valueChanges.subscribe(()=>{
+      this.disableBtn= true;
+    })
   }
 
   initializeForm() {
     this.reportForm = this.fb.group({
-      location: ['', Validators.required],
-      dateOfJoining: [null, Validators.required],
+      location: [''],
+      dateOfJoining: [null],
     });
+
   }
 
   onSubmit(form: FormGroup) {
+    this.dataload = true;
+    this.spinnerLoader1 = true;
     if (form.valid) {
       const formData = form.value;
 
-      // Prepare the request object
       const request: IStandardReportRequest = {
         dateRange: {
-          startDate: formData.dateOfJoining.startDate,
-          endDate: formData.dateOfJoining.endDate,
+          startDate: formData.dateOfJoining?.startDate,
+          endDate: formData.dateOfJoining?.endDate,
         },
         selectedBranchLocation: formData.location,
       };
-      this.reportService
-        .getStandardReports(request)
-        .pipe(takeUntil(this.destroy$))
+      this.reportService.getStandardReports(request).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
             if (res) {
@@ -104,8 +115,15 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
             }
           },
           error: (err: any) => {
-            console.log(err);
+            this.spinnerLoader1 = false;
+            this.dataload = false;
+            this.disableBtn= true;
           },
+          complete: () => {
+            this.spinnerLoader1 = false;
+            this.dataload = false;
+            this.disableBtn= false;
+          }
         });
     }
   }
@@ -138,9 +156,8 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
           this.ReportEmail(data.path, fileName);
         },
         error: (reason: any) => {
-          console.log(reason);
-           this.spinnerLoader = false;
-          this.sharedModalService.openErrorModal('file upload  is failed');
+          this.spinnerLoader = false;
+          this.modal.openErrorModal('file upload  is failed');
         },
       });
   }
@@ -165,9 +182,9 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       .postdata(`CustomEmail/Reports`, reportdata)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data: any) => {},
-        error: (err) =>{
-           this.spinnerLoader = false;
+        next: (data: any) => { },
+        error: (err) => {
+          this.spinnerLoader = false;
         }
       });
   }
@@ -184,13 +201,15 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          this.spinnerLoader = false;
+          this.modal.openSuccessModal('Branch Location Wise Data downloaded successfully');
         },
         error: (err: any) => {
-          console.log(err);
-           this.spinnerLoader = false;
+          this.spinnerLoader = false;
+          this.modal.openErrorModal('Failed to download branch location wise data');
         },
-        complete: () => {},
+        complete: () => {
+          this.spinnerLoader = false;
+         }
       });
   }
 
@@ -219,8 +238,8 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       let cell = ws[cellAddress];
 
       if (cell && cell.v) {
-        cell.v = cell.v.toString().toUpperCase(); // Convert to uppercase
-        cell.w = cell.v; // Ensure display is updated
+        cell.v = cell.v.toString().toUpperCase(); 
+        cell.w = cell.v; 
       }
     }
   }
@@ -236,25 +255,20 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   }
 
   getColumnWidth(data: any[], columnName: string): number {
-    // Find the maximum width of data in the column
     const maxWidth = data.reduce((max: number, record: any) => {
       const value = record[columnName]?.toString().length || 0;
       return value > max ? value : max;
     }, 0);
 
-    // Set minimum width to 10
     return Math.max(10, maxWidth);
   }
+
   getBranchLocations() {
-    this.http
-      .getData('BranchLocation')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
+    this.http.getData('BranchLocation').pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
           if (res) {
             this.branchLocations = res;
             if (this.branchLocations.length > 0) {
-              // Add "All Branch Locations" option at the beginning
               this.branchLocations.unshift({
                 sno: -1,
                 branchCode: 'ALL',
@@ -262,16 +276,13 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
                 isDeleted: false,
               });
 
-              // Set the default value to "All Branch Locations"
               this.reportForm.patchValue({
-                location: 'All Branch Locations', // Set the value directly
+                location: 'All Branch Locations',
               });
             }
           }
         },
-        error: (err) => {
-          console.error(err);
-        },
+        error: (err) => { }
       });
   }
 

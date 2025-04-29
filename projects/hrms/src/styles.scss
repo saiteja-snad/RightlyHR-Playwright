@@ -1579,3 +1579,11 @@ input[type="checkbox"] {
     color: #06274F;
     font-weight: 500;
 }
+
+// custom number input did get arrow
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;    -moz-appearance: none;    appearance: none;
+    margin: 0; 
+}
+ 

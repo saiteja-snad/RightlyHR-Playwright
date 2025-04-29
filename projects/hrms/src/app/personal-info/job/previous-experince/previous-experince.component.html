@@ -106,8 +106,7 @@
                                 class="error-msg">
                                 <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['required']">Company
                                     Name is required</div>
-                                <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['pattern']">Company Name
-                                    must only contain letters and spaces</div>
+                                <div class="error-msg" *ngIf="employeeExperienceForm.get('companyName')?.errors?.['maxlength']">Company name cannot exceed 100 characters</div>
                             </div>
                         </div>
 
@@ -163,6 +162,7 @@
                                 class="error-msg">
                                 Job Role is required
                             </div>
+                            <div class="error-msg"  *ngIf="employeeExperienceForm.get('jobTitle')?.errors?.['maxlength']"> Job Role cannot exceed 50 characters</div>
                         </div>
                     </div>
 
@@ -220,7 +220,7 @@
                                 accept=".pdf,image/*,.png" />
                             <div *ngIf="employeeExperienceForm.get('attachment')?.invalid && employeeExperienceForm.get('attachment')?.touched"
                                 class="error-msg">
-                                Please Upload a file
+                                File is required
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-2">
                                 <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
@@ -279,9 +279,7 @@
                                     *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.errors?.['required']">
                                     Company
                                     Name is required</div>
-                                <div *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.errors?.['pattern']">
-                                    Company Name
-                                    must only contain letters and spaces</div>
+                                    <div class="error-msg" *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.errors?.['maxlength']">Company name cannot exceed 100 characters</div>
                             </div>
                         </div>
 
@@ -339,6 +337,7 @@
                                 class="error-msg">
                                 Job Role is required
                             </div>
+                            <div class="error-msg" *ngIf="employeeExperienceupdateForm.get('jobTitleupdate')?.errors?.['maxlength']"> Job Role cannot exceed 50 characters</div>
                         </div>
                     </div>
 
@@ -398,7 +397,7 @@
                                 accept=".pdf,image/*,.png" />
                             <div *ngIf="employeeExperienceupdateForm.get('attachmentupdate')?.invalid && employeeExperienceupdateForm.get('attachmentupdate')?.touched"
                                 class="error-msg">
-                                Please Upload a file
+                               File is required
                             </div>
                             <div *ngIf="displaypreviousexperincedocument" class="mb-2 mt-2">
                                 <b>{{ displaypreviousexperincedocument?.name || displaypreviousexperincedocument }}</b>

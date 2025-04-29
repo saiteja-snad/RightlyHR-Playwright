@@ -168,11 +168,13 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   }
 
   onChangeEducation(event: any): void {
+    this.displalyeducationattachment = null;
     const file = event.target.files[0];
     const timestamp = new Date().getTime();
     this.educationAttachment = this.renameFileAttachment(
       file,`${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
+
     console.log('Identity attachment:', this.educationAttachment);
   }
 
@@ -309,12 +311,9 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       },
       error: (reason: any) => {
         this.spinnerLoader=false
+        this.conformationPopup.openErrorModal(reason.error.Message);
         console.error('Error updating education:', reason);
-        if (reason.error.includes('is already')) {
-          this.conformationPopup.openErrorModal(reason.error);
-        } else {
-          this.conformationPopup.openErrorModal('Something went wrong. Please check all the fields.');
-        }
+      
       }
     });
   }

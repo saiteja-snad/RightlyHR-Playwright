@@ -57,6 +57,9 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.get('gender')?.valueChanges.subscribe(() => {
       this.onsalutationvalidation();
     });
+    this.basicInfoForm.get('dob')?.valueChanges.subscribe(() => {
+      this.getdateofbirth();
+    });
 
   }
 
@@ -108,7 +111,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     });
   }
   getdateofbirth(): string | null {
-    const startDateValue = this.formatDateToLocal(this.emsployedata.dob)
+    const startDateValue = this.formatDateToLocal(this.emsployedata.dob) || this.formatDateToLocal(this.basicInfoForm.get('dob')?.value);
     if (startDateValue) {
       const startDate = new Date(startDateValue);
       startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
@@ -173,6 +176,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
             this.getEmployeeId();
             this.basicInfoForm.disable();
             this.buttons = !this.buttons;
+            this.http.setBasicDetails();
 
           } else if (data.statusCode === 409) {
             this.conformationPopup.openErrorModal(data.message,);
@@ -213,7 +217,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   showButtons(): void {
     this.buttons = !this.buttons;
-
+    this.basicInfoForm.get('fusionEmpId')?.disable();
     if (this.buttons) {
       // Enable the form when the user clicks "Edit"
       this.basicInfoForm.get('fusionEmpId')?.disable();

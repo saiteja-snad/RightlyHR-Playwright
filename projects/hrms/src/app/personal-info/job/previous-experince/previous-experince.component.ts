@@ -60,11 +60,11 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.employeeExperienceForm = this.fb.group({
       isPresent: [false],
-      companyName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      companyName: ['', [Validators.required, Validators.maxLength(100)]],
       employmentType: [null, Validators.required],
       fromDate: ['', [Validators.required]],
       toDate: ['', [Validators.required]],
-      jobTitle: ['', Validators.required],
+      jobTitle: ['', [Validators.required,Validators.maxLength(50)]],
 
       previousContactName: ['', Validators.pattern('^[a-zA-Z\\s]*$')],
       previousContactNumber: [
@@ -97,11 +97,11 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeupdateForm(): void {
     this.employeeExperienceupdateForm = this.fb.group({
       isPresentupdate: [false],
-      companyNameupdate: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      companyNameupdate: ['', [Validators.required, Validators.maxLength(100)]],
       employmentTypeudate: [null, Validators.required],
       fromDateupdate: ['', [Validators.required]],
       toDateupdate: ['', [Validators.required]],
-      jobTitleupdate: ['', Validators.required],
+      jobTitleupdate: ['', [Validators.required,Validators.maxLength(50)]],
 
       previousContactNameupdate: ['', Validators.pattern('^[a-zA-Z\\s]*$')],
       previousContactNumberupdate: [

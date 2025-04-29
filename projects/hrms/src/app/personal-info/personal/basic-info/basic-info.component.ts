@@ -91,13 +91,20 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
     return null; // Return null if validation passes
   }
+  
   onsalutationvalidation(): void {
     const gender = this.basicInfoForm.get('gender')?.value;
     const title = this.basicInfoForm.get('salutation')?.value;
-
+  
     const genderLower = typeof gender === 'string' ? gender.toLowerCase() : '';
     const titleLower = typeof title === 'string' ? title.toLowerCase() : '';
-
+  
+    // If gender is not selected, do not show the validation error
+    if (!gender) {
+      this.salutationValidationcheck = false;
+      return;
+    }
+  
     if (
       (genderLower === 'male' && titleLower === 'mr.') ||
       (genderLower === 'female' && ['ms.', 'miss.', 'mrs.'].includes(titleLower)) ||
@@ -115,7 +122,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.empyployeedata = data;
         this.patchForm(data);
-        this.dateofbirth =this.formatDateToLocal(this.empinfo.dob)
+        this.dateofbirth =this.formatDateToLocal(this.empyployeedata.dob)
 
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
@@ -123,7 +130,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     });
   }
     getdateofbirth(): string | null {
-    const startDateValue = this.formatDateToLocal(this.empinfo.dob)
+    const startDateValue = this.formatDateToLocal(this.empyployeedata.dob)
     if (startDateValue) {
       const startDate = new Date(startDateValue);
       startDate.setDate(startDate.getDate() + 1); // Add one day to the start date

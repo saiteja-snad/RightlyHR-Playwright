@@ -97,7 +97,7 @@ export class OnboardingDetailsComponent {
       branchLocation: [{ value: null, disabled: true }],
       probationEndDate: [{ value: null, disabled: true }],
       probationStatus: [{ value: null, disabled: true }],
-      noticePeriodStatus: [{ value: '', disable: true },],
+      noticePeriodStatus: [{ value: null, disabled: true },],
       backgroundCheckStatus: [{ value: null, disabled: true }],
       salaryHold: [{ value: null, disabled: true }],
       pf: [{ value: null, disabled: true }],
@@ -172,7 +172,7 @@ export class OnboardingDetailsComponent {
     this.onboardingForm.patchValue({
       status: this.Statusdetails?.find((item: any) => item?.statusname === data?.empstatus),
       dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
-      branchLocation: this.branchLocations.find((item: any) => item.branchCode === data?.branchCode),
+      branchLocation: data?.branchCode,
       probationEndDate: this.formatDateToLocal(data.probationEndDate),
       probationStatus: this.probation.find((item: any) => item.probationstatus1 === data?.probationStatus),
       noticePeriodStatus: this.noticePeriod.find((item: any) => item.name === data.noticePeriod),
@@ -299,11 +299,8 @@ export class OnboardingDetailsComponent {
         this.branchLocations = data as IBranchLocation[]
       },
       error: err => console.log(err),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      complete: () => {
-
-      },
-
+      
+  
     })
   }
 
@@ -388,11 +385,17 @@ export class OnboardingDetailsComponent {
       .postdata(`Employeedata/UPDATER`, payload)
       .subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully');
-          this.getEmployeeId();
-          this.buttons = !this.buttons;
-          this.onboardingForm.disable();
-          console.log('Data updated successfully:', data);
+          if(data.statusCode === 200){
+            this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully');
+            this.getEmployeeId();
+            this.buttons = !this.buttons;
+            this.onboardingForm.disable();
+            console.log('Data updated successfully:', data);
+          }else if(data.statusCode === 409){
+            this.conformationPopup.openErrorModal(data.message);
+          this.getEmployeeId(); 
+          }
+         
         },
         error: (reason: any) => {
           console.log(reason);

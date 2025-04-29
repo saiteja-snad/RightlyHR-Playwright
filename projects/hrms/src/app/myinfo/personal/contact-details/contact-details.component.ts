@@ -143,7 +143,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata(`Employeedata/UPDATER`, updatePayload)
       .subscribe({
         next: (data: any) => {
-          if (data) {
+          if (data.statusCode === 200) {
             this.conformationPopup.openSuccessModal('Contact Details updated successfully');
             this.contactForm.disable();
             this.buttons = false; // Disable the button after successful update

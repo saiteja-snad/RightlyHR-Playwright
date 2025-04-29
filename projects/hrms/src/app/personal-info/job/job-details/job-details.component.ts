@@ -38,7 +38,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   allempdata: any;
   allReportees: any;
   selectedJobRoleObj: any; // To store the selected job role object
-  teamManagerName: string = ''; // To store the team manager name
+  teamManagerName: any = ''; // To store the team manager name
   shiftDropdowns: any = []; // To store the dynamically fetched shifts
   selectedData = {} as any; // To store the selected job details data for updating
   empdata: {
@@ -226,15 +226,15 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+    //function to get ReportingTo dropdown
   getReportingTo(): void {
     this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {
         this.allempdata = data as IJob[];
         // Map the employee data to the format required by p-select
-        this.allReportees = this.allempdata.map((employee: { employeeId: number; firstName: string; lastName: string, fusionEmpId: any }) => ({
+        this.allReportees = this.allempdata.map((employee: { employeeId: number; firstName: string; lastName: string,middleName :string, fusionEmpId: any }) => ({
           id: employee.employeeId, // Use the employeeId as the unique identifier
-          employee: ` ${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.lastName ?? ''}`, // Combine first and last name
+          employee: ` ${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
         }));
       },
       error: (err: any) => {
@@ -262,12 +262,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         }));
         this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
         // Reset the team manager selection
-        this.jobDetailsForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
+        this.jobDetailsForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name }) ;
         this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
       },
       error: (err: any) => {
         this.teamManagerDropdownValues = []; // Reset on error
         this.jobDetailsForm.patchValue({ teamManager: null }); // Reset the team manager selection
+        this.jobDetailsupdateForm.patchValue({ teamManager: null }); // Reset the team manager selection
       },
     });
   }
@@ -277,17 +278,24 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     
     this.subscription = this.http.getData(`Subdepartments/${selectedSubDepartmentId}`).subscribe({
       next: (data: any) => {
-        this.subdeparmentSingleobj = data;
-        // Update the team manager dropdown values
-        this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
-          id: manager.reportingmanagerId,
-          name: manager.middleName ? `${manager.firstName || ''} ${manager.middleName || ''} ${manager.lastName || ''}`
-            : `${manager.firstName} ${manager.lastName}` || '',
-        }));
-        this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
-        // Reset the team manager selection
-       
-        this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
+        if(data){
+          this.subdeparmentSingleobj = data || '' ;
+          // Update the team manager dropdown values
+          this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
+            id: manager.reportingmanagerId,
+            name: manager.middleName ? `${manager.firstName || ''} ${manager.middleName || ''} ${manager.lastName || ''}`
+              : `${manager.firstName} ${manager.lastName}` || '',
+          }));
+          this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
+          // Reset the team manager selection
+         
+          this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
+        }
+        else{
+          this.subdeparmentSingleobj=''
+          this.teamManagerDropdownValues = []; // Reset if no team managers are found
+        }
+     
       },
       error: (err: any) => {
         this.teamManagerDropdownValues = []; // Reset on error
@@ -464,7 +472,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.selectedjobdetailesid = data?.id;
     this.selectedData = data; // Store the selected job details data for updating
     console.log('Selected Job Details ID:', data);
-    this.teamManagerName = data?.firstName + ' ' + data?.middleName + ' ' + data?.lastName
+    this.teamManagerName = data?.firstName + ' ' + data?.middleName + ' ' + data?.lastName || null
     const effectiveDate = this.formatDateToLocal(data.effectiveDate); // Format the effective date
     this.selectedJobRoleObj = this.JobroleDesignation.find(role => role.designationName === data.jobRole);
     this.jobDetailsupdateForm.patchValue({
@@ -481,7 +489,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       ),
     
       
-      teamManager: this.teamManagerName,
+      teamManager: this.teamManagerName || null,
       jobType: this.JobtypeDetails.find(jt => jt.jobType1 === data.jobTypeName),
       reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportingmanagerId),
       grade: this.selectedJobRoleObj?.gradeName,
@@ -703,6 +711,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll(); // Close the modal
         this.conformationPopup.openSuccessModal('Job Details updated successfully');
         this.getJobDetails();
+        this.http.setBasicDetails();
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Job Details update failed');
@@ -730,6 +739,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         this.conformationPopup.openSuccessModal('Job Details deleted successfully');
         // Refresh the job details list
         this.getJobDetails();
+        this.http.setBasicDetails();
         // Close the modal
         this.modalService.dismissAll();
       },

@@ -42,17 +42,17 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
       bankName: ['', Validators.required],
       accountName: ['', [Validators.required,Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       accountNo: ['', [Validators.required]],
-      ifscCode: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
+      ifscCode: ['', [Validators.required]],
       isPrimary: [false],
       attachment: [null, Validators.required]
     });
   }
   initializeBankDetailsupdateForm(): void {
     this.bankDetailsUpdateForm = this.fb.group({
-      bankNameupdate: ['',[ Validators.required,Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      bankNameupdate: ['',[ Validators.required,]],
       accountNameupdate: ['', [Validators.required,]],
       accountNoupdate: ['', [Validators.required]],
-      ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
+      ifscCodeupdate: ['', [Validators.required,]],
       isPrimaryupdate: [false],
       attachmentupdate: [null]
     });

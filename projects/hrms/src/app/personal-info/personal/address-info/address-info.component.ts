@@ -52,8 +52,8 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     this.addressForm = this.fb.group({
       sameAsPermanent: [{value:false}], // Checkbox for "Same as Current Address"
       currentAddress: this.fb.group({
-        addressLine1: ['', [Validators.required, Validators.maxLength(150)]],
-        addressLine2: [''],
+        addressLine1: ['', [Validators.required, Validators.maxLength(250)]],
+        addressLine2: ['', [Validators.maxLength(250)]],
         city: ['', [Validators.required, Validators.maxLength(50)]],
         state: ['', [Validators.required, Validators.maxLength(50)]],
         country: ['', [Validators.required, Validators.maxLength(50)]],

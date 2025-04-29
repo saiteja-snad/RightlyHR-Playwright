@@ -174,10 +174,10 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
         this.conformationPopup.openSuccessModal('Identity details added successfully');
         console.log('Data saved successfully');
       },
-      error: () => {
+      error: (error) => {
         this.spinnerLoader=false
         console.error('Error saving data');
-        this.conformationPopup.openErrorModal('Identity details added failed');
+        this.conformationPopup.openErrorModal(error.error.Message);
       }
     });
   }
@@ -289,7 +289,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
       error: (err: any) => {
         this.spinnerLoader=false
         console.error('Error updating identity:', err);
-        this.conformationPopup.openErrorModal('Failed to update identity details');
+        this.conformationPopup.openErrorModal(err.error.Message);
       }
     });
   }

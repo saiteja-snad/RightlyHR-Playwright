@@ -18,8 +18,22 @@
                     </div>
                 </div>
                 <div class="d-flex gap-2">
-                    <button class="custom-btn btn-secondary" [disabled]="reportForm.invalid">Generate</button>
-                    <button class="custom-btn btn-primary" [disabled]="familydata.length === 0" (click)="exportAsExcelFile()">Export</button>
+                    <button type="submit" class="custom-btn btn-secondary" [disabled]="reportForm.invalid || spinnerLoader1">
+                        @if(spinnerLoader1){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                        }@else {
+                        <span>{{'Generate'}}</span>
+                        }
+                    </button>
+                    <button type="button" class="custom-btn btn-primary" [disabled]="familydata.length === 0 || disableBtn" (click)="exportAsExcelFile()">
+                        @if(spinnerLoader2){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                        }@else {
+                        <span>{{'Export'}}</span>
+                        }
+                    </button>
                 </div>
             </div>
         </form>
@@ -29,70 +43,82 @@
         <app-standard-report-tabs />
     </div>
 
-    <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>{{ "Employee ID" }}</th>
-                    <th>{{ "First Name" }}</th>
-                    <th>{{ "Middle Name" }}</th>
-                    <th>{{ "Last Name" }}</th>
-                    <th>{{ "Work Email" }}</th>
-                    <th>{{ "Employee Status" }}</th>
-                    <th>{{ "Name" }}</th>
-                    <th>{{ "Relation" }}</th>
-                    <th>{{ "Date of Birth" }}</th>
-                    <th>{{ "Dependent" }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="familydata.length > 0; else noData">
-                    @for(row of familydata; track row){
+    <ng-container *ngIf="dataload; else maincontent">
+        <ng-template #loadingSpinner>
+            <div class="custom-compoent-data-loader">
+                <app-data-loader-content />
+            </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+
+    <ng-template #maincontent>
+        <div class="custom-table-content">
+            <table class="w-100">
+                <thead>
                     <tr>
-                        <td>{{ row.employeeId || "-" }}</td>
-                        <td>{{ row.firstName || "-" }}</td>
-                        <td>{{ row.middleName || "-" }}</td>
-                        <td>{{ row.lastName || "-" }}</td>
-                        <td>{{ row.workEmail || "-" }}</td>
-                        <td>{{ row.empStatus || "-" }}</td>
-                        <!-- Family Member Name(s) -->
-                        <td>
-                            <div class="mb-3" *ngFor="let member of row.familyMembers">
-                                {{ member.memberName || "-" }}
-                            </div>
-                        </td>
-    
-                        <!-- Family Member Relation(s) -->
-                        <td>
-                            <div class="mb-3" *ngFor="let member of row.familyMembers">
-                                {{ member.relation || "-" }}
-                            </div>
-                        </td>
-    
-                        <!-- Family Member DOB(s) -->
-                        <td>
-                            <div class="mb-3" *ngFor="let member of row.familyMembers">
-                                {{ member.memberDateOfBirth | dateformat }}
-                            </div>
-                        </td>
-    
-                        <!-- Family Member Dependent(s) -->
-                        <td>
-                            <div class="mb-3" *ngFor="let member of row.familyMembers">
-                                {{ member.dependent || "-" }}
-                            </div>
-                        </td>
+                        <th>{{ "Employee ID" }}</th>
+                        <th>{{ "First Name" }}</th>
+                        <th>{{ "Middle Name" }}</th>
+                        <th>{{ "Last Name" }}</th>
+                        <th>{{ "Work Email" }}</th>
+                        <th>{{ "Employee Status" }}</th>
+                        <th>{{ "Name" }}</th>
+                        <th>{{ "Relation" }}</th>
+                        <th>{{ "Date of Birth" }}</th>
+                        <th>{{ "Dependent" }}</th>
                     </tr>
-                    }
-                </ng-container>
-                <ng-template #noData>
-                    <tr>
-                        <td colspan="8">
-                            <app-no-data-found></app-no-data-found>
-                        </td>
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="familydata.length > 0; else noData">
+                        @for(row of familydata; track row){
+                        <tr>
+                            <td>{{ row.fusionEmpId || "-" }}</td>
+                            <td>{{ row.firstName || "-" }}</td>
+                            <td>{{ row.middleName || "-" }}</td>
+                            <td>{{ row.lastName || "-" }}</td>
+                            <td>{{ row.workEmail || "-" }}</td>
+                            <td>{{ row.empStatus || "-" }}</td>
+                            <!-- Family Member Name(s) -->
+                            <td>
+                                <div class="mb-3" *ngFor="let member of row.familyMembers">
+                                    {{ member.memberName || "-" }}
+                                </div>
+                            </td>
+        
+                            <!-- Family Member Relation(s) -->
+                            <td>
+                                <div class="mb-3" *ngFor="let member of row.familyMembers">
+                                    {{ member.relation || "-" }}
+                                </div>
+                            </td>
+        
+                            <!-- Family Member DOB(s) -->
+                            <td>
+                                <div class="mb-3" *ngFor="let member of row.familyMembers">
+                                    {{ member.memberDateOfBirth | dateformat }}
+                                </div>
+                            </td>
+        
+                            <!-- Family Member Dependent(s) -->
+                            <td>
+                                <div class="mb-3" *ngFor="let member of row.familyMembers">
+                                    {{ member.dependent || "-" }}
+                                </div>
+                            </td>
+                        </tr>
+                        }
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="8">
+                                <app-no-data-found></app-no-data-found>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
+   
 </div>

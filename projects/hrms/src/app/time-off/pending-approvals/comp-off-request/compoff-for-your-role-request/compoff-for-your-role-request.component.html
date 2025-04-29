@@ -128,7 +128,7 @@
                     @if(spinnerLoader){
                         <div class="button-loader-content">
                             <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading..'}}...</span>
+                            <span>{{'Loading...'}}</span>
                         </div>
                         }@else {
                         <span>{{'Approve'| translate}}</span>
@@ -146,7 +146,7 @@
             <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
         </div>
         <form [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
-            <div class="mb-3">
+            <div class="custom-main-popup-content">
                 <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
                     <span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection" 
@@ -164,7 +164,7 @@
                     @if(spinnerLoader){
                         <div class="button-loader-content">
                             <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading..'}}...</span>
+                            <span>{{'Loading...'}}</span>
                         </div>
                         }@else {
                         <span>{{'Reject' | translate}}</span>

@@ -35,7 +35,9 @@
                                         <div *ngIf="! offerLetterData.addressLine1;else address">Address:</div>
                                         <ng-template #address>
                                             <li>{{ offerLetterData.addressLine1}},</li>
-                                            <li>{{ offerLetterData.addressLine2}},</li>
+                                            @if(offerLetterData.addressLine2){
+                                                <li>{{ offerLetterData.addressLine2}},</li>
+                                            }
                                             <li>{{ offerLetterData.city}}, {{ offerLetterData.state}},</li>
                                             <li>{{ offerLetterData.country}} - {{ offerLetterData.zipCode}}.</li>
                                         </ng-template>

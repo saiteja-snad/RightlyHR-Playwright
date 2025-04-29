@@ -387,7 +387,9 @@
                                     <li *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
                                     <ng-template #address>
                                         <li>{{traineeEmpData.addressLine1}},</li>
-                                        <li>{{traineeEmpData.addressLine2}},</li>
+                                        @if(traineeEmpData.addressLine2){
+                                            <li>{{traineeEmpData.addressLine2}},</li>
+                                        }
                                         <li>{{traineeEmpData.city}}, {{traineeEmpData.state}},</li>
                                         <li>{{traineeEmpData.country}} - {{traineeEmpData.pinCode}}.</li>
                                     </ng-template>

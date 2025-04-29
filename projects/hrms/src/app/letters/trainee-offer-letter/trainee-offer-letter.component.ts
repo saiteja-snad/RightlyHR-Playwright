@@ -473,6 +473,7 @@ export class TraineeOfferLetterComponent {
        phoneNumber: data?.phoneNumber,
        reportingmanagerId:data?.reportsTo
      })  
+     this.traineeEmpData.note = this.employeeForm.get('note')?.value;
   }
 
   loadingCode= false;
@@ -489,6 +490,7 @@ export class TraineeOfferLetterComponent {
               this.traineeEmpData = data.checkofferletter;
               this.selectedCountryCode=this.traineeEmpData?.contactnumbercountryflag;
               this.loadingCode = false;
+              this.traineeEmpData.note= this.traineeEmpData.note;
               this.patchForm(this.traineeEmpData);
               this.getTraineeEmployeeAddress(data.checkofferletter.empId);
               this.traineeEmpData.CreateOffer = this.traineeEmpData.CreateOffer;
@@ -504,6 +506,7 @@ export class TraineeOfferLetterComponent {
               }
               this.jobDesignation = this.traineeEmpData.jobRole;
               this.jobRoleDetails = this.traineeEmpData.jobRole;
+             
               this.traineeEmpData.isEmployeevalid = data.isEmployeevalid;
               if (this.traineeEmpData.approver) {
                 this.traineeEmpData.reportingmanagerId = this.traineeEmpData.approver;

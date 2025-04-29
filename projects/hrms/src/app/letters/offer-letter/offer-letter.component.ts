@@ -475,6 +475,7 @@ pathValuesFuction(){
                   authorityid: this.prospectiveEmpData?.signatureAuthority,
                   phoneNumber:this.prospectiveEmpData?.phoneNumber
                 })
+                this.prospectiveEmpData.note=this.employeeForm?.get('note')?.value;
                 this.selectedCountryCode=this.prospectiveEmpData?.contactnumbercountryflag;
                 this.loadingCode = false;
                 this.getEmployeeAddress(data.checkofferletter.empId);

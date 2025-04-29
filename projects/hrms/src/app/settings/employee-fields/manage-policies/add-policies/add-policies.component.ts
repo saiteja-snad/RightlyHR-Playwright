@@ -88,13 +88,13 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
   
     
     submit() {
-      
+      debugger
       const formValue = this.policiesForm.value;
   
       const payload = {
         locationId: formValue.location?.id,
         subLocationId: formValue.subLocation,
-        applicableyear: formValue.year?.value ?? new Date().getFullYear(),
+        applicableyear: formValue.year ?? new Date().getFullYear(),
         addedby: parseInt(this.empinfo.employeeId),
         addedDate: new Date().toISOString(),
         status: 'Pending for submission',

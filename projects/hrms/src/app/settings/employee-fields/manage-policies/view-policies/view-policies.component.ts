@@ -126,6 +126,7 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
     if (policyData) {
       const parsedPolicy = JSON.parse(policyData);
       const id = parsedPolicy?.id;
+      localStorage.setItem('cloningPolicyId', id);
       if (id) {
         this.router.navigate(['/settings/employee-fields/clonepolices', id]);
       } else {

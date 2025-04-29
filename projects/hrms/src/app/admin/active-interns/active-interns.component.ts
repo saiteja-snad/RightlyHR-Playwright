@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -17,7 +17,7 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
   encapsulation:ViewEncapsulation.None
 })
 
-export class ActiveInternsComponent {
+export class ActiveInternsComponent implements OnInit,OnDestroy {
   searchValue: any;
   subscription!: Subscription;
   emp = {} as any;
@@ -49,5 +49,10 @@ export class ActiveInternsComponent {
 
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
+  }
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

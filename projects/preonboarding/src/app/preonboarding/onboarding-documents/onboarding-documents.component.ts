@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { NgbModal, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { IdocumentType } from '../../models/documents.model';
 import { HttpService } from '../../http-services/http.service';
@@ -15,9 +15,10 @@ import { DateFormatPipe } from '../../Pipes/date-format.pipe';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
 @Component({
   selector: 'app-onboarding-documents',
-  imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbTooltipModule, NgxDocViewerModule, RouterModule, DetailedStepProgressbarComponent],
+  imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbPopoverModule, NgxDocViewerModule, RouterModule, DetailedStepProgressbarComponent],
   templateUrl: './onboarding-documents.component.html',
-  styleUrl: './onboarding-documents.component.scss'
+  styleUrl: './onboarding-documents.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 
 export class OnboardingDocumentsComponent implements OnInit, OnDestroy {

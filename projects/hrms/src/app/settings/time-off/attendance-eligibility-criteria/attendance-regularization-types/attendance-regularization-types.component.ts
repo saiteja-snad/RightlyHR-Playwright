@@ -35,10 +35,10 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
 
   ngOnInit(): void {
     this.getPermissionTypes();
-    this.fromdataintalition();
+    this.formIntalition();
   }
 
-  fromdataintalition() {
+  formIntalition() {
     this.permissionsForm = this.fb.group({
       name: [null, Validators.required],
     });
@@ -83,7 +83,7 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  updatePermission(form: FormGroup) {
+  updateRegularization(form: FormGroup) {
     if (form.invalid) {
       return;
     }
@@ -120,7 +120,7 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
       });
   }
 
-  addPermission(permissionForm: FormGroup) {
+  addRegularization(permissionForm: FormGroup) {
     if (permissionForm.valid) {
       const payload: Ipermissions = {
         name: permissionForm.value.name,

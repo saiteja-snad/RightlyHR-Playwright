@@ -34,21 +34,21 @@
             <td><input type="color" readonly disabled></td>
             <td>{{details.validity}}</td>
             <td>{{details.status}}</td>
-            <td>
+            <td class="text-center">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
                 </span>
                 <ul class="dropdown-menu custom-dropdown-menu">
                   <li>
-                    <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" data-bs-toggle="modal"
-                      (click)="navigateToViewLeaveCategory(details)">
+                    <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" 
+                    (click)="navigateToViewLeaveCategory(details)">
                       <i class="bi bi-pencil-fill px-2"></i>{{'View' | translate}}
                     </a>
                   </li>
                   <li>
-                    <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" data-bs-toggle="modal"
-                      (click)="navigateToCloneLeaveCategory(details)">
+                    <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" 
+                    (click)="navigateToCloneLeaveCategory(details)">
                       <i class="bi bi-pencil-fill px-2"></i>{{'Clone' | translate}}
                     </a>
                   </li>

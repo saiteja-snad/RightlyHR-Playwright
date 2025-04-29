@@ -1,4 +1,8 @@
 <div>
+    @if (this.router.url !== '/settings/timeoff-configurations/addleavecategory' && 
+    this.router.url !== '/settings/timeoff-configurations/updateleavecategory' && 
+    this.router.url !== '/settings/timeoff-configurations/cloneleavecategory' && 
+    this.router.url !== '/settings/timeoff-configurations/viewleavecategory') {
     <!--header-->
     <div class="mb-3">
         <div class="component-header">Settings</div>
@@ -8,6 +12,7 @@
     <div class="mb-3">
         <app-settings-time-off-tabs></app-settings-time-off-tabs>
     </div>
+    
     
     <!--Content-->
     <div class="employee-fields-main-container d-flex gap-3 w-100">
@@ -28,4 +33,9 @@
             <router-outlet />
         </div>
     </div>
+    } @else {
+        <div>
+            <router-outlet />
+        </div>
+    }
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
@@ -20,7 +20,8 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   basicInfoForm!: FormGroup;
   subscription!: Subscription
   emsployedata: any
-  empinfo: any
+  empinfo: any;
+  showMarriageDateField: boolean = false;
   bloodGroups = [
     { name: 'A+' },
     { name: 'A-' },
@@ -31,13 +32,13 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     { name: 'O+' },
     { name: 'O-' }
   ];
-  
+  dateofbirth:any
   salutationValidationcheck: boolean = false
   Gender: IGender[] = [];
   titledetails: ITitle[] = [];
   Maritaldetails: IMarital[] = [];
   buttons = false
-  constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService,
+  constructor(private modalService: NgbModal, private cdr: ChangeDetectorRef, private fb: FormBuilder, public formValidation: FormValidationService,
     private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
@@ -52,16 +53,16 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.get('salutation')?.valueChanges.subscribe(() => {
       this.onsalutationvalidation();
     });
-  
+
     this.basicInfoForm.get('gender')?.valueChanges.subscribe(() => {
       this.onsalutationvalidation();
     });
-  
+
   }
 
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
-   
+
       fusionEmpId: [{ value: null, disabled: true }, [Validators.required]],
       salutation: [null, Validators.required],
       firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
@@ -71,6 +72,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: [null, [Validators.required, this.validateAge.bind(this)]],
       bloodGroup: [null, Validators.required],
       maritalStatus: [null, Validators.required],
+      marriageDate: [null],
     });
   }
   validateAge(control: AbstractControl): { [key: string]: boolean } | null {
@@ -92,17 +94,27 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
     return null; // Return null if validation passes
   }
-  
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.emsployedata = data;
+        this.dateofbirth =this.formatDateToLocal(this.emsployedata.dob)
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
+  }
+  getdateofbirth(): string | null {
+    const startDateValue = this.formatDateToLocal(this.emsployedata.dob)
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; 
   }
   formatDateToLocal(dateString: string): string {
     const date = new Date(dateString);
@@ -118,16 +130,17 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
       fusionEmpId: data.fusionEmpId,
-      salutation: this.titledetails.find((item: any) => item.titlename === data.title),
+      salutation: data.title,
       firstName: data.firstName,
       middleName: data.middleName,
       lastName: data.lastName,
       gender: data.gender,
-      dob:this.formatDateToLocal(data.dob) || null,
+      dob: this.formatDateToLocal(data.dob) || null,
+      marriageDate: this.formatDateToLocal(data.marriedDate) || null,
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
-      maritalStatus:this.Maritaldetails.find(((item: any)=>item.maritalstatus1 === data.maritalStatus)) ,
+      maritalStatus: this.Maritaldetails.find(((item: any) => item.maritalstatus1 === data.maritalStatus)),
     });
-    console.log('datapatch',this.basicInfoForm.value);
+    console.log('datapatch', this.basicInfoForm.value);
 
   }
 
@@ -138,7 +151,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     const updatePayload = {
       ...this.emsployedata,
       employeeId: this.empinfo.employeeId,
-      title: formValue.salutation?.titlename,
+      title: formValue.salutation,
       firstName: formValue.firstName,
       middleName: formValue.middleName,
       lastName: formValue.lastName,
@@ -146,7 +159,8 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
-      empStatus: 'Active', 
+      marriageDate: formValue.marriageDate,
+      empStatus: 'Active',
     };
     console.log(updatePayload);
 
@@ -154,18 +168,22 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       .postdata(`Employeedata/UPDATER`, updatePayload)
       .subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Basic Information Updated Successfully',);
-          this.getEmployeeId();
-          this.basicInfoForm.disable();
-          this.buttons = !this.buttons;
-          console.log('Data updated successfully:', data);
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Basic Info updated successfully')
+          if (data.statusCode === 200) {
+            this.conformationPopup.openSuccessModal('Basic Information Updated Successfully',);
+            this.getEmployeeId();
+            this.basicInfoForm.disable();
+            this.buttons = !this.buttons;
+
+          } else if (data.statusCode === 409) {
+            this.conformationPopup.openErrorModal(data.message,);
+            this.patchForm(this.emsployedata);
+          }
+
         },
         error: (reason: any) => {
           console.log(reason);
           this.conformationPopup.openErrorModal('Basic Info update failed')
-         
+
 
         },
       });
@@ -200,7 +218,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       // Enable the form when the user clicks "Edit"
       this.basicInfoForm.get('fusionEmpId')?.disable();
       this.basicInfoForm.enable();
-    
+
     } else {
       this.basicInfoForm.get('fusionEmpId')?.disable();
       this.basicInfoForm.disable();
@@ -209,13 +227,29 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
   }
 
+  changemaritalstatus(): void {
+    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'  || this.emsployedata?.maritalStatus === 'Married';
+  
+    if (maritalStatus) {
+      // Add the required validator to the marriageDate field
+      this.basicInfoForm.get('marriageDate')?.setValidators([Validators.required]);
+    } else {
+      // Clear the validators if marital status is not "Married"
+      this.basicInfoForm.get('marriageDate')?.clearValidators();
+      this.basicInfoForm.get('marriageDate')?.setValue(null); // Reset the marriage date field
+    }
+  
+    // Update the validation state of the marriageDate field
+    this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
+  }
+
   onsalutationvalidation(): void {
     const gender = this.basicInfoForm.get('gender')?.value;
     const title = this.basicInfoForm.get('salutation')?.value;
-  
+
     const genderLower = typeof gender === 'string' ? gender.toLowerCase() : '';
     const titleLower = typeof title === 'string' ? title.toLowerCase() : '';
-  
+
     if (
       (genderLower === 'male' && titleLower === 'mr.') ||
       (genderLower === 'female' && ['ms.', 'miss.', 'mrs.'].includes(titleLower)) ||

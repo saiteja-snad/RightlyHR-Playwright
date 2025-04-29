@@ -133,7 +133,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}...</span>
+                        <span>{{'Loading...'}}</span>
                     </div>
                     }@else {
                     <span>{{'Approve'| translate}}</span>
@@ -178,7 +178,7 @@
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}...</span>
+                        <span>{{'Loading...'}}</span>
                     </div>
                     }@else {
                     <span>{{'Reject'| translate}}</span>
@@ -194,7 +194,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Comments</p>
+                <p class="popup-heading mb-0">{{'Approver Comments'}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"

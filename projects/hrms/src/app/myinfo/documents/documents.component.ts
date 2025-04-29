@@ -11,11 +11,12 @@ import { TranslateModule, TranslatePipe } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { HttpService } from '../../services/http.service';
 import { FileSizePipe } from "../../Pipes/file-size.pipe";
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 
 
 @Component({
   selector: 'app-documents',
-  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, TranslateModule, CommonModule, FileSizePipe],
+  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })
@@ -42,7 +43,6 @@ export class DocumentsComponent {
     this.getMainFolders()
     this.initializejobForm();
 
-
   }
   initializejobForm(): void {
     this.uploadfrom = this.fb.group({
@@ -50,14 +50,7 @@ export class DocumentsComponent {
    
     });
   }
-  ngOnChanges(changes: SimpleChanges) {
-    this.showUploadIcon = true;
-    // if (changes['folder']) {
-    //   console.log(changes['folder']);
-    // }
-    console.log(this.selectedFile);
-    this.getAllFiles();
-  }
+
 
 
   getMainFolders(dirPath?: string) {
@@ -89,27 +82,18 @@ export class DocumentsComponent {
     });
   }
 
-  // onFolderSelectded(folder: IFolders | undefined, mainFolderName: string) {
-  //   if (folder) {
-  //     folder.expanded = !folder.expanded;
-  //   }
-  //   if (!folder) {
-  //     return;
-  //   }
-  //   if (folder.subfolders && folder.subfolders?.length > 0) {
-  //     this.selectedFolder = folder.subfolders as IFolders[];
-  //   } else {
-  //     this.selectedFolder = [] as IFolders[];
-  //   }
-  //   if (folder.isDirectory) {
-  //     this.isMainfolderTouched = true;
-  //   }
-  //   this.subDir.mainDir = mainFolderName;
-  //   this.selectedMainFolder = folder;
-  // }
+  
   toggleFolder(folder: any): void {
-    folder.expanded = !folder.expanded; // Toggle the expanded state
-    this.selectedMainFolder = folder; // Set the selected folder
+    // Collapse all other folders
+    this.folders.forEach((f) => {
+      if (f !== folder) {
+        f.expanded = false; // Collapse other folders
+      }
+    });
+  
+    folder.expanded = !folder.expanded;
+ 
+    this.selectedMainFolder = folder;
   }
   onSubFolderSelected(subFolder: any): void {
     this.selectedFile = subFolder;
@@ -127,7 +111,7 @@ export class DocumentsComponent {
   getAllFiles() {
     if (!this.selectedFile.isEmpDir) {
       this.subscription = this.http
-        .getDataWithQuery('FileSystem/Files', this.selectedFile.name)
+        .getDataWithQuery('FileSystem/Files',  `${this.selectedFile.name}/${this.empdata.employeeId}`)
         .subscribe({
           next: (data: any) => {
             console.log(data);
@@ -165,14 +149,7 @@ export class DocumentsComponent {
   }
   filechange(event: any) {
     this.file = event.target.files[0];
-    const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.uploadfrom.patchValue({ filename: file.name }); // Update the filename control with the selected file name
-    } else {
-      this.uploadfrom.patchValue({ filename: '' });
-    }
+    
   }
 
   filterFolder() {

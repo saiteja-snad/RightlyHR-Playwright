@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -10,14 +10,15 @@ import { FormsModule } from '@angular/forms';
 import { InactiveEmployeePipe } from '../../Pipes/inactive-employee.pipe';
 import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-inactive-employees',
-  imports: [CommonModule, RouterModule, InactiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent],
+  imports: [CommonModule, RouterModule, InactiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './inactive-employees.component.html',
   styleUrl: './inactive-employees.component.scss'
 })
 
-export class InactiveEmployeesComponent {
+export class InactiveEmployeesComponent implements OnInit ,OnDestroy{
   subscription!: Subscription;
   InActive = [] as any;
   emp = {} as any;

@@ -34,7 +34,7 @@
           <label for="salutation" class="form-label custom-label mb-2">Salutation<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="titledetails"  optionLabel="titlename"
+            <p-select [options]="titledetails"  optionLabel="titlename" 
               placeholder="Please select salutation" formControlName="salutation"
               class="form-select custom-select"></p-select>
           </div>
@@ -42,6 +42,7 @@
             class="error-msg">
             Salutation is required
           </div>
+          <div *ngIf="salutationValidationcheck" class="error-msg">Please select a valid value</div>
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
@@ -110,12 +111,21 @@
           <label for="maritalStatus" class="form-label custom-label mb-2">Marital Status<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="Maritaldetails" optionLabel="maritalstatus1"   placeholder="Please select marital status"
+            <p-select [options]="Maritaldetails" optionLabel="maritalstatus1"  (onchange)="changemaritalstatus()"  placeholder="Please select marital status"
               formControlName="maritalStatus" class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('maritalStatus')?.invalid && basicInfoForm.get('maritalStatus')?.touched"
             class="error-msg">
             Marital Status is required
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4 mb-3" *ngIf="basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'" >
+          <label for="maritalStatus" class="form-label custom-label mb-2">Married date<span
+              class="text-danger">*</span></label>
+              <input type="date" class="form-control custom-input" id="dob" formControlName="marriageDate" [min]="getdateofbirth()"  onkeypress="return false" />
+          <div *ngIf="basicInfoForm.get('marriageDate')?.invalid && basicInfoForm.get('marriageDate')?.touched"
+            class="error-msg">
+            Marriage date is required
           </div>
         </div>
       </div>

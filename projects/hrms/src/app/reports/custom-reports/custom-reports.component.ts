@@ -68,7 +68,7 @@ export class CustomReportsComponent implements OnInit,OnDestroy{
     basicInfo: {
       name: 'Basic Information',
       fields: [
-        'ID', 'Employee ID', 'First Name', 'Last Name', 'Middle Name', 'Salutation',
+        'ID', 'Employee ID', 'First Name', 'Middle Name', 'Last Name', 'Salutation',
         'Status', 'Marital Status', 'Gender', 'Date of Birth', 'Blood Group'
       ],
       selectedFields: ['ID','Employee ID','First Name','Middle Name','Last Name'],
@@ -94,7 +94,7 @@ export class CustomReportsComponent implements OnInit,OnDestroy{
     },
     contactDetails: {
       name: 'Contact Details',
-      fields: ['Work Number', 'Mobile Phone', 'Work Email', 'Home Email'],
+      fields: ['Work Number', 'Mobile Phone', 'Work Email', 'Personal Email'],
       selectedFields: [],
       selectAll: false
     },
@@ -453,8 +453,9 @@ export class CustomReportsComponent implements OnInit,OnDestroy{
         else if (field === 'Frequency') data[field] = user.frequency;
       });
       this.selectedData.push(data);
-      this.spinnerLoader1= false;
+      
     });
+    this.spinnerLoader1= false;
   }
 
   getStatus() {

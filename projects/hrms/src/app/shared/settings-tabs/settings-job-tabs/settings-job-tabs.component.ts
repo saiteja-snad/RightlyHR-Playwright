@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-settings-job-tabs',
@@ -11,26 +11,7 @@ import { RbacService } from '../../../services/rbac.service';
 })
 
 export class SettingsJobTabsComponent implements OnInit {
-  
   public navLinks: any[] = [];
-  public defaultRoute: string = '';
-  
-  constructor(public rbac: RbacService) {
-    
-  }
-
-  ngOnInit(): void {
-    this.navLinks = this.allNavLinks.filter(link =>
-      link.permission &&
-      link.permission.feature &&
-      link.permission.action &&
-      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
-    );
-
-    if (this.navLinks.length > 0) {
-      this.defaultRoute = this.navLinks[0].route;
-    }
-  }
 
   allNavLinks = [
     { label: 'Job Role', route: '/settings/employee-fields/job/jobrole' , permission: { feature: 'Job Role', action: 'view' }},
@@ -54,6 +35,35 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Serving period', route: '/settings/employee-fields/job/serving-period', permission: { feature: 'Serving Period', action: 'view' } },
     { label: 'Probation Details', route: '/settings/employee-fields/job/probation-details', permission: { feature: 'Probation Details', action: 'view' } },
     { label: 'Interview Round', route: '/settings/employee-fields/job/interview-round', permission: { feature: 'Interview Round', action: 'view' }},
-
   ];
+
+  constructor(
+    public rbac: RbacService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    // Step 1: Filter based on access
+    this.navLinks = this.allNavLinks.filter(link =>
+      link.permission &&
+      link.permission.feature &&
+      link.permission.action &&
+      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
+    );
+
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields/job';
+
+    // Step 2: Redirect to first allowed tab if on base URL
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
+
+    // Step 3: Redirect if current path is inaccessible
+    const isAllowed = this.navLinks.some(link => link.route === currentUrl);
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
+  }
 }

@@ -38,10 +38,10 @@ export class NoticeComponent {
 
   ngOnInit(): void {
     this.noticeperiodForm = this.fb.group({
-      noticeperiod: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9 ]+$/)]]
+      noticeperiod: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
     this.updateForm = this.fb.group({
-      updatenoticeperiod:  ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9 ]+$/)]]
+      updatenoticeperiod:  ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
 
     });
     this.getNoticeperiod();
@@ -70,7 +70,7 @@ export class NoticeComponent {
       error: (err : any) => {
         const errorMessage = err.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
+        // this.resetForm();
       }
     });
   }

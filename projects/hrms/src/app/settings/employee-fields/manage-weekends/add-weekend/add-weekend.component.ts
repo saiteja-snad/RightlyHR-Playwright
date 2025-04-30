@@ -18,6 +18,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 
 export class AddWeekendComponent implements OnInit, OnDestroy {
+  @ViewChild('deletepopup') deletepopup: any;
+  @ViewChild('deletepopup1') deletepopup1: any;
+  deleteIndex: number | null = null;
   weekendForm!: FormGroup;
   yearsList: number[] = [];
   locationDetails = [] as ILocation[];
@@ -52,8 +55,8 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
 
   initializeForm() {
     this.weekendForm = this.fb.group({
-      year: ['', Validators.required],
-      location: [{ value: '', disabled: true }, Validators.required],
+      year: [new Date().getFullYear(), Validators.required],
+      location: ['', Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
       weekends: this.fb.array([this.createWeekend()])
@@ -80,6 +83,19 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
       this.weekends.push(this.createWeekend());
     } else {
       console.warn('Maximum of 7 weekends can be added.');
+    }
+  }
+
+  
+  deleteRow(i: any){
+    this.deleteIndex = i;
+    this.modalService.open(this.deletepopup1, { backdrop: 'static', centered: true });
+  }
+
+  onDeleteClose(modal: any) {
+    modal.dismiss();
+    if (this.deleteIndex !== null) {
+      this.removeWeekend(this.deleteIndex);
     }
   }
 
@@ -230,7 +246,7 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     }
     this.http.postdata('OrgWeekendHeader/Post/OrgWeekEnd', payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        this.modal.openSuccessModal('Weekends Created Successfully!')
+        this.modal.openSuccessModal('Weekends Created Successfully')
         setTimeout(() => {
          this.closeWeekend();
         }, 2000)
@@ -241,6 +257,19 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     });
   }
 
+  Cancel() {
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+  }
+
+  closeDelete(modal: any) {
+    modal.dismiss();
+  }
+  
+  onDelete(modal: any) {
+    modal.dismiss();
+    this.navigation();
+  }
+
   openModal(content: any,) {
     this.modalService.open(content, { centered: true })
   }
@@ -248,6 +277,9 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
   closeWeekend(){
     this.modalService.dismissAll();
     this.navigate();
+  }
+  navigation(){
+    this.router.navigate(['/settings/employee-fields/manage-weekends/pending-for-submission']);
   }
 
   ngOnDestroy(): void {

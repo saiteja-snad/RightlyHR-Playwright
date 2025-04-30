@@ -5,21 +5,20 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter department"
                     formControlName="Department" aria-label="department" aria-describedby="department"
-                    (keypress)="allowOnlyLettersAndSpace($event)">
+                    (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101">
                 <span class="input-group-text" id="department">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="DepartmentForm.invalid">{{'Add'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="DepartmentForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
-            <div *ngIf="DepartmentForm.controls['Department'].touched" class="error-msg">
-                <div *ngIf="DepartmentForm.controls['Department'].touched || DepartmentForm.controls['Department'].dirty">
-                    <span *ngIf="DepartmentForm.controls['Department'].errors?.['required']">Department is required</span>
-                    <span class="error-msg" *ngIf="DepartmentForm.controls['Department'].errors?.['maxlength']">
-                        Maximum 100 characters are allowed.
-                    </span>
-                    <span class="error-msg" *ngIf="DepartmentForm.controls['Department'].errors?.['pattern']">
-                        Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
-                    </span>
+            <div *ngIf="DepartmentForm.get('Department')?.touched && DepartmentForm.get('Department')?.invalid"
+                class="error-msg">
+                <div *ngIf="DepartmentForm.get('Department')?.errors?.['required']">
+                    {{ 'Department is required' | translate }}
                 </div>
+            </div>
+            <div *ngIf="DepartmentForm.get('Department')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 100 characters' | translate }}
             </div>
         </div>
     </form>
@@ -77,22 +76,21 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Department'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Department"
-                        placeholder="Please enter department" (keypress)="allowOnlyLettersAndSpace($event)">
-                    <div *ngIf="updateForm.controls['Department'].touched" class="error-msg">
-                        <div *ngIf="updateForm.controls['Department'].touched || updateForm.controls['Department'].dirty">
-                            <span *ngIf="updateForm.controls['Department'].errors?.['required']">Department is required</span>
-                            <span class="error-msg" *ngIf="updateForm.controls['Department'].errors?.['maxlength']">
-                                Maximum 100 characters are allowed.
-                            </span>
-                            <span class="error-msg" *ngIf="updateForm.controls['Department'].errors?.['pattern']">
-                                Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
-                            </span>
+                        placeholder="Please enter department"
+                        (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101">
+                    <div *ngIf="updateForm.get('Department')?.touched && updateForm.get('Department')?.invalid" class="error-msg">
+                        <div *ngIf="updateForm.get('Department')?.errors?.['required']">
+                            {{ 'Department is required' | translate }}
                         </div>
+                    </div>
+                    <div *ngIf="updateForm.get('Department')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" (click)="updateDepartment(modal)" [disabled]="updateForm.invalid">
+                    <button type="button" class="custom-btn btn-primary" (click)="updateDepartment(modal)"
+                        [disabled]="updateForm.invalid">
                         {{'Update'|translate}}</button>
                 </div>
             </div>
@@ -105,7 +103,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

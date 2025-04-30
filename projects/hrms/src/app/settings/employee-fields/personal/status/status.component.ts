@@ -23,6 +23,7 @@ export class StatusComponent {
   statusDeletedata = {} as any;
   subscription!: Subscription;
   statusdetails = [] as any[];
+  isEditMode = false;
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
 
@@ -32,10 +33,10 @@ export class StatusComponent {
 
   ngOnInit(): void {
     this.statusForm = this.fb.group({
-      status: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]]
+      status: [null, [Validators.required, this.formValidations.maxCharactersValidator(51)]]
     });
     this.updateForm = this.fb.group({
-      statusname: ['', Validators.required]
+      statusname: ['', [Validators.required, this.formValidations.maxCharactersValidator(51)]]
     });
     this.getstatus();
   }
@@ -65,13 +66,14 @@ export class StatusComponent {
         this.statusForm.reset();
       },
       error: (reason: any) => {
-        console.log(reason);
-        this.conformationPopup.openErrorModal('Failed to add status');
+        const errorMessage = reason.error?.Message || 'An error occurred while adding status';
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }
 
   openupdate(status: any): void {
+    this.resetForm();
     this.statusDeletedata = status;
     this.updateForm?.patchValue({
       statusname: status.statusname
@@ -85,6 +87,7 @@ export class StatusComponent {
   }
 
   opendelete(status: any): void {
+    this.resetForm();
     this.statusDeletedata = status;
     this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
   }
@@ -100,8 +103,8 @@ export class StatusComponent {
           this.conformationPopup.openSuccessModal('Status updated successfully');
         },
         error: (err: any) => {
-          console.error('Update failed:', err);
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message || 'An error occurred while updating status';
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     } else {
@@ -120,12 +123,17 @@ export class StatusComponent {
       next: (data: any) => {
         this.getstatus();
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Status data deleted successfully');
+        this.conformationPopup.openSuccessModal('Status deleted successfully');
       },
       error: (err: any) => {
-        console.error('Delete status failed:', err);
-        this.conformationPopup.openErrorModal('Failed to delete status data');
+        const errorMessage = err.error?.Message || 'An error occurred while deleting status';
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
+  }
+
+  resetForm() {
+    this.statusForm.reset();
+    this.updateForm.reset();
   }
 }

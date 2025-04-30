@@ -24,13 +24,11 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 })
 export class UpdatePoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
-  @ViewChild('deletepopup1') deletepopup1: any;
   subscription!: Subscription;
   policyForm!: FormGroup;
   jobLocationDropDownData: any = [];
   updatePoliciesData: any;
   subLocationsDropdown: any = [];
-  deleteIndex: number | null = null;
   empinfo: any;
   yearDetails = [
     { name: '2024', value: 2024 },
@@ -161,27 +159,12 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
     this.navigation();
   }
 
-  onDeleteClose(modal: any) {
-    modal.dismiss();
-    if (this.deleteIndex !== null) {
-      this.removePolicyRow(this.deleteIndex);
-    }
-  }
-
   closeDelete(modal: any) {
     modal.dismiss();
   }
 
   Cancel() {
     this.modalService.open(this.deletepopup, {
-      backdrop: 'static',
-      centered: true,
-    });
-  }
-
-  deleteRow(i: any) {
-    this.deleteIndex = i;
-    this.modalService.open(this.deletepopup1, {
       backdrop: 'static',
       centered: true,
     });

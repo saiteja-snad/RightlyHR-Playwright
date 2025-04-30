@@ -18,8 +18,6 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class UpdateWeekendsComponent {
   @ViewChild('deletepopup') deletepopup: any;
-  @ViewChild('deletepopup1') deletepopup1: any;
-  deleteIndex: number | null = null;
   weekendForm!: FormGroup;
   weekendDataLM!: IWeekends;
   showbtn = false;
@@ -174,20 +172,7 @@ export class UpdateWeekendsComponent {
       });
     }
   }
-
   
-  deleteRow(i: any){
-    this.deleteIndex = i;
-    this.modalService.open(this.deletepopup1, { backdrop: 'static', centered: true });
-  }
-
-  onDeleteClose(modal: any) {
-    modal.dismiss();
-    if (this.deleteIndex !== null) {
-      this.removeWeekend(this.deleteIndex);
-    }
-  }
-
   getAllYears() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
       this.yearsList.push(i);

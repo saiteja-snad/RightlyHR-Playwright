@@ -51,20 +51,24 @@
                                 <input type="text" formControlName="policyName" class="form-control custom-input"
                                     placeholder="Please enter policy name" />
                             </div>
+
                             <div class="col-md-3">
-                                <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' |
-                                    translate}}<span class="text-danger">*</span></label>
-                                <div [ngbPopover]="popContent" triggers="click" placement="top">
+                                <label class="form-label custom-label">
+                                  {{'Policy Attachment (Image and PDF only)' | translate}}<span
+                                  class="text-danger">*</span>
+                                </label>
+                
+                                <div class="d-flex align-items-center gap-2">
+                                  <input type="file" class="form-control custom-input" [disabled]="true"/>
+                                  <div [ngbPopover]="popContent" triggers="click" placement="top">
                                     <i class="bi bi-info-circle-fill cursor"></i>
                                 </div>
+                                </div>
+                
                                 <ng-template #popContent>
                                     <div>{{ getPolicyAttachmentName(holiday.get('policyFile')?.value) }}</div>
                                 </ng-template>
-                                <div *ngIf="holiday.get('policyFile')?.touched && holiday.get('policyFile')?.invalid"
-                                    class="error-msg">
-                                    {{'Policy File is required' | translate}}.
-                                </div>
-                            </div>
+                              </div>
 
                             <div class="col-md-4">
                                 <label class="form-label custom-label">{{'Description' | translate}}<span

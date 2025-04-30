@@ -16,7 +16,7 @@
   <form [formGroup]="inviteActiveEmployeeForm" (ngSubmit)="activeInviteEmployee()">
     <div class="card custom-content-data p-4">
       <div class="input-content mb-4">
-        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Search Employee' | translate}}
+        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Select Employee' | translate}}
           <span class="text-danger">*</span></label>
         <div class="custom-p-select-content">
           <p-select [options]="Activeemployeedata" optionLabel="name" formControlName="EmployeeID" optionValue="employeeId" [filter]="true"

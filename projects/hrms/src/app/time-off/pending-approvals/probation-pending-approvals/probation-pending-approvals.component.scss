@@ -1,16 +1,14 @@
-.save-button {
-    border-radius: 14px;
-    padding: 11px 51px 13px 52px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #fff;
-  }
-  
-  .cancel-button {
-    background-color: #979797;
-    border-radius: 14px;
-    padding: 11px 55px 13px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #fff;
-  }
+.assessment-form-content{
+  width: 100%;
+  height: calc(100dvh - 12rem);
+  overflow: auto;
+}
+
+.form-content{
+  min-width: 900px;
+}
+
+.custom-popup-table {
+  height: 20vh !important;
+  max-height: 45vh !important;
+}

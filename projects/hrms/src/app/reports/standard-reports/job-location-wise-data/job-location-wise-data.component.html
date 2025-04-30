@@ -114,6 +114,7 @@
                         <th>Grade Name</th>
                         <th>Department</th>
                         <th>Team</th>
+                        <th>Team Manager</th>
                         <th>Reporting To</th>
                         <th>Location</th>
                         <th>Sub Location</th>
@@ -155,6 +156,7 @@
                           <td>{{ emp.gradeName ? emp.gradeName : '-' }}</td>
                           <td>{{ emp.departmentName ? emp.departmentName : '-' }}</td>
                           <td>{{ emp.subdepartment_name ? emp.subdepartment_name : '-' }}</td>
+                          <td>{{ emp.teammanager? emp.teammanager: '-'}}</td>
                           <td>{{ emp.reportingmanager ? emp.reportingmanager : '-' }}</td>
                           <td>{{ emp.joblocationname ? emp.joblocationname : '-' }}</td>
                           <td>{{ emp.jobsublocationname ? emp.jobsublocationname : '-' }}</td>

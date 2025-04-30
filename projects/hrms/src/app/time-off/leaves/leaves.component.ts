@@ -16,7 +16,6 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { LeavesApprovaltabsComponent } from "../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component";
-
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,
@@ -24,6 +23,7 @@ import { LeavesApprovaltabsComponent } from "../../shared/time-off-module-tabs/l
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss'
 })
+
 export class LeavesComponent {
   subscription!: Subscription;
   categoryDetails = [] as ICategoryDetails[];
@@ -80,8 +80,15 @@ export class LeavesComponent {
   model: any;
   disableSubmitButton : boolean = false;
   @ViewChild('leaveForm') work!: NgForm;
- 
-  
+
+  constructor(
+    private http: HttpService, 
+    private conformationPopup: OpenModalService,
+    private modalService: NgbModal,
+    private authService: AuthService,
+    private fb: FormBuilder,
+    public rbac: RbacService,
+  ) {}
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -99,18 +106,20 @@ export class LeavesComponent {
     this.checkPreviousOptionalLeaves();
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
-   
   }
 
-  constructor(
-    private http: HttpService, 
-    private conformationPopup: OpenModalService,
-    private modalService: NgbModal,
-    private authService: AuthService,
-    private fb: FormBuilder,
-    public rbac: RbacService,
-  ) {}
-
+  convertHexToRgba(hex: string, alpha: number): string {
+    if (!hex) return 'rgba(0, 0, 0, 0.2)'; // fallback
+    hex = hex.replace('#', '');
+    if (hex.length === 3) {
+      hex = hex.split('').map(c => c + c).join('');
+    }
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+  
   openModal(content: any) {
     this.modalService.open(content, {centered: true,backdrop: 'static'});
   }
@@ -127,7 +136,6 @@ export class LeavesComponent {
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
-    
   }
 
   updateHalfDayOptions() {

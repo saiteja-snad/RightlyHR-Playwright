@@ -259,11 +259,13 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   submitArchive() {
-    (this.empdata.empstatus = 'archived'),
+    (this.empdata.empstatus = 'Archived'),
     (this.empdata.substatus = 'Employee Created'),
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
         next: (data: any) => {
+          this.getEmployeeId();
           this.updateOnboardingStatus();
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Employee archived successfully');
           setTimeout(() => {
             this.router.navigate(['/admin']);
@@ -333,18 +335,22 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
       next: (data: any) => {
-        this.revokeEmail();
-        this.updateRevokeStatustooffer();
-        this.revokeEmailToEmployee();
-        this.updateOnboardingStatus();
-        if (this.jobPostData.id) {
-          this.updateJobapplicantdata();
-        } else {
+        if(data){
+          this.getEmployeeId();
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Offer Revoked Successfully');
+          this.revokeEmail();
+          this.updateRevokeStatustooffer();
+          this.revokeEmailToEmployee();
+          this.updateOnboardingStatus();
+          if (this.jobPostData.id) {
+            this.updateJobapplicantdata();
+          } 
           setTimeout(() => {
             this.router.navigate(['/admin']);
           }, 3000);
         }
-        this.conformationPopup.openSuccessModal('Offer Revoked Successfully');
+        
       },
       error: (err: any) => {
         console.log(err);

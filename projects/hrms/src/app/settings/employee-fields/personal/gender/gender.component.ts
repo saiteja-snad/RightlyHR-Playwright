@@ -40,37 +40,16 @@ export class GenderComponent {
     this.GenderForm = this.fb.group({
       Gender: ['',  [
         Validators.required,
-        Validators.maxLength(50),
-        Validators.pattern(/^[A-Za-z][A-Za-z ]*$/)
-        // letters, periods, spaces (not at start)
+        this.formValidations.maxCharactersValidator(51)
       ]]
     });
     this.updateForm = this.fb.group({
       Gender: ['',  [
         Validators.required,
-        Validators.maxLength(50),
-        Validators.pattern(/^[A-Za-z][A-Za-z ]*$/)
-        // letters, periods, spaces (not at start)
+        this.formValidations.maxCharactersValidator(51)
       ]]
     });
     this.getGender();
-  }
- 
-  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
-    const input = event.target as HTMLInputElement;
-    const char = event.key;
-    const pattern = /^[A-Za-z ]$/;
-  
-    // Block if the key is not a letter or space
-    if (!pattern.test(char)) {
-      event.preventDefault();
-      return;
-    }
-  
-    // Block if length is already 50
-    if (input.value.length >= 50) {
-      event.preventDefault();
-    }
   }
   
   getGender() {
@@ -92,8 +71,9 @@ export class GenderComponent {
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
+        const errorMessage = error.error?.Message
+        this.conformationPopup.openErrorModal(errorMessage);
+        // this.resetForm();
       }
     });
   }
@@ -114,7 +94,8 @@ export class GenderComponent {
           this.conformationPopup.openSuccessModal('Gender updated successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -126,6 +107,7 @@ export class GenderComponent {
   }
 
   openupdate(genderlist: any) {
+    this.resetForm();
     this.selectedId = genderlist.sno;
     this.updateForm.patchValue({ Gender: genderlist.genderName });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
@@ -133,6 +115,7 @@ export class GenderComponent {
 
   // DELETE
   opendelete(genderlist: any) {
+    this.resetForm();
     this.selectedDeleteGender = genderlist;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
@@ -151,7 +134,8 @@ export class GenderComponent {
         this.conformationPopup.openSuccessModal('Gender deleted successfully');
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the location');
+        const errorMessage = err.error?.Message
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

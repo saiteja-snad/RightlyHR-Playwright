@@ -38,8 +38,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   rerequestdisplayforrejected: boolean = false;
   modelref!: NgbModal;
   @ViewChild('viewmodel') viewmodel!: NgbModal;
-
-
+  
   constructor(private authService: AuthService, private fb: FormBuilder, private http: HttpService, private router: Router,
     private conformationPopup: OpenModalService, private modalService: NgbModal,) { this.intitalizeForm(); }
 
@@ -147,7 +146,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
       this.handlePDF(url);
     } else {
     }
-    this.modalService.open(this.viewmodel, { centered: true, backdrop: 'static', size: 'xl' })
+    this.modalService.open(this.viewmodel, { centered: true, backdrop: 'static', size: 'xl' });
   }
 
   //function to download the doc

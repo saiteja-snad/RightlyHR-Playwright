@@ -1,8 +1,14 @@
-.plus-icon {
-    font-size: 18px;
+.assessment-form-content {
+    width: 100%;
+    height: calc(100dvh - 12rem);
+    overflow: auto;
 }
 
-.sepration-icon {
-    width: 1.25rem;
-    height: 1.25rem;
+.form-content {
+    min-width: 900px;
+}
+
+.custom-popup-table {
+    height: 20vh !important;
+    max-height: 45vh !important;
 }

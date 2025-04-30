@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
    selector: 'app-published-weekends',
    imports: [CommonModule, NgbPopoverModule, TranslateModule, NoDataFoundComponent],
@@ -18,7 +19,7 @@ export class PublishedWeekendsComponent {
    weekendsList: IWeekends[] = [];
    destroy$: Subject<boolean> = new Subject<boolean>();
 
-   constructor(private router: Router, private http: HttpService) { }
+   constructor(private router: Router, private http: HttpService, public rbac: RbacService) { }
 
    ngOnInit(): void {
       this.getAllWeekend();
@@ -30,6 +31,10 @@ export class PublishedWeekendsComponent {
             this.weekendsList = data.filter((item: any) => item.status === 'Published');
          }
       })
+   }
+
+   addWeekends() {
+      this.router.navigate(['/settings/employee-fields/add-weekends']);
    }
 
    navigateToClone(weekend: IWeekends) {

@@ -1,6 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
@@ -16,8 +22,8 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
-import { WfhsearchfilterPipe } from "../../../../Pipes/wfhsearchfilter.pipe";
-import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { WfhsearchfilterPipe } from '../../../../Pipes/wfhsearchfilter.pipe';
+import { DataLoaderContentComponent } from '../../../../shared/data-loader-content/data-loader-content.component';
 import { SignalsService } from '../../../../services/signals.service';
 @Component({
   selector: 'app-compoff-for-your-role-request',
@@ -31,8 +37,8 @@ import { SignalsService } from '../../../../services/signals.service';
     TranslateModule,
     ReactiveFormsModule,
     WfhsearchfilterPipe,
-    DataLoaderContentComponent
-],
+    DataLoaderContentComponent,
+  ],
   templateUrl: './compoff-for-your-role-request.component.html',
   styleUrl: './compoff-for-your-role-request.component.scss',
 })
@@ -59,14 +65,16 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   searchValue: any;
   spinnerLoader = false;
   dataload = false;
+
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    private signalService:SignalsService
+    private signalService: SignalsService
   ) {}
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
@@ -75,13 +83,19 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: [
+        '',
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: [
+        '',
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
     });
   }
 
@@ -91,7 +105,8 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=3&approvedType=ROLE`
-      ).pipe(takeUntil(this.destroy$))
+      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.leaves.next(response.data);
@@ -99,9 +114,10 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         error: (reason) => console.log(reason),
         complete: () => {
           this.dataload = false;
-        }
+        },
       });
   }
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -123,12 +139,14 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
       approvedBy: this.empinfo.employeeId.toString(),
     };
     this.sharedModalService.openLoaderModal(
-      'Processing Request, Please wait...');
+      'Processing Request, Please wait...'
+    );
     this.http
       .putData(
         `PendingApproval/process/${request.approvalHeader.id}`,
         requestBody
-      ).pipe(takeUntil(this.destroy$))
+      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
@@ -140,7 +158,6 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
-
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
@@ -159,26 +176,28 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         approvedBy: this.empinfo.employeeId.toString(),
       };
       this.sharedModalService.openLoaderModal(
-        'Approving Request, Please wait...');
+        'Approving Request, Please wait...'
+      );
       this.http
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        ).pipe(takeUntil(this.destroy$))
+        )
+        .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-          this.modalService.dismissAll();
+            this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Approved Successfully'
             );
-           this.signalService.compOffForRoleTriggerSignal.set(true);
-           this.signalService.compOffSidNavCountTriggerSignal.set(true);
+            this.signalService.compOffForRoleTriggerSignal.set(true);
+            this.signalService.compOffSidNavCountTriggerSignal.set(true);
             setTimeout(() => {
               this.modalService.dismissAll();
             }, 2000);
           },
           error: (reason: any) => {
-          this.modalService.dismissAll();
+            this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
           },
@@ -199,16 +218,17 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         comments: formData.comments,
       };
       this.sharedModalService.openLoaderModal(
-        'Rejecting Request, Please wait...');
+        'Rejecting Request, Please wait...'
+      );
       this.http
         .putData(
           `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
           requestBody
-        ).pipe(takeUntil(this.destroy$))
+        )
+        .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-          this.modalService.dismissAll();
-
+            this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Rejected Successfully'
             );
@@ -221,7 +241,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             }, 2000);
           },
           error: (reason: any) => {
-          this.modalService.dismissAll();
+            this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
           },

@@ -554,6 +554,10 @@ input:focus, textarea:focus, select:focus {
     box-shadow: none !important;
 }
 
+.custom-input:read-only {
+    background-color: #e9ecef !important;
+}
+
 // custom search field
 .custom-search {
     border: 1px solid #CCDAEC;
@@ -722,7 +726,7 @@ input:focus, textarea:focus, select:focus {
         background-color: var(--table-header-bg-color);
         color: var(--table-header-color);
         text-wrap: nowrap;
-        text-transform: uppercase;
+        text-transform: capitalize;
     }
 
     th:first-child {
@@ -825,6 +829,13 @@ input:focus, textarea:focus, select:focus {
         flex: 1;
         height: calc(100dvh - 12rem);
         overflow: auto;
+
+        .letter-sub-data-content {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            min-width: 280mm;
+        }
 
         .letter-page-content {
             height: 380mm;
@@ -1399,7 +1410,7 @@ input[type="file"] {
         background-color: var(--table-header-bg-color);
         color: var(--table-header-color);
         text-wrap: nowrap;
-        text-transform: uppercase;
+        text-transform: capitalize;
     }
 
     th:first-child {

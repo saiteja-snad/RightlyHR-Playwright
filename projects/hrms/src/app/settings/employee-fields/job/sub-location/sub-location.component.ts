@@ -42,13 +42,13 @@ export class SubLocationComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      AddLocation: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]],
-      AddSubLocation: ['', Validators.required],
+      AddLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      AddSubLocation: ['', Validators.required, ],
     });
 
     this.updateForm = this.fb.group({
-      UpdateSubLocation: ['', [Validators.required]],
-      updateLocation: [null, [Validators.required]],
+      UpdateSubLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      updateLocation: [null, [Validators.required, ]],
     });
     this.getSubLocation();
     this.getLocation();
@@ -68,29 +68,6 @@ export class SubLocationComponent {
     });
   }
 
-  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
-    const input = event.target as HTMLInputElement;
-    const char = event.key;
-    const pattern = /^[A-Za-z ]$/;
-  
-    // Block if the key is not a letter or space
-    if (!pattern.test(char)) {
-      event.preventDefault();
-      return;
-    }
-  
-    // Block space at the beginning
-    if (input.selectionStart === 0 && char === ' ') {
-      event.preventDefault();
-      return;
-    }
-  
-    // Block if length is already 100
-    if (input.value.length >= 100) {
-      event.preventDefault();
-    }
-  }
-  
   getSubLocation() {
     this.subscription = this.http.getData('SubLocation/GetLocationNames').subscribe({
       next: (data: any) => {
@@ -125,7 +102,8 @@ export class SubLocationComponent {
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
+        const errorMessage= error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
         this.resetForm();
       }
     });
@@ -171,8 +149,9 @@ export class SubLocationComponent {
           this.resetForm();
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal('Insertion of data failed');
-          this.resetForm();
+          const errorMessage = error.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
+          // this.resetForm();
         }
       });
     }
@@ -196,7 +175,8 @@ export class SubLocationComponent {
 
         },
         error: (error: any) => {
-          this.conformationPopup.openErrorModal('Insertion of data failed');
+          const errorMessage = error.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
 
         }
       });

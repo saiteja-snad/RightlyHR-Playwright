@@ -17,6 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
   styleUrl: './view-weekends.component.scss'
 })
 export class ViewWeekendsComponent {
+  @ViewChild('deletepopup') deletepopup: any;
   weekendForm!: FormGroup;
   weekendDataLM!: IWeekends;
   showbtn = false;
@@ -181,6 +182,22 @@ export class ViewWeekendsComponent {
     this.modalService.dismissAll();
     this.navigate();
     localStorage.removeItem('weekend-update');
+  }
+  Cancel() {
+    this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
+  }
+
+  onDelete(modal: any) {
+    modal.dismiss();
+    this.navigation();
+  }
+
+  navigation(){
+    this.router.navigate(['/settings/employee-fields/manage-weekends/published-weekends']);
+  }
+
+  closeDelete(modal: any) {
+    modal.dismiss();
   }
 
   navigateToClone() {

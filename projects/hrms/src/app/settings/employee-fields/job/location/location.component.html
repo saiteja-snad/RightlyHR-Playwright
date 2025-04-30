@@ -4,16 +4,19 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter location"
-                    formControlName="jobLocationName" aria-label="location" (keypress)="allowOnlyLettersAndSpace($event)">
+                    formControlName="jobLocationName" aria-label="location" 
+                    (keydown)="formValidations.restrictInputAllowSpecialChars($event)" maxlength="101"/>
                 <span class="input-group-text" id="location">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="locationForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="locationForm.get('jobLocationName')?.touched && locationForm.get('jobLocationName')?.invalid" class="error-msg">
-                <div *ngIf="locationForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div>
+                <div *ngIf="locationForm.get('jobLocationName')?.errors?.['required']">
+                    {{ 'Location is required' | translate }}
+                </div>
             </div>
-            <div *ngIf="locationForm.controls['jobLocationName'].touched" class="error-msg">
-                <span *ngIf="locationForm.controls['jobLocationName'].errors?.['maxlength']">Maximum 100 characters are allowed.</span>
+            <div *ngIf="locationForm.get('jobLocationName')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 100 characters' | translate }}
             </div>
         </div>
     </form>
@@ -71,24 +74,26 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Location'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="jobLocationName"
-                        placeholder="Please enter location" (keypress)="allowOnlyLettersAndSpace($event)">
+                        placeholder="Please enter location"
+                        (keydown)="formValidations.restrictInputAllowSpecialChars($event)"
+                        maxlength="101"/>
                     <div *ngIf="updateForm.get('jobLocationName')?.touched && updateForm.get('jobLocationName')?.invalid"
-                        class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div>
+                        class="error-msg">
+                        <div *ngIf="updateForm.get('jobLocationName')?.errors?.['required']">
+                            {{ 'Location is required' | translate }}
+                        </div>
                     </div>
-                    <!-- <div *ngIf="updateForm.get('jobLocationName')?.errors?.['required']">{{'Location is required'|translate}}</div> -->
-                    <div *ngIf="updateForm.controls['jobLocationName'].touched" class="error-msg">
-                        <span *ngIf="updateForm.controls['jobLocationName'].errors?.['maxlength']">
-                            Maximum 100 characters are allowed.
-                        </span>
+                    <div *ngIf="updateForm.get('jobLocationName')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
                 </div>
                 <div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" (click)="updateLocation(modal)" [disabled]="updateForm.invalid">
-                    {{'Update' | translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateLocation(modal)"
+                        [disabled]="updateForm.invalid">
+                        {{'Update' | translate}}</button>
                 </div>
             </div>
         </div>
@@ -100,7 +105,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

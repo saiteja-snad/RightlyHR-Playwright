@@ -40,10 +40,10 @@ export class ProbationstatusComponent {
   }
   ngOnInit(): void {
     this.probitionForm = this.fb.group({
-      probitiontype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      probitiontype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
     this.updateForm = this.fb.group({
-      probitiontype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      probitiontype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
 
     this.getprobitiontype();

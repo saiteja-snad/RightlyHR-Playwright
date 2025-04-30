@@ -1,24 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder } from '@angular/forms';
 import { RbacService } from '../../../../services/rbac.service';
+import { IPolicy } from '../pending-policies/policies.model';
 
 @Component({
   selector: 'app-published-policies',
-  imports: [CommonModule, NoDataFoundComponent, TranslateModule],
+  imports: [CommonModule, NoDataFoundComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './published-policies.component.html',
   styleUrl: './published-policies.component.scss'
 })
-export class PublishedPoliciesComponent {
+export class PublishedPoliciesComponent implements OnInit, OnDestroy {
   
   subscription!: Subscription
-  allPolicies = [] as any;
+  allPolicies: IPolicy[] = [];
 
   constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
   
@@ -41,7 +42,7 @@ export class PublishedPoliciesComponent {
         console.log(data);
         this.allPolicies = data.filter(
           (status: { status: string; }) => status.status === 'Published'
-        ).reverse();
+        );
         console.log(this.allPolicies);
       }, error: (err: any) => {
         console.error(err);
@@ -49,10 +50,25 @@ export class PublishedPoliciesComponent {
     })
 
   }
+  clonePolicy1(id: any): void {
+    localStorage.setItem('cloningPolicyId', id);
+    this.router.navigate(['/settings/employee-fields/clonepolices',id]);
+  }
 
   viewPublishedPolicy(holiday: any) {
+    console.log(holiday);
     localStorage.setItem('viewpolicies', JSON.stringify(holiday));
     this.router.navigate(['/settings/employee-fields/viewpolices']);
     
   }
+
+  getPolicyNames(policy: any) {
+    return policy.shiftName || '';
+ }
+
+ ngOnDestroy(): void {
+  if (this.subscription) {
+    this.subscription.unsubscribe();
+  }
+ }
 }

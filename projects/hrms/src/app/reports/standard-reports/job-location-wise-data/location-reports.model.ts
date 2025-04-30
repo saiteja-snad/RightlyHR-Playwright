@@ -100,6 +100,7 @@ export interface ILocationReportData {
     jobRole?: string;
     departmentName?: string;
     subdepartment_name?: string;
+    teammanager?: String;
     reportingmanager?: string;
   
     joblocationname?: string;

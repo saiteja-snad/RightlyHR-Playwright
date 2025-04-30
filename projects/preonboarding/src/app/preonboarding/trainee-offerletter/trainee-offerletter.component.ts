@@ -99,6 +99,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   acceptoffer() {
+    this.loadingcircle=true;
     const offeraccept = "Offer Letter Accepted";
     let offerUpdateDetails = JSON.parse(JSON.stringify(this.updatedOfferLetterDetails)) as Iofferletter;
     offerUpdateDetails.candidateStatus = "Offer Letter Accepted";
@@ -435,7 +436,10 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
     this.subscription = this.http.uploadFileWithQuery('PreonboardingFilesystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
+          this.loadingcircle=false;
           localStorage.setItem('offerletterurl', data.path);
+          this.getOfferLetterDetails();
+          this.modalService.dismissAll();
           setTimeout(() => {
             this.openPopup.openSuccess("Offer Letter Accepted Successfully");
           }, 3000);

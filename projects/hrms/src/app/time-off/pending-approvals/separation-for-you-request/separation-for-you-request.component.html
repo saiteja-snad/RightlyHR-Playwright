@@ -203,15 +203,12 @@
                             placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                             #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" pattern="^[^\s].*"
                             required></textarea>
-                        <div>
-                            <span
-                                class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
-                                /250</span>
-                        </div>
-                        <small class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptForm.submitted)">
+                        <div class="textarea-count-text">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
+                            /250</div>
+                        <div class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptForm.submitted)">
                             <span *ngIf="earlyrelievingreason.errors?.['required']">Comments is required.</span>
                             <span *ngIf="earlyrelievingreason.errors?.['pattern']">Comments should not start with a space.</span>
-                        </small>
+                        </div>
                     </div>
                     }
                     <!-- Extend Section -->

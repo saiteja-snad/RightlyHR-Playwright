@@ -137,8 +137,18 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
         break;
 
       case 'maxRegularizeHoursPerDay':
-        if (isNaN(value) || value <= 0 || value > 6) {
-          return 'Max Regularize Hours Per Day should be greater than 0 and less than or equals to 6 Hours.';
+        if (isNaN(value) || value <= 0 || value > 24) {
+          return 'Max Regularize Hours Per Day should be greater than 0 and less than or equals to 24 Hours.';
+        }
+
+        const monthHrsCriteria = currentCriteria.find(
+          (c) => c.attribute === 'maxRegularizeHoursPerMonth'
+        );
+        if (monthHrsCriteria && !isNaN(parseFloat(monthHrsCriteria.value))) {
+          const monthValue = parseFloat(monthHrsCriteria.value);
+          if (value > monthValue) {
+            return 'Max Regularize Hours Per Day should be lower than Max Regularize Hours Per Month.';
+          }
         }
         break;
 

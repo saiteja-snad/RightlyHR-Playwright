@@ -91,12 +91,12 @@
                                             @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdata.employeeId){
                                                <a  class="ms-2" (click)="navigateToLeave()"><u>Leave</u> </a>
                                             } 
-
+<!-- 
                                              @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && 
                                             (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs) && currentMonth == selectedMonth && 
-                                            this.rbac.allowedToAccess('Attendance Regularization Button.view')){ 
+                                            this.rbac.allowedToAccess('Attendance Regularization Button.view')){  -->
                                                 <a class="ms-2" (click)="openModal(raiseregularization); onclickRegularization(item.date)"><u>Regularization</u> </a>
-                                            } 
+                                            <!-- }  -->
                                             
                                        </td>
                                         <td>

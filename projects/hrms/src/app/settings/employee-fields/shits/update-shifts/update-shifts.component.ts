@@ -86,15 +86,11 @@ export class UpdateShiftsComponent {
 
   deleteShift(index:number) {
     if (this.shifts.length > 1) {
-      this.modalService.open(this.deleterowpopup, { backdrop: 'static', centered: true });
+      this.shifts.removeAt(index);
+      this.isDeleteDisabled = false; // allow delete if more than 1
+    } else {
+      this.isDeleteDisabled = true; // disable delete button
     }
-   
-    // if (this.shifts.length > 1) {
-    //   this.shifts.removeAt(index);
-    //   this.isDeleteDisabled = false; // allow delete if more than 1
-    // } else {
-    //   this.isDeleteDisabled = true; // disable delete button
-    // }
   }
   onDeleterow(index:any){
     if (this.shifts.length > 1) {

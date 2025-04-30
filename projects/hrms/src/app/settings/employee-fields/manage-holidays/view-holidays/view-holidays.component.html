@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <form [formGroup]="holidayForm" (ngSubmit)="submit()">
+  <form [formGroup]="holidayForm">
     <div class="custom-setting-right-content w-100 p-4">
       <!--Select Fields-->
       <div class="d-flex gap-3 mb-4">
@@ -31,11 +31,6 @@
           <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="" formControlName="shift"
             placeholder="Select shift" class="form-select custom-select"></p-select>
         </div>
-        <!-- <div>
-                <button type="button" class="custom-btn btn-primary" (click)="addHolidayRow();hidePublishCloneButtons = true" >
-                  <i class="bi bi-plus me-2"></i> Add Row
-                </button>
-              </div> -->
       </div>
     <div formArrayName="holidays">
       <div class="card custom-background-card p-3 mt-2"  *ngFor="let holiday of holidays.controls; let i = index" [formGroupName]="i">
@@ -70,6 +65,7 @@
 </div>
   </form>
 </div>
+<!-- cancel popup -->
 <ng-template #cancelpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>

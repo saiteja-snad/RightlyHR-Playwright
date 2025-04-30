@@ -24,20 +24,17 @@ export class ViewHolidaysComponent {
   subLocationsDropdown: any = [];
   empinfo: any;
   isDisabled = false;
-  yearDetails = [
-    { name: '2024', value: 2024 },
-    { name: '2025', value: 2025 },
-    { name: '2026', value: 2026 },
-    { name: '2027', value: 2027 },
-    { name: '2028', value: 2028 },
-  ]
+  yearDetails: any[] = [];
+  shiftDropdown: any[] = [];
 
   constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
-
+// ng oninit method start
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.updateHolidaysData = JSON.parse(localStorage.getItem('viewholidays') ?? '{}');
     this.getjobLocationList();
+    const currentYear = new Date().getFullYear();
+    this.yearDetails = this.generateYears(2000, currentYear);
     this.holidayForm = this.fb.group({
       year: [{value : '', disabled : true}, Validators.required],
       location: [{value : '', disabled : true},, Validators.required],
@@ -48,16 +45,6 @@ export class ViewHolidaysComponent {
     this.holidayForm.patchValue({
       year: this.yearDetails.find((x: any) => x.value === this.updateHolidaysData.applicableyear),
     });
-    // this.updateHolidaysData.orgHolidaysItems.forEach((row: any) => {
-    //   this.holidays.push(
-    //     this.fb.group({
-    //       holidayName: row.holidayName,
-    //       holidayDate: moment(row.holidayDate).format('YYYY-MM-DD'),
-    //       isOptional: row.isOptional
-          
-    //     })
-    //   );
-    // });
     this.updateHolidaysData.orgHolidaysItems.forEach((row: any) => {
       this.holidays.push(
         this.fb.group({
@@ -70,98 +57,29 @@ export class ViewHolidaysComponent {
     
   }
 
+ // this method used for year generate dynamically 
+ generateYears(startYear: number, endYear: number) {
+  const years = [];
+  for (let year = startYear; year <= endYear; year++) {
+    years.push({ name: year, value: year });
+  }
+  return years;
+}
+//get holidys method
   get holidays(): FormArray {
     return this.holidayForm.get('holidays') as FormArray;
   }
-
-  addHolidayRow() {
-    const holidayGroup = this.fb.group({
-      holidayName: [''],
-      holidayDate: [''],
-      isOptional: [false]
-    });
-    this.holidays.push(holidayGroup);
-  }
-
-  removeHolidayRow(index: number): void {
-    if (this.holidays.length > 1) {
-      this.holidays.removeAt(index);
-    }
-  }
-
-  hidePublishCloneButtons: boolean = false
-  submit() {
-    const formValue = this.holidayForm.value;
-    const payload = {
-      locationId: formValue.location?.id ?? this.updateHolidaysData.locationId,
-      subLocationId: formValue.subLocation.id ?? this.updateHolidaysData.subLocationId,
-      applicableyear: formValue.year?.value ?? this.updateHolidaysData.applicableyear,
-      addedby: parseInt(this.empinfo.employeeId) ?? this.updateHolidaysData.addedby,
-      addedDate: new Date().toISOString() ?? this.updateHolidaysData.addedDate,
-      status: this.updateHolidaysData.status,
-      authorizedDate: new Date().toISOString() ?? this.updateHolidaysData.authorizedDate,
-      authorizedstatus: 'string',
-      shiftID: formValue.shift.id ?? this.updateHolidaysData.shiftID,
-      id: this.updateHolidaysData.id,
-      orgHolidaysItems: formValue.holidays.map((item: any) => ({
-        holidayName: item.holidayName,
-        holidayDate: item.holidayDate,
-        isOptional: item.isOptional,
-        status: 'Published',
-        holidayColor: 'string',
-        headerID: this.updateHolidaysData?.orgHolidaysItems?.[0]?.headerID,
-      }))
-    };
-    this.subscription = this.http.postdata('orgHolidays/Update', payload).subscribe({
-      next: (response: any) => {
-        this.confirmation.openSuccessModal('Holidays updated successfully');
-      },
-      error: (err) => {
-        this.confirmation.openErrorModal('Holidays update failed');
-      }
-    });
-  }
-
+//cancel button  yes click navigate page
   cancel() {
     this.router.navigate(['/settings/employee-fields/manage-holidays/published-holidays']);
   }
 
+  ////cancel button  yes click open dailog
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
   }
 
-  publish() {
-    const formValue = this.holidayForm.value;
-    const payload = {
-      locationId: formValue.location?.id ?? this.updateHolidaysData.locationId,
-      subLocationId: formValue.subLocation.id ?? this.updateHolidaysData.subLocationId,
-      applicableyear: formValue.year?.value ?? this.updateHolidaysData.applicableyear,
-      addedby: parseInt(this.empinfo.employeeId) ?? this.updateHolidaysData.addedby,
-      addedDate: new Date().toISOString() ?? this.updateHolidaysData.addedDate,
-      status: 'Published',
-      authorizedDate: new Date().toISOString() ?? this.updateHolidaysData.authorizedDate,
-      authorizedstatus: 'string',
-      shiftID: formValue.shift.id ?? this.updateHolidaysData.shiftID,
-      id: this.updateHolidaysData.id,
-      orgHolidaysItems: formValue.holidays.map((item: any) => ({
-        holidayName: item.holidayName,
-        holidayDate: item.holidayDate,
-        isOptional: item.isOptional,
-        status: 'Published',
-        holidayColor: 'string',
-        headerID: this.updateHolidaysData?.orgHolidaysItems?.[0]?.headerID,
-      }))
-    };
-    this.subscription = this.http.postdata('orgHolidays/Update', payload).subscribe({
-      next: (response: any) => {
-        this.confirmation.openSuccessModal('Holidays published successfully');
-      },
-      error: (err) => {
-        this.confirmation.openErrorModal('Holidays published failed');
-      }
-    });
-  }
-
+ //this mthiod use for location list
   getjobLocationList() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (locations: any) => {
@@ -174,6 +92,7 @@ export class ViewHolidaysComponent {
     });
   }
 
+ //this mthiod use for sub location list
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation) {
       this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation}`).subscribe({
@@ -200,7 +119,8 @@ export class ViewHolidaysComponent {
     }
   }
 
-  shiftDropdown: any[] = [];
+ //this mthiod use for shiftname  list
+ 
   getShiftBYid(selectedSubLocation: any): void {
     const formValue = this.holidayForm.value;
     if (selectedSubLocation && selectedSubLocation) {
@@ -220,16 +140,19 @@ export class ViewHolidaysComponent {
           });
         },
         error: (err: any) => {
-          this.shiftDropdown = []; // Reset on error
+          this.shiftDropdown = []; 
         },
       });
     } else {
-      this.shiftDropdown = []; // Reset if no sub-location is selected
+      this.shiftDropdown = []; 
     }
   }
+  //
+ //this mthiod use for clone button click
   clone(){
     this.router.navigate(['/settings/employee-fields/cloneholidays']);
   }
+  //cancel button click navigation
   nagvition() {
     this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
   }

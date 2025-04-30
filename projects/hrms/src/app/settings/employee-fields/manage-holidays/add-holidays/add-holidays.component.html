@@ -24,73 +24,80 @@
         </div>
         <div class="custom-p-select-content">
           <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue="id"
-            formControlName="subLocation" placeholder="Please select Sub Location" (onChange)="getShiftBYid($event.value)"
-            class="form-select custom-select"></p-select>
+            formControlName="subLocation" placeholder="Please select Sub Location"
+            (onChange)="getShiftBYid($event.value)" class="form-select custom-select"></p-select>
         </div>
         <div class="custom-p-select-content">
           <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id" formControlName="shift"
             placeholder="Select shift" class="form-select custom-select"></p-select>
         </div>
         <div>
-          <button type="button"  class="custom-btn btn-primary" (click)="addMomentRow()">
-            <i class="bi bi-plus me-2"></i> {{'Add Holidays' | translate}} 
+          <button type="button" class="custom-btn btn-primary" (click)="addMomentRow()">
+            <i class="bi bi-plus me-2"></i> {{'Add Holidays' | translate}}
           </button>
         </div>
       </div>
 
       <div class="" formArrayName="holidays">
-          <div class="card custom-background-card p-3 mb-4"  *ngFor="let holiday of holidays.controls; let i = index" [formGroupName]="i">
-            <div class="row">
-              <div class="col-md-5">
-                <label class="form-label custom-label">{{'Holiday Name' | translate}}<span class="text-danger">*</span></label>
-                <input type="text" formControlName="holidayName" class="form-control custom-input"
-                  placeholder="Please enter Holiday Name" />
-                  <div *ngIf="holiday.get('holidayName')?.invalid && (holiday.get('holidayName')?.dirty || holiday.get('holidayName')?.touched)"
-                  class="error-msg">
-                  <span *ngIf="holiday.get('holidayName')?.errors?.['required']">{{'holiday name is required' |translate}}</span>
-              </div>
-              </div>
-              <div class="col-md-5">
-                <div class="form-group position-relative">
-                  <label class="form-label custom-label mb-1">
-                    {{ 'Holiday Date' | translate }}<span class="text-danger">*</span>
-                  </label>
-                  <input
-                    type="date"
-                    formControlName="holidayDate"
-                    class="form-control custom-input"onkeydown="return false"
-                   
-                  />
-                  <div *ngIf="holiday.get('holidayDate')?.invalid && (holiday.get('holidayDate')?.dirty || holiday.get('holidayDate')?.touched)"
-                  class="error-msg">
-                  <span *ngIf="holiday.get('holidayDate')?.errors?.['required']">{{'holiday date is required' |translate}}</span>
-              </div>
-                </div>
-              </div>
-              
-              
-              <div class="col-md-2 d-flex align-items-end">
-                <div class="form-check">
-                  <input type="checkbox" formControlName="isOptional" class="form-check-input"/>
-                  <label class="form-check-label">{{'Optional' | translate}}</label>
-                </div>
-                <button type="button" class="btn btn-sm btn-danger ms-2" (click)="removeHolidayRow(i)"
-                  *ngIf="holidays.length > 1">
-                  <i class="bi bi-trash"></i>
-                </button>
+        <div class="card custom-background-card p-3 mb-4" *ngFor="let holiday of holidays.controls; let i = index"
+          [formGroupName]="i">
+          <div class="row">
+            <div class="col-md-5">
+              <label class="form-label custom-label">{{'Holiday Name' | translate}}<span
+                  class="text-danger">*</span></label>
+              <input type="text" formControlName="holidayName" class="form-control custom-input"
+                placeholder="Please enter Holiday Name" />
+              <div
+                *ngIf="holiday.get('holidayName')?.invalid && (holiday.get('holidayName')?.dirty || holiday.get('holidayName')?.touched)"
+                class="error-msg">
+                <span *ngIf="holiday.get('holidayName')?.errors?.['required']">{{'holiday name is required'
+                  |translate}}</span>
+                  <span *ngIf="holiday.get('holidayName')?.errors?.['pattern']">Enter valid data</span>
               </div>
             </div>
-          </div>
-          <!-- Submit Button -->
-      </div>
+            <div class="col-md-5">
+              <div class="form-group position-relative">
+                <label class="form-label custom-label mb-1">
+                  {{ 'Holiday Date' | translate }}<span class="text-danger">*</span>
+                </label>
+                <input type="date" formControlName="holidayDate" class="form-control custom-input"  [min]="minHolidayDate"
+                [max]="maxHolidayDate"
+                  onkeydown="return false" />
+                <div
+                  *ngIf="holiday.get('holidayDate')?.invalid && (holiday.get('holidayDate')?.dirty || holiday.get('holidayDate')?.touched)"
+                  class="error-msg">
+                  <span *ngIf="holiday.get('holidayDate')?.errors?.['required']">{{'holiday date is required'
+                    |translate}}</span>
+                </div>
+              
+              </div>
+            </div>
 
+
+
+            <div class="col-md-2 d-flex align-items-end">
+              <div class="form-check">
+                <input type="checkbox" formControlName="isOptional" class="form-check-input" />
+                <label class="form-check-label">{{'Optional' | translate}}</label>
+              </div>
+              <button type="button" class="btn btn-sm btn-danger ms-2" (click)="removeHolidayRow(i)"
+                *ngIf="holidays.length > 1">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Submit Button -->
+      </div>
+      <span class="error-msg">Note: All Fields are Mandatory Fields</span>
       <div class="d-flex justify-content-end gap-3 pt-3">
         <button type="button" class="custom-btn btn-secondary px-4" (click)="openmodel(cancelpopup)" id="submitButton">
           {{'Cancel' | translate}}
         </button>
-        <button class="custom-btn btn-primary px-4" [disabled]="holidayForm.invalid" type="submit">{{'Submit' | translate}}</button>
+        <button class="custom-btn btn-primary px-4" [disabled]="holidayForm.invalid" type="submit">{{'Submit' |
+          translate}}</button>
       </div>
-      
+
     </div>
   </form>
 </div>

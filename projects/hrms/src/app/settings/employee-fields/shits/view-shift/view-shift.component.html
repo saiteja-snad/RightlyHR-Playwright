@@ -192,12 +192,9 @@
                     <div class=" d-flex justify-content-end gap-3 p-3">
                         <button type="button" class="custom-btn btn-secondary"
                             (click)="Cancel()">{{'Close'|translate}}</button>
-                        <button type="button" class="custom-btn btn-secondary" *ngIf="!hideBUTTON"
+                        <button type="button" class="custom-btn clone-btn px-4" *ngIf="!hideBUTTON"
                             (click)="cloneshiftsPolicy1(shiftId)"
                             [disabled]="shiftForm.invalid">{{'Clone'|translate}}</button>
-                        <!-- <button type="button" class="custom-btn btn-secondary" *ngIf="!hideBUTTON" (click)="publish()" [disabled]="shiftForm.invalid">Publish</button> -->
-                        <!-- <button type="submit" class="custom-btn btn-primary" -->
-                        <!-- [disabled]="shiftForm.invalid">Submit</button> -->
                     </div>
 
                 </form>

@@ -1,7 +1,7 @@
 <div class="custom-main-component-container w-100">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <p class="component-header mb-0" (click)="openModal(Cancelback)">
+            <p class="component-header mb-0" (click)="Cancel()">
                 <i class="bi bi-arrow-90deg-left me-2"></i>{{"Update Weekends" | translate}}
             </p>
         </div>
@@ -135,26 +135,24 @@
                                             </p-select>
 
                                         </div>
-                                        <div *ngIf="weekend.get('day')?.touched && weekend.get('day')?.invalid"
-                                            class="error-msg">
-                                            <div *ngIf="weekend.get('day')?.errors?.['required']">
-                                                Please select day
-                                            </div>
-                                        </div>
+                                        <div  class="error-msg" *ngIf="weekendForm.get('weekends')?.errors?.['atLeastOneWeekRequired']">
+                                            Please select at least one week.
+                                          </div>
                                     </div>
                                 </div>
                             </td>
-                            <td><input type="checkbox" class="form-check-input" formControlName="week1"></td>
-                            <td><input type="checkbox" class="form-check-input" formControlName="week2"></td>
-                            <td><input type="checkbox" class="form-check-input" formControlName="week3"></td>
-                            <td><input type="checkbox" class="form-check-input" formControlName="week4"></td>
-                            <td><input type="checkbox" class="form-check-input" formControlName="week5"></td>
+                            <td><input type="checkbox" class="form-check-input" formControlName="week1" ></td>
+                            <td><input type="checkbox" class="form-check-input" formControlName="week2" ></td>
+                            <td><input type="checkbox" class="form-check-input" formControlName="week3" ></td>
+                            <td><input type="checkbox" class="form-check-input" formControlName="week4" ></td>
+                            <td><input type="checkbox" class="form-check-input" formControlName="week5" ></td>
                             @if(i>0){
                             <td>
                                 <a (click)="weekends.length > 1 && removeWeekend(i)">
                                     <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
                                 </a>
                             </td>
+
                             }
                         </tr>
                     </tbody>
@@ -162,41 +160,42 @@
             </div>
 
             <div class="d-flex justify-content-end gap-3 pt-4">
-                @if(isInitialRowOnly){
-                <button type="button" class="custom-btn publish-btn px-4" (click)="publishWeekends()">{{"Publish" | translate}}</button>
-                <button type="button" class="custom-btn clone-btn px-4" (click)="navigateToClone()">{{"Clone" | translate}}</button>
-                }
-                <button type="button" class="custom-btn btn-secondary px-4" (click)="openModal(confirmation)">{{"Cancel" | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="weekendForm.invalid">{{"Update" | translate}}</button>
+                <!-- @if(isInitialRowOnly){ -->
+                <button type="button" class="custom-btn btn-secondary" (click)="publishWeekends()">{{"Publish" | translate}}</button>
+                <button type="button" class="custom-btn btn-secondary" (click)="navigateToClone()">{{"Clone" | translate}}</button>
+                <!-- } -->
+                <button type="button" class="custom-btn btn-secondary" (click)="Cancel()">{{"Close" | translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="weekendForm.invalid || !isAtLeastOneWeekendChecked()" >{{"Update" | translate}}</button>
             </div>
         </form>
     </div>
 </div>
 
-<ng-template #confirmation let-modal>
+<!-- <ng-template #confirmation let-modal>
     <div class="result-popup-content text-center" ngbAutofocus>
         <div class="mt-2">
             <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
-            <p class="confirmation-text">{{'Are you sure want to close?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure want to Close?'|translate}}</p>
         </div>
         <div class="d-flex gap-5 pt-2 w-100">
             <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{"No" | translate}}</button>
             <button class="custom-btn btn-primary w-50  py-2" (click)="closeWeekend()">{{"Yes" | translate}}</button>
         </div>
     </div>
-</ng-template>
+</ng-template> -->
 
-
-<ng-template #Cancelback let-model>
+<ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
-      <div>
-        <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-        <p class="confirmation-text">Are you sure you want to go back?</p>
-      </div>
-      <div class="custom-modal-footer">
-        <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">{{'No'|translate}}</button>
-        <button type="button" class="custom-btn btn-primary" (click)="closeWeekend();model.dismiss()">{{"Yes" |
-          translate}}</button>
-      </div>
+
+        <div>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to close?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary "
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+        </div>
     </div>
+
 </ng-template>

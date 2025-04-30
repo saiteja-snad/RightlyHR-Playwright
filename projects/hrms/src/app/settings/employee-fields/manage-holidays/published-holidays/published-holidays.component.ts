@@ -47,7 +47,9 @@ export class PublishedHolidaysComponent {
     this.router.navigate(['/settings/employee-fields/viewholidays']);
 
   }
-
+  navigateToCloneComponent(holiday:any){
+    this.router.navigate(['/settings/employee-fields/cloneholidays']);
+  }
   nagvition() {
     this.router.navigate(['/settings/employee-fields/addholidays']);
   }

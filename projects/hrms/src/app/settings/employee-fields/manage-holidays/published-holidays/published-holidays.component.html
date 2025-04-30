@@ -53,11 +53,17 @@
                 </li>
                 <hr> -->
                 <li>
+                  <a class="dropdown-item" (click)="navigateToCloneComponent(item)">
+                      <i class="bi bi-copy me-2"></i>{{'Clone'|translate}}
+                  </a>
+              </li>
+                <li>
                   <a *ngIf="item.status === 'Published'"  class="dropdown-item cursor" data-bs-toggle="modal"
                     (click)="viewPublishedholiday(item)">
                     <i class="bi bi-pencil-fill px-2"></i>{{'View' | translate}}
                   </a>
                 </li>
+                
               </ul>
             </div>
           </td>

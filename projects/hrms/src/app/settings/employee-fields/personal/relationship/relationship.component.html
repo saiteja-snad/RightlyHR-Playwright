@@ -5,13 +5,18 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter relationship"
                     formControlName="Relationship" aria-label="relation" aria-describedby="relation"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
                 <span class="input-group-text" id="gender">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="RelationForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="RelationForm.get('Relationship')?.touched && RelationForm.get('Relationship')?.invalid" class="error-msg">
-                <div *ngIf="RelationForm.get('Relationship')?.errors?.['required']">{{'Relationship is required'|translate}}</div>
+                <div *ngIf="RelationForm.get('Relationship')?.errors?.['required']">
+                    {{ 'Relationship is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="RelationForm.get('Relationship')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 50 characters' | translate }}
             </div>
         </div>
     </form>
@@ -69,10 +74,15 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Relationship"
                         placeholder="Please enter relationship"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
-                    <div *ngIf="updateForm.get('Relationship')?.touched && updateForm.get('Relationship')?.invalid" class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('Relationship')?.errors?.['required']">{{'Relationship is required'|translate}}</div>
-                    </div>
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
+                        <div *ngIf="updateForm.get('Relationship')?.touched && updateForm.get('Relationship')?.invalid" class="error-msg">
+                            <div *ngIf="updateForm.get('Relationship')?.errors?.['required']">
+                                {{ 'Relationship is required' | translate }}
+                            </div>
+                        </div>
+                        <div *ngIf="updateForm.get('Relationship')?.errors?.['maxCharacters']" class="error-msg">
+                            {{ 'Please limit your input to 50 characters' | translate }}
+                        </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
@@ -89,7 +99,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

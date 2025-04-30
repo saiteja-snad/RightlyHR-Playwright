@@ -11,7 +11,6 @@ import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
-import { IAuthority } from '../../Interfaces/letters-model';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';

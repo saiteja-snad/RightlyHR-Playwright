@@ -103,8 +103,8 @@
                 </div>
         
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">{{'Select Address'|translate}}<span
-                            class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">{{'Select Address'|translate}}
+                        <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="addressdata" optionValue="value" optionLabel="name"
                             placeholder="Please select address" formControlName="SelectDropDown"
@@ -271,10 +271,9 @@
                     <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                         <div class="error-msg">Offer Expiry Date is required</div>
                     </div>
-                    <div *ngIf="!isExpiryDateValid" class="error-msg">Offer Expiry Date should be after the
-                        Offer Issued Date</div>
-                        <div *ngIf="!isStartDateValidofexpected" class="error-msg">Offer Expiry Date should be after the
-                            Expected Start Date</div>
+                    <div *ngIf="!isExpiryDateValid" class="error-msg">Offer Expiry Date should be after the Offer Issued Date</div>
+                    <div *ngIf="!isStartDateValidofexpected" class="error-msg">Offer Expiry Date should be after 
+                        the Expected Start Date</div>
                 </div>
 
                 <div class="mb-3">
@@ -351,12 +350,23 @@
                 </div>
         
                 <div class="d-flex flex-wrap gap-3 pt-4">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid ||loading">{{buttonValue}}</button>
-                    <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading||disableFieldsForApproval"
-                        (click)="emailSendingforApprover()">{{'Request For Approval'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || loading">
                         @if(loading){
-                            <div class="spinner-border text-primary" role="status"></div>
-                            }
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
+                        }@else { {{buttonValue}} }
+                    </button>
+                    <button type="button" class="custom-btn btn-primary"
+                        [disabled]="employeeForm.invalid || loading || disableFieldsForApproval" (click)="emailSendingforApprover()">
+                        @if(loading){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
+                        }@else { {{'Request For Approval'|translate}} }
+                    </button>
                 </div>
             </form>
         </div>

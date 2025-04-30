@@ -5,14 +5,19 @@
           <div class="custom-settings-add-input input-group">
               <input type="text" class="form-control custom-input" placeholder="Please enter background check status"
                   formControlName="BackgroundCheck" aria-label="BackgroundCheck" aria-describedby="BackgroundCheck"
-                  (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
+                  (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
               <span class="input-group-text" id="BackgroundCheck">
                   <button type="submit" class="custom-btn btn-primary" [disabled]="BackgroundCheckForm.invalid">
                     {{'Add'|translate}}</button></span>
           </div>
           <div *ngIf="BackgroundCheckForm.get('BackgroundCheck')?.touched && BackgroundCheckForm.get('BackgroundCheck')?.invalid" class="error-msg">
-              <div *ngIf="BackgroundCheckForm.get('BackgroundCheck')?.errors?.['required']">{{'Background Check Status is required'|translate}}</div>
-          </div>
+            <div *ngIf="BackgroundCheckForm.get('BackgroundCheck')?.errors?.['required']">
+                {{ 'Background Check Status is required' | translate }}
+            </div>
+        </div>
+        <div *ngIf="BackgroundCheckForm.get('BackgroundCheck')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Please limit your input to 100 characters' | translate }}
+        </div>
       </div>
   </form>
 
@@ -65,15 +70,22 @@
           </div>
 
           <div class="custom-main-popup-content">
-              <div class="mb-4">
-                  <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Background Check Status'|translate}}
-                      <span class="error-msg">*</span></label>
-                  <input type="text" class="form-control custom-input" formControlName="BackgroundCheck" placeholder="Please enter background check status"
-                  (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
-                  <div *ngIf="updateForm.get('BackgroundCheck')?.touched && updateForm.get('BackgroundCheck')?.invalid" class="error-msg">
-                      <div *ngIf="updateForm.get('BackgroundCheck')?.errors?.['required']">{{'Background Check Status is required'|translate}}</div>
-                  </div>
-              </div>
+            <div class="mb-4">
+                <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Background Check Status'|translate}}
+                    <span class="error-msg">*</span></label>
+                <input type="text" class="form-control custom-input" formControlName="BackgroundCheck"
+                    placeholder="Please enter background check status"
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
+                <div *ngIf="updateForm.get('BackgroundCheck')?.touched && updateForm.get('BackgroundCheck')?.invalid"
+                    class="error-msg">
+                    <div *ngIf="updateForm.get('BackgroundCheck')?.errors?.['required']">
+                        {{ 'Background Check Status is required' | translate }}
+                    </div>
+                </div>
+                <div *ngIf="updateForm.get('BackgroundCheck')?.errors?.['maxCharacters']" class="error-msg">
+                    {{ 'Please limit your input to 100 characters' | translate }}
+                </div>
+            </div>
               <div class="custom-modal-footer">
                   <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
                   <button type="button" class="custom-btn btn-primary" (click)="updateBackgroundChecktype(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
@@ -88,7 +100,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

@@ -4,20 +4,19 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter compensation reason"
-                    formControlName="Reason" aria-label="reason" aria-describedby="reason" maxlength="100" 
-                    (input)="allowOnlyLettersAndSpace($event)"  (input)="enforceMaxLength($event)">
+                    formControlName="Reason" aria-label="reason" aria-describedby="reason" maxlength="101" 
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                 <span class="input-group-text" id="reason">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="CompensationForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="CompensationForm.get('Reason')?.touched && CompensationForm.get('Reason')?.invalid" class="error-msg">
-                <div *ngIf="CompensationForm.get('Reason')?.errors?.['required']">{{'Compensation Reason  Required'|translate}}</div>
+                <div *ngIf="CompensationForm.get('Reason')?.errors?.['required']">
+                    {{ 'Conpensation Reason is required' | translate }}
+                </div>
             </div>
-            <div *ngIf="CompensationForm.controls['Reason'].touched" class="error-msg">
-                <span *ngIf="CompensationForm.controls['Reason'].errors?.['maxlength']">Maximum 100 characters are allowed.</span>
-                <span *ngIf="CompensationForm.controls['Reason'].errors?.['pattern']">
-                    Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
-                </span>
+            <div *ngIf="CompensationForm.get('Reason')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 100 characters' | translate }}
             </div>
         </div>
     </form>
@@ -74,11 +73,16 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Compensation Reason'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="UpdateReason"
-                        placeholder="Please enter compensation reason" (input)="allowOnlyLettersAndSpace($event)" maxlength="100"   (input)="enforceMaxLength($event)">
-                    <div *ngIf="updateForm.get('UpdateReason')?.touched && updateForm.get('UpdateReason')?.invalid"
-                        class="error-msg">
-                        <div *ngIf="updateForm.get('UpdateReason')?.errors?.['required']">{{'Compensation Reason Required'|translate}}</div>
-                    </div>
+                        placeholder="Please enter compensation reason" 
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
+                        <div *ngIf="updateForm.get('UpdateReason')?.touched && updateForm.get('UpdateReason')?.invalid" class="error-msg">
+                            <div *ngIf="updateForm.get('UpdateReason')?.errors?.['required']">
+                                {{ 'Conpensation Reason is required' | translate }}
+                            </div>
+                        </div>
+                        <div *ngIf="updateForm.get('UpdateReason')?.errors?.['maxCharacters']" class="error-msg">
+                            {{ 'Please limit your input to 100 characters' | translate }}
+                        </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
@@ -95,7 +99,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

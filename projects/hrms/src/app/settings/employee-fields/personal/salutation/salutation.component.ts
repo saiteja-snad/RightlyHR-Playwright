@@ -23,7 +23,7 @@ export class SalutationComponent implements OnInit {
   updatesalutation={} as any;
   deletesalutation={} as any;
   subscription!: Subscription;
-  
+  isEditMode = false;
 
 // salDeletedata: any;
 constructor(
@@ -40,50 +40,21 @@ constructor(
   
   ngOnInit(): void {
     this.saluationForm = this.fb.group({
-     
-      saluation:  [
+      saluation: [
         '',
-        [
-          Validators.required,
-          Validators.maxLength(50),
-          Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
-        ]
-      ]
-    
-      });
-      this.updateForm = this.fb.group({
-        titlename: [
-          '', 
-          [
-            Validators.required,
-            Validators.maxLength(50),
-            Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/)
-          ]
-        ]
-      });
+        [Validators.required, this.formValidations.maxCharactersValidator(51)],
+      ],
+    });
+    this.updateForm = this.fb.group({
+      titlename: [
+        '',
+        [Validators.required, this.formValidations.maxCharactersValidator(51)],
+      ],
+    });
     this.getsaluation();
-  
-      
+ 
     }
    
-    
-
-    allowOnlyLettersAndSpace(event: KeyboardEvent): void {
-      const input = event.target as HTMLInputElement;
-      const char = event.key;
-      const pattern = /^[A-Za-z ]$/;
-    
-      // Block if the key is not a letter or space
-      if (!pattern.test(char)) {
-        event.preventDefault();
-        return;
-      }
-    
-      // Block if length is already 50
-      if (input.value.length >= 50) {
-        event.preventDefault();
-      }
-    }
   getsaluation() {
     this.subscription = this.http.getData("Title").subscribe({
        next: (data: any) => {
@@ -91,7 +62,6 @@ constructor(
        },
        error: (reason: any) => {
          console.log(reason);
-         alert("Insertion of data is failed")
        }
      })
    }
@@ -109,8 +79,9 @@ onSubmit() {
         this.conformationPopup.openSuccessModal('Salutation added successfully');
       },
       error: (reason: any) => {
-        console.error('Error:', reason);
-        this.conformationPopup.openErrorModal('Failed to add salutation data');
+        const errorMessage = reason.error?.Message
+        this.conformationPopup.openErrorModal(errorMessage);
+        this.resetForm();
       }
     });
     
@@ -120,6 +91,7 @@ onSubmit() {
     this.updateForm.reset();
   }
   openupdate(sal:any) {
+    this.resetForm();
     this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
     this.updatesalutation=sal;
     this.updateForm?.patchValue({titlename : sal.titlename});
@@ -127,6 +99,7 @@ onSubmit() {
 }
 opendelete(sal:any) {
 this.updatesalutation=sal;
+this.resetForm();
 this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
 }
   updateSal(): void {
@@ -140,8 +113,8 @@ this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' })
           this.conformationPopup.openSuccessModal('Salutation updated successfully');
         },
         error: (err: any) => {
-          console.error('Update failed:', err);
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     } else {
@@ -163,13 +136,17 @@ this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' })
         this.conformationPopup.openSuccessModal('Salutation deleted successfully');
       },
       error: (err: any) => {
-        console.error('Delete salutation failed:', err);
-        this.conformationPopup.openErrorModal('Failed to delete salutation');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }
-  
-    
+
+  resetForm() {
+    this.saluationForm.reset();
+    this.isEditMode = false;
+    // this.selectedId = null;
+  }
 }
   
 

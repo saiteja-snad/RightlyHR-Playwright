@@ -41,10 +41,10 @@ export class BankNameComponent implements OnInit {
 
   ngOnInit(): void {
     this.bankForm = this.fb.group({
-      bank: [null, [Validators.required, Validators.maxLength(100)]],
+      bank: [null, [Validators.required, this.formValidations.maxCharactersValidator(101)]],
     });
     this.updateForm = this.fb.group({
-      bankName2: ['',[Validators.required, Validators.maxLength(100)]],
+      bankName2: ['',[Validators.required, this.formValidations.maxCharactersValidator(101)]],
     });
     this.getBank();
   }
@@ -84,6 +84,7 @@ export class BankNameComponent implements OnInit {
   }
 
   opendelete(bank: any) {
+    this.resetForm();
     this.selectedDeleteBank = bank;
     this.modalService.open(this.deletepopup, {
       centered: true,
@@ -92,6 +93,7 @@ export class BankNameComponent implements OnInit {
   }
 
   openupdate(banklist: any) {
+    this.resetForm();
     this.selectedId = banklist.sno;
     this.updateForm.patchValue({ bankName2: banklist.bankName1 });
     this.modalService.open(this.updatepopup, {
@@ -145,6 +147,12 @@ export class BankNameComponent implements OnInit {
         this.conformationPopup.openErrorModal(errorMessage);
       },
     });
+  }
+
+  resetForm() {
+    this.selectedId = null;
+    this.bankForm.reset();
+    this.updateForm.reset();
   }
 
   closeDelete(modal: any) {

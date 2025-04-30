@@ -123,21 +123,13 @@
       </div>
 
       <div class="custom-main-popup-content">
-        <!--Type -->
         <div class="mb-3">
           <label for="Type" class="form-label custom-label mb-2">
             {{ 'Probation Type' | translate }} <span class="error-msg">*</span>
           </label>
           <div class="custom-p-select-content">
-            <select title="value" class="form-control custom-input" formControlName="Type" [disabled]="isUserViewOnly">
-              <option [value]="updateForm.get('Type')?.value" *ngIf="updateForm.get('Type')?.value" readonly>
-                {{ updateForm.get('Type')?.value }}
-              </option>
-              <!-- <option value="" disabled selected>Please select designation</option> -->
-              <!-- <option *ngFor="let pro of getProbationconfigValues" [value]="pro.id">
-                                {{pro.value}}
-                              </option> -->
-            </select>
+            <input type="text" class="form-control custom-input" [value]="updateForm.get('Type')?.value"
+              formControlName="Type" readonly/>
           </div>
           <div *ngIf="updateForm.get('Type')?.touched && updateForm.get('Type')?.invalid" class="error-msg mt-2">
             <div *ngIf="updateForm.get('Type')?.errors?.['required']">{{'Type is required'|translate}}</div>
@@ -161,6 +153,7 @@
             </div>
           </div>
         </div>
+        
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close' | translate}}</button>
           <button type="button" class="custom-btn btn-primary" (click)="updateJobroletype(modal)"

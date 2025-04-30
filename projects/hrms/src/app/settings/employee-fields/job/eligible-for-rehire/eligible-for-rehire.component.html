@@ -5,13 +5,19 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter eligible for rehire"
                     formControlName="Rehire" aria-label="rehire" aria-describedby="rehire"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
                 <span class="input-group-text" id="rehire">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="EligibilityForm.invalid">{{'Add'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="EligibilityForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="EligibilityForm.get('Rehire')?.touched && EligibilityForm.get('Rehire')?.invalid" class="error-msg">
-                <div *ngIf="EligibilityForm.get('Rehire')?.errors?.['required']">{{'Eligible For Rehire is required'|translate}}</div>
+                <div *ngIf="EligibilityForm.get('Rehire')?.errors?.['required']">
+                    {{ 'Eligible For Rehire is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="EligibilityForm.get('Rehire')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 100 characters' | translate }}
             </div>
         </div>
     </form>
@@ -68,9 +74,14 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Eligible For Rehire'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Rehire" placeholder="Please enter eligible for rehire"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
-                    <div *ngIf="updateForm.get('Rehire')?.touched && updateForm.get('Rehire')?.invalid" class="error-msg mt-2">
-                        <div *ngIf="updateForm.get('Rehire')?.errors?.['required']">{{'Eligible For Rehire is required'|translate}}</div>
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
+                    <div *ngIf="updateForm.get('Rehire')?.touched && updateForm.get('Rehire')?.invalid" class="error-msg">
+                        <div *ngIf="updateForm.get('Rehire')?.errors?.['required']">
+                            {{ 'Eligible For Rehire is required' | translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('Rehire')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
                 </div>
                 <div class="custom-modal-footer">
@@ -88,7 +99,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

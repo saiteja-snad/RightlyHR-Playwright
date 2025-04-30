@@ -34,18 +34,18 @@
           </td>
           <td>{{ item.employeeNames || '-' }}</td>
           <td>{{ item.roleName || '-' }}</td>
-          <td class="text-center" *ngIf="rbac.allowedToAccess('Job Role.update') || rbac.allowedToAccess('Job Role.delete')">
+          <td class="text-center" *ngIf="rbac.allowedToAccess('No Due Clearance.update') || rbac.allowedToAccess('No Due Clearance.delete')">
             <div class="dropdown">
               <span type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
               </span>
               <ul class="dropdown-menu custom-dropdown-menu">
-                <li (click)="openupdateDialog(item)" *ngIf="rbac.allowedToAccess('Job Role.update')">
+                <li (click)="openupdateDialog(item)" *ngIf="rbac.allowedToAccess('No Due Clearance.update')">
                   <a class="dropdown-item">
                     <i class="bi bi-pencil me-2"></i>Update
                   </a>
                 </li>
-                <li (click)="opendelete(item)" *ngIf="rbac.allowedToAccess('Job Role.delete')">
+                <li (click)="opendelete(item)" *ngIf="rbac.allowedToAccess('No Due Clearance.delete')">
                   <a class="dropdown-item">
                     <i class="bi bi-trash3 me-2"></i>Delete
                   </a>

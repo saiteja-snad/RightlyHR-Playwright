@@ -5,13 +5,19 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter overtime eligibility"
                     formControlName="overtime" aria-label="overtime" aria-describedby="overtime"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
                 <span class="input-group-text" id="overtime">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="OvertimeForm.invalid">{{'Add'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="OvertimeForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="OvertimeForm.get('overtime')?.touched && OvertimeForm.get('overtime')?.invalid" class="error-msg">
-                <div *ngIf="OvertimeForm.get('overtime')?.errors?.['required']">{{'Overtime Eligiblity is required'|translate}}</div>
+                <div *ngIf="OvertimeForm.get('overtime')?.errors?.['required']">
+                    {{ 'Overtime Eligibility is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="OvertimeForm.get('overtime')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 100 characters' | translate }}
             </div>
         </div>
     </form>
@@ -70,17 +76,20 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="overtime"
                         placeholder="Please enter overtime eligibility"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
-                        maxlength="50">
-                    <div *ngIf="updateForm.get('overtime')?.touched && updateForm.get('overtime')?.invalid"
-                        class="error-msg">
-                        <div *ngIf="updateForm.get('overtime')?.errors?.['required']">{{'Overtime Eligibility is required'|translate}}</div>
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
+                    <div *ngIf="updateForm.get('overtime')?.touched && updateForm.get('overtime')?.invalid" class="error-msg">
+                        <div *ngIf="updateForm.get('overtime')?.errors?.['required']">
+                            {{ 'Overtime Eligibility is required' | translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('overtime')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" (click)="updateovertime(modal)" 
-                    [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateovertime(modal)"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -92,7 +101,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

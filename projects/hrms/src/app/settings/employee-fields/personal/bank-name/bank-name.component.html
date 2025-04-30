@@ -5,13 +5,18 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter bank name"
                     formControlName="bank" aria-label="bank" aria-describedby="bank"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="100">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
                 <span class="input-group-text" id="gender">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="bankForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="bankForm.get('bank')?.touched && bankForm.get('bank')?.invalid" class="error-msg">
-                <div *ngIf="bankForm.get('bank')?.errors?.['required']">{{'Bank Name is required'|translate}}</div>
+                <div *ngIf="bankForm.get('bank')?.errors?.['required']">
+                    {{ 'Bank Name is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="bankForm.get('bank')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 100 characters' | translate }}
             </div>
         </div>
     </form>
@@ -68,10 +73,15 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Bank Name'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="bankName2" placeholder="Please enter bank name" 
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="100">
-                    <div *ngIf="updateForm.get('bankName2')?.touched && updateForm.get('bankName2')?.invalid" class="error-msg">
-                        <div *ngIf="updateForm.get('bankName2')?.errors?.['required']">{{'Bank Name is required'|translate}}</div>
-                    </div>
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
+                        <div *ngIf="updateForm.get('bankName2')?.touched && updateForm.get('bankName2')?.invalid" class="error-msg">
+                            <div *ngIf="updateForm.get('bankName2')?.errors?.['required']">
+                                {{ 'Bank Name is required' | translate }}
+                            </div>
+                        </div>
+                        <div *ngIf="updateForm.get('bankName2')?.errors?.['maxCharacters']" class="error-msg">
+                            {{ 'Please limit your input to 100 characters' | translate }}
+                        </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
@@ -88,7 +98,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

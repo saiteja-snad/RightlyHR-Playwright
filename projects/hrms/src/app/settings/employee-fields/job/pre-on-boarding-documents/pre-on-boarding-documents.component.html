@@ -91,14 +91,17 @@
                         {{ 'Document Name' | translate }} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="PreOnboardDocuments"
-                        placeholder="Enter document name" maxlength="100" (keydown)="formValidations.restrictInput($event); 
+                        placeholder="Enter document name" maxlength="101" (keydown)="formValidations.restrictInput($event); 
                         formValidations.blockNonAlphabets($event)" />
-                    <div class="textarea-count-text">{{AddForm.get('PreOnboardDocuments')?.value?.length || 0}}/100
-                    </div>
-                    <div *ngIf="AddForm.get('PreOnboardDocuments')?.touched && AddForm.get('PreOnboardDocuments')?.invalid"
-                        class="error-msg">
-                        <div *ngIf="AddForm.get('PreOnboardDocuments')?.errors?.['required']">{{'Document Name is required'|translate}}
+                    <!-- <div class="textarea-count-text">{{AddForm.get('PreOnboardDocuments')?.value?.length || 0}}/100 -->
+                    <!-- </div> -->
+                    <div *ngIf="AddForm.get('PreOnboardDocuments')?.touched && AddForm.get('PreOnboardDocuments')?.invalid" class="error-msg">
+                        <div *ngIf="AddForm.get('PreOnboardDocuments')?.errors?.['required']">
+                            {{ 'Document Name is required' | translate }}
                         </div>
+                    </div>
+                    <div *ngIf="AddForm.get('PreOnboardDocuments')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
                 </div>
                 <!-- Checkbox Fields -->
@@ -169,11 +172,16 @@
                         {{'Document Name' | translate}} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="UpdatePreOnboardDocuments"
-                        placeholder="Enter document name " maxlength="100"
+                        placeholder="Enter document name " maxlength="101"
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
-                    <div>{{updateForm.get('UpdatePreOnboardDocuments')?.value?.length || 0}}/100</div>
-                    <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.invalid && updateForm.get('UpdatePreOnboardDocuments')?.touched"
-                        class="error-msg">{{' Document Name is required'|translate}}
+                    <!-- <div>{{updateForm.get('UpdatePreOnboardDocuments')?.value?.length || 0}}/100</div> -->
+                    <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.touched && updateForm.get('UpdatePreOnboardDocuments')?.invalid" class="error-msg">
+                        <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.errors?.['required']">
+                            {{ 'Document Name is required' | translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
                 </div>
 
@@ -193,7 +201,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

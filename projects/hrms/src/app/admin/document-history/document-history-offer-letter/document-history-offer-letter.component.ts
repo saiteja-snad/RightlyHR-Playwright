@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -68,14 +71,18 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   //functio to inialize the form
   initializeForm() {
     this.rejectDocument = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),this.blockLeadingSpace()]],
     });
   }
-  blockLeadingSpace(event: KeyboardEvent, inputValue: string): void {
-    if (event.key === ' ' && inputValue.length === 0) {
-      event.preventDefault(); // Block space if it's the first character
-    }
-  }
+  blockLeadingSpace() : ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value as string;
+      if (value && value.startsWith(' ')) {
+        return { leadingSpace: true };
+      }
+      return null;
+    };
+}
   //to get all offer Letters
   getOfferLetters() {
     this.subscription = this.http

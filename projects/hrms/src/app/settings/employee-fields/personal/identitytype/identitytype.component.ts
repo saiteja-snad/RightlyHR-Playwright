@@ -38,10 +38,10 @@ export class IdentitytypeComponent {
   }
   ngOnInit(): void {
     this.IdentityForm = this.fb.group({
-      IdentityType: ['', [Validators.required,Validators.maxLength(50)]]
+      IdentityType: ['', [Validators.required,this.formValidations.maxCharactersValidator(51)]]
     });
     this.updateForm = this.fb.group({
-      IdentityType: ['', [Validators.required, Validators.maxLength(50)]]
+      IdentityType: ['', [Validators.required, this.formValidations.maxCharactersValidator(51)]]
     });
 
     this.getIdentityType();
@@ -66,8 +66,9 @@ export class IdentitytypeComponent {
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+        // this.resetForm();
       }
     });
   }
@@ -88,7 +89,8 @@ export class IdentitytypeComponent {
           this.conformationPopup.openSuccessModal('Identity Type updated successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -98,12 +100,14 @@ export class IdentitytypeComponent {
     this.updateForm.reset();
   }
   openupdate(identitylist: any) {
+    this.resetForm();
     this.selectedId = identitylist.sno;
     this.updateForm.patchValue({ IdentityType: identitylist.identityType1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE
   opendelete(identitylist: any) {
+    this.resetForm();
     this.selectedDeletetype = identitylist;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
@@ -123,7 +127,8 @@ export class IdentitytypeComponent {
         this.conformationPopup.openSuccessModal('Identity Type deleted successfully');
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the location');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <form [formGroup]="holidayForm" (ngSubmit)="submit()">
+  <form [formGroup]="holidayForm">
     <div class="custom-setting-right-content w-100 p-4">
       <!--Select Fields-->
       <div class="d-flex gap-3 mb-4">
@@ -31,11 +31,6 @@
           <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="" formControlName="shift"
             placeholder="Select shift" class="form-select custom-select"></p-select>
         </div>
-        <!-- <div>
-                <button type="button" class="custom-btn btn-primary" (click)="addHolidayRow();hidePublishCloneButtons = true" >
-                  <i class="bi bi-plus me-2"></i> Add Row
-                </button>
-              </div> -->
       </div>
     <div formArrayName="holidays">
       <div class="card custom-background-card p-3 mt-2"  *ngFor="let holiday of holidays.controls; let i = index" [formGroupName]="i">
@@ -60,5 +55,28 @@
       <!-- Submit Button -->
     </div>
   </div>
+  <div class="d-flex justify-content-end gap-3 pt-3">       
+    <button type="button" class="custom-btn btn-secondary px-4" (click)="openmodel(cancelpopup)" id="submitButton">
+      {{'Cancel' | translate}}
+    </button>
+    <button type="button" class="custom-btn clone-btn px-4" (click)="clone()" id="submitButton">
+      {{'Clone' | translate}}
+    </button>
+</div>
   </form>
 </div>
+<!-- cancel popup -->
+<ng-template #cancelpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
+        {{'No' | translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="cancel();model.dismiss()">
+        {{'Yes' | translate}}</button>
+    </div>
+  </div>
+</ng-template>

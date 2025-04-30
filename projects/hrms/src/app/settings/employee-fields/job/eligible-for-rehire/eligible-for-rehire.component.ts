@@ -38,10 +38,10 @@ export class EligibleForRehireComponent {
   }
   ngOnInit(): void {
     this.EligibilityForm = this.fb.group({
-      Rehire: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      Rehire: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
     this.updateForm = this.fb.group({
-      Rehire: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      Rehire: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
 
     this.getEligibility();
@@ -68,7 +68,7 @@ export class EligibleForRehireComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
+        // this.resetForm();
       }
     });
   }

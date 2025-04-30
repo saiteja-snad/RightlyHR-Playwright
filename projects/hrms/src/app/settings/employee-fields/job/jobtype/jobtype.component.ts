@@ -38,10 +38,10 @@ export class JobtypeComponent {
   }
   ngOnInit(): void {
     this.JobtypeForm = this.fb.group({
-      jobtype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      jobtype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
     this.updateForm = this.fb.group({
-      jobtype: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      jobtype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
 
     this.getJobtype();
@@ -72,7 +72,7 @@ export class JobtypeComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
+        // this.resetForm();
       }
     });
   }

@@ -4,23 +4,19 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter gender"
-                    formControlName="Gender" aria-label="Gender" (keypress)="allowOnlyLettersAndSpace($event)">
+                    formControlName="Gender" aria-label="Gender" 
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
                 <span class="input-group-text" id="Gender"><button type="submit" class="custom-btn btn-primary"
                         [disabled]="GenderForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
-            <div *ngIf="GenderForm.controls['Gender'].touched" class="error-msg">
-                <div *ngIf="GenderForm.controls['Gender'].touched || GenderForm.controls['Gender'].dirty">
-                    <span *ngIf="GenderForm.controls['Gender'].errors?.['required']">
-                        Gender is required
-                    </span>
-                    <span *ngIf="GenderForm.controls['Gender'].errors?.['maxlength']">
-                        Maximum 50 characters are allowed
-                    </span>
-                    <span *ngIf="GenderForm.controls['Gender'].errors?.['pattern']">
-                        Only letters, spaces, and periods are allowed. Field cannot start with a space or period
-                    </span>
+            <div *ngIf="GenderForm.get('Gender')?.touched && GenderForm.get('Gender')?.invalid" class="error-msg">
+                <div *ngIf="GenderForm.get('Gender')?.errors?.['required']">
+                    {{ 'Gender is required' | translate }}
                 </div>
+            </div>
+            <div *ngIf="GenderForm.get('Gender')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 50 characters' | translate }}
             </div>
         </div>
     </form>
@@ -78,20 +74,15 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Gender'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Gender"
-                        (keypress)="allowOnlyLettersAndSpace($event)" placeholder="Please enter gender">
-                    <div *ngIf="updateForm.controls['Gender'].touched" class="error-msg">
-                        <div *ngIf="GenderForm.controls['Gender'].touched || updateForm.controls['Gender'].dirty">
-                            <span *ngIf="updateForm.controls['Gender'].errors?.['required']">
-                                Gender is required
-                            </span>
-                            <span *ngIf="updateForm.controls['Gender'].errors?.['maxlength']">
-                                Maximum 50 characters are allowed
-                            </span>
-                            <span *ngIf="updateForm.controls['Gender'].errors?.['pattern']">
-                                Only letters, spaces, and periods are allowed. Field cannot start with a space or
-                                period
-                            </span>
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                     placeholder="Please enter gender" maxlength="51">
+                     <div *ngIf="updateForm.get('Gender')?.touched && updateForm.get('Gender')?.invalid" class="error-msg">
+                        <div *ngIf="updateForm.get('Gender')?.errors?.['required']">
+                            {{ 'Gender is required' | translate }}
                         </div>
+                    </div>
+                    <div *ngIf="updateForm.get('Gender')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 50 characters' | translate }}
                     </div>
                 </div>
 
@@ -111,7 +102,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

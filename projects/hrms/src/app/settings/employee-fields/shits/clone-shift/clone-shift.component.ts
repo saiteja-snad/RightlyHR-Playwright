@@ -301,8 +301,8 @@ export class CloneShiftComponent {
       if (this.selectdata) {
         subLocationControl?.setValue(this.selectdata.id);
       }
-      console.log(this.subLocations);
-      console.log(this.selectdata);
+      console.log("this.subLocations",this.subLocations);
+      console.log("this.selectdata",this.selectdata);
     } else {
       subLocationControl?.disable();
       this.subLocations = [];

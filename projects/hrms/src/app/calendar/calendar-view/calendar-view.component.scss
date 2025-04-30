@@ -9,3 +9,27 @@
   width: 1rem;
   height: 1rem;
 }
+
+.fc .fc-scroller-liquid-absolute {
+  overflow: inherit !important;
+}
+
+.fc-scrollgrid-liquid {
+  a {
+    color: var(--primary-color) !important;
+  }
+}
+
+.fc-list-day {
+  a {
+    color: var(--primary-color) !important;
+  }
+}
+
+.custom-setting-right-content {
+  overflow-x: auto;
+
+  .calender-content {
+    min-width: 800px;
+  }
+}

@@ -37,6 +37,7 @@ export interface ILocation {
     jobLocationName: string,
     isDeleted: boolean
     jobSubLocations: ISubLocation[]
+    subLocations:ISubLocation[]
 }
 export interface ISubLocation {
     id: number,

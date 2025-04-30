@@ -14,8 +14,8 @@ import { HttpService } from '../../../services/http.service';
 export class SettingsManageHolidaysTabsComponent {
 
   navLinks = [
-    { label: 'Pending For Submit',route: '/settings/employee-fields/manage-holidays/pending-for-submit', count: 0 },
-    { label: 'Published Holidays',route: '/settings/employee-fields/manage-holidays/published-holidays', count: 0 },
+    { label: 'Pending For Submission',route: '/settings/employee-fields/manage-holidays/pending-for-submit', count: 0 },
+    { label: 'Published',route: '/settings/employee-fields/manage-holidays/published-holidays', count: 0 },
   ];
 
   subscription!: Subscription
@@ -44,8 +44,8 @@ export class SettingsManageHolidaysTabsComponent {
         ).reverse();
         this.publishedcount = this.allHolidaysPublished.length;
         this.navLinks = [
-          { label: 'Pending For Submit',route: '/settings/employee-fields/manage-holidays/pending-for-submit', count: this.pendingcount},
-          { label: 'Published Holidays',route: '/settings/employee-fields/manage-holidays/published-holidays', count: this.publishedcount },
+          { label: 'Pending For Submission',route: '/settings/employee-fields/manage-holidays/pending-for-submit', count: this.pendingcount},
+          { label: 'Published',route: '/settings/employee-fields/manage-holidays/published-holidays', count: this.publishedcount },
         ];
       }, error: (err: any) => {
         console.error(err);

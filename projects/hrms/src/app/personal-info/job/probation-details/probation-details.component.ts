@@ -147,9 +147,6 @@ export class ProbationDetailsComponent implements OnInit {
   openview(content:any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  close(){
-    window.location.reload();
-  }
   setformView(employeeId: number, responseId: number) {
     this.http.communicationService.next({ employeeId, responseId });
   }
@@ -157,13 +154,11 @@ export class ProbationDetailsComponent implements OnInit {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     console.log(Value)
     this.appcomment = Value.map((ele: any) => {
-      // Parse the metaData and assign it to metadata property
       const parsedMetaData = JSON.parse(ele.metaData);
       return {
-        ...ele, // Copy other properties from ele
-        metadata: parsedMetaData // Assign parsed metaData to metadata property
+        ...ele,
+        metadata: parsedMetaData
       };
     });
-    // console.log(this.appcomment)
   }
 }

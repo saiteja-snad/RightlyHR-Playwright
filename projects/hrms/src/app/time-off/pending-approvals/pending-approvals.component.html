@@ -1,12 +1,17 @@
 <div class="custom-main-component-container">
-    @if (router.url != '/time-off/pending-approvals/assessmentform') {
     <div class="d-flex justify-content-between align-items-center mb-3">
+        @if (router.url !== '/time-off/pending-approvals/assessmentform') {
         <div>
             <p class="component-header cursor mb-0">Pending Approvals</p>
         </div>
+        }
+        @if (router.url === '/time-off/pending-approvals/assessmentform') {
+        <div>
+            <p class="component-header cursor mb-0"><i class="bi bi-arrow-90deg-left me-2 cursor"></i>{{'Assessment Form'|translate}}</p>
+        </div>
+        }
     </div>
-    }
-    
+   
     <div class="employee-fields-main-container d-flex gap-3 w-100">
         @if (router.url != '/time-off/pending-approvals/assessmentform') {
         <div class="custom-component-left-content">

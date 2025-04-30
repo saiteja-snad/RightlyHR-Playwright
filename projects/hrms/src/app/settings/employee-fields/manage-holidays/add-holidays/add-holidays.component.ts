@@ -39,8 +39,8 @@ export class AddHolidaysComponent {
     this.holidayForm = this.fb.group({
       year: [{ name: currentYear, value: currentYear },Validators.required],
       location: [null, Validators.required],
-      subLocation: [null, Validators.required],
-      shift: [null, Validators.required],
+      subLocation: [{ value: '', disabled: true }, Validators.required],
+      shift: [{ value: '', disabled: true }, Validators.required],
       holidays: this.fb.array([]), // start empty
     });
     this.yearDetails = this.generateYears(2000, currentYear);
@@ -211,8 +211,12 @@ export class AddHolidaysComponent {
         next: (data: any) => {
           if (data.length === 0) {
             this.subLocationsDropdown = [];
+            this.holidayForm.get('subLocation')?.enable();
+            this.holidayForm.get('shift')?.disable()
           } else {
+            this.holidayForm.get('subLocation')?.enable();
             this.subLocationsDropdown = data.jobSubLocations;
+            this.holidayForm.get('shift')?.disable()
           }
         },
         error: (error: any) => {
@@ -238,7 +242,9 @@ export class AddHolidaysComponent {
         next: (data: any) => {
           if (data.length === 0) {
             this.shiftDropdown = []; // Reset if no shifts are found
+            this.holidayForm.get('shift')?.enable();
           } else {
+            this.holidayForm.get('shift')?.enable();
             this.shiftDropdown = [].concat(...data.map((element: any) => element.orgShiftsItems)
             );
           }

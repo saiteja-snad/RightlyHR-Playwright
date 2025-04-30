@@ -26,8 +26,6 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 })
 export class AddPoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
-  @ViewChild('deletepopup1') deletepopup1: any;
-  deleteIndex: number | null = null;
   subscription!: Subscription;
     policiesForm!: FormGroup;
     jobLocationDropDownData: any = [];
@@ -88,7 +86,6 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
   
     
     submit() {
-      debugger
       const formValue = this.policiesForm.value;
   
       const payload = {
@@ -216,18 +213,6 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
           });
       } else {
         this.shiftDropdown = []; // Reset if no sub-location is selected
-      }
-    }
-
-    deleteRow(i: any){
-      this.deleteIndex = i;
-      this.modalService.open(this.deletepopup1, { backdrop: 'static', centered: true });
-    }
-
-    onDeleteClose(modal: any) {
-      modal.dismiss();
-      if (this.deleteIndex !== null) {
-        this.removePolicyRow(this.deleteIndex);
       }
     }
 

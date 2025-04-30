@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -8,6 +8,9 @@ import { AuthService } from '../../services/auth.service';
 import { every, Subject, takeUntil } from 'rxjs';
 import { Ipersonal, IStatus } from './custom-model';
 import { CalendarModule } from 'primeng/calendar';
+import { environment } from '../../../environments/environment';
+import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';
+import dayjs from 'dayjs';
 interface FieldGroup {
   name: string;
   fields: string[];
@@ -16,39 +19,59 @@ interface FieldGroup {
 }
 @Component({
   selector: 'app-custom-reports',
-  imports: [SelectModule, ReactiveFormsModule, CommonModule, FormsModule, CalendarModule],
+  imports: [SelectModule, ReactiveFormsModule, CommonModule, FormsModule, CalendarModule,NgxDaterangepickerBootstrapDirective,],
   templateUrl: './custom-reports.component.html',
   styleUrl: './custom-reports.component.scss'
 })
 
-export class CustomReportsComponent {
-  reportForm: FormGroup;
+export class CustomReportsComponent implements OnInit,OnDestroy{
+  reportForm!: FormGroup;
   private destroy$ = new Subject<boolean>();
   activeRangeDates: Date[] | undefined;
   inActiveRangeDates: Date[] | undefined;
+
+   localeOptions: any = {
+      applyLabel: 'ok',
+      format: environment.dateformat.toUpperCase(),
+      direction: 'ltr',
+      clearLabel: 'Clear', // could be rtl
+    };
+  
+    ranges: any = {
+      Today: [dayjs(), dayjs()],
+      Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
+      'Last 7 Days': [dayjs().subtract(6, 'days'), dayjs()],
+      'Last 30 Days': [dayjs().subtract(29, 'days'), dayjs()],
+      'This Month': [dayjs().startOf('month'), dayjs().endOf('month')],
+      'Last Month': [
+        dayjs().subtract(1, 'month').startOf('month'),
+        dayjs().subtract(1, 'month').endOf('month'),
+      ],
+    };
+  
   // Form control flags
   showCard = false;
   JobShowCard = false;
   loggedInUser: any = {};
   // Data arrays
-  empStatusList = ['All Employees', 'Active', 'Inactive'];
+  empStatusList = ['All Employees', 'Active', 'Inactive', 'Prospective'];
   selectedData: any[] = [];
   selectedFields: string[] = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
+  reportFields: string[] = [];
   emp: Ipersonal[] = [];
   reportdata: any[] = [];
   // Define locked fields per group (if needed)
   lockedFields: string[] = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
-
 
   // Field groups
   fieldGroups: { [key: string]: FieldGroup } = {
     basicInfo: {
       name: 'Basic Information',
       fields: [
-        'ID', 'Employee ID', 'First Name', 'Last Name', 'Middle Name', 'Salutation',
+        'ID', 'Employee ID', 'First Name', 'Middle Name', 'Last Name', 'Salutation',
         'Status', 'Marital Status', 'Gender', 'Date of Birth', 'Blood Group'
       ],
-      selectedFields: ['Employee ID','First Name','Middle Name','Last Name'],
+      selectedFields: ['ID','Employee ID','First Name','Middle Name','Last Name'],
       selectAll: false
     },
     currentAddress: {
@@ -71,7 +94,7 @@ export class CustomReportsComponent {
     },
     contactDetails: {
       name: 'Contact Details',
-      fields: ['Work Number', 'Mobile Phone', 'Work Email', 'Home Email'],
+      fields: ['Work Number', 'Mobile Phone', 'Work Email', 'Personal Email'],
       selectedFields: [],
       selectAll: false
     },
@@ -160,22 +183,35 @@ export class CustomReportsComponent {
       selectAll: false
     }
   };
-
+  hasPendingChanges = false;
   spinnerLoader1= false;
   spinnerLoader2= false;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private http: HttpService) {
-    this.reportForm = this.fb.group({
-      status: ['All Employees']
-    });
-  }
+  constructor(
+    private fb: FormBuilder, 
+    private authService: AuthService, 
+    private http: HttpService
+  ) { }
 
   ngOnInit(): void {
     this.loggedInUser = this.authService.getToken();
+    this.inititalizeForm();
     this.getCustomReportDetails();
     this.getStatus();
     this.showPersonalData();
+   
   }
+
+  inititalizeForm() {
+    this.reportForm = this.fb.group({
+      status: ['All Employees'],
+      dateOfJoining: [null],
+    });
+  
+    this.reportForm.get('status')?.valueChanges.subscribe(() => {
+      this.reportForm.get('dateOfJoining')?.reset();
+    });
+  }  
 
   showPersonalData() {
     this.showCard = true;
@@ -189,7 +225,7 @@ export class CustomReportsComponent {
   showJobData() {
     this.showCard = false;
     this.JobShowCard = true;
-    this.selectedFields = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
+    this.selectedFields = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name',...this.selectedFields];
     if (this.fieldGroups['basicInfo']) {
       this.fieldGroups['basicInfo'].selectedFields = [...this.selectedFields]; 
     }
@@ -241,6 +277,7 @@ export class CustomReportsComponent {
     // Update selectAll status
     group.selectAll = group.selectedFields.length === group.fields.length;
     this.updateSelectedFields();
+    this.hasPendingChanges = true;
   }
 
   toggleSelectAll(event: Event, groupKey: string): void {
@@ -258,6 +295,7 @@ export class CustomReportsComponent {
     }
   
     this.updateSelectedFields();
+    this.hasPendingChanges = true;
   }
   
 
@@ -268,13 +306,42 @@ export class CustomReportsComponent {
     }
   }
 
+  private updateReportFields(): void {
+    this.reportFields = Object.values(this.fieldGroups).reduce((acc: string[], group) => [...acc, ...group.selectedFields], []);
+    if(this.reportFields.length == 0){
+      this.reportFields=[];
+    }
+  }
+
   onSubmit(): void {
     this.spinnerLoader1= true;
     if (this.reportForm.invalid) return;
     this.selectedData = [];
-    this.emp.forEach((user: Ipersonal) => {
+    console.log(this.reportForm.value);
+    
+
+    const formData = this.reportForm.value;
+    
+    
+    this.updateReportFields();
+    this.hasPendingChanges = false;
+    //if dateOfJoining present filter the data with provide range  
+    const startDate = formData.dateOfJoining?.startDate ? new Date(formData.dateOfJoining.startDate) : null;
+    const endDate = formData.dateOfJoining?.endDate ? new Date(formData.dateOfJoining.endDate) : null;
+
+      // Step 1: Filter employees based on DoJ if date range is provided
+    const filteredEmployees = this.emp.filter((user: Ipersonal) => {
+      const doj = user.dateOfJoining ? new Date(user.dateOfJoining) : null;
+      if (!doj || user.dateOfJoining === '0001-01-01T00:00:00' || isNaN(doj.getTime())) return false;
+      if (startDate && doj < startDate) return false;
+      if (endDate && doj > endDate) return false;
+      return true;
+    });
+
+    filteredEmployees.forEach((user: Ipersonal) => {
       const data: { [key: string]: any } = {};
       this.selectedFields.forEach((field: string) => {
+
         // Basic Info
         if (field === 'ID') data[field] = user.employeeId;
         else if (field === 'Employee ID') data[field] = user.fusionEmpId;
@@ -386,8 +453,9 @@ export class CustomReportsComponent {
         else if (field === 'Frequency') data[field] = user.frequency;
       });
       this.selectedData.push(data);
-        this.spinnerLoader1= false;
+      
     });
+    this.spinnerLoader1= false;
   }
 
   getStatus() {
@@ -417,24 +485,42 @@ export class CustomReportsComponent {
       if (employeeStatus.toLowerCase() == 'prospective') {
         this.filteredData = this.emp.filter(
           (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
-        );
+        );   
       }
       if (employeeStatus.toLowerCase() == 'active') {
         this.filteredData = this.emp.filter(
           (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
         );
-        //this.dateofJoiningRangeFilter();
+        
       }
       if (employeeStatus.toLowerCase() == 'inactive') {
+        console.log(employeeStatus.toLocaleLowerCase());
+        
         this.filteredData = this.emp.filter(
           (emp) => emp.empstatus.toLowerCase() == employeeStatus.toLowerCase()
         );
-        //this.lastWorkingDayRangeFilter();
       }
       this.emp = this.filteredData;
     } else {
       this.selectedFieldsOption = [];
     }
+  }
+
+  isActiveOrInactive(): boolean {
+    const status = this.employeeStatus?.toLowerCase();
+    return status === 'active' || status === 'inactive';
+  }
+  
+  getDateLabel(): string {
+    const status = this.reportForm.get('status')?.value?.toLowerCase();
+    return status === 'active' ? 'Date of Joining' : 'Last Working Day';
+  }
+  
+  getDatePlaceholder(): string {
+    const status = this.employeeStatus?.toLowerCase();
+    return status === 'active'
+      ? 'Please select date of joining'
+      : 'Please select last working day';
   }
 
   generateExcel(): void {

@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <form [formGroup]="saluationForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Salutation.create')">
+    <form [formGroup]="saluationForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Salutation.create') && rbac.allowedToAccess('Salutation.view')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
@@ -33,7 +33,7 @@
                     <th class="col-span-2"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody *ngIf="rbac.allowedToAccess('Salutation.view')">
                 @for (sal of saluationdetails; track $index) {
                 <tr>
                     <td class="w-75">{{ sal.titlename}}</td>

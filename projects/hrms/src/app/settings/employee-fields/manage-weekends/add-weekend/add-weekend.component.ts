@@ -86,19 +86,6 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     }
   }
 
-  
-  deleteRow(i: any){
-    this.deleteIndex = i;
-    this.modalService.open(this.deletepopup1, { backdrop: 'static', centered: true });
-  }
-
-  onDeleteClose(modal: any) {
-    modal.dismiss();
-    if (this.deleteIndex !== null) {
-      this.removeWeekend(this.deleteIndex);
-    }
-  }
-
   removeWeekend(index: number): void {
     this.weekends.removeAt(index);
   }

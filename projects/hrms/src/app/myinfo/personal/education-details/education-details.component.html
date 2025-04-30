@@ -93,7 +93,7 @@
           <div class="col-md-6 mb-3">
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" id="university" formControlName="university"
+            <input type="text" class="form-control custom-input" autocomplete="off" id="university" formControlName="university"
               placeholder="Please enter university" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
               *ngIf="educationForm.get('university')?.invalid && educationForm.get('university')?.touched">

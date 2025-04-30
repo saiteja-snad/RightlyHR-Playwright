@@ -14,8 +14,8 @@ import { HttpService } from '../../../services/http.service';
 export class SettingsManagePoliciesTabsComponent {
 
   navLinks = [
-    { label: 'Pending For Submit',route: '/settings/employee-fields/manage-policies/pending-for-submit', count: 0 },
-    { label: 'Published Policies',route: '/settings/employee-fields/manage-policies/published-policies', count: 0 },
+    { label: 'Pending For Submission',route: '/settings/employee-fields/manage-policies/pending-for-submit', count: 0},
+    { label: 'Published',route: '/settings/employee-fields/manage-policies/published-policies', count: 0}
   ];
   subscription!: Subscription
   allPoliciesPending = [] as any;
@@ -42,8 +42,8 @@ export class SettingsManagePoliciesTabsComponent {
         ).reverse();
         this.publishedcount = this.allPoliciesPublished.length;
        this.navLinks = [
-          { label: 'Pending For Submit',route: '/settings/employee-fields/manage-policies/pending-for-submit', count: this.pendingcount},
-          { label: 'Published Policies',route: '/settings/employee-fields/manage-policies/published-policies', count: this.publishedcount },
+          { label: 'Pending For Submission',route: '/settings/employee-fields/manage-policies/pending-for-submit', count: this.pendingcount},
+          { label: 'Published',route: '/settings/employee-fields/manage-policies/published-policies', count: this.publishedcount },
         ];
       }, error: (err: any) => {
         console.error(err);

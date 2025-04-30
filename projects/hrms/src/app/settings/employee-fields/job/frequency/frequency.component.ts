@@ -37,10 +37,10 @@ export class FrequencyComponent {
 
   ngOnInit(): void {
     this.FrequencyForm = this.fb.group({
-      frequency: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      frequency: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
     this.updateForm = this.fb.group({
-      frequency: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      frequency: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
 
     this.getFrequencies();
@@ -69,7 +69,7 @@ export class FrequencyComponent {
       error: (err: any) => {
         const errorMessage = err.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
+        // this.resetForm();
       }
     });
   }

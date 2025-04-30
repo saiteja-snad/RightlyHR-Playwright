@@ -45,8 +45,7 @@ export class DepartmentComponent {
         '',
         [
           Validators.required,
-          Validators.maxLength(100),
-          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
+          this.formValidations.maxCharactersValidator(51)
         ],
       ],
     });
@@ -55,8 +54,7 @@ export class DepartmentComponent {
         '',
         [
           Validators.required,
-          Validators.maxLength(100),
-          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
+          this.formValidations.maxCharactersValidator(51)
         ],
       ],
     });
@@ -64,22 +62,6 @@ export class DepartmentComponent {
     this.getDepartment();
   }
 
-  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
-    const input = event.target as HTMLInputElement;
-    const char = event.key;
-    const pattern = /^[A-Za-z ]$/;
-
-    // Block if the key is not a letter or space
-    if (!pattern.test(char)) {
-      event.preventDefault();
-      return;
-    }
-
-    // Block if length is already 50
-    if (input.value.length >= 100) {
-      event.preventDefault();
-    }
-  }
   getDepartment() {
     this.http.getData('Department').subscribe((data: any) => {
       this.DepartmentDetail = data;
@@ -101,8 +83,9 @@ export class DepartmentComponent {
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+        // this.resetForm();
       },
     });
   }
@@ -127,8 +110,9 @@ export class DepartmentComponent {
             );
           },
           error: (err: any) => {
+            const errorMessage = err.error?.Message;
             this.conformationPopup.openErrorModal(
-              'Update failed. Please try again.'
+              errorMessage
             );
           },
         });
@@ -174,7 +158,8 @@ export class DepartmentComponent {
         );
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the location');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       },
     });
   }

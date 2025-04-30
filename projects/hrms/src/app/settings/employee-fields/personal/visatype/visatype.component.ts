@@ -38,10 +38,10 @@ export class VisatypeComponent {
   }
   ngOnInit(): void {
     this.VisaForm = this.fb.group({
-      Visatype: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9 ]+$/)]]
+      Visatype: ['', [Validators.required,  this.formValidations.maxCharactersValidator(51)]]
     });
     this.updateForm = this.fb.group({
-      Visatype: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^(?! )[A-Za-z0-9 ]+$/)]]
+      Visatype: ['', [Validators.required, this.formValidations.maxCharactersValidator(51)]]
     });
 
     this.getVisa();
@@ -66,8 +66,9 @@ export class VisatypeComponent {
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+        // this.resetForm();
       }
     });
   }
@@ -88,7 +89,8 @@ export class VisatypeComponent {
           this.conformationPopup.openSuccessModal('Visa Type updated successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -98,12 +100,14 @@ export class VisatypeComponent {
     this.updateForm.reset();
   }
   openupdate(visalist: any) {
+    this.resetForm();
     this.selectedId = visalist.id;
     this.updateForm.patchValue({ Visatype: visalist.visatype1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE
   opendelete(visalist: any) {
+    this.resetForm();
     this.selectedDeleteVisa = visalist;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
@@ -123,7 +127,8 @@ export class VisatypeComponent {
         this.conformationPopup.openSuccessModal('Visa Type deleted successfully');
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the location');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

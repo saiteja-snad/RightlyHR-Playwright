@@ -49,14 +49,16 @@
     </div>
 
     <div class="custom-setting-right-content p-3">
-      <full-calendar [options]="calendarOptions" [events]="eventsPromise | async">
-        <ng-template #eventContent let-arg>
-          <!-- <b *ngIf="arg.timeText" >{{ arg.timeText }}</b> -->
-          <div>
-            <span class="event-title m-0">{{ arg.event.title }}<img [src]="arg.event.display" alt="arg" class="ms-2"></span>
-          </div>
-        </ng-template>
-      </full-calendar>
+      <div class="calender-content">
+        <full-calendar [options]="calendarOptions" [events]="eventsPromise | async">
+          <ng-template #eventContent let-arg>
+            <!-- <b *ngIf="arg.timeText" >{{ arg.timeText }}</b> -->
+            <div>
+              <span class="event-title m-0">{{ arg.event.title }}<img [src]="arg.event.display" alt="arg" class="ms-2"></span>
+            </div>
+          </ng-template>
+        </full-calendar>
+      </div>
     </div>
   </div>
 </div>

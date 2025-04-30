@@ -65,28 +65,37 @@
       </div>
 
       <div class="custom-main-popup-content">
-        <!-- Job Role Field -->
+        <!-- Grade Name Field -->
         <div class="mb-3">
           <label for="Addgrade" class="form-label custom-label mb-2">{{ 'Grade Name' | translate }}
             <span class="error-msg">*</span></label>
-          <input type="text" class="form-control custom-input" formControlName="Addgrade" placeholder="Please enter grade name"
-            maxlength="100" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
+          <input type="text" class="form-control custom-input" formControlName="Addgrade"
+            placeholder="Please enter grade name" maxlength="101"
+            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
           <div *ngIf="AddForm.get('Addgrade')?.touched && AddForm.get('Addgrade')?.invalid" class="error-msg">
-            <div *ngIf="AddForm.get('Addgrade')?.errors?.['required']">{{ 'Grade Name is required' | translate }}</div>
-            <div *ngIf="AddForm.get('Addgrade')?.errors?.['maxlength']">{{ 'Grade Name cannot exceed 100 characters' | translate }}</div>
+            <div *ngIf="AddForm.get('Addgrade')?.errors?.['required']">
+              {{ 'Grade Name is required' | translate }}
+            </div>
+          </div>
+          <div *ngIf="AddForm.get('Addgrade')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Please limit your input to 100 characters' | translate }}
           </div>
         </div>
-
-        <!-- Grade Name Field -->
+      
+        <!-- Job Grade Field -->
         <div class="mb-3">
           <label for="jobgrade" class="form-label custom-label mb-2">
             {{ 'Job Grade' | translate }}<span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="jobgrade" placeholder="Please enter job grade"
-            maxlength="100" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
+            maxlength="101" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" />
           <div *ngIf="AddForm.get('jobgrade')?.touched && AddForm.get('jobgrade')?.invalid" class="error-msg">
-            <div *ngIf="AddForm.get('jobgrade')?.errors?.['required']">{{ 'Job Grade is required' | translate }}</div>
-            <div *ngIf="AddForm.get('jobgrade')?.errors?.['maxlength']">{{ 'Job Grade cannot exceed 100 characters' | translate }}</div>
+            <div *ngIf="AddForm.get('jobgrade')?.errors?.['required']">
+              {{ 'Job Grade is required' | translate }}
+            </div>
+          </div>
+          <div *ngIf="AddForm.get('jobgrade')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Max 100 characters allowed' | translate }}
           </div>
         </div>
         <!-- Buttons -->
@@ -124,12 +133,16 @@
             {{'Grade Name' | translate}}<span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="Updatejobrole"
-            placeholder="Please enter grade name" maxlength="100"
+            placeholder="Please enter grade name" maxlength="101"
             (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
-          <div *ngIf="updateForm.get('Updatejobrole')?.invalid && updateForm.get('Updatejobrole')?.touched" class="error-msg">
-            <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['required']">{{ 'Grade Name is required' | translate }}</div>
-            <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxlength']">{{ 'Grade Name cannot exceed 100 characters' | translate }}</div>
-          </div>
+            <div *ngIf="updateForm.get('Updatejobrole')?.touched && updateForm.get('Updatejobrole')?.invalid" class="error-msg">
+              <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['required']">
+                {{ 'Job Grade is required' | translate }}
+              </div>
+            </div>
+            <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxCharacters']" class="error-msg">
+              {{ 'Max 100 characters allowed' | translate }}
+            </div>
         </div>
 
         <div class="mb-3">
@@ -137,11 +150,15 @@
             {{'Job Grade' | translate}}<span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="updategraderole"
-            placeholder="Please enter job grade" maxlength="100" (keydown)="formValidations.restrictInput($event); 
+            placeholder="Please enter job grade" maxlength="101" (keydown)="formValidations.restrictInput($event); 
             formValidations.blockNonAlphabets($event)" />
           <div *ngIf="updateForm.get('updategraderole')?.touched && updateForm.get('updategraderole')?.invalid" class="error-msg">
-            <div *ngIf="updateForm.get('updategraderole')?.errors?.['required']">{{ 'Job Grade is required' | translate }}</div>
-            <div *ngIf="updateForm.get('updategraderole')?.errors?.['maxlength']">{{ 'Job Grade cannot exceed 100 characters' | translate }}</div>
+            <div *ngIf="updateForm.get('updategraderole')?.errors?.['required']">
+              {{ 'Job Grade is required' | translate }}
+            </div>
+          </div>
+          <div *ngIf="updateForm.get('updategraderole')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Please limit your input to 100 characters' | translate }}
           </div>
         </div>
         
@@ -161,7 +178,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

@@ -64,11 +64,10 @@ export class AddHolidaysComponent {
     this.holidays.controls.forEach(control => {
       const dateControl = control.get('holidayDate');
       if (dateControl && dateControl.value) {
-        // Replace year part of the date (if valid format)
         const oldDate = dateControl.value;
-        const parts = oldDate.split('-');
-        if (parts.length === 3) {
-          const newDate = `${year}-${parts[1]}-${parts[2]}`;
+        const newdates = oldDate.split('-');
+        if (newdates.length === 3) {
+          const newDate = `${year}-${newdates[1]}-${newdates[2]}`;
           dateControl.setValue(newDate); // Update the value
         }
       }

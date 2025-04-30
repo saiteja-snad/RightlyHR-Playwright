@@ -37,7 +37,7 @@ export class AddHolidaysComponent {
     this.getjobLocationList();
     const currentYear = new Date().getFullYear();
     this.holidayForm = this.fb.group({
-      year: [{ name: currentYear, value: currentYear }, Validators.required],
+      year: [{ name: currentYear, value: currentYear },Validators.required],
       location: [null, Validators.required],
       subLocation: [null, Validators.required],
       shift: [null, Validators.required],
@@ -63,6 +63,15 @@ export class AddHolidaysComponent {
 
     this.holidays.controls.forEach(control => {
       const dateControl = control.get('holidayDate');
+      if (dateControl && dateControl.value) {
+        // Replace year part of the date (if valid format)
+        const oldDate = dateControl.value;
+        const parts = oldDate.split('-');
+        if (parts.length === 3) {
+          const newDate = `${year}-${parts[1]}-${parts[2]}`;
+          dateControl.setValue(newDate); // Update the value
+        }
+      }
       if (dateControl) {
         dateControl.setValidators([
           Validators.required,

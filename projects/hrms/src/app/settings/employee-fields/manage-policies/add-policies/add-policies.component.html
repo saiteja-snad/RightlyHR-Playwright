@@ -77,9 +77,11 @@
             </div>
 
             <!-- Add New Button aligned right -->
+            <!-- [disabled]="policiesForm?.get('year')?.invalid || policiesForm?.get('location')?.invalid || policiesForm?.get('subLocation')?.invalid || policiesForm?.get('shift')?.invalid" -->
+             
             <div>
               <button type="button"
-                [disabled]="policiesForm?.get('year')?.invalid || policiesForm?.get('location')?.invalid || policiesForm?.get('subLocation')?.invalid || policiesForm?.get('shift')?.invalid"
+               
                 class="custom-btn btn-primary mt-4" (click)="addMomentRow()">
                 <i class="bi bi-plus"></i>{{'Add New' | translate}}
               </button>

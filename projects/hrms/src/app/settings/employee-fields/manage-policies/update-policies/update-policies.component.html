@@ -64,7 +64,7 @@
                 </div>
               </div>
 
-              <div class="col-md-3">
+              <!-- <div class="col-md-3">
                 <label class="form-label custom-label">
                   {{'Existing Policy Attachment' | translate}}
                 </label>
@@ -80,11 +80,12 @@
                 <ng-template #oldPopContent>
                   <div>{{ getPolicyAttachmentName(policy.get('policyFile')?.value) }}</div>
                 </ng-template>
-              </div>
+              </div> -->
 
               <div class="col-md-3">
                 <label class="form-label custom-label">
-                  {{'Upload New Policy Attachment' | translate}}
+                  {{'Policy Attachment (Image and PDF only)' | translate}}<span
+                  class="text-danger">*</span>
                 </label>
 
                 <div class="d-flex align-items-center gap-2">
@@ -95,7 +96,7 @@
                 </div>
 
                 <ng-template #newPopContent>
-                  <div>{{ getPolicyAttachmentName(policy.get('policyNewFile')?.value) }}</div>
+                  <div>{{ getPolicyAttachmentName(policy.get('policyFile')?.value) }}</div>
                 </ng-template>
               </div>
               <div class="col-md-2 d-flex align-items-end">

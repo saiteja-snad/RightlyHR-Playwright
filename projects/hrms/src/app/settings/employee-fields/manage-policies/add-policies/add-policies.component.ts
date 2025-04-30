@@ -88,7 +88,6 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
   
     
     submit() {
-      debugger
       const formValue = this.policiesForm.value;
   
       const payload = {

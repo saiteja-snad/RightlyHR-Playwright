@@ -3,7 +3,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootstrap';
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { ILocation, ILocationReportData, ISubLocation } from './location-reports.model';
@@ -16,6 +16,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { OpenModalService } from '../../../services/open-modal.service';
 @Component({
   selector: 'app-job-location-wise-data',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent, NoDataFoundComponent, DataLoaderContentComponent],
@@ -26,6 +27,8 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   dataload = false;
+  spinnerLoader1= false;
+  disableBtn= false;
   locationReportsForm!: FormGroup;
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   locationDetails = [] as ILocation[];
@@ -34,14 +37,23 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(private reports: ReportsService,private http: HttpService,private fb: FormBuilder) { }
+  constructor(
+    private reports: ReportsService,
+    private http: HttpService,
+    private fb: FormBuilder,
+    private modal: OpenModalService
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
     this.handleFormValueChanges();
-    this.getStandardReports();
+    // this.getStandardReports();
     this.getAllLocations();
+
+    this.locationReportsForm.valueChanges.subscribe(()=>{
+      this.disableBtn= true;
+    })
   }
 
   initializeForm() {
@@ -56,10 +68,41 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     return this.locationReportsForm.get('dateOfJoining') as FormControl;
   }
 
+  // Function to get All the lcoations
   getAllLocations(): void {
     this.reports.getJobLocations().pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => this.locationDetails = res.jobLocations || [],
-      error: err => console.error('Error fetching locations:', err)
+      next: (res: any) => {
+        this.locationDetails = res.jobLocations || [];
+        if (this.locationDetails.length > 0) {
+          const allLocationsOption: ILocation = {
+            id: -1,
+            jobLocationName: 'All Locations',
+            isDeleted: false,
+            jobSubLocations: []
+          };
+          this.locationDetails.unshift(allLocationsOption);
+    
+          this.locationReportsForm.patchValue({
+            location: allLocationsOption
+          });
+          
+          const allSubLocationOption: ISubLocation = {
+            id: -1,
+            jobLocationId: -1,
+            jobSubLocationName: 'All Sub Locations',
+            isDeleted: false,
+            jobLocationName: 'All Locations'
+          };
+  
+          this.subLocationDetails = [allSubLocationOption];
+  
+          this.locationReportsForm.patchValue({
+            subLocation: allSubLocationOption
+          });
+        
+        }
+      },
+      error: err => console.error('Error fetching locations:', err),
     });
   }
 
@@ -82,49 +125,44 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     clearLabel: 'Clear',
   };
 
-  enableLocation(): void {
-    console.log(this.locationReportsForm.get('dateOfJoining')?.value);
-    if (this.locationReportsForm.get('dateOfJoining')?.value) {
-      this.getAllLocations();
-      // this.locationReportsForm.get('location')?.enable();
-    }
-  }
-
-  onLocationChange(location: ILocation): void {
-    if (location?.jobSubLocations?.length) {
-      this.getSubLocations(location);
-      // this.locationReportsForm.get('subLocation')?.enable();
-    } else {
-      this.subLocationDetails = [];
-      // this.locationReportsForm.get('subLocation')?.enable();
-      // this.locationReportsForm.get('subLocation')?.reset();
-    }
-  }
-
+  // Function to get All the Sub Locations based on the Job lcocation id 
   getSubLocations(location: ILocation) {
     this.http.getData(`JobLocation/sub-location-by-joblocation/${location.id}`).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (res: any) => this.subLocationDetails = res.jobSubLocations || [],
+      next: (res: any) => {
+        const subLocations = res.jobSubLocations || [];
+        const allSubLocationsOption: ISubLocation = {
+          id: -1,
+          jobLocationId: location.id,
+          jobSubLocationName: 'All Sub Locations',
+          isDeleted: false,
+          jobLocationName: location.jobLocationName
+        };
+
+        this.subLocationDetails = [allSubLocationsOption, ...subLocations];
+
+        this.locationReportsForm.patchValue({
+          subLocation: allSubLocationsOption
+        });
+      },
       error: err => console.error('Error fetching locations:', err)
     });
   }
 
+  // Function to handle field changes
   private handleFormValueChanges(): void {
     const form = this.locationReportsForm;
 
-    const resetAndDisable = (controls: string[]) => {
-      controls.forEach(control => {
-        form.get(control)?.reset();
-        // form.get(control)?.disable();
-      });
-    };
+    form.get('location')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((location: ILocation) => {
+      if (location?.id === -1) {
+        // this.getSubLocations(location);
+      } else if (location?.id) {
+        this.getSubLocations(location);
+      } else {
+        this.subLocationDetails = [];
+        form.get('subLocation')?.reset();
+      }
 
-    // form.get('dateOfJoining')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-    //   form.get('location')?.reset();
-    //   resetAndDisable(['subLocation']);
-    // });
-
-    form.get('location')?.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
-      resetAndDisable(['subLocation']);
+      this.disableBtn = true; 
     });
   }
 
@@ -139,6 +177,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     return `${year}-${month}-${day}`;
   }
 
+  // Function to get the reports with out filter
   getStandardReports() {
     this.dataload = true;
     const params = new URLSearchParams();
@@ -146,9 +185,9 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     this.http.getData(endpoint).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.locationReportList = res.standardReports || [];
+        this.disableBtn= false;
       },
       error: (err: any) => {
-        console.log(err);
         this.dataload = false;
       },
       complete: ()=>{
@@ -157,34 +196,54 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Function to get the data after click on Generat button
   onSubmit(form: FormGroup) {
-    this.dataload = true;
-    if (form.valid) {
-      const formData = form.value;
-      const request: IStandardReportRequest = {
-        dateRange: {
-          startDate: formData.dateOfJoining.startDate,
-          endDate: formData.dateOfJoining.endDate,
-        },
-        selectedJobLocation: formData.location?.jobLocationName,
-        selectedJobSubLocation: formData.subLocation?.jobSubLocationName
-      };
-      this.reports.getStandardReports(request).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          if (res) {
-            this.locationReportList = res.standardReports || [];
-          }
-        },
-        error: (err: any) => {
-          this.dataload = false;
-        },
-        complete: () => {
-          this.dataload = false;
-        }
-      });
-    }else{
-      console.log('invalid')
+    const formData = form.value;
+    
+    if (formData.location.jobLocationName === 'All Locations' && formData.dateOfJoining == null){
+      this.getStandardReports();
+    } else{
+      const isEmptyDate = !formData.dateOfJoining;
+      const isEmptyLocation = !formData.location;
+      const isEmptySubLocation = !formData.subLocation;
+    
+      if (isEmptyDate && isEmptyLocation && isEmptySubLocation) {
+        return;
+      }
+    
+      this.getFilterReports(formData); 
     }
+  }
+    
+
+// Function to get the report data based on filters selection
+  getFilterReports(formData: any): void {
+    this.dataload = true;
+    this.spinnerLoader1 = true;
+  
+    const request: IStandardReportRequest = {
+      dateRange: {
+        startDate: formData.dateOfJoining?.startDate || null,
+        endDate: formData.dateOfJoining?.endDate || null,
+      },
+      selectedJobLocation: formData.location?.jobLocationName === 'All Locations'? '' : formData.location?.jobLocationName,
+      selectedJobSubLocation:  formData.subLocation?.jobSubLocationName === 'All Sub Locations'? '' : formData.subLocation?.jobSubLocationName
+    };
+  
+    this.reports.getStandardReports(request).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.locationReportList = res?.standardReports || [];
+        this.disableBtn= false;
+      },
+      error: (err: any) => {
+        this.spinnerLoader1 = false;
+        this.dataload = false;
+      },
+      complete: () => {
+        this.spinnerLoader1 = false;
+        this.dataload = false;
+      }
+    });
   }
 
   onClickJobLocationExport() {
@@ -226,8 +285,8 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       let cellAddress = XLSX.utils.encode_cell({ r: range.s.r, c: C });
       let cell = ws[cellAddress];
       if (cell && cell.v) {
-        cell.v = cell.v.toString().toUpperCase(); // Convert to uppercase
-        cell.w = cell.v; // Ensure display is updated
+        cell.v = cell.v.toString().toUpperCase(); 
+        cell.w = cell.v; 
       }
     }
   }
@@ -241,7 +300,6 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, reportFile).subscribe({
       next: (data: any) => {
         this.ReportEmail(data.path, fileName);
-        //window.location.reload();
       },
       error: (reason: any) => {
         this.spinnerLoader = false;
@@ -251,8 +309,6 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
 
   ReportEmail(docUrl: string, fileName: string) {
     let loggedInUser = this.empinfo;
-    //let filetitle = this.fileName.reports;
-    //console.log(filetitle);
     const date = new Date();
     let reportdata = {
       employeeId: loggedInUser.employeeId,
@@ -268,9 +324,7 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       reportdata.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
     }
     this.http.postdata(`CustomEmail/Reports`, reportdata).subscribe({
-      next: (data: any) => {
-        console.log(data);
-      }, error: (err: any) => {
+      next: (data: any) => { }, error: (err: any) => {
         this.spinnerLoader = false;
       }
     });
@@ -284,12 +338,15 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     }
     this.http.postdata("ReportsLog", req).subscribe({
       next: (res: any) => {
-        this.spinnerLoader = false;
+       this.modal.openSuccessModal('Job Location Wise Data downloaded successfully');
       },
       error: (err) => {
         this.spinnerLoader = false;
+        this.modal.openErrorModal("Failed to download job location wise data");
       },
-      complete: () => { }
+      complete: () => {
+        this.spinnerLoader = false;
+       }
     })
   }
 

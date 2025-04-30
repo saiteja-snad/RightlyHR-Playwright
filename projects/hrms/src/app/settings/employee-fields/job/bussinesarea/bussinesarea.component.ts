@@ -39,10 +39,10 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
   }
   ngOnInit(): void {
     this.BussinesForm = this.fb.group({
-      BUSINESS: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      BUSINESS: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
     this.updateForm = this.fb.group({
-      BUSINESS: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      BUSINESS: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
 
     this.getBusiness();

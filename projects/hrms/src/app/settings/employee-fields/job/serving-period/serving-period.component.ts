@@ -41,7 +41,8 @@ export class ServingPeriodComponent {
   ngOnInit(): void {
     this.AddForm = this.fb.group({
       addServingPeriod: ['', [
-        Validators.required
+        Validators.required,
+        this.formValidations.maxCharactersValidator(101)
       ]],
       Duration: ['', [
         Validators.required, 
@@ -51,7 +52,7 @@ export class ServingPeriodComponent {
     this.updateForm = this.fb.group({ 
       UpdateServingPeriod: ['', [
         Validators.required, // Only letters and spaces
-
+        this.formValidations.maxCharactersValidator(101)
       ]],
       UpdateDuration: ['', [
         Validators.required
@@ -186,7 +187,7 @@ private isBackspaceOrDelete(event: KeyboardEvent): boolean {
         this.resetForm();
       },
       error: (error: any) => {
-        const errorMessage = error.error?.message;
+        const errorMessage = error.error?.Message || 'An error occurred while adding the serving period.';
         this.conformationPopup.openErrorModal(errorMessage);
         this.resetForm();
       }
@@ -226,7 +227,7 @@ private isBackspaceOrDelete(event: KeyboardEvent): boolean {
           this.resetForm();
         },
         error: (error: any) => {
-          const errorMessage = error.error?.message;
+          const errorMessage = error.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
           this.resetForm();
         }
@@ -239,6 +240,7 @@ private isBackspaceOrDelete(event: KeyboardEvent): boolean {
     this.selectedDeleteserving = servingPeriodList;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
+
   onDelete(modal: any) {
     if (!this.selectedDeleteserving) return;
     const deleteRequest: IServingPeriod = {

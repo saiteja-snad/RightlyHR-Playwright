@@ -9,10 +9,11 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-attendance-regularization-types',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, DataLoaderContentComponent],
   templateUrl: './attendance-regularization-types.component.html',
   styleUrl: './attendance-regularization-types.component.scss'
 })
@@ -22,7 +23,7 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
   permissionsForm!: FormGroup;
   permissionUpdateForm!: FormGroup;
   selectedPermission = {} as IPermissionType;
-
+  dataLoad = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -34,10 +35,10 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
 
   ngOnInit(): void {
     this.getPermissionTypes();
-    this.fromdataintalition();
+    this.formIntalition();
   }
 
-  fromdataintalition() {
+  formIntalition() {
     this.permissionsForm = this.fb.group({
       name: [null, Validators.required],
     });
@@ -46,16 +47,19 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
 
   getPermissionTypes(): void {
     const params = 'Regularization';
+    this.dataLoad = true;
     this.http
       .getDatabytype(`PermissionTypes`, params)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.permissionsType = data as IPermissionType[];
+          this.permissionsType = (data as IPermissionType[])?.sort((a, b) => a.id - b.id);
+          this.dataLoad = false;
         },
-        error(err) {
+        error:(err) => {
           console.log('errors', err);
+          this.dataLoad = false;
         },
       });
   }
@@ -79,7 +83,7 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  updatePermission(form: FormGroup) {
+  updateRegularization(form: FormGroup) {
     if (form.invalid) {
       return;
     }
@@ -98,12 +102,13 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     console.log(payload);
     this.http
       .putData(`PermissionTypes/${this.selectedPermission.id}`, payload)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
-            'Permission Updated Successfully'
+            'Attendance Regalarization Updated Successfully'
           );
         },
         error: (err) => {
@@ -116,18 +121,18 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
       });
   }
 
-  addPermission(permissionForm: FormGroup) {
+  addRegularization(permissionForm: FormGroup) {
     if (permissionForm.valid) {
       const payload: Ipermissions = {
         name: permissionForm.value.name,
         isDeleted: true,
         type: 'Regularization',
       };
-      this.http.postdata(`PermissionTypes`, payload).subscribe({
+      this.http.postdata(`PermissionTypes`, payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
-            'Permission Added Successfully'
+            'Attendance Regalarization Added Successfully'
           );
         },
         error: (err: any) => {
@@ -141,11 +146,11 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
   }
 
   deletePermission() {
-    this.http.deleteData(`PermissionTypes/${this.selectedPermission.id}`).subscribe({
+    this.http.deleteData(`PermissionTypes/${this.selectedPermission.id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal(
-          'Permission Deleted Successfully'
+          'Attendance Regalarization Deleted Successfully'
         );
       },
       error: (err) => {

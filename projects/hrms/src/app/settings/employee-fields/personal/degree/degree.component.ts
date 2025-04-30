@@ -41,18 +41,14 @@ this.degreeFrom = this.fb.group({
      degree: [null,  [
       
         Validators.required,
-        Validators.maxLength(50),
-        Validators.pattern(/^(?![ .])[A-Za-z0-9. ]*(?<=\S)$/)
-
+        this.formValidations.maxCharactersValidator(51)
       ]]
       });
       this.updateForm = this.fb.group({
         degreeName: ["",  
           [
             Validators.required,
-            Validators.maxLength(50),
-            Validators.pattern(/^(?![ .])[A-Za-z0-9. ]*(?<=\S)$/)
-
+            this.formValidations.maxCharactersValidator(51)
           ]]
       });
       this.getdegree();
@@ -61,35 +57,13 @@ this.degreeFrom = this.fb.group({
   getdegree() {
     this.subscription = this.http.getData("Degree").subscribe({
        next:(data: any) => {
-         console.log(data);
          this.degreedetails = data as any[];
-         console.log(this.degreedetails)
        },
        error: (reason: any) => {
          console.log(reason);
        }
      })
-   }
-   
-   
-  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
-    const input = event.target as HTMLInputElement;
-    const char = event.key;
-
-    // Regex to allow letters (A-Z, a-z), spaces, periods (dots), and numbers (0-9)
-    const pattern = /^[A-Za-z0-9. ]*$/;
-
-    // Block if the key is not a letter, space, period, or number
-    if (!pattern.test(char)) {
-      event.preventDefault();
-      return;
-    }
-
-    // Block if length is already 50 characters
-    if (input.value.length >= 50) {
-      event.preventDefault();
-    }
-  }
+   }  
   
   onSubmit() {
     const request = {
@@ -116,6 +90,7 @@ this.degreeFrom = this.fb.group({
   }
 
   openupdate(degree: any) {
+    this.resetForm();
     this.modalService.open(this.updatepopup, {
       centered: true,
       backdrop: 'static',
@@ -124,6 +99,7 @@ this.degreeFrom = this.fb.group({
     this.updateForm?.patchValue({ degreeName: degree.degreeName });
   }
   opendelete(degree: any) {
+    this.resetForm();
     this.updateDegreeDetails = degree;
     this.modalService.open(this.deletepopup, {
       centered: true,
@@ -177,9 +153,14 @@ this.degreeFrom = this.fb.group({
           );
         },
         error: (err: any) => {
-          console.error('Delete degree failed:', err);
-          this.conformationPopup.openErrorModal('Failed to delete degree data');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         },
       });
+  }
+
+  resetForm() {
+    this.degreeFrom.reset();
+    this.updateForm.reset();
   }
 }

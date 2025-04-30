@@ -38,10 +38,10 @@ export class RelationshipComponent {
   }
   ngOnInit(): void {
     this.RelationForm = this.fb.group({
-      Relationship: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      Relationship: ['', [Validators.required, this.formValidations.maxCharactersValidator(51)]]
     });
     this.updateForm = this.fb.group({
-      Relationship: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      Relationship: ['', [Validators.required, this.formValidations.maxCharactersValidator(51)]]
     });
 
     this.getRelationship();
@@ -66,8 +66,9 @@ export class RelationshipComponent {
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+        // this.resetForm();
       }
     });
   }
@@ -88,7 +89,8 @@ export class RelationshipComponent {
           this.conformationPopup.openSuccessModal('Relationship updated successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -98,12 +100,14 @@ export class RelationshipComponent {
     this.updateForm.reset();
   }
   openupdate(relationlist: any) {
+    this.resetForm();
     this.selectedId = relationlist.sno;
     this.updateForm.patchValue({ Relationship: relationlist.relationship1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE
   opendelete(relationlist: any) {
+    this.resetForm();
     this.selectedDeleterelation = relationlist;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
@@ -123,7 +127,8 @@ export class RelationshipComponent {
         this.conformationPopup.openSuccessModal('Relationship deleted successfully');
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the location');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

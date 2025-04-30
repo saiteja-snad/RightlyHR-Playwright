@@ -1,25 +1,26 @@
 <div class="custom-main-component-container">
-    <form [formGroup]="saluationForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Salutation.create')">
+    <form [formGroup]="saluationForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Salutation.create') && rbac.allowedToAccess('Salutation.view')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter salutation"
                     formControlName="saluation" aria-label="saluation" aria-describedby="saluation"
-                    (keypress)="allowOnlyLettersAndSpace($event)">
+                    (keydown)="formValidations.restrictInputAllowDot($event); formValidations.blockNonAlphabets($event)"
+                    maxlength="51">
                 <span class="input-group-text" id="saluation">
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="saluationForm.invalid">{{'Add'|translate}}</button></span>
             </div>
-            <div *ngIf="saluationForm.controls['saluation'].touched">
-                <div *ngIf="saluationForm.controls['saluation'].touched || saluationForm.controls['saluation'].dirty">
-                    <span class="error-msg" *ngIf="saluationForm.controls['saluation'].errors?.['required']">
-                        Saluation is required</span>
-                    <span class="error-msg" *ngIf="saluationForm.controls['saluation'].errors?.['maxlength']">
-                        Maximum 50 characters are allowed.</span>
-                    <span class="error-msg" *ngIf="saluationForm.controls['saluation'].errors?.['pattern']">
-                        Only letters, spaces, and periods are allowed. Field cannot start with a space or period.
-                    </span>
+            <div *ngIf="saluationForm.get('saluation')?.touched && saluationForm.get('saluation')?.invalid" class="error-msg">
+                <div *ngIf="saluationForm.get('saluation')?.errors?.['required']">
+                    {{ 'Salutation is required' | translate }}
                 </div>
+            </div>
+            <div *ngIf="saluationForm.get('saluation')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space or period' | translate }}
+            </div>
+            <div *ngIf="saluationForm.get('saluation')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 50 characters' | translate }}
             </div>
         </div>
     </form>
@@ -32,7 +33,7 @@
                     <th class="col-span-2"></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody *ngIf="rbac.allowedToAccess('Salutation.view')">
                 @for (sal of saluationdetails; track $index) {
                 <tr>
                     <td class="w-75">{{ sal.titlename}}</td>
@@ -78,21 +79,27 @@
                         class="form-label custom-label mb-2">{{'Salutation'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="titlename"
-                        placeholder="Please enter salutation" (keypress)="allowOnlyLettersAndSpace($event)"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
-                    <div *ngIf="updateForm.get('titlename')?.touched && updateForm.get('titlename')?.invalid" class="error-msg">
-                        <div *ngIf="updateForm.controls['titlename'].touched || updateForm.controls['titlename'].dirty">
-                            <span *ngIf="updateForm.controls['titlename'].errors?.['required']">Salutation is required</span>
-                            <span *ngIf="updateForm.controls['titlename'].errors?.['maxlength']">Maximum 50 characters are allowed</span>
-                            <span *ngIf="updateForm.controls['titlename'].errors?.['pattern']">
-                                Only letters, spaces, and periods are allowed. Field cannot start with a space or period
-                            </span>
+                        placeholder="Please enter salutation"
+                        (keydown)="formValidations.restrictInputAllowDot($event); formValidations.blockNonAlphabets($event)"
+                        maxlength="51">
+                    <div *ngIf="updateForm.get('titlename')?.touched && updateForm.get('titlename')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="updateForm.get('titlename')?.errors?.['required']">
+                            {{ 'Salutation is required' | translate }}
                         </div>
+                    </div>
+                    <div *ngIf="updateForm.get('titlename')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space or period' | translate }}
+                    </div>
+                    <div *ngIf="updateForm.get('titlename')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 50 characters' | translate }}
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -104,11 +111,12 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.close()">{{'No'|translate}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="deletesal(updatesalutation)">{{'Yes'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="deletesal(updatesalutation)">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

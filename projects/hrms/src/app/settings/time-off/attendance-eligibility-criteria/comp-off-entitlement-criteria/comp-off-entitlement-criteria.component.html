@@ -1,4 +1,5 @@
 <div class="custom-main-component-container">
+    @if(!dataLoad){
     <div class="custom-table-content">
         <ng-container *ngIf="eligibilityCriterias!.length > 0; else noDataTemplate">
             <table class="w-100">
@@ -6,7 +7,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Value</th>
-                        <th class="text-center">Actions</th>
+                        <th class="text-center">Action<span class="text-lowercase">(s)</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -55,6 +56,9 @@
             </table>
         </ng-container>
     </div>
+} @else { <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
+</div>}
 </div>
 
 <ng-template #noDataTemplate>

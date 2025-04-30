@@ -46,8 +46,7 @@ export class PreOnBoardingDocumentsComponent {
         '',
         [
           Validators.required,
-          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
-          Validators.maxLength(100),
+          this.formValidations.maxCharactersValidator(101)
         ],
       ],
       isApplicableFresher: [false],
@@ -62,8 +61,7 @@ export class PreOnBoardingDocumentsComponent {
         '',
         [
           Validators.required,
-          Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'),
-          Validators.maxLength(100),
+          this.formValidations.maxCharactersValidator(101)
         ],
       ],
     });

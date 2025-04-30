@@ -32,7 +32,7 @@
                         @else {
                         @if(data.documentUrl.endsWith('jpg') || data.documentUrl.endsWith('jpeg') ||
                         data.documentUrl.endsWith('png')){
-                        <a type="button" class="view-btn" (click)="onViewClick(data.documentUrl,viewmodel);onClickEditDocument(data)">
+                        <a type="button" class="view-btn" (click)="onViewClick(data.documentUrl);onClickEditDocument(data)">
                             <i class="bi bi-paperclip me-1"></i>View
                         </a>
                         }
@@ -87,12 +87,14 @@
             </div>
         </div>
 
-        <div class="text-center p-4">
+        <div class="custom-main-popup-content text-center">
             <p *ngIf="!OnbImageUrl;else imageViews">
                 <ngx-doc-viewer [url]="OnbViewURL" viewer="google"></ngx-doc-viewer>
             </p>
             <ng-template #imageViews>
-                <img [src]="OnbImageUrl" alt="My Image" class="modal-image">
+                <div>
+                    <img [src]="OnbImageUrl" alt="My Image" class="modal-image">
+                </div>
             </ng-template>
         </div>
     </div>

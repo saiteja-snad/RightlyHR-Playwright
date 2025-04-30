@@ -80,21 +80,24 @@
             {{ 'Department Name is required' | translate }}
           </div>
         </div>
-
+      
         <!-- Team Name field -->
         <div class="mb-3">
           <label for="teamName1" class="form-label custom-label mb-2">
             {{ 'Team Name' | translate }} <span class="error-msg">*</span>
           </label>
-          <input type="text" class="form-control custom-input" formControlName="teamName"
-            placeholder="Please enter team name" maxlength="100"
-            (input)="allowOnlyHyphenAndAlphanumeric($event, AddForm.get('teamName'))"
-            (input)="formValidations.validateInput(AddForm.get('teamName'))" />
+          <input type="text" class="form-control custom-input" formControlName="teamName" placeholder="Please enter team name"
+            maxlength="101" (keydown)="formValidations.restrictInputAllowSpecialChars($event)"/>
           <div *ngIf="AddForm.get('teamName')?.touched && AddForm.get('teamName')?.invalid" class="error-msg">
-            <div *ngIf="AddForm.get('teamName')?.errors?.['required']">{{ 'Team Name is required' | translate }}</div>
+            <div *ngIf="AddForm.get('teamName')?.errors?.['required']">
+              {{ 'Team Name is required' | translate }}
+            </div>
+          </div>
+          <div *ngIf="AddForm.get('teamName')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Please limit your input to 100 characters' | translate }}
           </div>
         </div>
-
+      
         <!-- Team Manager dropdown -->
         <div class="mb-3">
           <label for="teammangar" class="form-label custom-label mb-2">
@@ -120,7 +123,7 @@
             {{ 'Team Manager is required' | translate }}
           </div>
         </div>
-
+      
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();AddForm.reset()">
@@ -174,14 +177,16 @@
             {{ 'Team Name' | translate }} <span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="UpdatedTeamName"
-            placeholder="Please enter team name" maxlength="100"
-            (input)="allowOnlyHyphenAndAlphanumeric($event, updateForm.get('UpdatedTeamName'))"
-            (input)="formValidations.validateInput(updateForm.get('UpdatedTeamName'))" />
-          <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid"
-            class="error-msg">
-            <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['required']">{{ 'Team Name is required' | translate }}
+            placeholder="Please enter team name" maxlength="101" (keydown)="formValidations.restrictInputAllowSpecialChars($event)"
+             />
+             <div *ngIf="updateForm.get('UpdatedTeamName')?.touched && updateForm.get('UpdatedTeamName')?.invalid" class="error-msg">
+              <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['required']">
+                {{ 'Team Name is required' | translate }}
+              </div>
             </div>
-          </div>
+            <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['maxCharacters']" class="error-msg">
+              {{ 'Please limit your input to 100 characters' | translate }}
+            </div>
         </div>
 
         <!-- Team Manager dropdown -->
@@ -230,7 +235,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
     </div>
     <!-- <div class="custom-modal-footer"> -->
     <div class="custom-modal-footer">

@@ -1,48 +1,50 @@
 <div class="custom-main-component-container">
+    @if(!dataLoad){
     <div class="custom-table-content w-50">
-        <ng-container *ngIf="permissionsvalue!.length > 0; else noDataTemplate">
+    
+        <ng-container *ngIf="regularizationValues!.length > 0; else noDataTemplate">
             <table class="w-100">
                 <thead>
                     <tr>
                         <th>Name</th>
                         <th>Value</th>
-                        <th >Action</th>
+                        <th>Action<span class="text-lowercase">(s)</span></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor=" let permi of permissionsvalue ;let i = index">
+                    <tr *ngFor=" let permi of regularizationValues ;let i = index">
                         <td class="table-text">{{ permi.attribute }}</td>
                         <!-- <td class="table-text">{{permi.value}}</td> -->
                         <td class="table-text">
                             <ng-container *ngIf="editingIndex !== i">
                                 {{ permi.value }}
                             </ng-container>
-
+    
                             <ng-container *ngIf="editingIndex === i">
-                                <input class="form-control custom-input" type="text"
-                                    [(ngModel)]="temporaryValue"
+                                <input class="form-control custom-input" type="text" [(ngModel)]="temporaryValue"
                                     (keypress)="validateDecimal($event, permi.attribute)"
-                                    (keydown.tab)="editingIndex === i"
-                                     />
+                                    (keydown.tab)="editingIndex === i" />
                             </ng-container>
                         </td>
-
+    
                         <td>
-                            
+    
                             <div class="dropdown" *ngIf="editingIndex !== i; else editingMode">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item"  (click)="enableEditForPermissionRegulization(i, permi.id, permi.value, permi.entity)"><i class="bi bi-pencil me-2"></i>Update</a>
+                                        <button class="dropdown-item"
+                                            (click)="enableEditForPermissionRegulization(i, permi.id, permi.value, permi.entity)"  ><i
+                                                class="bi bi-pencil me-2"></i>Update</button>
                                     </li>
                                 </ul>
                             </div>
                             <ng-template #editingMode>
                                 <div class="d-flex gap-2">
-                                    <button class="custom-btn btn-primary" type="button" 
-                                    (click)="submitPermissionEligibilityValue(i, temporaryValue)">
+                                    <button class="custom-btn btn-primary" type="button"
+                                        (click)="submitPermissionEligibilityValue(i, temporaryValue)"  [disabled]="!temporaryValue || temporaryValue.trim() === ''">
                                         Update
                                     </button>
                                     <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">
@@ -56,7 +58,11 @@
                 </tbody>
             </table>
         </ng-container>
+    
     </div>
+    }@else { <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+    </div>}
 </div>
 
 <ng-template #noDataTemplate>

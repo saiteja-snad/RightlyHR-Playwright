@@ -186,7 +186,7 @@
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Designation <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Designation<span class="error-msg">*</span></label>
             <input placeholder="Designation" formControlName="jobRoleDetails" class="form-control custom-input">
             <div *ngIf="employeeForm.get('jobRoleDetails')?.invalid && employeeForm.get('jobRoleDetails')?.touched">
               <div class="error-msg">Designation is required</div>
@@ -194,7 +194,7 @@
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">ESIC <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">ESIC<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="esic" optionValue="value" optionLabel="name" placeholder="Please select ESIC"
                 formControlName="esic" class="form-select custom-select" (ngModelChange)="ctcCalculation()">
@@ -206,7 +206,7 @@
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">PF <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">PF<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="pfdata" optionValue="value" optionLabel="name" placeholder="Please select PF"
                 formControlName="pf" class="form-select custom-select" (ngModelChange)="ctcCalculation()"></p-select>
@@ -217,7 +217,7 @@
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Salary (Cost to Company) <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Salary (Cost to Company)<span class="error-msg">*</span></label>
             <input type="text" class="form-control custom-input" formControlName="amount" placeholder="Please enter salary"
               (ngModelChange)="onclickCTC($event)" />
             <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched" class="error-msg">
@@ -225,7 +225,7 @@
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Variable Pay <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Variable Pay<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="variabledata" optionLabel="name" optionValue="value"
                 placeholder="Please select variable pay" formControlName="isVariablePay"
@@ -238,7 +238,7 @@
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Variable Amount <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Variable Amount<span class="error-msg">*</span></label>
             <input type="text" class="form-control custom-input" formControlName="variablePayAmount"
               (ngModelChange)="onVariablePayChangeAmount($event)" placeholder="Please enter variable amount" />
             <div *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
@@ -273,7 +273,7 @@
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Offer Issued Date <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Offer Issued Date<span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
               placeholder="Please enter offer issued date" (click)="pathValuesFuction()" onkeydown="return false;" />
             <div *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
@@ -285,7 +285,7 @@
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Expected Start Date <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Expected Start Date<span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="dateOfJoining" (click)="pathValuesFuction()"
               placeholder="Please enter expected start date" onkeydown="return false;" />
             <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
@@ -302,7 +302,7 @@
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Offer Expiry Date <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Offer Expiry Date<span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
               (click)="pathValuesFuction()" onkeydown="return false;" placeholder="Please enter offer expiry date" />
             <div class="error-msg">
@@ -316,7 +316,7 @@
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Document Type<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="documentType" optionValue="value" optionLabel="name" (onChange)="pathValuesFuction()"
                 placeholder="Please select document type" formControlName="Copys" class="form-select custom-select">
@@ -331,16 +331,14 @@
             <label class="form-label custom-label mb-2">Note</label>
             <textarea class="form-control custom-input" formControlName="note" (ngModelChange)="pathValuesFuction()"
               placeholder="Please enter note" maxlength="250"></textarea>
-              <div class="mt-2 textarea-count-text">
-                <span class="color">{{ employeeForm.get('note')?.value?.length || 0 }} / 250</span>
-            </div>
+            <div class="textarea-count-text">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
             <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched" class="error-msg">
               Note is required
             </div>
           </div>
       
           <div class="mb-3">
-            <label class="form-label custom-label mb-2">Signature Authority Name <span class="error-msg">*</span></label>
+            <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="authorityDetails" optionValue="employeeId" (click)="onclickDesignation()"
                 optionLabel="fullName" placeholder="Please select signature authority" formControlName="authorityid"
@@ -365,7 +363,7 @@
     
       <!--Letter content-->
       <div class="card letter-data-content p-4">
-        <div class="d-flex justify-content-center">
+        <div class="letter-sub-data-content">
           <div>
             <!--page-1-->
             <div class="letter-page-content" id="pdfContent1">
@@ -392,7 +390,9 @@
                         <li *ngIf="!addresFlag;else address" class="mt-3">Employee Location:</li>
                         <ng-template #address>
                           <li class="mt-3">{{prospectiveEmpData.addressLine1}},</li>
-                          <li>{{prospectiveEmpData.addressLine2}},</li>
+                          @if (prospectiveEmpData.addressLine2) {
+                            <li>{{prospectiveEmpData.addressLine2}},</li>
+                          }
                           <li>{{prospectiveEmpData.city}}, {{prospectiveEmpData.state}},</li>
                           <li>{{prospectiveEmpData.country}} - {{prospectiveEmpData.pinCode}}.</li>
                         </ng-template>
@@ -867,19 +867,19 @@
                   </p>
                   <p class="mb-1">Additional Details Related to Salary Structure: </p>
                   <ol class="list-style-none">
-                    <li class="mb-2"><span>a)</span> TDS will be deducted from the Gross Salary after statutory deductions.</li>
-                    <li class="mb-2"><span>b)</span> Employees are responsible for their Tax Planning.</li>
-                    <li class="mb-2"><span>c)</span> Employees may avail tax benefit by submitting bills against Leave Travel Allowance.</li>
-                    <li class="mb-2"><span>d)</span> All eligible employees as per the respective policies of the Company will be covered under 
+                    <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory deductions.</li>
+                    <li class="mb-1"><span>b)</span> Employees are responsible for their Tax Planning.</li>
+                    <li class="mb-1"><span>c)</span> Employees may avail tax benefit by submitting bills against Leave Travel Allowance.</li>
+                    <li class="mb-1"><span>d)</span> All eligible employees as per the respective policies of the Company will be covered under 
                       the Group Medical Coverage Policy and Group Covid policy. </li>
-                    <li class="mb-2"><span>e)</span> All the above benefits are as per the Company’s policies, which are subjective to change from time
+                    <li class="mb-1"><span>e)</span> All the above benefits are as per the Company’s policies, which are subjective to change from time
                       to time. Further salary, allowances, any alteration in salary structure and other payments/benefits
                       will be governed by The Company’s rules as well as statutory provisions in force from time to time
                       and subject to deduction of appropriate taxes as applicable under government norms. </li>
-                    <li class="mb-2"><span>f)</span> While the other terms and conditions of your appointment
+                    <li class="mb-1"><span>f)</span> While the other terms and conditions of your appointment
                       remain unchanged, please do take note that as per the current Company’s Separation Policy, if you resign from the services of the company,
                       you will be liable to serve Ninety (90) days i.e. Three (3) months of Notice Period. </li>
-                    <li class="mb-2"><span>g)</span> Medical insurance amount will be calculated based on the
+                    <li class="mb-1"><span>g)</span> Medical insurance amount will be calculated based on the
                       number of dependents; the respective amount will be deducted from your monthly salary. </li>
                   </ol>
                   <p class="letter-sub-header"><span>Note</span>: The above compensation package is strictly confidential
@@ -899,11 +899,10 @@
 
 <!-- offerletter generation popup -->
 <ng-template #approveModal let-modal>
-  <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
-    <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
-    <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{this.confirmation_Msg??''}} </h4>
-    <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
+  <div class="result-popup-content" ngbAutofocus>
+    <img src="icons\conformation.png" alt="failure icon" class="confirmation-icon">
+    <p class="confirmation-text">{{this.confirmation_Msg ?? ''}} </p>
+    <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
       <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
         (click)="confimationfuction('yes')">{{'Yes'|translate}}</button>
@@ -913,11 +912,10 @@
 
 <!-- offerletter generation popup 2 -->
 <ng-template #approveModal1 let-modal>
-  <div class="modal-content d-flex flex-column justify-content-cenetr align-items-center">
-    <!-- <i class="bi bi-check-circle-fill mt-4 mb-3"></i> -->
-    <i class="bi bi-exclamation-circle-fill mt-4 mb-3"></i>
-    <h4 class="text-center ps-3 pe-3 inactive-poptext">{{this.confirmation_Msg ?? ''}}</h4>
-    <div class="d-flex mb-3 mt-3 pb-2 mt-1 justify-content-around w-100">
+  <div class="result-popup-content" ngbAutofocus>
+    <img src="icons\conformation.png" alt="failure icon" class="confirmation-icon">
+    <p class="confirmation-text">{{this.confirmation_Msg ?? ''}} </p>
+    <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();this.loading=false">{{'No'|translate}}</button>
       <button type="button" class="custom-btn btn-primary" (click)="confimationfuction1('yes')">{{'Yes'|translate}}</button>
     </div>

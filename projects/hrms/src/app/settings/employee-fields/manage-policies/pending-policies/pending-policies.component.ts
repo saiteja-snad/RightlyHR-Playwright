@@ -1,25 +1,26 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpService } from '../../../../services/http.service';
 import { CommonModule } from '@angular/common';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder} from '@angular/forms';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { RbacService } from '../../../../services/rbac.service';
+import { IPolicy } from './policies.model';
 
 
 @Component({
   selector: 'app-pending-policies',
-  imports: [CommonModule, NoDataFoundComponent, TranslateModule],
+  imports: [CommonModule, NoDataFoundComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './pending-policies.component.html',
   styleUrl: './pending-policies.component.scss'
 })
-export class PendingPoliciesComponent {
+export class PendingPoliciesComponent implements OnInit, OnDestroy {
 
   subscription!: Subscription
-  allPolicies = [] as any;
+  allPolicies: IPolicy[] = [];
 
   constructor(public router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, public rbac: RbacService) { }
   
@@ -42,7 +43,7 @@ export class PendingPoliciesComponent {
         console.log(data);
         this.allPolicies = data.filter(
           (status: { status: string; }) => status.status === 'Pending for submission'
-        ).reverse();
+        );
         console.log(this.allPolicies);
       }, error: (err: any) => {
         console.error(err);
@@ -50,4 +51,14 @@ export class PendingPoliciesComponent {
     })
 
   }
+
+  getPolicyNames(policy: any) {
+    return policy.shiftName || '';
+ }
+
+ ngOnDestroy(): void {
+  if (this.subscription) {
+    this.subscription.unsubscribe();
+  }
+ }
 }

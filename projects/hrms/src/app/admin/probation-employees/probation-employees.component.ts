@@ -9,9 +9,10 @@ import { IProbationEmployees } from './probation-emp-module';
 import { FormsModule } from '@angular/forms';
 import { ProbationpipePipe } from "../../Pipes/probationpipe.pipe";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-probation-employees',
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ProbationpipePipe, DataLoaderContentComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ProbationpipePipe, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './probation-employees.component.html',
   styleUrl: './probation-employees.component.scss'
 })

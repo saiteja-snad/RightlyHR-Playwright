@@ -17,9 +17,10 @@ import {
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { FormValidationsService } from '../../../../services/form-validations.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-permissions',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, DataLoaderContentComponent],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
 })
@@ -29,7 +30,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   permissionsForm!: FormGroup;
   permissionUpdateForm!: FormGroup;
   selectedPermission = {} as IPermissionType;
-
+  dataLoad = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -53,16 +54,19 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 
   getPermissionTypes(): void {
     const params = 'Permissions';
+    this.dataLoad = true;
     this.http
       .getDatabytype(`PermissionTypes`, params)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           console.log(data);
-          this.permissionsType = data as IPermissionType[];
+          this.permissionsType = (data as IPermissionType[])?.sort((a, b) => a.id - b.id);
+          this.dataLoad = false;
         },
-        error(err) {
+        error:(err) => {
           console.log('errors', err);
+          this.dataLoad = false;
         },
       });
   }
@@ -105,6 +109,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     console.log(payload);
     this.http
       .putData(`PermissionTypes/${this.selectedPermission.id}`, payload)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
@@ -130,7 +135,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
         isDeleted: true,
         type: 'Permissions',
       };
-      this.http.postdata(`PermissionTypes`, payload).subscribe({
+      this.http.postdata(`PermissionTypes`, payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
@@ -148,7 +153,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   deletePermission() {
-    this.http.deleteData(`PermissionTypes/${this.selectedPermission.id}`).subscribe({
+    this.http.deleteData(`PermissionTypes/${this.selectedPermission.id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal(

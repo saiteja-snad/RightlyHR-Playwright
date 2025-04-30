@@ -7,13 +7,17 @@
                 <input type="text" class="form-control custom-input" placeholder="Please enter probation status"
                     formControlName="probitiontype" aria-label="probitiontype" aria-describedby="probitiontype"
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
-                    maxlength="50">
+                    maxlength="101">
                 <span class="input-group-text" id="probitiontype">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="probitionForm.invalid">{{'Add'|translate}}</button></span>
             </div>
-            <div *ngIf="probitionForm.get('probitiontype')?.touched && probitionForm.get('probitiontype')?.invalid"
-                class="error-msg">
-                <div *ngIf="probitionForm.get('probitiontype')?.errors?.['required']">{{'Probation Status is required'|translate}}</div>
+            <div *ngIf="probitionForm.get('probitiontype')?.touched && probitionForm.get('probitiontype')?.invalid" class="error-msg">
+                <div *ngIf="probitionForm.get('probitiontype')?.errors?.['required']">
+                    {{ 'Probation Status is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="probitionForm.get('probitiontype')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 100 characters' | translate }}
             </div>
         </div>
     </form>
@@ -73,10 +77,15 @@
                     <input type="text" class="form-control custom-input" formControlName="probitiontype"
                         placeholder="Please enter probation status"
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
-                        maxlength="50">
-                    <div *ngIf="updateForm.get('probitiontype')?.touched && updateForm.get('probitiontype')?.invalid" class="error-msg">
-                        <div *ngIf="updateForm.get('probitiontype')?.errors?.['required']">{{'Probation Status is required'|translate}}</div>
-                    </div>
+                        maxlength="101">
+                        <div *ngIf="updateForm.get('probitiontype')?.touched && updateForm.get('probitiontype')?.invalid" class="error-msg">
+                            <div *ngIf="updateForm.get('probitiontype')?.errors?.['required']">
+                                {{ 'Probation Status is required' | translate }}
+                            </div>
+                        </div>
+                        <div *ngIf="updateForm.get('probitiontype')?.errors?.['maxCharacters']" class="error-msg">
+                            {{ 'Please limit your input to 100 characters' | translate }}
+                        </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
@@ -93,7 +102,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

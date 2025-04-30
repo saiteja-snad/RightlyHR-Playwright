@@ -177,7 +177,6 @@
               </td>
               <td>
                 <div class="text-center" *ngIf="comment.comments; else popupcomments">
-                  <!-- <div class="text-truncate" style="width:150px;">{{comment.comments}}</div> -->
                   <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
                     ngbPopover="{{ comment?.comments }}" container="body"></i>
                 </div>

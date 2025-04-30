@@ -7,9 +7,10 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-wfh-entitlemen-criteria',
-  imports: [CommonModule, NoDataFoundComponent,FormsModule],
+  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent],
   templateUrl: './wfh-entitlemen-criteria.component.html',
   styleUrl: './wfh-entitlemen-criteria.component.scss'
 })
@@ -21,7 +22,7 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
   valueId!: number
   currentEntity!:string;
   validationError!:any;
-
+  dataLoad = false;
   constructor(private http: HttpService,private sharedModalService: OpenModalService,public rbac: RbacService) {}
 
   ngOnInit(): void {
@@ -29,21 +30,21 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
   }
 
   WorkFromHomeEligibilityCriteria(eligibilityType: string) {
+    this.dataLoad = true;
     this.http.getData(eligibilityType).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data) => {
-        this.eligibilityCriterias = data as unknown as IEligibilityCriteria[];
+        this.eligibilityCriterias = (data as unknown as IEligibilityCriteria[])?.sort((a, b) => a.id - b.id);
+        this.dataLoad = false;
       },
-      error: (reason) => console.log(reason),
+      error: (reason) =>{ 
+        console.log(reason)
+        this.dataLoad = false;
+      },
       complete: () => {},
     });
   }
 
   validateDecimal(event: KeyboardEvent, criteriaName:string) {
-    // if(criteriaName === 'expiryDays' || criteriaName === 'minAppliedDays' || criteriaName === 'pastDatesAllowed' || criteriaName === 'maxRegularizePerDay' || criteriaName === 'maxRegularizePerMonth'){
-    //   if (!/^\d$/.test(criteriaName) ) {
-    //     event.preventDefault(); // Prevent any non-digit characters
-    //   }
-    // }
     const inputChar = String.fromCharCode(event.charCode);
     const inputElement = event.target as HTMLInputElement;
     const currentValue = inputElement.value;
@@ -110,10 +111,8 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
     const validationError = this.validateWFHValue(this.valueId, value);
     if (validationError) {
       this.sharedModalService.openErrorModal(validationError)
-      
       return; 
     }
-
     const data = {
       id: this.valueId,
       value: value
@@ -122,20 +121,10 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.WorkFromHomeEligibilityCriteria('WorkFromHomeEligibilityCriteria');
         this.sharedModalService.openSuccessModal('Data Updated Successfully');
-        // this.toaster.success({
-        //   detail: 'SUCCESS',
-        //   summary: 'Data Updated Successfully',
-        //   duration: 2000,
-        // });
-
       },
       error: (err :any) => {
         this.sharedModalService.openErrorModal("Some Thing Went Wrong")
-        // this.toaster.error({
-        //   detail: 'ERROR',
-        //   summary: 'Some Thing Went Wrong',
-        //   duration: 3000,
-        // });
+     
       }
     })
   }

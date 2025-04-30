@@ -7,22 +7,23 @@ import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-attendance-regularization-eligibility-criteria',
-  imports: [CommonModule, NoDataFoundComponent,FormsModule],
+  imports: [CommonModule, NoDataFoundComponent, FormsModule, DataLoaderContentComponent],
   templateUrl: './attendance-regularization-eligibility-criteria.component.html',
   styleUrl: './attendance-regularization-eligibility-criteria.component.scss'
 })
 export class AttendanceRegularizationEligibilityCriteriaComponent implements OnInit, OnDestroy {
-  permissionsvalue=[] as IPermissionsvalue[];
+  regularizationValues=[] as IPermissionsvalue[];
   editingIndex: number | null = null;
   temporaryValue: any;
   valueId!: number
   currentEntity!:string;
   validationError!:any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
+  dataLoad = false;
   constructor(private http: HttpService,private sharedModalService: OpenModalService,public rbac: RbacService) {}
 
   ngOnInit(): void {
@@ -34,11 +35,14 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
   getdatabyentriy() {
     this.disableEdit();
     const params = 'AttendanceRegularization'
-    const param = ["maxRegularizePerDay", 'maxRegularizePerMonth']
+    const param = ["maxRegularizePerDay", 'maxRegularizePerMonth'];
+    this.dataLoad =  true;
     this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        this.permissionsvalue = data as IPermissionsvalue[];
-      }, error(err) {
+        this.regularizationValues = (data as IPermissionsvalue[])?.sort((a, b) => a.id - b.id);
+        this.dataLoad =  false;
+      }, error:(err) => {
+        this.dataLoad =  false;
         console.log("errors", err)
       },
     });
@@ -85,11 +89,6 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
     
     if (this.validationError) {
       this.sharedModalService.openErrorModal(this.validationError);
-      // this.toaster.error({
-      //   detail: 'ERROR',
-      //   summary: this.validationError,
-      //   duration: 5000,
-      // });
       return; 
     }
     const data = {
@@ -100,20 +99,13 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
       next: (data: any) => {
   
         this.getdatabyentriy();
+        this.sharedModalService.openSuccessModal("Eligibility criteria updated successfully");
        
-        // this.toaster.success({
-        //   detail: 'SUCCESS',
-        //   summary: 'Data Updated Successfully',
-        //   duration: 2000,
-        // });
       },
       error: (err) => {
+        console.log(err);
+        this.sharedModalService.openErrorModal(err.error);
         
-        // this.toaster.error({
-        //   detail: 'ERROR',
-        //   summary: 'Some Thing Went Wrong',
-        //   duration: 3000,
-        // });
       }
     })
   }
@@ -123,7 +115,7 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
       return 'Value cannot be null or empty.';
     }
 
-    const currentCriteria = this.permissionsvalue;
+    const currentCriteria = this.regularizationValues;
     const criteria = currentCriteria.find((c) => c.id === id);
 
     if (!criteria) {
@@ -134,6 +126,14 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
       case 'maxRegularizePerDay':
         if (isNaN(value) || value <= 0 || value > 99) {
           return 'Max Regularize Per Day should be greater than 0 and less than or equals to 99.';
+        }
+
+        const monthCriteria = currentCriteria.find(c => c.attribute === 'maxRegularizePerMonth');
+        if (monthCriteria && !isNaN(parseFloat(monthCriteria.value))) {
+          const monthValue = parseFloat(monthCriteria.value);
+          if (value > monthValue) {
+            return 'Max Regularize Per Day should be lower than Max Regularize Per Month.';
+          }
         }
         break;
 
@@ -163,7 +163,7 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
     if (value === null || value === undefined || value === '') {
       return 'Value cannot be null or empty.';
     }
-    const currentCriteria = this.permissionsvalue;
+    const currentCriteria = this.regularizationValues;
     const criteria = currentCriteria.find((c) => c.id === id);
 
     if (!criteria) {

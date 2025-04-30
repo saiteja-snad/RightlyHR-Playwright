@@ -32,6 +32,7 @@
             </div>
 
             <div class="custom-table-content">
+                @if(!dataLoad){
                 <table class="w-100">
 
                     <thead>
@@ -40,6 +41,7 @@
                         <th>ACTION</th>
                     </thead>
                     <tbody>
+                        @if(selectedFolder?.length && selectedFolder.length > 0){
                         @for(subFolder of selectedFolder; track $index){
                         <tr>
                             @if(!subFolder.isNotVisible){
@@ -55,8 +57,15 @@
                             }
                         </tr>
                         }
+                    }
+                    @else{
+                        <tr>
+                          <td colspan="3"><app-no-data-found /></td>
+                        </tr>
+                      }
                     </tbody>
                 </table>
+            }
             </div>
         </div>
     </div>
@@ -66,7 +75,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Add Folder'| translate}}</p>
+                <p class="popup-heading mb-0">{{'Add Sub-Folder'| translate}}</p>
             </div>
             <div>
                 <a (click)="onClose()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -77,10 +86,14 @@
             <form name="AddSubDirectory" #AddSubDirectory="ngForm"
                 (ngSubmit)="AddSubDirectory.valid && createSubDirectory(AddSubDirectory)">
                 <div class="mb-3">
+                    <label for="subDirName" class="form-label custom-label mb-2">
+                        {{ "File Name" | translate }}<span class="text-danger">*</span>
+                    </label>
                     <input type="text" class="form-control custom-input" name="subDirName" [(ngModel)]="subDir.subDirName" 
-                    autocomplete="off" placeholder="Enter File Name" id="subDirName"  #subDirName="ngModel" required/>
+                    autocomplete="off" placeholder="Please enter file name" id="subDirName"  #subDirName="ngModel" required maxlength="50" [attr.maxlength]="50"
+                    (keydown)="formValidations.restrictInitialSpace($event)"/>
                     <div *ngIf="subDirName.touched && subDirName.invalid" class="error-msg">
-                        {{'File name is required' | translate}}
+                        {{'File Name is required' | translate}}
                       </div>
                 </div>
                 <div class="custom-modal-footer">

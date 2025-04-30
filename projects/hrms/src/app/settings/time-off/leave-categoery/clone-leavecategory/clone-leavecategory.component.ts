@@ -7,6 +7,7 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -48,7 +49,7 @@ export class CloneLeavecategoryComponent {
  updatecloneLeaveCategoryData = {} as Iorgcategoryleaves;
 
 
-  constructor(private fb: FormBuilder,private http: HttpService,private confirmation: OpenModalService,private router: Router) {
+  constructor(private fb: FormBuilder,private http: HttpService,private confirmation: OpenModalService,private router: Router,private modalService: NgbModal) {
     
 
     this.leavePolicyForm = this.fb.group({
@@ -363,15 +364,21 @@ export class CloneLeavecategoryComponent {
       next: (data: any) => {
         this.confirmation.openSuccessModal('Leave Category added successfully');
         this.router.navigate(['/settings/employee-fields/manage-leave-categories/pending-for-submit']);
-        this.resetForm();
+        this.leavePolicyForm.reset();
       },
       error: (err: any) => {
         this.confirmation.openErrorModal(err.error.message);
       }
     });
   }
-  resetForm() {
+  resetForm(content:any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
     this.leavePolicyForm.reset();
   }
-
+  cancel(){
+    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory']);
+  }
+  closepopup(){
+    this.modalService.dismissAll();
+  }
 }

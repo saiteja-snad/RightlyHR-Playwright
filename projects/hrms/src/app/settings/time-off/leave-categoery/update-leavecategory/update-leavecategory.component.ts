@@ -7,6 +7,7 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { Iorgcategoryleaves, ShiftData } from '../../../../Interfaces/timoff-model';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-update-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule],
@@ -44,7 +45,7 @@ export class UpdateLeavecategoryComponent {
   shiftsArray = [] as any[];
   updateLeaveCategoryData = {} as Iorgcategoryleaves
 
-  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService, private router: Router) {
+  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService, private router: Router,private modalService: NgbModal,) {
     this.leavePolicyForm = this.fb.group({
       // Location/Shift Section
       applicableYear: [undefined, Validators.required],
@@ -328,6 +329,7 @@ export class UpdateLeavecategoryComponent {
   onSubmit() {
     const formData = this.leavePolicyForm.value;
     let payload = {
+      id : this.updateLeaveCategoryData.id,
       applicableYear: this.leavePolicyForm.value.applicableYear ?? this.updateLeaveCategoryData.applicableYear,
       locationID: this.leavePolicyForm.value.locationID.id ?? this.updateLeaveCategoryData.locationID,
       subLocation: this.leavePolicyForm.value.subLocation.id ?? this.updateLeaveCategoryData.subLocation,
@@ -367,7 +369,7 @@ export class UpdateLeavecategoryComponent {
       next: (data: any) => {
         this.confirmation.openSuccessModal('Leave Category updated successfully');
         this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
-        this.resetForm();
+        this.leavePolicyForm.reset();
       },
       error: (err: any) => {
         this.confirmation.openErrorModal(err.error.message);
@@ -419,7 +421,7 @@ export class UpdateLeavecategoryComponent {
       next: (data: any) => {
         this.confirmation.openSuccessModal('Leave Category published successfully');
         this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory']);
-        this.resetForm();
+        this.leavePolicyForm.reset();
       },
       error: (err: any) => {
         this.confirmation.openErrorModal(err.error.message);
@@ -432,7 +434,14 @@ export class UpdateLeavecategoryComponent {
     this.router.navigate(['/settings/timeoff-configurations/cloneleavecategory']);
   }
   
-  resetForm() {
+  resetForm(content:any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
     this.leavePolicyForm.reset();
+  }
+  cancel(){
+    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
+  }
+  closepopup(){
+    this.modalService.dismissAll();
   }
 }

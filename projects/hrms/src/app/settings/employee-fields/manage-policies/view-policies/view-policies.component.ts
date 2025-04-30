@@ -75,7 +75,7 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
         this.policies.push(
           this.fb.group({
             policyName: [{ value: row.policyName, disabled: true }],
-            policyFile: [row.policyAttachment],
+            policyFile: [{value : row.policyAttachment, disabled: true}],
             policyDescription: [
               { value: row.policyDescription, disabled: true },
             ],

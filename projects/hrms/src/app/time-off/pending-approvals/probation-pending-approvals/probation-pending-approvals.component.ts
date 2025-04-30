@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
@@ -15,6 +15,9 @@ import moment from 'moment';
 import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
 import { RbacService } from '../../../services/rbac.service';
 import { AuthService } from '../../../services/auth.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { Select } from 'primeng/select';
+import { OpenModalService } from '../../../services/open-modal.service';
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [
@@ -28,10 +31,13 @@ import { AuthService } from '../../../services/auth.service';
     NoDataFoundComponent,
     ProbationdetailsPipe,
     ProbationformViewComponent,
+    TranslateModule,
+    Select,
   ],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss',
 })
+
 export class ProbationPendingApprovalsComponent {
   subscription!: Subscription;
   probationDetails = [] as any;
@@ -48,12 +54,19 @@ export class ProbationPendingApprovalsComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+  managers= [
+    {label :'Reporting Manager', value : 'Reproting Manager'},
+    {label : 'Team Manager', value : 'Team Manager'}
+  ]
+  @ViewChild('assessmentForm') assessmentForm!: NgbModal;
+  @ViewChild('commentspopup') commentspopup!: NgbModal;
 
   constructor(
     private modalService: NgbModal,
     private http: HttpService,
     public rbac: RbacService,
-    private authService: AuthService
+    private authService: AuthService,
+    private openModalService:OpenModalService, 
   ) {}
 
   openModal(content: any) {
@@ -107,11 +120,6 @@ export class ProbationPendingApprovalsComponent {
 
   myApproverComments = [] as any;
   approverComments(value: any) {
-    const modalElement = document.getElementById('CommentsPopup');
-    if (modalElement) {
-      modalElement.classList.add('show');
-      modalElement.style.display = 'block';
-    }
     this.myApproverComments = value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property
       const parsedMetaData = JSON.parse(ele.meta);
@@ -120,31 +128,19 @@ export class ProbationPendingApprovalsComponent {
         metadata: parsedMetaData, // Assign parsed metaData to metadata property
       };
     });
-    console.log(this.myApproverComments);
-  }
-
-  closeModel() {
-    const modalElement = document.getElementById('CommentsPopup');
-    if (modalElement) {
-      modalElement.classList.remove('show');
-      modalElement.style.display = 'none';
-    }
+    this.modalService.open(this.commentspopup, { size: 'xl', centered: true, backdrop: 'static' })
   }
 
   openview() {
-    this.closeModel();
-    const modalElement = document.getElementById('rolereq');
-    if (modalElement) {
-      modalElement.classList.add('show');
-      modalElement.style.display = 'block';
-    }
+    this.modalService.open(this.assessmentForm, { centered: true, backdrop: 'static', size: 'xl' });
   }
 
   setformView(employeeId: number, responseId: number) {
     this.http.communicationService.next({ employeeId, responseId });
   }
 
-  handleRequests(request: Iprobationapproval) {
+  handleRequests(request: Iprobationapproval,content:any) {
+    this.modalService.open(content, { centered: true })
     this.requesthandler = request;
     this.selectedData = request.entity;
     this.selectedPrRequestDataforheader = request.approvalHeader;
@@ -299,6 +295,7 @@ export class ProbationPendingApprovalsComponent {
 
   jsonData = {} as any;
   handleProcess(f: NgForm) {
+    this.openModalService.openLoaderModal('Processing....')
     if (this.selectedData.requestSelectedType == 'Approve') {
       this.jsonData = JSON.stringify({
         status: 'Processed',
@@ -349,20 +346,18 @@ export class ProbationPendingApprovalsComponent {
       )
       .subscribe({
         next: (respone: any) => {
-          //alert("Request Processed Successfully")
-          //this.dataSuccessMsg('Probation Request Processed Successfully');
-          setTimeout(() => {
-            window.location.reload();
-          }, 2000);
+          this.modalService.dismissAll();
+          this.openModalService.openSuccessModal('Probation Request Processed Successfully');
         },
         error: (reason: any) => {
-          //this.dataFailureMsg(reason.error.message);
+          this.openModalService.openErrorModal(reason.error.message);
         },
         complete: () => {},
       });
   }
 
   reset() {
+    this.modalService.dismissAll();
     this.clearApproveData();
     this.clearExtendData();
     this.clearDiscontinueData();

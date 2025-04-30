@@ -38,17 +38,17 @@
             @if(this.rbac.allowedToAccess('Policies.view')){
             <li class="nav-item p-2 mb-3" [routerLink]="['/policies']" routerLinkActive="active-nav-link">
                 <i class="bi bi-file-earmark-text-fill custom-icon"></i>Policies
+            </li>
             }
-
-
             @if(this.rbac.allowedToAccess('Pms.view')){
             <li class="nav-item" [routerLink]="['/pms']" routerLinkActive="active-nav-link">
                 <i class="bi bi-graph-up-arrow custom-icon"></i>PMS
             </li>
             }
+            @if(this.rbac.allowedToAccess('Pms-configuration.view')){
             <li class="nav-item text-wrap" [routerLink]="['/pmsconfiguration']" routerLinkActive="active-nav-link">
                 <i class="bi bi-gear-fill custom-icon"></i>PMS Configurations
-            </li>
+            </li>}
             @if(this.rbac.allowedToAccess('Calendar.view')){
             <li class="nav-item" [routerLink]="['/calendar']" routerLinkActive="active-nav-link">
                 <i class="bi bi-calendar custom-icon"></i>Calendar
@@ -69,9 +69,10 @@
                 <i class="bi bi-headset  custom-icon"></i>IT Support
             </li>
             }
+            @if(this.rbac.allowedToAccess('Organizational Hierarchy.view')){
             <li class="nav-item p-2 mb-3" [routerLink]="['/organization-chart']" routerLinkActive="active-nav-link">
                 <i class="bi bi-diagram-3  custom-icon"></i>Hierarchy
-            </li>
+            </li>}
         </ul>
     </div>
     <div class="sidenav-footer-content text-center py-4">
@@ -88,8 +89,17 @@
             <p class="confirmation-text">Are you sure you want to logout?</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="close()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="onLogout()">Yes</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'No'| translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="onLogout()">
+                @if(spinnerLoader){
+                <div class="button-loader-content">
+                    <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                    <span>{{'Loading...'}}</span>
+                </div>
+                }@else {
+                <span>{{'Yes'| translate}}</span>
+                }
+            </button>
         </div>
     </div>
 </ng-template>

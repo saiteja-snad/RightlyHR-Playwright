@@ -1,10 +1,9 @@
-import { Component, ElementRef, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbModal,} from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';

@@ -77,9 +77,11 @@
             </div>
 
             <!-- Add New Button aligned right -->
+            <!-- [disabled]="policiesForm?.get('year')?.invalid || policiesForm?.get('location')?.invalid || policiesForm?.get('subLocation')?.invalid || policiesForm?.get('shift')?.invalid" -->
+             
             <div>
               <button type="button"
-                [disabled]="policiesForm?.get('year')?.invalid || policiesForm?.get('location')?.invalid || policiesForm?.get('subLocation')?.invalid || policiesForm?.get('shift')?.invalid"
+               
                 class="custom-btn btn-primary mt-4" (click)="addMomentRow()">
                 <i class="bi bi-plus"></i>{{'Add New' | translate}}
               </button>
@@ -126,12 +128,12 @@
                     <!-- <button title="text" type="button" class="btn btn-sm btn-danger ms-2" (click)="removePolicyRow(i)" *ngIf="policies.length > 1">
                     <i class="bi bi-trash"></i>
                   </button> -->
-                    @if(i>0){
+                    <!-- @if(i>0){ -->
                     <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
                       class="btn p-0 border-0 bg-transparent">
                       <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
                     </button>
-                    }
+                    <!-- } -->
                   </div>
                 </div>
               </div>

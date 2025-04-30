@@ -27,12 +27,11 @@
                         <td>{{ item.referenceNumber ? item.referenceNumber : '-' }}</td>
                         <td>{{ item.submittedDate ? (item.submittedDate | dateFormat) : '-' }}</td>
                         <td>{{ item.firstName ? item.firstName : '-' }} {{ item.middleName ? item.middleName : '' }}
-                            {{
-                            item.lastName ? item.lastName : '' }}</td>
+                            {{ item.lastName ? item.lastName : '' }}</td>
                         <td>{{ item.status ? item.status : '-' }}</td>
                         <td>
                             <div>
-                                <a *ngIf="item.reason" [ngbPopover]="tipContent">
+                                <a class="view-btn" *ngIf="item.reason" [ngbPopover]="tipContent">
                                     <i class="bi bi-info-circle-fill"></i>
                                 </a>
                                 <span *ngIf="!item.reason">-</span>
@@ -172,7 +171,7 @@
 <!--Image view popup-->
 <ng-template #viewpopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{documentSelectFields.documentType}}</p>
             </div>
@@ -180,12 +179,12 @@
                 <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="text-center w-100 p-4">
+        <div class="custom-main-popup-content text-center p-4">
             <div *ngIf="!DocImageUrl; else imageView">
                 <ngx-doc-viewer [url]="DocViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
             </div>
             <ng-template #imageView>
-                <img [src]="DocImageUrl" alt="Image" class="view-image w-50" />
+                <img [src]="DocImageUrl" alt="My Image" class="modal-image" />
             </ng-template>
         </div>
     </div>

@@ -350,13 +350,23 @@
           </div>
       
           <div class="d-flex align-items-center flex-wrap gap-3 pt-4">
-            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading">{{buttonValue}}</button>
-            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading||disableFieldsForApproval"
-              (click)="emailSendingforApprover()">Request
-              For Approval</button>
-            @if(loading){
-            <div class="spinner-border text-primary" role="status"></div>
-            }
+            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || loading">
+              @if(loading){
+              <div class="button-loader-content">
+                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                <span>{{'Loading...'}}</span>
+              </div>
+              }@else { {{buttonValue}} }
+            </button>
+            <button type="button" class="custom-btn btn-primary"
+              [disabled]="employeeForm.invalid || loading || disableFieldsForApproval" (click)="emailSendingforApprover()">
+              @if(loading){
+              <div class="button-loader-content">
+                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                <span>{{'Loading...'}}</span>
+              </div>
+              }@else { Request For Approval }
+            </button>
           </div>
         </form>
       </div>
@@ -865,8 +875,8 @@
                     right in its sole discretion to amend, change, suspend, or terminate the Performance Award Program at
                     any time.
                   </p>
-                  <p class="mb-1">Additional Details Related to Salary Structure: </p>
-                  <ol class="list-style-none">
+                  <p class="mb-0">Additional Details Related to Salary Structure: </p>
+                  <ol class="list-style-none mb-0">
                     <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory deductions.</li>
                     <li class="mb-1"><span>b)</span> Employees are responsible for their Tax Planning.</li>
                     <li class="mb-1"><span>c)</span> Employees may avail tax benefit by submitting bills against Leave Travel Allowance.</li>

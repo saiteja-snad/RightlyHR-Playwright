@@ -4,17 +4,18 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule,TranslateModule],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
 
 export class SidenavComponent {
   @ViewChild('logoutpopup') logoutpopup: any;
-
+  spinnerLoader = false;
   constructor(private authService: AuthService, private modalservie: NgbModal, public rbac: RbacService,) {
   }
 

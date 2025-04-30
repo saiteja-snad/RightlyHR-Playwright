@@ -3,14 +3,23 @@
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
-                <input type="text" class="form-control custom-input" placeholder="Please enter status"
-                    formControlName="status" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
-                    formValidations.blockNonAlphabets($event)">
+                <input type="text" class="form-control custom-input" placeholder="Please enter status" formControlName="status"
+                    aria-label="stat" (keydown)="formValidations.restrictInput($event); 
+                                    formValidations.blockNonAlphabets($event)" maxlength="51">
                 <span class="input-group-text" id="stat">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="statusForm.invalid">{{'Add'|translate}}</button></span>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="statusForm.invalid">{{'Add'|translate}}</button></span>
             </div>
             <div *ngIf="statusForm.get('status')?.touched && statusForm.get('status')?.invalid" class="error-msg">
-                <div *ngIf="statusForm.get('status')?.errors?.['required']">{{'Status is required'|translate}}</div>
+                <div *ngIf="statusForm.get('status')?.errors?.['required']">
+                    {{ 'Status is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="statusForm.get('status')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space or period' | translate }}
+            </div>
+            <div *ngIf="statusForm.get('status')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 50 characters' | translate }}
             </div>
         </div>
     </form>
@@ -67,15 +76,22 @@
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Status'|translate}}
                         <span class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="statusname" placeholder="Please enter status"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    <input type="text" class="form-control custom-input" formControlName="statusname"
+                        placeholder="Please enter status"
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
                     <div *ngIf="updateForm.get('statusname')?.touched && updateForm.get('statusname')?.invalid" class="error-msg">
-                        <div *ngIf="updateForm.get('statusname')?.errors?.['required']">{{'Status name is required'|translate}}</div>
+                        <div *ngIf="updateForm.get('statusname')?.errors?.['required']">
+                            {{ 'Status is required' | translate }}
+                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('statusname')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 50 characters' | translate }}
                     </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -87,7 +103,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.close()">{{'No'|translate}}</button>

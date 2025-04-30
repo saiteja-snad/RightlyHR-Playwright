@@ -123,8 +123,6 @@
   </ng-template>
 </div>
 
-
-
 <!--update Popup-->
 <ng-template #updateevets let-modal>
   <div class="custom-main-popup-container">
@@ -165,7 +163,7 @@
             <div *ngIf="customEventupdateForm.get('eventMessage')?.errors?.['required']" class="error-msg">
               Event Description is requied
             </div>
-            <div class="form-label custom-label my-1 text-end">{{ customEventupdateForm.get("eventMessage")?.value?.length || 0 }}/250</div>
+            <div class="textarea-count-text">{{ customEventupdateForm.get("eventMessage")?.value?.length || 0 }}/250</div>
           </div>
           <div class="col-md-12 mb-3">
             <label for="file" class="form-label custom-label mb-2">Attachment</label>
@@ -179,6 +177,7 @@
             </div>
           </div>
         </div>
+        
         <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="customEventupdateForm.invalid || spinnerLoader">

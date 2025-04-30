@@ -110,6 +110,10 @@ export class PendingApprovalsTabsComponent {
         this.getAllPendingApprovalsCount();
         this.signalService.compOffSidNavCountTriggerSignal.set(false);
       }
+      if(this.signalService.regularizationSidNavCountTriggerSignal()){
+        this.getAllPendingApprovalsCount();
+        this.signalService.regularizationSidNavCountTriggerSignal.set(false);
+      }
     });
   }
 

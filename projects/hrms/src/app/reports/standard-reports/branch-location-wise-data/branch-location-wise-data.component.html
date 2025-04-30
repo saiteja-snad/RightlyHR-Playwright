@@ -6,33 +6,43 @@
         <!--right data-->
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
             <div class="d-flex align-items-center gap-3">
-                <div>
-                    <label class="custom-label text-nowrap">Date Of Joining<span class="text-danger">*</span></label>
-                    <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
-                        [locale]="localeOptions" [showClearButton]="true" formControlName="dateOfJoining"
-                        [placeholder]="'Please Select Date of Joining'" class="form-control custom-input" [startKey]="'startDate'"
-                        [endKey]="'endDate'" readonly />
+                <div class="d-flex gap-2 align-items-center">
+                    <label class="custom-label text-nowrap">Date Of Joining</label>
+                    <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
+                        [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
+                        formControlName="dateOfJoining" [placeholder]="'Please Select Date of Joining'"
+                        class="form-control custom-input" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
                 </div>
 
                 <div class="d-flex gap-2 align-items-center">
-                    <label class="custom-label text-nowrap">Branch Location<span class="text-danger">*</span></label>
+                    <label class="custom-label text-nowrap">Branch Location</label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="branchLocations" optionLabel="branchLocation1" optionValue="branchLocation1"
-                            [filter]="false" [showClear]="false" class="form-select custom-select" formControlName="location"
+                        <p-select [options]="branchLocations" optionLabel="branchLocation1"
+                            optionValue="branchLocation1" [filter]="false" [showClear]="false"
+                            class="form-select custom-select" formControlName="location"
                             placeholder="Please select branch">
                             <ng-template let-option pTemplate="item">{{ option.branchLocation1 }}</ng-template>
-                            <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption.branchLocation1 }}</ng-template>
+                            <ng-template let-selectedOption pTemplate="selectedItem">{{ selectedOption.branchLocation1
+                                }}</ng-template>
                         </p-select>
                     </div>
                 </div>
-            
+
                 <div class="d-flex gap-2">
-                    <button class="custom-btn btn-secondary" [disabled]="reportForm.invalid">Generate</button>
-                    <button class="custom-btn btn-primary" [disabled]="standardReportData.length === 0 || spinnerLoader"
+                    <button type="submit" class="custom-btn btn-secondary"
+                        [disabled]="!reportForm.get('location')?.value && !reportForm.get('dateOfJoining')?.value || spinnerLoader1">
+                        @if(spinnerLoader1){
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                        }@else {
+                        <span>{{'Generate'}}</span>
+                        }
+                    </button>
+                    <button type="button" class="custom-btn btn-primary" [disabled]="standardReportData.length === 0 || disableBtn"
                         (click)="onClickBranchLocationExport() ">
                         @if(spinnerLoader){
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading..'}}...</span>
+                        <span>{{'Loading...'}}</span>
                         }@else {
                         <span>{{'Export'}}</span>
                         }
@@ -46,85 +56,99 @@
         <app-standard-report-tabs />
     </div>
 
-    <div class="custom-table-content">
-        <table class="w-100" id="branchLocation">
-            <thead>
-                <tr>
-                    <th>{{ "Employee ID" }}</th>
-                    <th>{{ "Salutation" }}</th>
-                    <th>{{ "First Name" }}</th>
-                    <th>{{ "Middle Name" }}</th>
-                    <th>{{ "Last Name" }}</th>
-                    <th>{{ "Status" }}</th>
-                    <th>{{ "Date Of Joining" }}</th>
-                    <th>{{ "Address Line 1(current)" }}</th>
-                    <th>{{ "Address Line 2(current)" }}</th>
-                    <th>{{ "City(current)" }}</th>
-                    <th>{{ "State(current)" }}</th>
-                    <th>{{ "Country(current)" }}</th>
-                    <th>{{ "ZipCode(current)" }}</th>
-                    <th>{{ "Address Line 1(permanent)" }}</th>
-                    <th>{{ "Address Line 2(permanent)" }}</th>
-                    <th>{{ "City(permanent)" }}</th>
-                    <th>{{ "State(permanent)" }}</th>
-                    <th>{{ "Country(permanent)" }}</th>
-                    <th>{{ "ZipCode(permanent)" }}</th>
-                    <th>{{ "Work Number" }}</th>
-                    <th>{{ "Mobile Phone" }}</th>
-                    <th>{{ "Branch Location/Code" }}</th>
-                    <th>{{ "Grade Name" }}</th>
-                    <th>{{ "Department" }}</th>
-                    <th>{{ "Location" }}</th>
-                    <th>{{ "Sub Location" }}</th>
-                    <th>{{ "Shift" }}</th>
-                    <th>{{ "Shift Code" }}</th>
-                    <th>{{ "Job Type" }}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="standardReportData.length > 0; else noData">
-                    @for(emp of standardReportData; track emp){
+    <ng-container *ngIf="dataload; else maincontent">
+        <ng-template #loadingSpinner>
+            <div class="custom-compoent-data-loader">
+                <app-data-loader-content />
+            </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+
+    <ng-template #maincontent>
+        <div class="custom-table-content">
+            <table class="w-100" id="branchLocation">
+                <thead>
                     <tr>
-                        <td>{{ emp.fusionEmpId }}</td>
-                        <td>{{ emp.title }}</td>
-                        <td>{{ emp.firstName }}</td>
-                        <td>{{ emp.middleName }}</td>
-                        <td>{{ emp.lastName }}</td>
-                        <td>{{ emp.empstatus }}</td>
-                        <td>{{ emp.dateOfJoining |dateformat }}</td>
-                        <td>{{ emp.currentAddressLine1 }}</td>
-                        <td>{{ emp.currentAddressLine2 }}</td>
-                        <td>{{ emp.currentCity }}</td>
-                        <td>{{ emp.currentState }}</td>
-                        <td>{{ emp.currentCountry }}</td>
-                        <td>{{ emp.currentZipCode }}</td>
-                        <td>{{ emp.permanentAddressLine1 }}</td>
-                        <td>{{ emp.permanentAddressLine2 }}</td>
-                        <td>{{ emp.permanentCity }}</td>
-                        <td>{{ emp.permanentState }}</td>
-                        <td>{{ emp.permanentCountry }}</td>
-                        <td>{{ emp.permanentZipCode }}</td>
-                        <td>{{ emp.workPhone }}</td>
-                        <td>{{ emp.contactnumber }}</td>
-                        <td>{{ emp.branchCode }}</td>
-                        <td>{{ emp.gradeName }}</td>
-                        <td>{{ emp.departmentName }}</td>
-                        <td>{{ emp.jobLocationName }}</td>
-                        <td>{{ emp.jobSubLocationName }}</td>
-                        <td>{{ emp.shiftName }}</td>
-                        <td>{{ emp.shiftCode }}</td>
-                        <td>{{ emp.jobType }}</td>
+                        <th>{{ "Employee ID" }}</th>
+                        <th>{{ "Salutation" }}</th>
+                        <th>{{ "First Name" }}</th>
+                        <th>{{ "Middle Name" }}</th>
+                        <th>{{ "Last Name" }}</th>
+                        <th>{{ "Status" }}</th>
+                        <th>{{ "Date Of Joining" }}</th>
+                        <th>{{ "Address Line 1(current)" }}</th>
+                        <th>{{ "Address Line 2(current)" }}</th>
+                        <th>{{ "City(current)" }}</th>
+                        <th>{{ "State(current)" }}</th>
+                        <th>{{ "Country(current)" }}</th>
+                        <th>{{ "ZipCode(current)" }}</th>
+                        <th>{{ "Address Line 1(permanent)" }}</th>
+                        <th>{{ "Address Line 2(permanent)" }}</th>
+                        <th>{{ "City(permanent)" }}</th>
+                        <th>{{ "State(permanent)" }}</th>
+                        <th>{{ "Country(permanent)" }}</th>
+                        <th>{{ "ZipCode(permanent)" }}</th>
+                        <th>{{ "Work Number" }}</th>
+                        <th>{{ 'Work Mail-Id'}}</th>
+                        <th>{{ "Mobile Phone" }}</th>
+                        <th>{{ "Branch Location/Code" }}</th>
+                        <th>{{ "Grade Name" }}</th>
+                        <th>{{ "Department" }}</th>
+                        <th>{{ "Location" }}</th>
+                        <th>{{ "Sub Location" }}</th>
+                        <th>{{ "Shift" }}</th>
+                        <th>{{ "Shift Code" }}</th>
+                        <th>{{ "Job Type" }}</th>
                     </tr>
-                    }
-                </ng-container>
-                <ng-template #noData>
-                    <tr>
-                        <td colspan="8">
-                            <app-no-data-found></app-no-data-found>
-                        </td>
-                    </tr>
-                </ng-template>
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="standardReportData.length > 0; else noData">
+                        @for(emp of standardReportData; track emp){
+                        <tr>
+                            <td>{{ emp.fusionEmpId }}</td>
+                            <td>{{ emp.title }}</td>
+                            <td>{{ emp.firstName }}</td>
+                            <td>{{ emp.middleName }}</td>
+                            <td>{{ emp.lastName }}</td>
+                            <td>{{ emp.empstatus }}</td>
+                            <td>{{ emp.dateOfJoining |dateformat }}</td>
+                            <td>{{ emp.currentaddressline1 }}</td>
+                            <td>{{ emp.currentaddressline2 }}</td>
+                            <td>{{ emp.currentcity }}</td>
+                            <td>{{ emp.currentstate }}</td>
+                            <td>{{ emp.currentcountry }}</td>
+                            <td>{{ emp.currentzipcode }}</td>
+                            <td>{{ emp.permanentaddressline1 }}</td>
+                            <td>{{ emp.permanentaddressline2 }}</td>
+                            <td>{{ emp.permanentcity }}</td>
+                            <td>{{ emp.permanentstate }}</td>
+                            <td>{{ emp.permanentcountry }}</td>
+                            <td>{{ emp.permanentzipcode }}</td>
+                            <td>{{ emp.workPhone }}</td>
+                            <td>{{ emp.workEmail || '-' }}</td>
+                            <td>{{ emp.contactnumber }}</td>
+                            <td>{{ emp.branchcode }}</td>
+                            <td>{{ emp.gradeName }}</td>
+                            <td>{{ emp.departmentName }}</td>
+                            <td>{{ emp.joblocationname }}</td>
+                            <td>{{ emp.jobsublocationname }}</td>
+                            <td>{{ emp.shiftname }}</td>
+                            <td>{{ emp.shiftcode }}</td>
+                            <td>{{ emp.jobType }}</td>
+                        </tr>
+                        }
+                    </ng-container>
+                    <ng-template #noData>
+                        <tr>
+                            <td colspan="8">
+                                <app-no-data-found></app-no-data-found>
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
+    
 </div>

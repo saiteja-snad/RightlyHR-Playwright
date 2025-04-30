@@ -199,7 +199,7 @@
     "Days": "Days",
     "2nd": "2nd",
     "3rd": "3rd",
-    "4th": "44thst",
+    "4th": "4th",
     "5th": "5th",
     "Day": "Day",
     "Please select day": "Please select day",
@@ -315,5 +315,6 @@
     "Consultancy Name":"Consultancy Name",
     "Consultancy name is  required":"Consultancy name is  required",
     "Please select designation": "Please select designation",
-    "Please select gradename": "Please select gradename"
+    "Please select gradename": "Please select gradename",
+    "Shift is required" : "Shift is required"
 }

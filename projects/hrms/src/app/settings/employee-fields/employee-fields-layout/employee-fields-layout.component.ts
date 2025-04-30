@@ -29,6 +29,7 @@ export class EmployeeFieldsLayoutComponent {
   }
 
   shouldShowSection(): boolean {
+    const cloningPolicyId = localStorage.getItem('cloningPolicyId');
     const excludedRoutes: (string | RegExp)[] =[
       '/settings/employee-fields/addholidays',
       '/settings/employee-fields/updateholidays',
@@ -49,6 +50,11 @@ export class EmployeeFieldsLayoutComponent {
       '/settings/employee-fields/update-dst',
       '/settings/employee-fields/clone-dst',
       '/settings/employee-fields/view-dst',
+      '/settings/employee-fields/updateholidays',
+      '/settings/employee-fields/viewholidays',
+      '/settings/employee-fields/updatepolices',
+      `/settings/employee-fields/clonepolices/${cloningPolicyId}`,
+      '/settings/employee-fields/viewpolices',
       '/settings/employee-fields/documents',
     ];
     return !excludedRoutes.some((pattern) => {

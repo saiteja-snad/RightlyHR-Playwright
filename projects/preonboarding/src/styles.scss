@@ -119,6 +119,11 @@ a {
     cursor: pointer;
 }
 
+input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 // button stylings
 .custom-btn {
     padding: 0.5rem 1rem;

@@ -73,10 +73,14 @@
           <input type="text" class="form-control custom-input" formControlName="Updatejobrole"
             placeholder="Please enter job role"
             (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
-            maxlength="100">
-          <div *ngIf="updateForm.get('Updatejobrole')?.invalid && updateForm.get('Updatejobrole')?.touched"
-            class="error-msg">
-            {{'Job Role is required'|translate}}.
+            maxlength="101">
+            <div *ngIf="updateForm.get('Updatejobrole')?.touched && updateForm.get('Updatejobrole')?.invalid" class="error-msg">
+              <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['required']">
+                  {{ 'Job Role is required' | translate }}
+              </div>
+          </div>
+          <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxCharacters']" class="error-msg">
+              {{ 'Max 100 characters allowed' | translate }}
           </div>
         </div>
 
@@ -130,9 +134,14 @@
           <input type="text" class="form-control custom-input" formControlName="Addjobrole"
             placeholder="Please enter job role"
             (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
-            maxlength="100" />
-          <div *ngIf="AddForm.get('Addjobrole')?.touched && AddForm.get('Addjobrole')?.invalid" class="error-msg">
-            <div *ngIf="AddForm.get('Addjobrole')?.errors?.['required']">{{'Job Role is required'|translate}}</div>
+            maxlength="101" />
+            <div *ngIf="AddForm.get('Addjobrole')?.touched && AddForm.get('Addjobrole')?.invalid" class="error-msg">
+              <div *ngIf="AddForm.get('Addjobrole')?.errors?.['required']">
+                  {{ 'Job Role is required' | translate }}
+              </div>
+          </div>
+          <div *ngIf="AddForm.get('Addjobrole')?.errors?.['maxCharacters']" class="error-msg">
+              {{ 'Max 100 characters allowed' | translate }}
           </div>
         </div>
 
@@ -171,7 +180,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

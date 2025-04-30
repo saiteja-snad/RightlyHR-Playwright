@@ -24,7 +24,7 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th class="text-center" *ngIf="rbac.allowedToAccess('Attndance Eligibility Permissions Tab.update') || rbac.allowedToAccess('Attndance Eligibility Permissions Tab.delete')">Actions</th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Attndance Eligibility Permissions Tab.update') || rbac.allowedToAccess('Attndance Eligibility Permissions Tab.delete')">Action<span class="text-lowercase">(s)</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -70,7 +70,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div >
-                <p class="popup-heading mb-0">Edit Permission</p>
+                <p class="popup-heading mb-0">Update Permission</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -79,8 +79,8 @@
         <div class="custom-main-popup-content">
             <form [formGroup]="permissionUpdateForm"  (ngSubmit)="updatePermission(permissionUpdateForm)">
                 <div class="mb-4">
-                    <label for="name" class="form-label custom-label mb-2"
-                        style="font-weight: bolder;">Permission</label>
+                    <label for="name" class="form-label custom-label mb-2">Permission<span
+                        class="text-danger">*</span></label>
                     <input type="text" name="name" formControlName="name" class="form-control" autocomplete="off"
                         id="backgroundcheckstatus1" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                         <div *ngIf="permissionUpdateForm.get('name')?.touched && permissionUpdateForm.get('name')?.invalid" class="error-msg mt-2">

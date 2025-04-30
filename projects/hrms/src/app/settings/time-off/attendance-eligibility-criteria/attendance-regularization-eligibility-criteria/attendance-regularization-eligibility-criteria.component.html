@@ -14,7 +14,6 @@
                 <tbody>
                     <tr *ngFor=" let permi of regularizationValues ;let i = index">
                         <td class="table-text">{{ permi.attribute }}</td>
-                        <!-- <td class="table-text">{{permi.value}}</td> -->
                         <td class="table-text">
                             <ng-container *ngIf="editingIndex !== i">
                                 {{ permi.value }}
@@ -48,7 +47,6 @@
                                         Update
                                     </button>
                                     <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">
-                                        <!-- <i class="bi bi-x-circle-fill"></i> -->
                                         Cancel
                                     </button>
                                 </div>

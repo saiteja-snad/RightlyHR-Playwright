@@ -35,7 +35,7 @@
               <span>{{'Generate'}}</span>
             }
           </button>
-          <button type="button" [disabled]="this.employeeMasterData.length === 0 || disableBtn" (click)="onClickEmpMasterExport()"
+          <button type="button" [disabled]="employeeMasterData.length === 0 || disableBtn" (click)="onClickEmpMasterExport()"
             class="custom-btn btn-primary">
             @if(spinnerLoader2){
               <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

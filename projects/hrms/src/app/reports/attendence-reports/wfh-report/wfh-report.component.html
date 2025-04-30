@@ -13,8 +13,8 @@
               <!-- Employee -->
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
-                  <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="false"
-                            formControlName="employee" placeholder="Select Employee" class="form-select custom-select">
+                  <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="true"
+                            formControlName="employee" placeholder="Select Employee" class="form-select custom-select" filterPlaceholder="Search employee">
                     <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                     <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                   </p-select>
@@ -24,14 +24,10 @@
               <!-- Team Manager -->
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
-                  <p-select [options]="teamdetails" [filter]="true" [showClear]="false" optionLabel="firstName" formControlName="manager"
-                            placeholder="Select Manager" class="form-select custom-select">
-                    <ng-template #selectedItem let-selectedOption>
-                      {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
-                    </ng-template>
-                    <ng-template let-manager #item>
-                      {{ manager.firstName }} {{ manager.middleName }} {{ manager.lastName }}
-                    </ng-template>
+                  <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName" filterBy="fullName" formControlName="manager"
+                            placeholder="Select Manager" class="form-select custom-select" filterPlaceholder="Search manager">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                            <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                   </p-select>
                 </div>
               </div>
@@ -47,67 +43,82 @@
       
               <!-- Buttons -->
               <div class="d-flex gap-2">
-                <button type="submit" class="custom-btn btn-secondary" [disabled]="wfhReportForm.invalid">
-                  Generate
+                <button type="submit" class="custom-btn btn-secondary" [disabled]="isWFHGenerateDisabled">
+                  @if(spinnerLoader1){
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    <span>{{'Loading...'}}</span>
+                    }@else {
+                    <span>{{'Generate'}}</span>
+                    }
                 </button>
       
                 <button type="button" class="custom-btn btn-primary" (click)="exportToExcelWfh()" 
-                [disabled]="wfhReportForm.invalid || filteredWfhRecord.length === 0">
-                  Export
+                [disabled]="filteredWfhRecord.length === 0 || disableBtn">
+                @if(spinnerLoader2){
+                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  <span>{{'Loading...'}}</span>
+                  }@else {
+                  <span>{{'Export'}}</span>
+                  }
                 </button>
               </div>
             </div>
           </form>
         </div>
       </div>
-      
   
     <div class="mb-3">
       <app-attandace-report-tabs />
     </div>
   
-    <div class="custom-table-content">
-      <table id="wfhReportTable" class="content w-100">
-        <thead>
-          <tr>
-            <th>Employee ID</th>
-            <th>Employee Name</th>
-            <th>Department</th>
-            <th>Team Manager</th>
-            <th>Location</th>
-            <th>Sub Location</th>
-            <th>Shift</th>
-            <th>Worked Date</th>
-            <th>Duration</th>
-          </tr>
-        </thead>
-        <tbody>
-          @if (filteredWfhRecord && filteredWfhRecord.length > 0) {
-            @for (record of filteredWfhRecord; track record) {
+    @if(isLoading){
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
+    }@else {
+      <div class="custom-table-content">
+        <table id="wfhReportTable" class="content w-100">
+          <thead>
+            <tr>
+              <th>Employee ID</th>
+              <th>Employee Name</th>
+              <th>Department</th>
+              <th>Team Manager</th>
+              <th>Location</th>
+              <th>Sub Location</th>
+              <th>Shift</th>
+              <th>Worked Date</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredWfhRecord && filteredWfhRecord.length > 0) {
+              @for (record of filteredWfhRecord; track record) {
+                <tr>
+                  <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+                  <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+                  <td class="td-center">{{ record.department ?? '-' }}</td>
+                  <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+                  <td class="td-center">{{ record.location ?? '-' }}</td>
+                  <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+                  <td class="td-center">{{ record.shift ?? '-' }}</td>
+                  <td class="td-center">
+                    {{ record.worked_Date ? (record.worked_Date | date: 'dd-MMM-yyyy') : '-' }}
+                  </td>
+                  <td class="td-center">{{ record.duration ?? '-' }}</td>
+                </tr>
+              }
+            } @else {
               <tr>
-                <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-                <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-                <td class="td-center">{{ record.department ?? '-' }}</td>
-                <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-                <td class="td-center">{{ record.location ?? '-' }}</td>
-                <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-                <td class="td-center">{{ record.shift ?? '-' }}</td>
-                <td class="td-center">
-                  {{ record.worked_Date ? (record.worked_Date | date: 'dd-MMM-yyyy') : '-' }}
+                <td colspan="9" class="text-center">
+                  <app-no-data-found></app-no-data-found>
                 </td>
-                <td class="td-center">{{ record.duration ?? '-' }}</td>
               </tr>
             }
-          } @else {
-            <tr>
-              <td colspan="9" class="text-center">
-                <app-no-data-found></app-no-data-found>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
+    }
       
   </div>
 

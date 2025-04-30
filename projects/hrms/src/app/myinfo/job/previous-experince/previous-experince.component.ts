@@ -61,7 +61,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.employeeExperienceForm = this.fb.group({
       isPresent: [false],
-      companyName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]$'),Validators.maxLength(100)]],
+      companyName: ['', [Validators.required, Validators.pattern('^[a-zA-Z\\s]+$'),Validators.maxLength(100)]],
       employmentType: [null, Validators.required],
       fromDate: ['', [Validators.required]],
       toDate: ['', [Validators.required]],

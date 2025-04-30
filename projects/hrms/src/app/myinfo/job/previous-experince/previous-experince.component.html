@@ -106,7 +106,9 @@
                                 class="error-msg">
                                 <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['required']">Company
                                     Name is required</div>
-                               
+                               <div class="error-msg"  *ngIf="employeeExperienceForm.get('companyName')?.errors?.['pattern']">
+                                Name is canot
+                               </div>
                                 <div class="error-msg"
                                     *ngIf="employeeExperienceForm.get('companyName')?.errors?.['maxlength']">Company
                                     name cannot exceed 100 characters</div>

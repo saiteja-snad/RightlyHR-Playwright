@@ -226,12 +226,12 @@
                 <a (click)="modal.dismiss()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
-            <p *ngIf="!DocImageUrl;else imageView">
-                <ngx-doc-viewer [url]="DocViewURL" viewer="google" style="width:100%;height:100vh;"></ngx-doc-viewer>
-            </p>
+        <div class="custom-main-popup-content text-center p-4">
+            <div *ngIf="!DocImageUrl; else imageView">
+                <ngx-doc-viewer [url]="DocViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+            </div>
             <ng-template #imageView>
-                <img [src]="DocImageUrl" alt="My Image" class="modal-image w-50">
+                <img [src]="DocImageUrl" alt="My Image" class="modal-image" />
             </ng-template>
         </div>
     </div>

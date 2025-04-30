@@ -89,7 +89,7 @@
               <label class="form-label custom-label">{{'Holiday Name' | translate}}<span
                   class="text-danger">*</span></label>
               <input type="text" formControlName="holidayName" class="form-control custom-input"
-                placeholder="Please enter holiday name" style="width: 200px" />
+                placeholder="Please enter holiday name" style="width: 350px" />
               <div
                 *ngIf="holiday.get('holidayName')?.invalid && (holiday.get('holidayName')?.dirty || holiday.get('holidayName')?.touched)"
                 class="error-msg">
@@ -104,7 +104,7 @@
                   class="text-danger">*</span></label>
               <input type="date" formControlName="holidayDate" class="form-control custom-input"
                 [min]="getMinDateForHoliday()" [max]="getMaxDateForHoliday()" onkeydown="return false"
-                style="width: 200px" />
+                style="width: 350px" />
               <div
                 *ngIf="holiday.get('holidayDate')?.invalid && (holiday.get('holidayDate')?.dirty || holiday.get('holidayDate')?.touched)"
                 class="error-msg">

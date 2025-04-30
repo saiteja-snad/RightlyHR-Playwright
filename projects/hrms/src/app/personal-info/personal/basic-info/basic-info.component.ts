@@ -48,18 +48,20 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.getMaritaldetails()
     this.getTitle()
     this.basicInfoForm.disable();
-    this.basicInfoForm.get('salutation')?.valueChanges.subscribe(() => {
-      this.onsalutationvalidation();
-    });
+  this.basicInfoForm.get('salutation')?.valueChanges.subscribe(() => {
+    console.log('Salutation changed');
+    this.onsalutationvalidation();
+  });
 
-    this.basicInfoForm.get('gender')?.valueChanges.subscribe(() => {
-      this.onsalutationvalidation();
-    });
+  this.basicInfoForm.get('gender')?.valueChanges.subscribe(() => {
+    console.log('Gender changed');
+    this.onsalutationvalidation();
+  });
   }
 
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
-      employeeId: [null, Validators.required],
+      employeeId: [{ value: null, disabled: true }, Validators.required],
       salutation: [null, Validators.required],
       firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       middleName: [null, [Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
@@ -99,23 +101,36 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     const genderLower = typeof gender === 'string' ? gender.toLowerCase() : '';
     const titleLower = typeof title === 'string' ? title.toLowerCase() : '';
   
+    console.log('Gender:', genderLower);
+    console.log('Title:', titleLower);
+  
     // If gender is not selected, do not show the validation error
     if (!gender) {
       this.salutationValidationcheck = false;
       return;
     }
   
+    // Ensure title is not empty or null
+    if (!title || titleLower === '') {
+      this.salutationValidationcheck = true; // Invalid combination
+      console.log('Validation Failed: Title is required');
+      return;
+    }
+  
     if (
-      (genderLower === 'male' && titleLower === 'mr.') ||
-      (genderLower === 'female' && ['ms.', 'miss.', 'mrs.'].includes(titleLower)) ||
-      ((genderLower === 'other' || genderLower === 'others') && (titleLower === 'other' || titleLower === 'others')) ||
-      ((genderLower === 'male' || genderLower === 'female') && (titleLower == null || titleLower === ''))
+      (genderLower === 'Male' && titleLower === 'Mr.') ||
+      (genderLower === 'Female' && ['Ms.', 'Miss.', 'Mrs.'].includes(titleLower)) ||
+      ((genderLower === 'other' || genderLower === 'others') && (titleLower === 'other' || titleLower === 'others'))
     ) {
       this.salutationValidationcheck = false; // Valid combination
+      console.log('Validation Passed:', this.salutationValidationcheck);
     } else {
       this.salutationValidationcheck = true; // Invalid combination
+      console.log('Validation Failed:', this.salutationValidationcheck);
     }
   }
+
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -129,8 +144,9 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
+  
     getdateofbirth(): string | null {
-    const startDateValue = this.formatDateToLocal(this.empyployeedata.dob)
+      const startDateValue = this.formatDateToLocal(this.empyployeedata.dob) || this.formatDateToLocal(this.basicInfoForm.get('dob')?.value);
     if (startDateValue) {
       const startDate = new Date(startDateValue);
       startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
@@ -196,6 +212,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
             // Success case
             this.conformationPopup.openSuccessModal('Basic Information Updated Successfully');
             this.getEmployeeId();
+            this.http.setBasicDetails();
             this.basicInfoForm.disable();
             console.log('Data updated successfully:', data);
             this.buttons = !this.buttons;
@@ -256,7 +273,9 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   showButtons(): void {
     this.buttons = !this.buttons;
     if (this.buttons) {
+     
       this.basicInfoForm.enable();
+      this.basicInfoForm.get('employeeId')?.disable()
 
 
     } else {

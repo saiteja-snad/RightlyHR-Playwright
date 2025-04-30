@@ -69,13 +69,13 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
 
   initializeForm(): void {
     this.emergencyContactForm = this.fb.group({
-      contact1Name: ['', Validators.required],
+      contact1Name: ['', [Validators.required,Validators.maxLength(50)]],
       contact1Email: ['', [Validators.required, Validators.email]],
       contact1Phone: ['', Validators.required],
       contact1Relationship: ['', Validators.required],
       contact1CountryCode: ['', Validators.required],
       contact2CountryCode: ['', Validators.required],
-      contact2Name: ['', Validators.required],
+      contact2Name: ['',[ Validators.required,Validators.maxLength(50)]],
       contact2Email: ['', [Validators.required, Validators.email]],
       contact2Phone: ['', Validators.required],
       contact2Relationship: ['', Validators.required],
@@ -142,7 +142,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     
     const cleanPhoneNumber = (phone: any): string => {
       if (!phone) return '';
-      return String(phone).replace(/\s+/g, '').replace(/-/g, '');
+      return String(phone).replace(/\D+/g, '');
     };
 
     const contact1Phone = cleanPhoneNumber(formValue.contact1Phone || this.employedata?.mobileNumber || '');

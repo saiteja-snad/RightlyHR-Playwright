@@ -88,7 +88,7 @@ export class JobDetailsComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.joiningDate =this.formatDateToLocal(this.empinfo.dateOfJoining)
+ 
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
@@ -188,7 +188,9 @@ export class JobDetailsComponent {
     this.subscription = this.http
       .getData(`Employeedata/${employeeId}`)
       .subscribe({
-        next: (data: any) => {},
+        next: (data: any) => {
+          this.joiningDate =this.formatDateToLocal(data.dateOfJoining)
+        },
         error: (reason: any) =>
           console.error('Error fetching employee data:', reason),
       });

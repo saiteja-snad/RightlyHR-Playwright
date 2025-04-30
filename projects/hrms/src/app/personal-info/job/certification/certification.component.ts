@@ -146,29 +146,27 @@ export class CertificationComponent implements OnInit,OnDestroy {
       });
   }
   onFileChange(event: any): void {
+    this.displaycertification = null
     const file = event.target.files[0];
     if (file) {
       const fileSizeInMB = file.size / (1024 * 1024);
-      const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
-      const fileExtension = file.name.split('.').pop()?.toLowerCase();
-
-      // Validate file type and size
-      this.showError = !allowedExtensions.includes(fileExtension || '');
-      this.showErrorr = fileSizeInMB > 25;
-
-      if (!this.showError && !this.showErrorr) {
-        // Rename the file if it passes validation
-        const timestamp = new Date().getTime();
-        this.certificationDocument = this.renameFileAttachment(
-          file,
-          `${this.empinfo.employeeId}_${timestamp}_${file.name}`
-        );
-        console.log('Renamed attachment:', this.certificationDocument);
-      } else {
-        this.certificationDocument = null; // Reset the document if validation fails
-        console.error('File validation failed');
+      if (fileSizeInMB > 25) {
+        this.certificationDocument = null;
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.certificationForm.get('attachment')?.reset();
+        this.certificationForm.get('attachment')?.markAsUntouched();
+        this.updateCertificationForm.get('attachmentupdate')?.reset();
+        this.updateCertificationForm.get('attachmentupdate')?.markAsUntouched();
+       
+        return;
       }
     }
+
+    const timestamp = new Date().getTime();
+    this.certificationDocument = this.renameFileAttachment(
+      file,
+      `${this.empinfo.employeeId}_${timestamp}_${file.name}`
+    );
   }
 
   private renameFileAttachment(originalFile: File, newName: string): File {

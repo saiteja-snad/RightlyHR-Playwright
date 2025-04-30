@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="card custom-background-card p-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <div class="component-sub-header">Basic Details</div>
+      <div class="component-sub-header">Basic Information</div>
       @if(!buttons && (empyployeedata?.empstatus?.toLowerCase() !== 'prospective' &&
       empyployeedata?.empstatus?.toLowerCase() !== 'trainee prospective'
       && empyployeedata?.empstatus?.toLowerCase() !== 'inactive' && empyployeedata?.empstatus?.toLowerCase() !==
@@ -22,7 +22,7 @@
       <div class="row">
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="employeeId" class="form-label custom-label mb-2">Employee ID<span class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" id="employeeId" formControlName="employeeId"
+          <input type="text"  autocomplete="off"  class="form-control custom-input" id="employeeId" formControlName="employeeId"
             placeholder="Please enter Employee ID" />
           <div *ngIf="basicInfoForm.get('employeeId')?.invalid && basicInfoForm.get('employeeId')?.touched"
             class="error-msg">
@@ -42,13 +42,13 @@
             class="error-msg">
             Salutation is required
           </div>
-          <div *ngIf="salutationValidationcheck" class="error-msg">Please select a valid value</div>
+          <!-- <div *ngIf="salutationValidationcheck" class="error-msg">Please select a valid value</div> -->
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="firstName" class="form-label custom-label mb-2">First Name<span
               class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" id="firstName" formControlName="firstName"
+          <input type="text"  autocomplete="off"  class="form-control custom-input" id="firstName" formControlName="firstName"
             placeholder="Please enter first name" (keypress)="formValidation.restrictInput($event)" />
           <div *ngIf="basicInfoForm.get('firstName')?.invalid && basicInfoForm.get('firstName')?.touched"
             class="error-msg">
@@ -58,13 +58,13 @@
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="middleName" class="form-label custom-label mb-2">Middle Name</label>
-          <input type="text" class="form-control custom-input" id="middleName" formControlName="middleName"
+          <input type="text"  autocomplete="off"  class="form-control custom-input" id="middleName" formControlName="middleName"
             placeholder="Please enter middle name" (keypress)="formValidation.restrictInput($event)" />
         </div>
 
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="lastName" class="form-label custom-label mb-2">Last Name<span class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" id="lastName" formControlName="lastName"
+          <input type="text"  autocomplete="off"  class="form-control custom-input" id="lastName" formControlName="lastName"
             placeholder="Please enter last name" (keypress)="formValidation.restrictInput($event)" />
           <div *ngIf="basicInfoForm.get('lastName')?.invalid && basicInfoForm.get('lastName')?.touched"
             class="error-msg">

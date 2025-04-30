@@ -38,6 +38,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   titledetails: ITitle[] = [];
   Maritaldetails: IMarital[] = [];
   buttons = false
+  changeingdob:any
   constructor(private modalService: NgbModal, private cdr: ChangeDetectorRef, private fb: FormBuilder, public formValidation: FormValidationService,
     private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService) { }
 
@@ -57,8 +58,10 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.get('gender')?.valueChanges.subscribe(() => {
       this.onsalutationvalidation();
     });
-    this.basicInfoForm.get('dob')?.valueChanges.subscribe(() => {
-      this.getdateofbirth();
+    this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
+      console.log(data)
+      this.emsployedata.dob=null
+      this.changeingdob=data
     });
 
   }
@@ -110,8 +113,11 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
+  
   getdateofbirth(): string | null {
-    const startDateValue = this.formatDateToLocal(this.emsployedata.dob) || this.formatDateToLocal(this.basicInfoForm.get('dob')?.value);
+    const startDateValue = this.formatDateToLocal(this.emsployedata.dob) || this.formatDateToLocal(this.changeingdob);
+    console.log(startDateValue);
+    
     if (startDateValue) {
       const startDate = new Date(startDateValue);
       startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
@@ -217,11 +223,12 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   showButtons(): void {
     this.buttons = !this.buttons;
-    this.basicInfoForm.get('fusionEmpId')?.disable();
+  
     if (this.buttons) {
       // Enable the form when the user clicks "Edit"
-      this.basicInfoForm.get('fusionEmpId')?.disable();
+   
       this.basicInfoForm.enable();
+      this.basicInfoForm.get('fusionEmpId')?.disable();
 
     } else {
       this.basicInfoForm.get('fusionEmpId')?.disable();

@@ -38,6 +38,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   buttondisable = true;
   spinnerLoader=false;
   empinfo: any = {}
+  dateofbirth: any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,) { }
   ngOnInit(): void {
@@ -61,8 +62,8 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   initializeForm(): void {
     this.educationForm = this.fb.group({
       education: ['', Validators.required],
-      university: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")]],
-      specialization: ['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")],],
+      university: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),Validators.maxLength(50)]],  
+      specialization: ['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),,Validators.maxLength(50)],],
       gpa: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
       degreeStartDate: ['',[ Validators.required]],
       degreeEndDate: ['', [Validators.required]],
@@ -74,8 +75,8 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   initializeupdateForm(): void {
     this.educationupdateForm = this.fb.group({
       educationupdate: ['', Validators.required],
-      universityupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")]],
-      specializationupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")],],
+      universityupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),,Validators.maxLength(50)]],
+      specializationupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),,Validators.maxLength(50)],],
       gpaupdate: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
       degreeStartDateupdate: ['', Validators.required],
       degreeEndDateupdate: ['', Validators.required],
@@ -170,6 +171,20 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   onChangeEducation(event: any): void {
     this.displalyeducationattachment = null;
     const file = event.target.files[0];
+    if (file) {
+      const fileSizeInMB = file.size / (1024 * 1024);
+      if (fileSizeInMB > 25) {
+        this.educationAttachment = null;
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.educationForm.get('attachment')?.reset();
+        this.educationForm.get('attachment')?.markAsUntouched();
+        this.educationupdateForm.get('attachmentupdate')?.reset();
+        this.educationupdateForm.get('attachmentupdate')?.markAsUntouched();
+       
+        return;
+      }
+    }
+  
     const timestamp = new Date().getTime();
     this.educationAttachment = this.renameFileAttachment(
       file,`${this.empinfo.employeeId}_${timestamp}_${file.name}`
@@ -218,8 +233,10 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
     let employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Education/${employeeId}`).subscribe({
       next: (data: any) => {
+       this.dateofbirth=this.formatDateToLocal(data.dob)
         localStorage.setItem('educationinfodata', JSON.stringify(data));
         this.educationData.next(data);
+      
       },
     });
   }

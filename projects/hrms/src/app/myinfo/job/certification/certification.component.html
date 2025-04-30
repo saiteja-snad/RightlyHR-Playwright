@@ -93,10 +93,13 @@
                             formControlName="certificationName" placeholder="Please enter certification name" (keypress)="formValidation.restrictInput($event)" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('certificationName')?.invalid && certificationForm.get('certificationName')?.touched">
-                            <span *ngIf="certificationForm.get('certificationName')?.errors?.['required']">Certification
-                                Name is required</span>
-                            <span *ngIf="certificationForm.get('certificationName')?.errors?.['pattern']">Enter a
-                                valid Certification Name</span>
+                            <div *ngIf="certificationForm.get('certificationName')?.errors?.['required']">Certification
+                                Name is required</div>
+                            <div *ngIf="certificationForm.get('certificationName')?.errors?.['pattern']">Enter a
+                                valid Certification Name</div>
+                                <div *ngIf="certificationForm.get('certificationName')?.errors?.['maxlength']">Certification Name should not exceed 100 characters</div>
+                                  
+
                         </div>
                     </div>}
 
@@ -109,10 +112,11 @@
                             formControlName="certificationId" placeholder="Please enter certification ID" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('certificationId')?.invalid && certificationForm.get('certificationId')?.touched">
-                            <span *ngIf="certificationForm.get('certificationId')?.errors?.['required']">Certification
-                                ID is required</span>
-                            <span *ngIf="certificationForm.get('certificationId')?.errors?.['pattern']">Enter a
-                                valid Certification ID</span>
+                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['required']">Certification
+                                ID is required</div>
+                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['pattern']">Enter a
+                                valid Certification ID</div>
+                                <div *ngIf="certificationForm.get('certificationId')?.errors?.['maxlength']">Certification ID cannot exceed 100 characters</div>
                         </div>
                     </div>}
 
@@ -158,14 +162,17 @@
                             formControlName="attachment" (change)="onFileChange($event)" accept=".pdf,image/*,.png" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('attachment')?.invalid && certificationForm.get('attachment')?.touched">
-                            Please choose a file
+                           File is required
+
                         </div>
+                        <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
+                        <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
+
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                                 The file size should be less than 25MB.</p>
                         </div>
-                        <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
-                        <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
+                        
                     </div>}
                 </div>
 
@@ -208,10 +215,11 @@
                             formControlName="certificationName" placeholder="Please enter certification name" (keypress)="formValidation.restrictInput($event)" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('certificationName')?.invalid && updateCertificationForm.get('certificationName')?.touched">
-                            <span *ngIf="updateCertificationForm.get('certificationName')?.errors?.['required']">Certification
-                                Name is required</span>
-                            <span *ngIf="updateCertificationForm.get('certificationName')?.errors?.['pattern']">Enter a
-                                valid Certification Name</span>
+                            <div *ngIf="updateCertificationForm.get('certificationName')?.errors?.['required']">Certification
+                                Name is required</div>
+                            <div *ngIf="updateCertificationForm.get('certificationName')?.errors?.['pattern']">Enter a
+                                valid Certification Name</div>
+                                <div *ngIf="updateCertificationForm.get('certificationName')?.errors?.['maxlength']">Certification Name should not exceed 100 characters</div>
                         </div>
                     </div>}
 
@@ -224,10 +232,12 @@
                             formControlName="certificationId" placeholder="Please enter certification ID" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('certificationId')?.invalid && updateCertificationForm.get('certificationId')?.touched">
-                            <span *ngIf="updateCertificationForm.get('certificationId')?.errors?.['required']">Certification
-                                ID is required</span>
-                            <span *ngIf="updateCertificationForm.get('certificationId')?.errors?.['pattern']">Enter a
-                                valid Certification ID</span>
+                            <div *ngIf="updateCertificationForm.get('certificationId')?.errors?.['required']">Certification
+                                ID is required</div>
+                            <div *ngIf="updateCertificationForm.get('certificationId')?.errors?.['pattern']">Enter a
+                                valid Certification ID</div>
+                                <div *ngIf="updateCertificationForm.get('certificationId')?.errors?.['maxlength']">Certification ID cannot exceed 100 characters</div>
+                                  
                         </div>
                     </div>}
 
@@ -272,7 +282,7 @@
                             formControlName="attachment" (change)="onFileChange($event)" accept=".pdf,image/*,.png" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('attachment')?.invalid && updateCertificationForm.get('attachment')?.touched">
-                            Please choose a file
+                            File is required
                         </div>
                         <div *ngIf="displaycertification" class="mb-2 mt-2">
                             <b>{{ displaycertification?.name || displaycertification }}</b>

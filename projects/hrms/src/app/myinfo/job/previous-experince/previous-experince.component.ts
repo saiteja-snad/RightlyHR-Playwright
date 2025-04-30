@@ -61,11 +61,11 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.employeeExperienceForm = this.fb.group({
       isPresent: [false],
-      companyName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      companyName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]$'),Validators.maxLength(100)]],
       employmentType: [null, Validators.required],
       fromDate: ['', [Validators.required]],
       toDate: ['', [Validators.required]],
-      jobTitle: ['', Validators.required],
+      jobTitle: ['', [Validators.required,Validators.maxLength(50)]],
 
       previousContactName: ['', Validators.pattern('^[a-zA-Z\\s]*$')],
       previousContactNumber: [
@@ -98,13 +98,13 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeupdateForm(): void {
     this.employeeExperienceupdateForm = this.fb.group({
       isPresentupdate: [false],
-      companyNameupdate: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      companyNameupdate: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]'),Validators.maxLength(50)]],
       employmentTypeudate: [null, Validators.required],
       fromDateupdate: ['', [Validators.required]],
       toDateupdate: ['', [Validators.required]],
-      jobTitleupdate: ['', Validators.required],
+      jobTitleupdate: ['', [Validators.required,Validators.maxLength(50)]],
 
-      previousContactNameupdate: ['', Validators.pattern('^[a-zA-Z\\s]*$')],
+      previousContactNameupdate: ['', [Validators.pattern('^[a-zA-Z\\s]*$'),Validators.maxLength(50)]],
       previousContactNumberupdate: [
         '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
@@ -117,8 +117,8 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     });
 
     // Disable "toDate" field if "isPresent" is checked
-    this.employeeExperienceForm.get('isPresentupdate')?.valueChanges.subscribe((isPresent) => {
-      const toDateControl = this.employeeExperienceForm.get('toDateupdate');
+    this.employeeExperienceupdateForm.get('isPresentupdate')?.valueChanges.subscribe((isPresent) => {
+      const toDateControl = this.employeeExperienceupdateForm.get('toDateupdate');
       if (isPresent) {
         toDateControl?.reset();
         toDateControl?.clearValidators();
@@ -172,29 +172,28 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     return null; // Return null if no start date is selected
   }
   onChangeExperience(event: any): void {
+  
+    this.displaypreviousexperincedocument = null
     const file = event.target.files[0];
     if (file) {
       const fileSizeInMB = file.size / (1024 * 1024);
-      const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
-      const fileExtension = file.name.split('.').pop()?.toLowerCase();
-
-      // Validate file type and size
-      this.showError = !allowedExtensions.includes(fileExtension || '');
-      this.showErrorr = fileSizeInMB > 25;
-
-      if (!this.showError && !this.showErrorr) {
-        // Rename the file if it passes validation
-        const timestamp = new Date().getTime();
-        this.previousexperincedocument = this.renameFileAttachment(
-          file,
-          `${this.empinfo.employeeId}_${timestamp}_${file.name}`
-        );
-        console.log('Renamed attachment:', this.previousexperincedocument);
-      } else {
-        this.previousexperincedocument = null; // Reset the document if validation fails
-        console.error('File validation failed');
+      if (fileSizeInMB > 25) {
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.previousexperincedocument = null;
+        this.employeeExperienceForm.get('attachment')?.reset();
+        this.employeeExperienceForm.get('attachment')?.markAsUntouched();
+        this.employeeExperienceupdateForm.get('attachmentupdate')?.reset();
+        this.employeeExperienceupdateForm.get('attachmentupdate')?.markAsUntouched();
+       
+        return;
       }
     }
+
+    const timestamp = new Date().getTime();
+    this.previousexperincedocument = this.renameFileAttachment(
+      file,
+      `${this.empinfo.employeeId}_${timestamp}_${file.name}`
+    );
   }
 
   private renameFileAttachment(originalFile: File, newName: string): File {
@@ -382,53 +381,52 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
   openModalupdate(content: any, experienceDetail: any): void {
     this.selectedid = experienceDetail.id;
-  
+
     this.getJobtype().subscribe(() => {
       console.log('Experience Detail:', experienceDetail);
-  
+
       const startDate = this.formatDateToLocal(experienceDetail.fromDate) || null;
-        
       const endDate = this.formatDateToLocal(experienceDetail.toDate) || null;
-  
+
       const selectedJobType = this.JobtypeDetails.find(
-        (jobType) => jobType.jobType1 === experienceDetail.employmentType
+        (jobType) => jobType.jobType1 === experienceDetail?.employmentType
       );
-  
-      console.log('Matched Job Type:', selectedJobType);  // 🔍 Check what’s matched
-  
+
       this.employeeExperienceupdateForm.patchValue({
         jobTitleupdate: experienceDetail.jobTitle,
         companyNameupdate: experienceDetail.companyName,
         employmentTypeudate: selectedJobType,
         fromDateupdate: startDate,
         toDateupdate: endDate,
-        previousContactNameupdate: experienceDetail.previousContactName,
-        previousContactNumberupdate: experienceDetail.previousContactNumber,
-        previousContactEmailupdate: experienceDetail.previousContactEmail,
+        previousContactNameupdate: experienceDetail?.previousContactName,
+        previousContactNumberupdate: experienceDetail?.previousContactNumber,
+        previousContactEmailupdate: experienceDetail?.previousContactEmail,
         isPresentupdate: experienceDetail.isPresent,
       });
-  
-      if (experienceDetail.isPresent) {
-        this.employeeExperienceupdateForm.get('toDateupdate')?.clearValidators();
-        this.employeeExperienceupdateForm.get('toDateupdate')?.disable();
+
+      // Handle "toDateupdate" field based on "isPresent" or absence of "toDate"
+      const toDateControl = this.employeeExperienceupdateForm.get('toDateupdate');
+      if (experienceDetail.isPresent || !experienceDetail.toDate) {
+        toDateControl?.reset();
+        toDateControl?.clearValidators();
+        toDateControl?.disable();
       } else {
-        this.employeeExperienceupdateForm.get('toDateupdate')?.enable();
-        this.employeeExperienceupdateForm.get('toDateupdate')?.setValidators([Validators.required]);
+        toDateControl?.enable();
+        toDateControl?.setValidators([Validators.required]); // Reapply the required validator when enabling the field
       }
-  
-      this.employeeExperienceupdateForm.get('toDateupdate')?.updateValueAndValidity();
+
+      toDateControl?.updateValueAndValidity()
       this.previousexperincedocument = experienceDetail.attachment;
 
-      
-    this.displaypreviousexperincedocument=experienceDetail.attachment
-    ? experienceDetail.attachment.split('/').pop()
-    : null;
-   console.log(this.displaypreviousexperincedocument)
-  
+
+      this.displaypreviousexperincedocument = experienceDetail.attachment
+        ? experienceDetail.attachment.split('/').pop()
+        : null;
+
       this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     });
   }
-  
+
 
   saveUpdatedExperienceDetails(): void {
 

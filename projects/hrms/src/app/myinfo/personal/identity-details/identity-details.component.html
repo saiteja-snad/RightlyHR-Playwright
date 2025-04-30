@@ -1,7 +1,8 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Identity Details</span></div>
-        <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+        <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add
+            New</div>
     </div>
     <div class="custom-table-content">
         <table class="w-100">
@@ -19,9 +20,9 @@
                         <td>{{ identityDetails.identityType }}</td>
                         <td>{{ identityDetails.identityNumber }}</td>
                         <td><span *ngIf="identityDetails.attachment;else noData" class="dowload-text"
-                             (click)="onSelectIdentityAttachmentDownload(identityDetails)">
-                             <i class="bi bi-download clip-icon px-2"></i>Download</span>
-                             <ng-template #noData>-</ng-template>
+                                (click)="onSelectIdentityAttachmentDownload(identityDetails)">
+                                <i class="bi bi-download clip-icon px-2"></i>Download</span>
+                            <ng-template #noData>-</ng-template>
                         </td>
                         <td class="text-center">
                             <div class="dropdown">
@@ -58,7 +59,8 @@
                 <p class="popup-heading mb-0">Add Identiy Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();identityForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();identityForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -78,13 +80,14 @@
                             Identity Type is required
                         </div>
                     </div>
-                } @if(this.rbac.allowedToAccess('Identity.view')){
+                    } @if(this.rbac.allowedToAccess('Identity.view')){
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" formControlName="identityNumber" [maxlength]="IdentityMaxNumber"
-                            [minlength]="IdentityMinNumber" class="form-control custom-input" id="exampleFormControlInput1"
-                            placeholder="Please enter Identity Number">
+                        <input type="text" formControlName="identityNumber"
+                           [maxlength]="IdentityMaxNumber"
+                            [minlength]="IdentityMinNumber" class="form-control custom-input"
+                            id="exampleFormControlInput1" placeholder="Please enter Identity Number">
                         <div class="error-msg" *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched || 
                           identityForm.get('identityNumber')?.dirty)">
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['required']">
@@ -98,6 +101,10 @@
                             </div>
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['pattern']">
                                 Identity Number is required
+                            </div>
+                            <div class="error-msg"
+                                *ngIf="identityForm.get('identityNumber')?.errors?.['invalidIdentityNumber'] && identityForm.get('identityNumber')?.touched">
+                                Identity Number cannot be all zeroes
                             </div>
                         </div>
                     </div>}
@@ -117,16 +124,17 @@
                         </div>
                     </div>}
                 </div>
-    
+
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityForm.invalid || spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="identityForm.invalid || spinnerLoader">
                         @if (spinnerLoader) {
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading' | translate}}...</span>
-                            } @else {
-                            <span>{{'Add'| translate}}</span>
-                            }
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading' | translate}}...</span>
+                        } @else {
+                        <span>{{'Add'| translate}}</span>
+                        }
                     </button>
                 </div>
             </form>
@@ -139,7 +147,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Update Identiy Details</p>
+                <p class="popup-heading mb-0">Update Identity Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -180,6 +188,10 @@
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['maxlength']">
                                 Identity Number must not exceed {{ IdentityMaxNumber }} digits
                             </div>
+                            <div class="error-msg"
+                                *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['invalidIdentityNumber'] && identityupdateForm.get('identityupdateNumber')?.touched">
+                                Identity Number cannot be all zeroes
+                            </div>
                         </div>
                     </div>}
                     @if(this.rbac.allowedToAccess('Identity.view')){
@@ -192,7 +204,8 @@
                             *ngIf="identityupdateForm.get('identityupdateAttachment')?.invalid && identityupdateForm.get('identityupdateAttachment')?.touched">
                             File is required
                         </div>
-                        <div *ngIf="displayidentiydocument" class="mb-2 mt-2">{{ displayidentiydocument?.name || displayidentiydocument }}</div>
+                        <div *ngIf="displayidentiydocument" class="mb-2 mt-2">{{ displayidentiydocument?.name ||
+                            displayidentiydocument }}</div>
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                                 The file size should be less than 25MB.</p>
@@ -201,13 +214,14 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid || spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="identityupdateForm.invalid || spinnerLoader">
                         @if (spinnerLoader) {
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading' | translate}}...</span>
-                            } @else {
-                            <span>{{'Update'| translate}}</span>
-                            }
+                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading' | translate}}...</span>
+                        } @else {
+                        <span>{{'Update'| translate}}</span>
+                        }
                     </button>
                 </div>
             </form>

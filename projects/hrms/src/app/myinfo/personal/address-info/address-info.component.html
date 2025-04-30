@@ -25,7 +25,7 @@
               placeholder="Please enter address line 1"
               (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
             <div class="error-msg"
-              *ngIf="addressForm.get('currentAddress.addressLine1')?.invalid && addressForm.get('currentAddress.addressLine1')?.touched">
+              *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['required'] && addressForm.get('currentAddress.addressLine1')?.touched">
               Address Line 1 is required
             </div>
             <div class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['maxlength']">Address
@@ -56,7 +56,7 @@
             <input type="text" class="form-control custom-input" id="currentState" formControlName="state"
               placeholder="Please enter state" (keypress)="formValidation.restrictInputallowspoint($event)">
             <div class="error-msg"
-              *ngIf="addressForm.get('currentAddress.state')?.invalid && addressForm.get('currentAddress.state')?.touched">
+              *ngIf="addressForm.get('currentAddress.state')?.errors?.['required'] && addressForm.get('currentAddress.state')?.touched">
               State is required
             </div>
             <div class="error-msg" *ngIf="addressForm.get('currentAddress.state')?.errors?.['maxlength']">State cannot
@@ -68,7 +68,7 @@
             <input type="text" class="form-control custom-input" id="currentCountry" formControlName="country"
               placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
-              *ngIf="addressForm.get('currentAddress.country')?.invalid && addressForm.get('currentAddress.country')?.touched">
+              *ngIf="addressForm.get('currentAddress.country')?.errors?.['required'] && addressForm.get('currentAddress.country')?.touched">
               Country is required
 
             </div>
@@ -136,7 +136,7 @@
               <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
                 placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
               <div class="error-msg"
-                *ngIf="addressForm.get('permanentAddress.city')?.invalid && addressForm.get('permanentAddress.city')?.touched">
+                *ngIf="addressForm.get('permanentAddress.city')?.errors?.['required'] && addressForm.get('permanentAddress.city')?.touched">
                 City is required
               </div>
               <div class="error-msg" *ngIf="addressForm.get('permanentAddress.city')?.errors?.['maxlength']">City cannot
@@ -148,7 +148,7 @@
               <input type="text" class="form-control custom-input" id="permanentState" formControlName="state"
                 placeholder="Please enter state" (keypress)="formValidation.restrictInputallowspoint($event)">
               <div class="error-msg"
-                *ngIf="addressForm.get('permanentAddress.state')?.invalid && addressForm.get('permanentAddress.state')?.touched">
+                *ngIf="addressForm.get('permanentAddress.state')?.errors?.['required'] && addressForm.get('permanentAddress.state')?.touched">
                 State is required
 
               </div>
@@ -161,7 +161,7 @@
               <input type="text" class="form-control custom-input" id="permanentCountry" formControlName="country"
                 placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
               <div class="error-msg"
-                *ngIf="addressForm.get('permanentAddress.country')?.invalid && addressForm.get('permanentAddress.country')?.touched">
+                *ngIf="addressForm.get('permanentAddress.country')?.errors?.['required'] && addressForm.get('permanentAddress.country')?.touched">
                 Country is required
               </div>
               <div class="error-msg" *ngIf="addressForm.get('permanentAddress.country')?.errors?.['maxlength']">Country

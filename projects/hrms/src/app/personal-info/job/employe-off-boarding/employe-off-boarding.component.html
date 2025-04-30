@@ -58,7 +58,7 @@
                     <label class="form-label custom-label mb-2">Last Working Day</label>
 
 
-                    <input type="date" formControlName="lastdate" class="form-control custom-input" [max]="currentDate">
+                    <input type="date" formControlName="lastdate" class="form-control custom-input"[min]="joiningDate" [max]="currentDate">
                     <div class="error-msg"
                         *ngIf="offBoardingForm.get('lastdate')?.touched && offBoardingForm.get('lastdate')?.invalid">
                         Last Working Day is required

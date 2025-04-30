@@ -26,51 +26,56 @@
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="currentAddressLine1" formControlName="addressLine1"
               placeholder="Please enter address line 1"
-              (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" maxlength="250">
+              (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" >
             <div class="error-msg"
-              *ngIf="addressForm.get('currentAddress.addressLine1')?.invalid && addressForm.get('currentAddress.addressLine1')?.touched">
+              *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['required'] && addressForm.get('currentAddress.addressLine1')?.touched">
               Address Line 1 is required
             </div>
             <div  class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['maxlength']">Address Line 1 cannot exceed 250 characters</div>
-            <div>
-           
-            
-            </div>
+          
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
             <input type="text" class="form-control custom-input" id="currentAddressLine2" formControlName="addressLine2"
               placeholder="Please enter address line 2"
-              (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" maxlength="150">
+              (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" >
+              <div class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine2')?.errors?.['maxlength']">Address
+                Line 2 cannot exceed 250 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentCity" class="form-label custom-label mb-2">City<span class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="currentCity" formControlName="city"
-              placeholder="Please enter city" maxlength="50" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
-              *ngIf="addressForm.get('currentAddress.city')?.invalid && addressForm.get('currentAddress.city')?.touched">
+              *ngIf="addressForm.get('currentAddress.city')?.errors?.['required'] && addressForm.get('currentAddress.city')?.touched">
               City is required
             </div>
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.city')?.errors?.['maxlength']">City cannot
+              exceed 50 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentState" class="form-label custom-label mb-2">State<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="currentState" formControlName="state"
-              placeholder="Please enter state" (keypress)="formValidation.restrictInputallowspoint($event)" maxlength="50">
+              placeholder="Please enter state" (keypress)="formValidation.restrictInputallowspoint($event)">
             <div class="error-msg"
-              *ngIf="addressForm.get('currentAddress.state')?.invalid && addressForm.get('currentAddress.state')?.touched">
+              *ngIf="addressForm.get('currentAddress.state')?.errors?.['required'] && addressForm.get('currentAddress.state')?.touched">
               State is required
             </div>
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.state')?.errors?.['maxlength']">State cannot
+              exceed 50 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentCountry" class="form-label custom-label mb-2">Country<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="currentCountry" formControlName="country"
-              placeholder="Please enter country" maxlength="50" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
-              *ngIf="addressForm.get('currentAddress.country')?.invalid && addressForm.get('currentAddress.country')?.touched">
+              *ngIf="addressForm.get('currentAddress.country')?.errors?.['required'] && addressForm.get('currentAddress.country')?.touched">
               Country is required
             </div>
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.country')?.errors?.['maxlength']">Country
+              cannot exceed 50 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentZipCode" class="form-label custom-label mb-2">Zip Code/Postal Code<span
@@ -107,46 +112,57 @@
             <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="permanentAddressLine1"
-              formControlName="addressLine1" placeholder="Please enter address line 1" maxlength="150"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+              formControlName="addressLine1" placeholder="Please enter address line 1"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
             <div class="error-msg"
-              *ngIf="addressForm.get('permanentAddress.addressLine1')?.invalid && addressForm.get('permanentAddress.addressLine1')?.touched">
+              *ngIf="addressForm.get('permanentAddress.addressLine1')?.errors?.['required'] && addressForm.get('permanentAddress.addressLine1')?.touched">
               Address Line 1 is required
             </div>
+            <div class="error-msg" *ngIf="addressForm.get('permanentAddress.addressLine1')?.errors?.['maxlength']">
+              Address Line 1 cannot exceed 250 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
             <input type="text" class="form-control custom-input" id="permanentAddressLine2"
-              formControlName="addressLine2" placeholder="Please enter address line 2" [maxlength]="150"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+              formControlName="addressLine2" placeholder="Please enter address line 2"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+              <div class="error-msg" *ngIf="addressForm.get('permanentAddress.addressLine2')?.errors?.['maxlength']">
+                Address Line 2 cannot exceed 250 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentCity" class="form-label custom-label mb-2">City<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
-              placeholder="Please enter city" maxlength="50" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
-              *ngIf="addressForm.get('permanentAddress.city')?.invalid && addressForm.get('permanentAddress.city')?.touched">
+              *ngIf="addressForm.get('permanentAddress.city')?.errors?.['required'] && addressForm.get('permanentAddress.city')?.touched">
               City is required
             </div>
+            <div class="error-msg" *ngIf="addressForm.get('permanentAddress.city')?.errors?.['maxlength']">City cannot
+              exceed 50 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentState" class="form-label custom-label mb-2">State<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="permanentState" formControlName="state"
-              placeholder="Please enter state" maxlength="50" (keypress)="formValidation.restrictInput($event)" >
+              placeholder="Please enter state"  (keypress)="formValidation.restrictInput($event)" >
             <div class="error-msg"
-              *ngIf="addressForm.get('permanentAddress.state')?.invalid && addressForm.get('permanentAddress.state')?.touched">
+              *ngIf="addressForm.get('permanentAddress.state')?.errors?.['required'] && addressForm.get('permanentAddress.state')?.touched">
               State is required
             </div>
+            <div class="error-msg" *ngIf="addressForm.get('permanentAddress.state')?.errors?.['maxlength']">State
+              cannot exceed 50 characters</div>
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="permanentCountry" formControlName="country"
-              placeholder="Please enter country"  maxlength="50" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter country"  (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
-              *ngIf="addressForm.get('permanentAddress.country')?.invalid && addressForm.get('permanentAddress.country')?.touched">
+              *ngIf="addressForm.get('permanentAddress.country')?.errors?.['required'] && addressForm.get('permanentAddress.country')?.touched">
               Country is required
             </div>
+            <div class="error-msg" *ngIf="addressForm.get('permanentAddress.country')?.errors?.['maxlength']">Country
+              cannot exceed 50 characters</div>
+          
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentZipCode" class="form-label custom-label mb-2">Zip Code/Postal Code<span

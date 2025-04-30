@@ -96,9 +96,11 @@
             <input type="text" class="form-control custom-input" id="university" formControlName="university"
               placeholder="Please enter university" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
-              *ngIf="educationForm.get('university')?.invalid && educationForm.get('university')?.touched">
+              *ngIf="educationForm.get('university')?.errors?.['required'] && educationForm.get('university')?.touched">
               University is required
             </div>
+            <div class="error-msg" *ngIf="educationForm.get('university')?.errors?.['maxlength']">University
+              cannot exceed 50 characters</div>
           </div>
           }@if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
@@ -107,9 +109,11 @@
             <input type="text" class="form-control custom-input" id="specialization" formControlName="specialization"
               placeholder="Please enter specialization" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
-              *ngIf="educationForm.get('specialization')?.invalid && educationForm.get('specialization')?.touched">
+              *ngIf="educationForm.get('specialization')?.errors?.['required'] && educationForm.get('specialization')?.touched">
               Specialization is required
             </div>
+            <div class="error-msg" *ngIf="educationForm.get('specialization')?.errors?.['maxlength']">Specialization
+              cannot exceed 50 characters</div>
           </div>
           }@if(this.rbac.allowedToAccess('Education.view')){
           <div class="col-md-6 mb-3">
@@ -124,7 +128,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
-                <input type="date" formControlName="degreeStartDate"  onkeypress="return false" [max]="currentDate" class="form-control custom-input"
+                <input type="date" formControlName="degreeStartDate"  onkeypress="return false" [min]="dateofbirth" [max]="currentDate" class="form-control custom-input"
                 id="degreeStartDate">
               <div class="error-msg"
                 *ngIf="educationForm.get('degreeStartDate')?.invalid && educationForm.get('degreeStartDate')?.touched">
@@ -219,9 +223,11 @@
             <input type="text" class="form-control custom-input" id="university" formControlName="universityupdate"
               placeholder="Please enter university" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
-              *ngIf="educationupdateForm.get('universityupdate')?.invalid && educationupdateForm.get('universityupdate')?.touched">
+              *ngIf="educationupdateForm.get('universityupdate')?.errors?.['required'] && educationupdateForm.get('universityupdate')?.touched">
               University is required
             </div>
+            <div class="error-msg" *ngIf="educationupdateForm.get('universityupdate')?.errors?.['maxlength']">University
+              cannot exceed 50 characters</div>
           </div>
         }
 
@@ -233,9 +239,11 @@
               formControlName="specializationupdate" placeholder="Please enter specialization"
               (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
-              *ngIf="educationupdateForm.get('specializationupdate')?.invalid && educationupdateForm.get('specializationupdate')?.touched">
+              *ngIf="educationupdateForm.get('specializationupdate')?.errors?.['required'] && educationupdateForm.get('specializationupdate')?.touched">
               Specialization is required
             </div>
+            <div class="error-msg" *ngIf="educationupdateForm.get('specializationupdate')?.errors?.['maxlength']">Specialization
+              cannot exceed 50 characters</div>
           </div>
         }
 
@@ -255,7 +263,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeStartDateupdate" [max]="currentDate"  onkeypress="return false"
+            <input type="date" formControlName="degreeStartDateupdate" [min]="dateofbirth" [max]="currentDate"  onkeypress="return false"
               class="form-control custom-input" id="degreeStartDate">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('degreeStartDateupdate')?.invalid && educationupdateForm.get('degreeStartDateupdate')?.touched">

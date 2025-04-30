@@ -29,7 +29,7 @@ export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
   constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getEmployeeId();
     this.getAppointmentEmployeebyId();
     this.getOfferLetterEmployeebyId();
@@ -111,11 +111,11 @@ export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
         this.imgurl = this.empdata.profilePic;
 
         // Patch the form with employee data
-        this.preOnboardingForm.patchValue({
-          traineeOfferSentDate: this.empdata.offerIssueddate || '',
-          traineeOfferSentBy: this.empdata.createdby || '',
-          traineeOfferSentStatus: this.empdata.offerstatus || ''
-        });
+        // this.preOnboardingForm.patchValue({
+        //   traineeOfferSentDate: this.empdata.offerIssueddate || '',
+        //   traineeOfferSentBy: this.empdata.createdby || '',
+        //   traineeOfferSentStatus: this.empdata.offerstatus || ''
+        // });
       },
       error: (err: any) => {
         console.log(err);

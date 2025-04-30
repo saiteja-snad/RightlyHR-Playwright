@@ -101,12 +101,12 @@
                         <input type="text" class="form-control custom-input" id="accountName"
                             formControlName="accountName" placeholder="Please enter account holder's name"
                             (keypress)="restrictInput($event)">
-                        <div class="error-msg"
+                            <div class="error-msg"
                             *ngIf="bankDetailsForm.get('accountName')?.invalid && bankDetailsForm.get('accountName')?.touched">
                             <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['required']">Account Holder's Name
                                 is required</div>
-                            <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['pattern']">Name must contain only
-                                letters</div>
+                            <div *ngIf="bankDetailsForm.get('accountName')?.errors?.['maxlength']">Account Holder's Name
+                                cannot exceed 50 characters</div>
                         </div>
                     </div>
 
@@ -115,12 +115,15 @@
                                 class="text-danger">*</span></label>
                         <input type="number" class="form-control custom-input" id="accountNo"
                             formControlName="accountNo" placeholder="Please enter account number" pattern="^\d{12,20}$">
-                        <div class="error-msg"
+                            <div class="error-msg"
                             *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
                             <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['required']">Account Number is
                                 required</div>
-                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['pattern']">Account Number must be
-                                between 12 and 20 digits</div>
+                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['pattern']">Enter valid account number</div>
+                            <div class="error-msg"
+                                *ngIf="bankDetailsForm.get('accountNo')?.errors?.['invalidbankNumber'] && bankDetailsForm.get('accountNo')?.touched">
+                                Account Number cannot be all zeroes
+                            </div>
                         </div>
                     </div>
 
@@ -128,12 +131,14 @@
                         <label for="ifscCode" class="form-label custom-label mb-2">IFSC Code<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="ifscCode" formControlName="ifscCode"
-                            placeholder="Please enter IFSC code" [maxlength]="11">
-                        <div class="error-msg"
+                            placeholder="Please enter IFSC code" [maxlength]="11" (keypress)="formValidation.restrictInputAllowsAlphaNumericAndHyphen($event)">
+                            <div class="error-msg"
                             *ngIf="bankDetailsForm.get('ifscCode')?.invalid && bankDetailsForm.get('ifscCode')?.touched">
                             <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['required']">IFSC Code is required
                             </div>
                             <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['pattern']">Enter a valid IFSC Code
+                            </div>
+                            <div *ngIf="bankDetailsForm.get('ifscCode')?.errors?.['invalidIfscCode']">Enter a valid IFSC Code
                             </div>
                         </div>
                     </div>
@@ -166,7 +171,14 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary px-4" (click)="bankDetailsForm.reset();modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="bankDetailsForm.invalid">Add</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="bankDetailsForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Add'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>
@@ -207,12 +219,12 @@
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="accountNameupdate"
                             formControlName="accountNameupdate" placeholder="Please enter account holder's name">
-                        <div class="error-msg"
+                            <div class="error-msg"
                             *ngIf="bankDetailsUpdateForm.get('accountNameupdate')?.invalid && bankDetailsUpdateForm.get('accountNameupdate')?.touched">
                             <div *ngIf="bankDetailsUpdateForm.get('accountNameupdate')?.errors?.['required']">Account
                                 Holder's Name is required</div>
-                            <div *ngIf="bankDetailsUpdateForm.get('accountNameupdate')?.errors?.['pattern']">Name must
-                                contain only letters</div>
+                            <div *ngIf="bankDetailsUpdateForm.get('accountNameupdate')?.errors?.['maxlength']">Account
+                                Holder's Name cannot exceed 50 characters</div>
                         </div>
                     </div>
 
@@ -221,14 +233,18 @@
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="accountNoupdate"
                             formControlName="accountNoupdate" placeholder="Please enter account number">
-                        <div class="error-msg"
-                            *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.invalid && bankDetailsUpdateForm.get('accountNoupdate')?.touched">
-                            <div *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['required']">Account
-                                Number is required</div>
-                            <div *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['minlength']">Account
-                                Number must be at least 12 digits</div>
-                            <div *ngIf="bankDetailsUpdateForm.get('accountNoupdate')?.errors?.['maxlength']">Account
-                                Number must not exceed 20 digits</div>
+                            <div class="error-msg"
+                            *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
+                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['required']">
+                                Account Number is required
+                            </div>
+                            <div *ngIf="bankDetailsForm.get('accountNo')?.errors?.['pattern']">
+                                Enter valid account number
+                            </div>
+                            <div
+                                *ngIf="bankDetailsForm.get('accountNo')?.errors?.['invalidbankNumber'] && bankDetailsForm.get('accountNo')?.touched">
+                                Account Number cannot be all zeroes
+                            </div>
                         </div>
                     </div>
 
@@ -236,15 +252,12 @@
                         <label for="ifscCode" class="form-label custom-label mb-2">IFSC Code<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="ifscCode"
-                            formControlName="ifscCodeupdate" placeholder="Please enter IFSC code">
-                        <div class="error-msg"
-                            *ngIf="bankDetailsUpdateForm.get('ifscCodeupdate')?.invalid && bankDetailsUpdateForm.get('ifscCodeupdate')?.touched">
-                            <div *ngIf="bankDetailsUpdateForm.get('ifscCodeupdate')?.errors?.['required']">IFSC Code is
-                                required</div>
-                            <div *ngIf="bankDetailsUpdateForm.get('ifscCodeupdate')?.errors?.['pattern']">Enter a valid
-                                IFSC
-                                Code</div>
-                        </div>
+                            formControlName="ifscCodeupdate" placeholder="Please enter IFSC code" (keypress)="formValidation.restrictInputAllowsAlphaNumericAndHyphen($event)">
+                            <div class="error-msg" *ngIf="bankDetailsUpdateForm.get('ifscCodeupdate')?.invalid && bankDetailsUpdateForm.get('ifscCodeupdate')?.touched">
+                                <div *ngIf="bankDetailsUpdateForm.get('ifscCodeupdate')?.errors?.['required']">IFSC Code is required</div>
+                                <div *ngIf="bankDetailsUpdateForm.get('ifscCodeupdate')?.errors?.['pattern']">Enter a valid IFSC Code</div>
+                                <div *ngIf="bankDetailsUpdateForm.get('ifscCodeupdate')?.errors?.['invalidIfscCode']">IFSC Code cannot be all zeroes</div>
+                              </div>
                     </div>
 
                     <div class="col-md-12 mb-3">
@@ -257,9 +270,8 @@
                             *ngIf="bankDetailsUpdateForm.get('attachmentupdate')?.invalid && bankDetailsUpdateForm.get('attachmentupdate')?.touched">
                             Flie is required
                         </div>
-                        <div *ngIf="displayblankdocument" class="mb-2 mt-2">
-                            <b style="font-size: 14px;">{{ displayblankdocument.name || displayblankdocument }}</b>
-                        </div>
+                        <div *ngIf="displayblankdocument" class="custom-file-name my-3">{{ displayblankdocument.name ||
+                            displayblankdocument }}</div>
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                                 The file size should be less than 25MB.</p>
@@ -279,7 +291,14 @@
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary px-4" (click)="bankDetailsUpdateForm.reset();modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="bankDetailsUpdateForm.invalid">Update</button>
+                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="bankDetailsUpdateForm.invalid">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Update'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>

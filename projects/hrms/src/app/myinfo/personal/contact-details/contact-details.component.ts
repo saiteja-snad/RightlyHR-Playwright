@@ -120,7 +120,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
     const cleanPhoneNumber = (phone: any): string => {
       if (!phone) return '';
-      return String(phone).replace(/\s+/g, '').replace(/-/g, '');
+      return String(phone).replace(/\D+/g, '');
     };
 
     const contactnumber = cleanPhoneNumber(formValue.phoneNumber || this.employedata?.phoneNumber || '');
@@ -202,15 +202,16 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.employedata.mobilephonecountryflag = country.code;
   }
 
-  formatPhoneNumber(value: any, countryCode: any) {
+  formatPhoneNumber(value: any, countryCode: any): string {
     if (!countryCode || !value) return value;
-    const stringValue = String(value); // Make sure it's a string
+    const stringValue = String(value); // Ensure the value is a string
     const phoneNumber = parsePhoneNumberFromString(stringValue, countryCode);
+  
     if (phoneNumber && phoneNumber.isValid()) {
-      this.formattedPhoneNumber = phoneNumber.formatInternational();
-      return phoneNumber.formatNational();
+      return phoneNumber.formatNational(); // Format with spaces (e.g., "212 555 1234")
     }
-    return stringValue;
+  
+    return stringValue; // Return the original value if invalid
   }
 
   phoneNumberValidator(countryCode: any) {

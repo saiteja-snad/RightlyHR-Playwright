@@ -75,7 +75,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    this.joiningDate = this.formatDateToLocal(this.empinfo.dateOfJoining)
+   
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
@@ -182,6 +182,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.joiningDate = this.formatDateToLocal(data.dateOfJoining)
       },
       error: (reason: any) => console.error('Error fetching employee data:', reason),
     });
@@ -263,7 +264,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
         // Reset the team manager selection
         this.jobDetailsForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name }) ;
-        this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
+        this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name ?? '' });
       },
       error: (err: any) => {
         this.teamManagerDropdownValues = []; // Reset on error
@@ -289,7 +290,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
           this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
           // Reset the team manager selection
          
-          this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
+          this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name ?? ''});
         }
         else{
           this.subdeparmentSingleobj=''

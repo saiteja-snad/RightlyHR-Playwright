@@ -112,7 +112,7 @@
                 </div>
                 <div>
                   @if(i>0){
-                  <button title="Delete" type="button" (click)="deleteRow(i)" *ngIf="policies.length > 1"
+                  <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
                     class="btn p-0 border-0 bg-transparent">
                     <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
                   </button>
@@ -157,21 +157,6 @@
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary " (click)="closeDelete(modal)">{{'No'|translate}}</button>
       <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
-    </div>
-  </div>
-
-</ng-template>
-
-<ng-template #deletepopup1 let-modal>
-  <div class="result-popup-content" ngbAutofocus>
-
-    <div>
-      <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
-    </div>
-    <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary " (click)="closeDelete(modal)">{{'No'|translate}}</button>
-      <button type="button" class="custom-btn btn-primary " (click)="onDeleteClose(modal)">{{'Yes'|translate}}</button>
     </div>
   </div>
 

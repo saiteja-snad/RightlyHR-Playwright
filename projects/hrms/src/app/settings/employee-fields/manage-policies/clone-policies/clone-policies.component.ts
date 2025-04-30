@@ -18,8 +18,6 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 })
 export class ClonePoliciesComponent implements OnInit, OnDestroy {
   @ViewChild('deletepopup') deletepopup: any;
-  @ViewChild('deletepopup1') deletepopup1: any;
-  deleteIndex: number | null = null;
   subscription!: Subscription;
   isFormEdited: boolean = false;
   policyForm!: FormGroup;
@@ -133,18 +131,6 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
       policyNewFile: ['', Validators.required]
     });
     this.policies.push(policyGroup);
-  }
-
-  deleteRow(i: any){
-    this.deleteIndex = i;
-    this.modalService.open(this.deletepopup1, { backdrop: 'static', centered: true });
-  }
-
-  onDeleteClose(modal: any) {
-    modal.dismiss();
-    if (this.deleteIndex !== null) {
-      this.removePolicyRow(this.deleteIndex);
-    }
   }
   
   removePolicyRow(index: number) {
@@ -280,31 +266,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
 
     }
   }
-
-  // getSubLocationByid(selectedLocation: any): void {
-  //   if (selectedLocation && selectedLocation.id) {
-  //     this.subscription = this.http
-  //       .getData(
-  //         `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
-  //       )
-  //       .subscribe({
-  //         next: (data: any) => {
-  //           if (data.length === 0) {
-  //             this.subLocationsDropdown = [];
-  //           } else {
-  //             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
-  //           }
-
-  //         },
-  //         error: (err: any) => {
-           
-  //         },
-  //       });
-  //   } else {
-  //     this.subLocationsDropdown = [];
-      
-  //   }
-  // }
+  
   shiftDropdown: any[] = []; 
 
   onSubLocationChange(subLocationId: any) {

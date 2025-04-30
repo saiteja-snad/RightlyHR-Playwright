@@ -35,10 +35,10 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
 
   ngOnInit(): void {
     this.getPermissionTypes();
-    this.fromdataintalition();
+    this.formIntalition();
   }
 
-  fromdataintalition() {
+  formIntalition() {
     this.permissionsForm = this.fb.group({
       name: [null, Validators.required],
     });
@@ -83,7 +83,7 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
-  updatePermission(form: FormGroup) {
+  updateRegularization(form: FormGroup) {
     if (form.invalid) {
       return;
     }
@@ -102,12 +102,13 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     console.log(payload);
     this.http
       .putData(`PermissionTypes/${this.selectedPermission.id}`, payload)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
-            'Permission Updated Successfully'
+            'Attendance Regalarization Updated Successfully'
           );
         },
         error: (err) => {
@@ -120,18 +121,18 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
       });
   }
 
-  addPermission(permissionForm: FormGroup) {
+  addRegularization(permissionForm: FormGroup) {
     if (permissionForm.valid) {
       const payload: Ipermissions = {
         name: permissionForm.value.name,
         isDeleted: true,
         type: 'Regularization',
       };
-      this.http.postdata(`PermissionTypes`, payload).subscribe({
+      this.http.postdata(`PermissionTypes`, payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
-            'Permission Added Successfully'
+            'Attendance Regalarization Added Successfully'
           );
         },
         error: (err: any) => {
@@ -145,11 +146,11 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
   }
 
   deletePermission() {
-    this.http.deleteData(`PermissionTypes/${this.selectedPermission.id}`).subscribe({
+    this.http.deleteData(`PermissionTypes/${this.selectedPermission.id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal(
-          'Permission Deleted Successfully'
+          'Attendance Regalarization Deleted Successfully'
         );
       },
       error: (err) => {

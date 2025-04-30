@@ -47,7 +47,7 @@
           <td>{{item.teamId_sublocIdName?item.teamId_sublocIdName:'-'}}</td>
           <td>{{item.selectType?item.selectType:'-'}}</td>
           <td>
-            <div class="mt-2">
+            <div>
               <span *ngIf="item.employeeIds.length > 0; else emp">
                 <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
@@ -62,7 +62,7 @@
           <td>{{item.requestType?item.requestType:'-'}}</td>
           <td>{{item.duration?(item.duration * 60 * 60 * 1000 | date:'HH:mm':'UTC'):'-'}}</td>
           <td>
-            <div class="mt-2">
+            <div>
               <span *ngIf="item.meta;else res">
                 <a type="button" [ngbPopover]="reason">
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">

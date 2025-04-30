@@ -58,12 +58,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    // this.halfDayValue = JSON.parse(
-    //   localStorage.getItem('filterHalfDayData') || '{}'
-    // );
-    // this.fullDayValue = JSON.parse(
-    //   localStorage.getItem('filterFullDayData') || '{}'
-    // );
     this.intializeCompOffForm();
     this.getWorkfromhomeCriteria();
     this.getEmployeeeHolidays();

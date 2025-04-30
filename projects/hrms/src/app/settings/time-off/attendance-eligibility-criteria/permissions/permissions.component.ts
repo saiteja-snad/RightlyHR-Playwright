@@ -109,6 +109,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     console.log(payload);
     this.http
       .putData(`PermissionTypes/${this.selectedPermission.id}`, payload)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
@@ -134,7 +135,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
         isDeleted: true,
         type: 'Permissions',
       };
-      this.http.postdata(`PermissionTypes`, payload).subscribe({
+      this.http.postdata(`PermissionTypes`, payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
@@ -152,7 +153,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   deletePermission() {
-    this.http.deleteData(`PermissionTypes/${this.selectedPermission.id}`).subscribe({
+    this.http.deleteData(`PermissionTypes/${this.selectedPermission.id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal(

@@ -45,11 +45,6 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
   }
 
   validateDecimal(event: KeyboardEvent, criteriaName:string) {
-    // if(criteriaName === 'expiryDays' || criteriaName === 'minAppliedDays' || criteriaName === 'pastDatesAllowed' || criteriaName === 'maxRegularizePerDay' || criteriaName === 'maxRegularizePerMonth'){
-    //   if (!/^\d$/.test(criteriaName) ) {
-    //     event.preventDefault(); // Prevent any non-digit characters
-    //   }
-    // }
     const inputChar = String.fromCharCode(event.charCode);
     const inputElement = event.target as HTMLInputElement;
     const currentValue = inputElement.value;
@@ -116,10 +111,8 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
     const validationError = this.validateWFHValue(this.valueId, value);
     if (validationError) {
       this.sharedModalService.openErrorModal(validationError)
-      
       return; 
     }
-
     const data = {
       id: this.valueId,
       value: value
@@ -128,20 +121,10 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.WorkFromHomeEligibilityCriteria('WorkFromHomeEligibilityCriteria');
         this.sharedModalService.openSuccessModal('Data Updated Successfully');
-        // this.toaster.success({
-        //   detail: 'SUCCESS',
-        //   summary: 'Data Updated Successfully',
-        //   duration: 2000,
-        // });
-
       },
       error: (err :any) => {
         this.sharedModalService.openErrorModal("Some Thing Went Wrong")
-        // this.toaster.error({
-        //   detail: 'ERROR',
-        //   summary: 'Some Thing Went Wrong',
-        //   duration: 3000,
-        // });
+     
       }
     })
   }

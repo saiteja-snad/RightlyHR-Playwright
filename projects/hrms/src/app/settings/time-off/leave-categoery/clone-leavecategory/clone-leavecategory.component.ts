@@ -127,7 +127,9 @@ export class CloneLeavecategoryComponent {
       }
     })
   }
-  
+  navigate(){
+    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory'])
+  }
   subloactionid(id?: any) {
       const sublocationId = this.subLocationsDropdown.find((c: any) => parseInt(c.id) === parseInt(id));
       this.getShiftBYid(sublocationId);

@@ -43,13 +43,13 @@
                   <li>
                     <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" 
                     (click)="navigateToViewLeaveCategory(details)">
-                      <i class="bi bi-pencil-fill px-2"></i>{{'View' | translate}}
+                    <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}
                     </a>
                   </li>
                   <li>
                     <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" 
                     (click)="navigateToCloneLeaveCategory(details)">
-                      <i class="bi bi-pencil-fill px-2"></i>{{'Clone' | translate}}
+                    <i class="bi bi-copy me-2"></i>{{'Clone' | translate}}
                     </a>
                   </li>
                 </ul>

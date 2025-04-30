@@ -116,6 +116,9 @@ export class UpdateLeavecategoryComponent {
     })
   }
 
+  navigate(){
+    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
+  }
   getSubLocationByid(locationID: any) {
     let sublocid = locationID ?? this.updateLeaveCategoryData.locationID
     this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${sublocid}`).subscribe({

@@ -107,6 +107,9 @@ export class ViewLeavecategoryComponent {
     }
   }
 
+  navigate(){
+    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory']);
+  }
   jobLocationList() {
     this.subscription = this.http.getData(`JobLocation`).subscribe({
       next: (data: any) => {

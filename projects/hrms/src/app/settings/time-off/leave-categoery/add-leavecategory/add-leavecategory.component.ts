@@ -274,6 +274,10 @@ export class AddLeavecategoryComponent {
     return null;
   }
 
+  navigate(){
+    this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
+  }
+
 
  
 

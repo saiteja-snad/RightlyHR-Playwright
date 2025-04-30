@@ -203,7 +203,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2"> {{'Salary (Cost to Company)'|translate}}<span
                             class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="amount"
+                    <input type="number" class="form-control custom-input" formControlName="amount"
                         placeholder="Please enter salary" (ngModelChange)="onclickCTC($event)" />
                     <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched">
                         <div class="error-msg">Salary is required</div>
@@ -242,7 +242,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
                             class="error-msg">*</span></label>
-                    <input type="date" class="form-control custom-input" formControlName="offerSentDate"
+                    <input type="date" class="form-control custom-input" formControlName="offerSentDate" (change)="updateEndDateValidityupdate();updateEndDateValidity();updateEndDateValidityForExpectedStartDate()"
                         placeholder="Please enter offer issued date" onkeydown="return false;" (change)="isDataPopulated()" />
                     <div *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
                         <div class="error-msg">Offer Issued Date is required</div>
@@ -267,7 +267,7 @@
                     <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                        placeholder="Please enter offer expiry date" (change)="updateEndDateValidityupdate()" onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
+                        placeholder="Please enter offer expiry date" (change)="updateEndDateValidityupdate();updateEndDateValidity()" onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
                     <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                         <div class="error-msg">Offer Expiry Date is required</div>
                     </div>

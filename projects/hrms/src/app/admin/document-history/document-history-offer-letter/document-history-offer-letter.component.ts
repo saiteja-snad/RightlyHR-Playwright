@@ -71,6 +71,11 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       comments: ['', [Validators.required, Validators.maxLength(250)]],
     });
   }
+  blockLeadingSpace(event: KeyboardEvent, inputValue: string): void {
+    if (event.key === ' ' && inputValue.length === 0) {
+      event.preventDefault(); // Block space if it's the first character
+    }
+  }
   //to get all offer Letters
   getOfferLetters() {
     this.subscription = this.http
@@ -327,7 +332,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
           this.rejectEmail();
           this.Rejectnotification();
           this.getOfferLetters();
-          this.conformationPopup.openSuccessModal('Rejected Successfully ');
+          
         },
         error: (reason: any) => {
           console.log(reason);
@@ -375,10 +380,9 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           if (data) {
-            this.conformationPopup.openSuccessModal(
-              'Rejected Email Sent Successfully'
-            );
+            this.rejectDocument.reset();
             this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal('Offer Rejected Successfully ');
           }
         },
         error: (err: any) => {

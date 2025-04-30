@@ -55,7 +55,11 @@ export class DocumentHistoryInternOfferLetterComponent {
     this.initializeForm();
     this.getTraineeOfferLetters();
   }
-
+  blockLeadingSpace(event: KeyboardEvent, inputValue: string): void {
+    if (event.key === ' ' && inputValue.length === 0) {
+      event.preventDefault(); // Block space if it's the first character
+    }
+  }
   openModal(content: any) {
     this.modalService.open(content, {
       centered: true,
@@ -390,7 +394,7 @@ export class DocumentHistoryInternOfferLetterComponent {
           if (data) {
             setTimeout(() => {
               this.conformationPopup.openSuccessModal(
-                'Email Sent Successfully'
+                'Trainee Offer Rejected Successfully'
               );
             }, 3000);
             this.getTraineeOfferLetters();

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -24,7 +24,7 @@ interface FieldGroup {
   styleUrl: './custom-reports.component.scss'
 })
 
-export class CustomReportsComponent {
+export class CustomReportsComponent implements OnInit,OnDestroy{
   reportForm!: FormGroup;
   private destroy$ = new Subject<boolean>();
   activeRangeDates: Date[] | undefined;
@@ -57,6 +57,7 @@ export class CustomReportsComponent {
   empStatusList = ['All Employees', 'Active', 'Inactive', 'Prospective'];
   selectedData: any[] = [];
   selectedFields: string[] = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
+  reportFields: string[] = [];
   emp: Ipersonal[] = [];
   reportdata: any[] = [];
   // Define locked fields per group (if needed)
@@ -182,7 +183,7 @@ export class CustomReportsComponent {
       selectAll: false
     }
   };
-
+  hasPendingChanges = false;
   spinnerLoader1= false;
   spinnerLoader2= false;
 
@@ -224,7 +225,7 @@ export class CustomReportsComponent {
   showJobData() {
     this.showCard = false;
     this.JobShowCard = true;
-    this.selectedFields = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name'];
+    this.selectedFields = ['ID','Employee ID', 'First Name', 'Middle Name', 'Last Name',...this.selectedFields];
     if (this.fieldGroups['basicInfo']) {
       this.fieldGroups['basicInfo'].selectedFields = [...this.selectedFields]; 
     }
@@ -276,6 +277,7 @@ export class CustomReportsComponent {
     // Update selectAll status
     group.selectAll = group.selectedFields.length === group.fields.length;
     this.updateSelectedFields();
+    this.hasPendingChanges = true;
   }
 
   toggleSelectAll(event: Event, groupKey: string): void {
@@ -293,6 +295,7 @@ export class CustomReportsComponent {
     }
   
     this.updateSelectedFields();
+    this.hasPendingChanges = true;
   }
   
 
@@ -300,6 +303,13 @@ export class CustomReportsComponent {
     this.selectedFields = Object.values(this.fieldGroups).reduce((acc: string[], group) => [...acc, ...group.selectedFields], []);
     if(this.selectedFields.length == 0){
       this.selectedData=[];
+    }
+  }
+
+  private updateReportFields(): void {
+    this.reportFields = Object.values(this.fieldGroups).reduce((acc: string[], group) => [...acc, ...group.selectedFields], []);
+    if(this.reportFields.length == 0){
+      this.reportFields=[];
     }
   }
 
@@ -311,9 +321,10 @@ export class CustomReportsComponent {
     
 
     const formData = this.reportForm.value;
-    console.log(formData);
     
-
+    
+    this.updateReportFields();
+    this.hasPendingChanges = false;
     //if dateOfJoining present filter the data with provide range  
     const startDate = formData.dateOfJoining?.startDate ? new Date(formData.dateOfJoining.startDate) : null;
     const endDate = formData.dateOfJoining?.endDate ? new Date(formData.dateOfJoining.endDate) : null;

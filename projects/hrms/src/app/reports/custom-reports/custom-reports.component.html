@@ -37,10 +37,10 @@
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading...'}}</span>
             }@else {
-            <span>{{'Generate'}}</span>
+            <span>{{ 'Apply Changes'  }}</span>
             }
           </button>
-          <button type="button" class="custom-btn btn-primary" [disabled]="selectedData.length == 0"
+          <button type="button" class="custom-btn btn-primary" [disabled]="selectedData.length == 0 || hasPendingChanges"
             (click)="generateExcel()">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -462,20 +462,20 @@
   </div>
 
   <!--table content-->
-  @if(selectedData.length > 0 && selectedFields.length > 0){
+  @if(reportFields.length > 0 && reportFields.length > 0){
   <div class="custom-setting-right-content custom-data-table p-3 mb-3">
     <div class="custom-table-content">
       <table class="w-100">
         <thead>
           <tr>
-            <th *ngFor="let field of selectedFields" scope="col">
+            <th *ngFor="let field of reportFields" scope="col">
               {{ field }}
             </th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let data of selectedData">
-            <td *ngFor="let field of selectedFields" scope="row">
+            <td *ngFor="let field of reportFields" scope="row">
               {{ data[field] || '-' }}
             </td>
           </tr>

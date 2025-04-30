@@ -96,7 +96,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal,
+    public modalService: NgbModal,
     public rbac: RbacService,
     private fb: FormBuilder,
     public formsValidation:FormValidationsService

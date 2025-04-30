@@ -101,8 +101,7 @@
                     </div>
                 </div>
                 <div>
-                    <button type="button" class="custom-btn btn-primary" (click)="addWeekend()"
-                        [disabled]="weekends.length >= 3 || (weekendForm?.get('year')?.invalid || weekendForm?.get('location')?.invalid || weekendForm?.get('subLocation')?.invalid || weekendForm?.get('shift')?.invalid)">{{"+ Add Row" | translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="addWeekend()">{{"+ Add Row" | translate}}</button>
                 </div>
             </div>
 
@@ -154,13 +153,13 @@
                             <td><input type="checkbox" class="form-check-input" formControlName="week3"></td>
                             <td><input type="checkbox" class="form-check-input" formControlName="week4"></td>
                             <td><input type="checkbox" class="form-check-input" formControlName="week5"></td>
-                            @if(i>0){
+                            <!-- @if(i>0){ -->
                             <td>
-                                <a (click)="weekends.length > 1 && removeWeekend(i)">
+                                <a (click)="weekends.length > 1 && removeWeekend(i)" *ngIf="weekends.length > 1">
                                     <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
                                 </a>
                             </td>
-                            }  
+                            <!-- }   -->
                         </tr>
                     </tbody>
                 </table>

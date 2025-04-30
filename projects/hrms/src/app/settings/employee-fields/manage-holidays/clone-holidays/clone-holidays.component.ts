@@ -42,8 +42,8 @@ export class CloneHolidaysComponent {
     this.holidayForm = this.fb.group({
       year: ['', Validators.required],
       location: ['', Validators.required],
-      subLocation: ['', Validators.required],
-      shift: ['', Validators.required],
+      subLocation: [{ value: '', disabled: true }, Validators.required],
+      shift: [{ value: '', disabled: true }, Validators.required],
       holidays: this.fb.array([])
     });
 
@@ -222,10 +222,14 @@ export class CloneHolidaysComponent {
         .subscribe({
           next: (data: any) => {
             if (data.length === 0) {
+              this.holidayForm.get('subLocation')?.enable();
+              this.holidayForm.get('shift')?.disable()
               this.subLocationsDropdown = [];
             } else {
               this.subLocationsDropdown = data.jobSubLocations;
               this.shiftDropdown = [];
+              this.holidayForm.get('subLocation')?.enable();
+              this.holidayForm.get('shift')?.disable()
             }       
           },
           error: (err: any) => {
@@ -249,8 +253,10 @@ export class CloneHolidaysComponent {
         .subscribe({
           next: (data: any) => {
             if (data.length === 0) {
+              this.holidayForm.get('shift')?.enable()
               this.shiftDropdown = []; 
             } else {
+              this.holidayForm.get('shift')?.enable()
               this.shiftDropdown = [].concat( ...data.map((element: any) => element.orgShiftsItems)
               ); 
             }         

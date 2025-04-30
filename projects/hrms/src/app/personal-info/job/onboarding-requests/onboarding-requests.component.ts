@@ -214,11 +214,6 @@ extendCondition(data:any){
       }
     })
   }
-
-  onboardstatuschange() {
-    this.empdata.onboardstatus = true;
-    this.empdata.substatus = 'Trainee Onboarded'
-  }
   
   myApproverCommentss: any;
   approverComments(value: any) {
@@ -239,6 +234,8 @@ extendCondition(data:any){
   }
 
 readyforonboardRequest() {
+   this.empdata.onboardstatus = true;
+    this.empdata.substatus = 'Trainee Onboarded'
     this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
       next: (data: any) => {
          this.modalService.dismissAll();

@@ -160,7 +160,7 @@
                 <p class="popup-heading mb-0">{{'Re-Request Documents'|translate}}</p>
             </div>
             <div>
-                <a (click)="reload()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="reRequestForm.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-3">
@@ -178,7 +178,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="reload()">{{'Close'|translate}}</button>
+                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="reRequestForm.reset();modal.dismiss()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary px-4" [disabled]="!reRequestForm.valid">{{'Submit'|translate}}</button>
                 </div>
             </form>

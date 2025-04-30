@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -68,9 +71,18 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
   //functio to inialize the form
   initializeForm() {
     this.rejectDocument = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),this.blockLeadingSpace()]],
     });
   }
+  blockLeadingSpace() : ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value as string;
+      if (value && value.startsWith(' ')) {
+        return { leadingSpace: true };
+      }
+      return null;
+    };
+}
   //to get all offer Letters
   getOfferLetters() {
     this.subscription = this.http
@@ -327,7 +339,7 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
           this.rejectEmail();
           this.Rejectnotification();
           this.getOfferLetters();
-          this.conformationPopup.openSuccessModal('Rejected Successfully ');
+          
         },
         error: (reason: any) => {
           console.log(reason);
@@ -375,10 +387,9 @@ export class DocumentHistoryOfferLetterComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           if (data) {
-            this.conformationPopup.openSuccessModal(
-              'Rejected Email Sent Successfully'
-            );
+            this.rejectDocument.reset();
             this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal('Offer Rejected Successfully ');
           }
         },
         error: (err: any) => {

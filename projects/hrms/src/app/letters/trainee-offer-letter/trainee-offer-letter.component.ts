@@ -1001,13 +1001,16 @@ export class TraineeOfferLetterComponent {
 
   //function to validate the offer expiry date and offer issued date
   updateEndDateValidity(): void {
-    const offerExpiryDate = new Date(this.traineeEmpData.offerExpiryDate);
-    const offerIssuedDate = new Date(this.traineeEmpData.offerIssuedDate);
-    if (offerExpiryDate < offerIssuedDate) {
-      this.isExpiryDateValid = false;
-    } else {
-      this.isExpiryDateValid = true;
+    const offerExpiryDate = moment(this.employeeForm.get('offerExpiryDate')?.value);
+    const offerIssuedDate = moment(this.employeeForm.get('offerSentDate')?.value);
+    if(offerExpiryDate && offerIssuedDate) {
+      if (offerExpiryDate <= offerIssuedDate) {
+        this.isExpiryDateValid = false;
+      } else {
+        this.isExpiryDateValid = true;
+      }
     }
+  
   }
 
   //function to validate the offer expected start date and offer issued date

@@ -270,15 +270,16 @@
                 <p class="popup-heading mb-0">{{'Assessment Form'| translate}}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
             </div>
         </div>
 
         <div class="custom-main-popup-content">
             <div class="assessment-form-content">
                 <app-probationform-view class="form-content"></app-probationform-view>
-            </div> 
+            </div>
         </div>
     </div>
 </ng-template>

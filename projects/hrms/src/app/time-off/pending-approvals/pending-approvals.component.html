@@ -2,12 +2,12 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         @if (router.url !== '/time-off/pending-approvals/assessmentform') {
         <div>
-            <p class="component-header cursor mb-0">Pending Approvals</p>
+            <p class="component-header cursor mb-0">{{'Pending Approvals'|translate}}</p>
         </div>
         }
         @if (router.url === '/time-off/pending-approvals/assessmentform') {
         <div>
-            <p class="component-header cursor mb-0"><i class="bi bi-arrow-90deg-left me-2 cursor"></i>{{'Assessment Form'|translate}}</p>
+            <p class="component-header cursor mb-0" (click)="navigate()"><i class="bi bi-arrow-90deg-left me-2 cursor"></i>{{'Assessment Form'|translate}}</p>
         </div>
         }
     </div>

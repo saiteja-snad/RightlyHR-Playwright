@@ -11,4 +11,9 @@ import { TranslateModule } from '@ngx-translate/core';
 
 export class PendingApprovalsComponent {
   constructor(public router: Router) { }
+
+  navigate(){
+    this.router.navigate(['/time-off/pending-approvals/probation-request']);
+  }
+
 }

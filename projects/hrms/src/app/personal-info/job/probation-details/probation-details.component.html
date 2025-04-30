@@ -1,7 +1,8 @@
 <div class="custom-main-component-container">
-    <div class="component-header my-3">Probation Details</div>
-    
-    <div class="custom-table-content mt-2">
+    <!--Header-->
+    <div class="component-sub-header mb-3">Probation Details</div>
+    <!--table Content-->
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <tr>
@@ -23,9 +24,9 @@
                     <td>{{probation.probationStartDate ? (probation.probationStartDate | dateformat) : '-' }}</td>
                     <td>{{probation.probationEndDate ? (probation.probationEndDate | dateformat) : '-'}}</td>
                     <td>{{probation.probationExtendedDate ? (probation.probationExtendedDate | dateformat) : '-'}}</td>
-                    <td class="cursor">
+                    <td>
                         @if(probation.approvers && probation.approvers.length > 0;){
-                        <div (click)="probationCommentsFunction(probation.approvers,approverhistory)">
+                        <div (click)="probationCommentsFunction(probation.approvers,approverhistory)" class="cursor">
                             <i class="bi bi-info-circle-fill"></i>
                         </div>
                         } @else {
@@ -34,36 +35,32 @@
                     </td>
                     <td>{{probation.status}}</td>
                     <td class="text-center">
-                        @if (probation.status === 'Pending' || probation.status === 'Rejected' || probation.status ===
-                        'Extended') {
+                        @if (probation.status === 'Pending' || probation.status === 'Rejected' || probation.status === 'Extended') {
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 <!--status pending-->
-                                @if(probation.status === 'Pending' &&
-                                shouldprobationShowButton(empdata.probationEndDate) &&
-                                probation.status!='Extended'){
+                                @if(probation.status === 'Pending' && shouldprobationShowButton(empdata.probationEndDate) && probation.status!='Extended'){
                                 <li>
                                     <a (click)="requestForProbation(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
                                 </li>
                                 }
                                 <!--status Rejected-->
-                                @if(probation.status === 'Rejected' &&
-                                shouldprobationShowButton(empdata.probationEndDate)){
+                                @if(probation.status === 'Rejected' && shouldprobationShowButton(empdata.probationEndDate)){
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Re-Request for Probation Confirmation</a>
                                 </li>
                                 }
                                 <!--status extended-->
-                                @if(probation.status === 'Extended' &&
-                                shouldprobationShowButton(empdata.probationEndDate) &&
-                                probation.probationExtendCount < probationExtendTimes){ <li>
+                                @if(probation.status === 'Extended' && shouldprobationShowButton(empdata.probationEndDate)
+                                && probation.probationExtendCount < probationExtendTimes){ 
+                                <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
-                                    </li>
-                                    }
+                                </li>
+                                }
                             </ul>
                         </div>
                         } @else {
@@ -78,85 +75,80 @@
 </div>
 
 <ng-template #approverhistory let-modal>
-    <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Approver History Details</h1>
-        <button type="button" class="btn-close me-2" data-bs-dismiss="modal" (click)="closeModel()"
-            aria-label="Close"></button>
-    </div>
-        <div class="custom-main-component-container">
-            <div class="custom-table-content mt-2">
-                <table class="table">
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Approver History Details</p>
+            </div>
+            <div>
+                <a (click)="closeModel()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <div class="custom-table-content custom-popup-table">
+                <table class="w-100">
                     <thead>
                         <tr>
-                            <th class="text-nowrap">Approver Role</th>
-                            <th class="text-nowrap">Over all Rating</th>
-                            <th class="text-nowrap">Status</th>
-                            <th class="text-nowrap">Extended Date</th>
-                            <th class="text-nowrap">comments </th>
-                            <th class="text-nowrap">Commented Date</th>
-                            <th class="text-nowrap">Commented by</th>
-                            <th class="text-nowrap">Attachment</th>
+                            <th>Approver Role</th>
+                            <th>Over all Rating</th>
+                            <th>Status</th>
+                            <th>Extended Date</th>
+                            <th>comments </th>
+                            <th>Commented Date</th>
+                            <th>Commented by</th>
+                            <th>Attachment</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let comment of appcomment">
-                            <td>
-                                <span *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
-                                <ng-template #approverrole>NA</ng-template>
+                            <td>{{comment.approverRole ? comment.approverRole : 'NA'}}</td>
+                            <td>{{comment.metadata.Overallrating | number : '1.2-2' }}</td>
+                            <td>{{comment.metadata.status ? comment.metadata.status : 'NA'}}</td>
+                            <td>{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | date) : 'NA'}}
                             </td>
                             <td>
-                                <span>
-                                    {{comment?.metadata?.Overallrating|number : '1.2-2' }}</span>
-                            </td>
-                            <td>
-                                <span *ngIf="comment?.metadata?.status;else status">
-                                    {{comment.metadata.status}}</span>
-                                <ng-template #status>NA</ng-template>
-                            </td>
-                            <td>
-                                <span *ngIf="comment?.metadata?.PrExtendedDate;else extenddate">
-                                    {{comment.metadata.PrExtendedDate |dateformat}}</span>
-                                <ng-template #extenddate>NA</ng-template>
-                            </td>
-                            <td class="">
-                                <div class="text-center" *ngIf="comment?.comments;else popupcomments">
-                                    <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
-                                        ngbPopover="{{comment?.comments}}"> </i>
+                                <div>
+                                    <span class="ms-2" *ngIf="comment?.comments;else popupcomments">
+                                        <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
+                                            ngbPopover="{{comment?.comments}}"></i>
+                                    </span>
+                                    <ng-template #popupcomments>{{'NA' | translate}}</ng-template>
                                 </div>
-                                <ng-template #popupcomments>NA</ng-template>
                             </td>
-                            <td><span *ngIf="comment.addedDate;else addeddate">
-                                    {{comment.addedDate | dateformat}}</span>
-                                <ng-template #addeddate>NA</ng-template>
-                            </td>
-                            <td><span *ngIf="comment.employeeName;else employeeName">
-                                    {{comment.employeeName}} ({{comment.fusionEmployeeId}})</span>
-                                <ng-template #employeeName>NA</ng-template>
-                            </td>
+                            <td>{{comment.addedDate ? (comment.addedDate | date) : 'NA'}}</td>
+                            <td>{{comment.addedName}}-{{comment.addedByFusionEmpId}}</td>
                             <td>
-                                <a type="button" style="color: blue;" (click)="openview(probationformpopup)"
-                                    (click)="setformView(this.empdata.employeeId,comment?.metadata?.responseId)">
-                                    <i class="bi bi-paperclip"></i>View
+                                <a type="button" class="view-btn" (click)="openview(probationformpopup);
+                                setformView(this.empdata.employeeId,comment?.metadata?.responseId)">
+                                    <i class="bi bi-paperclip"></i>{{'View' | translate}}
                                 </a>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" (click)="closeModel()">Close</button>
+        </div>
     </div>
 </ng-template>
 
 
 <!-- form view -->
 <ng-template #probationformpopup let-modal>
-    <div class="modal-header">
-        <button type="button" class="btn-close me-2" data-bs-dismiss="modal" (click)="closeModel()"
-            aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-        <app-probationform-view></app-probationform-view>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Assessment Form</p>
+            </div>
+            <div>
+                <a (click)="closeModel()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <div class="assessment-form-content">
+                <app-probationform-view class="form-content"></app-probationform-view>
+            </div>
+        </div>
     </div>
 </ng-template>

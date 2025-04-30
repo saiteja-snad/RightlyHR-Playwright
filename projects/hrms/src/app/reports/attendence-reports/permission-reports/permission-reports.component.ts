@@ -241,7 +241,6 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
 
     const modifiedData = this.filteredPermissionData.map(record => {
       const modifiedRecord: any = {};
-      console.log(modifiedRecord)
       NEW_SEQUENCE.forEach(columnName => {
         const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
 
@@ -255,17 +254,13 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
 
             // Assign the formatted date to the modified record
             modifiedRecord[columnName] = date_formatted;
-            console.log(modifiedRecord)
           } else {
             modifiedRecord[columnName] = record[originalColumnName];
-            console.log(modifiedRecord)
           }
         } else {
           modifiedRecord[columnName] = '';
-          console.log(modifiedRecord)
         }
       });
-      console.log(modifiedRecord)
       return modifiedRecord;
     });
 

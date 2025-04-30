@@ -651,7 +651,6 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
 
   generateExcel(): void {
     if (this.selectedData.length === 0) {
-      console.log('No data to export. Please generate the report first.');
       return;
     }
     this.spinnerLoader2 = true;

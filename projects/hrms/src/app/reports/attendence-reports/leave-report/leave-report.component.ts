@@ -98,8 +98,8 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       employee: [null],
       manager: [null],
       dateRange: [null],
-      leaveCategory: [''],
-      year: ['']
+      leaveCategory: [null],
+      // year: ['']
     });
 
     this.LeaveReportForm.valueChanges.subscribe(()=>{
@@ -118,9 +118,6 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-  
-          console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,

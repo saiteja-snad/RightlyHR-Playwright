@@ -122,9 +122,6 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-
-          console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,

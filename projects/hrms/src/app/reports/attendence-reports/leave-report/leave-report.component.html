@@ -24,7 +24,7 @@
           <!-- Team Manager -->
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName" filterBy="fullName"
+              <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName"
                 filterBy="fullName" formControlName="manager" placeholder="Please select manager"
                 class="form-select custom-select" filterPlaceholder="Search manager">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
@@ -45,14 +45,13 @@
 
           <!-- Leave Category -->
           <div class="d-flex align-items-center gap-2">
-            <div class="d-flex align-items-center gap-2">
-              <div class="custom-p-select-content">
-                <p-select [options]="uniqueLeaveCategory" optionLabel="label"
-                  [filter]="true" [showClear]="true" formControlName="leaveCategory"
-                  placeholder="Select leave category" class="form-select custom-select" 
-                  filterPlaceholder="Search leave type">
-                </p-select>
-              </div>
+            <div class="custom-p-select-content">
+              <p-select [options]="uniqueLeaveCategory" [filter]="true" [showClear]="true"
+                optionLabel="label" filterBy="label" formControlName="leaveCategory" placeholder="Select leave category"
+                class="form-select custom-select" filterPlaceholder="Search leave type">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
+                <ng-template let-employee #item>{{ employee.label }}</ng-template>
+              </p-select>
             </div>
           </div>
 

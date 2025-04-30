@@ -35,10 +35,12 @@
               <div class="d-flex align-items-center gap-2">
                 <div class="d-flex align-items-center gap-2">
                   <div class="custom-p-select-content">
-                    <p-select [options]="uniqueLeaveCategory" optionLabel="label"
-                      [showClear]="lvSummeryReportForm.get('leaveCategory')?.value" formControlName="leaveCategory"
+                    <p-select [options]="uniqueLeaveCategory" optionLabel="label" filterBy="label"
+                      [showClear]="true" formControlName="leaveCategory"
                       placeholder="Please select leave category" class="form-select custom-select" [filter]="true"
                       filterPlaceholder="Search leave type">
+                      <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
+                      <ng-template let-employee #item>{{ employee.label }}</ng-template>
                     </p-select>
                   </div>
                 </div>

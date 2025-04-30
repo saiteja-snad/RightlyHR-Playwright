@@ -14,7 +14,7 @@
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
                   <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="true"
-                            formControlName="employee" placeholder="Select Employee" class="form-select custom-select" filterPlaceholder="Search employee">
+                            formControlName="employee" placeholder="Please select employee" class="form-select custom-select" filterPlaceholder="Search employee">
                     <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                     <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                   </p-select>
@@ -25,7 +25,7 @@
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
                   <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName" filterBy="fullName" formControlName="manager"
-                            placeholder="Select Manager" class="form-select custom-select" filterPlaceholder="Search manager">
+                            placeholder="Please select manager" class="form-select custom-select" filterPlaceholder="Search manager">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                             <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                   </p-select>
@@ -36,7 +36,7 @@
               <div class="d-flex align-items-center gap-2">
                 <div>
                   <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
-                         [locale]="localeOptions" [showClearButton]="true" placeholder="Please Select Date" formControlName="dateRange"
+                         [locale]="localeOptions" [showClearButton]="true" placeholder="Please select date" formControlName="dateRange"
                          [startKey]="'startDate'" [endKey]="'endDate'" readonly />
                 </div>
               </div>

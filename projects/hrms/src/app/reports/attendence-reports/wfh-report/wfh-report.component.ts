@@ -114,9 +114,6 @@ export class WfhReportComponent implements OnInit, OnDestroy {
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-
-          console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
@@ -145,7 +142,6 @@ export class WfhReportComponent implements OnInit, OnDestroy {
       .getData('PendingApprovalsAuthority/getAll')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data) {
             this.teamdetails = data.map((employee: any) => {
               return {
@@ -156,11 +152,9 @@ export class WfhReportComponent implements OnInit, OnDestroy {
               };
             });
           }
-          console.log('Team details' + this.teamdetails);
         },
         error: (reason: any) => {
           console.log(reason);
-          alert('Insertion of data is failed');
         },
       });
   }

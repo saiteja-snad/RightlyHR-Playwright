@@ -4,7 +4,7 @@
       <div class="component-header">Reports</div>
   
       <div>
-        <form [formGroup]="permissionReportForm" (ngSubmit)="generatePermissionReport()">
+        <form [formGroup]="regularizationReportForm" (ngSubmit)="generateRegularizationReport()">
           <div class="d-flex align-items-center gap-3">
             <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
               Clear All
@@ -53,8 +53,8 @@
                 <span>{{'Generate'}}</span>
                 }
               </button>
-              <button type="button" class="custom-btn btn-primary" (click)="exportToExcelPemrissionReport()"
-                [disabled]="filteredPermissionData.length == 0 || disableBtn">
+              <button type="button" class="custom-btn btn-primary" (click)="exportToExcelAttendanceRegularization()"
+                [disabled]="filteredRegularizationData.length == 0 || disableBtn">
                 @if(spinnerLoader2){
                 <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                 <span>{{'Loading...'}}</span>
@@ -92,7 +92,7 @@
           </tr>
         </thead>
         <tbody>
-          @if (!filteredPermissionData || filteredPermissionData.length === 0) {
+          @if (!filteredRegularizationData || filteredRegularizationData.length === 0) {
           <tr>
             <td colspan="9" class="text-center">
               <app-no-data-found></app-no-data-found>
@@ -100,7 +100,7 @@
           </tr>
           }
           @else {
-          @for (record of filteredPermissionData; track $index) {
+          @for (record of filteredRegularizationData; track $index) {
           <tr>
             <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
             <td class="td-center">{{ record.employeeName ?? '-' }}</td>

@@ -127,7 +127,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
     this.absentReportForm = this.fb.group({
       employee: [null, Validators.required],
       manager: [null],
-      frequency: [''],
+      frequency: [null],
       dateRange: [null],
       month: ['']
     });
@@ -161,9 +161,6 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-
-          console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
@@ -181,9 +178,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
             ...filteredEmployees
           ];
         },
-        error: (reason: any) => {
-          console.log(reason);
-        },
+        error: (reason: any) => { },
       });
   }
 
@@ -192,7 +187,6 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
       .getData('PendingApprovalsAuthority/getAll')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data) {
             this.teamdetails = data.map((employee: any) => {
               return {
@@ -203,11 +197,9 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
               };
             });
           }
-          console.log('Team details' + this.teamdetails);
         },
         error: (reason: any) => {
           console.log(reason);
-          alert('Insertion of data is failed');
         },
       });
   }
@@ -279,13 +271,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
   }
 
   clearAllFilters(): void {
-    this.absentReportForm.reset({
-      employee: null,
-      manager: null,
-      frequency: '',
-      dateRange: null,
-      month: ''
-    });
+    this.absentReportForm.reset();
   }
 
   formatDate(date: Date): string {

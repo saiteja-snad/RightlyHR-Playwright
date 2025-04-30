@@ -73,8 +73,8 @@ export class YearlySummaryReportComponent {
     this.yearlyReportForm = this.fb.group({
       employee: [null, Validators.required],
       manager: [null],
-      leaveCategory: [''],
-      year: ['']
+      leaveCategory: [null],
+      year: [null]
     });
 
     this.yearlyReportForm.valueChanges.subscribe(() => {
@@ -99,9 +99,6 @@ export class YearlySummaryReportComponent {
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-
-          console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,

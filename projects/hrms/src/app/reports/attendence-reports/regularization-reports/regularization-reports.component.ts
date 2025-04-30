@@ -23,11 +23,11 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
   styleUrl: './regularization-reports.component.scss'
 })
 export class RegularizationReportsComponent implements OnInit, OnDestroy{
-  permissionReportForm!: FormGroup;
+  regularizationReportForm!: FormGroup;
   loggedInUser: IemployeeDetails | undefined;
   employeeDetails: IemployeeDetails[] = [];
   teamManagerDetails: ITeamManagerEmployees[] = [];
-  filteredPermissionData: any[] = [];
+  filteredRegularizationData: any[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   spinnerLoader1 = false;
   spinnerLoader2 = false;
@@ -69,19 +69,19 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
   }
 
   initializeForm() {
-    this.permissionReportForm = this.fb.group({
+    this.regularizationReportForm = this.fb.group({
       employee: [null],
       manager: [null],
       dateRange: [null]
     });
 
-    this.permissionReportForm.valueChanges.subscribe(() => {
+    this.regularizationReportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
   }
 
   get isPermissionGenerateDisabled(): boolean {
-    const form = this.permissionReportForm;
+    const form = this.regularizationReportForm;
     return !(
       form.get('employee')?.value ||
       form.get('manager')?.value ||
@@ -135,7 +135,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
   }
 
   clearAllFilters() { 
-    this.permissionReportForm.reset();
+    this.regularizationReportForm.reset();
   }
 
   formatDate(date: Date): string {
@@ -149,11 +149,11 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
     return date instanceof Date ? date : new Date(date);
   }
 
-  generatePermissionReport(): void {
+  generateRegularizationReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
   
-    const formValue = this.permissionReportForm.value;
+    const formValue = this.regularizationReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
   
     const noFilterProvided =
@@ -164,7 +164,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
       !formValue.manager;
   
     if (noFilterProvided) {
-      this.filteredPermissionData = [];
+      this.filteredRegularizationData = [];
       this.spinnerLoader1 = false;
       this.isLoading = false;
       return;
@@ -199,13 +199,13 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
   
     this.reportsService.getRegularizationReports(request).subscribe({
       next: (response: any) => {
-        this.filteredPermissionData = response ?? [];
+        this.filteredRegularizationData = response ?? [];
       },
       error: (error) => {
         this.spinnerLoader1 = false;
         this.disableBtn = true;
         this.isLoading = false;
-        this.filteredPermissionData = [];
+        this.filteredRegularizationData = [];
       },
       complete: () => {
         this.spinnerLoader1 = false;
@@ -215,7 +215,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
     });
   }
 
-  exportToExcelPemrissionReport(): void {
+  exportToExcelAttendanceRegularization(): void {
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -239,9 +239,9 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
       'Total Duration'
     ];
 
-    const modifiedData = this.filteredPermissionData.map(record => {
+
+    const modifiedData = this.filteredRegularizationData.map(record => {
       const modifiedRecord: any = {};
-      console.log(modifiedRecord)
       NEW_SEQUENCE.forEach(columnName => {
         const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
 
@@ -255,17 +255,13 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
 
             // Assign the formatted date to the modified record
             modifiedRecord[columnName] = date_formatted;
-            console.log(modifiedRecord)
           } else {
             modifiedRecord[columnName] = record[originalColumnName];
-            console.log(modifiedRecord)
           }
         } else {
           modifiedRecord[columnName] = '';
-          console.log(modifiedRecord)
         }
       });
-      console.log(modifiedRecord)
       return modifiedRecord;
     });
 
@@ -277,7 +273,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
     ws['!merges'] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: NEW_SEQUENCE.length - 1 } }];
 
     // Add Leave Report row
-    XLSX.utils.sheet_add_aoa(ws, [['PERMISSION REPORT']], { origin: 'A1' });
+    XLSX.utils.sheet_add_aoa(ws, [['ATTENDANCE REGULARIZATION REPORT']], { origin: 'A1' });
 
     // Add header row
     const headerRow = NEW_SEQUENCE.map(columnName => HEADER_MAPPINGS[columnName]);
@@ -322,8 +318,9 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
     // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Permission Report');
-    XLSX.writeFile(wb, 'Permission_Report.xlsx');
+    XLSX.writeFile(wb, 'AttendanceRegularization_Report.xlsx');
   }
+
 
   getColumnWidth(data: any[], columnName: string): number {
     const maxWidth = data.reduce((max: number, record: any) => {

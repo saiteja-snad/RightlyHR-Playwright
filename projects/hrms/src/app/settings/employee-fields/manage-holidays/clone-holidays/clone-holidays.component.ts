@@ -88,7 +88,6 @@ export class CloneHolidaysComponent {
         })
       );
     });
-    console.log(this.updateHolidaysData);
   }
   // this method used for year generate dynamically 
   generateYears(startYear: number, endYear: number) {
@@ -197,7 +196,6 @@ export class CloneHolidaysComponent {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (locations: any) => {
         this.jobLocationDropDownData = locations;
-        console.log(this.jobLocationDropDownData);
         this.holidayForm.patchValue({
           location: this.jobLocationDropDownData.jobLocationName
         });
@@ -228,8 +226,7 @@ export class CloneHolidaysComponent {
             } else {
               this.subLocationsDropdown = data.jobSubLocations;
               this.shiftDropdown = [];
-            }
-            console.log(this.subLocationsDropdown);           
+            }       
           },
           error: (err: any) => {
           },
@@ -245,17 +242,12 @@ export class CloneHolidaysComponent {
     if (selectedSubLocation && selectedSubLocation) {
       const locationId = formValue.location?.id
       const subLocationId = formValue.subLocation.id ?? selectedSubLocation
-      console.log('Location ID:', locationId);
-      console.log('Sub Location ID:', subLocationId);
-
       this.subscription = this.http
         .getData(
           `orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`
         )
         .subscribe({
           next: (data: any) => {
-            console.log('Shift Data:', data);
-
             if (data.length === 0) {
               this.shiftDropdown = []; 
             } else {
@@ -264,7 +256,6 @@ export class CloneHolidaysComponent {
             }         
           },
           error: (err: any) => {
-            console.error('Error fetching shift data:', err);
             this.shiftDropdown = []; 
           },
         });

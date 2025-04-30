@@ -61,7 +61,6 @@ export class UpdateHolidaysComponent {
         })
       );
     });
-    console.log(this.updateHolidaysData);
   }
 
   // this method used for year generate dynamically 
@@ -175,16 +174,13 @@ export class UpdateHolidaysComponent {
     };
     this.subscription = this.http.postdata('orgHolidays/Update', payload).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.confirmation.openSuccessModal('Holidays updated successfully');
         this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
       },
       error: (err) => {
-        console.log(err);
         this.confirmation.openErrorModal('Holidays update failed');
       }
     });
-    console.log(payload);
   }
 
   //this method used for close dailog no button click 
@@ -227,12 +223,10 @@ export class UpdateHolidaysComponent {
     };
     this.subscription = this.http.postdata('orgHolidays/Update', payload).subscribe({
       next: (response: any) => {
-        console.log(response);
         this.confirmation.openSuccessModal('Holidays published successfully');
         this.router.navigate(['/settings/employee-fields/manage-holidays/published-holidays']);
       },
       error: (err) => {
-        console.log(err);
         this.confirmation.openErrorModal('Holidays published failed');
 
       }
@@ -245,7 +239,6 @@ export class UpdateHolidaysComponent {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (locations: any) => {
         this.jobLocationDropDownData = locations;
-        console.log(this.jobLocationDropDownData);
         this.holidayForm.patchValue({
           location: this.jobLocationDropDownData.find((x: any) => x.jobLocationName === this.updateHolidaysData.locationName),
         });

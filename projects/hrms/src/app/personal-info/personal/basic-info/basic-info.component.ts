@@ -95,38 +95,17 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
   
   onsalutationvalidation(): void {
+    const salutation = this.basicInfoForm.get('salutation')?.value;
     const gender = this.basicInfoForm.get('gender')?.value;
-    const title = this.basicInfoForm.get('salutation')?.value;
-  
-    const genderLower = typeof gender === 'string' ? gender.toLowerCase() : '';
-    const titleLower = typeof title === 'string' ? title.toLowerCase() : '';
-  
-    console.log('Gender:', genderLower);
-    console.log('Title:', titleLower);
-  
-    // If gender is not selected, do not show the validation error
-    if (!gender) {
-      this.salutationValidationcheck = false;
-      return;
-    }
-  
-    // Ensure title is not empty or null
-    if (!title || titleLower === '') {
-      this.salutationValidationcheck = true; // Invalid combination
-      console.log('Validation Failed: Title is required');
-      return;
-    }
-  
-    if (
-      (genderLower === 'Male' && titleLower === 'Mr.') ||
-      (genderLower === 'Female' && ['Ms.', 'Miss.', 'Mrs.'].includes(titleLower)) ||
-      ((genderLower === 'other' || genderLower === 'others') && (titleLower === 'other' || titleLower === 'others'))
-    ) {
-      this.salutationValidationcheck = false; // Valid combination
-      console.log('Validation Passed:', this.salutationValidationcheck);
+
+    if (gender === 'Male' && salutation !== 'Mr.') {
+      this.salutationValidationcheck = true;
+    } else if (gender === 'Female' && salutation !== 'Ms.' && salutation !== 'Miss.') {
+      this.salutationValidationcheck = true;
+    } else if (gender === 'Other') {
+      this.salutationValidationcheck = false; // No specific validation for 'Other'
     } else {
-      this.salutationValidationcheck = true; // Invalid combination
-      console.log('Validation Failed:', this.salutationValidationcheck);
+      this.salutationValidationcheck = false; // Valid case
     }
   }
 
@@ -238,7 +217,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+// Fetch titles from the API
   getTitle() {
     this.subscription = this.http.getData('Title').subscribe({
       next: (data: any) => {
@@ -246,7 +225,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+  // Fetch marital status from the API
   getMaritaldetails() {
     this.subscription = this.http.getData('Maritalstatus').subscribe({
       next: (data: any) => {
@@ -254,6 +233,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
+
   changemaritalstatus(): void {
     const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'  || this.empyployeedata?.maritalStatus === 'Married';
   

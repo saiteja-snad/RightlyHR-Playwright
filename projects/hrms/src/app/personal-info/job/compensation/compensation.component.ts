@@ -59,7 +59,7 @@ export class CompensationComponent {
       paytype: [null, Validators.required],
       overtimeeligibility: [null, Validators.required],
       frequency: [null, Validators.required],
-      compensationamount: [null, [Validators.required, Validators.pattern(/^\d+$/)]]
+      compensationamount: [null, [Validators.required, Validators.pattern(/^(?!0+$)\d+(\.\d{1,2})?$/)]]
     });
   }
 
@@ -71,7 +71,7 @@ export class CompensationComponent {
       paytype: [null, Validators.required],
       overtimeeligibility: [null, Validators.required],
       frequency: [null, Validators.required],
-      compensationamount: [null, [Validators.required, Validators.pattern(/^\d+$/)]]
+      compensationamount: [null, [Validators.required, Validators.pattern(/^(?!0+$)\d+(\.\d{1,2})?$/)]]
     });
   }
   

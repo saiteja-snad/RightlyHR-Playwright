@@ -125,17 +125,18 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
     return null; 
   }
-  formatDateToLocal(dateString: string): string {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
+
+ // Helper method to format a date to 'YYYY-MM-DD'
+ formatDateToLocal(date: string | null): string | null {
+  if (!date) return null;
+  const d = new Date(date);
+  const month = ('0' + (d.getMonth() + 1)).slice(-2);
+  const day = ('0' + d.getDate()).slice(-2);
+  const year = d.getFullYear();
+  return `${year}-${month}-${day}`;
+}
 
   patchForm(data: any): void {
-
-
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
       fusionEmpId: data.fusionEmpId,
@@ -198,7 +199,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         },
       });
   }
-
+  // Get the gender details from the API
   getGender() {
     this.subscription = this.http.getData('gender').subscribe({
       next: (data: any) => {
@@ -206,6 +207,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
+  // Get the title details from the API
   getTitle() {
     this.subscription = this.http.getData('Title').subscribe({
       next: (data: any) => {
@@ -213,6 +215,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
+  // Get the marital status details from the API
   getMaritaldetails() {
     this.subscription = this.http.getData('Maritalstatus').subscribe({
       next: (data: any) => {
@@ -237,7 +240,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.getEmployeeId();
     }
   }
-
+// Function to open the modal for confirmation
   changemaritalstatus(): void {
     const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'  || this.emsployedata?.maritalStatus === 'Married';
   

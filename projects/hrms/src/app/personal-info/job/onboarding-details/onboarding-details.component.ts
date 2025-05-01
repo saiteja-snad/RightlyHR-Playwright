@@ -194,86 +194,42 @@ export class OnboardingDetailsComponent {
     // Patching values for traineeForm
     this.traineeForm.patchValue({
       empType: data.empType,
-      dateOfJoining: moment(data.dateOfJoining).isValid() ? moment(data.dateOfJoining).format('yyyy-MM-DD') : null,
+      dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
       durationOfTrainee: data.durationOfTrainee,
-      trainingEndDate: moment(data.trainingEndDate).isValid() ? moment(data.trainingEndDate).format('yyyy-MM-DD') : null
+      trainingEndDate: this.formatDateToLocal(data.trainingEndDate)
     });
     
     console.log(this.traineeForm.value); // Check values in the traineeForm
   }
   
-
+//function to get employee status dropdown
   getStatus() {
     this.subscription = this.http.getData(`Status`).subscribe({
       next: (data: any) => {
-        this.Statusdetails = data as IStatus[];
-        console.log(this.Statusdetails);
-        if (this.empdata?.empstatus == 'Prospective') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return (
-              lowerCaseStatusName === 'active' ||
-              lowerCaseStatusName === 'inactive' ||
-              lowerCaseStatusName === 'prospective'
-            );
-          });
-          console.log(filteredData);
-          this.Statusdetails = filteredData;
-        } else if (this.empdata?.empstatus == 'Active') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return (
-              lowerCaseStatusName === 'active' ||
-              lowerCaseStatusName === 'inactive'
-            );
-          });
-          console.log(filteredData);
-          this.Statusdetails = filteredData;
-        } else if (this.empdata?.empstatus?.toLowerCase() == 'inactive') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return (
-              lowerCaseStatusName === 'active' ||
-              lowerCaseStatusName === 'inactive'
-            );
-          });
-          console.log(filteredData);
-          this.Statusdetails = filteredData;
-        }
-        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return lowerCaseStatusName === 'trainee active' 
-            || lowerCaseStatusName === 'inactive' 
-            || lowerCaseStatusName === 'trainee';
-          });
-          this.Statusdetails = filteredData
-        }
-        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee prospective') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return lowerCaseStatusName === 'trainee active' || lowerCaseStatusName === 'trainee prospective';
-          });
-
-          this.Statusdetails = filteredData
-        }
-        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee active') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return lowerCaseStatusName === 'trainee active';
-          });
-          this.Statusdetails = filteredData
-
-        }
-        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee inactive') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return lowerCaseStatusName === 'trainee inactive';
-          });
-          //console.log(filteredData);
-          this.Statusdetails = filteredData
-        }
+        const empStatus = this.empdata?.empstatus?.toLowerCase();
+  
+        const statusMapping: { [key: string]: string[] } = {
+          prospective: ['active', 'inactive', 'prospective'],
+          active: ['active', 'inactive'],
+          inactive: ['active', 'inactive'],
+          trainee: ['trainee active', 'inactive', 'trainee'],
+          'trainee prospective': ['trainee active', 'trainee prospective'],
+          'trainee active': ['trainee active'],
+          'trainee inactive': ['trainee inactive']
+        };
+  
+        const allowedStatuses = statusMapping[empStatus] || []; // Default to an empty array if empStatus is not found
+  
+        const filteredData = data?.filter((status: IStatus) =>
+          allowedStatuses.includes(status?.statusname?.toLowerCase())
+        );
+  
+        this.Statusdetails = filteredData; // Update Statusdetails with filtered data
+        console.log('Filtered Statusdetails:', this.Statusdetails);
       },
+      error: (err: any) => {
+        console.error('Error fetching status:', err);
+      }
     });
   }
 

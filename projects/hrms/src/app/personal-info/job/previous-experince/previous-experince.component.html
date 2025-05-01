@@ -108,6 +108,7 @@
                                     Name is required</div>
                                 <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['pattern']">Company Name
                                     must only contain letters and spaces</div>
+                                <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['maxlength']">Company name cannot exceed 100 characters</div>
                             </div>
                         </div>
 
@@ -129,7 +130,7 @@
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="FromDate"
-                                formControlName="fromDate" onkeypress="return false" [min]="'1940-01-01'"
+                                formControlName="fromDate" onkeypress="return false" [min]="dateofbirth"
                                 [max]="currentDate | date: 'yyyy-MM-dd'" />
                             <div *ngIf="employeeExperienceForm.get('fromDate')?.invalid && employeeExperienceForm.get('fromDate')?.touched"
                                 class="error-msg">
@@ -162,6 +163,7 @@
                                 class="error-msg">
                                 Job Role is required
                             </div>
+                            <div *ngIf="employeeExperienceForm.get('jobTitle')?.errors?.['maxlength']" class="error-msg"> Job Role cannot exceed 50 characters</div>
                         </div>
                     </div>
                 </div>
@@ -178,6 +180,7 @@
                             class="error-msg">
                             Contact Name is required
                         </div>
+                        <div *ngIf="employeeExperienceForm.get('previousContactName')?.errors?.['maxlength']" class="error-msg"> Contact Name cannot exceed 50 characters</div>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -365,6 +368,7 @@
                                 class="error-msg">
                                 Contact Name is required
                             </div>
+                            <div *ngIf="employeeExperienceupdateForm.get('previousContactNameupdate')?.errors?.['maxlength']" class="error-msg"> Contact Name cannot exceed 50 characters</div>
                         </div>
 
                         <div class="col-md-6 mb-3">

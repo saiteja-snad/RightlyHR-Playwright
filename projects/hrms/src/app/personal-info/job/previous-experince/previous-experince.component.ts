@@ -35,6 +35,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   showError = false;
   showErrorr = false;
   empinfo: any
+  dateofbirth: any
   previousexperincedocument: any
   displaypreviousexperincedocument: any
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
@@ -66,7 +67,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       toDate: ['', [Validators.required]],
       jobTitle: ['', [Validators.required, Validators.maxLength(50)]],
 
-      previousContactName: ['', Validators.pattern('^[a-zA-Z\\s]*$')],
+      previousContactName: ['', [Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50)]],
       previousContactNumber: [
         '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
@@ -103,7 +104,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       toDateupdate: ['', [Validators.required]],
       jobTitleupdate: ['', [Validators.required, Validators.maxLength(50)]],
 
-      previousContactNameupdate: ['', Validators.pattern('^[a-zA-Z\\s]*$')],
+      previousContactNameupdate: ['',[ Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50)]],
       previousContactNumberupdate: [
         '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
@@ -296,6 +297,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     console.log(EmployeeId);
     this.subscription = this.http.getData(`ExperienceDetail/${EmployeeId}`).subscribe({
       next: (data: any) => {
+        this.dateofbirth =this.formatDateToLocal(data.dob)
         console.log(data);
         this.getempexpdata.next(data);
       }

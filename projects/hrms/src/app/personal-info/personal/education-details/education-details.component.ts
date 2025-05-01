@@ -49,6 +49,12 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
     this.getDegree()
     this.getEducationEmpid();
     this.getEmployeeId();
+    this.educationForm.get('degreeStartDate')?.valueChanges.subscribe(() => {
+      this.educationForm.get('degreeEndDate')?.reset();
+    });
+    this.educationupdateForm.get('degreeStartDateupdate')?.valueChanges.subscribe(() => {
+      this.educationupdateForm.get('degreeEndDateupdate')?.reset();
+    });
   }
 
   openModal(content: any) {
@@ -88,13 +94,13 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.employedata = data;
-        this.patchForm(data);
         this.dateofbirth =this.formatDateToLocal(this.employedata.dob)
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
+
   formatDateToLocal(dateString: string): string {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -102,20 +108,26 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-
-  patchForm(data: any): void {
-    this.educationupdateForm.patchValue({
-      educationupdate: data.education || '',  
-      universityupdate: data.university || '',  
-      specializationupdate: data.specialization || '',  
-      gpaupdate: data.gpa || '',  
-      degreeStartDateupdate: data.degreeStartDate || '',  
-      degreeEndDateupdate: data.degreeEndDate || '',  
-      attachmentupdate: data.attachment || '', 
-    });
-  
-    console.log(this.educationupdateForm.value);  
+  getMinEndDate(): string | null {
+    const startDateValue = this.educationForm.get('degreeStartDate')?.value;
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; // Return null if no start date is selected
   }
+
+  getupdateMinEndDate(): string | null {
+    const startDateValue = this.educationupdateForm.get('degreeStartDateupdate')?.value;
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; 
+  }
+
 
   validations() {
     // Add validation for start and end dates
@@ -416,6 +428,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
       }
     });
   }
+  
  ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()

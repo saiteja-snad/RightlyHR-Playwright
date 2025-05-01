@@ -37,6 +37,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   spinnerLoader=false;
   empinfo: any
   previousexperincedocument: any
+  dateofbirth: any
   displaypreviousexperincedocument:any
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
 
@@ -67,7 +68,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       toDate: ['', [Validators.required]],
       jobTitle: ['', [Validators.required,Validators.maxLength(50)]],
 
-      previousContactName: ['', Validators.pattern('^[a-zA-Z\\s]*$')],
+      previousContactName: ['', [Validators.pattern('^[a-zA-Z\\s]*$'),Validators.maxLength(50)]],
       previousContactNumber: [
         '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
@@ -299,6 +300,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`ExperienceDetail/${EmployeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
+        this.dateofbirth =this.formatDateToLocal(data.dob)
         this.getempexpdata.next(data);
       }
     })

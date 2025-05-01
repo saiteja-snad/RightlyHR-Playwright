@@ -88,10 +88,13 @@
                             formControlName="certificationName" placeholder="Please enter certification name" (keypress)="formValidation.restrictInput($event)" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('certificationName')?.invalid && certificationForm.get('certificationName')?.touched">
-                            <span *ngIf="certificationForm.get('certificationName')?.errors?.['required']">Certification
-                                Name is required</span>
-                            <span *ngIf="certificationForm.get('certificationName')?.errors?.['pattern']">Enter a
-                                valid Certification Name</span>
+                            <div *ngIf="certificationForm.get('certificationName')?.errors?.['required']">Certification
+                                Name is required</div>
+                            <div *ngIf="certificationForm.get('certificationName')?.errors?.['pattern']">Enter a
+                                valid Certification Name</div>
+                            <div *ngIf="certificationForm.get('certificationName')?.errors?.['maxlength']">
+                                Certification Name cannot exceed 50 characters</div>
+                         
                         </div>
                     </div>
 
@@ -103,10 +106,11 @@
                             formControlName="certificationId" placeholder="Please enter certification ID" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('certificationId')?.invalid && certificationForm.get('certificationId')?.touched">
-                            <span *ngIf="certificationForm.get('certificationId')?.errors?.['required']">Certification
-                                ID is required</span>
-                            <span *ngIf="certificationForm.get('certificationId')?.errors?.['pattern']">Enter a
-                                valid Certification ID</span>
+                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['required']">Certification
+                                ID is required</div>
+                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['pattern']">Enter a
+                                valid Certification ID</div>
+                            <div *ngIf="certificationForm.get('certificationId')?.errors?.['maxlength']">Certification ID cannot exceed 50 characters</div>
                         </div>
                     </div>
 
@@ -115,7 +119,7 @@
                             Issued Date <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="issuedDate"
-                            formControlName="issuedDate"  onkeypress="return false" [max]="currentDate | date: 'yyyy-MM-dd'" (change)="changesstartdate()"  />
+                            formControlName="issuedDate"  onkeypress="return false" [min]="dateofbirth" [max]="currentDate | date: 'yyyy-MM-dd'" (change)="changesstartdate()"  />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('issuedDate')?.invalid && certificationForm.get('issuedDate')?.touched">
                             Issued Date is required
@@ -196,10 +200,12 @@
                             formControlName="certificationName" placeholder="Please enter certification name" (keypress)="formValidation.restrictInput($event)" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('certificationName')?.invalid && updateCertificationForm.get('certificationName')?.touched">
-                            <span *ngIf="updateCertificationForm.get('certificationName')?.errors?.['required']">Certification
-                                Name is required</span>
-                            <span *ngIf="updateCertificationForm.get('certificationName')?.errors?.['pattern']">Enter a
-                                valid Certification Name</span>
+                            <div *ngIf="updateCertificationForm.get('certificationName')?.errors?.['required']">Certification
+                                Name is required</div>
+                            <div *ngIf="updateCertificationForm.get('certificationName')?.errors?.['pattern']">Enter a
+                                valid Certification Name</div>
+                            <div *ngIf="updateCertificationForm.get('certificationName')?.errors?.['maxlength']">
+                                Certification Name cannot exceed 50 characters</div>
                         </div>
                     </div>
 
@@ -211,10 +217,11 @@
                             formControlName="certificationId" placeholder="Please enter certification ID" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('certificationId')?.invalid && updateCertificationForm.get('certificationId')?.touched">
-                            <span *ngIf="updateCertificationForm.get('certificationId')?.errors?.['required']">Certification
-                                ID is required</span>
-                            <span *ngIf="updateCertificationForm.get('certificationId')?.errors?.['pattern']">Enter a
-                                valid Certification ID</span>
+                            <div *ngIf="updateCertificationForm.get('certificationId')?.errors?.['required']">Certification
+                                ID is required</div>
+                            <div *ngIf="updateCertificationForm.get('certificationId')?.errors?.['pattern']">Enter a
+                                valid Certification ID</div>
+                            <div *ngIf="updateCertificationForm.get('certificationId')?.errors?.['maxlength']">Certification ID cannot exceed 50 characters</div>
                         </div>
                     </div>
 
@@ -223,7 +230,7 @@
                             Issued Date <span class="text-danger">*</span>
                         </label>
                         <input type="date" class="form-control custom-input" id="issuedDate"
-                            formControlName="issuedDate"  onkeypress="return false"  (change)="changesstartdateupdate()" [max]="currentDate | date: 'yyyy-MM-dd'" />
+                            formControlName="issuedDate"  onkeypress="return false"  (change)="changesstartdateupdate()"  [min]="dateofbirth" [max]="currentDate | date: 'yyyy-MM-dd'" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('issuedDate')?.invalid && updateCertificationForm.get('issuedDate')?.touched">
                             Issued Date is required

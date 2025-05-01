@@ -29,6 +29,7 @@ export class CertificationComponent implements OnInit,OnDestroy {
   showError: boolean = false;
   showErrorr: boolean = false;
   selectedid: any;
+  dateofbirth:any;
   displaycertification: any
   spinnerLoader=false;
   constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService) { }
@@ -42,8 +43,8 @@ export class CertificationComponent implements OnInit,OnDestroy {
 
   initializeForm(): void {
     this.certificationForm = this.fb.group({
-      certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
-      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
+      certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/),Validators.maxLength(50)]],
+      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/),Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
@@ -68,8 +69,8 @@ export class CertificationComponent implements OnInit,OnDestroy {
 
   initializeupdateForm(): void {
     this.updateCertificationForm = this.fb.group({
-      certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
-      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
+      certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/),Validators.maxLength(50)]],
+      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/),Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
@@ -256,6 +257,7 @@ export class CertificationComponent implements OnInit,OnDestroy {
       .subscribe({
         next: (data: any) => {
           console.log(data);
+          this.dateofbirth =this.formatDateToLocal(data.dob)
           this.empcertsdata.next(data);
         },
         error: (err: any) => {

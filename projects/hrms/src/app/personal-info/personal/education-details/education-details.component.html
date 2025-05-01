@@ -157,7 +157,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDate" onkeypress="return false"
+            <input type="date" formControlName="degreeEndDate" [min]="getMinEndDate()" onkeypress="return false"
               [min]="educationForm.get('degreeStartDate')?.value" class="form-control custom-input" id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationForm.get('degreeEndDate')?.invalid && educationForm.get('degreeEndDate')?.touched">
@@ -280,7 +280,7 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDateupdate" onkeypress="return false"
+            <input type="date" formControlName="degreeEndDateupdate" [min]="getupdateMinEndDate()" onkeypress="return false"
               [min]="educationupdateForm.get('degreeStartDateupdate')?.value" class="form-control custom-input"
               id="degreeEndDate">
             <div class="error-msg"

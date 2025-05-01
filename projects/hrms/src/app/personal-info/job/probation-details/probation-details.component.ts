@@ -95,16 +95,20 @@ export class ProbationDetailsComponent implements OnInit {
   }
 
   requestForProbation(Value: any) {
+    this.openModalService.openLoaderModal('Requesting....');
     const employeeId = parseInt(this.empinfo.employeeId);
     const referenceId = Value.probationId;
     const raisedbyempId = this.loggedinuser.employeeId;
     this.http.postProbation(`ProbationFlow/raiseprobationrequest`, employeeId, referenceId, raisedbyempId).subscribe({
       next: (response: any) => {
         this.getProbationRequest();
+        this.modalService.dismissAll();
         this.openModalService.openSuccessModal('Probation Request Raised Successfully');
       },
       error: (reason: any) => {
-        this.openModalService.openErrorModal(reason.error.Message);
+        console.log(reason);
+        
+        this.openModalService.openErrorModal(reason.error.message);
       }
     })
   }

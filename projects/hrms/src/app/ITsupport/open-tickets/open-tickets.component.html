@@ -2,7 +2,7 @@
     <!--Input search-->
     <div class="input-group custom-search mt-3 mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search Here" aria-label="Username"
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search Here" aria-label="Username"
             aria-describedby="basic-addon1">
     </div>
 
@@ -27,17 +27,28 @@
                 </tr>
             </thead>
             <tbody>
-                @if (tickets.length > 0) {
-                <tr *ngFor="let ticket of tickets">
+                <ng-container *ngIf="(tickets | itsupport: searchValue) as filteredTickets">
+                <tr *ngFor="let ticket of filteredTickets">
                     <td>{{ticket.id}}</td>
-                    <td>{{ticket.priority ?? '-'}}</td>
-                    <td>{{ticket.subject ?? '-'}}</td>
-                    <td>{{ticket.employeeName ?? '-'}}</td>
+                    <td>
+                        <ul class="mb-0">
+                            <li [ngClass]="{
+                                    'text-danger fw-bold': ticket.priority === 'High',
+                                    'text-warning fw-bold': ticket.priority === 'Normal',
+                                    'text-success fw-bold': ticket.priority === 'Low',
+                                    'text-red fw-bold': ticket.priority === 'Urgent'
+                                }">
+                                {{ticket.priority || '-'}}
+                            </li>
+                        </ul>
+                    </td>
+                    <td>{{ticket.subject || '-'}}</td>
+                    <td>{{ticket.employeeName || '-'}}</td>
                     <td>{{ticket.createdAt | date}} </td>
-                    <td>{{ticket.departmentName ?? '-'}}</td>
-                    <td>{{ticket.subdepartmentName ?? '-'}}</td>
-                    <td>{{ticket.assigneeName ?? '-'}}</td>
-                    <td>{{ticket.ticketStatus ?? '-'}}</td>
+                    <td>{{ticket.departmentName || '-'}}</td>
+                    <td>{{ticket.subdepartmentName || '-'}}</td>
+                    <td>{{ticket.assigneeName || '-'}}</td>
+                    <td>{{ticket.ticketStatus || '-'}}</td>
                     <td>{{ticket.updatedAt | date}}</td>
                     <td class="text-center">
                         <div class="dropdown">
@@ -56,12 +67,10 @@
 
 
                 </tr>
-                }
-                @else{
-                <tr>
+                <tr *ngIf="filteredTickets.length === 0">
                     <td colspan="9"><app-no-data-found></app-no-data-found></td>
                 </tr>
-                }
+            </ng-container>
             </tbody>
         </table>
     </div>
@@ -153,10 +162,6 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                            <!-- <p-select [options]="departmentDetails"
-                            optionLabel="departmentName" placeholder="Please select department"
-                            formControlName="department" class="custom-select w-100">
-                        </p-select> -->
                         <input type="text" class="form-control custom-input" formControlName="department"
                         placeholder="Please enter department" onkeydown="return false;" />
                         
@@ -170,10 +175,6 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                            <!-- <p-select [options]="teamDropdownValues" [filter]="true" filterBy="subdepartmentName" [showClear]="true"
-                            optionLabel="subdepartmentName"  placeholder="Please select team"
-                            formControlName="team" class="custom-select w-100" (onChange)="onSubDepartmentNameChange($event.value)">
-                        </p-select> -->
                         <input type="text" class="form-control custom-input" formControlName="team"
                         placeholder="Please enter department" onkeydown="return false;" />
                     <div *ngIf="itSupportForm.get('team')?.invalid && itSupportForm.get('team')?.touched">
@@ -185,11 +186,6 @@
                         <label class="form-label custom-label mb-2">{{'Type' | translate}}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <!-- <p-select [options]="typeDetails"
-                            optionLabel="label" optionValue="value" placeholder="Please select type"
-                            formControlName="type" class="custom-select w-100">
-                            
-                        </p-select> -->
 
                         <input type="text" class="form-control custom-input" formControlName="type"
                         placeholder="Please enter department" onkeydown="return false;" />
@@ -205,11 +201,6 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Priority' | translate}}<span
                             class="text-danger">*</span></label>
-                            <!-- <p-select [options]="priorityDetails"
-                            optionLabel="label" optionValue="value" placeholder="Please select priority"
-                            formControlName="priority" class="custom-select w-100">
-                            
-                        </p-select> -->
 
                         <input type="text" class="form-control custom-input" formControlName="priority"
                         placeholder="Please enter department" onkeydown="return false;" />
@@ -246,18 +237,18 @@
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Ticket Assigned To'| translate}}<span class="text-danger">*</span></label>
-                        <p-select [options]="allEmployees" [filter]="true" filterBy="firstName" [showClear]="true"
-                                optionLabel="fullName" optionValue="assigneeId" (onChange)="assigneeDetails($event.value)" placeholder="Please select employee"
+                        <label class="form-label custom-label mb-2">{{'Ticket Assigned To'| translate}}</label>
+                        <p-select [options]="allEmployees" [filter]="true" filterBy="firstName"
+                                optionLabel="fullName" (onChange)="assigneeDetails($event.value)" placeholder="Please select employee"
                                 formControlName="assignedto" class="custom-select w-100" [dataKey]="'fusionEmpId'">
                                 <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
                                     }}</ng-template>
                                 <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
                                     }}</ng-template>
                             </p-select>
-                        <div *ngIf="itSupportForm.get('assignedto')?.invalid && itSupportForm.get('assignedto')?.touched">
+                        <!-- <div *ngIf="itSupportForm.get('assignedto')?.invalid && itSupportForm.get('assignedto')?.touched">
                             <div class="error-msg">{{'Assigned To is required' | translate}}</div>
-                        </div>
+                        </div> -->
                     </div>
                     
                 </div>
@@ -273,11 +264,11 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Comments'| translate}}<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Comments'| translate}}</label>
                         <textarea class="form-control custom-input" formControlName="comments" placeholder="Please enter comments"></textarea>
-                        <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
+                        <!-- <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
                             <div class="error-msg">{{'Comments is required' | translate}}</div>
-                        </div>
+                        </div> -->
                     </div>
                     
                 </div>

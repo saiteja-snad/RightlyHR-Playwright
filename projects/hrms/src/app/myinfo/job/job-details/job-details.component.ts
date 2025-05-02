@@ -603,6 +603,7 @@ export class JobDetailsComponent {
 
           // Refresh the job details list
           this.getJobDetails();
+          this.http.setBasicDetails();
 
           // Close the modal
           this.modalService.dismissAll();

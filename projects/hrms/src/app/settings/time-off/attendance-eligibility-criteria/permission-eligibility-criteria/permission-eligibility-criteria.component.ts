@@ -51,11 +51,6 @@ export class PermissionEligibilityCriteriaComponent implements OnInit, OnDestroy
 
 
   validateDecimal(event: KeyboardEvent, criteriaName:string) {
-    // if(criteriaName === 'expiryDays' || criteriaName === 'minAppliedDays' || criteriaName === 'pastDatesAllowed' || criteriaName === 'maxRegularizePerDay' || criteriaName === 'maxRegularizePerMonth'){
-    //   if (!/^\d$/.test(criteriaName) ) {
-    //     event.preventDefault(); // Prevent any non-digit characters
-    //   }
-    // }
     const inputChar = String.fromCharCode(event.charCode);
     const inputElement = event.target as HTMLInputElement;
     const currentValue = inputElement.value;

@@ -60,9 +60,9 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     this.updatePoliciesData.orgPolicyItems.forEach((row:any) => {
       this.policies.push(
         this.fb.group({
-          policyName : [row.policyName,[Validators.required, Validators.maxLength(50)]],
+          policyName : [row.policyName,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
           policyFile : [row.policyAttachment],
-          policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50)]],
+          policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
           policyNewFile: ['']
          
         })
@@ -125,9 +125,9 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
   
   addPolicyRow() {
     const policyGroup = this.fb.group({
-      policyName: ['', [Validators.required, Validators.maxLength(50)]],
+      policyName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
       policyFile: [''],
-      policyDescription: ['',[ Validators.required, Validators.maxLength(50)]],
+      policyDescription: ['',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
       policyNewFile: ['', Validators.required]
     });
     this.policies.push(policyGroup);

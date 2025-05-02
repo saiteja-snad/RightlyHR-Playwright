@@ -47,6 +47,8 @@ export interface IEntityDetails {
   spheaderId: number;
   sprecalledStatus: string;
   spEarlyRelievingReason: string;
+  spRecallReason: string;
+  spSeparationType: string;
 }
 export interface IModule {
   id: number;

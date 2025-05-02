@@ -4,22 +4,23 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { Iidentity, Iidentitydrop } from '../../../Interfaces/personal-modal';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-identity-details',
-  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent,TranslateModule],
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })
-export class IdentityDetailsComponent implements OnInit,OnDestroy {
+export class IdentityDetailsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   unmatchedIdentityDetails: any = [];
-  displayidentiydocument:any
+  displayidentiydocument: any
   selectedIdentityId: any
   getidentitydropdetails: Iidentitydrop[] = [];
   getIdentitydetails = new BehaviorSubject<Iidentity[]>([]);
@@ -29,7 +30,9 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
   IdentityAttachment: any;
   IdentityMaxNumber = 12;
   IdentityMinNumber = 12;
-  employedata={} as any;
+  employedata = {} as any;
+  spinnerLoader=false
+  selectedIdentityTypetoUpdate: any;
   constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
@@ -47,6 +50,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
       identityType: ['', Validators.required],
       identityNumber: ['', [
         Validators.required,
+        this.invalidIdentityNumberValidator(),
         Validators.minLength(this.IdentityMinNumber),
         Validators.maxLength(this.IdentityMaxNumber)
       ]],
@@ -58,7 +62,9 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     this.identityupdateForm = this.fb.group({
       identityupdateType: [{ value: null, disabled: true }, Validators.required],
       identityupdateNumber: ['', [Validators.required,
-        Validators.minLength(this.IdentityMinNumber),Validators.maxLength(this.IdentityMaxNumber)
+      this.invalidIdentityNumberValidator(),
+      Validators.minLength(this.IdentityMinNumber)
+        , Validators.maxLength(this.IdentityMaxNumber)
       ]],
       identityupdateAttachment: [null]
     });
@@ -67,6 +73,15 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
+  invalidIdentityNumberValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (value && /^0+$/.test(value)) {
+        return { invalidIdentityNumber: true }; // Return error if identity number is all zeros
+      }
+      return null; // Valid identity number
+    };
+  }
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -80,12 +95,12 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
   }
   patchForm(data: any): void {
     this.identityForm.patchValue({
-      identityType: data.identityType || '',  
-      identityNumber: data.identityNumber || '',  
-      identityAttachment: data.identityAttachment || '', 
+      identityType: data.identityType || '',
+      identityNumber: data.identityNumber || '',
+      identityAttachment: data.identityAttachment || '',
     });
-  
-    console.log(this.identityForm.value);  
+
+    console.log(this.identityForm.value);
   }
   // Fetch identity details by employee ID
   getIdentityByEmpid(): void {
@@ -123,10 +138,22 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
 
 
   onIdentityAttachmentSelected(event: any): void {
+    this.displayidentiydocument = null; // Reset the displayed document name
     const file = event.target.files[0];
     if (file) {
       this.IdentityAttachment = file; // Store the selected file
       console.log('Selected file:', file);
+      const fileSizeInMB = file.size / (1024 * 1024);
+      if (fileSizeInMB > 25) {
+        this.IdentityAttachment = null;
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.identityForm.get('identityAttachment')?.reset();
+        this.identityForm.get('identityAttachment')?.markAsUntouched();
+        this.identityupdateForm.get('identityupdateAttachment')?.reset();
+        this.identityupdateForm.get('identityupdateAttachment')?.markAsUntouched();
+
+        return;
+      }
     }
     const timestamp = new Date().getTime();
     this.IdentityAttachment = this.renameFileAttachment(
@@ -145,6 +172,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
 
   submitIdentityForm(form: FormGroup): void {
     if (form.valid) {
+      this.spinnerLoader=true
       const payload = this.createPayload();
       if (this.IdentityAttachment) {
         this.uploadIdentityAttachment(payload);
@@ -164,11 +192,13 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
       .subscribe({
         next: (data: any) => {
           if (data) {
+            this.spinnerLoader=false
             payload.attachment = data.path;
             this.saveIdentityData(payload);
           }
         },
         error: () => {
+          this.spinnerLoader=false
           console.error('File upload failed');
         }
       });
@@ -181,6 +211,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
 
     this.subscription = this.http.postdata('IdentityTable', payload).subscribe({
       next: () => {
+        this.spinnerLoader=false
         this.modalService.dismissAll()
         this.identityForm.reset();
         this.getIdentityByEmpid()
@@ -188,6 +219,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
         console.log('Data saved successfully');
       },
       error: () => {
+        this.spinnerLoader=false
         console.error('Error saving data');
         this.conformationPopup.openErrorModal('Identity details added failed');
       }
@@ -228,32 +260,35 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
   }
   //openupdate
   openModalupdate(content: any, identityDetails: any): void {
-    this.selectedIdentityId=identityDetails.identityId;
+    this.selectedIdentityId = identityDetails.identityId;
     const selectedIdentityType = this.getidentitydropdetails.find(
-      (item) => item.documentName === identityDetails.identityType
+      (item) => item.identityType1 === identityDetails.identityType
     );
+    this.selectedIdentityTypetoUpdate = selectedIdentityType
     this.identityupdateForm.patchValue({
       identityupdateType: selectedIdentityType,
       identityupdateNumber: identityDetails.identityNumber,
 
     });
 
-    this.displayidentiydocument=identityDetails.attachment
-    ? identityDetails.attachment.split('/').pop()
-    : null;
+    this.displayidentiydocument = identityDetails.attachment
+      ? identityDetails.attachment.split('/').pop()
+      : null;
     this.IdentityAttachment = identityDetails.attachment
-      
+
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
   updateIdentity(form: FormGroup): void {
     if (form.valid) {
+      this.spinnerLoader=true
       const formData = form.value;
 
-    //payload
+      //payload
       const payload = {
         identityId: this.selectedIdentityId,
-        identityType: formData.identityupdateType?.identityType1,
+        identityType: this.selectedIdentityTypetoUpdate.identityType1,
+        identityNumber: formData.identityupdateNumber,
         attachment: this.IdentityAttachment || '',
         empId: this.empinfo.employeeId,
         isDeleted: false
@@ -277,11 +312,13 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
       .subscribe({
         next: (data: any) => {
           if (data) {
+            this.spinnerLoader=false
             payload.attachment = data.path; // Update the payload with the uploaded file path
             this.saveUpdatedIdentity(payload);
           }
         },
         error: () => {
+          this.spinnerLoader=true
           console.error('File upload failed');
         }
       });
@@ -292,13 +329,14 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata(`IdentityTable/Update`, payload).subscribe({
       next: (data: any) => {
         console.log('Identity updated successfully:', data);
-
+        this.spinnerLoader=false
         // Close the modal and refresh the data
         this.getIdentityByEmpid();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Identity details updated successfully');
       },
       error: (err: any) => {
+        this.spinnerLoader=false
         console.error('Error updating identity:', err);
         this.conformationPopup.openErrorModal('Failed to update identity details');
       }

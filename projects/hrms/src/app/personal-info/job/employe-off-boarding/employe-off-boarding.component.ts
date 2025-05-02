@@ -31,6 +31,7 @@ export class EmployeOffBoardingComponent {
   rehireDetails = [] as IRehiredata[];
   currentDate = new Date().toISOString().slice(0, 10);
   Statusdetails = [] as IStatus[]
+  joiningDate: any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private router: Router) { }
 
@@ -43,6 +44,11 @@ export class EmployeOffBoardingComponent {
     this.getJobDetails();
     this.getRehire();
     this.getStatus();
+    this.getEmployeeId()
+    
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+  
+
 
     if (this.empinfo?.lastworkingday) {
       const formattedDate = new Date(this.empinfo.lastworkingday).toISOString().split('T')[0];
@@ -59,6 +65,27 @@ export class EmployeOffBoardingComponent {
       status: [null, Validators.required],
       lastdate: [null]
     });
+  }
+  
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.joiningDate =this.formatDateToLocal(data.dateOfJoining)
+        },
+        error: (reason: any) =>
+          console.error('Error fetching employee data:', reason),
+      });
+  }
+  formatDateToLocal(dateString: string): string {
+   
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
 

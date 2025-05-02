@@ -54,16 +54,16 @@ export class AddressInfoComponent {
     this.addressForm = this.fb.group({
       sameAsPermanent: [{value:false}], // Checkbox for "Same as Current Address"
       currentAddress: this.fb.group({
-        addressLine1: ['', [Validators.required, Validators.maxLength(150)]],
-        addressLine2: [''],
+        addressLine1: ['', [Validators.required, Validators.maxLength(250)]],
+        addressLine2: ['',Validators.maxLength(250)],
         city: ['', [Validators.required, Validators.maxLength(50)]],
         state: ['', [Validators.required, Validators.maxLength(50)]],
         country: ['', [Validators.required, Validators.maxLength(50)]],
         zipCode: ['', [Validators.required, Validators.pattern('^[0-9]{5,10}$'), this.invalidZipCodeValidator()]],
       }),
       permanentAddress: this.fb.group({
-        addressLine1: ['', [Validators.required, Validators.maxLength(150)]],
-        addressLine2: [''],
+        addressLine1: ['', [Validators.required, Validators.maxLength(250)]],
+        addressLine2: ['',[ Validators.maxLength(250)]],
         city: ['', [Validators.required, Validators.maxLength(50)]],
         state: ['', [Validators.required, Validators.maxLength(50)]],
         country: ['', [Validators.required, Validators.maxLength(50)]],
@@ -93,6 +93,7 @@ export class AddressInfoComponent {
     this.getEmployeeId(); 
 
   }
+  
   invalidZipCodeValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;

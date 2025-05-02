@@ -45,7 +45,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="branchLocation" class="form-label custom-label mb-2">Branch Location / Code</label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="branchLocations" optionLabel="branchCode" formControlName="branchLocation"
+                        <p-select [options]="branchLocations" optionLabel="branchCode" optionValue="branchCode" formControlName="branchLocation"
                             placeholder="Select Branch Location / Code" class="form-select custom-select">
                         </p-select>
                     </div>
@@ -82,7 +82,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="noticePeriodStatus" class="form-label custom-label mb-2">Notice Period Status
                     </label>
-                    <!-- <input type="text" class="form-control custom-input"  formControlName="noticePeriodStatus"> -->
+                    
                     <div class="custom-p-select-content">
                         <p-select [options]="noticePeriod" optionLabel="name" formControlName="noticePeriodStatus"
                             placeholder="Select Notice Period" class="form-select custom-select">
@@ -228,7 +228,7 @@
         <form [formGroup]="traineeForm">
             <div class="row">
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label">Employment Type Status</label>
+                    <label class="form-label custom-label mb-2">Employment Type Status</label>
                     <input type="text" class="form-control custom-input" formControlName="empType"
                         placeholder="Employment type status" />
                 </div>
@@ -236,7 +236,7 @@
                 @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') && isEditing
                 ){
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label">Trainee Start Date</label>
+                    <label class="form-label custom-label mb-2">Trainee Start Date</label>
                     <input type="date" class="form-control custom-input" formControlName="dateOfJoining" />
                 </div>
                 }
@@ -244,7 +244,7 @@
                 @if((empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active') &&
                 !isEditing){
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label">Trainee Start Date</label>
+                    <label class="form-label custom-label mb-2">Trainee Start Date</label>
                     <input type="date" class="form-control custom-input" id="dateOfJoining"
                         formControlName="dateOfJoining" placeholder="Please enter probation end date"
                         onkeydown="return false;">
@@ -252,14 +252,14 @@
                 }
 
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label">Duration of Training</label>
+                    <label class="form-label custom-label mb-2" >Duration of Training</label>
                     <input type="text" class="form-control custom-input" formControlName="durationOfTrainee"
                         placeholder="Duration of Training" (keypress)="letters($event)" appNameConversion />
                 </div>
 
                 @if(!isEditing ){
                 <div class="col-md-6 col-lg-4 mb-3">
-                    <label class="form-label">Training End Date</label>
+                    <label class="form-label custom-label mb-2">Training End Date</label>
                     <input type="date" class="form-control custom-input" id="trainingEndDate"
                         formControlName="trainingEndDate" placeholder="Please enter probation end date"
                         onkeydown="return false;">

@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
+import {  FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { IDegre, Ieducation } from '../../../Interfaces/personal-modal';
-import { BehaviorSubject, delay, map, of, Subscription } from 'rxjs';
+import { BehaviorSubject,  Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
@@ -38,6 +38,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   buttondisable = true;
   spinnerLoader=false;
   empinfo: any = {}
+  dateofbirth: any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,) { }
   ngOnInit(): void {
@@ -61,8 +62,8 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   initializeForm(): void {
     this.educationForm = this.fb.group({
       education: ['', Validators.required],
-      university: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")]],
-      specialization: ['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")],],
+      university: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),Validators.maxLength(50)]],  
+      specialization: ['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),,Validators.maxLength(50)],],
       gpa: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
       degreeStartDate: ['',[ Validators.required]],
       degreeEndDate: ['', [Validators.required]],
@@ -74,8 +75,8 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   initializeupdateForm(): void {
     this.educationupdateForm = this.fb.group({
       educationupdate: ['', Validators.required],
-      universityupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")]],
-      specializationupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$")],],
+      universityupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),,Validators.maxLength(50)]],
+      specializationupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),,Validators.maxLength(50)],],
       gpaupdate: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
       degreeStartDateupdate: ['', Validators.required],
       degreeEndDateupdate: ['', Validators.required],
@@ -168,11 +169,27 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   }
 
   onChangeEducation(event: any): void {
+    this.displalyeducationattachment = null;
     const file = event.target.files[0];
+    if (file) {
+      const fileSizeInMB = file.size / (1024 * 1024);
+      if (fileSizeInMB > 25) {
+        this.educationAttachment = null;
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.educationForm.get('attachment')?.reset();
+        this.educationForm.get('attachment')?.markAsUntouched();
+        this.educationupdateForm.get('attachmentupdate')?.reset();
+        this.educationupdateForm.get('attachmentupdate')?.markAsUntouched();
+       
+        return;
+      }
+    }
+  
     const timestamp = new Date().getTime();
     this.educationAttachment = this.renameFileAttachment(
       file,`${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
+
     console.log('Identity attachment:', this.educationAttachment);
   }
 
@@ -216,8 +233,10 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
     let employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Education/${employeeId}`).subscribe({
       next: (data: any) => {
+       this.dateofbirth=this.formatDateToLocal(data.dob)
         localStorage.setItem('educationinfodata', JSON.stringify(data));
         this.educationData.next(data);
+      
       },
     });
   }
@@ -309,12 +328,9 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       },
       error: (reason: any) => {
         this.spinnerLoader=false
+        this.conformationPopup.openErrorModal(reason.error.Message);
         console.error('Error updating education:', reason);
-        if (reason.error.includes('is already')) {
-          this.conformationPopup.openErrorModal(reason.error);
-        } else {
-          this.conformationPopup.openErrorModal('Something went wrong. Please check all the fields.');
-        }
+      
       }
     });
   }

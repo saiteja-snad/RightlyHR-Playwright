@@ -25,6 +25,7 @@ export class PreOnboaringDetailsComponent {
   appointmentDetails: any;
   offerDetails: any;
   imgurl: any;
+  traineeofferDetails: any;
 
   constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
@@ -33,6 +34,7 @@ export class PreOnboaringDetailsComponent {
     this.getEmployeeId();
     this.getAppointmentEmployeebyId();
     this.getOfferLetterEmployeebyId();
+    this.getTraineeOfferLetterEmployeebyId();
     this.initializeForm();
     this.preOnboardingForm.disable(); // Disable the form initially
   }
@@ -85,11 +87,12 @@ export class PreOnboaringDetailsComponent {
     }
   }
   
-  formatDate(data: any): any {
-    if (data) {
-      return moment(data).format('YYYY-MM-DD');
-    }
-    return data;
+  formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   getEmployeeId(): void {
@@ -102,28 +105,14 @@ export class PreOnboaringDetailsComponent {
         this.previousEmpData = JSON.parse(JSON.stringify(data));
         this.empdata = data as Ipersonal;
 
-        // Format dates
-        this.empdata.lastworkingday = this.formatDate(this.empdata.lastworkingday);
-        this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
-        this.empdata.probationEndDate = this.formatDate(this.empdata.probationEndDate);
-        this.empdata.offerIssueddate = this.formatDate(this.empdata.offerIssueddate);
-
-        console.log(this.empdata);
-        this.imgurl = this.empdata.profilePic;
-
-        // Patch the form with employee data
-        this.preOnboardingForm.patchValue({
-          traineeOfferSentDate: this.empdata.offerIssueddate || '',
-          traineeOfferSentBy: this.empdata.createdby || '',
-          traineeOfferSentStatus: this.empdata.offerstatus || ''
-        });
       },
       error: (err: any) => {
         console.log(err);
       }
     });
   }
-
+// Get the employee ID from local storage and fetch data
+//function to get appointment details by employee ID
   getAppointmentEmployeebyId(): void {
     const Empid = parseInt(this.empinfo.employeeId);
     console.log(Empid);
@@ -145,7 +134,7 @@ export class PreOnboaringDetailsComponent {
       }
     });
   }
-
+//function to get trainee offer letter data using getbyemployeeid
   getOfferLetterEmployeebyId(): void {
     const EmpId = parseInt(this.empinfo.employeeId);
     console.log(EmpId);
@@ -167,6 +156,28 @@ export class PreOnboaringDetailsComponent {
       }
     });
   }
+
+    //function to get traineeofferletter data using getbyemployeeid
+    getTraineeOfferLetterEmployeebyId() {
+      let Empid = parseInt(this.empinfo.employeeId)
+      console.log(Empid);
+      this.subscription = this.http.getData(`TraineeOfferLetter/getbyEmpidNames/${Empid}`).subscribe({
+        next: (data: any) => {
+          console.log(data);
+          this.traineeofferDetails = data
+        
+          // Patch the form with employee data
+          this.preOnboardingForm.patchValue({
+            traineeOfferSentDate: this.traineeofferDetails.offerSentDate || '',
+            traineeOfferSentBy: this.traineeofferDetails.offerSentByName || '',
+            traineeOfferSentStatus: this.traineeofferDetails.offerSentStatus || ''
+          });
+  
+        },
+        error: Reason => console.log(Reason)
+      })
+  
+    }
 
   ngOnDestroy(): void {
     if (this.subscription) {

@@ -88,7 +88,7 @@ export class JobDetailsComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.joiningDate =this.formatDateToLocal(this.empinfo.dateOfJoining)
+ 
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
@@ -188,7 +188,9 @@ export class JobDetailsComponent {
     this.subscription = this.http
       .getData(`Employeedata/${employeeId}`)
       .subscribe({
-        next: (data: any) => {},
+        next: (data: any) => {
+          this.joiningDate =this.formatDateToLocal(data.dateOfJoining)
+        },
         error: (reason: any) =>
           console.error('Error fetching employee data:', reason),
       });
@@ -268,11 +270,10 @@ export class JobDetailsComponent {
               firstName: string;
               lastName: string;
               fusionEmpId: any;
+              middleName: any;
             }) => ({
               id: employee.employeeId, // Use the employeeId as the unique identifier
-              employee: ` ${employee.fusionEmpId ?? ''} - ${
-                employee.firstName ?? ''
-              } ${employee.lastName ?? ''}`, // Combine first and last name
+              employee: ` ${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''}  `, // Combine first and last name
             })
           );
 
@@ -505,13 +506,14 @@ export class JobDetailsComponent {
       this.subscription = this.http.postdata('JobDetails', playload).subscribe({
         next: (data: any) => {
           console.log('Response:', data);
-
+          this.http.setBasicDetails();
           this.jobDetailsForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal(
             'Job Details added successfully'
           );
           this.getJobDetails(); // Refresh job details
+          this.http.setBasicDetails();
         },
         error: (reason: any) => {
           console.error('Error:', reason);

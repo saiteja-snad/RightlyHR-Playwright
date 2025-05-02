@@ -42,10 +42,10 @@ export class CompensationComponent {
 
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    this.joiningDate =this.formatDateToLocal(this.empinfo.dateOfJoining)
+  
     this.intizationFrom()
     this.intizationupdateFrom()
-  
+  this.getEmployeeId()
     this.getCompensationempid()
     this.getFrequency()
     this.getpaytype()
@@ -59,7 +59,7 @@ export class CompensationComponent {
       paytype: [null, Validators.required],
       overtimeeligibility: [null, Validators.required],
       frequency: [null, Validators.required],
-      compensationamount: [null, [Validators.required, Validators.pattern(/^\d+$/)]]
+      compensationamount: [null, [Validators.required, Validators.pattern(/^(?!0+$)\d+(\.\d{1,2})?$/)]]
     });
   }
 
@@ -71,7 +71,7 @@ export class CompensationComponent {
       paytype: [null, Validators.required],
       overtimeeligibility: [null, Validators.required],
       frequency: [null, Validators.required],
-      compensationamount: [null, [Validators.required, Validators.pattern(/^\d+$/)]]
+      compensationamount: [null, [Validators.required, Validators.pattern(/^(?!0+$)\d+(\.\d{1,2})?$/)]]
     });
   }
   
@@ -82,7 +82,18 @@ export class CompensationComponent {
     });
   }
 
-
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.joiningDate =this.formatDateToLocal(data.dateOfJoining)
+        },
+        error: (reason: any) =>
+          console.error('Error fetching employee data:', reason),
+      });
+  }
   //function to get overtime dropdown
   getOvertime() {
     this.subscription = this.http.getData('Overtime').subscribe({

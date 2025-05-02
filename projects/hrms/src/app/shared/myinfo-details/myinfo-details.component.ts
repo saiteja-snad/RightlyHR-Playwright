@@ -34,6 +34,10 @@ export class MyinfoDetailsComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getJobDetails();
     this.getEmployeeId();
+    this.http.basicDetailesadded$.subscribe(() => {
+      this.getJobDetails();
+      this.getEmployeeId();
+    });
   }
 
   getJobDetails() {

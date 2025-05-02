@@ -1340,6 +1340,13 @@ input[type="file"] {
     line-height: 30px;
     color: #06274F;
 }
+
+.popup-image-view-container{
+    width: 100%;
+    height: calc(100dvh - 20rem);
+    padding: 1rem;
+    overflow: auto;
+}
 // popup stylings ends
 
 // download text
@@ -1590,3 +1597,14 @@ input[type="checkbox"] {
     color: #06274F;
     font-weight: 500;
 }
+
+// custom number input did get arrow
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;    -moz-appearance: none;    appearance: none;
+    margin: 0; 
+}
+ .custom-file-name{
+    display: flex;
+    text-wrap: wrap;
+ }

@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between mb-3">
         <div class="d-flex gap-2">
             <div class="image-content">
-                <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
+                <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image img-fluid">
                 <div class="edit-icon-content">
                     <label for="formFile" class="form-label"><img src="/icons/Edit.png" alt="edit-icon"
                             class="edit-icon cursor"></label>
@@ -28,7 +28,7 @@
                 {{empdata?.workPhoneCountryCode}}  {{empdata?.workPhone || 'N/A'}} </span>
         </div>
         <div class="mb-3 text-truncate">
-            <i class="bi bi-geo-alt profile-data-icon me-2"></i><span class="details-text">{{jobdata?.locationName}}
+            <i class="bi bi-geo-alt profile-data-icon me-2"></i><span class="details-text">{{jobdata?.locationName || 'N/A' }},
                 {{jobdata?.sublocationName || 'N/A' }}</span>
         </div>
         <div class="mb-3 text-truncate">

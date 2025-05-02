@@ -9,7 +9,6 @@ import { HttpService } from '../../../../services/http.service';
 import { LeaveApproval, LeaveApproverComment } from '../../../../Interfaces/pendingapprovalsmodel';
 import { DateformatPipe } from '../../../../Pipes/dateformat.pipe';
 import { OpenModalService } from '../../../../services/open-modal.service';
-import { LeavesPendingapprovalsPipe } from '../../../../Pipes/leaves-pendingapprovals.pipe';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
@@ -30,6 +29,7 @@ import { TimeoffsearchPipe } from '../../../../Pipes/timeoffsearch.pipe';
   templateUrl: './time-off-for-your-role-request.component.html',
   styleUrl: './time-off-for-your-role-request.component.scss',
 })
+
 export class TimeOffForYourRoleRequestComponent {
   totalRecords = 100;
   first: any = 0;
@@ -54,6 +54,7 @@ export class TimeOffForYourRoleRequestComponent {
   onRowsChange() {
     this.first = 0;
   }
+  
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
@@ -63,7 +64,7 @@ export class TimeOffForYourRoleRequestComponent {
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
     public rbac: RbacService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -79,10 +80,7 @@ export class TimeOffForYourRoleRequestComponent {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.subscription = this.http
-      .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=ROLE`
-      )
+    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=ROLE`)
       .subscribe({
         next: (response: any) => {
           // this.leaves = response.data as LeaveApproval[];
@@ -108,6 +106,7 @@ export class TimeOffForYourRoleRequestComponent {
     this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
     this.approveRequest(selecteddata);
   }
+
   processleave(selecteddata: any) {
     this.approveRequest(selecteddata);
     this.handleProcess(selecteddata);
@@ -124,8 +123,8 @@ export class TimeOffForYourRoleRequestComponent {
             this.selectedLeaveData = response;
             this.selectedLeaveData.request = leaveRequest;
           },
-          error: (err) => {},
-          complete: () => {},
+          error: (err) => { },
+          complete: () => { },
         });
     }
   }
@@ -137,16 +136,16 @@ export class TimeOffForYourRoleRequestComponent {
       approvedBy: this.LOGIN.employeeId.toString(),
     };
     this.subscription = this.http.putData(`PendingApproval/process/${data.approvalHeader.id}`, requestBody).subscribe({
-        next: (respone: any) => {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Request Processed Successfully');
-          this.getAllPendingApprovals();
-        },
-        error: (reason: any) => {
-          this.conformationPopup.openErrorModal('Request Processed Failed');
-        },
-        complete: () => {},
-      });
+      next: (respone: any) => {
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Request Processed Successfully');
+        this.getAllPendingApprovals();
+      },
+      error: (reason: any) => {
+        this.conformationPopup.openErrorModal('Request Processed Failed');
+      },
+      complete: () => { },
+    });
   }
 
   handleReject(data: LeaveApproval) {

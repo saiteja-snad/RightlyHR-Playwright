@@ -1,4 +1,8 @@
 <div>
+    @if (this.router.url !== '/settings/timeoff-configurations/addleavecategory' && 
+    this.router.url !== '/settings/timeoff-configurations/updateleavecategory' && 
+    this.router.url !== '/settings/timeoff-configurations/cloneleavecategory' && 
+    this.router.url !== '/settings/timeoff-configurations/viewleavecategory') {
     <!--header-->
     <div class="mb-3">
         <div class="component-header">Settings</div>
@@ -9,20 +13,29 @@
         <app-settings-time-off-tabs></app-settings-time-off-tabs>
     </div>
     
+    
     <!--Content-->
     <div class="employee-fields-main-container d-flex gap-3 w-100">
-        @if (router.url === '/settings/timeoff-configurations/eligibility-criterias/comp-off' || router.url === '/settings/timeoff-configurations/eligibility-criterias/wfh' 
-        || router.url === '/settings/timeoff-configurations/eligibility-criterias/permissions' || router.url === '/settings/timeoff-configurations/eligibility-criterias/permissions-eligibility-criteria'
-        || router.url === '/settings/timeoff-configurations/eligibility-criterias/global-permissions' || router.url === '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-types'
-        || router.url === '/settings/timeoff-configurations/eligibility-criterias/attendance-regularization-eligibility-criteria') {
+        @if (isActive('/settings/timeoff-configurations/eligibility-criterias') ||
+        isActive('/settings/timeoff-configurations/leave-categoery')) {
         <!--sub tabs Content-->
         <div class="custom-component-left-content">
-            <app-attendance-eligibility-criteria-tabs/>
+            @if (isActive('/settings/timeoff-configurations/eligibility-criterias')) {
+            <app-attendance-eligibility-criteria-tabs />
+            }
+            @if(isActive('/settings/timeoff-configurations/leave-categoery')) {
+            <app-leave-category-tabs />
+            }
         </div>
         }
-        
+    
         <div class="custom-setting-right-content p-3">
             <router-outlet />
         </div>
     </div>
+    } @else {
+        <div>
+            <router-outlet />
+        </div>
+    }
 </div>

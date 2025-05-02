@@ -1,12 +1,18 @@
 import { Route } from "@angular/router";
-import { LeaveCategoeryComponent } from "./leave-categoery/leave-categoery.component";
 import { FlexibleLeaveAllocationComponent } from "./flexible-leave-allocation/flexible-leave-allocation.component";
 import { LeaveAlloctaionComponent } from "./leave-alloctaion/leave-alloctaion.component";
 import { LoadEntitlementsComponent } from "./load-entitlements/load-entitlements.component";
 
 export default [
     { path: '', redirectTo: '/settings/timeoff-configurations/leave-categoery', pathMatch: 'full' },
-    { path: 'leave-categoery', component: LeaveCategoeryComponent },
+    {
+        path: 'leave-categoery',
+        children: [
+            { path: '', redirectTo: 'pendingleavecategory', pathMatch: 'full' },
+            { path: 'pendingleavecategory', loadComponent: () => import('./leave-categoery/pending-leavecategory/pending-leavecategory.component').then((m) => m.PendingLeavecategoryComponent) },
+            { path: 'publishedleavecategory', loadComponent: () => import('./leave-categoery/published-leavecategory/published-leavecategory.component').then((m) => m.PublishedLeavecategoryComponent) },
+        ]
+    },
     { path: 'leave-allocation', component: LeaveAlloctaionComponent },
     { path: 'load-entitlements', component: LoadEntitlementsComponent },
     { path: 'flexible-leave-allocation', component: FlexibleLeaveAllocationComponent },
@@ -22,4 +28,8 @@ export default [
             { path: 'attendance-regularization-eligibility-criteria', loadComponent: () => import('./attendance-eligibility-criteria/attendance-regularization-eligibility-criteria/attendance-regularization-eligibility-criteria.component').then((m) => m.AttendanceRegularizationEligibilityCriteriaComponent)},
         ]
     },
+    { path: 'addleavecategory', loadComponent: () => import('./leave-categoery/add-leavecategory/add-leavecategory.component').then((m) => m.AddLeavecategoryComponent) },
+    { path: 'updateleavecategory', loadComponent: () => import('./leave-categoery/update-leavecategory/update-leavecategory.component').then((m) => m.UpdateLeavecategoryComponent) },
+    { path: 'cloneleavecategory', loadComponent: () => import('./leave-categoery/clone-leavecategory/clone-leavecategory.component').then((m) => m.CloneLeavecategoryComponent) },
+    { path: 'viewleavecategory', loadComponent: () => import('./leave-categoery/view-leavecategory/view-leavecategory.component').then((m) => m.ViewLeavecategoryComponent) },
 ] as Route[];

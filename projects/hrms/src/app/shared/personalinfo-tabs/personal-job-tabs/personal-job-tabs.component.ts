@@ -18,15 +18,15 @@ export class PersonalJobTabsComponent implements OnInit {
     { label: 'Onboarding Details', link: '/personalinfo/job/onboarding-details',permission: { feature: 'Employee Onboarding Documents', action: 'view' } },
     { label: 'Offboarding Details', link: '/personalinfo/job/employmentType',permission: { feature: 'Employee Separation Request', action: 'view' } },
     { label: 'Job Details', link: '/personalinfo/job/job-details' ,permission: { feature: 'Employee Job Details', action: 'view' }},
-    { label: 'Separation Requests', link: '/personalinfo/job/separation-details',permission: { feature: 'Employee Separation Request', action: 'view' } },
-    { label: ' No Due Clearance', link: '/personalinfo/job/no-due-clearance-details',permission: { feature: 'Employee No Due Request', action: 'view' } },
-    { label: 'Past Experiences', link: '/personalinfo/job/past-experiences' ,permission: { feature: 'Employee Experience Details', action: 'view' }},
+    { label: 'Separation Request Details', link: '/personalinfo/job/separation-details',permission: { feature: 'Employee Separation Request', action: 'view' } },
+    { label: ' No Due Clearance Details', link: '/personalinfo/job/no-due-clearance-details',permission: { feature: 'Employee No Due Request', action: 'view' } },
+    { label: 'Previous  Experience Details', link: '/personalinfo/job/past-experiences' ,permission: { feature: 'Employee Experience Details', action: 'view' }},
     { label: 'Certification Details', link: '/personalinfo/job/certifications',permission: { feature: 'Employee Certification Details', action: 'view' } },
     { label: 'Probation Details', link: '/personalinfo/job/probation-details',permission: { feature: 'Employee Probation Details', action: 'view' } },
-    { label: 'Onboarding Request', link: '/personalinfo/job/onboarding-requests',permission: { feature: 'Employee Onboarding Request', action: 'view' } },
-    { label: 'Compensation', link: '/personalinfo/job/compensation-details',permission: { feature: 'Compensation Details', action: 'view' } },
-    { label: 'Desk', link: '/personalinfo/job/desk-details' },
-    { label: 'Assets', link: '/personalinfo/job/assets-details',permission: { feature: 'Assets', action: 'view' } },
+    { label: 'Onboarding Request Details', link: '/personalinfo/job/onboarding-requests',permission: { feature: 'Employee Onboarding Request', action: 'view' } },
+    { label: 'Compensation Details', link: '/personalinfo/job/compensation-details',permission: { feature: 'Compensation Details', action: 'view' } },
+    { label: 'Desk Details', link: '/personalinfo/job/desk-details' },
+    { label: 'Assets Details', link: '/personalinfo/job/assets-details',permission: { feature: 'Assets', action: 'view' } },
   
   ];
   constructor(public rbac: RbacService) { }

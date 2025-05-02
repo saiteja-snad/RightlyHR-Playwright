@@ -3,7 +3,7 @@
 
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">{{'Asset Sub Catagory'|translate}}</span></div>
-    <div class="custom-add-btn" (click)="openModal(addassetescataerys)" *ngIf="rbac.allowedToAccess('Vendor Details.create')">
+    <div class="custom-add-btn" (click)="openModal(addassetescataerys)" *ngIf="rbac.allowedToAccess('Asset Sub Catagory.create')">
       <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
     </div>
   </div>
@@ -16,7 +16,7 @@
             <th >Asset Category</th>
             <th >Asset Sub Category</th>
 
-            <th *ngIf="rbac.allowedToAccess('Vendor Details.update') || rbac.allowedToAccess('Vendor Details.delete')">Action(s)</th>
+            <th *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update') || rbac.allowedToAccess('Asset Sub Catagory.delete')">Action(s)</th>
 
           </tr>
         </thead>
@@ -26,16 +26,16 @@
             <tr *ngFor="let asset of categoridata | async">
               <td >{{ getAssetCatData(asset.parentId) }}</td>
               <td >{{ asset.name }}</td>
-              <td class="text-center" *ngIf="rbac.allowedToAccess('Vendor Details.update') || rbac.allowedToAccess('Vendor Details.delete')">
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update') || rbac.allowedToAccess('Asset Sub Catagory.delete')">
                 <div class="d-flex gap-4">
 
-                  <div *ngIf="rbac.allowedToAccess('Vendor Details.update')">
+                  <div *ngIf="rbac.allowedToAccess('Asset Sub Catagory.update')">
                     <a (click)="openupdate(updateassetescataerys, asset)"><img src="/settings-icon/edit.png"
                         alt="edit icon" class="settings-common-icon">
                     </a>
                   </div>
 
-                  <div *ngIf="rbac.allowedToAccess('Vendor Details.delete')">
+                  <div *ngIf="rbac.allowedToAccess('Asset Sub Catagory.delete')">
                     <a (click)="opendelete(deleteconformation,asset)"><img src="/settings-icon/trash-2.png"
                         alt="edit icon" class="settings-common-icon"></a>
                   </div>

@@ -13,16 +13,16 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-certification',
-  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule],
   templateUrl: './certification.component.html',
   styleUrl: './certification.component.scss'
 })
-export class CertificationComponent  implements OnInit, OnDestroy{
+export class CertificationComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   selectedCertification: any;
   empcertsdata = new BehaviorSubject<any>([]);
-  empinfo:any
-  spinnerLoader=false;
+  empinfo: any
+  spinnerLoader = false;
   certificationForm!: FormGroup;
   updateCertificationForm!: FormGroup;
   certificationDocument: any;
@@ -31,23 +31,25 @@ export class CertificationComponent  implements OnInit, OnDestroy{
   showError: boolean = false;
   showErrorr: boolean = false;
   selectedid: any;
-  displaycertification:any
+  displaycertification: any
+  dateofbirth: any;
 
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService,public rbac: RbacService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.getEmployeeId()
     this.getEmpcertdata();
     this.initializeForm();
     this.initializeupdateForm();
-  
+
 
   }
 
   initializeForm(): void {
     this.certificationForm = this.fb.group({
-      certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
-      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
+      certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(100)]],
+      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
@@ -72,12 +74,12 @@ export class CertificationComponent  implements OnInit, OnDestroy{
 
   initializeupdateForm(): void {
     this.updateCertificationForm = this.fb.group({
-      certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
-      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
+      certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(100)]],
+      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
-      expiryDate: ['', Validators.required],
+      expiryDate: [null, Validators.required],
       isExpired: [false],
-      attachment: ['', ],
+      attachment: ['',],
     });
 
     // Disable "expiryDate" field if "isExpired" is checked
@@ -95,12 +97,12 @@ export class CertificationComponent  implements OnInit, OnDestroy{
     });
   }
 
-  changesstartdate(){
-   if (this.certificationForm.get('issuedDate')?.value) {
-    this.certificationForm.get('expiryDate')?.reset();
+  changesstartdate() {
+    if (this.certificationForm.get('issuedDate')?.value) {
+      this.certificationForm.get('expiryDate')?.reset();
+    }
   }
-}
-  changesstartdateupdate(){
+  changesstartdateupdate() {
     if (this.updateCertificationForm.get('issuedDate')?.value) {
       this.updateCertificationForm.get('expiryDate')?.reset();
     }
@@ -108,9 +110,20 @@ export class CertificationComponent  implements OnInit, OnDestroy{
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.dateofbirth =this.formatDateToLocal(data.dob)
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
+
   onSelectBankProofDownload(file: any) {
     this.subscription = this.http
-      .DownloadDataWithQuery('FileSystem/Downloadfile', file.docUrl)
+      .DownloadDataWithQuery('FileSystem/Downloadfile', file.attachment)
       .subscribe({
         next: (res: any) => {
           let fileName = res.headers
@@ -121,7 +134,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
           let a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
           let filename =
-            file.docUrl.split('/')[file.docUrl.split('/').length - 1];
+            file.attachment.split('/')[file.attachment.split('/').length - 1];
           a.download = filename;
           a.click();
         },
@@ -129,30 +142,29 @@ export class CertificationComponent  implements OnInit, OnDestroy{
       });
   }
   onFileChange(event: any): void {
+    this.displaycertification = null
     const file = event.target.files[0];
     if (file) {
       const fileSizeInMB = file.size / (1024 * 1024);
-      const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
-      const fileExtension = file.name.split('.').pop()?.toLowerCase();
-
-      // Validate file type and size
-      this.showError = !allowedExtensions.includes(fileExtension || '');
-      this.showErrorr = fileSizeInMB > 25;
-
-      if (!this.showError && !this.showErrorr) {
-        // Rename the file if it passes validation
-        const timestamp = new Date().getTime();
-        this.certificationDocument = this.renameFileAttachment(
-          file,
-          `${this.empinfo.employeeId}_${timestamp}_${file.name}`
-        );
-        console.log('Renamed attachment:', this.certificationDocument);
-      } else {
-        this.certificationDocument = null; // Reset the document if validation fails
-        console.error('File validation failed');
+      if (fileSizeInMB > 25) {
+        this.certificationDocument = null;
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.certificationForm.get('attachment')?.reset();
+        this.certificationForm.get('attachment')?.markAsUntouched();
+        this.updateCertificationForm.get('attachmentupdate')?.reset();
+        this.updateCertificationForm.get('attachmentupdate')?.markAsUntouched();
+       
+        return;
       }
     }
+
+    const timestamp = new Date().getTime();
+    this.certificationDocument = this.renameFileAttachment(
+      file,
+      `${this.empinfo.employeeId}_${timestamp}_${file.name}`
+    );
   }
+  
 
   private renameFileAttachment(originalFile: File, newName: string): File {
     return new File([originalFile], newName, {
@@ -183,7 +195,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
 
   postCertificationDetails(): void {
     if (this.certificationForm.valid) {
-      this.spinnerLoader=true
+      this.spinnerLoader = true
       const payload = this.createCertificationPayload();
 
       if (this.certificationDocument) {
@@ -202,6 +214,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
       .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.certificationDocument)
       .subscribe({
         next: (data: any) => {
+          this.spinnerLoader=false
           if (data) {
             payload.attachment = data.path; // Add the uploaded file path to the payload
             console.log('Uploaded file path:', data.path); // Debugging log
@@ -211,6 +224,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
           }
         },
         error: () => {
+          this.spinnerLoader=false
           console.error('File upload failed');
           this.conformationPopup.openErrorModal('Failed to upload the file. Please try again.');
         }
@@ -220,7 +234,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
   saveCertificationData(payload: any): void {
     this.subscription = this.http.postdata('Certification', payload).subscribe({
       next: () => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         this.certificationForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Certification details added successfully');
@@ -228,7 +242,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
         this.getEmpcertdata(); // Refresh the certification data
       },
       error: (err: any) => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         console.error('Error saving certification data:', err);
         if (err.status === 400) {
           this.conformationPopup.openErrorModal(err.error?.message || 'Failed to save certification details.');
@@ -247,7 +261,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
       certificationId: this.certificationForm.get('certificationId')?.value,
       issuedDate: this.certificationForm.get('issuedDate')?.value,
       expirationDate: this.certificationForm.get('expiryDate')?.value,
-      isExpired: this.certificationForm.get('isExpired')?.value,
+      isExpired: this.certificationForm.get('isExpired')?.value || false,
       isDeleted: false,
       isdeleted: false,
       createdAt: currentDate,
@@ -270,6 +284,8 @@ export class CertificationComponent  implements OnInit, OnDestroy{
   }
   onReset(): void {
     this.certificationForm.reset();
+    this.modalService.dismissAll();
+    this.showError = false;
   }
 
   formatDateToLocal(dateString: string): string {
@@ -282,32 +298,33 @@ export class CertificationComponent  implements OnInit, OnDestroy{
 
 
   openModalupdate(content: any, data: any) {
-    this.selectedid= data.id; // Store the selected identityId
+    console.log(data)
+    this.selectedid = data.id; // Store the selected identityId
     const startDate = this.formatDateToLocal(data.issuedDate) || null;
-  
-  const EndDate = this.formatDateToLocal(data.expirationDate) || null;
+
+    const EndDate = this.formatDateToLocal(data.expirationDate) || null;
 
     this.updateCertificationForm.patchValue({
       certificationName: data.certificationName,
       certificationId: data.certificationId,
-      issuedDate:startDate,
+      issuedDate: startDate,
       expiryDate: EndDate,
       isExpired: data.isExpired,
     });
-    this.certificationDocument=data.attachment; 
 
-          
-    this.displaycertification=data?.attachment
-    ? this.displaycertification?.attachment?.split('/')?.pop()
-    : null;
-     // Reset the document for the update form
+   
+    this.certificationDocument = data.attachment;
+    this.displaycertification = data?.attachment?.split('/')?.pop()
+     
+      console.log(this.displaycertification)
+    // Reset the document for the update form
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
 
   updateCertificationDetails(): void {
     if (this.updateCertificationForm.valid) {
-      this.spinnerLoader=true
+      this.spinnerLoader = true
       const payload = this.createUpdateCertificationPayload();
 
       if (this.certificationDocument) {
@@ -326,6 +343,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
       .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.certificationDocument)
       .subscribe({
         next: (data: any) => {
+          this.spinnerLoader=false
           if (data) {
             payload.attachment = data.path; // Add the uploaded file path to the payload
             console.log('Uploaded file path:', data.path); // Debugging log
@@ -335,6 +353,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
           }
         },
         error: () => {
+          this.spinnerLoader=false
           console.error('File upload failed');
           this.conformationPopup.openErrorModal('Failed to upload the file. Please try again.');
         }
@@ -344,7 +363,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
   saveUpdatedCertificationData(payload: any): void {
     this.subscription = this.http.postdata('Certification/Update', payload).subscribe({
       next: () => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         this.updateCertificationForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Certification details updated successfully');
@@ -352,7 +371,7 @@ export class CertificationComponent  implements OnInit, OnDestroy{
         this.getEmpcertdata(); // Refresh the certification data
       },
       error: (err: any) => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         console.error('Error updating certification data:', err);
         if (err.status === 400) {
           this.conformationPopup.openErrorModal(err.error?.message || 'Failed to update certification details.');
@@ -373,13 +392,13 @@ export class CertificationComponent  implements OnInit, OnDestroy{
       certificationId: this.updateCertificationForm.get('certificationId')?.value,
       issuedDate: this.updateCertificationForm.get('issuedDate')?.value,
       expirationDate: this.updateCertificationForm.get('expiryDate')?.value,
-      isExpired: this.updateCertificationForm.get('isExpired')?.value,
+      isExpired: this.updateCertificationForm.get('isExpired')?.value || false,
       isDeleted: false,
       isdeleted: false,
       attachment: attachmentPath || '',
-      createdAt: currentDate, 
-      updatedAt: currentDate, 
-  
+      createdAt: currentDate,
+      updatedAt: currentDate,
+
 
     };
   }
@@ -420,6 +439,6 @@ export class CertificationComponent  implements OnInit, OnDestroy{
       this.subscription.unsubscribe();
     }
   }
-  
+
 }
 

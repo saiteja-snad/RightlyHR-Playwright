@@ -67,6 +67,51 @@ export class FormValidationService {
     }
   }
 
+  restrictInputallowspicalcharterswithnumbers(event: KeyboardEvent): void {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+  
+    if (key === 'Backspace' || key === 'Delete' || key === 'ArrowLeft' || key === 'ArrowRight') {
+      return;
+    }
+  
+    // Prevent the first character from being a space
+    if (key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Allow alphabetic characters, numbers, and special characters
+    const isValidCharacter = /^[A-Za-z0-9\s!@#$%^&*(),.?":{}|<>-]$/.test(key);
+    if (!isValidCharacter) {
+      event.preventDefault();
+    }
+  }
+
+  restrictInputAllowsAlphaNumericAndHyphen(event: KeyboardEvent): void {
+    const key = event.key;
+    const inputElement = event.target as HTMLInputElement;
+  
+    // Allow control/navigation keys
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+    if (allowedKeys.includes(key)) {
+      return;
+    }
+  
+    // Prevent first character from being a space
+    if (key === ' ' && inputElement.selectionStart === 0) {
+      event.preventDefault();
+      return;
+    }
+  
+    // Allow only alphanumeric characters and hyphen
+    const isValidCharacter = /^[A-Za-z0-9-]$/.test(key);
+    if (!isValidCharacter) {
+      event.preventDefault();
+    }
+  }
+  
+
   restrictInputallowspoint(event: KeyboardEvent): void {
     const key = event.key;
     const inputElement = event.target as HTMLInputElement;

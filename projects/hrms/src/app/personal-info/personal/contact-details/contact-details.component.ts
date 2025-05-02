@@ -120,7 +120,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
     const cleanPhoneNumber = (phone: any): string => {
       if (!phone) return '';
-      return String(phone).replace(/\s+/g, '').replace(/-/g, '');
+      return String(phone).replace(/\D+/g, '');
     };
 
     const contactnumber = cleanPhoneNumber(formValue.phoneNumber || this.employedata?.phoneNumber || '');
@@ -145,8 +145,10 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           console.log('Data updated successfully:', data);
           if (data.statusCode === 200) {
+            this.http.setBasicDetails();
             this.conformationPopup.openSuccessModal('Contact Details updated successfully');
           this.contactForm.disable();
+        
           this.buttons = false; // Disable the button after successful update
           this.getEmployeeId();
         

@@ -215,11 +215,13 @@ export const permissionsData = [
     { fields: 'Asset Sub Catagory', View: false, Update: false, Create: false, Delete: false },
 
     // TimeOff Attendece Eligibility Criteria  
-    { fields: 'Comp Off Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'WFH Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Attndance Eligibility Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Comp Off Entitlement Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'WFH Entitlement Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Eligibility Permissions Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Permission Elgibility Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Regularization Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Regularization Eligibility Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Eligibility Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
 
      // Settings Dynamic Forms Section    
      { fields: 'Active Forms', View: false, Update: false, Create: false, Delete: false },

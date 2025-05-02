@@ -97,7 +97,7 @@ export class OnboardingDetailsComponent {
             probationEndDate: this.empdata.probationEndDate || '', 
             probationStatus: this.empdata.probationStatus || '', 
             noticePeriodStatus: this.empdata.noticePeriod || '',
-            backgroundCheckStatus: this.empdata.bgc ? 'Completed' : 'Pending', // Map boolean to string
+            backgroundCheckStatus: this.empdata.backgroundCheckStatus , // Map boolean to string
             salaryHold: this.empdata.issalaryhold ? 'Yes' : 'No', // Map boolean to string
             pf: this.empdata.pf ? 'Yes' : 'No', // Map boolean to string
             esic: this.empdata.esic ? 'Yes' : 'No', 

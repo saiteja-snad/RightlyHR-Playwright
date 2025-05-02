@@ -64,15 +64,15 @@
 
 <ng-template #addEducationmodal let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
+    <div class="custom-poup-header-content popup-header-border">
+      <div >
         <p class="popup-heading mb-0">Add Education Details</p>
       </div>
       <div>
         <a (click)="modal.dismiss();educationForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
+    <div class="custom-main-popup-content ">
       <form [formGroup]="educationForm" (ngSubmit)="postEducation()">
         <div class="row">
           @if(this.rbac.allowedToAccess('Education.view')){
@@ -169,7 +169,7 @@
           </div>}
         </div>
 
-        <div class="d-flex justify-content-end gap-3">
+        <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary"
             (click)="educationForm.reset();modal.dismiss()">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="educationForm.invalid || spinnerLoader ">
@@ -189,15 +189,15 @@
 
 <ng-template #updateEducationmodal let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
+    <div class="custom-poup-header-content popup-header-border">
+      <div >
         <p class="popup-heading mb-0">Update Education Details</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
+    <div class="custom-main-popup-content ">
       <form [formGroup]="educationupdateForm" (ngSubmit)="updateEducation()">
         <div class="row">
           @if(this.rbac.allowedToAccess('Education.view')){
@@ -295,7 +295,7 @@
               *ngIf="educationupdateForm.get('attachmentupdate')?.invalid && educationupdateForm.get('attachmentupdate')?.touched">
               File is required
             </div>
-            <div *ngIf="displalyeducationattachment" class="custom-file-name my-2">{{ displalyeducationattachment?.name
+            <div *ngIf="displalyeducationattachment" class="custom-file-name text-wrap">{{ displalyeducationattachment?.name
               || displalyeducationattachment }}</div>
             <div class="d-flex justify-content-between align-items-center mt-3">
               <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
@@ -305,7 +305,7 @@
         }
         
         </div>
-        <div class="d-flex justify-content-end gap-3">
+        <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary"
             (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="educationupdateForm.invalid || spinnerLoader ">

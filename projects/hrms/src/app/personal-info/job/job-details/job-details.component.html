@@ -345,7 +345,7 @@
                         <label for="team" class="form-label custom-label mb-2">Team<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="teamDropdownValues" optionLabel="subdepartmentName"
+                            <p-select [options]="teamDropdownValues" optionLabel="subdepartmentName" optionValue="subdepartmentId"
                                 formControlName="team" placeholder="Please select team"
                                 class="form-select custom-select"
                                 (onChange)="onSubDepartmentNameChangeupdate($event.value)"></p-select>

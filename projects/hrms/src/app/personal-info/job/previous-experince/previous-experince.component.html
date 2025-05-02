@@ -414,8 +414,8 @@
                                 class="error-msg">
                                File is required
                             </div>
-                            <div *ngIf="displaypreviousexperincedocument" class="mb-2 mt-2">
-                                <b>{{ displaypreviousexperincedocument?.name || displaypreviousexperincedocument }}</b>
+                            <div *ngIf="displaypreviousexperincedocument" class="custom-file-name text-wrap mt-2">
+                                {{ displaypreviousexperincedocument?.name || displaypreviousexperincedocument }}
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-2">
                                 <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.

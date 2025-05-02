@@ -63,7 +63,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.employeeExperienceForm = this.fb.group({
       isPresent: [false],
-      companyName: ['', [Validators.required, Validators.pattern('^[a-zA-Z\\s]+$'),Validators.maxLength(100)]],
+      companyName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/),Validators.maxLength(100)]],
       employmentType: [null, Validators.required],
       fromDate: ['', [Validators.required]],
       toDate: ['', [Validators.required]],
@@ -100,13 +100,13 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeupdateForm(): void {
     this.employeeExperienceupdateForm = this.fb.group({
       isPresentupdate: [false],
-      companyNameupdate: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]'),Validators.maxLength(50)]],
+      companyNameupdate: ['', [Validators.required, Validators.pattern(/^[^\s].*$/),Validators.maxLength(50)]],
       employmentTypeudate: [null, Validators.required],
       fromDateupdate: ['', [Validators.required]],
       toDateupdate: ['', [Validators.required]],
       jobTitleupdate: ['', [Validators.required,Validators.maxLength(50)]],
 
-      previousContactNameupdate: ['', [Validators.pattern('^[a-zA-Z\\s]*$'),Validators.maxLength(50)]],
+      previousContactNameupdate: ['', [Validators.pattern(/^[^\s].*$/),Validators.maxLength(50)]],
       previousContactNumberupdate: [
         '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
@@ -115,7 +115,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         '',
         [Validators.required, Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
-      attachmentupdate: [null, Validators.required],
+      attachmentupdate: [null],
     });
 
     // Disable "toDate" field if "isPresent" is checked
@@ -463,6 +463,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         createdAt: currentDate,
         updatedAt: currentDate,
         isDeleted: false,
+        attachment:this.previousexperincedocument
       };
 
       console.log('Payload being sent:', payload);
@@ -509,7 +510,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       error: (reason: any) => {
         this.spinnerLoader=false
         console.error('Error updating experience details:', reason);
-        this.conformationPopup.openErrorModal('Failed to update experience details. Please check all fields.');
+        this.conformationPopup.openErrorModal(reason.error.message || 'Failed to update experience details. Please check all fields.');
       }
     });
   }

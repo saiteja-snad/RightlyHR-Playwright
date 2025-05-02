@@ -1,0 +1,68 @@
+<div class="custom-main-component-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div><span class="component-sub-header">Visa Details</span></div>
+      <div class="custom-add-btn" (click)="openModal(addvisamodal)" ><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+    </div>
+    
+    <div class="custom-table-content">
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>Education</th>
+            <th>University</th>
+            <th>Specialization</th>
+            <th>GPA</th>
+            <th>From Date</th>
+            <th>To Date</th>
+            <th>Document</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <!-- <tbody>
+          <ng-container *ngIf="((educationData | async) ?? []).length > 0; else noDataTemplate">
+          
+          </ng-container>
+        
+          <ng-template #noDataTemplate>
+            <tr>
+              <td colspan="9"><app-no-data-found></app-no-data-found></td>
+            </tr>
+          </ng-template>
+        </tbody> -->
+      </table>
+    </div>
+  </div>
+  
+
+  <ng-template #addvisamodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+      <div class="custom-poup-header-content popup-header-border">
+        <div >
+          <p class="popup-heading mb-0">Add Visa Details</p>
+        </div>
+        <div>
+          <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+      </div>
+      <div class="custom-main-popup-content ">
+      <form>
+        
+      </form>
+      </div>
+    </div>
+  </ng-template>
+
+  
+  
+  <!-- <ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text">Are you sure you want to delete the Education Details?</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="educationDelete()">Yes</button>
+      </div>
+    </div>
+  </ng-template> -->

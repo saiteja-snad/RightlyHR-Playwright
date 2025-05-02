@@ -119,8 +119,8 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     });
 
     // Disable "toDate" field if "isPresent" is checked
-    this.employeeExperienceForm.get('isPresentupdate')?.valueChanges.subscribe((isPresent) => {
-      const toDateControl = this.employeeExperienceForm.get('toDateupdate');
+    this.employeeExperienceupdateForm.get('isPresentupdate')?.valueChanges.subscribe((isPresent) => {
+      const toDateControl = this.employeeExperienceupdateForm.get('toDateupdate');
       if (isPresent) {
         toDateControl?.reset();
         toDateControl?.clearValidators();
@@ -409,7 +409,12 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         previousContactEmailupdate: experienceDetail?.previousContactEmail,
         isPresentupdate: experienceDetail.isPresent,
       });
+      this.previousexperincedocument = experienceDetail.attachment;
 
+
+      this.displaypreviousexperincedocument = experienceDetail.attachment
+        ? experienceDetail.attachment.split('/').pop()
+        : null;
       // Handle "toDateupdate" field based on "isPresent" or absence of "toDate"
       const toDateControl = this.employeeExperienceupdateForm.get('toDateupdate');
       if (experienceDetail.isPresent || !experienceDetail.toDate) {
@@ -422,12 +427,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       }
 
       toDateControl?.updateValueAndValidity()
-      this.previousexperincedocument = experienceDetail.attachment;
-
-
-      this.displaypreviousexperincedocument = experienceDetail.attachment
-        ? experienceDetail.attachment.split('/').pop()
-        : null;
+      
 
       this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     });
@@ -455,6 +455,8 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         createdAt: currentDate,
         updatedAt: currentDate,
         isDeleted: false,
+        attachment:this.previousexperincedocument
+
       };
 
       console.log('Payload being sent:', payload);
@@ -501,7 +503,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       },
       error: (reason: any) => {
         console.error('Error updating experience details:', reason);
-        this.conformationPopup.openErrorModal('Failed to update experience details. Please check all fields.');
+        this.conformationPopup.openErrorModal(reason.error.message || 'Failed to update experience details. Please check all fields.');
       }
     });
   }

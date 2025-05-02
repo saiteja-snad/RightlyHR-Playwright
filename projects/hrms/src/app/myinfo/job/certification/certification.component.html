@@ -73,7 +73,7 @@
 <ng-template #addexperincemodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
-            <div class="pt-2">
+            <div>
                 <p class="popup-heading mb-0">Add Certification Details
                 </p>
             </div>
@@ -196,7 +196,7 @@
 <ng-template #updateexperincemodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
-            <div class="pt-2">
+            <div >
                 <p class="popup-heading mb-0">Update Certification Details</p>
             </div>
             <div>
@@ -284,7 +284,7 @@
                             *ngIf="updateCertificationForm.get('attachment')?.invalid && updateCertificationForm.get('attachment')?.touched">
                             File is required
                         </div>
-                        <div *ngIf="displaycertification" class="mb-2 mt-2">
+                        <div *ngIf="displaycertification" class="custom-file-name text-wrap mt-2">
                             <b>{{ displaycertification?.name || displaycertification }}</b>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mt-2">
@@ -316,10 +316,10 @@
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text mb-4">Are you sure you want to delete the Certification Details?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
+        <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="deleteCertification()">Yes</button>
         </div>

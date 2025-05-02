@@ -46,7 +46,7 @@ export class CertificationComponent implements OnInit,OnDestroy {
   initializeForm(): void {
     this.certificationForm = this.fb.group({
       certificationName: ['', [Validators.required,Validators.maxLength(50),Validators.pattern(/^[^\s].*$/) ,noWhitespaceValidator]],
-      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/),Validators.maxLength(50),noWhitespaceValidator]],
+      certificationId: ['', [Validators.required,Validators.pattern(/^(?=.*[A-Za-z0-9])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]+$/), Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
@@ -72,7 +72,7 @@ export class CertificationComponent implements OnInit,OnDestroy {
   initializeupdateForm(): void {
     this.updateCertificationForm = this.fb.group({
       certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/),Validators.maxLength(50)]],
-      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/),Validators.maxLength(50)]],
+      certificationId: ['', [Validators.required,Validators.pattern(/^(?=.*[A-Za-z0-9])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]+$/), Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
@@ -278,9 +278,12 @@ export class CertificationComponent implements OnInit,OnDestroy {
         },
       });
   }
+
   onReset(): void {
     this.certificationForm.reset();
+    
   }
+
   formatDateToLocal(dateString: string): string {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -315,8 +318,8 @@ export class CertificationComponent implements OnInit,OnDestroy {
     if (this.updateCertificationForm.valid) {
       this.spinnerLoader=true
       const payload = this.createUpdateCertificationPayload();
-
-      if (this.certificationDocument) {
+   
+      if (this.certificationDocument  instanceof File) {
         this.uploadUpdatedCertificationAttachment(payload);
       } else {
         this.saveUpdatedCertificationData(payload);
@@ -384,10 +387,9 @@ export class CertificationComponent implements OnInit,OnDestroy {
       isExpired: this.updateCertificationForm.get('isExpired')?.value || false,
       isDeleted: false,
       isdeleted: false,
-      attachment: attachmentPath || '',
       createdAt: currentDate,
       updatedAt: currentDate,
-
+      attachment:this.certificationDocument
 
     };
   }

@@ -129,15 +129,15 @@
 
 <ng-template #seprationModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div >
                 <p class="popup-heading mb-0">Separation Request</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-3">
+        <div class="custom-main-popup-content">
             <form [formGroup]="separationRequestForm" (ngSubmit)="postSeparationRequestForm()">
                 <div class="row">
                     <div class="col-md-6">
@@ -263,7 +263,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3">
+                <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="separationRequestForm.invalid||isLoading">
                         @if(!isLoading){
@@ -285,15 +285,15 @@
 
 <ng-template #addEducationmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div >
                 <p class="popup-heading mb-0">Add Job Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();jobDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-3">
+        <div class="custom-main-popup-content ">
             <form [formGroup]="jobDetailsForm" (ngSubmit)="postJobDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -440,7 +440,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end gap-3 mt-4">
+                <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="jobDetailsForm.invalid">Submit</button>
                 </div>
@@ -453,15 +453,15 @@
 
 <ng-template #seprationModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div >
                 <p class="popup-heading mb-0">Separation Request</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-3">
+        <div class="custom-main-popup-content ">
             <form [formGroup]="separationRequestForm">
                 <div class="row">
                     <div class="col-md-6">
@@ -571,7 +571,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3">
+                <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary">Submit</button>
                 </div>
@@ -583,10 +583,10 @@
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text mb-4">Are you sure you want to delete the Job Details?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3">
+        <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="jobdetailsdelte()">Yes</button>
         </div>

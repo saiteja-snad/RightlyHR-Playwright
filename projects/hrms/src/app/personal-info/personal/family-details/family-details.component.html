@@ -68,15 +68,15 @@
 <!--Add popup-->
 <ng-template #addFamilyModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
                 <p class="popup-heading mb-0">Add New Family Member Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();familyDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content">
             <form [formGroup]="familyDetailsForm" (ngSubmit)="postFamilyDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -124,9 +124,9 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary px-4">Add</button>
+                <div class="custom-modal-footer">
+                    <button type="reset" class="custom-btn btn-secondary " (click)="modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary">Add</button>
                 </div>
             </form>
         </div>
@@ -136,15 +136,15 @@
 <!--update popup-->
 <ng-template #updateFamilyModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div >
                 <p class="popup-heading mb-0">Update Family Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content">
             <form [formGroup]="familyDetailsupdateForm" (ngSubmit)="updatefamilyDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -193,7 +193,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3">
+                <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();familyDetailsupdateForm.reset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="familyDetailsupdateForm.invalid">Update</button>
                 </div>
@@ -206,10 +206,10 @@
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
             <p class="confirmation-text mb-4">Are you sure you want to delete the Family Details?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
+        <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="familyDelete()">Yes</button>
         </div>

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ShitsComponent } from './shits.component';
+import { PublishedShiftsComponent } from './published-shifts.component';
 
-describe('ShitsComponent', () => {
-  let component: ShitsComponent;
-  let fixture: ComponentFixture<ShitsComponent>;
+describe('PublishedShiftsComponent', () => {
+  let component: PublishedShiftsComponent;
+  let fixture: ComponentFixture<PublishedShiftsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShitsComponent]
+      imports: [PublishedShiftsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ShitsComponent);
+    fixture = TestBed.createComponent(PublishedShiftsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

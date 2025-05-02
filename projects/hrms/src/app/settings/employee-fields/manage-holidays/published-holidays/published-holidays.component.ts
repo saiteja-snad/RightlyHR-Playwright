@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
@@ -13,10 +13,8 @@ import { RbacService } from '../../../../services/rbac.service';
   templateUrl: './published-holidays.component.html',
   styleUrl: './published-holidays.component.scss'
 })
+
 export class PublishedHolidaysComponent {
-
-
-
   subscription!: Subscription
   allHolidays = [] as any;
 
@@ -26,16 +24,10 @@ export class PublishedHolidaysComponent {
     this.getAllHolidays();
   }
 
-
   getAllHolidays() {
     this.subscription = this.http.getData('orgHolidays').subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.allHolidays = data.filter(
-          (status: { status: string; }) => status.status === 'Published'
-        ).reverse();
-        console.log(this.allHolidays);
-
+        this.allHolidays = data.filter((status: { status: string; }) => status.status === 'Published').reverse();
       }, error: (err: any) => {
         console.error(err);
       }
@@ -45,11 +37,12 @@ export class PublishedHolidaysComponent {
   viewPublishedholiday(holiday: any) {
     localStorage.setItem('viewholidays', JSON.stringify(holiday));
     this.router.navigate(['/settings/employee-fields/viewholidays']);
-
   }
-  navigateToCloneComponent(holiday:any){
+
+  navigateToCloneComponent(holiday: any) {
     this.router.navigate(['/settings/employee-fields/cloneholidays']);
   }
+
   nagvition() {
     this.router.navigate(['/settings/employee-fields/addholidays']);
   }

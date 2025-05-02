@@ -1,19 +1,19 @@
-import { Component } from '@angular/core';
-import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
-import { HttpService } from '../../../../services/http.service';
-import { Router, RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { RouterModule, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
+import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
-@Component({
-  selector: 'app-pendingshits',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule],
-  templateUrl: './pendingshits.component.html',
-  styleUrl: './pendingshits.component.scss'
-})
+import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 
-export class PendingshitsComponent {
+@Component({
+  selector: 'app-pending-shifts',
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule],
+  templateUrl: './pending-shifts.component.html',
+  styleUrl: './pending-shifts.component.scss'
+})
+export class PendingShiftsComponent {
   empinfo: any
   subscription!: Subscription;
   shiftsData: any[] = [];

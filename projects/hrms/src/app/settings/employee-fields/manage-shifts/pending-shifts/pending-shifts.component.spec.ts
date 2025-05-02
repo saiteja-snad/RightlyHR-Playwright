@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PulishedShitsComponent } from './pulished-shits.component';
+import { PendingShiftsComponent } from './pending-shifts.component';
 
-describe('PulishedShitsComponent', () => {
-  let component: PulishedShitsComponent;
-  let fixture: ComponentFixture<PulishedShitsComponent>;
+describe('PendingShiftsComponent', () => {
+  let component: PendingShiftsComponent;
+  let fixture: ComponentFixture<PendingShiftsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PulishedShitsComponent]
+      imports: [PendingShiftsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PulishedShitsComponent);
+    fixture = TestBed.createComponent(PendingShiftsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

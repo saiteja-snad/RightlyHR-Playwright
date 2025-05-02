@@ -13,8 +13,8 @@ import { RbacService } from '../../../../services/rbac.service';
   templateUrl: './pending-holidays.component.html',
   styleUrl: './pending-holidays.component.scss'
 })
-export class PendingHolidaysComponent {
 
+export class PendingHolidaysComponent {
   subscription!: Subscription
   allHolidays = [] as any;
 
@@ -27,12 +27,7 @@ export class PendingHolidaysComponent {
   getAllHolidays() {
     this.subscription = this.http.getData('orgHolidays').subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.allHolidays = data.filter(
-          (status: { status: string; }) => status.status === 'Pending for submission'
-        ).reverse();
-        console.log(this.allHolidays);
-
+        this.allHolidays = data.filter((status: { status: string; }) => status.status === 'Pending for submission').reverse();
       }, error: (err: any) => {
         console.error(err);
       }

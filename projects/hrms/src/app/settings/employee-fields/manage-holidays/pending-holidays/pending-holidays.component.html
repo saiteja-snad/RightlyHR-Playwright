@@ -6,19 +6,17 @@
     </div>
   </div>
 
-
-  <div class="custom-table-content mt-2">
+  <div class="custom-table-content">
     <table class="w-100">
       <thead>
         <tr>
           <th>{{'Year' | translate}}</th>
-          <th>{{'Location' | translate}}</th> 
+          <th>{{'Location' | translate}}</th>
           <th>{{'Sub Location' | translate}}</th>
           <th>{{'Shift Name' | translate}}</th>
           <th>{{'Status' | translate}}</th>
           <th>{{'Added By' | translate}}</th>
           <th *ngIf="rbac.allowedToAccess('Manage Holidays Tab.update')">{{'Action(s)' | translate}}</th>
-
         </tr>
       </thead>
       <tbody>
@@ -33,14 +31,14 @@
           <td>{{item.addedbyName}}</td>
           <td *ngIf="rbac.allowedToAccess('Manage Holidays Tab.update')">
             <div class="dropdown">
-              <span type="button" data-bs-toggle="dropdown">
+              <a type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
-              </span>
+              </a>
               <ul class="dropdown-menu custom-dropdown-menu">
                 <li>
                   <a *ngIf="item.status == 'Pending for submission'" class="dropdown-item cursor" data-bs-toggle="modal"
                     (click)="updateHoliday(item)">
-                    <i class="bi bi-pencil-fill px-2"></i>{{'Update' | translate}}
+                    <i class="bi bi-pencil-fill me-2"></i>{{'Update' | translate}}
                   </a>
                 </li>
               </ul>
@@ -57,6 +55,4 @@
       </tbody>
     </table>
   </div>
-
-
 </div>

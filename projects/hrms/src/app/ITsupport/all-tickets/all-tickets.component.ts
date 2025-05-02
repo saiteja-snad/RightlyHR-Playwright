@@ -71,8 +71,8 @@ export class AllTicketsComponent {
       priority: [{ value: '', disabled: true }, [Validators.required]],
       subject: [{ value: '', disabled: true }, [Validators.required]],
       description: [{ value: '', disabled: true }, [Validators.required]],
-      comments: ['', [Validators.required]],
-      assignedto: [null, [Validators.required]],
+      comments: [''],
+      assignedto: [null],
       ticketStatus: ['', [Validators.required]]
     });
   }
@@ -152,11 +152,17 @@ export class AllTicketsComponent {
     this.itTicketDetails.description = this.teamTicketDetails.description;
     this.itTicketDetails.stepsToReplicate = this.teamTicketDetails.stepsToReplicate;
     this.itTicketDetails.comments = this.itSupportForm.value.comments;
-    this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.assigneeId.toString();
+    
     this.itTicketDetails.attachmentUrl = null;
     this.itTicketDetails.createdAt = this.teamTicketDetails.createdAt;
-    this.itTicketDetails.updatedAt = new Date().toISOString();;
-    this.itTicketDetails.isdeleted = false
+    this.itTicketDetails.updatedAt = new Date().toISOString();
+    this.itTicketDetails.isdeleted = false;
+    if(this.itSupportForm.value.assignedto !== null && this.itSupportForm.value.assignedto !== "" && this.itSupportForm.value.assignedto !== undefined){
+      this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.assigneeId.toString();
+    }
+    if(this.itSupportForm.value.assignedto === undefined){
+      this.itTicketDetails.assigneeId = null;
+    }
     this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Ticket updated successfully');

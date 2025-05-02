@@ -11,6 +11,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Select } from 'primeng/select';
 import { IDepartment } from '../../Interfaces/letters-model';
 import { OpenModalService } from '../../services/open-modal.service';
+import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
 
 @Component({
   selector: 'app-open-tickets',
@@ -22,7 +23,7 @@ export class OpenTicketsComponent {
 
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
-  tickets: any = [];
+  tickets= [] as Ticket[];
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
   ticketRaisedFor: any[] = [];
@@ -33,7 +34,7 @@ export class OpenTicketsComponent {
     { value: 'Rejected', label: 'Rejected' }
   ];
   teamTicketDetails: any = {};
-  allEmployees = [] as any[];
+  allEmployees = [] as Assignee[];
   selectedTickets: any = {};
   itTicketDetails = {} as any;
   selectedAssigneeId: any;
@@ -52,7 +53,7 @@ export class OpenTicketsComponent {
     ];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.teamTicketDetails = JSON.parse(localStorage.getItem('ticketDetails') || '{}');
-    this.getEmployee(this.teamTicketDetails.empId)
+    
     this.getuserticketsbyempid();
     this.itSupportForm = this.fb.group({
       employee: [{ value: 'Self', disabled: true }, Validators.required],
@@ -74,6 +75,7 @@ export class OpenTicketsComponent {
 
   openModal(content: any, ticket: any) {
     this.selectedTickets = ticket;
+    this.getEmployee(this.selectedTickets.empId)
     this.itSupportForm.patchValue({
       name: this.selectedTickets.employeeName,
       email: this.selectedTickets.emailaddress,
@@ -109,6 +111,9 @@ export class OpenTicketsComponent {
           ...a,
           fullName: `${a.fusionEmpId} - ${a.assigneeName}`.trim()
         }));
+        this.itSupportForm.patchValue({
+          assignedto : this.allEmployees.find((emp) => emp.assigneeId == this.selectedTickets.assigneeId),
+        });
       },
       error: (reason: any) => {
       }
@@ -132,11 +137,13 @@ export class OpenTicketsComponent {
     this.itTicketDetails.description = this.teamTicketDetails.description;
     this.itTicketDetails.stepsToReplicate = this.teamTicketDetails.stepsToReplicate;
     this.itTicketDetails.comments = this.itSupportForm.value.comments;
-    this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.toString();
+    this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.assigneeId.toString()
     this.itTicketDetails.attachmentUrl = null;
     this.itTicketDetails.createdAt = this.teamTicketDetails.createdAt;
     this.itTicketDetails.updatedAt = new Date().toISOString();;
     this.itTicketDetails.isdeleted = false
+    console.log(this.itTicketDetails);
+    
     this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Ticket updated successfully');

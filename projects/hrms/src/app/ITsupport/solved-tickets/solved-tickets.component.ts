@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { Subscription } from 'rxjs';
 import { RouterModule } from '@angular/router';
+import { Ticket } from '../../Interfaces/hierachy.modal';
 
 @Component({
   selector: 'app-solved-tickets',
@@ -16,7 +17,7 @@ import { RouterModule } from '@angular/router';
 export class SolvedTicketsComponent {
 subscription!: Subscription;
   empinfo = {} as Ipersonal;
-  tickets: any = [];
+  tickets = [] as Ticket[];
 
 
   constructor(
@@ -33,7 +34,7 @@ subscription!: Subscription;
   
   getuserticketsbyempid(){
     let EmpId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Tickets/getnamesbyEmpId/${EmpId}`).subscribe({ 
+    this.subscription = this.http.getData(`Tickets/getTicketsByReportingId/${EmpId}`).subscribe({ 
       next: (data: any) => {
         console.log(data);
         this.tickets = data.filter((ticket: any) => ticket.ticketStatus === 'Closed')

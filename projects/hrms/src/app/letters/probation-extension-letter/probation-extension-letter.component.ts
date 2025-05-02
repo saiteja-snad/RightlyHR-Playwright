@@ -42,6 +42,7 @@ export class ProbationExtensionLetterComponent {
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
+  todayDate!: string;
 
   constructor(private http: HttpService, private router: Router, private fb: FormBuilder, private openModalService: OpenModalService) { }
 
@@ -49,6 +50,8 @@ export class ProbationExtensionLetterComponent {
     this.initializeForm();
     this.getProbationEmployees();
     this.getAuthorityDetails();
+    const today = new Date();
+    this.todayDate = today.toISOString().split('T')[0];
   }
 
   naviagte(){

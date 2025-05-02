@@ -2,11 +2,9 @@
     <!--Input search-->
     <div class="input-group custom-search mt-3 mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search Here" aria-label="Username"
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
             aria-describedby="basic-addon1">
     </div>
-
-
 
     <div class="custom-table-content">
         <table class="w-100">
@@ -25,26 +23,36 @@
                 </tr>
             </thead>
             <tbody>
-                @if (tickets.length > 0) {
-                <tr *ngFor="let ticket of tickets">
+                <ng-container *ngIf="(tickets | itsupport: searchValue) as filteredTickets">
+                <tr *ngFor="let ticket of filteredTickets">
                     <td>{{ticket.id}}</td>
-                    <td>{{ticket.priority ?? '-'}}</td>
-                    <td>{{ticket.subject ?? '-'}}</td>
-                    <td>{{ticket.firstName}} {{ticket.middleName}} {{ticket.lastName}}</td>
+                    <td>
+                        <ul class="mb-0">
+                            <li [ngClass]="{
+                                    'text-danger fw-bold': ticket.priority === 'High',
+                                    'text-warning fw-bold': ticket.priority === 'Normal',
+                                    'text-success fw-bold': ticket.priority === 'Low',
+                                    'text-red fw-bold': ticket.priority === 'Urgent'
+                                }">
+                                {{ticket.priority || '-'}}
+                            </li>
+                        </ul>
+                    </td>
+                    <td>{{ticket.subject || '-'}}</td>
+                    <td>{{ticket.employeeName || '-'}}</td>
                     <td>{{ticket.createdAt | date}} </td>
-                    <td>{{ticket.departmentName ?? '-'}}</td>
-                    <td>{{ticket.subdepartmentName ?? '-'}}</td>
-                    <td>{{ticket.assigneeName ?? '-'}}</td>
-                    <td>{{ticket.ticketStatus ?? '-'}}</td>
+                    <td>{{ticket.departmentName || '-'}}</td>
+                    <td>{{ticket.subdepartmentName || '-'}}</td>
+                    <td>{{ticket.assigneeName || '-'}}</td>
+                    <td>{{ticket.ticketStatus || '-'}}</td>
                     <td>{{ticket.updatedAt | date}}</td>
 
                 </tr>
-                }
-                @else{
-                <tr>
-                    <td colspan="9"><app-no-data-found></app-no-data-found></td>
-                </tr>
-                }
+            
+            <tr *ngIf="filteredTickets.length === 0">
+                <td colspan="9"><app-no-data-found></app-no-data-found></td>
+            </tr>
+        </ng-container>
             </tbody>
         </table>
     </div>

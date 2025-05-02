@@ -237,7 +237,7 @@
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Ticket Assigned To'| translate}}<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Ticket Assigned To'| translate}}</label>
                         <p-select [options]="allEmployees" [filter]="true" filterBy="firstName"
                                 optionLabel="fullName" (onChange)="assigneeDetails($event.value)" placeholder="Please select employee"
                                 formControlName="assignedto" class="custom-select w-100" [dataKey]="'fusionEmpId'">
@@ -246,9 +246,9 @@
                                 <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
                                     }}</ng-template>
                             </p-select>
-                        <div *ngIf="itSupportForm.get('assignedto')?.invalid && itSupportForm.get('assignedto')?.touched">
+                        <!-- <div *ngIf="itSupportForm.get('assignedto')?.invalid && itSupportForm.get('assignedto')?.touched">
                             <div class="error-msg">{{'Assigned To is required' | translate}}</div>
-                        </div>
+                        </div> -->
                     </div>
                     
                 </div>
@@ -264,11 +264,11 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Comments'| translate}}<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Comments'| translate}}</label>
                         <textarea class="form-control custom-input" formControlName="comments" placeholder="Please enter comments"></textarea>
-                        <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
+                        <!-- <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
                             <div class="error-msg">{{'Comments is required' | translate}}</div>
-                        </div>
+                        </div> -->
                     </div>
                     
                 </div>

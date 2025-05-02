@@ -68,8 +68,8 @@ export class AwaitOnUserTicketsComponent {
       priority: [{ value: '', disabled: true }, [Validators.required]],
       subject: [{ value: '', disabled: true }, [Validators.required]],
       description: [{ value: '', disabled: true }, [Validators.required]],
-      comments: ['', [Validators.required]],
-      assignedto: [null, [Validators.required]],
+      comments: [''],
+      assignedto: [null],
       ticketStatus: ['', [Validators.required]]
     });
   }
@@ -143,7 +143,13 @@ export class AwaitOnUserTicketsComponent {
     this.itTicketDetails.attachmentUrl = null;
     this.itTicketDetails.createdAt = this.teamTicketDetails.createdAt;
     this.itTicketDetails.updatedAt = new Date().toISOString();;
-    this.itTicketDetails.isdeleted = false
+    this.itTicketDetails.isdeleted = false;
+    if(this.itSupportForm.value.assignedto !== null && this.itSupportForm.value.assignedto !== "" && this.itSupportForm.value.assignedto !== undefined){
+      this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.assigneeId.toString();
+    }
+    if(this.itSupportForm.value.assignedto === undefined){
+      this.itTicketDetails.assigneeId = null;
+    }
     console.log(this.itSupportForm.value.assignedto.assigneeId.toString());
     
     this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({

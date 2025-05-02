@@ -67,9 +67,15 @@ export class HttpService {
 
    eventAddedSource = new Subject<void>();
   eventAdded$ = this.eventAddedSource.asObservable();
-
+  // Function to notify that an event has been added
   notifyEventAdded() {
     this.eventAddedSource.next();
+  }
+  // Function to set the communication service data for basic info 
+  basicDetailes=new Subject<void>();
+  basicDetailesadded$=this.basicDetailes.asObservable();
+  setBasicDetails(){
+    this.basicDetailes.next();
   }
 
  private triggerSignal = signal(false);

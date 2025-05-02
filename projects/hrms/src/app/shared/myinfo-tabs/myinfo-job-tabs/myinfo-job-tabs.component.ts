@@ -14,18 +14,18 @@ export class MyinfoJobTabsComponent implements OnInit {
   filteredTabs: any[] = [];
   constructor(public rbac: RbacService) { }
   navTabs: any[] = [
-    { label: ' Pre-Onboarding', link: '/myinfo/job/pre-onboarding-details',permission: { feature: 'Pre Onboarding Details', action: 'view' } },
-    { label: 'Onboarding', link: '/myinfo/job/onboarding-details',permission: { feature: 'Onboarding Details', action: 'view' } },
-    { label: 'Offboarding', link: '/myinfo/job/employmentType' ,permission: { feature: 'Offboarding Details', action: 'view' }},
+    { label: ' Pre-Onboarding Details', link: '/myinfo/job/pre-onboarding-details',permission: { feature: 'Pre Onboarding Details', action: 'view' } },
+    { label: 'Onboarding Details', link: '/myinfo/job/onboarding-details',permission: { feature: 'Onboarding Details', action: 'view' } },
+    { label: 'Offboarding Details', link: '/myinfo/job/employmentType' ,permission: { feature: 'Offboarding Details', action: 'view' }},
     { label: 'Job Details', link: '/myinfo/job/job-details',permission: { feature: 'Job Details', action: 'view' } },
-    { label: 'Separation', link: '/myinfo/job/separation-details',permission: { feature: 'Separation Request', action: 'view' } },
-    { label: 'No Due Clearance', link: '/myinfo/job/no-due-clearance-details',permission: { feature: 'No Due Clearance', action: 'view' } },
-    { label: 'Probation', link: '/myinfo/job/probation-details' ,permission: { feature: 'Probation Details', action: 'view' }},
-    { label: 'Past Experiences', link: '/myinfo/job/past-experiences',permission: { feature: 'Experience Details', action: 'view' } },
-    { label: 'Certifications', link: '/myinfo/job/certifications' ,permission: { feature: 'Certification Details', action: 'view' }},
-    { label: 'Compensation', link: '/myinfo/job/compensation-details',permission: { feature: 'Compensation Details', action: 'view' } },
-    { label: 'Desk', link: '/myinfo/job/desk-details' },
-    { label: 'Assets', link: '/myinfo/job/assets-details',permission: { feature: 'Assets', action: 'view' } },
+    { label: 'Separation Request Details', link: '/myinfo/job/separation-details',permission: { feature: 'Separation Request', action: 'view' } },
+    { label: 'No Due Clearance Details', link: '/myinfo/job/no-due-clearance-details',permission: { feature: 'No Due Clearance', action: 'view' } },
+    { label: 'Probation Details', link: '/myinfo/job/probation-details' ,permission: { feature: 'Probation Details', action: 'view' }},
+    { label: 'Previous Experience Details', link: '/myinfo/job/past-experiences',permission: { feature: 'Experience Details', action: 'view' } },
+    { label: 'Certification Details', link: '/myinfo/job/certifications' ,permission: { feature: 'Certification Details', action: 'view' }},
+    { label: 'Compensation Details', link: '/myinfo/job/compensation-details',permission: { feature: 'Compensation Details', action: 'view' } },
+    { label: 'Desk Details', link: '/myinfo/job/desk-details' },
+    { label: 'Assets Details', link: '/myinfo/job/assets-details',permission: { feature: 'Assets', action: 'view' } },
   ];
   ngOnInit(): void {
     this.filterTabsByRbac();

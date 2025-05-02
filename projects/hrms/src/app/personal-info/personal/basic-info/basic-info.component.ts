@@ -37,6 +37,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   empyployeedata = {} as any;
   buttons = false
   dateofbirth: any
+  changeingdob: any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
 
@@ -48,18 +49,30 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.getMaritaldetails()
     this.getTitle()
     this.basicInfoForm.disable();
-    this.basicInfoForm.get('salutation')?.valueChanges.subscribe(() => {
-      this.onsalutationvalidation();
+    this.basicInfoForm.get('salutation')?.valueChanges.subscribe((data) => {
+      if(data){
+        this.onsalutationvalidation();
+      }
     });
 
-    this.basicInfoForm.get('gender')?.valueChanges.subscribe(() => {
-      this.onsalutationvalidation();
+    this.basicInfoForm.get('gender')?.valueChanges.subscribe((data) => {
+      if(data){
+        this.onsalutationvalidation();
+      }
     });
+
+
+    this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
+      console.log(data)
+      this.empyployeedata.dob = null
+      this.changeingdob = data
+    });
+
   }
 
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
-      employeeId: [null, Validators.required],
+      employeeId: [{ value: null, disabled: true }, Validators.required],
       salutation: [null, Validators.required],
       firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       middleName: [null, [Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
@@ -91,6 +104,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
     return null; // Return null if validation passes
   }
+
   onsalutationvalidation(): void {
     const gender = this.basicInfoForm.get('gender')?.value;
     const title = this.basicInfoForm.get('salutation')?.value;
@@ -109,35 +123,41 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.salutationValidationcheck = true; // Invalid combination
     }
   }
+
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empyployeedata = data;
         this.patchForm(data);
-        this.dateofbirth =this.formatDateToLocal(this.empinfo.dob)
+        this.dateofbirth = this.formatDateToLocal(this.empyployeedata.dob)
 
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
-    getdateofbirth(): string | null {
-    const startDateValue = this.formatDateToLocal(this.empinfo.dob)
+
+  getdateofbirth(): string | null {
+    const startDateValue = this.formatDateToLocal(this.empyployeedata.dob) || this.formatDateToLocal(this.basicInfoForm.get('dob')?.value);
     if (startDateValue) {
       const startDate = new Date(startDateValue);
       startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
       return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
     }
-    return null; 
+    return null;
   }
-  formatDateToLocal(dateString: string): string {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-    const day = String(date.getDate()).padStart(2, '0');
+  // Helper method to format a date to 'YYYY-MM-DD'
+  formatDateToLocal(date: string | null): string | null {
+    if (!date) return null;
+    const d = new Date(date);
+    const month = ('0' + (d.getMonth() + 1)).slice(-2);
+    const day = ('0' + d.getDate()).slice(-2);
+    const year = d.getFullYear();
     return `${year}-${month}-${day}`;
   }
+
   patchForm(data: any): void {
     console.log('data', data)
     this.basicInfoForm.patchValue({
@@ -189,14 +209,15 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
             // Success case
             this.conformationPopup.openSuccessModal('Basic Information Updated Successfully');
             this.getEmployeeId();
+            this.http.setBasicDetails();
             this.basicInfoForm.disable();
             console.log('Data updated successfully:', data);
             this.buttons = !this.buttons;
           } else if (data.statusCode === 409) {
-      
+
             console.log('Conflict:', data.message);
-            this.conformationPopup.openErrorModal(data.message );
-            this.patchForm(this.empyployeedata); 
+            this.conformationPopup.openErrorModal(data.message);
+            this.patchForm(this.empyployeedata);
           }
         },
         error: (reason: any) => {
@@ -214,7 +235,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+  // Fetch titles from the API
   getTitle() {
     this.subscription = this.http.getData('Title').subscribe({
       next: (data: any) => {
@@ -222,7 +243,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+  // Fetch marital status from the API
   getMaritaldetails() {
     this.subscription = this.http.getData('Maritalstatus').subscribe({
       next: (data: any) => {
@@ -230,9 +251,10 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
+
   changemaritalstatus(): void {
-    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'  || this.empyployeedata?.maritalStatus === 'Married';
-  
+    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married' || this.empyployeedata?.maritalStatus === 'Married';
+
     if (maritalStatus) {
       // Add the required validator to the marriageDate field
       this.basicInfoForm.get('marriageDate')?.setValidators([Validators.required]);
@@ -241,7 +263,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.basicInfoForm.get('marriageDate')?.clearValidators();
       this.basicInfoForm.get('marriageDate')?.setValue(null); // Reset the marriage date field
     }
-  
+
     // Update the validation state of the marriageDate field
     this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
   }
@@ -249,7 +271,9 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   showButtons(): void {
     this.buttons = !this.buttons;
     if (this.buttons) {
+
       this.basicInfoForm.enable();
+      this.basicInfoForm.get('employeeId')?.disable()
 
 
     } else {

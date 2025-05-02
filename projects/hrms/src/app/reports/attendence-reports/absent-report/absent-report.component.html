@@ -10,6 +10,32 @@
           Clear All
         </button>
 
+        <!-- Frequency Dropdown -->
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="frequencyOptions" optionLabel="label" formControlName="frequency"
+              placeholder="Please select frequency" class="form-select custom-select" [showClear]="true">
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Month Dropdown -->
+        <div class="d-flex align-items-center gap-2"
+          *ngIf="absentReportForm.get('frequency')?.value?.value === 'month'">
+          <div class="custom-p-select-content">
+            <p-select [options]="months" optionLabel="name" optionValue="value" placeholder="Please select month"
+              formControlName="month" class="form-select custom-select" [showClear]="true">
+            </p-select>
+          </div>
+        </div>
+
+        <!-- Date Range Picker -->
+        <div class="d-flex align-items-center gap-2" *ngIf="absentReportForm.get('frequency')?.value?.value === 'date'">
+          <input type="text" class="form-control custom-input" ngxDaterangepickerBootstrap formControlName="dateRange"
+            [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions"
+            [isInvalidDate]="isInvalidDate" [showClearButton]="true" placeholder="Please select date" readonly />
+        </div>
+
         <!-- Employee -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
@@ -25,37 +51,11 @@
         <!-- Manager -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="true"
-              formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
-              filterPlaceholder="Search manager">
+            <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+              [showClear]="true" formControlName="manager" placeholder="Please select manager"
+              class="form-select custom-select" filterPlaceholder="Search manager">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-            </p-select>
-          </div>
-        </div>
-
-        <!-- Frequency Dropdown -->
-        <div class="d-flex align-items-center gap-2">
-          <div class="custom-p-select-content">
-            <p-select [options]="frequencyOptions" optionLabel="label" formControlName="frequency"
-              placeholder="Please select frequency" class="form-select custom-select" [showClear]="true">
-            </p-select>
-          </div>
-        </div>
-
-        <!-- Date Range Picker -->
-        <div class="d-flex align-items-center gap-2" *ngIf="absentReportForm.get('frequency')?.value?.value === 'date'">
-          <input type="text" class="form-control custom-input" ngxDaterangepickerBootstrap formControlName="dateRange"
-            [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions"
-            [isInvalidDate]="isInvalidDate" [showClearButton]="true" placeholder="Please select date" readonly />
-        </div>
-
-        <!-- Month Dropdown -->
-        <div class="d-flex align-items-center gap-2"
-          *ngIf="absentReportForm.get('frequency')?.value?.value === 'month'">
-          <div class="custom-p-select-content">
-            <p-select [options]="months" optionLabel="name" optionValue="value" placeholder="Please select month"
-              formControlName="month" class="form-select custom-select" [showClear]="true">
             </p-select>
           </div>
         </div>
@@ -119,7 +119,7 @@
           <td class="td-center">{{ record.department ?? '-' }}</td>
           <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
           <td class="td-center">{{ record.location ?? '-' }}</td>
-          <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+          <td class="td-center">{{ record.sublocation ?? '-' }}</td>
           <td class="td-center">{{ record.shift ?? '-' }}</td>
           <td class="td-center">{{ record.leaveType ?? '-' }}</td>
           <td class="td-center">

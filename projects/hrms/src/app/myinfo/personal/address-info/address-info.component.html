@@ -1,162 +1,192 @@
 <div class="custom-main-component-container">
-    <div class="card custom-background-card p-4 mb-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div>
-                <span class="component-sub-header">Current Address</span>
+  <div class="card custom-background-card p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <span class="component-sub-header">Current Address</span>
+      </div>
+      <div *ngIf="!buttons">
+        <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+      </div>
+      <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
+        <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="addressForm.invalid"
+          (click)="updateAddressInfo()">Save</button>
+      </div>
+    </div>
+
+    <form [formGroup]="addressForm">
+      <div class="row">
+        <!-- Current Address Fields -->
+        <ng-container formGroupName="currentAddress">
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="currentAddressLine1" formControlName="addressLine1"
+              placeholder="Please enter address line 1"
+              (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+            <div class="error-msg"
+              *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['required'] && addressForm.get('currentAddress.addressLine1')?.touched">
+              Address Line 1 is required
             </div>
-            <div *ngIf="!buttons">
-                <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine1')?.errors?.['maxlength']">Address
+              Line 1 cannot exceed 250 characters</div>
+          </div>
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
+            <input type="text" class="form-control custom-input" id="currentAddressLine2" formControlName="addressLine2"
+              placeholder="Please enter address line 2"
+              (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine2')?.errors?.['maxlength']">Address
+              Line 2 cannot exceed 250 characters</div>
+          </div>
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="currentCity" class="form-label custom-label mb-2">City<span class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="currentCity" formControlName="city"
+              placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
+            <div class="error-msg"
+              *ngIf="addressForm.get('currentAddress.city')?.invalid && addressForm.get('currentAddress.city')?.touched">
+              City is required
             </div>
-            <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
-                <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="addressForm.invalid"
-                    (click)="updateAddressInfo()">Save</button>
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.city')?.errors?.['maxlength']">City cannot
+              exceed 50 characters</div>
+          </div>
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="currentState" class="form-label custom-label mb-2">State<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="currentState" formControlName="state"
+              placeholder="Please enter state" (keypress)="formValidation.restrictInputallowspoint($event)">
+            <div class="error-msg"
+              *ngIf="addressForm.get('currentAddress.state')?.errors?.['required'] && addressForm.get('currentAddress.state')?.touched">
+              State is required
             </div>
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.state')?.errors?.['maxlength']">State cannot
+              exceed 50 characters</div>
+          </div>
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="currentCountry" class="form-label custom-label mb-2">Country<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="currentCountry" formControlName="country"
+              placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
+            <div class="error-msg"
+              *ngIf="addressForm.get('currentAddress.country')?.errors?.['required'] && addressForm.get('currentAddress.country')?.touched">
+              Country is required
+
+            </div>
+            <div class="error-msg" *ngIf="addressForm.get('currentAddress.country')?.errors?.['maxlength']">Country
+              cannot exceed 50 characters</div>
+          </div>
+          <div class="col-md-6 col-lg-4 mb-3">
+            <label for="currentZipCode" class="form-label custom-label mb-2">Zip Code/Postal Code<span
+                class="text-danger">*</span></label>
+            <input type="text" class="form-control custom-input" id="currentZipCode" formControlName="zipCode"
+              [maxlength]="6" (keypress)="formValidation.restrictAlphabets($event)"
+              placeholder="Please enter zip code/postal code">
+            <div class="error-msg"
+              *ngIf="addressForm.get('currentAddress.zipCode')?.invalid && addressForm.get('currentAddress.zipCode')?.touched">
+              <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['required']">Zip Code/Postal Code is
+                required</div>
+              <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['pattern']">Zip Code/Postal Code must be a
+                valid 5-6
+                digit number</div>
+              <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['invalidZipCode']">Zip Code/Postal Code
+                cannot be all zeros</div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <div>
+        <div class=" mt-2 mb-3">
+          <span class="component-sub-header">Permanent Address</span>
+        </div>
+        <!-- Same as Current Address Checkbox -->
+        <div class="form-check custom-label mb-3 mx-3">
+          <input class="form-check-input custom-check" type="checkbox" id="sameAddress"
+            formControlName="sameAsPermanent" (change)="copyCurrentAddress($event)" />
+          <label class="form-check-label" for="sameAddress">Same as Current Address</label>
         </div>
 
-        <form [formGroup]="addressForm">
-            <div class="row">
-              <!-- Current Address Fields -->
-              <ng-container formGroupName="currentAddress">
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
-                      class="text-danger">*</span></label>
-                  <input type="text" class="form-control custom-input" id="currentAddressLine1" formControlName="addressLine1"
-                    placeholder="Please enter address line 1"
-                    (keypress)="formValidation.restrictInputallowspicalcharters($event)">
-                  <div class="error-msg"
-                    *ngIf="addressForm.get('currentAddress.addressLine1')?.invalid && addressForm.get('currentAddress.addressLine1')?.touched">
-                    Address Line 1 is required
-                  </div>
-                </div>
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
-                  <input type="text" class="form-control custom-input" id="currentAddressLine2" formControlName="addressLine2"
-                    placeholder="Please enter address line 2"
-                    (keypress)="formValidation.restrictInputallowspicalcharters($event)">
-                </div>
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="currentCity" class="form-label custom-label mb-2">City<span class="text-danger">*</span></label>
-                  <input type="text" class="form-control custom-input" id="currentCity" formControlName="city"
-                    placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
-                  <div class="error-msg"
-                    *ngIf="addressForm.get('currentAddress.city')?.invalid && addressForm.get('currentAddress.city')?.touched">
-                    City is required
-                  </div>
-                </div>
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="currentState" class="form-label custom-label mb-2">State<span
-                      class="text-danger">*</span></label>
-                  <input type="text" class="form-control custom-input" id="currentState" formControlName="state"
-                    placeholder="Please enter state" (keypress)="formValidation.restrictInputallowspoint($event)">
-                  <div class="error-msg"
-                    *ngIf="addressForm.get('currentAddress.state')?.invalid && addressForm.get('currentAddress.state')?.touched">
-                    State is required
-                  </div>
-                </div>
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="currentCountry" class="form-label custom-label mb-2">Country<span
-                      class="text-danger">*</span></label>
-                  <input type="text" class="form-control custom-input" id="currentCountry" formControlName="country"
-                    placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
-                  <div class="error-msg"
-                    *ngIf="addressForm.get('currentAddress.country')?.invalid && addressForm.get('currentAddress.country')?.touched">
-                    Country is required
-                  </div>
-                </div>
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="currentZipCode" class="form-label custom-label mb-2">Zip Code/Post Code<span
-                      class="text-danger">*</span></label>
-                  <input type="text" class="form-control custom-input" id="currentZipCode" formControlName="zipCode"
-                    [maxlength]="6" (keypress)="formValidation.restrictAlphabets($event)"
-                    placeholder="Please enter zip code/post code">
-                  <div class="error-msg"
-                    *ngIf="addressForm.get('currentAddress.zipCode')?.invalid && addressForm.get('currentAddress.zipCode')?.touched">
-                    <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['required']">Zip Code is required</div>
-                    <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['pattern']">Zip Code must be a valid 5-6
-                      digit number</div>
-                      <div *ngIf="addressForm.get('currentAddress.zipCode')?.errors?.['invalidZipCode']">Zip Code cannot be all zeros</div>
-                  </div>
-                </div>
-              </ng-container>
+        <!-- Permanent Address Fields -->
+        <ng-container formGroupName="permanentAddress">
+          <div class="row">
+            <div class="col-md-6 col-lg-4 mb-3">
+              <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
+                  class="text-danger">*</span></label>
+              <input type="text" class="form-control custom-input" id="permanentAddressLine1"
+                formControlName="addressLine1" placeholder="Please enter address line 1"
+                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+              <div class="error-msg"
+                *ngIf="addressForm.get('permanentAddress.addressLine1')?.invalid && addressForm.get('permanentAddress.addressLine1')?.touched">
+                Address Line 1 is required
               </div>
-      
-              <div>
-              <div class=" mt-2 mb-3">
-                <span class="component-sub-header">Permanent Address</span>
-              </div>
-              <!-- Same as Current Address Checkbox -->
-              <div class="form-check custom-label mb-3 mx-3">
-                <input class="form-check-input custom-check" type="checkbox" id="sameAddress"
-                  formControlName="sameAsPermanent" (change)="copyCurrentAddress($event)" />
-                <label class="form-check-label" for="sameAddress">Same as Current Address</label>
-              </div>
-      
-              <!-- Permanent Address Fields -->
-              <ng-container formGroupName="permanentAddress">
-                  <div class="row">
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
-                      class="text-danger">*</span></label>
-                  <input type="text" class="form-control custom-input" id="permanentAddressLine1"
-                    formControlName="addressLine1" placeholder="Please enter address line 1"  (keypress)="formValidation.restrictInputallowspicalcharters($event)">
-                  <div class="error-msg"
-                    *ngIf="addressForm.get('permanentAddress.addressLine1')?.invalid && addressForm.get('permanentAddress.addressLine1')?.touched">
-                    Address Line 1 is required
-                  </div>
-                </div>
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
-                  <input type="text" class="form-control custom-input" id="permanentAddressLine2"
-                    formControlName="addressLine2" placeholder="Please enter address line 2"  (keypress)="formValidation.restrictInputallowspicalcharters($event)">
-                </div>
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="permanentCity" class="form-label custom-label mb-2">City<span
-                      class="text-danger">*</span></label>
-                  <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
-                    placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)" >
-                  <div class="error-msg"
-                    *ngIf="addressForm.get('permanentAddress.city')?.invalid && addressForm.get('permanentAddress.city')?.touched">
-                    City is required
-                  </div>
-                </div>
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="permanentState" class="form-label custom-label mb-2">State<span
-                      class="text-danger">*</span></label>
-                  <input type="text" class="form-control custom-input" id="permanentState" formControlName="state"
-                    placeholder="Please enter state" (keypress)="formValidation.restrictInputallowspoint($event)">
-                  <div class="error-msg"
-                    *ngIf="addressForm.get('permanentAddress.state')?.invalid && addressForm.get('permanentAddress.state')?.touched">
-                    State is required
-                  </div>
-                </div>
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
-                      class="text-danger">*</span></label>
-                  <input type="text" class="form-control custom-input" id="permanentCountry" formControlName="country"
-                    placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
-                  <div class="error-msg"
-                    *ngIf="addressForm.get('permanentAddress.country')?.invalid && addressForm.get('permanentAddress.country')?.touched">
-                    Country is required
-                  </div>
-                </div>
-                <div class="col-md-6 col-lg-4 mb-3">
-                  <label for="permanentZipCode" class="form-label custom-label mb-2">Zip Code/Post Code<span
-                      class="text-danger">*</span></label>
-                  <input type="text" class="form-control custom-input" id="permanentZipCode" formControlName="zipCode"
-                    [maxlength]="6" (keypress)="formValidation.restrictAlphabets($event)"
-                    placeholder="Please enter zip code/post code">
-                  <div class="error-msg"
-                    *ngIf="addressForm.get('permanentAddress.zipCode')?.invalid && addressForm.get('permanentAddress.zipCode')?.touched">
-                    <div *ngIf="addressForm.get('permanentAddress.zipCode')?.errors?.['required']">Zip Code is required</div>
-                    <div *ngIf="addressForm.get('permanentAddress.zipCode')?.errors?.['pattern']">Zip Code must be a valid 5-6
-                      digit number</div>
-                      <div *ngIf="addressForm.get('permanentAddress.zipCode')?.errors?.['invalidZipCode']">Zip Code cannot be all zeros</div>
-                  </div>
-                </div>
-              </div>
-              </ng-container>
+              <div class="error-msg" *ngIf="addressForm.get('permanentAddress.addressLine1')?.errors?.['maxlength']">
+                Address Line 1 cannot exceed 250 characters</div>
             </div>
-      
-          </form>
-</div>
+            <div class="col-md-6 col-lg-4 mb-3">
+              <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
+              <input type="text" class="form-control custom-input" id="permanentAddressLine2"
+                formControlName="addressLine2" placeholder="Please enter address line 2"
+                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+              <div class="error-msg" *ngIf="addressForm.get('permanentAddress.addressLine2')?.errors?.['maxlength']">
+                Address Line 2 cannot exceed 250 characters</div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-3">
+              <label for="permanentCity" class="form-label custom-label mb-2">City<span
+                  class="text-danger">*</span></label>
+              <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
+                placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
+              <div class="error-msg"
+                *ngIf="addressForm.get('permanentAddress.city')?.errors?.['required'] && addressForm.get('permanentAddress.city')?.touched">
+                City is required
+              </div>
+              <div class="error-msg" *ngIf="addressForm.get('permanentAddress.city')?.errors?.['maxlength']">City cannot
+                exceed 50 characters</div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-3">
+              <label for="permanentState" class="form-label custom-label mb-2">State<span
+                  class="text-danger">*</span></label>
+              <input type="text" class="form-control custom-input" id="permanentState" formControlName="state"
+                placeholder="Please enter state" (keypress)="formValidation.restrictInputallowspoint($event)">
+              <div class="error-msg"
+                *ngIf="addressForm.get('permanentAddress.state')?.errors?.['required'] && addressForm.get('permanentAddress.state')?.touched">
+                State is required
+
+              </div>
+              <div class="error-msg" *ngIf="addressForm.get('permanentAddress.state')?.errors?.['maxlength']">State
+                cannot exceed 50 characters</div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-3">
+              <label for="permanentCountry" class="form-label custom-label mb-2">Country<span
+                  class="text-danger">*</span></label>
+              <input type="text" class="form-control custom-input" id="permanentCountry" formControlName="country"
+                placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
+              <div class="error-msg"
+                *ngIf="addressForm.get('permanentAddress.country')?.errors?.['required'] && addressForm.get('permanentAddress.country')?.touched">
+                Country is required
+              </div>
+              <div class="error-msg" *ngIf="addressForm.get('permanentAddress.country')?.errors?.['maxlength']">Country
+                cannot exceed 50 characters</div>
+            </div>
+            <div class="col-md-6 col-lg-4 mb-3">
+              <label for="permanentZipCode" class="form-label custom-label mb-2">Zip Code/Postal Code<span
+                  class="text-danger">*</span></label>
+              <input type="text" class="form-control custom-input" id="permanentZipCode" formControlName="zipCode"
+                [maxlength]="6" (keypress)="formValidation.restrictAlphabets($event)"
+                placeholder="Please enter zip code/postal code">
+              <div class="error-msg"
+                *ngIf="addressForm.get('permanentAddress.zipCode')?.invalid && addressForm.get('permanentAddress.zipCode')?.touched">
+                <div *ngIf="addressForm.get('permanentAddress.zipCode')?.errors?.['required']">Zip Code/Postal Code is
+                  required</div>
+                <div *ngIf="addressForm.get('permanentAddress.zipCode')?.errors?.['pattern']">Zip Code/Postal Code must
+                  be a valid 5-6
+                  digit number</div>
+                <div *ngIf="addressForm.get('permanentAddress.zipCode')?.errors?.['invalidZipCode']">Zip Code/Postal
+                  Code cannot be all zeros</div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+    </form>
+  </div>

@@ -7,6 +7,7 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { FormsModule } from '@angular/forms';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-comp-off-entitlement-criteria',
@@ -21,7 +22,8 @@ export class CompOffEntitlementCriteriaComponent implements OnInit, OnDestroy {
   temporaryValue: any;
   valueId!: number
   dataLoad = false;
-  constructor(private http: HttpService,private sharedModalService:OpenModalService) {}
+  
+  constructor(private http: HttpService,private sharedModalService:OpenModalService, public rbac : RbacService) {}
 
   ngOnInit(): void {
     this.getCompOffEligibitlyCriterias('CompOffEligibilityCriteria');

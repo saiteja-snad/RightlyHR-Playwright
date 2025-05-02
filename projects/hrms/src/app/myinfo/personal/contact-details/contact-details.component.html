@@ -19,7 +19,7 @@
       <div class="row">
         @if(this.rbac.allowedToAccess('Contact Details.view')){
         <div class="col-lg-4 col-md-6 mb-3">
-          <label for="location" class="form-label custom-label mb-2">Mobile Number<span
+          <label for="location" class="form-label custom-label mb-2">Work Number<span
               class="text-danger">*</span></label>
           <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
             <div *ngIf="!loading; else loadingTemplate">
@@ -32,16 +32,16 @@
               <p>Loading...</p>
             </ng-template>
             <input type="text" class="form-control custom-input" formControlName="workNumber"  (input)="onWorkNumberInput()" (keypress)="formValidation.restrictAlphabets($event)"
-              placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+              placeholder="Please enter work number" id="phonenumbers" aria-describedby="phonenumbers"
             
               autocomplete="off" required>
           </div>
           <div class="error-msg my-1"
             *ngIf="contactForm.get('workNumber')?.invalid &&  (contactForm.get('workNumber')?.touched || contactForm.get('workNumber')?.dirty)">
-            <div *ngIf="contactForm.get('workNumber')?.hasError('required')">Mobile number is
+            <div *ngIf="contactForm.get('workNumber')?.hasError('required')">Work number is
               required</div>
             <div *ngIf="contactForm.get('workNumber')?.hasError('pattern')">Please enter a valid
-              mobile number</div>
+              work number</div>
             <div *ngIf="contactForm.get('workNumber')?.hasError('invalidPhoneNumber')">
               The phone number is not valid for the selected country
             </div>
@@ -62,13 +62,13 @@
               <p>Loading...</p>
             </ng-template>
             <input type="text" class="form-control custom-input" formControlName="phoneNumber"   (input)="onPhoneNumberInput()" (keypress)="formValidation.restrictAlphabets($event)"
-              placeholder="Please enter your phone number" id="phonenumbers" aria-describedby="phonenumbers"
+              placeholder="Please enter phone number" id="phonenumbers" aria-describedby="phonenumbers"
             
               autocomplete="off" required>
           </div>
           <div class="error-msg my-1"
             *ngIf="contactForm.get('phoneNumber')?.invalid &&  (contactForm.get('phoneNumber')?.touched || contactForm.get('phoneNumber')?.dirty)">
-            <div *ngIf="contactForm.get('phoneNumber')?.hasError('required')">Mobile number is
+            <div *ngIf="contactForm.get('phoneNumber')?.hasError('required')">Work number is
               required</div>
             <div *ngIf="contactForm.get('phoneNumber')?.hasError('pattern')">Please enter a valid
               mobile number</div>
@@ -83,8 +83,8 @@
           <input type="email" class="form-control custom-input" id="workMail" formControlName="workMail"
             placeholder="Please enter work mail">
           <div class="error-msg" *ngIf="contactForm.get('workMail')?.invalid && contactForm.get('workMail')?.touched">
-            <div *ngIf="contactForm.get('workMail')?.errors?.['required']">Work email is required</div>
-            <div *ngIf="contactForm.get('workMail')?.errors?.['email']">Work email must be a valid email address</div>
+            <div *ngIf="contactForm.get('workMail')?.errors?.['required']">Work mail is required</div>
+            <div *ngIf="contactForm.get('workMail')?.errors?.['email']">Work mail must be a valid email address</div>
           </div>
         </div>
         } @if(this.rbac.allowedToAccess('Contact Details.view')){

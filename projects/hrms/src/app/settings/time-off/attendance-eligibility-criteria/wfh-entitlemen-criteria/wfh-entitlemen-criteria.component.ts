@@ -66,7 +66,6 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
     if (value === null || value === undefined || value === '') {
       return 'Value cannot be null or empty.';
     }
-
     const currentCriteria = this.eligibilityCriterias;
     const criteria = currentCriteria.find((c) => c.id === id);
 
@@ -128,10 +127,6 @@ export class WFHEntitlemenCriteriaComponent implements OnInit, OnDestroy {
       }
     })
   }
-
-
-  
-
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

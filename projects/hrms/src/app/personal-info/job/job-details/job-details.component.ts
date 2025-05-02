@@ -38,9 +38,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   allempdata: any;
   allReportees: any;
   selectedJobRoleObj: any; // To store the selected job role object
-  teamManagerName: string = ''; // To store the team manager name
+  teamManagerName: any = ''; // To store the team manager name
   shiftDropdowns: any = []; // To store the dynamically fetched shifts
   selectedData = {} as any; // To store the selected job details data for updating
+  shiftDropdown: any[] = []; // To store the dynamically fetched shifts
   empdata: {
     id?: number;
     employeeId?: number;
@@ -75,7 +76,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    
+   
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
@@ -92,17 +93,17 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   initializejobForm(): void {
     this.jobDetailsForm = this.fb.group({
-      effectiveDate: ['', Validators.required],
-      jobRole: ['', Validators.required],
+      effectiveDate: [null, Validators.required],
+      jobRole: [null, Validators.required],
       grade: [{ value: null, disabled: true }, Validators.required],
-      department: ['', Validators.required],
-      team: ['', Validators.required],
+      department: [null, Validators.required],
+      team: [null, Validators.required],
       teamManager: [{ value: null, disabled: true }, Validators.required],
-      reportingManager: ['', Validators.required],
-      location: ['', Validators.required],
-      subLocation: ['', Validators.required],
-      shift: ['', Validators.required],
-      jobType: ['', Validators.required],
+      reportingManager: [null, Validators.required],
+      location: [null, Validators.required],
+      subLocation: [null, Validators.required],
+      shift: [, Validators.required],
+      jobType: [null, Validators.required],
     });
   }
 
@@ -227,15 +228,15 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+    //function to get ReportingTo dropdown
   getReportingTo(): void {
     this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {
         this.allempdata = data as IJob[];
         // Map the employee data to the format required by p-select
-        this.allReportees = this.allempdata.map((employee: { employeeId: number; firstName: string; lastName: string, fusionEmpId: any }) => ({
+        this.allReportees = this.allempdata.map((employee: { employeeId: number; firstName: string; lastName: string,middleName :string, fusionEmpId: any }) => ({
           id: employee.employeeId, // Use the employeeId as the unique identifier
-          employee: ` ${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.lastName ?? ''}`, // Combine first and last name
+          employee: ` ${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
         }));
       },
       error: (err: any) => {
@@ -263,12 +264,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         }));
         this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
         // Reset the team manager selection
-        this.jobDetailsForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
-        this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
+        this.jobDetailsForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name }) ;
+        this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name ?? '' });
       },
       error: (err: any) => {
         this.teamManagerDropdownValues = []; // Reset on error
         this.jobDetailsForm.patchValue({ teamManager: null }); // Reset the team manager selection
+        this.jobDetailsupdateForm.patchValue({ teamManager: null }); // Reset the team manager selection
       },
     });
   }
@@ -278,17 +280,24 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     
     this.subscription = this.http.getData(`Subdepartments/${selectedSubDepartmentId}`).subscribe({
       next: (data: any) => {
-        this.subdeparmentSingleobj = data;
-        // Update the team manager dropdown values
-        this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
-          id: manager.reportingmanagerId,
-          name: manager.middleName ? `${manager.firstName || ''} ${manager.middleName || ''} ${manager.lastName || ''}`
-            : `${manager.firstName} ${manager.lastName}` || '',
-        }));
-        this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
-        // Reset the team manager selection
-       
-        this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
+        if(data){
+          this.subdeparmentSingleobj = data || '' ;
+          // Update the team manager dropdown values
+          this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
+            id: manager.reportingmanagerId,
+            name: manager.middleName ? `${manager.firstName || ''} ${manager.middleName || ''} ${manager.lastName || ''}`
+              : `${manager.firstName} ${manager.lastName}` || '',
+          }));
+          this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
+          // Reset the team manager selection
+         
+          this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name ?? ''});
+        }
+        else{
+          this.subdeparmentSingleobj=''
+          this.teamManagerDropdownValues = []; // Reset if no team managers are found
+        }
+     
       },
       error: (err: any) => {
         this.teamManagerDropdownValues = []; // Reset on error
@@ -359,6 +368,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   subLocationsDropdown: any = [] // To store the dynamically fetched sub-locations
   getSubLocationByid(selectedLocation: any): void {
+    this.jobDetailsForm.get('subLocation')?.reset()
+    this.jobDetailsForm.get('shift')?.reset()
     if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
         next: (data: any) => {
@@ -368,11 +379,17 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
           }
           // Reset the sub-location selection in the form
-          this.jobDetailsForm.patchValue({ subLocation: null });
+          this.jobDetailsForm.get('subLocation')?.reset()
+          this.jobDetailsupdateForm.get('subLocation')?.reset()
+          this.jobDetailsForm.get('shift')?.reset()
+          this.jobDetailsupdateForm.get('shift')?.reset()
         },
         error: (err: any) => {
           this.subLocationsDropdown = []; // Reset on error
-          this.jobDetailsForm.patchValue({ subLocation: null }); // Reset the sub-location field
+          this.jobDetailsForm.get('subLocation')?.reset()
+          this.jobDetailsupdateForm.get('subLocation')?.reset()
+          this.jobDetailsForm.get('shift')?.reset()
+          this.jobDetailsupdateForm.get('shift')?.reset()
         },
       });
     } else {
@@ -381,14 +398,17 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  shiftDropdown: any[] = []; // To store the dynamically fetched shifts
+ 
   getShiftBYid(selectedSubLocation: any): void {
+    this.jobDetailsForm.get('shift')?.reset()
     if (selectedSubLocation && selectedSubLocation.id) {
       const locationId = this.jobDetailsForm.get('location')?.value?.id ?? this.jobDetailsForm.get('location')?.value; // Get the selected location ID
       const subLocationId = selectedSubLocation.id; // Get the selected sub-location ID
       this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
         next: (data: any) => {
           if (data.length === 0) {
+            this.jobDetailsForm.get('shift')?.reset()
+            this.jobDetailsupdateForm.get('shift')?.reset()
             this.shiftDropdown = []; // Reset if no shifts are found
           } else {
             this.shiftDropdown = [].concat(...data.map((element: any) => element.orgShiftsItems)); // Flatten the shift data
@@ -396,10 +416,12 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.shiftDropdown = []; // Reset on error
+          this.jobDetailsForm.get('shiftName')?.reset()
         },
       });
     } else {
       this.shiftDropdown = []; // Reset if no sub-location is selected
+      this.jobDetailsForm.get('shiftName')?.reset()
     }
   }
 
@@ -465,7 +487,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.selectedjobdetailesid = data?.id;
     this.selectedData = data; // Store the selected job details data for updating
     console.log('Selected Job Details ID:', data);
-    this.teamManagerName = data?.firstName + ' ' + data?.middleName + ' ' + data?.lastName
+    this.teamManagerName = data
+    ? `${data.firstName ?? ''} ${data.middleName ?? ''} ${data.lastName ?? ''}`.trim()
+    : null;
+  
     const effectiveDate = this.formatDateToLocal(data.effectiveDate); // Format the effective date
     this.selectedJobRoleObj = this.JobroleDesignation.find(role => role.designationName === data.jobRole);
     this.jobDetailsupdateForm.patchValue({
@@ -482,64 +507,62 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       ),
     
       
-      teamManager: this.teamManagerName,
+      teamManager: this.teamManagerName || null,
       jobType: this.JobtypeDetails.find(jt => jt.jobType1 === data.jobTypeName),
       reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportingmanagerId),
       grade: this.selectedJobRoleObj?.gradeName,
     });
-    this.subscription = this.http.getData(`Subdepartments/Getnames/${data?.departmentId}`).subscribe({
+    this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${locationId}`).subscribe({
+      next: (res: any) => {
+        if (!res?.jobSubLocations || res.jobSubLocations.length === 0) {
+          this.subLocationsDropdown = []; // Reset if no sub-locations are found
+        } else {
+          this.subLocationsDropdown = res.jobSubLocations;
+          this.jobDetailsupdateForm.patchValue({subLocation: this.subLocationsDropdown?.find(
+            (sub: { id: any; }) => sub.id === data?.subLocationId
+          ),});
+          console.log(this.subLocationsDropdown);
+        }
+      },
+      error: (err: any) => {
+        console.error('Error fetching sub-location data:', err);
+      }
+
+    });
+
+    this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
+      next: (response: any) => {
+        if (response.length === 0) {
+          this.shiftDropdown = []; // Reset if no shifts are found
+        } else {
+          this.shiftDropdown = [].concat(...response?.map((element: any) => element.orgShiftsItems)); 
+          console.log(this.shiftDropdown);
+          console.log(this.shiftDropdown?.find(
+            (shift: { id: any }) => shift.id === data?.shiftId
+          ));
+          
+          this.jobDetailsupdateForm.patchValue({
+            shiftName: this.shiftDropdown?.find(
+            (shift: { id: any }) => shift.id === data?.shiftId
+          )
+        });
+        }
+      },
+      error: (err: any) => {
+        console.error('Error fetching shift data:', err);
+      },
+
+    });
+
+    this.subscription = this.http.getData(`Subdepartments/Getnames/${data.departmentId}`).subscribe({
       next: (teamData: any) => {
         this.teamDropdownValues = teamData || [];
         this.teamManagerDropdownValues = this.teamDropdownValues.map((manager: any) => ({
           id: manager.reportingmanagerId,
-          teamManager: manager.middleName ? `${manager.firstName} ${manager.middleName} ${manager.lastName}` 
-          : `${manager.firstName} ${manager.lastName}`,
+          teamManager: manager.middleName 
+            ? `${manager.firstName} ${manager.middleName} ${manager.lastName}` 
+            : `${manager.firstName} ${manager.lastName}`,
         }));
-        this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${locationId}`).subscribe({
-          next: (res: any) => {
-            if (!res?.jobSubLocations || res.jobSubLocations.length === 0) {
-              this.subLocationsDropdown = []; // Reset if no sub-locations are found
-            } else {
-              this.subLocationsDropdown = res.jobSubLocations;
-              this.jobDetailsupdateForm.patchValue({subLocation: this.subLocationsDropdown?.find(
-                (sub: { id: any; }) => sub.id === data?.subLocationId
-              ),});
-              console.log(this.subLocationsDropdown);
-            }
-          },
-          error: (err: any) => {
-            console.error('Error fetching sub-location data:', err);
-          },
-        });
-        this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
-          next: (response: any) => {
-            if (response.length === 0) {
-              this.shiftDropdown = []; // Reset if no shifts are found
-            } else {
-              this.shiftDropdown = [].concat(...response?.map((element: any) => element.orgShiftsItems)); 
-              console.log(this.shiftDropdown);
-              console.log(this.shiftDropdown?.find(
-                (shift: { id: any }) => shift.id === data?.shiftId
-              ));
-              
-              this.jobDetailsupdateForm.patchValue({
-                shiftName: this.shiftDropdown?.find(
-                (shift: { id: any }) => shift.id === data?.shiftId
-              )
-            });
-
-             
-              // Flatten the shift data
-            }
-          },
-          error: (err: any) => {
-            console.error('Error fetching shift data:', err);
-          },
-        });
-        console.log(this.subLocationsDropdown);
-        
-       
-        
       },
       error: (err: any) => {
         console.error('Error fetching teams:', err);
@@ -549,6 +572,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
+
+  
   //function to open the separation popup
   openModalforSeparationupdate(content: any, data: any): void {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -704,6 +729,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll(); // Close the modal
         this.conformationPopup.openSuccessModal('Job Details updated successfully');
         this.getJobDetails();
+        this.http.setBasicDetails();
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Job Details update failed');
@@ -731,6 +757,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         this.conformationPopup.openSuccessModal('Job Details deleted successfully');
         // Refresh the job details list
         this.getJobDetails();
+        this.http.setBasicDetails();
         // Close the modal
         this.modalService.dismissAll();
       },

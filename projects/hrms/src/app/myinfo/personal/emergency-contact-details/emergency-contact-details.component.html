@@ -26,8 +26,12 @@
           <input type="text" class="form-control custom-input" id="contact1Name" formControlName="contact1Name"
             placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
           <div class="error-msg"
-            *ngIf="emergencyContactForm.get('contact1Name')?.invalid && emergencyContactForm.get('contact1Name')?.touched">
+            *ngIf="emergencyContactForm.get('contact1Name')?.errors?.['required'] && emergencyContactForm.get('contact1Name')?.touched">
             Name is required
+          </div>
+        
+          <div class="error-msg" *ngIf="emergencyContactForm.get('contact1Name')?.errors?.['maxlength'] && emergencyContactForm.get('contact1Name')?.touched">
+            Name cannot exceed 50 characters
           </div>
         </div>
   
@@ -57,7 +61,7 @@
                   <p>Loading...</p>
                 </ng-template>
                 <input type="text" class="form-control custom-input" formControlName="contact1Phone"
-                  placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                  placeholder="Please enter mobile number" id="phonenumbers" aria-describedby="phonenumbers"
                   (input)="onEmergencyContact1PhoneInput()" (keypress)="formValidation.restrictAlphabets($event)"
                   autocomplete="off" required>
               </div>
@@ -104,9 +108,12 @@
           <input type="text" class="form-control custom-input" id="contact2Name" formControlName="contact2Name"
             placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
           <div class="error-msg"
-            *ngIf="emergencyContactForm.get('contact2Name')?.invalid && emergencyContactForm.get('contact2Name')?.touched">
+            *ngIf="emergencyContactForm.get('contact2Name')?.errors?.['required'] && emergencyContactForm.get('contact2Name')?.touched">
             Name is required
           </div>
+          <div class="error-msg" *ngIf="emergencyContactForm.get('contact2Name')?.errors?.['maxlength'] && emergencyContactForm.get('contact2Name')?.touched">
+            Name cannot exceed 50 characters
+            </div>
         </div>
   
         <div class="col-md-6 col-lg-4 mb-3">
@@ -135,7 +142,7 @@
                   <p>Loading...</p>
                 </ng-template>
                 <input type="text" class="form-control custom-input" formControlName="contact2Phone" (input)="onEmergencyContact2PhoneInput()"
-                (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter mobile number" id="phonenumbers" aria-describedby="phonenumbers"
                  
                   autocomplete="off" required>
               </div>

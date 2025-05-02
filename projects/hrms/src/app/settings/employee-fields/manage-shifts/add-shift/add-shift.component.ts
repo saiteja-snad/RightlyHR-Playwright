@@ -1,28 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { Select } from 'primeng/select';
-import { TabsModule } from 'primeng/tabs';
-import { HttpService } from '../../../../services/http.service';
-import { Subscription } from 'rxjs';
-import { OpenModalService } from '../../../../services/open-modal.service';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { Select } from 'primeng/select';
+import { TabsModule } from 'primeng/tabs';
+import { Subscription } from 'rxjs';
+import { HttpService } from '../../../../services/http.service';
+import { OpenModalService } from '../../../../services/open-modal.service';
 
 @Component({
-  selector: 'app-add-shits',
-  imports: [
-    RouterModule,
-    Select,
-    ReactiveFormsModule,
-    CommonModule,
-    TabsModule,TranslateModule
-  ],
-  templateUrl: './add-shits.component.html',
-  styleUrl: './add-shits.component.scss'
+  selector: 'app-add-shift',
+  imports: [RouterModule, Select, ReactiveFormsModule,
+    CommonModule, TabsModule, TranslateModule],
+  templateUrl: './add-shift.component.html',
+  styleUrl: './add-shift.component.scss'
 })
-export class AddShitsComponent {
+export class AddShiftComponent {
   @ViewChild('deletepopup') deletepopup: any;
   shiftForm!: FormGroup;
   years: number[] = [];
@@ -32,22 +27,18 @@ export class AddShitsComponent {
   Employeeinfo = {} as any;
   currentYear: number = new Date().getFullYear();
   sublocatiodis = false;
-  // navTabs: any[] = [
-  //   { label: 'Create Shifts', link: '/claimsandexpenses/addexpens' },
-
-  // ];
   isDuplicateCodeName: boolean[] = [];
   isDuplicateCodeName1: boolean[] = [];
+
   constructor(
     public router: Router,
     private fb: FormBuilder,
     private http: HttpService,
     private modalService: NgbModal,
-     private conformationPopup: OpenModalService,
+    private conformationPopup: OpenModalService,
   ) { }
 
   ngOnInit(): void {
-    
     this.initializeForm();
     this.yearsList();
     this.geAllLocations();
@@ -60,20 +51,21 @@ export class AddShitsComponent {
     }
   }
 
-   //BLOCK -VE VALUE
-   blockInvalidKeys(event: KeyboardEvent) {
+  //BLOCK -VE VALUE
+  blockInvalidKeys(event: KeyboardEvent) {
     const invalidKeys = ['-', '+', 'e', 'E'];
     if (invalidKeys.includes(event.key)) {
       event.preventDefault();
     }
   }
+
   blockNegativePaste(event: ClipboardEvent) {
     const clipboardData = event.clipboardData?.getData('text');
     if (clipboardData && parseFloat(clipboardData) < 0) {
       event.preventDefault();
     }
   }
-  
+
   initializeForm() {
     this.shiftForm = this.fb.group({
       year: [new Date().getFullYear(), Validators.required],
@@ -106,26 +98,24 @@ export class AddShitsComponent {
     this.shifts.push(this.createShift());
   }
 
- isDeleteDisabled: boolean = false;
-
-deleteShift(index: number) {
-  if (this.shifts.length > 1) {
-    this.shifts.removeAt(index);
-    this.isDeleteDisabled = false; // allow delete if more than 1
-  } else {
-    this.isDeleteDisabled = true; // disable delete button
+  isDeleteDisabled: boolean = false;
+  deleteShift(index: number) {
+    if (this.shifts.length > 1) {
+      this.shifts.removeAt(index);
+      this.isDeleteDisabled = false; // allow delete if more than 1
+    } else {
+      this.isDeleteDisabled = true; // disable delete button
+    }
   }
-}
 
-  Cancel(){
+  Cancel() {
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
-     
   }
+
   // submit button click
   Addshift(): void {
     if (this.shiftForm.valid) {
       const formValue = this.shiftForm.value;
-
       const payload = {
         locationId: formValue.location,
         subLocationId: formValue.subLocation,
@@ -148,8 +138,6 @@ deleteShift(index: number) {
           fullDayMinHrs: shift.fullDayMinHrs,
         }))
       };
-      // shiftStartTime: shift.startTime + ':' + shift.endTime,
-          // shiftEndTime: shift.startTime + ':' + shift.endTime,
       this.http.postdata(`orgShifts/Post/Shift/OrgShift`, payload).subscribe({
         next: (data: any) => {
           this.conformationPopup.openSuccessModal('Shift Added successfully');
@@ -175,22 +163,19 @@ deleteShift(index: number) {
       error: (reason: any) => console.log(reason)
     });
   }
-// location changes
+
+  // location changes
   onLocationChange(selectedLocationId: number | null) {
     const subLocationControl = this.shiftForm.get('subLocation');
-  
     // Reset subLocation value
     subLocationControl?.reset();
-  
     if (selectedLocationId) {
       // Enable subLocation field
       subLocationControl?.enable();
-  
       // Find the selected location object
       const selectedLocation = this.locations.find(
         loc => loc.id === selectedLocationId
       );
-  
       // Extract subLocations
       this.subLocations = selectedLocation?.subLocations || [];
     } else {
@@ -199,46 +184,49 @@ deleteShift(index: number) {
       this.subLocations = [];
     }
   }
+
   //check for same shift code
   isDuplicateShift(index: number): boolean {
     const shiftArray = this.shiftForm.get('shifts') as FormArray;
     const currentShift = shiftArray.at(index).value;
-  
     return shiftArray.controls.some((ctrl, i) => {
       if (i === index) return false;
       const shift = ctrl.value;
       return (
         shift.shiftCode?.trim().toLowerCase() === currentShift.shiftCode?.trim().toLowerCase()
-        // shift.shiftName?.trim().toLowerCase() === currentShift.shiftName?.trim().toLowerCase()
       );
     });
   }
+
   isDuplicateShift1(index: number): boolean {
     const shiftArray = this.shiftForm.get('shifts') as FormArray;
     const currentShift = shiftArray.at(index).value;
-  
     return shiftArray.controls.some((ctrl, i) => {
       if (i === index) return false;
       const shift = ctrl.value;
       return (
-        // shift.shiftCode?.trim().toLowerCase() === currentShift.shiftCode?.trim().toLowerCase() &&
         shift.shiftName?.trim().toLowerCase() === currentShift.shiftName?.trim().toLowerCase()
       );
     });
   }
+
   checkDuplicate(index: number): void {
     this.isDuplicateCodeName[index] = this.isDuplicateShift(index);
   }
+
   checkDuplicate1(index: number): void {
     this.isDuplicateCodeName1[index] = this.isDuplicateShift1(index);
   }
-  onDelete(modal:any){
+
+  onDelete(modal: any) {
     modal.dismiss();
-this.nagvition();
+    this.nagvition();
   }
-  closeDelete(modal:any){
+
+  closeDelete(modal: any) {
     modal.dismiss();
   }
+
   nagvition() {
     this.router.navigate(['/settings/employee-fields/manage-shifts/pending-for-submit']);
   }

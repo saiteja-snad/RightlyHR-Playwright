@@ -8,6 +8,7 @@ import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-global-permissions',
@@ -27,7 +28,8 @@ export class GlobalPermissionsComponent {
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
-    public formValidations: FormValidationsService
+    public formValidations: FormValidationsService,
+    public rbac: RbacService
   ) {}
 
   ngOnInit(): void {

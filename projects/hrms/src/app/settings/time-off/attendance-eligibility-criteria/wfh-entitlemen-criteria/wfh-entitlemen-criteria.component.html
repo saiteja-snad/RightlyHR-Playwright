@@ -7,7 +7,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Value</th>
-                        <th *ngIf="rbac.allowedToAccess('WFH Tab.update')">Action<span class="text-lowercase">(s)</span></th>
+                        <th *ngIf="rbac.allowedToAccess('WFH Entitlement Tab.update')">Action<span class="text-lowercase">(s)</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,7 +20,7 @@
                                     (keydown.tab)="editingIndex === i" />
                             </ng-container>
                         </td>
-                        <td *ngIf="rbac.allowedToAccess('WFH Tab.update')">
+                        <td *ngIf="rbac.allowedToAccess('WFH Entitlement Tab.update')">
                             <div class="dropdown" *ngIf="editingIndex !== i; else editingMode">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-three-dots-vertical"></i>

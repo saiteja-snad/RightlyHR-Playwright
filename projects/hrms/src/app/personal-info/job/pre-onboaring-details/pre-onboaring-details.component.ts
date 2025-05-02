@@ -14,7 +14,7 @@ import moment from 'moment';
   templateUrl: './pre-onboaring-details.component.html',
   styleUrl: './pre-onboaring-details.component.scss'
 })
-export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
+export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   empinfo: any;
   preOnboardingForm!: FormGroup;
@@ -42,16 +42,16 @@ export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
   initializeForm(): void {
     this.preOnboardingForm = this.fb.group({
       offerSentDate: [{ value: '', disabled: true }],
-    
+
       offerSentBy: [{ value: '', disabled: true }],
-      offerSentStatus: [{ value: '', disabled: true }], 
-      appointmentSentDate: [{ value: '', disabled: true }], 
-      appointmentSentBy: [{ value: '', disabled: true }], 
-      appointmentSentStatus: [{ value: '', disabled: true }], 
-      traineeOfferSentDate: [{ value: '', disabled: true }], 
-      traineeOfferSentBy: [{ value: '', disabled: true }], 
-      traineeOfferSentStatus: [{ value: '', disabled: true }], 
-      traineeAppointmentSentBy: [{ value: '', disabled: true }], 
+      offerSentStatus: [{ value: '', disabled: true }],
+      appointmentSentDate: [{ value: '', disabled: true }],
+      appointmentSentBy: [{ value: '', disabled: true }],
+      appointmentSentStatus: [{ value: '', disabled: true }],
+      traineeOfferSentDate: [{ value: '', disabled: true }],
+      traineeOfferSentBy: [{ value: '', disabled: true }],
+      traineeOfferSentStatus: [{ value: '', disabled: true }],
+      traineeAppointmentSentBy: [{ value: '', disabled: true }],
       traineeAppointmentSentStatus: [{ value: '', disabled: true }]
     });
   }
@@ -93,7 +93,7 @@ export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
- 
+
 
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
@@ -114,7 +114,7 @@ export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
         console.log(this.empdata);
         this.imgurl = this.empdata.profilePic;
 
-        
+
       },
       error: (err: any) => {
         console.log(err);
@@ -122,15 +122,15 @@ export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
     });
   }
 
-   //function to get traineeofferletter data using getbyemployeeid
-   getTraineeOfferLetterEmployeebyId() {
+  //function to get traineeofferletter data using getbyemployeeid
+  getTraineeOfferLetterEmployeebyId() {
     let Empid = parseInt(this.empinfo.employeeId)
     console.log(Empid);
     this.subscription = this.http.getData(`TraineeOfferLetter/getbyEmpidNames/${Empid}`).subscribe({
       next: (data: any) => {
         console.log(data);
         this.traineeofferDetails = data
-      
+
         // Patch the form with employee data
         this.preOnboardingForm.patchValue({
           traineeOfferSentDate: this.traineeofferDetails.offerSentDate || '',
@@ -144,7 +144,7 @@ export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
 
   }
 
-//function to get appointment letter data using getbyemployeeid
+  //function to get appointment letter data using getbyemployeeid
   getAppointmentEmployeebyId(): void {
     const Empid = parseInt(this.empinfo.employeeId);
     console.log(Empid);
@@ -166,8 +166,8 @@ export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
       }
     });
   }
-  
-//function to get offer letter data using getbyemployeeid
+
+  //function to get offer letter data using getbyemployeeid
   getOfferLetterEmployeebyId(): void {
     const EmpId = parseInt(this.empinfo.employeeId);
     console.log(EmpId);
@@ -195,5 +195,5 @@ export class PreOnboaringDetailsComponent implements OnInit,OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-  
+
 }

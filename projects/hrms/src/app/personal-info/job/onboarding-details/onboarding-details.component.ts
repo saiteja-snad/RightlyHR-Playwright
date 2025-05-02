@@ -37,6 +37,7 @@ export class OnboardingDetailsComponent {
   traineeForm!: FormGroup;
   isEditing = false;
   empyployeedata={} as any;
+  employeestatus:any
   noticePeriodStatus = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
@@ -80,7 +81,7 @@ export class OnboardingDetailsComponent {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
-    this.getStatus();
+
     this.getEmployeeId();
     this.getBackground();
     this.getBranchLocations();
@@ -146,6 +147,9 @@ export class OnboardingDetailsComponent {
       next: (data: any) => {
         console.log(data);
         this.empdata = data;
+        this.employeestatus=data?.empstatus?.toLowerCase()
+        console.log("status"+this.employeestatus)
+        this.getStatus();
         this.patchForm(data);
       },
       error: (err: any) => {
@@ -170,7 +174,7 @@ export class OnboardingDetailsComponent {
     const workLocation = this.worklocation.find((item: any) => item.value === data?.workLocation);
     console.log(workLocation);
     this.onboardingForm.patchValue({
-      status: this.Statusdetails?.find((item: any) => item?.statusname === data?.empstatus),
+  
       dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
       branchLocation: data?.branchCode,
       probationEndDate: this.formatDateToLocal(data.probationEndDate),
@@ -206,8 +210,9 @@ export class OnboardingDetailsComponent {
   getStatus() {
     this.subscription = this.http.getData(`Status`).subscribe({
       next: (data: any) => {
-        const empStatus = this.empdata?.empstatus?.toLowerCase();
-  
+        const empStatus = this.employeestatus?.toLowerCase();
+        console.log('empStatus:', empStatus);
+      
         const statusMapping: { [key: string]: string[] } = {
           prospective: ['active', 'inactive', 'prospective'],
           active: ['active', 'inactive'],
@@ -217,16 +222,28 @@ export class OnboardingDetailsComponent {
           'trainee active': ['trainee active'],
           'trainee inactive': ['trainee inactive']
         };
-  
-        const allowedStatuses = statusMapping[empStatus] || []; // Default to an empty array if empStatus is not found
-  
-        const filteredData = data?.filter((status: IStatus) =>
-          allowedStatuses.includes(status?.statusname?.toLowerCase())
+      
+        const allowedStatuses = (statusMapping[empStatus] || []).map(s => s.toLowerCase());
+        console.log('Allowed Statuses:', allowedStatuses);
+      
+        console.log('Raw data from API:', data);
+      
+        const filteredData = data?.filter((status: any) =>
+          allowedStatuses.includes(status?.statusname?.toLowerCase()) // change property if needed
+        );
+      
+        this.Statusdetails = filteredData;
+        console.log('Filtered Statusdetails:', this.Statusdetails);
+        const matchedStatus = filteredData.find((s: any) =>
+          s.statusname.toLowerCase() === empStatus
         );
   
-        this.Statusdetails = filteredData; // Update Statusdetails with filtered data
-        console.log('Filtered Statusdetails:', this.Statusdetails);
+        if (matchedStatus) {
+          this.onboardingForm.patchValue({ status: matchedStatus }); // Use correct form name
+          console.log('Form patched with status:', matchedStatus);
+        }
       },
+      
       error: (err: any) => {
         console.error('Error fetching status:', err);
       }

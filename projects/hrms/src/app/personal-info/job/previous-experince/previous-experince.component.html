@@ -315,7 +315,7 @@
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="FromDate"
-                                formControlName="fromDateupdate" [min]="'1940-01-01'"  onkeypress="return false"
+                                formControlName="fromDateupdate" [min]="dateofbirth"  onkeypress="return false"
                                 (change)="currentDateValidation()" />
                             <div *ngIf="employeeExperienceupdateForm.get('fromDateupdate')?.invalid && employeeExperienceupdateForm.get('fromDateupdate')?.touched"
                                 class="error-msg">

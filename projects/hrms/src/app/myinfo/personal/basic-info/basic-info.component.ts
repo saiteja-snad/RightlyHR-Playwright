@@ -71,7 +71,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
       fusionEmpId: [{ value: null, disabled: true }, [Validators.required]],
       salutation: [null, Validators.required],
-      firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,30}$')]],
       middleName: [null, [Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       lastName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       gender: [null, Validators.required],
@@ -125,6 +125,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
     return null; 
   }
+
 
  // Helper method to format a date to 'YYYY-MM-DD'
  formatDateToLocal(date: string | null): string | null {

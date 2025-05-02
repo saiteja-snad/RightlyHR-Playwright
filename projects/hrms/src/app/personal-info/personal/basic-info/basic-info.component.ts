@@ -37,6 +37,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   empyployeedata = {} as any;
   buttons = false
   dateofbirth: any
+  changeingdob: any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
 
@@ -57,6 +58,12 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     console.log('Gender changed');
     this.onsalutationvalidation();
   });
+  this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
+    console.log(data)
+    this.empyployeedata.dob=null
+    this.changeingdob=data
+  });
+
   }
 
   initializeForm(): void {
@@ -95,17 +102,21 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
   
   onsalutationvalidation(): void {
-    const salutation = this.basicInfoForm.get('salutation')?.value;
     const gender = this.basicInfoForm.get('gender')?.value;
+    const title = this.basicInfoForm.get('salutation')?.value;
 
-    if (gender === 'Male' && salutation !== 'Mr.') {
-      this.salutationValidationcheck = true;
-    } else if (gender === 'Female' && salutation !== 'Ms.' && salutation !== 'Miss.') {
-      this.salutationValidationcheck = true;
-    } else if (gender === 'Other') {
-      this.salutationValidationcheck = false; // No specific validation for 'Other'
+    const genderLower = typeof gender === 'string' ? gender.toLowerCase() : '';
+    const titleLower = typeof title === 'string' ? title.toLowerCase() : '';
+
+    if (
+      (genderLower === 'male' && titleLower === 'mr.') ||
+      (genderLower === 'female' && ['ms.', 'miss.', 'mrs.'].includes(titleLower)) ||
+      ((genderLower === 'other' || genderLower === 'others') && (titleLower === 'other' || titleLower === 'others')) ||
+      ((genderLower === 'male' || genderLower === 'female') && (titleLower == null || titleLower === ''))
+    ) {
+      this.salutationValidationcheck = false; // Valid combination
     } else {
-      this.salutationValidationcheck = false; // Valid case
+      this.salutationValidationcheck = true; // Invalid combination
     }
   }
 
@@ -133,13 +144,16 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
     return null; 
   }
-  formatDateToLocal(dateString: string): string {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
+ // Helper method to format a date to 'YYYY-MM-DD'
+ formatDateToLocal(date: string | null): string | null {
+  if (!date) return null;
+  const d = new Date(date);
+  const month = ('0' + (d.getMonth() + 1)).slice(-2);
+  const day = ('0' + d.getDate()).slice(-2);
+  const year = d.getFullYear();
+  return `${year}-${month}-${day}`;
+}
+
   patchForm(data: any): void {
     console.log('data', data)
     this.basicInfoForm.patchValue({

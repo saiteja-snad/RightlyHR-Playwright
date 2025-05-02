@@ -47,9 +47,10 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
-    this.getJobtypes()
-    this.getexperiencedetailsbyemployeid()
-    this.initializeupdateForm()
+    this.getJobtypes();
+    this.getEmployeeId();
+    this.getexperiencedetailsbyemployeid();
+    this.initializeupdateForm();
     this.employeeExperienceForm.get('fromDate')?.valueChanges.subscribe(() => {
       this.employeeExperienceForm.get('toDate')?.reset();
     });
@@ -292,6 +293,16 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       })
     );
   }
+  
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.dateofbirth =this.formatDateToLocal(data.dob)
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
 
   //function to get all experiences 
   getexperiencedetailsbyemployeid() {
@@ -300,7 +311,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`ExperienceDetail/${EmployeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.dateofbirth =this.formatDateToLocal(data.dob)
+   
         this.getempexpdata.next(data);
       }
     })
@@ -321,7 +332,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
           let a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
           let filename =
-            file.docUrl.split('/')[file.attachment.split('/').length - 1];
+            file.attachment?.split('/')[file.attachment?.split('/')?.length - 1];
           a.download = filename;
           a.click();
         },

@@ -269,7 +269,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     //payload
       const payload = {
         identityId: this.selectedIdentityId,
-        identityType: this.selectedIdentityTypetoUpdate.identityType1,
+        identityType: this.selectedIdentityTypetoUpdate?.identityType1,
         identityNumber: formData.identityupdateNumber,
         attachment: this.IdentityAttachment || '',
         empId: this.empinfo.employeeId,
@@ -297,7 +297,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
         next: (data: any) => {
           if (data) {
             this.spinnerLoader=false
-            payload.attachment = data.path; // Update the payload with the uploaded file path
+            payload.attachment = data?.path; // Update the payload with the uploaded file path
             this.saveUpdatedIdentity(payload);
           }
         },

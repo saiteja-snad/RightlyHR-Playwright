@@ -2,17 +2,18 @@ import { Component } from '@angular/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { CommonModule } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-visa-details',
-  imports: [NoDataFoundComponent,CommonModule,ReactiveFormsModule],
+  imports: [NoDataFoundComponent,CommonModule,ReactiveFormsModule,TranslateModule],
   templateUrl: './visa-details.component.html',
   styleUrl: './visa-details.component.scss'
 })
@@ -23,6 +24,8 @@ export class VisaDetailsComponent {
   visa = [] as any;
   visaData = [] as any;
   Countrydetails: any;
+  spinnerLoader=false
+  visaForm!: FormGroup;
   allCountries: any; 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,) { }
   ngOnInit(): void {
@@ -32,6 +35,19 @@ export class VisaDetailsComponent {
     this.getVisaEmpId()
     
   }
+
+  intitionfrom(){
+    this.visaForm = this.fb.group({
+      visatype: [null, Validators.required],
+      countryname:[null,Validators.required],
+      issueddate: [null, Validators.required],
+      expirydate: [null, Validators.required],
+      notes: [''],
+    });
+  }
+
+
+  
   getvisadata() {
     this.subscription = this.http.getData('Visatype').subscribe({
       next: (data) => {

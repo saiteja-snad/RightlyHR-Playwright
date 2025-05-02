@@ -10,6 +10,16 @@
               <button type="button"  class="clear-all-btn" (click)="clearAllFilters()">
                 Clear All
               </button>
+              
+              <!-- Date Range -->
+              <div class="d-flex align-items-center gap-2">
+                <div>
+                  <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
+                         [locale]="localeOptions" [showClearButton]="true" placeholder="Please select date" formControlName="dateRange"
+                         [startKey]="'startDate'" [endKey]="'endDate'" readonly />
+                </div>
+              </div>
+
               <!-- Employee -->
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
@@ -29,15 +39,6 @@
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                             <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                   </p-select>
-                </div>
-              </div>
-      
-              <!-- Date Range -->
-              <div class="d-flex align-items-center gap-2">
-                <div>
-                  <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
-                         [locale]="localeOptions" [showClearButton]="true" placeholder="Please select date" formControlName="dateRange"
-                         [startKey]="'startDate'" [endKey]="'endDate'" readonly />
                 </div>
               </div>
       

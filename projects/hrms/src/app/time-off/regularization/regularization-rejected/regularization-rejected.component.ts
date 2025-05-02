@@ -11,10 +11,11 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-regularization-rejected',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent],
   templateUrl: './regularization-rejected.component.html',
   styleUrl: './regularization-rejected.component.scss'
 })
@@ -24,8 +25,8 @@ export class RegularizationRejectedComponent implements OnInit,OnDestroy {
   rows: any = 10;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
- rejectedPerimisions: RegularizationRequest [] = [] as RegularizationRequest[];
-
+  rejectedPerimisions: RegularizationRequest [] = [] as RegularizationRequest[];
+  dataLoad = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -55,14 +56,18 @@ export class RegularizationRejectedComponent implements OnInit,OnDestroy {
 
   getDataPermissions() {
     let empId = this.empinfo.employeeId;
+    this.dataLoad =  true;
     this.http.getData(`RegularizationRequests/attendance/${empId}`)
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (response: any) => {
         this.rejectedPerimisions = response.filter((element: { status: string }) => element.status === 'Rejected');
+        this.dataLoad =  false;
+
       },
       error: (error) => {
         console.error('Error fetching data:', error);
+        this.dataLoad =  false;
         this.rejectedPerimisions = []; // Set to empty array on error
       },
     });

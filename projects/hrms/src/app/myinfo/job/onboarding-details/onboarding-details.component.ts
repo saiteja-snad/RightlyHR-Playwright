@@ -116,7 +116,7 @@ export class OnboardingDetailsComponent {
   getStatus() {
     this.subscription = this.http.getData(`Status`).subscribe({
       next: (data: any) => {
-        this.Statusdetails = data as IStatus[];
+       
         console.log(this.Statusdetails);
         if (this.empinfo.empstatus == 'Prospective') {
           const filteredData = data.filter((status: IStatus) => {

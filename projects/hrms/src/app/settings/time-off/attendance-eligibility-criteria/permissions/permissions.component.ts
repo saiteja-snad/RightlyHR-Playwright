@@ -60,7 +60,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.permissionsType = (data as IPermissionType[])?.sort((a, b) => a.id - b.id);
           this.dataLoad = false;
         },
@@ -79,8 +78,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     this.permissionUpdateForm.patchValue({
       name: selectedPermission.name,
     });
-    console.log(this.permissionUpdateForm.value);
-
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -106,7 +103,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       createdAt: formattedDate,
       updatedAt: this.selectedPermission.updatedAt,
     };
-    console.log(payload);
     this.http
       .putData(`PermissionTypes/${this.selectedPermission.id}`, payload)
       .pipe(takeUntil(this.destroy$))
@@ -119,7 +115,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
           );
         },
         error: (err) => {
-          // this.permissionsForm.reset();
           this.sharedModalService.openErrorModal(err.error.message);
         },
         complete: () => {

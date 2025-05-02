@@ -54,43 +54,18 @@ export default [
             { path: 'allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent) }
         ]
     },
-    
-    { path: 'addshifts', loadComponent: () => import('./shits/add-shits/add-shits.component').then((m) => m.AddShitsComponent) },
     {
         path: 'manage-shifts',
         children: [
             { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
-            { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
-            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
+            { path: 'pending-for-submit', loadComponent: () => import('./manage-shifts/pending-shifts/pending-shifts.component').then((m) => m.PendingShiftsComponent) },
+            { path: 'published-shifts', loadComponent: () => import('./manage-shifts/published-shifts/published-shifts.component').then((m) => m.PublishedShiftsComponent) },
         ]
     },
-    {  path: 'updateshifts/:id', loadComponent: () => import('./shits/update-shifts/update-shifts.component').then((m) => m.UpdateShiftsComponent) },
-    {
-        path: 'manage-shifts',
-        children: [
-            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
-            { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
-            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
-        ]
-    },
-    { path: 'cloneshifts/:id', loadComponent: () => import('./shits/clone-shift/clone-shift.component').then((m) => m.CloneShiftComponent) },
-    {
-        path: 'manage-shifts',
-        children: [
-            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
-            { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
-            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
-        ]
-    },
-    {  path: 'viewshifts/:id', loadComponent: () => import('./shits/view-shift/view-shift.component').then((m) => m.ViewShiftComponent) },
-    {
-        path: 'manage-shifts',
-        children: [
-            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
-            { path: 'pending-for-submit', loadComponent: () => import('./shits/pendingshits/pendingshits.component').then((m) => m.PendingshitsComponent) },
-            { path: 'published-shifts', loadComponent: () => import('./shits/pulished-shits/pulished-shits.component').then((m) => m.PulishedShitsComponent) },
-        ]
-    },
+    { path: 'addshifts', loadComponent: () => import('./manage-shifts/add-shift/add-shift.component').then((m) => m.AddShiftComponent) },
+    { path: 'updateshifts/:id', loadComponent: () => import('./manage-shifts/update-shift/update-shift.component').then((m) => m.UpdateShiftComponent) },
+    { path: 'cloneshifts/:id', loadComponent: () => import('./manage-shifts/clone-shift/clone-shift.component').then((m) => m.CloneShiftComponent) },
+    { path: 'viewshifts/:id', loadComponent: () => import('./manage-shifts/view-shift/view-shift.component').then((m) => m.ViewShiftComponent) },
     { path: 'addpolices', loadComponent: () => import('./manage-policies/add-policies/add-policies.component').then((m) => m.AddPoliciesComponent) },
     { path: 'updatepolices', loadComponent: () => import('./manage-policies/update-policies/update-policies.component').then((m) => m.UpdatePoliciesComponent) },
     { path: 'clonepolices/:id', loadComponent: () => import('./manage-policies/clone-policies/clone-policies.component').then((m) => m.ClonePoliciesComponent) },

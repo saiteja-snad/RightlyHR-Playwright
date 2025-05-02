@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
-import { HttpService } from '../../../../services/http.service';
 import { Subscription } from 'rxjs';
-import { OpenModalService } from '../../../../services/open-modal.service';
-import { TranslateModule } from '@ngx-translate/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { HttpService } from '../../../../services/http.service';
 
 @Component({
   selector: 'app-view-shift',
@@ -35,37 +34,28 @@ export class ViewShiftComponent {
   shiftid: any;
   hideBUTTON = false;
   isDisabled = true;
-  // navTabs: any[] = [
-  //   { label: 'Clone Shifts', link: '/claimsandexpenses/addexpens' },
-  // ];
   disabled: boolean | undefined;
 
-  constructor(
-    private route: ActivatedRoute,
-    private fb: FormBuilder,
-    private router: Router,
-    private http: HttpService,
-    private conformationPopup: OpenModalService,
-    private modalService: NgbModal
-  ) { }
+  constructor( private route: ActivatedRoute, private fb: FormBuilder, private router: Router,
+     private http: HttpService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
-
     this.initializeForm();
     this.yearsList();
     this.geAllLocations();
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-
     const shiftId = this.route.snapshot.paramMap.get('id');
     if (shiftId) {
       this.getShiftById(shiftId);
     }
   }
+
   yearsList() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
       this.years.push({ label: i.toString(), value: i });
     }
   }
+
   initializeForm() {
     this.shiftForm = this.fb.group({
       year: ['', Validators.required],
@@ -75,8 +65,8 @@ export class ViewShiftComponent {
       shifts: this.fb.array([this.createShift()])
     });
   }
-  isDeleteDisabled: boolean = false;
 
+  isDeleteDisabled: boolean = false;
   deleteShift(index: number) {
     if (this.shifts.length > 1) {
       this.shifts.removeAt(index);
@@ -85,6 +75,7 @@ export class ViewShiftComponent {
       this.isDeleteDisabled = true; // disable delete button
     }
   }
+
   addShift() {
     this.shifts.push(this.createShift());
     this.hideBUTTON = true;
@@ -93,6 +84,7 @@ export class ViewShiftComponent {
   get shifts(): FormArray {
     return this.shiftForm.get('shifts') as FormArray;
   }
+
   createShift(shiftData: any = null): FormGroup {
     return this.fb.group({
       id: this.route.snapshot.paramMap.get('id'),
@@ -120,13 +112,9 @@ export class ViewShiftComponent {
         });
         this.shiftDATA = data.subLocationId;
         this.selectedLocationId = data.locationId;
-        console.log("Selected Locationid:", this.selectedLocationId);
-        console.log(this.shiftDATA);
-
         this.onLocationChange(data.locationId); // to load sublocations
         const shiftArray = this.shiftForm.get('shifts') as FormArray;
         shiftArray.clear(); // remove any existing default shift
-
         data.orgShiftsItems.forEach((item: any) => {
           shiftArray.push(this.fb.group({
             shiftCode: [item.code],
@@ -141,14 +129,11 @@ export class ViewShiftComponent {
             breakTime: [item.allowedBreakTime],
             halfDayMinHrs: [item.halfDayMinHrs],
             fullDayMinHrs: [item.fullDayMinHrs],
-
           }));
         });
         this.shiftid = data.orgShiftsItems.forEach((items: any) => {
           console.log('this.shiftid ', items.id);
-
         });
-
       },
       error: (err: any) => console.error('Error loading shift data', err)
     });
@@ -156,10 +141,10 @@ export class ViewShiftComponent {
 
   Status: any;
   hoildaylist: any;
-
   Cancel() {
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
+
   cloneshiftsPolicy1(id: any): void {
     this.router.navigate(['/settings/employee-fields/cloneshifts', this.route.snapshot.paramMap.get('id')]);
   }
@@ -174,8 +159,6 @@ export class ViewShiftComponent {
       if (this.selectdata) {
         subLocationControl?.setValue(this.selectdata.id);
       }
-      console.log(this.subLocations);
-      console.log(this.selectdata);
     } else {
       subLocationControl?.disable();
       this.subLocations = [];
@@ -188,16 +171,11 @@ export class ViewShiftComponent {
       next: (data: any) => {
         this.locations = data;
         this.selectedLocation = this.locations.find(loc => loc.id === this.selectedLocationId);
-        console.log(this.selectedLocation);
-        console.log("Selected Location:", this.selectedLocation);
         this.sublocation = this.selectedLocation.subLocations;
         const sublocationdata = this.sublocation.find(
           (sub: any) => sub.id === this.shiftDATA
         );
-
         if (sublocationdata) {
-          console.log("Matched Sub Location ID:", sublocationdata.id);
-          console.log("Selected Sub Location Name:", sublocationdata.jobSubLocationName);
           this.matchedSubLocation = sublocationdata;
           if (this.matchedSubLocation) {
             // Set the value to form
@@ -209,13 +187,16 @@ export class ViewShiftComponent {
       error: (reason: any) => console.log(reason)
     });
   }
+
   onDelete(modal: any) {
     modal.dismiss();
     this.nagvition();
   }
+
   closeDelete(modal: any) {
     modal.dismiss();
   }
+
   nagvition() {
     this.router.navigate(['/settings/employee-fields/manage-shifts/published-shifts']);
   }

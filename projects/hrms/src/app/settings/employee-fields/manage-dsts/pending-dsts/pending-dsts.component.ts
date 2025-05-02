@@ -12,7 +12,7 @@ import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-pending-dsts',
-  imports: [NoDataFoundComponent, CommonModule,TranslateModule],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule],
   templateUrl: './pending-dsts.component.html',
   styleUrl: './pending-dsts.component.scss',
 })
@@ -27,7 +27,7 @@ export class PendingDstsComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private router: Router,
     public rbac: RbacService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getAllDayLight();
@@ -38,15 +38,12 @@ export class PendingDstsComponent implements OnInit, OnDestroy {
   }
 
   getAllDayLight() {
-    this.http
-      .getData('OrgDayLight/getAll')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.allDSTs = data;
-          this.filterPendingDSTs();
-        },
-      });
+    this.http.getData('OrgDayLight/getAll').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.allDSTs = data;
+        this.filterPendingDSTs();
+      },
+    });
   }
 
   navigateToUpdateDSTComponent(pendingDST: ManageDST) {
@@ -55,12 +52,9 @@ export class PendingDstsComponent implements OnInit, OnDestroy {
   }
 
   filterPendingDSTs() {
-    this.pendingDSTs = this.allDSTs
-      .filter(
-        (status: { status: string }) =>
-          status.status === 'Pending for submission'
-      )
-      .reverse();
+    this.pendingDSTs = this.allDSTs.filter((status: { status: string }) =>
+      status.status === 'Pending for submission'
+    ).reverse();
   }
 
   ngOnDestroy(): void {

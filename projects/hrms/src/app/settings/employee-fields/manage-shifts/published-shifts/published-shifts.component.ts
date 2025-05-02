@@ -1,28 +1,29 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
-import { Router, RouterModule } from '@angular/router';
-import { HttpService } from '../../../../services/http.service';
-import { CommonModule, NgIf} from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+
 @Component({
-  selector: 'app-pulished-shits',
-  imports: [NoDataFoundComponent,CommonModule,TranslateModule,RouterModule,NgIf],
-  templateUrl: './pulished-shits.component.html',
-  styleUrl: './pulished-shits.component.scss'
+  selector: 'app-published-shifts',
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule],
+  templateUrl: './published-shifts.component.html',
+  styleUrl: './published-shifts.component.scss'
 })
 
-export class PulishedShitsComponent {
+export class PublishedShiftsComponent {
   shiftsData: any[] = [];
   subscription: any;
   empinfo: any
   pendingsubmittedshifts: any = [];
   publishedshifts: any = [];
-  publishedCount :any;
+  publishedCount: any;
   viewClicked: boolean | undefined;
 
-  constructor( public router:Router, private http: HttpService, public rbac: RbacService) { }
-  
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getShifts();
@@ -45,15 +46,15 @@ export class PulishedShitsComponent {
     });
   }
 
-  view(id:any) {
-    this.router.navigate(['/settings/employee-fields/viewshifts',id]);
+  view(id: any) {
+    this.router.navigate(['/settings/employee-fields/viewshifts', id]);
   }
 
   cloneshiftsPolicy1(id: any): void {
-    this.router.navigate(['/settings/employee-fields/cloneshifts',id]);
+    this.router.navigate(['/settings/employee-fields/cloneshifts', id]);
   }
-  
-  nagvition(){
+
+  nagvition() {
     this.router.navigate(['/settings/employee-fields/addshifts']);
   }
 }

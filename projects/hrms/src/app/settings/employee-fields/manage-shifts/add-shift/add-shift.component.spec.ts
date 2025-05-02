@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddShitsComponent } from './add-shits.component';
+import { AddShiftComponent } from './add-shift.component';
 
-describe('AddShitsComponent', () => {
-  let component: AddShitsComponent;
-  let fixture: ComponentFixture<AddShitsComponent>;
+describe('AddShiftComponent', () => {
+  let component: AddShiftComponent;
+  let fixture: ComponentFixture<AddShiftComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AddShitsComponent]
+      imports: [AddShiftComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AddShitsComponent);
+    fixture = TestBed.createComponent(AddShiftComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -5,7 +5,8 @@
       <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
     </div>
   </div>
-  <div class="custom-table-content mt-2">
+
+  <div class="custom-table-content">
     <table class="w-100">
       <thead>
         <tr>
@@ -16,7 +17,6 @@
           <th>{{'Status' | translate}}</th>
           <th>{{'Added By' | translate}}</th>
           <th>{{'Action(s)' | translate}}</th>
-
         </tr>
       </thead>
       <tbody>
@@ -29,49 +29,29 @@
           <td>{{item.shiftName}}</td>
           <td>{{item.status}}</td>
           <td>{{item.addedbyName}}</td>
-
-
-
           <td>
             <div class="dropdown">
-              <span type="button" data-bs-toggle="dropdown">
+              <a type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
-              </span>
+              </a>
               <ul class="dropdown-menu custom-dropdown-menu">
-                <!-- <li>
-                  <a *ngIf="item.status == 'Pending for submission'" class="cursor" data-bs-toggle="modal"
-                    (click)="updateHoliday(item)">
-                    <i class="bi bi-pencil-fill px-2"></i>Update
-                  </a>
-                </li>
-                <hr *ngIf="item.status == 'Pending for submission'">
-                <li>
-                  <a *ngIf="item.status == 'Published'" class="cursor" data-bs-toggle="modal"
-                    (click)="cloneHolidayPolicy(item)">
-                    <i class="bi bi-pencil-fill px-2"></i>Clone
-                  </a>
-                </li>
-                <hr> -->
                 <li>
                   <a class="dropdown-item" (click)="navigateToCloneComponent(item)">
-                      <i class="bi bi-copy me-2"></i>{{'Clone'|translate}}
-                  </a>
-              </li>
-                <li>
-                  <a *ngIf="item.status === 'Published'"  class="dropdown-item cursor" data-bs-toggle="modal"
-                    (click)="viewPublishedholiday(item)">
-                    <i class="bi bi-pencil-fill px-2"></i>{{'View' | translate}}
+                    <i class="bi bi-copy me-2"></i>{{'Clone'|translate}}
                   </a>
                 </li>
-                
+                <li>
+                  <a *ngIf="item.status === 'Published'" class="dropdown-item cursor" data-bs-toggle="modal"
+                    (click)="viewPublishedholiday(item)">
+                    <i class="bi bi-pencil-fill me-2"></i>{{'View' | translate}}
+                  </a>
+                </li>
               </ul>
             </div>
           </td>
         </tr>
         }
-
         }
-
         @else {
         <tr>
           <td colspan="9"><app-no-data-found></app-no-data-found></td>

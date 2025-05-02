@@ -202,7 +202,6 @@ export class CloneHolidaysComponent {
         this.getSubLocationByid(this.updateHolidaysData.locationId)
       }
     });
-
   }
 
   //this method used for sublocation list show in location dropdown

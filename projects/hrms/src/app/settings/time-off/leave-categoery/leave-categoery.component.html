@@ -163,6 +163,7 @@
                                                         [hidden]="details.status !== 'Published'">
                                                         <span class="me-4"><i class="bi bi-eye"></i>View</span>
                                                     </a>
+                                                    <div *ngIf="rbac.allowedToAccess('Leave Category Tab.create')">
                                                     <hr [hidden]="details.status !== 'Published'">
                                                     <a data-bs-toggle="modal" (click)="onClick(details)"
                                                         data-bs-target="#requestdoc"
@@ -177,6 +178,7 @@
                                                             Clone
                                                         </span>
                                                     </a>
+                                                </div>
                                                 </div>
                                             </div>
                                         </div>

@@ -62,6 +62,15 @@ export interface IYearlyReportRequest {
   Year?: number;
 }
 
+
+export interface IPermissionReportRequest {
+  FusionEmpId?: string;
+  EmployeeName?: string;
+  TeamManagerName?: string;
+  StartDate?: string;
+  EndDate?: string;
+}
+
 export interface IFamilyDetails{
   empStatus: string;
   employeeId: number,

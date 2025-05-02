@@ -162,7 +162,7 @@
                 <p class="popup-heading mb-0">{{'Re-Request Documents'|translate}}</p>
             </div>
             <div>
-                <a (click)="reload()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="reRequestForm.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">
@@ -180,7 +180,7 @@
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="reload()">{{'Close'|translate}}</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="reRequestForm.reset();modal.dismiss()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="!reRequestForm.valid">{{'Submit'|translate}}</button>
                 </div>
             </form>

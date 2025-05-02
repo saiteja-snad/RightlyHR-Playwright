@@ -35,7 +35,7 @@
               <span>{{'Generate'}}</span>
             }
           </button>
-          <button type="button" [disabled]="this.employeeMasterData.length === 0 || disableBtn" (click)="onClickEmpMasterExport()"
+          <button type="button" [disabled]="employeeMasterData.length === 0 || disableBtn" (click)="onClickEmpMasterExport()"
             class="custom-btn btn-primary">
             @if(spinnerLoader2){
               <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -143,7 +143,7 @@
           <th>Last Working Day</th>
           <th>Eligible For Rehire</th>
           <th>Exit Reason</th>
-          <th>Employment Effective Date</th>
+          <!-- <th>Employment Effective Date</th> -->
           <th>Job Type</th>
           <th>Grade Name</th>
           <th>Job Grade</th>
@@ -251,7 +251,7 @@
             <td>{{ emp.lastworkingday ? (emp.lastworkingday | dateformat) : '-' }}</td>
             <td>{{ emp.eligibleforrehire || '-' }}</td>
             <td>{{ emp.termreasonoffboard || '-' }}</td>
-            <td>{{ emp.employmentEffectiveDate ? (emp.employmentEffectiveDate | dateformat) : '-' }}</td>
+            <!-- <td>{{ emp.employmentEffectiveDate ? (emp.employmentEffectiveDate | dateformat) : '-' }}</td> -->
             <td>{{ emp.jobType || '-' }}</td>
             <td>{{ emp.gradeName || '-' }}</td>
             <td>{{ emp.jobGrade || '-' }}</td>

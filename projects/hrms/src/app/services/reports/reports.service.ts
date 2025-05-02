@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../http.service';
 import { HttpParams } from '@angular/common/http';
-import { IAbsentReportRequest, IAttendanceDetails, ICompoffDetails, IInactiveReportRequest, ILeavesummery, IStandardReportRequest, IWfhReportRequest, IYearlyReportRequest} from '../../Interfaces/reports.model';
+import { IAbsentReportRequest, IAttendanceDetails, ICompoffDetails, IInactiveReportRequest, ILeavesummery, IPermissionReportRequest, IStandardReportRequest, IWfhReportRequest, IYearlyReportRequest} from '../../Interfaces/reports.model';
 
 @Injectable({
   providedIn: 'root',
@@ -233,6 +233,34 @@ export class ReportsService {
   
     return this.http.get('Reports/YearSummaryReports', { params });
   }
+
+  gterPermissionReports(request: IPermissionReportRequest) {
+    let params = new HttpParams();
+
+    if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
+    if (request.TeamManagerName) params = params.set('TeamManagerName', request.TeamManagerName);
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+      params = params.set('EndDate', request.EndDate);
+    }
+
+    return this.http.get('Reports/PermissionReports', { params });
+  }
+
+  getRegularizationReports(request: IPermissionReportRequest) {
+    let params = new HttpParams();
+
+    if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
+    if (request.TeamManagerName) params = params.set('TeamManagerName', request.TeamManagerName);
+    if (request.StartDate && request.EndDate) {
+      params = params.set('StartDate', request.StartDate);
+      params = params.set('EndDate', request.EndDate);
+    }
+
+    return this.http.get('Reports/AttendanceRegularizationReports', { params });
+  }
   
 
   postToReportLog(reportName: string, reportType: string, employeeId: number) {
@@ -247,6 +275,7 @@ export class ReportsService {
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
+
   formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = ('0' + (date.getMonth() + 1)).slice(-2);
@@ -277,6 +306,7 @@ export class ReportsService {
   
     return this.http.get('Reports/Leave_Reports', { params });
   }
+
   getLeaveSummaryReport(request: ILeavesummery) {
     let params = new HttpParams();
     

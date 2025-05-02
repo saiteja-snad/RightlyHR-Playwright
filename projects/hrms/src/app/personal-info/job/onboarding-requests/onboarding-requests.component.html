@@ -47,7 +47,7 @@
                                     </span>
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li *ngIf="item.status=='Processed' && this.empdata.substatus === 'Offer Letter Accepted' && this.empdata.empstatus === 'Trainee Active' ">
-                                            <a class="dropdown-item" (click)="onboardstatuschange();openmodel(readyforonboard)">
+                                            <a class="dropdown-item" (click)="openmodel(readyforonboard)">
                                                 Ready for Onboard
                                             </a>
                                         </li>
@@ -96,8 +96,8 @@
                 <a><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content">
-            <p>{{myApproverCommentss}}</p>
+        <div class="custom-main-popup-content text-wrap">
+            <p class="text-wrap">{{myApproverCommentss}}</p>
         </div>
     </div>
 </ng-template>

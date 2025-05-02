@@ -9,15 +9,16 @@
 
     <div class="custom-setting-right-content w-100 p-3">
         <form [formGroup]="weekendForm">
-            <div class="d-flex gap-3">
+            <div class="d-flex gap-3 mb-3">
                 <!-- Year -->
-                <div class="mb-3">
+                <div>
                     <label for="year" class="form-label custom-label mb-2">
                         {{ "Year" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false" class="form-select custom-select"
-                         formControlName="year" placeholder="Please select year" (onChange)="enableLocation()">
+                        <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
+                            class="form-select custom-select" formControlName="year" placeholder="Please select year"
+                            (onChange)="enableLocation()">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
                             <ng-template let-year #item>{{ year }}</ng-template>
                         </p-select>
@@ -25,22 +26,24 @@
                 </div>
 
                 <!-- Location -->
-                <div class="mb-3">
+                <div>
                     <label for="location" class="form-label custom-label mb-2">
                         {{ "Location" | translate }}<span class="text-danger">*</span>
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
-                            formControlName="location" placeholder="Please select location" (onChange)="onLocationChange($event.value)">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
+                            formControlName="location" placeholder="Please select location"
+                            (onChange)="onLocationChange($event.value)">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
+                                }}</ng-template>
                             <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                         </p-select>
                     </div>
                 </div>
 
                 <!-- Sub Location -->
-                <div class="mb-3">
+                <div>
                     <label for="subLocation" class="form-label custom-label mb-2">
                         {{ "Sub Location" | translate }}<span class="text-danger">*</span>
                     </label>
@@ -49,14 +52,15 @@
                             class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
                             formControlName="subLocation" placeholder="Please select sub location"
                             (onChange)="getAllShifts($event.value)">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
+                                }}</ng-template>
                             <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                         </p-select>
                     </div>
                 </div>
 
                 <!-- Shifts -->
-                <div class="mb-3">
+                <div>
                     <label for="shift" class="form-label custom-label mb-2">
                         {{ "Shift" | translate }}<span class="text-danger">*</span>
                     </label>
@@ -88,19 +92,18 @@
                     <tbody formArrayName="weekends">
                         <tr *ngFor="let weekend of weekends.controls; let i = index" [formGroupName]="i">
                             <td>
-                                <div class="custom-p-select-content">
-                                    <div class="col-md-5 mb-3">
-                                        <label for="day" class="form-label custom-label mb-2">
-                                            {{ "Day" | translate }}<span class="text-danger">*</span>
-                                        </label>
-                                        <div class="custom-p-select-content">
-                                            <p-select [options]="daysList" [filter]="true" [showClear]="false"
-                                                formControlName="day" placeholder="Please select day"
-                                                class="form-select custom-select">
-                                                <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
-                                                <ng-template let-option #item>{{ option }}</ng-template>
-                                            </p-select>
-                                        </div>
+                                <div class="col-md-5 mb-3">
+                                    <label for="day" class="form-label custom-label mb-2">
+                                        {{ "Day" | translate }}<span class="text-danger">*</span>
+                                    </label>
+                                    <div class="custom-p-select-content">
+                                        <p-select [options]="daysList" [filter]="true" [showClear]="false"
+                                            formControlName="day" placeholder="Please select day"
+                                            class="form-select custom-select">
+                                            <ng-template #selectedItem let-selectedOption>{{ selectedOption
+                                                }}</ng-template>
+                                            <ng-template let-option #item>{{ option }}</ng-template>
+                                        </p-select>
                                     </div>
                                 </div>
                             </td>
@@ -115,38 +118,22 @@
             </div>
 
             <div class="d-flex justify-content-end gap-3 pt-4">
-                <button type="button" class="custom-btn btn-secondary px-4" (click)="Cancel()">Close</button>
-                <button type="button" class="custom-btn btn-primary px-4" (click)="navigateToClone()">Clone</button>
+                <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">Close</button>
+                <button type="button" class="custom-btn btn-primary px-5" (click)="navigateToClone()">Clone</button>
             </div>
         </form>
     </div>
 </div>
 
-<ng-template #confirmation let-modal>
-    <div class="result-popup-content text-center" ngbAutofocus>
-        <div class="mt-2">
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
-            <p class="confirmation-text">{{'Are you sure want to close?'|translate}}</p>
-        </div>
-        <div class="d-flex gap-5 pt-2 w-100">
-            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">No</button>
-            <button class="custom-btn btn-primary w-50  py-2" (click)="closeWeekend()">Yes</button>
-        </div>
-    </div>
-</ng-template>
-
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
-
         <div>
             <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to close?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary "
-                (click)="closeDelete(modal)">{{'No'|translate}}</button>
-            <button type="button" class="custom-btn btn-primary " (click)="onDelete(modal)">{{'Yes'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>
-
 </ng-template>

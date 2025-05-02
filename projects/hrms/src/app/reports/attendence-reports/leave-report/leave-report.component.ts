@@ -1,5 +1,5 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, Renderer2 } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
@@ -17,11 +17,11 @@ import { NgxDaterangepickerBootstrapDirective } from "ngx-daterangepicker-bootst
 import { Dayjs } from 'dayjs';
 import { IAttendanceDetails } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 
 @Component({
   selector: 'app-leave-report',
-  //imports: [NgxDaterangepickerBootstrapDirective,FormsModule,DropdownModule, SelectModule, TranslateModule, DateformatPipe, AttandaceReportTabsComponent],
   imports: [
     NgxDaterangepickerBootstrapDirective,
     CommonModule,
@@ -30,7 +30,9 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
     DropdownModule,
     SelectModule,
     TranslateModule,
-    ReactiveFormsModule,NoDataFoundComponent],
+    ReactiveFormsModule, NoDataFoundComponent,
+    DataLoaderContentComponent
+],
   templateUrl: './leave-report.component.html',
   styleUrl: './leave-report.component.scss'
 })
@@ -47,12 +49,16 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   selectedMonth: string | null = null;
   selectedLeave: string | null = null;
   selectedYear: string | null = null;
-  uniqueLeaveCategory: string[] = [];
+  uniqueLeaveCategory: any[] = [];
   years: number[] = [new Date().getFullYear() - 1, new Date().getFullYear(), new Date().getFullYear() + 1];
   LeaveReportForm!: FormGroup;
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   selectedDateRange: any;
   wfhReportForm!: FormGroup;
+  spinnerLoader1= false;
+  spinnerLoader2= false;
+  disableBtn= false;
+
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -64,44 +70,45 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
+
   localeOptions: any = {
     applyLabel: 'ok',
     format: environment.dateformat.toUpperCase(),
     direction: 'ltr',
     clearLabel: 'Clear', // could be rtl
   };
+
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
     private http: HttpService,
-    private fb: FormBuilder, private renderer: Renderer2, private cdr: ChangeDetectorRef
+    private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
-    this.initializeForm();
     this.loggedInUser = this.authService.getToken();
+    this.initializeForm();
     this.getEmployeeId();
     this.getAttendanceReports();
     this.getTeam();
   }
-  clearAllFilters(): void {
-    this.LeaveReportForm.reset({
-      employee: null,
-      manager: null,
-      dateRange: null,
-      leaveCategory: '',
-      year: ''
-    });
-  }
 
   initializeForm() {
     this.LeaveReportForm = this.fb.group({
-      employee: [null, Validators.required],
+      employee: [null],
       manager: [null],
       dateRange: [null],
-      leaveCategory: [''],
-      year: ['']
+      leaveCategory: [null],
+      // year: ['']
     });
+
+    this.LeaveReportForm.valueChanges.subscribe(()=>{
+      this.disableBtn= true;
+    })
+  }
+
+  clearAllFilters(): void {
+    this.LeaveReportForm.reset();
   }
 
   getEmployeeId() {
@@ -111,19 +118,12 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-  
-          console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${
-                employee.fusionEmployeeId
-                  ? employee.fusionEmployeeId + ' - '
-                  : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
             };
           });
           const filteredEmployees = employeedata.filter((element: any) => {
@@ -144,115 +144,127 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   getTeam() {
     this.subscription = this.http.getData('PendingApprovalsAuthority/getAll').subscribe({
       next: (data: any) => {
-        this.teamdetails = data.map((e: any) => ({
-          ...e,
-          fullName: `${e.fusionEmpId ? e.fusionEmpId + ' - ' : ''}${e.firstName} ${e.middleName ? e.middleName + ' ' : ''}${e.lastName}`
-        }));
+        this.teamdetails = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+          };
+        });
       },
       error: (reason: any) => console.log(reason),
     });
   }
   
   getAttendanceReports() {
-    this.isLoading = true;
     this.subscription = this.reportsService.getAttendanceReports({}).subscribe({
       next: (res: any) => {
         this.extractUniqueYearlyFilters(res);
-        this.isLoading = false;
-      },
-      error: (err: any) => console.log(err)
+      }
     });
   }
   
   extractUniqueYearlyFilters(data: any[]): void {
-    this.uniqueLeaveCategory = Array.from(new Set(data.map((item: any) => item.leaveType))).filter(Boolean);
+    const uniqueLeaveCategory = Array.from(new Set(data.map((item: any) => item.leaveType))).filter(Boolean);
+  
+    this.uniqueLeaveCategory = uniqueLeaveCategory.map(category => ({
+      label: category,
+      value: category
+    }));
+  }
+
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
   }
   
-  selectYearlyEmployee(employee: any, event: Event) {
-    event.stopPropagation();
-    this.selectedEmployeeId = employee?.fusionEmpId ?? null;
-    this.filteredleaveRecord = [];
-  }
-
-  selectYearlyManager(manager: { id: string; fullName: string }): void {
-    this.selectedWfhManager = manager.fullName;
-  }
-
-  onDateRangeChange(dateRange: any): void {
-    if (dateRange && dateRange.startDate && dateRange.endDate) {
-      console.log('Selected Start Date:', dateRange.startDate.toDate());
-      console.log('Selected End Date:', dateRange.endDate.toDate());
-    }
-  }
-  onYearChange(event: Event): void {
-    this.selectedYear = (event.target as HTMLSelectElement).value;
-  }
-
-  onLeaveChangeYearly(event: Event): void {
-    this.selectedLeave = (event.target as HTMLSelectElement).value;
-  }
-  formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
-  }
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
 
+  get isLeaveGenerateDisabled(): boolean {
+    const form = this.LeaveReportForm;
+    return !(
+      form.get('employee')?.value ||
+      form.get('manager')?.value ||
+      form.get('dateRange')?.value ||
+      form.get('leaveCategory')?.value
+    );
+  }
+
   generateleaveReport(): void {
+    this.spinnerLoader1 = true;
+    this.isLoading = true;
+  
     const formValue = this.LeaveReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
   
     const noFilterProvided =
       !formValue.employee &&
+      !formValue.leaveCategory &&
       (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
       !formValue.month &&
       !formValue.manager;
   
     if (noFilterProvided) {
       this.filteredleaveRecord = [];
+      this.spinnerLoader1 = false;
+      this.isLoading = false;
       return;
     }
   
     const request: IAttendanceDetails = {};
   
-    // Only include filters if not "All Employees"
-    if (!isAllEmployeesSelected) {
-      if (formValue.employee?.fusionEmpId) {
-        request.FusionEmpId = formValue.employee.fusionEmpId;
-      }
-  
-      if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
-        const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
-        const endDate = this.formatDate(this.parseDate(formValue.dateRange.endDate));
-        request.StartDate = startDate;
-        request.EndDate = endDate;
-      }
-  
-      if (formValue.leaveCategory) {
-        request.LeaveName = formValue.leaveCategory;
-      }
-  
-      if (formValue.manager) {
-        request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-          .filter(Boolean)
-          .join(' ');
-      }
+    // Apply leave category if selected
+    if (formValue.leaveCategory) {
+      request.LeaveName = formValue.leaveCategory.value;
     }
   
-    // Single API call
+    // Apply date range if provided
+    if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
+      const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
+      const endDate = this.formatDate(this.parseDate(formValue.dateRange.endDate));
+      request.StartDate = startDate;
+      request.EndDate = endDate;
+    }
+  
+    // Apply manager name if provided
+    if (formValue.manager) {
+      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
+        .filter(Boolean)
+        .join(' ');
+    }
+  
+    // Only include employee filter if not "All Employees"
+    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
+      request.FusionEmpId = formValue.employee.fusionEmpId;
+    }
+  
     this.reportsService.getAttendanceReports(request).subscribe({
       next: (response: any) => {
         this.filteredleaveRecord = response ?? [];
       },
       error: (error) => {
-        console.error('Error fetching WFH records', error);
+        this.spinnerLoader1 = false;
+        this.disableBtn = true;
+        this.isLoading = false;
         this.filteredleaveRecord = [];
       },
+      complete: () => {
+        this.spinnerLoader1 = false;
+        this.disableBtn = false;
+        this.isLoading = false;
+      }
     });
   }
+  
 
   exportToExcelYearly(): void {
     // Define header mappings
+    this.spinnerLoader2= true;
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -348,6 +360,8 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Yearly Summary Report');
     XLSX.writeFile(wb, 'Leave_Report.xlsx');
+
+    this.spinnerLoader2= false;
   }
 
 
@@ -367,8 +381,5 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
-
-
-
 
 }

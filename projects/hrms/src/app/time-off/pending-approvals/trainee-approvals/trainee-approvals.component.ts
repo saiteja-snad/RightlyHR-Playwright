@@ -83,7 +83,15 @@ export class TraineeApprovalsComponent {
       this.selectedLeaveData.rejectedReason = val.rejectedReason;
     });
   }
-
+  blockLeadingSpace(event: Event, value: string) {
+    const inputElement = event.target as HTMLTextAreaElement;
+    if (inputElement.value.startsWith(' ')) {
+      inputElement.value = inputElement.value.trimStart();
+      // Trigger model update
+      const nativeEvent = new Event('input', { bubbles: true });
+      inputElement.dispatchEvent(nativeEvent);
+    }
+  }
   transform(value: any, ...args: unknown[]): unknown {
     if (value) {
       return this.datePipe.transform(value, this.customsetup);

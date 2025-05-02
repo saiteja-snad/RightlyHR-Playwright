@@ -133,8 +133,7 @@
           <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="documentType" optionLabel="name" placeholder="Please select document type"
-              formControlName="documentType" class="form-select custom-select"
-              (onChange)="onclickDocumentType(employeeForm.get('documentType')?.value)">
+              formControlName="documentType" class="form-select custom-select">
             </p-select>
           </div>
           <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
@@ -177,7 +176,7 @@
         </div>
 
         <div class="d-flex flex-wrap gap-3 pt-4">
-          <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid">
+          <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || spinnerLoader" >
             <ng-container *ngIf="spinnerLoader; else addText">
               <div class="button-loader-content">
                 <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
@@ -220,10 +219,6 @@
                   {{ employeeForm.value.pinCode }}.
                 </p>
 
-                <!-- <p class="mb-3" *ngIf="appointmentletter.addressLine1"> {{ appointmentletter.addressLine1 }},
-                  {{ appointmentletter.addressLine2 }}, {{ appointmentletter.city }},{{ appointmentletter.state }}, {{
-                  appointmentletter.zipCode }}.
-                </p> -->
                 <p class="letter-sub-header">Welcome to RightlyHR!</p>
                 <p>
                   Pursuant to your application for employment with us, and the subsequent selection process, it gives

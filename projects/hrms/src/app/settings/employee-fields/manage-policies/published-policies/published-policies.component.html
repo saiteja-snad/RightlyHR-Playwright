@@ -16,8 +16,7 @@
           <th>{{'Shift Name' | translate}}</th>
           <th>{{'Status' | translate}}</th>
           <th>{{'Added By' | translate}}</th>
-          <th>{{'Action(s)' | translate}}</th>
-
+          <th class="text-center">{{'Action(s)' | translate}}</th>
         </tr>
       </thead>
       <tbody>
@@ -30,7 +29,7 @@
           <td>{{item.shiftName}} </td>
           <td>{{item.status}}</td>
           <td>{{item.addedbyName}}</td>
-          <td>
+          <td class="text-center">
             <div class="dropdown">
               <span type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
@@ -38,7 +37,7 @@
               <ul class="dropdown-menu custom-dropdown-menu">
                 <li>
                   <a class="dropdown-item" (click)="clonePolicy1(item.id)">
-                    <i class="bi bi-copy me-2 ms-2"></i>Clone
+                    <i class="bi bi-copy me-2"></i>Clone
                   </a>
                 </li>
                 <li>

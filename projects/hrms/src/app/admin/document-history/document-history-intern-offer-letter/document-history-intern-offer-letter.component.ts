@@ -1,10 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -55,7 +58,15 @@ export class DocumentHistoryInternOfferLetterComponent {
     this.initializeForm();
     this.getTraineeOfferLetters();
   }
-
+  blockLeadingSpace() : ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value as string;
+      if (value && value.startsWith(' ')) {
+        return { leadingSpace: true };
+      }
+      return null;
+    };
+}
   openModal(content: any) {
     this.modalService.open(content, {
       centered: true,
@@ -66,7 +77,7 @@ export class DocumentHistoryInternOfferLetterComponent {
 
   initializeForm() {
     this.rejectDocument = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),this.blockLeadingSpace()]],
     });
   }
 
@@ -390,7 +401,7 @@ export class DocumentHistoryInternOfferLetterComponent {
           if (data) {
             setTimeout(() => {
               this.conformationPopup.openSuccessModal(
-                'Email Sent Successfully'
+                'Trainee Offer Rejected Successfully'
               );
             }, 3000);
             this.getTraineeOfferLetters();

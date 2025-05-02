@@ -218,7 +218,7 @@
       
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Salary (Cost to Company)<span class="error-msg">*</span></label>
-            <input type="text" class="form-control custom-input" formControlName="amount" placeholder="Please enter salary"
+            <input type="number" class="form-control custom-input" formControlName="amount" placeholder="Please enter salary"
               (ngModelChange)="onclickCTC($event)" />
             <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched" class="error-msg">
               Salary is required</div>

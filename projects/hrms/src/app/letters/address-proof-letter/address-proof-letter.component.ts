@@ -29,34 +29,12 @@ export class AddressProofLetterComponent {
     { name: 'Current Address', value: 'C' },
     { name: 'Permanent Address', value: 'P' },
   ];
+
   employeementType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
-  designation: { id: number; name: string }[] = [
-    { id: 1, name: 'Software Engineer' },
-    { id: 2, name: 'Project Manager' },
-    { id: 3, name: 'HR Executive' },
-    { id: 4, name: 'Data Analyst' }
-  ];
-  location: { id: number; name: string }[] = [
-    { id: 1, name: 'New York' },
-    { id: 2, name: 'Los Angeles' },
-    { id: 3, name: 'Chicago' },
-    { id: 4, name: 'Houston' }
-  ];
-  sublocation: { id: number; name: string; locationId: number }[] = [
-    { id: 1, name: 'Brooklyn', locationId: 1 },
-    { id: 2, name: 'Downtown', locationId: 1 },
-    { id: 3, name: 'Hollywood', locationId: 2 },
-    { id: 4, name: 'South Side', locationId: 3 }
-  ];
-  employees = [
-    { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' },
-    { id: 3, name: 'Mark Taylor' },
-    { id: 4, name: 'Emily Johnson' }
-  ];
+
   employeeForm!: FormGroup;
   selectedEmployee: any;
   subscription!: Subscription;
@@ -93,14 +71,10 @@ export class AddressProofLetterComponent {
     private http: HttpService,
     private httpclient: HttpClient,
     private router: Router,
-    // private _userAcessService:UserAccessService,
-    private elementRef: ElementRef,
-    config: NgbModalConfig, private modalService: NgbModal, private fb: FormBuilder,
-      private conformationPopup: OpenModalService, 
-  ) {
-    config.backdrop = 'static';
-    config.keyboard = false;
-  }
+    config: NgbModalConfig, 
+    private fb: FormBuilder,
+    private conformationPopup: OpenModalService, 
+  ) { }
 
   ngOnInit(): void {
     // this._userAcessService.checkRouteAccess('Dashboard.view')
@@ -156,28 +130,6 @@ export class AddressProofLetterComponent {
       authorityName: [''],                    
       authorityDesignation: ['']
     });
-
-    // this.employeeForm.valueChanges.subscribe(()=>{
-    //   this.addressErrorMessage='';
-    // })
-  }
-
-
-  //function to disable the submit button when we select the incorrect id 
-  Onclickemployyeid(Value: any) {
-    if (Value == "") {
-      this.disablebuttonforemployeeid = true
-    }
-    else {
-      this.disablebuttonforemployeeid = false
-    }
-    let employeeinfo = this.employeeiddetails.find(
-      (c: any) => c.fusionEmpId == Value
-    );
-    if (Value != employeeinfo && employeeinfo != undefined) {
-      this.disablebuttonforemployeeid = false
-    }
-
   }
 
   Onclick(selectedEmployee: any) {
@@ -272,25 +224,6 @@ export class AddressProofLetterComponent {
     }
   }
 
-  //toggledropdown to open and close the dropdown list
-  toggleDropdown(dropcategory: any) {
-    if (dropcategory == 'empid') {
-      this.isDropdownOpen = !this.isDropdownOpen;
-      if (this.isDropdownOpen) {
-
-      } else {
-        this.filteredOptions = [];
-      }
-    }
-    else if (dropcategory == 'authority') {
-      this.isDropdownOpenauthority = !this.isDropdownOpenauthority;
-      if (this.isDropdownOpenauthority) {
-
-      } else {
-        this.filteredOptions = [];
-      }
-    }
-  }
   //on click function for the authority name 
   onclickauthority(ValueName: any) {
     this.authorityName = ValueName
@@ -325,8 +258,8 @@ export class AddressProofLetterComponent {
       this.signatureAuthorityName = null
     }
   }
-  onclickDesignation(selectedAuthority: any) {
 
+  onclickDesignation(selectedAuthority: any) {
     if (!selectedAuthority) {
       this.addressLetterData.authorityName = '';
       this.authorityDesignation = '';
@@ -340,7 +273,6 @@ export class AddressProofLetterComponent {
     if (signatureAuthorityDetails) {
       this.authorityDesignation = signatureAuthorityDetails.designation;
 
-      // 🔹 Construct full name correctly
       this.addressLetterData.authorityName = signatureAuthorityDetails.middleName
         ? `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.middleName} ${signatureAuthorityDetails.lastName}`
         : `${signatureAuthorityDetails.firstName} ${signatureAuthorityDetails.lastName}`;
@@ -356,26 +288,13 @@ export class AddressProofLetterComponent {
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({
           ...authority,
-          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() // Concatenate first, middle, last name and trim any extra spaces
+          fullName: `${authority.firstName} ${authority.middleName} ${authority.lastName}`.trim() 
         }));
       },
       error: (error: any) => {
         console.error(error);
       }
     });
-  }
-
-  //hostlister to close the dropdown when we Click out side the box
-  @HostListener('document:click', ['$event.target'])
-  onClickOutside(target: any) {
-    const dropdownToggle = this.elementRef.nativeElement.querySelector('.dropdown-toggles');
-    const dropdownMenu = this.elementRef.nativeElement.querySelector('.dropdown-menu');
-
-    if (dropdownToggle && !dropdownToggle.contains(target) && dropdownMenu && !dropdownMenu.contains(target)) {
-      this.isDropdownOpen = false;
-      this.filteredOptions = [];
-    }
-
   }
 
   //get employee ids for dropdown
@@ -417,7 +336,6 @@ export class AddressProofLetterComponent {
             Employee.jobRole = res.jobRole;
             Employee.workLocation = res.location; 
 
-            // ✅ Update form field dynamically
             this.employeeForm.patchValue({
               jobRole: Employee.jobRole || 'Not Available',
             });
@@ -431,7 +349,7 @@ export class AddressProofLetterComponent {
         error: (reason: any) => {
           console.error("Error fetching job details:", reason);
           this.employeeForm.patchValue({
-            jobRole: 'Not Available', // Handle API failure
+            jobRole: 'Not Available', 
           });
         },
       });
@@ -494,7 +412,6 @@ export class AddressProofLetterComponent {
             setTimeout(()=>{
               this.navigateDashboard();
             }, 2000)
-            // this.router.navigate(['/admin/active']);
           }
         },
         error: (reason: any) => {
@@ -515,25 +432,6 @@ export class AddressProofLetterComponent {
     return `${day}/${month}/${year}`;
   }
 
-
-  //to format string date to actual date
-  private formatDatebyDatestring(data: string) {
-    let stringarray = data.split('/');
-    console.log(
-      new Date(
-        `${parseInt(stringarray[2])}-${parseInt(stringarray[1])}-${parseInt(
-          stringarray[0]
-        )}`
-      )
-    );
-    return new Date(
-      `${parseInt(stringarray[2])}-${parseInt(stringarray[1])}-${parseInt(stringarray[0]) + 1
-      }`
-    );
-  }
-  closeDropdown() {
-    this.isDropdownOpen = false;
-  }
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

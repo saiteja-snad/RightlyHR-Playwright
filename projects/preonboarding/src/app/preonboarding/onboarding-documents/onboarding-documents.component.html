@@ -85,27 +85,18 @@
                 [disabled]="!aftersubmitbuttondisable||!submitbuttondisableforrejected"
                 (click)="openConfirmation()">Submit</button>
             }  -->
-            <button
-                *ngIf="(prosempdata.substatus?.toLowerCase() === 'requested documents' || prosempdata.substatus?.toLowerCase() === 'documents rejected')"
-                type="submit" class="custom-btn btn-primary py-2 px-5"
-                [disabled]="!aftersubmitbuttondisable || !submitbuttondisableforrejected"
-                (click)="openConfirmation()">Submit
-            </button>
+           
 
-            @if((this.prosempdata?.empstatus?.toLowerCase() == 'prospective') && (
-            this.prosempdata?.substatus?.toLowerCase() == 'offer letter generated' ||
-            this.prosempdata?.substatus?.toLowerCase() == 'offer letter released' ||
-            this.prosempdata?.substatus?.toLowerCase() == 'offer letter regenerated' ||
-            this.prosempdata?.substatus?.toLowerCase() == 'offer letter accepted' )){
-            <button type="button" class="custom-btn btn-primary py-2 px-5" routerLink="/offer-letter">Next</button>
+            @if(((this.prosempdata?.empstatus?.toLowerCase() == 'prospective')||(this.prosempdata?.empstatus?.toLowerCase() == 'trainee prospective')) &&
+             ((prosempdata.substatus?.toLowerCase() === 'requested documents' 
+            || prosempdata.substatus?.toLowerCase() === 'documents rejected') )){
+             <button
+                 type="submit" class="custom-btn btn-primary py-2 px-5"
+                 [disabled]="!aftersubmitbuttondisable || !submitbuttondisableforrejected"
+                 (click)="openConfirmation()">Submit
+             </button>
             }
-
-            @if((this.prosempdata?.empstatus?.toLowerCase() == 'trainee prospective') &&
-            (this.prosempdata?.empType?.toLowerCase() == 'trainee') &&
-            (this.prosempdata?.substatus?.toLowerCase() == 'offer letter generated' ||
-            this.prosempdata?.substatus?.toLowerCase() == 'offer letter released'
-            || this.prosempdata?.substatus?.toLowerCase() =='offer letter regenerated'||
-            this.prosempdata?.substatus?.toLowerCase() == 'offer letter accepted')){
+            @else{
             <button type="button" class="custom-btn btn-primary py-2 px-5" routerLink="/trainee-offerletter">Next</button>
             }
         </div>

@@ -73,7 +73,6 @@ export class MonthlyAttandanceReportComponent {
 
   onMonthChangeLeave(event: any): void {
     this.selectedMonth = event.value;
-    console.log(this.selectedMonth)
   }
 
   generateReport(f: FormGroup) {
@@ -95,7 +94,7 @@ export class MonthlyAttandanceReportComponent {
       error:(err: any) => {
         this.spinnerLoader= false;
         // err.error.message? err.error.message : 'Error downloading the file'
-        this.openmodalservice.openErrorModal('Error downloading the file');
+        this.openmodalservice.openErrorModal('No records found');
       },
       complete: ()=>{
         this.spinnerLoader= false;

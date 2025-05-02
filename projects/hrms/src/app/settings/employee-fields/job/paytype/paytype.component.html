@@ -5,13 +5,19 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter pay type"
                     formControlName="Paytype" aria-label="paytype" aria-describedby="paytype"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
                 <span class="input-group-text" id="paytype">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="PaytypeForm.invalid">{{'Add'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="PaytypeForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="PaytypeForm.get('Paytype')?.touched && PaytypeForm.get('Paytype')?.invalid" class="error-msg">
-                <div *ngIf="PaytypeForm.get('Paytype')?.errors?.['required']">{{'Pay Type is required'|translate}}</div>
+                <div *ngIf="PaytypeForm.get('Paytype')?.errors?.['required']">
+                    {{ 'Pay Type is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="PaytypeForm.get('Paytype')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 100 characters' | translate }}
             </div>
         </div>
     </form>
@@ -69,10 +75,16 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Pay Type'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Paytype" placeholder="Please enter pay type"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="50">
-                    <div *ngIf="updateForm.get('Paytype')?.touched && updateForm.get('Paytype')?.invalid" class="error-msg">
-                        <div *ngIf="updateForm.get('Paytype')?.errors?.['required']">{{'Pay Type is required'|translate}}</div>
-                    </div>
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
+                    <div *ngIf="updateForm.get('Paytype')?.touched && updateForm.get('Paytype')?.invalid"
+                class="error-msg">
+                <div *ngIf="updateForm.get('Paytype')?.errors?.['required']">
+                    {{ 'Pay Type is required' | translate }}
+                </div>
+            </div>
+            <div *ngIf="updateForm.get('Paytype')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 100 characters' | translate }}
+            </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
@@ -88,7 +100,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

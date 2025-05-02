@@ -59,15 +59,19 @@
                         <div class="error-msg">Authority is required</div>
                     </div>
                 </div>
+
                 <div>
                     <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name, Designation,
                         Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
                 </div>
+                
                 <div class="d-flex flex-wrap gap-3 pt-3">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="probationExtensionForm.invalid || spinnerLoader">
                         <ng-container *ngIf="spinnerLoader; else addText">
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading..' | translate}}...</span>
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span>{{'Loading...'}}</span>
+                            </div>
                         </ng-container>
                         <ng-template #addText>
                             <span>{{'Generate Document' | translate}}</span>
@@ -77,8 +81,10 @@
                     <button type="button" class="custom-btn btn-primary" (click)="probationExtendeEmail()"
                         [disabled]="!enableBtn || releaseLoader">
                         <ng-container *ngIf="releaseLoader; else releaseText">
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading..' | translate}}...</span>
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span>{{'Loading...'}}</span>
+                            </div>
                         </ng-container>
                         <ng-template #releaseText>
                             <span>{{'Release Letter' | translate}}</span>
@@ -128,7 +134,7 @@
                             <div>
                                 <p>We are pleased to inform that following a performance appraisal
                                     and subsequent review, your probation period has been extended by {{probationExtensionLetterData.probationmonths}} months.
-                                    This extension will conclude on {{ probationExtensionLetterData.probationExtendedDate|dateformat}}.
+                                    This extension will conclude on {{ probationExtensionLetterData.probationExtendedDate | dateformat}}.
                                     At the conclusion of this extended probation period, we will conduct another performance
                                     review to determine the subsequent course of action based on your performance.</p>
     

@@ -70,10 +70,15 @@
             {{ 'Serving Period Type' | translate }} <span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="addServingPeriod"
-            placeholder="Please enter serving period type" (keypress)="allowOnlyLettersAndSpace($event)"
-            maxlength="100" />
-          <div *ngIf="AddForm.get('addServingPeriod')?.touched && AddForm.get('addServingPeriod')?.invalid"
-            class="error-msg">{{ 'Serving Period Type is required' | translate }}
+            placeholder="Please enter serving period type"
+            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101" />
+          <div *ngIf="AddForm.get('addServingPeriod')?.touched && AddForm.get('addServingPeriod')?.invalid" class="error-msg">
+            <div *ngIf="AddForm.get('addServingPeriod')?.errors?.['required']">
+              {{ 'Serving Period Type is required' | translate }}
+            </div>
+          </div>
+          <div *ngIf="AddForm.get('addServingPeriod')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Please limit your input to 100 characters' | translate }}
           </div>
         </div>
 
@@ -82,16 +87,12 @@
           <label for="duration" class="form-label custom-label mb-2">
             {{ 'Duration' | translate }} <span class="error-msg">*</span>
           </label>
-          <input type="number" class="form-control custom-input" placeholder="Please enter duration"
-            formControlName="Duration" aria-label="duration" aria-describedby="duration" min="1" max="999"
-            (keydown)="onDurationInput($event)">
+          <input type="number" class="form-control custom-input" placeholder="Please enter duration" formControlName="Duration"
+            aria-label="duration" aria-describedby="duration" min="1" max="999" (keydown)="onDurationInput($event)">
           <div *ngIf="AddForm.get('Duration')?.touched && AddForm.get('Duration')?.invalid" class="error-msg">
             <div *ngIf="AddForm.get('Duration')?.errors?.['required']">{{'Duration is required' | translate}}</div>
             <div *ngIf="AddForm.get('Duration')?.errors?.['pattern']">
               {{'Only letters, numbers, spaces, periods, commas, slashes, and hyphens are allowed' | translate}}
-            </div>
-            <div *ngIf="AddForm.get('Duration')?.errors?.['maxlength']">
-              {{'Maximum 100 characters are allowed' | translate}}
             </div>
           </div>
         </div>
@@ -132,12 +133,19 @@
             {{'Serving Period Type' | translate}} <span class="error-msg">*</span>
           </label>
           <input type="text" class="form-control custom-input" formControlName="UpdateServingPeriod"
-            placeholder="Please enter serving period" (keypress)="allowOnlyLettersAndSpace($event)" maxlength="100">
-          <div *ngIf="updateForm.get('UpdateServingPeriod')?.invalid && updateForm.get('UpdateServingPeriod')?.touched"
-            class="error-msg">{{'Serving Period Type is required'|translate}}
+            placeholder="Please enter serving period"
+            (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
+          <div *ngIf="updateForm.get('UpdateServingPeriod')?.touched && updateForm.get('UpdateServingPeriod')?.invalid"
+            class="error-msg">
+            <div *ngIf="updateForm.get('UpdateServingPeriod')?.errors?.['required']">
+              {{ 'Serving Period Type is required' | translate }}
+            </div>
+          </div>
+          <div *ngIf="updateForm.get('UpdateServingPeriod')?.errors?.['maxCharacters']" class="error-msg">
+            {{ 'Please limit your input to 100 characters' | translate }}
           </div>
         </div>
-
+      
         <div class="mb-3">
           <label for="duration" class="form-label custom-label mb-2">
             {{ 'Duration' | translate }} <span class="error-msg">*</span>
@@ -152,11 +160,9 @@
             <div *ngIf="updateForm.get('UpdateDuration')?.errors?.['pattern']">
               {{'Only letters, numbers, spaces, periods, commas, slashes, and hyphens are allowed' | translate}}
             </div>
-            <div *ngIf="updateForm.get('UpdateDuration')?.errors?.['maxlength']">{{'Maximum 100 characters are allowed'
-              | translate}}</div>
           </div>
         </div>
-
+      
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary " (click)="close(modal)">{{'Close' |
             translate}}</button>
@@ -175,7 +181,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary " (click)="closeDelete(modal)">{{'No'|translate}}</button>

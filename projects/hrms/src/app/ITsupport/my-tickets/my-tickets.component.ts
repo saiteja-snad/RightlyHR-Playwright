@@ -79,6 +79,7 @@ export class MyTicketsComponent {
     this.itSupportForm = this.fb.group({
       employee: ['', Validators.required],
       name: [null, Validators.required],
+      colleaguename: [''],
       email: [null, Validators.required],
       phoneNumber: [null, Validators.required], 
       deskdetails: ['', [Validators.required]],
@@ -244,6 +245,7 @@ export class MyTicketsComponent {
     if (this.allEmployees.length > 0) {
       this.itSupportForm.patchValue({
         name: this.allEmployeesself.find((employee) => employee.employeeId === event).fullName,
+        
         email: this.ticketEmpData.email,
         phoneNumber: this.ticketEmpData.mobile_number,
         deskdetails: this.ticketEmpData.deskId,
@@ -332,6 +334,10 @@ export class MyTicketsComponent {
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+
+  cleardata(){
+    this.modalService.dismissAll();
   }
 
   ngOnDestroy() {

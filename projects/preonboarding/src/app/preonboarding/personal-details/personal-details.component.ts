@@ -185,7 +185,7 @@ export class PersonalDetailsComponent implements OnInit {
   }
   enforceMaxLength(event: KeyboardEvent, maxLength: number): void {
     const input = event.target as HTMLInputElement;
-    const allowedKeys = ['Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
+    const allowedKeys = ['Backspace','Tab', 'ArrowLeft', 'ArrowRight', 'Delete'];
   
     if (
       input.value.length >= maxLength &&

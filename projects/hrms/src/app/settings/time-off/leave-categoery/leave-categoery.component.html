@@ -6,7 +6,7 @@
 
 
 
-    <div class="card shadow mt-4 table-card">
+    <div class="card shadow mt-4 table-card" *ngIf="rbac.allowedToAccess('Leave Category Tab.view')">
         <ul class="nav nav-tabs mb-2 border-bottom" id="pills-tab" role="tablist">
             <li class="nav-item today-nav-item" role="presentation">
                 <button class="nav-link today-nav-link active" id="pills-home-tab" data-bs-toggle="pill"

@@ -21,7 +21,7 @@ export class ManageWeekendsTabsComponent implements OnInit, OnDestroy {
   ) {}
 
   allNavLinks = [
-    { label: 'Pending for submission',route: '/settings/employee-fields/manage-weekends/pending-for-submission',count: 0 },
+    { label: 'Pending For Submission',route: '/settings/employee-fields/manage-weekends/pending-for-submission',count: 0 },
     { label: 'Published',route: '/settings/employee-fields/manage-weekends/published-weekends',count: 0 }
   ];
 
@@ -37,7 +37,7 @@ export class ManageWeekendsTabsComponent implements OnInit, OnDestroy {
 
         this.navLinks = this.allNavLinks
           .map(link => {
-            if (link.label === 'Pending for submission') {
+            if (link.label === 'Pending For Submission') {
               return { ...link, count: pendingCount };
             } else if (link.label === 'Published') {
               return { ...link, count: publishedCount };

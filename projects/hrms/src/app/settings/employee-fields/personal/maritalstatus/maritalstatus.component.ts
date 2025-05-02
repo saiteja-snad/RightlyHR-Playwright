@@ -41,38 +41,19 @@ export class MaritalstatusComponent {
     this.MaritalStatusForm = this.fb.group({
       MaritalStatus: ['', [
         Validators.required,
-        Validators.maxLength(50),
-        Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
+        this.formValidations.maxCharactersValidator(51)
       ]]
     });
     this.updateForm = this.fb.group({
       MaritalStatus: ['',[
         Validators.required,
-        Validators.maxLength(50),
-        Validators.pattern(/^[A-Za-z](?:[A-Za-z. ]*)$/) // letters, periods, spaces (not at start)
+        this.formValidations.maxCharactersValidator(51)
       ]]
     });
 
     this.getMaritialStatus();
   }
-  
 
-  allowOnlyLettersAndSpace(event: KeyboardEvent): void {
-    const input = event.target as HTMLInputElement;
-    const char = event.key;
-    const pattern = /^[A-Za-z ]$/;
-  
-    // Block if the key is not a letter or space
-    if (!pattern.test(char)) {
-      event.preventDefault();
-      return;
-    }
-  
-    // Block if length is already 50
-    if (input.value.length >= 50) {
-      event.preventDefault();
-    }
-  }
   getMaritialStatus() {
     this.http.getData('Maritalstatus').subscribe((data: any) => {
       this.MaritalStatusDetail = data;
@@ -88,12 +69,13 @@ export class MaritalstatusComponent {
     this.subscription = this.http.postdata('Maritalstatus', request).subscribe({
       next: () => {
         this.getMaritialStatus();
-        this.conformationPopup.openSuccessModal('Marital status added successfully');
+        this.conformationPopup.openSuccessModal('Marital Status added successfully');
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+        // this.resetForm();
       }
     });
   }
@@ -111,10 +93,11 @@ export class MaritalstatusComponent {
           this.getMaritialStatus();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Marital status updated successfully');
+          this.conformationPopup.openSuccessModal('Marital Status updated successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -124,12 +107,14 @@ export class MaritalstatusComponent {
     this.updateForm.reset();
   }
   openupdate(maritalStatus: any) {
+    this.resetForm();
     this.selectedId = maritalStatus.sno;
     this.updateForm.patchValue({ MaritalStatus: maritalStatus.maritalstatus1 });
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
   // DELETE
   opendelete(maritalStatus: any) {
+    this.resetForm();
     this.selectedDeletestatus = maritalStatus;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
@@ -146,10 +131,11 @@ export class MaritalstatusComponent {
       next: () => {
         this.getMaritialStatus();
         modal.close();
-        this.conformationPopup.openSuccessModal('Marital status deleted successfully');
+        this.conformationPopup.openSuccessModal('Marital Status deleted successfully');
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the location');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

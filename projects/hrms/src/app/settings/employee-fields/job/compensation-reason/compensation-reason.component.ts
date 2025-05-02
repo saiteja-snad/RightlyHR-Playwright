@@ -38,37 +38,15 @@ export class CompensationReasonComponent {
   }
   ngOnInit(): void {
     this.CompensationForm = this.fb.group({
-      Reason: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      Reason: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
     this.updateForm = this.fb.group({
-      UpdateReason: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$')]]
+      UpdateReason: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
 
     this.getReason();
   }
 
-  allowOnlyLettersAndSpace(event: any): void {
-    const input = event.target as HTMLInputElement;
-    const char = event.key;
-    const pattern = /^[A-Za-z ]$/;
-  
-    // Block if the key is not a letter or space
-    if (!pattern.test(char)) {
-      event.preventDefault();
-      return;
-    }
-  
-    // Block space at the beginning
-    if (input.selectionStart === 0 && char === ' ') {
-      event.preventDefault();
-      return;
-    }
-  
-    // Block if length is already 100
-    if (input.value.length >= 100) {
-      event.preventDefault();
-    }
-  }
   
   getReason() {
     this.http.getData('CompensationReason').subscribe((data: any) => {
@@ -85,12 +63,13 @@ export class CompensationReasonComponent {
     this.subscription = this.http.postdata('CompensationReason', request).subscribe({
       next: () => {
         this.getReason();
-        this.conformationPopup.openSuccessModal('Compensation reason added successfully');
+        this.conformationPopup.openSuccessModal('Compensation Reason added successfully');
         this.resetForm();
       },
       error: (error: any) => {
-        this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
+        const errorMessage = error.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
+        // this.resetForm();
       }
     });
   }
@@ -108,10 +87,11 @@ export class CompensationReasonComponent {
           this.getReason();
           modal.close();
           this.updateForm.reset();
-          this.conformationPopup.openSuccessModal('Compensation reason updated successfully');
+          this.conformationPopup.openSuccessModal('Compensation Reason updated successfully');
         },
         error: (err: any) => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          const errorMessage = err.error?.Message;
+          this.conformationPopup.openErrorModal(errorMessage);
         }
       });
     }
@@ -127,12 +107,6 @@ export class CompensationReasonComponent {
     this.modalService.open(this.updatepopup, { backdrop: 'static', centered: true });
   }
 
-  enforceMaxLength(event: any) {
-    const maxLength = 100;
-    if (event.target.value.length > maxLength) {
-      event.target.value = event.target.value.slice(0, maxLength); // Truncate to the max length
-    }
-  }
   // DELETE
   opendelete(reasonList: any) {
     this.selectedDeletereason = reasonList;
@@ -151,10 +125,11 @@ export class CompensationReasonComponent {
       next: () => {
         this.getReason();
         modal.close();
-        this.conformationPopup.openSuccessModal('Compensation reason deleted successfully');
+        this.conformationPopup.openSuccessModal('Compensation Reason deleted successfully');
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal('Failed to delete the location');
+        const errorMessage = err.error?.Message;
+        this.conformationPopup.openErrorModal(errorMessage);
       }
     });
   }

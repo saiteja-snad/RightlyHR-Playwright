@@ -1,24 +1,26 @@
-import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
-import { FormsModule, NgForm} from '@angular/forms';
+import { Component, ViewChild } from '@angular/core';
+import { FormsModule, NgForm } from '@angular/forms';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import moment from 'moment';
 import { HttpService } from '../../../services/http.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { IFormDetails, ISection } from './assessmentform';
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../../services/rbac.service';
-
+import { OpenModalService } from '../../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-assessmentform',
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule, TranslateModule],
   templateUrl: './assessmentform.component.html',
   styleUrl: './assessmentform.component.scss'
 })
+
 export class AssessmentformComponent {
   subscription!: Subscription;
   dynamicformSubmit = {} as IFormDetails;
@@ -40,22 +42,27 @@ export class AssessmentformComponent {
   displayTextArea = true;
   indexspace = 25;
   loggedindata = {} as any;
-  @ViewChild('successhide') private readonly successhide!: NgbModal;
-  @ViewChild('errorhide') private readonly errorhide!: NgbModal;
-  @ViewChild('loaderpopup') loaderpopup!: ElementRef;
-  @ViewChild('successpopup') successpopup!: ElementRef;
-  @ViewChild('formsavepopup') formsavepopup!: ElementRef;
+  jsonData = {} as any;
+  discontinue: boolean = false;
+  extend: boolean = false;
+  approve: boolean = false;
+  buttondisable: boolean = false;
+  formFile = {} as any;
+  probationExtensiondays = [] as any;
+  probationExtensionDuration!: number;
+  overallRatingcount: number = 0;
+  sectionRatings: { [key: number]: number } = {}; // Object to hold ratings for each section
+  @ViewChild('formsavepopup') formsavepopup!: any;
+  @ViewChild('cancelmodal') cancelmodal!: any;
   Status: any;
 
   constructor(
-    private renderer: Renderer2, 
-    private elRef: ElementRef, 
-    private router: Router, 
+    private router: Router,
     private http: HttpService,
-    private route: ActivatedRoute, 
     private authService: AuthService,
-    config: NgbModalConfig, 
+    config: NgbModalConfig,
     private modalService: NgbModal,
+    private openModalService: OpenModalService,
     public rbac: RbacService,
   ) {
     config.backdrop = 'static';
@@ -68,10 +75,8 @@ export class AssessmentformComponent {
     let data = localStorage.getItem('formdata');
     if (data) {
       this.formemployeedetails = JSON.parse(data);
-      console.log(this.formemployeedetails?.entity?.employeeId);
       this.getFormDetails(this.formemployeedetails?.entity?.employeeId);
       this.selected_approve = this.formemployeedetails.entity;
-      console.log(this.formemployeedetails);
     }
   }
 
@@ -79,48 +84,26 @@ export class AssessmentformComponent {
     this.modalService.open(content, { centered: true })
   }
 
-  dataSuccessMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.successhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
-
-  dataFailureMsg(msg: string) {
-    this.Status = msg;
-    this.openmodel(this.errorhide);
-    setTimeout(() => {
-      this.modalService.dismissAll();
-    }, 2000);
-  }
-
   //function to get the probation extend days
-  probationExtensiondays = [] as any;
   getProbationExtendDaysconfig() {
     let moduleId = environment.SeparationrequestmoduleId;
-    this.subscription = this.http
-      .getData(`ProbationFlow/settingsconfigvalue/${moduleId}`)
-      .subscribe({
+    this.subscription = this.http.getData(`ProbationFlow/settingsconfigvalue/${moduleId}`).subscribe({
         next: (data: any) => {
-          console.log(data);
           this.probationExtensiondays = data;
         },
       });
   }
 
-  probationExtensionDuration!: number;
+
   getProbationExtendDays() {
     let extensionId = environment.ProbationExtensionId;
     this.subscription = this.http
       .getData(`ProbationFlow/settingsprobationconfiggetall`)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           let duration = data.find((ele: any) => {
             return ele.configValueId === extensionId;
           });
-          console.log(duration);
           this.probationExtensionDuration = duration.noOfDays;
         },
       });
@@ -140,7 +123,6 @@ export class AssessmentformComponent {
   functioncall() {
     this.subscription = this.http.communicationService.subscribe({
       next: (response: any) => {
-        console.log(response);
         this.getFormDetails(response);
       },
       error: (err: any) => {
@@ -183,8 +165,7 @@ export class AssessmentformComponent {
   }
 
   //function get selected question details
-  overallRatingcount: number = 0;
-  sectionRatings: { [key: number]: number } = {}; // Object to hold ratings for each section
+
   onCheckboxChange(
     questions: any,
     rating: string,
@@ -299,9 +280,9 @@ export class AssessmentformComponent {
           ele.data.meta = meta;
         }
       });
-      
+
     } else {
-      
+
       this.selected_questions.push({
         id: sectionId,
         data: {
@@ -311,19 +292,19 @@ export class AssessmentformComponent {
           sectionId: sectionId,
         },
       });
-      
+
     }
-    
+
   }
 
   onCheckboxChangefooter(questions: any, rating: string, optionId: number, section: any, sectionId: number, quetsionId: number, meta: any): void {
-    
+
     if (!this.sectionRatings[sectionId]) {
       this.sectionRatings[sectionId] = 0;
     }
     // Reset section rating for the current section
     this.sectionRatings[sectionId] = 0;
-    
+
     questions.forEach((optionsarray: any) => {
       optionsarray.options.forEach((element: any) => {
         if (element.optionId === optionId) {
@@ -368,7 +349,7 @@ export class AssessmentformComponent {
           ele.data.meta = meta;
         }
       });
-     
+
     } else {
       // questions.forEach((ele:any)=>{
       this.selected_questions.push({
@@ -449,26 +430,14 @@ export class AssessmentformComponent {
         }
       });
     }
-    //console.log(this.selected_questions);
   }
 
   textArea() {
     this.displayTextArea = false;
     this.indexspace = 3
-    this.modalService.open(this.formsavepopup,{centered:true});
+    this.modalService.open(this.formsavepopup, { centered: true });
   }
 
-  cancel() {
-    // this.displayTextArea = !this.displayTextArea;
-    this.indexspace = 25;
-    this.closeSave()
-  }
-
-  closeSave() {
-    this.modalService.dismissAll();
-  }
-
-  formFile = {} as any;
   FormDownload() {
     localStorage.setItem('assessmentform', 'true');
     const pdfContent = document.getElementById('content');
@@ -511,7 +480,7 @@ export class AssessmentformComponent {
     }
     this.displayTextArea = !this.displayTextArea;
     this.indexspace = 25
-   
+
   }
 
   //to store file to the azure and return to the url
@@ -520,7 +489,7 @@ export class AssessmentformComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file).subscribe({
       next: (data: any) => {
         if (data) {
-          
+
           console.log(data);
         }
       },
@@ -535,7 +504,8 @@ export class AssessmentformComponent {
   postProbationDetails() { }
 
   close() {
-    this.router.navigate(['/timeoffleaves/probation-approvals']);
+    this.closeModal()
+    this.router.navigate(['/time-off/pending-approvals/probation-request']);
   }
 
   reset() {
@@ -547,11 +517,7 @@ export class AssessmentformComponent {
     this.approve = false;
   }
 
-  showloader() {
-    this.modalService.open(this.loaderpopup, { centered: true });
-  }
-
-  closeLoader() {
+  closeModal() {
     this.modalService.dismissAll();
   }
 
@@ -560,30 +526,13 @@ export class AssessmentformComponent {
     this.modalService.open(content, { centered: true })
   }
 
-  showsuccess() {
-    this.modalService.open(this.successpopup, { centered: true })
-  }
-
   closeSuccess() {
     this.modalService.dismissAll();
   }
 
-  openformApproval() {
-    const modalElement = document.getElementById('formapprovals');
-    const overlay = document.createElement('div');
-    if (modalElement) {
-      modalElement.classList.add('show');
-      modalElement.style.display = 'block';
-      document.body.classList.add('modal-open');
-      overlay.className = 'modal-backdrop fade show';
-      document.body.appendChild(overlay);
-    }
-  }
-
   //function to submit the formdata
-  formSubmit() {
-    this.closeSave()
-    this.showloader();
+  formSubmit(content: any) {
+    this.modalService.dismissAll();
     let loginuserdata = this.authService.getToken();
     this.jsonData = JSON.stringify({
       Overallrating: this.overallRatingcount,
@@ -606,25 +555,17 @@ export class AssessmentformComponent {
     };
     this.subscription = this.http.postdata(`ProbationFlow/postOrUpdateFormResponse`, payload).subscribe({
       next: (data: any) => {
-        console.log(data);
         if (data) {
           this.responseId = data.responseId;
           this.FormDownload();
-          this.closeLoader();
-          this.showsuccess();
+          this.closeModal();
+          this.modalService.open(content, { centered: true })
         }
       },
     });
   }
 
-  click() {
-    const modalElement = document.getElementById('savesuccess');
-    if (modalElement) {
-    }
-  }
 
-  //function to send approved status and comments
-  jsonData = {} as any;
   handleAccept(f: NgForm) {
     this.isSubmitted = false;
     if (this.selected_approve.requestSelectedType == 'Approve') {
@@ -675,14 +616,14 @@ export class AssessmentformComponent {
       )
       .subscribe({
         next: (respone: any) => {
-          this.dataSuccessMsg('Probation Request Submitted Successfully');
+          this.openModalService.openSuccessModal('Probation Request Submitted Successfully');
           setTimeout(() => {
             this.modalService.dismissAll();
-            this.router.navigate(['/timeoffleaves/probation-approvals']);
+            this.router.navigate(['/time-off/pending-approvals/probation-request']);
           }, 2000);
         },
         error: (reason: any) => {
-          this.dataFailureMsg(reason.error.message)
+          this.openModalService.openErrorModal(reason.error.message);
 
         },
         complete: () => {
@@ -738,11 +679,12 @@ export class AssessmentformComponent {
       )
       .subscribe({
         next: (respone: any) => {
-          this.dataSuccessMsg('Probation Request Processed Successfully');
+          this.openModalService.openSuccessModal('Probation Request Processed Successfully');
 
         },
         error: (reason: any) => {
-          this.dataFailureMsg(reason.error.message)
+          // this.dataFailureMsg(reason.error.message)
+          this.openModalService.openErrorModal(reason.error.message);
 
         },
         complete: () => {
@@ -794,9 +736,6 @@ export class AssessmentformComponent {
                 })),
               })),
             }));
-          //  response.sectionDetails.filter((ele: any) => {
-          //   return ele.sectionName === 'Overall Rating' ;
-          // });
           this.dynamicFormHeader.forEach((ele: any) => {
             ele.questions.forEach((question: any) => {
               if (question.options.length > 0) {
@@ -810,7 +749,6 @@ export class AssessmentformComponent {
                     question.quetsionId,
                     question.meta
                   );
-                  // onCheckboxChange(section.questions, options.optionWeightage,options.optionId,dynamicFormQuestions,section.id,questions.id,options.meta)
                 });
               } else {
                 this.defaultaddingforvalues(
@@ -832,10 +770,6 @@ export class AssessmentformComponent {
       });
   }
 
-  discontinue: boolean = false;
-  extend: boolean = false;
-  approve: boolean = false;
-  buttondisable: boolean = false;
   // Function to handle toggling Early Relieving option
   toggleApprove() {
     if (!this.approve) {
@@ -848,7 +782,6 @@ export class AssessmentformComponent {
       this.clearExtendData();
       this.clearDiscontinueData();
     }
-    
   }
 
   // Function to handle toggling Extend option

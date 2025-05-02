@@ -68,22 +68,33 @@ export class UpdateExperienceDetailsComponent {
       previousContactEmail: [this.experienceData?.previousContactEmail || null, [Validators.email]],
       attachment: [this.experienceData?.attachment || null, Validators.required]
     });
-    // Disable toDate if isPresent is true
-    if (this.experienceData?.isPresent) {
-      this.isDisabletoDate = true;
-      this.experienceForm.get('toDate')?.disable();
-    }
-    this.experienceForm.get('isPresent')?.valueChanges.subscribe((isPresent) => {
-      this.isDisabletoDate = isPresent;
-      if (isPresent) {
+      this.isDisabletoDate = this.experienceData?.isPresent;
+      console.log(this.isDisabletoDate);
+      if (this.experienceData?.isPresent) {
         this.experienceForm.get('toDate')?.setValue(null);
         this.experienceForm.get('toDate')?.disable();
       } else {
+        this.isDisabletoDate = false;
         this.experienceForm.get('toDate')?.enable();
+        this.experienceForm.get('toDate')?.setValidators(Validators.required);
       }
-    });
+    
   }
+  checkboxCondition(event: any) {
+    if (event.target.checked) {
+      this.isDisabletoDate=false;
+      this.experienceForm.get('toDate')?.disable();
+      this.experienceForm.get('toDate')?.clearValidators();
+      this.experienceForm.get('toDate')?.setValue(null);
+      this.experienceForm.get('toDate')?.updateValueAndValidity();
+    } else {
+      this.isDisabletoDate=true;
+      this.experienceForm.get('toDate')?.enable();
+      this.experienceForm.get('toDate')?.setValidators(Validators.required);
+      this.experienceForm.get('toDate')?.updateValueAndValidity();
+    }
 
+  }
   //function to formate the data
   formatDate(date: Date): string {
     return moment(date).format('YYYY-MM-DD');

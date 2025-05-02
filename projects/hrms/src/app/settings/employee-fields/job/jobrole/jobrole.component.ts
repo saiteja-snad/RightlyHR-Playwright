@@ -45,12 +45,12 @@ export class JobroleComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      Addjobrole: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(100)]],
+      Addjobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
       gradeId: ['', Validators.required],
     });
 
     this.updateForm = this.fb.group({
-      Updatejobrole: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(100)]],
+      Updatejobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
       updategradeId: ['', Validators.required],
     });
     this.getgradeid();

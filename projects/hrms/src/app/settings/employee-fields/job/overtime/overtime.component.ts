@@ -39,10 +39,10 @@ export class OvertimeComponent implements OnInit,OnDestroy {
   }
   ngOnInit(): void {
     this.OvertimeForm = this.fb.group({
-      overtime: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      overtime: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
     this.updateForm = this.fb.group({
-      overtime: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z ]*$'), Validators.maxLength(50)]]
+      overtime: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
     });
 
     this.getovertime();
@@ -67,9 +67,9 @@ export class OvertimeComponent implements OnInit,OnDestroy {
          this.resetForm();
       },
       error: (error: any) => {
-        const errorMessage = error.error?.message;
+        const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-         this.resetForm();
+        //  this.resetForm();
       }
     });
   }
@@ -90,7 +90,7 @@ export class OvertimeComponent implements OnInit,OnDestroy {
             this.conformationPopup.openSuccessModal('Overtime Eligibility updated successfully');
           },
           error: (err: any) => {
-            const errorMessage = err.error?.message;
+            const errorMessage = err.error?.Message;
             this.conformationPopup.openErrorModal(errorMessage);
           }
         });
@@ -128,7 +128,7 @@ export class OvertimeComponent implements OnInit,OnDestroy {
             this.conformationPopup.openSuccessModal('Overtime Eligibility deleted successfully');
           },
           error: (err: any) => {
-            const errorMessage = err.error?.message;
+            const errorMessage = err.error?.Message;
             this.conformationPopup.openErrorModal(errorMessage);
           }
         });

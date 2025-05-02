@@ -94,8 +94,10 @@
                 <div class="d-flex flex-wrap gap-3">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="probationConfirmationForm.invalid || spinnerLoader">
                         <ng-container *ngIf="spinnerLoader; else addText">
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading..' | translate}}...</span>
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span>{{'Loading...'}}</span>
+                            </div>
                         </ng-container>
                         <ng-template #addText>
                             <span>{{'Generate Document' | translate}}</span>
@@ -105,8 +107,12 @@
                     <button type="button" class="custom-btn btn-primary" (click)="probationConfirmationemail()"
                         [disabled]="!enableBtn || releaseLoader">
                         <ng-container *ngIf="releaseLoader; else releaseText">
-                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading..' | translate}}...</span>
+                            <div class="button-loader-content">
+                                <div class="button-loader-content">
+                                    <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                    <span>{{'Loading...'}}</span>
+                                </div>
+                            </div>
                         </ng-container>
                         <ng-template #releaseText>
                             <span>{{'Release Letter' | translate}}</span>

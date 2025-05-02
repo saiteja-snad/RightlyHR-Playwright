@@ -4,16 +4,19 @@
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter visa type"
-                    formControlName="Visatype" aria-label="visa" aria-describedby="visa" maxlength="50">
+                    formControlName="Visatype" aria-label="visa" aria-describedby="visa" maxlength="51"
+                    (keydown)="formValidations.restrictInputAllowSpecialChars($event)">
                 <span class="input-group-text" id="visa">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="VisaForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="VisaForm.get('Visatype')?.touched && VisaForm.get('Visatype')?.invalid" class="error-msg">
-                <div *ngIf="VisaForm.get('Visatype')?.errors?.['required']">{{'Visa Type is required'|translate}}</div>
+                <div *ngIf="VisaForm.get('Visatype')?.errors?.['required']">
+                    {{ 'Visa Type is required' | translate }}
+                </div>
             </div>
-            <div *ngIf="VisaForm.get('Visatype')?.errors?.['pattern']" class="error-msg">
-                {{ 'Spaces at start and special character are not allowed' | translate }}
+            <div *ngIf="VisaForm.get('Visatype')?.errors?.['maxCharacters']" class="error-msg">
+                {{ 'Please limit your input to 50 characters' | translate }}
             </div>
         </div>
     </form>
@@ -70,13 +73,16 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Visa Type'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Visatype"
-                        placeholder="Please enter visa type" maxlength="50">
-                    <div *ngIf="updateForm.get('Visatype')?.touched && updateForm.get('Visatype')?.invalid" class="error-msg">
-                        <div *ngIf="updateForm.get('Visatype')?.errors?.['required']">{{'Visa Type is required'|translate}}</div>
-                    </div>
-                    <div *ngIf="updateForm.get('Visatype')?.errors?.['pattern']" class="error-msg">
-                        {{ 'Spaces at start and special character are not allowed' | translate }}
-                    </div>
+                        placeholder="Please enter visa type" maxlength="51"
+                        (keydown)="formValidations.restrictInput($event)">
+                        <div *ngIf="updateForm.get('Visatype')?.touched && updateForm.get('Visatype')?.invalid" class="error-msg">
+                            <div *ngIf="updateForm.get('Visatype')?.errors?.['required']">
+                                {{ 'Visa Type is required' | translate }}
+                            </div>
+                        </div>
+                        <div *ngIf="updateForm.get('Visatype')?.errors?.['maxCharacters']" class="error-msg">
+                            {{ 'Please limit your input to 50 characters' | translate }}
+                        </div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
@@ -92,7 +98,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

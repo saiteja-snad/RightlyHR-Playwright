@@ -7,20 +7,22 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { Subscription } from 'rxjs';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
 import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
+import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
 
 @Component({
   selector: 'app-await-on-user-tickets',
-  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, TranslateModule, ReactiveFormsModule],
+  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe],
   templateUrl: './await-on-user-tickets.component.html',
   styleUrl: './await-on-user-tickets.component.scss'
 })
 export class AwaitOnUserTicketsComponent {
 
   subscription!: Subscription;
+  searchValue !:string; 
   empinfo = {} as Ipersonal;
   tickets= [] as Ticket[];
   isLoading: boolean = false;

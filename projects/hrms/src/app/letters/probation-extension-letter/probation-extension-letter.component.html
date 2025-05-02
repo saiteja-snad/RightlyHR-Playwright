@@ -28,7 +28,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="issuedDate" placeholder="Please enter Date" 
-                        (change)="pathValuesFuction()"  (keydown)="preventTyping($event)"/>
+                        (change)="pathValuesFuction()" [min]="todayDate" (keydown)="preventTyping($event)"/>
                     <div *ngIf="probationExtensionForm.get('issuedDate')?.invalid && probationExtensionForm.get('issuedDate')?.touched">
                         <div class="error-msg">Issued Date is required</div>
                     </div>

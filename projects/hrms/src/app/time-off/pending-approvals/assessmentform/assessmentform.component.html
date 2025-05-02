@@ -251,12 +251,26 @@
       </div>
 
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary" (click)="reset();modal.dismiss()">
+        <button type="reset" class="custom-btn btn-secondary" (click)="reset(confirmpopup);modal.dismiss()">
           {{'Close' | translate}}</button>
         <button type="submit" class="custom-btn btn-primary"
           [disabled]="acceptForm.invalid || issubmitdiable || !buttondisable">
           {{'Submit' | translate}}</button>
       </div>
     </form>
+  </div>
+</ng-template>
+
+<ng-template #confirmpopup let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to close?' | translate}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="closeModal()">{{'No' | translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="closeModal()">
+        {{'Yes' | translate}}</button>
+    </div>
   </div>
 </ng-template>

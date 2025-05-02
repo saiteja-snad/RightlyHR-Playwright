@@ -7,10 +7,12 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { Subscription } from 'rxjs';
 import { RouterModule } from '@angular/router';
 import { Ticket } from '../../Interfaces/hierachy.modal';
+import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-rejected-tickets',
-  imports: [CommonModule,RouterModule,NoDataFoundComponent],
+  imports: [CommonModule, RouterModule, NoDataFoundComponent,FormsModule,ItsupportPipe],
   templateUrl: './rejected-tickets.component.html',
   styleUrl: './rejected-tickets.component.scss'
 })
@@ -18,6 +20,7 @@ export class RejectedTicketsComponent {
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
   tickets=[] as Ticket[];
+  searchValue!:string;
 
 
   constructor(

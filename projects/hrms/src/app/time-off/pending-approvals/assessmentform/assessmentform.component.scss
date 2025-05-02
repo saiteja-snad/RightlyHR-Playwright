@@ -13,3 +13,7 @@
 input[type="checkbox"]:checked {
   accent-color: var(--primary-color) !important;
 }
+
+.max-width {
+  width: max-content;
+}

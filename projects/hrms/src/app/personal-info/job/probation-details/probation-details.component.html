@@ -13,7 +13,7 @@
                     <th>probation extended date</th>
                     <th>approved status</th>
                     <th>status</th>
-                    <th class="text-center">ACTIONS</th>
+                    <th class="text-center">Action(s)</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,7 +78,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Approver History Details</p>
+                <p class="popup-heading mb-0">Approver History</p>
             </div>
             <div>
                 <a (click)="closeModel()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -102,10 +102,10 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let comment of appcomment">
-                            <td>{{comment.approverRole ? comment.approverRole : 'NA'}}</td>
-                            <td>{{comment.metadata.Overallrating | number : '1.2-2' }}</td>
+                            <td>{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) : '-'}}</td>
+                            <td>{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating | number:'1.2-2') : '-'}}</td>
                             <td>{{comment.metadata.status ? comment.metadata.status : 'NA'}}</td>
-                            <td>{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | date) : 'NA'}}
+                            <td>{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) : 'NA'}}
                             </td>
                             <td>
                                 <div>
@@ -116,8 +116,8 @@
                                     <ng-template #popupcomments>{{'NA' | translate}}</ng-template>
                                 </div>
                             </td>
-                            <td>{{comment.addedDate ? (comment.addedDate | date) : 'NA'}}</td>
-                            <td>{{comment.addedName}}-{{comment.addedByFusionEmpId}}</td>
+                            <td>{{comment.addedDate ? (comment.addedDate | dateformat) : 'NA'}}</td>
+                            <td>{{comment.employeeName}} - {{comment.fusionEmployeeId}}</td>
                             <td>
                                 <a type="button" class="view-btn" (click)="openview(probationformpopup);
                                 setformView(this.empdata.employeeId,comment?.metadata?.responseId)">

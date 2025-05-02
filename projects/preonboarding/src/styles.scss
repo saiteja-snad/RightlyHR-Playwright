@@ -607,3 +607,8 @@ input[type="number"].no-arrows {
     color: #06274F;
     font-weight: 500;
 }
+
+.modal-image {
+    width: inherit !important;
+    max-height: 60vh;
+}

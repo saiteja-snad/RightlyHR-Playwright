@@ -188,6 +188,10 @@ export class ProbationExtensionLetterComponent {
         this.getProbationDetails = response.find((ele: any) => {
           return (ele.status?.toLowerCase() === 'extended');
         });
+
+        this.probationExtensionLetterData.probationExtendedDate = this.getProbationDetails.probationExtendedDate
+        this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(this.getProbationDetails.probationEndDate, this.getProbationDetails.probationExtendedDate)
+      
       }
     })
   }

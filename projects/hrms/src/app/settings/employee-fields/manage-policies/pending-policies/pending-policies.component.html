@@ -16,7 +16,7 @@
           <th>{{'Shift Name' | translate}}</th>
           <th>{{'Status' | translate}}</th>
           <th>{{'Added By' | translate}}</th>
-          <th *ngIf="rbac.allowedToAccess('Manage Policies Tab.update')">{{'Action(s)' | translate}}</th>
+          <th *ngIf="rbac.allowedToAccess('Manage Policies Tab.update')" class="text-center">{{'Action(s)' | translate}}</th>
         </tr>
       </thead>
 
@@ -27,20 +27,10 @@
           <td>{{item.applicableyear}}</td>
           <td>{{item.locationName}}</td>
           <td>{{item.subLocationName}}</td>
-          <td>
-            <div class="d-flex align-items-center gap-1">
-              <!-- <div>{{ item.orgPolicyItems.length }}</div> -->
-              <div [ngbPopover]="popContent" *ngIf="getPolicyNames(item) !== null">
-                <i class="bi bi-info-circle-fill cursor"></i>
-              </div>
-            </div>
-            <ng-template #popContent>
-              <div>{{ getPolicyNames(item) }}</div>
-            </ng-template>
-          </td>
+          <td>{{item.shiftName}} </td>
           <td>{{item.status}}</td>
           <td>{{item.addedbyName}}</td>
-          <td *ngIf="rbac.allowedToAccess('Manage Policies Tab.update')">
+          <td *ngIf="rbac.allowedToAccess('Manage Policies Tab.update')" class="text-center">
             <div class="dropdown">
               <span type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
@@ -49,7 +39,7 @@
                 <li>
                   <a *ngIf="item.status == 'Pending for submission'" class="dropdown-item cursor" data-bs-toggle="modal"
                     (click)="updateNavigation(item)">
-                    <i class="bi bi-pencil-fill px-2"></i>{{'Update' | translate}}
+                    <i class="bi bi-pencil-fill me-2"></i>{{'Update' | translate}}
                   </a>
                 </li>
               </ul>

@@ -77,7 +77,8 @@ export const permissionsData = [
     { fields: 'Applicant Screening', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Pms', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Pms-configuration', View: false, Update: false, Create: false, Delete: false },
-
+    { fields: 'Organizational Hierarchy', View: false, Update: false, Create: false, Delete: false },
+    
     // View Modules
     { fields: 'Invite New User', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Permissions', View: false, Update: false, Create: false, Delete: false },

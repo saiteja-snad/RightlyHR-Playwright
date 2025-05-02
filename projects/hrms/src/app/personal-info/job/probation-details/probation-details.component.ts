@@ -9,10 +9,11 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../../../../environments/environment';
 import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-probation-details',
   standalone: true,
-  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent],
+  imports: [CommonModule, DateformatPipe, NgbPopoverModule, ProbationformViewComponent, TranslateModule],
   templateUrl: './probation-details.component.html',
   styleUrl: './probation-details.component.scss'
 })
@@ -27,16 +28,15 @@ export class ProbationDetailsComponent implements OnInit {
   appcomment = {} as any;
   loggedinuser = {} as any;
 
-  constructor(private http: HttpService, private authService: AuthService, private openModalService:OpenModalService, private modalService:NgbModal) { }
+  constructor(private http: HttpService, private authService: AuthService, private openModalService: OpenModalService,
+     private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.loggedinuser = this.authService.getToken();
     this.getEmployeeId();
     this.getProbationRequest();
-    this.getProbationExtendDays()
-    console.log(this.probationProbationNotiperiodDuration);
-    
+    this.getProbationExtendDays();
   }
 
   getEmployeeId(): void {
@@ -64,16 +64,15 @@ export class ProbationDetailsComponent implements OnInit {
     const shouldShow = (this.isprobationEndDateComplete(probationEndDate));
     return shouldShow;
   }
+
   getProbationExtendDays() {
     const probationnoticeperiodId = environment.ProbationbuttonbeforeId;
     const probtimesextended = environment.ProbationExtendPeriodTimes
     this.subscription = this.http.getData(`ProbationFlow/settingsprobationconfiggetall`).subscribe({
       next: (data: any) => {
-        console.log(data);
         const duration = data.find((ele: any) => {
           return ele.configValueId === probationnoticeperiodId;
         })
-        console.log(duration);
         this.probationProbationNotiperiodDuration = duration.noOfDays;
         const probExtendTimes = data.find((ele: any) => {
           return ele.configValueId === probtimesextended;
@@ -82,13 +81,12 @@ export class ProbationDetailsComponent implements OnInit {
       }
     })
   }
+
   isprobationEndDateComplete(probationEndDate: string) {
-    console.log(probationEndDate);
     if (probationEndDate) {
       const endDate = new Date(probationEndDate);
       const buttonEnabledDate = new Date(endDate);
       buttonEnabledDate.setDate(endDate.getDate() - parseInt(this.probationProbationNotiperiodDuration));
-      console.log(buttonEnabledDate)
       const currentDate = new Date();
       const isComplete = currentDate >= buttonEnabledDate;
       return isComplete;
@@ -97,17 +95,20 @@ export class ProbationDetailsComponent implements OnInit {
   }
 
   requestForProbation(Value: any) {
+    this.openModalService.openLoaderModal('Requesting....');
     const employeeId = parseInt(this.empinfo.employeeId);
     const referenceId = Value.probationId;
     const raisedbyempId = this.loggedinuser.employeeId;
     this.http.postProbation(`ProbationFlow/raiseprobationrequest`, employeeId, referenceId, raisedbyempId).subscribe({
       next: (response: any) => {
-        
         this.getProbationRequest();
+        this.modalService.dismissAll();
         this.openModalService.openSuccessModal('Probation Request Raised Successfully');
       },
       error: (reason: any) => {
-        this.openModalService.openErrorModal(reason.error.Message);
+        console.log(reason);
+        
+        this.openModalService.openErrorModal(reason.error.message);
       }
     })
   }
@@ -139,33 +140,27 @@ export class ProbationDetailsComponent implements OnInit {
       }
     })
   }
+
   closeModel() {
-    const modalElement = document.getElementById('probationCommentsPopup');
-    if (modalElement) {
-      modalElement.classList.remove('show');
-      modalElement.style.display = 'none';
-    }
+    this.modalService.dismissAll();
   }
-  openview(content:any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+
+  openview(content: any) {
+    this.modalService.open(content, { size:'xl', centered: true, backdrop: 'static' });
   }
-  close(){
-    window.location.reload();
-  }
+
   setformView(employeeId: number, responseId: number) {
     this.http.communicationService.next({ employeeId, responseId });
   }
-  probationCommentsFunction(Value: any) {
-    
-    console.log(Value)
+
+  probationCommentsFunction(Value: any, content: any) {
+    this.modalService.open(content, { size:'xl', centered: true, backdrop: 'static' });
     this.appcomment = Value.map((ele: any) => {
-      // Parse the metaData and assign it to metadata property
       const parsedMetaData = JSON.parse(ele.metaData);
       return {
-        ...ele, // Copy other properties from ele
-        metadata: parsedMetaData // Assign parsed metaData to metadata property
+        ...ele,
+        metadata: parsedMetaData
       };
     });
-    // console.log(this.appcomment)
   }
 }

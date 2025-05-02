@@ -43,9 +43,9 @@ export class AddExperienceDetailtsComponent {
     hideCode: true,
   };
   mobileNumberData: IphoneNumberData | null = null;
-  showError: boolean = false;
-  showErrorr: boolean = false;
-
+  showError = false;
+  showErrorr = false;
+  required=true;
   constructor(private http: HttpService, private fb: FormBuilder, private modalService: NgbModal, private openPopup:PopupService, private getData:DataService) { }
 
   ngOnInit(): void {
@@ -78,7 +78,21 @@ export class AddExperienceDetailtsComponent {
       }
     });
   }
+  checkboxCondition(event: any) {
+    if (event.target.checked) {
+      this.required=false;
+      this.experienceForm.get('toDate')?.disable();
+      this.experienceForm.get('toDate')?.clearValidators();
+      this.experienceForm.get('toDate')?.setValue(null);
+      this.experienceForm.get('toDate')?.updateValueAndValidity();
+    } else {
+      this.required=true;
+      this.experienceForm.get('toDate')?.enable();
+      this.experienceForm.get('toDate')?.setValidators(Validators.required);
+      this.experienceForm.get('toDate')?.updateValueAndValidity();
+    }
 
+  }
   private renameFile(originalFile: File, newName: string) {
     return new File([originalFile], newName, {
       type: originalFile.type,

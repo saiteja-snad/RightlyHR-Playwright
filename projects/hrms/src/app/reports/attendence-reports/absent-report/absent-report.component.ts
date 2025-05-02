@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
-import { IAbsentReportRequest, IWfhReportRequest } from '../../../Interfaces/reports.model';
+import { IAbsentReportRequest } from '../../../Interfaces/reports.model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
@@ -16,6 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { SelectModule } from 'primeng/select';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-absent-report',
@@ -28,12 +29,14 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
     SelectModule,
     TranslateModule,
     ReactiveFormsModule,
-    NoDataFoundComponent
+    NoDataFoundComponent,
+    DataLoaderContentComponent
 ],
   templateUrl: './absent-report.component.html',
   styleUrl: './absent-report.component.scss'
 })
-export class AbsentReportComponent {
+
+export class AbsentReportComponent implements OnInit, OnDestroy{
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -54,6 +57,9 @@ export class AbsentReportComponent {
   selectedMonth: number | null = null;
   frequency: string = '';
   absentReportForm!: FormGroup;
+  spinnerLoader1 = false;
+  spinnerLoader2 = false;
+  disableBtn = false;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -66,6 +72,7 @@ export class AbsentReportComponent {
       dayjs().subtract(1, 'month').endOf('month'),
     ],
   };
+
   localeOptions: any = {
     applyLabel: 'ok',
     format: environment.dateformat.toUpperCase(),
@@ -92,12 +99,17 @@ export class AbsentReportComponent {
     { value: 12, name: 'December' }
   ];
 
+  frequencyOptions = [
+    { label: 'Month wise', value: 'month' },
+    { label: 'Date wise', value: 'date' }
+  ];  
+
   constructor(
     private authService: AuthService,
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
-  ) {}
+  ) { }
 
   getParsedEmployee(event: Event): any {
     const target = event.target as HTMLSelectElement;
@@ -106,20 +118,40 @@ export class AbsentReportComponent {
 
   ngOnInit(): void {
     this.loggedInUser = this.authService.getToken();
-    // this.getAbsentReports();
+    this.initializeForm();
     this.getEmployeeId();
     this.getTeam();
-    this.initializeForm();
   }
 
   initializeForm() {
     this.absentReportForm = this.fb.group({
       employee: [null, Validators.required],
       manager: [null],
-      frequency: [''],
+      frequency: [null],
       dateRange: [null],
       month: ['']
     });
+
+    this.absentReportForm.valueChanges.subscribe(() => {
+      this.disableBtn = true;
+    })
+
+    this.absentReportForm.get('frequency')?.valueChanges.subscribe(()=>{
+      this.absentReportForm.get('dateRange')?.reset();
+      this.absentReportForm.get('month')?.reset();
+    })
+  }
+
+
+  get isAbsentGenerateDisabled(): boolean {
+    const form = this.absentReportForm;
+    return !(
+      form.get('employee')?.value ||
+      form.get('manager')?.value ||
+      form.get('frequency')?.value ||
+      form.get('dateRange')?.value ||
+      form.get('month')?.value
+    );
   }
 
   getEmployeeId() {
@@ -129,19 +161,12 @@ export class AbsentReportComponent {
       .getData('Employeedata/ActiveEmployees')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-
-          console.log('from wfh' + this.employeeiddetails);
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${
-                employee.fusionEmployeeId
-                  ? employee.fusionEmployeeId + ' - '
-                  : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
             };
           });
           const filteredEmployees = employeedata.filter((element: any) => {
@@ -153,9 +178,7 @@ export class AbsentReportComponent {
             ...filteredEmployees
           ];
         },
-        error: (reason: any) => {
-          console.log(reason);
-        },
+        error: (reason: any) => { },
       });
   }
 
@@ -164,54 +187,27 @@ export class AbsentReportComponent {
       .getData('PendingApprovalsAuthority/getAll')
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           if (data) {
             this.teamdetails = data.map((employee: any) => {
               return {
                 ...employee,
-                fullName: `${
-                  employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${
-                  employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
+                fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                  }${employee.lastName}`,
               };
             });
           }
-          console.log('Team details' + this.teamdetails);
         },
         error: (reason: any) => {
           console.log(reason);
-          alert('Insertion of data is failed');
         },
       });
   }
 
-  // //method to get All the reports
-  // getAbsentReports() {
-  //   this.isLoading = true;
-  //   const request: IWfhReportRequest = {
-  //     // FusionEmpId: this.selectedEmployeeId,
-  //     // TeamManagerName: this.selectedWfhManager,
-  //     // StartDate: this.wfhDateRange?.startDate,
-  //     // EndDate: this.wfhDateRange?.endDate,
-  //     // Worked_Month: this.selectedMonth
-  //   };
-  //   this.subscription = this.reportsService.getAbsentReports(request).subscribe({
-  //     next: (res: any) => {
-  //       if (res) {
-  //         this.employeeMasterData = res;
-  //         // this.maxPageNumber = res.maxPageNumber;
-  //         this.isLoading = false;
-  //       }
-  //     },
-  //     error: (err: any) => {
-  //       console.log(err);
-  //     },
-  //     complete: () => {},
-  //   });
-  // }
-
   generateAbsentReport(): void {
+    this.spinnerLoader1 = true;
+    this.isLoading = true;
+
     const formValue = this.absentReportForm.value;
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
     const noFilterProvided =
@@ -220,19 +216,23 @@ export class AbsentReportComponent {
       (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
       !formValue.month &&
       !formValue.manager;
-  
+
     if (noFilterProvided) {
       this.filteredAbsentRecord = [];
+      this.spinnerLoader1 = false;
+      this.isLoading = false;
       return;
     }
-  
+
     const request: IAbsentReportRequest = {};
-    if (!isAllEmployeesSelected) {
-    // Employee
+    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
+      request.FusionEmpId = formValue.employee.fusionEmpId;
+    }
+
     if (formValue.employee?.fusionEmpId) {
       request.FusionEmpId = formValue.employee.fusionEmpId;
     }
-  
+
     // Date Range
     if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
       const startDate = this.formatDate(this.parseDate(formValue.dateRange.startDate));
@@ -240,49 +240,54 @@ export class AbsentReportComponent {
       request.StartDate = startDate;
       request.EndDate = endDate;
     }
-  
+
     // Month
     if (formValue.month) {
       request.Worked_Month = formValue.month;
     }
-  
+
     // Manager full name
     if (formValue.manager) {
       request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
         .filter(Boolean)
         .join(' ');
     }
-  }
     this.reportsService.getAbsentReports(request).subscribe({
       next: (response: any) => {
         this.filteredAbsentRecord = response ?? [];
       },
       error: (error) => {
-        console.error('Error fetching absent records', error);
+        this.spinnerLoader1 = false;
+        this.disableBtn = true;
+        this.isLoading = false;
         this.filteredAbsentRecord = [];
       },
-    });
-  }
-  
-  clearAllFilters(): void {
-    this.absentReportForm.reset({
-      employee: null,
-      manager: null,
-      frequency: '',
-      dateRange: null,
-      month: ''
+      complete: () => {
+        this.spinnerLoader1 = false;
+        this.disableBtn = false;
+        this.isLoading = false;
+      }
     });
   }
 
-  formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+  clearAllFilters(): void {
+    this.absentReportForm.reset();
   }
+
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`; // Format as 'YYYY-MM-DD'
+  }
+
   parseDate(date: any): Date {
     return date instanceof Date ? date : new Date(date);
   }
 
   exportToExcelAbsent(): void {
     // Define header mappings
+    this.spinnerLoader2 = true;
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -381,8 +386,8 @@ export class AbsentReportComponent {
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Absent Report');
     XLSX.writeFile(wb, 'Absent_Report.xlsx');
+    this.spinnerLoader2 = false;
   }
-
 
   getColumnWidth(data: any[], columnName: string): number {
     // Find the maximum width of data in the column

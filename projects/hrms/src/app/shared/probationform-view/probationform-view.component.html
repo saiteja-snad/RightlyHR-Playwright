@@ -1,59 +1,46 @@
-<div class="container-fluid info-container pt-3">
-    <div>
-        <div class="container-fluid border rounded-1 page-div" id="content">
-            <div class="text-center mt-4">
-                <b>{{dynamicFormDetails?.formName}}</b>
+<div class="custom-main-component-container">
+    <div class="assessment-form-content">
+        <div class="card assessment-form-card" id="content">
+            <div class="text-center pt-3 pb-5">
+                <b>{{dynamicFormDetails.formName}}</b>
             </div>
 
-            <div class="mt-4">
-                <div *ngFor="let item of dynamicFormHeader" class="row row-cols-2">
-                    <div *ngFor="let question of item.questions" class="col">
-                        <p class="m-0 mb-1">{{question.question}}
-                            <span *ngIf="question.question === 'Emp.ID:'">{{dynamicFormDetails.fusionEmployeeId}}</span>
-                            <span *ngIf="question.question === 'Emp.Name:'">{{dynamicFormDetails.employeeName}}</span>
-                            <span *ngIf="question.question === 'Designation:'">{{dynamicFormDetails.designation}}</span>
-                            <span *ngIf="question.question === 'Location:'">{{dynamicFormDetails.sublocation}},
-                                {{dynamicFormDetails.location}}</span>
-                            <span *ngIf="question.question === 'DOJ:'">{{dynamicFormDetails.dateOfJoining | dateformat
-                                }}</span>
-                            <span
-                                *ngIf="question.question === 'Department:'">{{dynamicFormDetails.departmentname}}</span>
-                            <span
-                                *ngIf="question.question === 'Reviewer ID:'">{{dynamicFormDetails.reviewerFusionEmployeeId}}</span>
-                            <span
-                                *ngIf="question.question === 'Reviewer Name:'">{{dynamicFormDetails.reviewerName}}</span>
-                            <span
-                                *ngIf="question.question === 'Reporting Manager Name:'">{{dynamicFormDetails.rmName}}</span>
-                            <span
-                                *ngIf="question.question === 'Team Manager Name:'">{{dynamicFormDetails.tmName}}</span>
-                        </p>
-                    </div>
-
+            <div *ngFor="let item of dynamicFormHeader" class="row row-cols-2 mx-4 mb-5">
+                <div *ngFor="let question of item.questions" class="col">
+                    <p class="text-start d-flex gap-1 mb-1"><b>{{question.question}}</b>
+                        <span *ngIf="question.question === 'Emp.ID:'">{{dynamicFormDetails.fusionEmployeeId}}</span>
+                        <span *ngIf="question.question === 'Emp.Name:'">{{dynamicFormDetails.employeeName}}</span>
+                        <span *ngIf="question.question === 'Designation:'">{{dynamicFormDetails.designation}}</span>
+                        <span *ngIf="question.question === 'Location:'">{{dynamicFormDetails.sublocation}},
+                            {{dynamicFormDetails.location}}</span>
+                        <span *ngIf="question.question === 'DOJ:'">{{dynamicFormDetails.dateOfJoining | dateformat
+                            }}</span>
+                        <span *ngIf="question.question === 'Department:'">{{dynamicFormDetails.departmentname}}</span>
+                        <span
+                            *ngIf="question.question === 'Reviewer ID:'">{{dynamicFormDetails.reviewerFusionEmployeeId}}</span>
+                        <span *ngIf="question.question === 'Reviewer Name:'">{{dynamicFormDetails.reviewerName}}</span>
+                        <span
+                            *ngIf="question.question === 'Reporting Manager Name:'">{{dynamicFormDetails.rmName}}</span>
+                        <span *ngIf="question.question === 'Team Manager Name:'">{{dynamicFormDetails.tmName}}</span>
+                    </p>
                 </div>
             </div>
 
             <form name="personal" #personal="ngForm">
-                <div class="document-header-div" *ngFor="let section of dynamicFormQuestions;let sectionIndex=index">
-
-                    <div class="mb-3 mt-2">
-                        <span class="job-header bold">{{section.sectionName}}</span>
-                    </div>
+                <div *ngFor="let section of dynamicFormQuestions;let sectionIndex=index">
+                    <div class="mb-2"><b>{{section.sectionName}}</b></div>
                     <div class="row mt-2">
                         <div class="col-md-8 col-lg-10"
                             *ngFor="let questions of section.questions let questionIndex=index">
-                            <div class="mb-6">
+                            <div class="mb-1">
                                 <label for="exampleFormControlInput1" class="form-label">{{questions.question}}</label>
                             </div>
                         </div>
                         <div>
-                            <!-- <div *ngIf="questions?.type=='checkbox';else another"> -->
-                            <!-- <div *ngFor="let options of questions?.optionsData; let optionIndex = index"> -->
-                            <div class="d-flex">
+                            <div class="d-flex align-items-center mb-2">
                                 <input type="checkbox" class="me-2" checked disabled>
                                 <span>{{section.questions ? section.questions[0].optionsData.option : ''}}</span>
-                                <!-- </div> -->
                             </div>
-                            <!-- </div> -->
                             <ng-template #another>
                                 <textarea type="text" class="form-control" id="EmployeeId" placeholder="EmployeeId"
                                     name="EmployeeId"></textarea>
@@ -64,36 +51,22 @@
                     <hr>
                 </div>
 
-                <div class="mt-4">
-                    <p class="bold">{{dynamicFormFooter[0]?.sectionName}}</p>
-                    <span *ngFor="let item of dynamicFormFooter[0]?.questions">
-                        <div>
-                            <div>
-                                <p>{{item.question}} </p>
-                            </div>
-                            <!-- <div>
-                      <span *ngIf="item.question=='Employee Signature:'" style="font-family: autographsignatureFont; font-size: xx-large;"> {{dynamicFormDetails.employeeName}}</span>
-                      <span *ngIf="item.question=='Reviewer Signature:'" style="font-family: autographsignatureFont; font-size: xx-large;"> {{dynamicFormDetails.reviewerName}}</span>
-                    </div> -->
-                            <!-- <div class="mb-3" *ngFor="let options of item.optionsData"> -->
-                            <span *ngIf="item.optionsData.meta">
-                                <textarea placeholder="Text area" class="form-control" rows="2" cols="40"
-                                    name="textarea" id="textarea" minlength="0" maxlength="250"
-                                    [(ngModel)]="item.optionsData.meta"></textarea>
-                                <!-- <p *ngIf="dynamicformSubmit.textarea">{{dynamicformSubmit.textarea?.length}}/250
-                                        </p> -->
-                            </span>
-                            <div *ngIf="item.optionsData.option && !item.optionsData.meta">
-                                <input type="checkbox" class="me-2" checked disabled>
-                                <span>{{item.optionsData.option}}</span>
-                            </div>
-
-                            <!-- </div> -->
-
+                <div>
+                    <p><b>{{dynamicFormFooter[0].sectionName}}</b></p>
+                    <div *ngFor="let item of dynamicFormFooter[0]?.questions">
+                        <p><b>{{item.question}}</b></p>
+                        <div *ngIf="item.optionsData.meta" class="mb-3">
+                            <textarea placeholder="Text area" class="form-control" rows="2" cols="40" name="textarea"
+                                id="textarea" minlength="0" maxlength="250"
+                                [(ngModel)]="item.optionsData.meta"></textarea>
                         </div>
-
-                    </span>
-                    <p>Over all rating: {{dynamicFormDetails?.metadata?.Overallrating |number : '1.2-2'}}</p>
+                        <div class="d-flex align-items-center"
+                            *ngIf="item.optionsData.option && !item.optionsData.meta">
+                            <input type="checkbox" class="me-2" checked disabled>
+                            <span>{{item.optionsData.option}}</span>
+                        </div>
+                    </div>
+                    <p>Over all rating: {{dynamicFormDetails.metadata.Overallrating |number : '1.2-2'}}</p>
                 </div>
             </form>
         </div>

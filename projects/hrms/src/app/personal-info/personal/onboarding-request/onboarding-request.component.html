@@ -37,7 +37,8 @@
                         </a>
                         }
                         @else {
-                        <a type="button" class="view-btn" (click)="onSelectDownload(data.documentUrl)"><i class="bi bi-download me-2"></i>Download</a>
+                        <a type="button" class="view-btn" (click)="onSelectDownload(data.documentUrl)">
+                            <i class="bi bi-download me-2"></i>Download</a>
                         }
                         }
                     </td>
@@ -50,13 +51,13 @@
                     <td>
                         <span *ngIf="!data.documentUrl; else approverejectbuttons"></span>
                         <ng-template #approverejectbuttons>
-                            <button class="custom-btn btn-primary-approve me-2" *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' && data.status=='Submitted'"
-                                (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,data.rejectedBy,data.reason,data.referenceNumber,data.referenceId);
-                                openModal(approveModal)">Approve
+                            <button class="custom-btn btn-primary-approve me-2" *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' 
+                            && data.status=='Submitted'"
+                                (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,data.rejectedBy,data.reason,
+                                data.referenceNumber,data.referenceId); openModal(approveModal)">Approve
                             </button>
-                            <button class="custom-btn btn-primary-reject" *ngIf="data.status !== 'Verified' && data.status !== 'Rejected'&& data.status=='Submitted' "
-                                (click)="submitRejectReason(data);openModal(rejectModal)">Reject
-                            </button>
+                            <button class="custom-btn btn-primary-reject" *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' 
+                            && data.status=='Submitted' " (click)="submitRejectReason(data);openModal(rejectModal)">Reject</button>
                         </ng-template>
                     </td>
                 </tr>
@@ -78,7 +79,7 @@
 <!-- View popup start -->
 <ng-template #viewmodel let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
+        <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{documentSelectFields.documentType }}</p>
             </div>
@@ -103,7 +104,7 @@
 <!-- View popup end -->
 <ng-template #rejectModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Reject Reason</p>
             </div>
@@ -111,7 +112,8 @@
                 <a (click)="closeModal(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+
+        <div class="custom-main-popup-content">
             <form [formGroup]="rejectDocument" (ngSubmit)="updaterejectdocs()">
                 <div class="mb-3">
                     <label for="rejectReason" class="form-label custom-label mb-2">Reject Reason<span
@@ -128,10 +130,10 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss()">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="rejectDocument.invalid">{{'Submit'|translate}}</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                        {{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rejectDocument.invalid">
+                        {{'Submit'|translate}}</button>
                 </div>
             </form>
         </div>
@@ -155,15 +157,15 @@
 
 <ng-template #request let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-4">
+        <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{'Re-Request Documents'|translate}}</p>
             </div>
             <div>
-                <a (click)="reload()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="reRequestForm.reset();modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-3">
+        <div class="custom-main-popup-content">
             <form [formGroup]="reRequestForm" (ngSubmit)="reRequestEmail(reRequestForm)" class="w-100">
                 <div class="mb-3">
                     <label for="comments" class="form-label custom-label mb-2"> {{'Comments'|translate}} <span
@@ -177,9 +179,9 @@
                         <div class="error-msg">{{'Comments are required'|translate}}</div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="reload()">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="!reRequestForm.valid">{{'Submit'|translate}}</button>
+                <div class="custom-modal-footer">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="reRequestForm.reset();modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="!reRequestForm.valid">{{'Submit'|translate}}</button>
                 </div>
             </form>
         </div>

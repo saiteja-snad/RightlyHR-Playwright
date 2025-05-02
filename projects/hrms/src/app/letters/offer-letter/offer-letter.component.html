@@ -218,7 +218,7 @@
       
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Salary (Cost to Company)<span class="error-msg">*</span></label>
-            <input type="text" class="form-control custom-input" formControlName="amount" placeholder="Please enter salary"
+            <input type="number" class="form-control custom-input" formControlName="amount" placeholder="Please enter salary"
               (ngModelChange)="onclickCTC($event)" />
             <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched" class="error-msg">
               Salary is required</div>
@@ -350,13 +350,23 @@
           </div>
       
           <div class="d-flex align-items-center flex-wrap gap-3 pt-4">
-            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading">{{buttonValue}}</button>
-            <button type="button" class="custom-btn btn-primary" [disabled]="employeeForm.invalid||loading||disableFieldsForApproval"
-              (click)="emailSendingforApprover()">Request
-              For Approval</button>
-            @if(loading){
-            <div class="spinner-border text-primary" role="status"></div>
-            }
+            <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || loading">
+              @if(loading){
+              <div class="button-loader-content">
+                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                <span>{{'Loading...'}}</span>
+              </div>
+              }@else { {{buttonValue}} }
+            </button>
+            <button type="button" class="custom-btn btn-primary"
+              [disabled]="employeeForm.invalid || loading || disableFieldsForApproval" (click)="emailSendingforApprover()">
+              @if(loading){
+              <div class="button-loader-content">
+                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                <span>{{'Loading...'}}</span>
+              </div>
+              }@else { Request For Approval }
+            </button>
           </div>
         </form>
       </div>
@@ -687,12 +697,12 @@
                   </ng-template>
                   <h5 class="text-center letter-header mb-3"><strong>ANNEXURE - 2</strong> </h5>
                   <h6 class="text-center letter-sub-header mb-3">STRICTLY PRIVATE & CONFIDENTIAL</h6>
-                  <div class="d-flex justify-content-between border-box mb-3">
-                    <div class="p-2">NAME</div>
-                    <div class="p-2">{{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
+                  <div class="row">
+                    <div class="p-2 border-box col-md-2">NAME</div>
+                    <div class="p-2 border-box col-md-4">{{prospectiveEmpData.firstName}} {{prospectiveEmpData.middleName}}
                       {{prospectiveEmpData.lastName}}</div>
-                    <div class="p-2">Designation</div>
-                    <div class="p-2">{{prospectiveEmpData?.jobRole}}</div>
+                    <div class="p-2 border-box col-md-2">Designation</div>
+                    <div class="p-2 border-box col-md-4">{{prospectiveEmpData?.jobRole}}</div>
                   </div>
                   <p class="text-center letter-sub-header my-3">Compensation Details <span class="boldnone">(All figures in
                       Rs.)</span></p>
@@ -865,8 +875,8 @@
                     right in its sole discretion to amend, change, suspend, or terminate the Performance Award Program at
                     any time.
                   </p>
-                  <p class="mb-1">Additional Details Related to Salary Structure: </p>
-                  <ol class="list-style-none">
+                  <p class="mb-0">Additional Details Related to Salary Structure: </p>
+                  <ol class="list-style-none mb-0">
                     <li class="mb-1"><span>a)</span> TDS will be deducted from the Gross Salary after statutory deductions.</li>
                     <li class="mb-1"><span>b)</span> Employees are responsible for their Tax Planning.</li>
                     <li class="mb-1"><span>c)</span> Employees may avail tax benefit by submitting bills against Leave Travel Allowance.</li>
@@ -900,12 +910,13 @@
 <!-- offerletter generation popup -->
 <ng-template #approveModal let-modal>
   <div class="result-popup-content" ngbAutofocus>
-    <img src="icons\conformation.png" alt="failure icon" class="confirmation-icon">
-    <p class="confirmation-text">{{this.confirmation_Msg ?? ''}} </p>
-    <div class="d-flex justify-content-center gap-3 mt-4">
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{this.confirmation_Msg ?? ''}}</p>
+    </div>
+    <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-      <button type="button" class="custom-btn btn-primary" data-bs-dismiss="modal" aria-label="Close"
-        (click)="confimationfuction('yes')">{{'Yes'|translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confimationfuction('yes')">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>
@@ -913,11 +924,13 @@
 <!-- offerletter generation popup 2 -->
 <ng-template #approveModal1 let-modal>
   <div class="result-popup-content" ngbAutofocus>
-    <img src="icons\conformation.png" alt="failure icon" class="confirmation-icon">
-    <p class="confirmation-text">{{this.confirmation_Msg ?? ''}} </p>
-    <div class="d-flex justify-content-center gap-3 mt-4">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();this.loading=false">{{'No'|translate}}</button>
-      <button type="button" class="custom-btn btn-primary" (click)="confimationfuction1('yes')">{{'Yes'|translate}}</button>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{this.confirmation_Msg ?? ''}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss(); this.loading=false">{{'No'|translate}}</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="confimationfuction1('yes')">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>

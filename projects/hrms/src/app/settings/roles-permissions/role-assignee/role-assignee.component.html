@@ -20,12 +20,8 @@
                         <p-select formControlName="selected_user" [options]="usersList" name="user" id="user"
                             optionLabel="fullName" placeholder="Search User" class="w-100" [filter]="true" filterBy="fullName"
                             [showClear]="true">
-                            <ng-template let-selectedOption #selectedItem>
-                                {{ selectedOption.firstName }} {{ selectedOption.middleName }} {{ selectedOption.lastName }}
-                            </ng-template>
-                            <ng-template let-user #item>
-                                {{ user.firstName }} {{ user.middleName }} {{ user.lastName }}
-                            </ng-template>
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                            <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                         </p-select>
                         <!-- <p-multiSelect formControlName="selected_user" [options]="usersList" name="user" id="user"
                             optionLabel="fullName" placeholder="Search User" field="selectedUser" class="w-100"

@@ -26,7 +26,18 @@
                 <ng-container *ngIf="(tickets | itsupport: searchValue) as filteredTickets">
                 <tr *ngFor="let ticket of filteredTickets">
                     <td>{{ticket.id}}</td>
-                    <td>{{ticket.priority || '-'}}</td>
+                    <td>
+                        <ul class="mb-0">
+                            <li [ngClass]="{
+                                    'text-danger fw-bold': ticket.priority === 'High',
+                                    'text-warning fw-bold': ticket.priority === 'Normal',
+                                    'text-success fw-bold': ticket.priority === 'Low',
+                                    'text-red fw-bold': ticket.priority === 'Urgent'
+                                }">
+                                {{ticket.priority || '-'}}
+                            </li>
+                        </ul>
+                    </td>
                     <td>{{ticket.subject || '-'}}</td>
                     <td>{{ticket.employeeName || '-'}}</td>
                     <td>{{ticket.createdAt | date}} </td>

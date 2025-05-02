@@ -53,7 +53,6 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.permissionsType = (data as IPermissionType[])?.sort((a, b) => a.id - b.id);
           this.dataLoad = false;
         },
@@ -87,10 +86,8 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     if (form.invalid) {
       return;
     }
-
     const now = new Date();
     const formattedDate = now.toISOString().replace(/(\.\d{3})\d+Z$/, '$1');
-
     const payload: any = {
       id: this.selectedPermission.id,
       name: this.permissionUpdateForm.value.name,
@@ -112,7 +109,6 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
           );
         },
         error: (err) => {
-          // this.permissionsForm.reset();
           this.sharedModalService.openErrorModal(err.error.message);
         },
         complete: () => {
@@ -145,7 +141,7 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     }
   }
 
-  deletePermission() {
+  deleteRegularization() {
     this.http.deleteData(`PermissionTypes/${this.selectedPermission.id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();

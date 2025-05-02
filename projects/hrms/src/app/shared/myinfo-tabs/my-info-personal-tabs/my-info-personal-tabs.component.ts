@@ -15,14 +15,13 @@ export class MyInfoPersonalTabsComponent implements OnInit {
 
   navTabs: any[] = [
     { label: 'Basic Information', link: '/myinfo/personal/basic-info', permission: { feature: 'Basic Information', action: 'view' } },
-    { label: 'Address', link: '/myinfo/personal/address-info',permission: { feature: 'Current Address', action: 'view' } },
-    { label: 'Contact', link: '/myinfo/personal/contact-details',permission: { feature: 'Contact Details', action: 'view' } },
-    { label: 'Education', link: '/myinfo/personal/education-details',permission: { feature: 'Education', action: 'view' } },
-    { label: 'Identity', link: '/myinfo/personal/identity-details',permission: { feature: 'Identity', action: 'view' } },
-    { label: 'Family', link: '/myinfo/personal/family-details',permission: { feature: 'Family Details', action: 'view' } },
-    { label: 'Emergency Contact', link: '/myinfo/personal/emergency-contact-details',permission: { feature: 'Emergency Contact Details', action: 'view' } },
-  
-    { label: 'Bank', link: '/myinfo/personal/bank-details',permission: { feature: 'Bank Details', action: 'view' } }
+    { label: 'Address Details', link: '/myinfo/personal/address-info',permission: { feature: 'Current Address', action: 'view' } },
+    { label: 'Contact Details', link: '/myinfo/personal/contact-details',permission: { feature: 'Contact Details', action: 'view' } },
+    { label: 'Emergency Contact Details', link: '/myinfo/personal/emergency-contact-details',permission: { feature: 'Emergency Contact Details', action: 'view' } },
+    { label: 'Education Details', link: '/myinfo/personal/education-details',permission: { feature: 'Education', action: 'view' } },
+    { label: 'Identity Details', link: '/myinfo/personal/identity-details',permission: { feature: 'Identity', action: 'view' } },
+    { label: 'Family Details', link: '/myinfo/personal/family-details',permission: { feature: 'Family Details', action: 'view' } },
+    { label: 'Bank Details', link: '/myinfo/personal/bank-details',permission: { feature: 'Bank Details', action: 'view' } }
   ];
 
   constructor(public rbac: RbacService) { }

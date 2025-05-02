@@ -38,6 +38,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   titledetails: ITitle[] = [];
   Maritaldetails: IMarital[] = [];
   buttons = false
+  changeingdob:any
   constructor(private modalService: NgbModal, private cdr: ChangeDetectorRef, private fb: FormBuilder, public formValidation: FormValidationService,
     private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService) { }
 
@@ -57,6 +58,11 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.basicInfoForm.get('gender')?.valueChanges.subscribe(() => {
       this.onsalutationvalidation();
     });
+    this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
+      console.log(data)
+      this.emsployedata.dob=null
+      this.changeingdob=data
+    });
 
   }
 
@@ -65,7 +71,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
       fusionEmpId: [{ value: null, disabled: true }, [Validators.required]],
       salutation: [null, Validators.required],
-      firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,30}$')]],
       middleName: [null, [Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       lastName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       gender: [null, Validators.required],
@@ -107,8 +113,11 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
+  
   getdateofbirth(): string | null {
-    const startDateValue = this.formatDateToLocal(this.emsployedata.dob)
+    const startDateValue = this.formatDateToLocal(this.emsployedata.dob) || this.formatDateToLocal(this.changeingdob);
+    console.log(startDateValue);
+    
     if (startDateValue) {
       const startDate = new Date(startDateValue);
       startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
@@ -116,17 +125,19 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
     return null; 
   }
-  formatDateToLocal(dateString: string): string {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
+
+
+ // Helper method to format a date to 'YYYY-MM-DD'
+ formatDateToLocal(date: string | null): string | null {
+  if (!date) return null;
+  const d = new Date(date);
+  const month = ('0' + (d.getMonth() + 1)).slice(-2);
+  const day = ('0' + d.getDate()).slice(-2);
+  const year = d.getFullYear();
+  return `${year}-${month}-${day}`;
+}
 
   patchForm(data: any): void {
-
-
     this.basicInfoForm.patchValue({
       employeeId: data.employeeId,
       fusionEmpId: data.fusionEmpId,
@@ -173,6 +184,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
             this.getEmployeeId();
             this.basicInfoForm.disable();
             this.buttons = !this.buttons;
+            this.http.setBasicDetails();
 
           } else if (data.statusCode === 409) {
             this.conformationPopup.openErrorModal(data.message,);
@@ -188,7 +200,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         },
       });
   }
-
+  // Get the gender details from the API
   getGender() {
     this.subscription = this.http.getData('gender').subscribe({
       next: (data: any) => {
@@ -196,6 +208,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
+  // Get the title details from the API
   getTitle() {
     this.subscription = this.http.getData('Title').subscribe({
       next: (data: any) => {
@@ -203,6 +216,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       },
     });
   }
+  // Get the marital status details from the API
   getMaritaldetails() {
     this.subscription = this.http.getData('Maritalstatus').subscribe({
       next: (data: any) => {
@@ -213,11 +227,12 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   showButtons(): void {
     this.buttons = !this.buttons;
-
+  
     if (this.buttons) {
       // Enable the form when the user clicks "Edit"
-      this.basicInfoForm.get('fusionEmpId')?.disable();
+   
       this.basicInfoForm.enable();
+      this.basicInfoForm.get('fusionEmpId')?.disable();
 
     } else {
       this.basicInfoForm.get('fusionEmpId')?.disable();
@@ -226,7 +241,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.getEmployeeId();
     }
   }
-
+// Function to open the modal for confirmation
   changemaritalstatus(): void {
     const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'  || this.emsployedata?.maritalStatus === 'Married';
   

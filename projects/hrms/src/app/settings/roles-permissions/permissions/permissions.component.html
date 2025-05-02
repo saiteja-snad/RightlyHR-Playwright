@@ -294,15 +294,15 @@
                             </td>
                             <td>
                                 <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
-                                    (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                    (change)="onCheckboxChange(per, 'Update')" [disabled]="isDisabled(per.fields, 'Update') || !roleToFilter?.id">
                             </td>
                             <td>
                                 <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
-                                    (change)="onCheckboxChange(per, 'Create')" [disabled]="!roleToFilter?.id">
+                                    (change)="onCheckboxChange(per, 'Create')" [disabled]="isDisabled(per.fields, 'Create') || !roleToFilter?.id">
                             </td>
                             <td>
                                 <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
-                                    (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id">
+                                    (change)="onCheckboxChange(per, 'Delete')" [disabled]="true">
                             </td>
                         </tr>
                     </ng-container>
@@ -312,8 +312,9 @@
                     </tr>
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center"
-                            *ngIf="per.fields === 'Comp Off Tab' || per.fields === 'WFH Tab' || 
-                        per.fields === 'Attndance Eligibility Permissions Tab' || per.fields === 'Permission Elgibility Tab' || per.fields === 'Eligibility Global Permissions Tab'">
+                            *ngIf="per.fields === 'Comp Off Entitlement Tab' || per.fields === 'WFH Entitlement Tab' || 
+                        per.fields === 'Attendance Eligibility Permissions Tab' || per.fields === 'Permission Elgibility Tab' || 
+                        per.fields === 'Attendance Regularization Tab' || per.fields === 'Attendance Regularization Eligibility Tab' || per.fields === 'Eligibility Global Permissions Tab'">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td>
                                 <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -329,7 +330,7 @@
                             </td>
                             <td>
                                 <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
-                                    (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id">
+                                    (change)="onCheckboxChange(per, 'Delete')" [disabled]="isDisabled(per.fields, 'Delete') || !roleToFilter?.id">
                             </td>
                         </tr>
                     </ng-container>

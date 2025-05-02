@@ -11,10 +11,11 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-previous-experince',
-  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, NoDataFoundComponent, TranslateModule],
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
@@ -35,19 +36,21 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   showError = false;
   showErrorr = false;
   empinfo: any
+  dateofbirth: any
   previousexperincedocument: any
-  displaypreviousexperincedocument:any
+  displaypreviousexperincedocument: any
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
-  spinnerLoader=false;
+  spinnerLoader = false;
 
   constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
-    this.getJobtypes()
-    this.getexperiencedetailsbyemployeid()
-    this.initializeupdateForm()
+    this.getJobtypes();
+    this.getexperiencedetailsbyemployeid();
+    this.initializeupdateForm();
+    this.getEmployeeId()
     this.employeeExperienceForm.get('fromDate')?.valueChanges.subscribe(() => {
       this.employeeExperienceForm.get('toDate')?.reset();
     });
@@ -60,13 +63,13 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.employeeExperienceForm = this.fb.group({
       isPresent: [false],
-      companyName: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      companyName: ['', [Validators.required, Validators.maxLength(100),noWhitespaceValidator]],
       employmentType: [null, Validators.required],
       fromDate: ['', [Validators.required]],
       toDate: ['', [Validators.required]],
-      jobTitle: ['', Validators.required],
+      jobTitle: ['', [Validators.required, Validators.maxLength(50)]],
 
-      previousContactName: ['', Validators.pattern('^[a-zA-Z\\s]*$')],
+      previousContactName: ['', [Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50),noWhitespaceValidator]],
       previousContactNumber: [
         '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
@@ -97,13 +100,13 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeupdateForm(): void {
     this.employeeExperienceupdateForm = this.fb.group({
       isPresentupdate: [false],
-      companyNameupdate: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
+      companyNameupdate: ['', [Validators.required, Validators.maxLength(100),noWhitespaceValidator]],
       employmentTypeudate: [null, Validators.required],
       fromDateupdate: ['', [Validators.required]],
       toDateupdate: ['', [Validators.required]],
-      jobTitleupdate: ['', Validators.required],
+      jobTitleupdate: ['', [Validators.required, Validators.maxLength(50)]],
 
-      previousContactNameupdate: ['', Validators.pattern('^[a-zA-Z\\s]*$')],
+      previousContactNameupdate: ['',[ Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50),noWhitespaceValidator]],
       previousContactNumberupdate: [
         '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
@@ -130,7 +133,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     });
   }
 
-  
+
   getMinEndDate(): string | null {
     const startDateValue = this.employeeExperienceForm.get('fromDate')?.value;
     if (startDateValue) {
@@ -151,6 +154,15 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     return null; // Return null if no start date is selected
   }
 
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.dateofbirth =this.formatDateToLocal(data.dob)
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     console.log(content)
@@ -173,29 +185,24 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   }
 
   onChangeExperience(event: any): void {
+    this.displaypreviousexperincedocument = null
     const file = event.target.files[0];
     if (file) {
       const fileSizeInMB = file.size / (1024 * 1024);
-      const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
-      const fileExtension = file.name.split('.').pop()?.toLowerCase();
-
-      // Validate file type and size
-      this.showError = !allowedExtensions.includes(fileExtension || '');
-      this.showErrorr = fileSizeInMB > 25;
-
-      if (!this.showError && !this.showErrorr) {
-        // Rename the file if it passes validation
-        const timestamp = new Date().getTime();
-        this.previousexperincedocument = this.renameFileAttachment(
-          file,
-          `${this.empinfo.employeeId}_${timestamp}_${file.name}`
-        );
-        console.log('Renamed attachment:', this.previousexperincedocument);
-      } else {
-        this.previousexperincedocument = null; // Reset the document if validation fails
-        console.error('File validation failed');
+      if (fileSizeInMB > 25) {
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.employeeExperienceForm.get('attachment')?.reset();
+        this.employeeExperienceForm.get('attachment')?.markAsUntouched();
+        this.employeeExperienceupdateForm.get('attachmentupdate')?.reset();
+        this.employeeExperienceupdateForm.get('attachmentupdate')?.markAsUntouched()
+        return;
       }
     }
+    const timestamp = new Date().getTime();
+    this.previousexperincedocument = this.renameFileAttachment(
+      file,
+      `${this.empinfo.employeeId}_${timestamp}_${file.name}`
+    );
   }
 
   private renameFileAttachment(originalFile: File, newName: string): File {
@@ -274,12 +281,12 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   }
 
   getJobtypes() {
-    this.subscription= this.http.getData("Jobtype").subscribe({
-      next:(data: any) => {
+    this.subscription = this.http.getData("Jobtype").subscribe({
+      next: (data: any) => {
         this.JobtypeDetails = data as IJobtype[];
       }
     })
-    
+
   }
 
 
@@ -318,13 +325,14 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
           let a = document.createElement('a');
           a.href = window.URL.createObjectURL(blob);
           let filename =
-            file.docUrl.split('/')[file.attachment.split('/').length - 1];
+            file.attachment?.split('/')[file.attachment?.split('/').length - 1];
           a.download = filename;
           a.click();
         },
         error: (reason) => console.log(reason),
       });
   }
+
 
   restrictInputaccteponlynumber(event: KeyboardEvent) {
     const key = event.key;
@@ -379,49 +387,52 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
   openModalupdate(content: any, experienceDetail: any): void {
     this.selectedid = experienceDetail.id;
-  
+
     this.getJobtype().subscribe(() => {
       console.log('Experience Detail:', experienceDetail);
-  
-      const startDate =this.formatDateToLocal( experienceDetail.fromDate) || null;
+
+      const startDate = this.formatDateToLocal(experienceDetail.fromDate) || null;
       const endDate = this.formatDateToLocal(experienceDetail.toDate) || null;
-       
+
       const selectedJobType = this.JobtypeDetails.find(
-        (jobType) => jobType.jobType1 === experienceDetail.employmentType
+        (jobType) => jobType.jobType1 === experienceDetail?.employmentType
       );
-  
+
       this.employeeExperienceupdateForm.patchValue({
         jobTitleupdate: experienceDetail.jobTitle,
         companyNameupdate: experienceDetail.companyName,
         employmentTypeudate: selectedJobType,
         fromDateupdate: startDate,
         toDateupdate: endDate,
-        previousContactNameupdate: experienceDetail.previousContactName,
-        previousContactNumberupdate: experienceDetail.previousContactNumber,
-        previousContactEmailupdate: experienceDetail.previousContactEmail,
+        previousContactNameupdate: experienceDetail?.previousContactName,
+        previousContactNumberupdate: experienceDetail?.previousContactNumber,
+        previousContactEmailupdate: experienceDetail?.previousContactEmail,
         isPresentupdate: experienceDetail.isPresent,
       });
-  
-      if (experienceDetail.isPresent) {
-        this.employeeExperienceupdateForm.get('toDateupdate')?.clearValidators();
-        this.employeeExperienceupdateForm.get('toDateupdate')?.disable();
+
+      // Handle "toDateupdate" field based on "isPresent" or absence of "toDate"
+      const toDateControl = this.employeeExperienceupdateForm.get('toDateupdate');
+      if (experienceDetail.isPresent || !experienceDetail.toDate) {
+        toDateControl?.reset();
+        toDateControl?.clearValidators();
+        toDateControl?.disable();
       } else {
-        this.employeeExperienceupdateForm.get('toDateupdate')?.enable();
-        this.employeeExperienceupdateForm.get('toDateupdate')?.setValidators([Validators.required]);
+        toDateControl?.enable();
+        toDateControl?.setValidators([Validators.required]); // Reapply the required validator when enabling the field
       }
-  
-      this.employeeExperienceupdateForm.get('toDateupdate')?.updateValueAndValidity();
+
+      toDateControl?.updateValueAndValidity()
       this.previousexperincedocument = experienceDetail.attachment;
 
-            
-    this.displaypreviousexperincedocument=experienceDetail.attachment
-    ? experienceDetail.attachment.split('/').pop()
-    : null;
-  
+
+      this.displaypreviousexperincedocument = experienceDetail.attachment
+        ? experienceDetail.attachment.split('/').pop()
+        : null;
+
       this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     });
   }
-  
+
 
   saveUpdatedExperienceDetails(): void {
 
@@ -465,12 +476,14 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.previousexperincedocument)
       .subscribe({
         next: (data: any) => {
+          this.spinnerLoader=false
           if (data) {
             payload.attachment = data.path; // Update the payload with the uploaded file path
             this.saveExperienceData(payload);
           }
         },
         error: () => {
+          this.spinnerLoader=false
           console.error('File upload failed');
           this.conformationPopup.openErrorModal('Failed to upload experience document. Please try again.');
         }

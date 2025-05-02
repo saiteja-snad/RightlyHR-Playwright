@@ -151,6 +151,13 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return disabledOptions.includes(field) && (action === 'delete' || action === 'create');
 }
 
+isDisabled(field: string, action: string): boolean {
+  const viewOnlyFields = ['Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Load Entitlements Tab', 'Attendance Eligibility Criteria Tab', 'Comp Off Entitlement Tab',
+    'WFH Entitlement Tab', 'Permission Elgibility Tab', 'Attendance Regularization Eligibility Tab'
+  ];
+  return viewOnlyFields.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
+}
+
   changePermissions() {
     if (!this.roleToFilter?.id) {
       this.permissions.forEach((permission: any) => {

@@ -22,8 +22,8 @@ export default [
            { path: 'absent-report', loadComponent: () => import('./attendence-reports/absent-report/absent-report.component').then((m) => m.AbsentReportComponent) },
            { path: 'inactive-employee-report', loadComponent: () => import('./attendence-reports/inactive-employee-report/inactive-employee-report.component').then((m) => m.InactiveEmployeeReportComponent) },
            { path: 'yearly-summary-report', loadComponent: () => import('./attendence-reports/yearly-summary-report/yearly-summary-report.component').then((m) => m.YearlySummaryReportComponent) },
-        //    { path: 'permission-report', loadComponent: () => import('./attendence-reports/permission-reports/permission-reports.component').then((m) => m.PermissionReportsComponent) },
-        //    { path: 'regularization-report', loadComponent: () => import('./attendence-reports/regularization-reports/regularization-reports.component').then((m) => m.RegularizationReportsComponent) },
+           { path: 'permission-report', loadComponent: () => import('./attendence-reports/permission-reports/permission-reports.component').then((m) => m.PermissionReportsComponent) },
+           { path: 'regularization-report', loadComponent: () => import('./attendence-reports/regularization-reports/regularization-reports.component').then((m) => m.RegularizationReportsComponent) },
         ]
     },
     { path: 'monthly-attandance-reports', loadComponent: () => import('./monthly-attandance-report/monthly-attandance-report.component').then((m) => m.MonthlyAttandanceReportComponent) },

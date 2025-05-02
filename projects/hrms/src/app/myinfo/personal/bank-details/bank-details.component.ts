@@ -5,11 +5,12 @@ import { Select } from 'primeng/select';
 import { Ibank, Ibankdetails } from '../../../Interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-bank-details',
@@ -29,7 +30,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   bankdocument: any
   spinnerLoader=false;
   displayblankdocument:any
-  constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService) { }
+  constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService,public rbac: RbacService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeBankDetailsForm();
@@ -37,28 +38,49 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
     this.getbanknames()
     this.getbankempid()
   }
+
   initializeBankDetailsForm(): void {
     this.bankDetailsForm = this.fb.group({
       bankName: ['', Validators.required],
-      accountName: ['', [Validators.required,Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
-      accountNo: ['', [Validators.required]],
-      ifscCode: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
+      accountName: ['', [Validators.required,Validators.maxLength(50)]],
+      accountNo: ['', [Validators.required,   Validators.pattern('^[0-9]{12,20}$'),this.invalidBankNumberValidator()]],
+      ifscCode: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'),this.invalidIfscCodeValidator(),]],
       isPrimary: [false],
       attachment: [null, Validators.required]
     });
   }
   initializeBankDetailsupdateForm(): void {
     this.bankDetailsUpdateForm = this.fb.group({
-      bankNameupdate: ['',[ Validators.required,Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
-      accountNameupdate: ['', [Validators.required,]],
-      accountNoupdate: ['', [Validators.required]],
-      ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
+      bankNameupdate: ['',[ Validators.required,]],
+      accountNameupdate: ['', [Validators.required,Validators.maxLength(50)]],
+      accountNoupdate: ['', [Validators.required,this.invalidBankNumberValidator()]],
+      ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'),this.invalidIfscCodeValidator()]],
       isPrimaryupdate: [false],
       attachmentupdate: [null]
     });
   }
 
 
+
+  invalidBankNumberValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (value && /^0+$/.test(value)) {
+        return { invalidbankNumber: true }; // Return error if account number is all zeros
+      }
+      return null; // Valid account number
+    };
+  }
+
+  invalidIfscCodeValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (value && /^0+$/.test(value)) {
+        return { invalidIfscCode: true }; // Return error if IFSC Code is all zeros
+      }
+      return null; // Valid IFSC Code
+    };
+  }
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -107,7 +129,24 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   // }
 
   onBankProofSelected(event: any): void {
+    this.displayblankdocument=null
     const file = event.target.files[0];
+    if (file) {
+      const fileSizeInMB = file.size / (1024 * 1024);
+      // const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
+      // const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      if (fileSizeInMB > 25) {
+        this.bankdocument = null;
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.bankDetailsForm.get('attachment')?.reset();
+        this.bankDetailsForm.get('attachment')?.markAsUntouched();
+        this.bankDetailsUpdateForm.get('attachmentupdate')?.reset();
+        this.bankDetailsUpdateForm.get('attachmentupdate')?.markAsUntouched();
+       
+        return;
+      }
+     
+    }
     const timestamp = new Date().getTime();
     this.bankdocument = this.renameFileAttachment(
       file,

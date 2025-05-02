@@ -85,7 +85,8 @@
                             formControlName="memberName" placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
                         <div class="error-msg" *ngIf="familyDetailsForm.get('memberName')?.invalid && familyDetailsForm.get('memberName')?.touched">
                             <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['required']">Name is required</div>
-                            <div *ngIf="familyDetailsForm.get('memberName')?.errors?.['pattern']">Name must contain only letters</div>
+                            <div class="error-msg" *ngIf="familyDetailsForm.get('memberName')?.errors?.['maxlength']">Name
+                                cannot exceed 50 characters</div>
                         </div>
                     </div>
 
@@ -152,7 +153,8 @@
                             formControlName="memberNameupdate" placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
                         <div class="error-msg" *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.invalid && familyDetailsupdateForm.get('memberNameupdate')?.touched">
                             <div *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.errors?.['required']">Name is required</div>
-                            <div *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.errors?.['pattern']">Name must contain only letters</div>
+                            <div class="error-msg" *ngIf="familyDetailsupdateForm.get('memberNameupdate')?.errors?.['maxlength']">Name
+                                cannot exceed 50 characters</div>
                         </div>
                     </div>
 

@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container" *ngIf="rbac.allowedToAccess('Comp Off Entitlement Tab.view')">
     @if(!dataLoad){
     <div class="custom-table-content">
         <ng-container *ngIf="eligibilityCriterias!.length > 0; else noDataTemplate">
@@ -7,7 +7,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Value</th>
-                        <th class="text-center">Action<span class="text-lowercase">(s)</span></th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Comp Off Entitlement Tab.update')">Action<span class="text-lowercase">(s)</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -27,7 +27,7 @@
                             </ng-container>
                         </td>
 
-                        <td class="text-center">
+                        <td class="text-center" *ngIf="rbac.allowedToAccess('Comp Off Entitlement Tab.update')">
                             <div class="dropdown" *ngIf="editingIndex !== i; else editingMode">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="bi bi-three-dots-vertical"></i>

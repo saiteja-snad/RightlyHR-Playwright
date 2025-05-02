@@ -143,7 +143,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     // Clean and format phone numbers
     const cleanPhoneNumber = (phone: any): string => {
       if (!phone) return ''; // Return an empty string if phone is null or undefined
-      return String(phone).replace(/\s+/g, '').replace(/-/g, ''); // Convert to string and remove spaces and dashes
+      return String(phone).replace(/\D+/g, '');; // Convert to string and remove spaces and dashes
     };
 
     const contact1Phone = cleanPhoneNumber(formValue.contact1Phone || this.employedata.mobileNumber || '');
@@ -169,14 +169,14 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           console.log('Data updated successfully:', data);
-          if (data.status === 200) {
+          if (data.statusCode === 200) {
             this.conformationPopup.openSuccessModal('Emergency Contact Details updated successfully');
             this.emergencyContactForm.disable();
             this.buttons = false; 
             this.buttons2 = false;
             this.getEmployeeId(); 
           }
-          else if (data.status === 409) {
+          else if (data.statusCode === 409) {
             console.log('Conflict:', data.message);
             this.conformationPopup.openErrorModal(data.message);
             this.patchForm(data); 

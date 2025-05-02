@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, map, Observable, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject,Subject, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,12 +16,12 @@ import { IAttendance } from './attendance-modal';
 import { Ipersonal } from '../../Interfaces/personal-modal';
 import { RbacService } from '../../services/rbac.service';
 import moment from 'moment';
-import { TohoursPipe } from "../../Pipes/tohours.pipe";
-import { LeaveType } from '../../Interfaces/timoff-model';
+import { IPermissionsvalue, LeaveType } from '../../Interfaces/timoff-model';
 import { Select } from 'primeng/select';
 import { environment } from '../../../environments/environment';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../services/form-validations.service';
+import { TohoursPipe } from "../../Pipes/tohours.pipe";
 
 @Component({
   selector: 'app-attendance',
@@ -36,9 +36,10 @@ import { FormValidationsService } from '../../services/form-validations.service'
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
-    TohoursPipe,
     Select,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    TohoursPipe,
+    
 ],
   templateUrl: './attendance.component.html',
   styleUrl: './attendance.component.scss',
@@ -91,12 +92,18 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   totalDurationHours!: string;
   permissionsDuration!: string;
   regularizationAttendDuration!: string;
+  regularizationValues=[] as IPermissionsvalue[];
+  punchPairs: { in?: string, out?: string }[] = [];
+  selectedDate!:Date;
+  getAllEmployeeInfo = [] as any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  get_Employeelist_forTM = [] as any;
   constructor(
     private authService: AuthService,
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal,
+    public modalService: NgbModal,
     public rbac: RbacService,
     private fb: FormBuilder,
     public formsValidation:FormValidationsService
@@ -111,12 +118,9 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     // Get current year
     this.currentYear = moment().year();
     this.selectedYear=this.currentYear;
-    let loggedInUser = this.authService.getToken();
-    console.log(loggedInUser);
-    
-    this.empdata = loggedInUser;
-    // this.selectedEmployee = loggedInUser.employeeId;
+    this.empdata = this.authService.getToken();
     this.getAttendnaceData(this.empdata);
+    this.getAttendanceCriteria();
     this.getAllEmployeeDetails();
     this.getEmployeeDetails();
     this.initializeForm();
@@ -135,9 +139,29 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
+
+  getAttendanceCriteria() {
+    const params = 'AttendanceRegularization'
+    const param = ["maxRegularizePerDay", 'maxRegularizePerMonth','maxRegularizeHoursPerDay','maxRegularizeHoursPerMonth'];
+    this.subscription = this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param).subscribe({
+      next: (data: any) => {
+        this.regularizationValues = (data as IPermissionsvalue[]);
+        const maxHoursConfig = this.regularizationValues?.find(
+          (item) => item.attribute === 'maxRegularizeHoursPerDay'
+        );
+        const maxHours = maxHoursConfig ? parseFloat(maxHoursConfig.value) : 2; // default to 2 if not found
+        this.duration = [];
+        for (let i = 0.5; i <= maxHours; i += 0.5) {
+          this.duration.push({ name: i, value: i });
+        }
+      }, error:(err) => {
+        console.log("errors", err)
+      },
+    });
+  }
+
   //function to get the day logs
-  punchPairs: { in?: string, out?: string }[] = [];
-  selectedDate!:Date;
   dayLogsData(Value:any,date:Date){
     this.selectedDate=date;
     if(Value){
@@ -231,8 +255,6 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   }
 
   navigateToLeave(){
-    console.log("Hello");
-    
     this.router.navigate(['/time-off/leaves/waiting-for-approval'])
   }
 
@@ -243,9 +265,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     permissionduration: string,
     regularizationduration: string
   ) {
-    console.log(duration,totalDurationHours,permissionduration,regularizationduration);
    this.openModal(durationPopup) 
-      
     this.logsDuration = duration,
     this.totalDurationHours = totalDurationHours,
     this.permissionsDuration = permissionduration,
@@ -329,22 +349,8 @@ export class AttendanceComponent implements OnInit, OnDestroy {
         return '';
     }
   }
-  //function to get the count of the each status
-  // statusSummary(){
-  //   this.statusCounts$ = this.attendanceData.pipe(
-  //     map(data => {
-  //       const counts: Record<string, number> = {};
-  //       data.forEach(item => {
-  //         if (item.status) {
-  //           counts[item.status] = (counts[item.status] || 0) + 1;
-  //         }
-  //       });
-  //       return counts;
-  //     })
-  //   );
-  // }
+
   // function to get the data of employees by hierarchy
-  getAllEmployeeInfo = [] as any;
   getAllEmployeeDetails() {
     // let EmployeeId=this.employeeId;
     const satus = ['active', 'Trainee Active'];
@@ -378,7 +384,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     });
   }
   // function to get the data of employees by hierarchy
-  get_Employeelist_forTM = [] as any;
+
   getEmployeeDetails() {
     const EmployeeId = this.empdata.employeeId;
     this.subscription = this.http

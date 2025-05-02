@@ -270,9 +270,10 @@ updateRM() {
         id: employee.id
       };
     });
-
-    
-  
+}
+resetAndClose(modal: any): void {
+  this.rmForm.reset();   // clear the form
+  modal.dismiss();       // close the popup
 }
 }
 

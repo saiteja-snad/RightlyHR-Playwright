@@ -15,10 +15,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { MyinfoDetailsComponent } from "../../shared/myinfo-details/myinfo-details.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-myinfo-layout',
-  imports: [CommonModule, RouterOutlet, Select, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule, MyinfoDetailsComponent],
+  imports: [CommonModule, RouterOutlet, Select, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule, MyinfoDetailsComponent,TranslateModule],
   templateUrl: './myinfo-layout.component.html',
   styleUrl: './myinfo-layout.component.scss'
 })
@@ -46,7 +47,7 @@ export class MyinfoLayoutComponent implements OnInit {
   ngOnInit(): void {
     
     this.teamForm = this.fb.group({
-      teamMembers: [null, Validators.required],
+      teamMembers: [null, Validators.required,],
       reportingManager: [null, Validators.required]
     });
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
@@ -211,4 +212,6 @@ showSuccessPopup() {
     
     
 }
+
+
 }

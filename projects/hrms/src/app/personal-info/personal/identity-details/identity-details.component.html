@@ -67,7 +67,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Identiy Details</p>
+                <p class="popup-heading mb-0">Add Identity Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();identityForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -107,6 +107,10 @@
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['maxlength']">
                                 Identity Number must not exceed {{ IdentityMaxNumber }} digits
                             </div>
+                            <div class="error-msg"
+                            *ngIf="identityForm.get('identityNumber')?.errors?.['invalidIdentityNumber'] && identityForm.get('identityNumber')?.touched">
+                            Identity Number cannot be all zeroes
+                        </div>
                         </div>
                     </div>
                
@@ -130,7 +134,14 @@
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityForm.invalid">Add</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityForm.invalid || spinnerLoader">
+                        @if (spinnerLoader) {
+                            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading' | translate}}...</span>
+                            } @else {
+                            <span>{{'Add'| translate}}</span>
+                            }
+                    </button>
                 </div>
             </form>
         </div>
@@ -142,7 +153,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Update Identiy Details</p>
+                <p class="popup-heading mb-0">Update Identity Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -182,6 +193,10 @@
                             <div *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['maxlength']">
                                 Identity Number must not exceed {{ IdentityMaxNumber }} digits
                             </div>
+                            <div class="error-msg"
+                            *ngIf="identityupdateForm.get('identityupdateNumber')?.errors?.['invalidIdentityNumber'] && identityupdateForm.get('identityupdateNumber')?.touched">
+                            Identity Number cannot be all zeroes
+                        </div>
                         </div>
                     </div>
 

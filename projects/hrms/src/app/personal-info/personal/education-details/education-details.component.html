@@ -1,9 +1,9 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Education Details</span></div>
-    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
-    && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-      <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'&& employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+    <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New
+    </div>
     }
   </div>
 
@@ -18,7 +18,9 @@
           <th>From Date</th>
           <th>To Date</th>
           <th>Document</th>
-          @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+          @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
+          'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+          employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
           <th class="text-center">Actions</th>
           }
         </tr>
@@ -33,10 +35,13 @@
             <td>{{edacationDetails.degreeStartDate | dateformat}}</td>
             <td>{{edacationDetails.degreeEndDate | dateformat}}</td>
             <td>
-              <span *ngIf="edacationDetails.attachment;else noData" class="dowload-text cursor" (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
+              <span *ngIf="edacationDetails.attachment;else noData" class="dowload-text cursor"
+                (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
                 <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
             </td>
-            @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+            @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
+            'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+            employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
             <td class="text-center">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
@@ -56,16 +61,16 @@
                 </ul>
               </div>
             </td>
-           }
+            }
           </tr>
         </ng-container>
         <!-- No Data Found Template -->
         <ng-template #noDataTemplate>
           <tr>
             <td>
-                <app-no-data-found />
+              <app-no-data-found />
             </td>
-        </tr>
+          </tr>
         </ng-template>
       </tbody>
     </table>
@@ -80,41 +85,53 @@
         <p class="popup-heading mb-0">Add Education Details</p>
       </div>
       <div>
-        <a (click)="modal.dismiss();educationForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="modal.dismiss();educationForm.reset()"><img src="icons/close.png" alt="Close Icon"
+            class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content p-4">
       <form [formGroup]="educationForm" (ngSubmit)="postEducation()">
         <div class="row">
           <div class="col-md-6 mb-3">
-            <label for="education" class="form-label custom-label mb-2">Education<span class="text-danger">*</span></label>
+            <label for="education" class="form-label custom-label mb-2">Education<span
+                class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="degreeDetails" [filter]="true" filterBy="degreeName" optionLabel="degreeName"
-                formControlName="education" placeholder="Please select education" class="form-select custom-select"></p-select>
+                formControlName="education" placeholder="Please select education"
+                class="form-select custom-select"></p-select>
             </div>
-            <div class="error-msg" *ngIf="educationForm.get('education')?.invalid && educationForm.get('education')?.touched">
+            <div class="error-msg"
+              *ngIf="educationForm.get('education')?.invalid && educationForm.get('education')?.touched">
               Education is required
             </div>
           </div>
 
           <div class="col-md-6 mb-3">
-            <label for="university" class="form-label custom-label mb-2">University<span class="text-danger">*</span></label>
+            <label for="university" class="form-label custom-label mb-2">University<span
+                class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="university" formControlName="university"
-              placeholder="Please enter university" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
-            <div class="error-msg" *ngIf="educationForm.get('university')?.invalid && educationForm.get('university')?.touched">
+              placeholder="Please enter university"
+              (keypress)="formValidation.restrictInputallowspicalcharters($event)">
+            <div class="error-msg"
+              *ngIf="educationForm.get('university')?.errors?.['required'] && educationForm.get('university')?.touched">
               University is required
             </div>
+            <div class="error-msg" *ngIf="educationForm.get('university')?.errors?.['maxlength']">University cannot
+              exceed 50 characters</div>
           </div>
 
           <div class="col-md-6 mb-3">
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="specialization" formControlName="specialization"
-              placeholder="Please enter specialization" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
+              placeholder="Please enter specialization"
+              (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
-              *ngIf="educationForm.get('specialization')?.invalid && educationForm.get('specialization')?.touched">
+              *ngIf="educationForm.get('specialization')?.errors?.['required'] && educationForm.get('specialization')?.touched">
               Specialization is required
             </div>
+            <div class="error-msg" *ngIf="educationForm.get('specialization')?.errors?.['maxlength']">Specialization
+              cannot exceed 50 characters</div>
           </div>
 
           <div class="col-md-6 mb-3">
@@ -129,8 +146,8 @@
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeStartDate"  onkeypress="return false" [max]="currentDate" class="form-control custom-input"
-              id="degreeStartDate">
+            <input type="date" formControlName="degreeStartDate" onkeypress="return false" [min]="dateofbirth"
+              [max]="currentDate" class="form-control custom-input" id="degreeStartDate">
             <div class="error-msg"
               *ngIf="educationForm.get('degreeStartDate')?.invalid && educationForm.get('degreeStartDate')?.touched">
               From Date is required
@@ -140,7 +157,8 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDate"  onkeypress="return false" [min]="educationForm.get('degreeStartDate')?.value" class="form-control custom-input" id="degreeEndDate">
+            <input type="date" formControlName="degreeEndDate" [min]="getMinEndDate()" onkeypress="return false"
+              [min]="educationForm.get('degreeStartDate')?.value" class="form-control custom-input" id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationForm.get('degreeEndDate')?.invalid && educationForm.get('degreeEndDate')?.touched">
               To Date is required
@@ -150,7 +168,7 @@
           <div class="col-md-12 mb-3">
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
-            <input type="file" formControlName="attachment" accept="image/*, application/pdf"
+            <input type="file" formControlName="attachment" accept=".pdf, .png, .jpg,"
               (change)="onChangeEducation($event)" class="form-control custom-input" />
             <div class="error-msg"
               *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">
@@ -164,8 +182,17 @@
         </div>
 
         <div class="d-flex justify-content-end gap-3">
-          <button type="reset" class="custom-btn btn-secondary px-4" (click)="educationForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary px-4">Add</button>
+          <button type="reset" class="custom-btn btn-secondary px-4"
+            (click)="educationForm.reset();modal.dismiss()">Close</button>
+          <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationForm.invalid || spinnerLoader">
+           
+            @if (spinnerLoader) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading' | translate}}...</span>
+            } @else {
+            <span>{{'Add'| translate}}</span>
+            }
+          </button>
         </div>
       </form>
     </div>
@@ -177,7 +204,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Add Education Details</p>
+        <p class="popup-heading mb-0">Update Education Details</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -204,11 +231,14 @@
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="university" formControlName="universityupdate"
-              placeholder="Please enter university" (keypress)="formValidation.restrictInputallowspicalcharters($event)">
+              placeholder="Please enter university"
+              (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
-              *ngIf="educationupdateForm.get('universityupdate')?.invalid && educationupdateForm.get('universityupdate')?.touched">
+              *ngIf="educationupdateForm.get('universityupdate')?.errors?.['required'] && educationupdateForm.get('universityupdate')?.touched">
               University is required
             </div>
+            <div class="error-msg" *ngIf="educationupdateForm.get('universityupdate')?.errors?.['maxlength']">University
+              cannot exceed 50 characters</div>
           </div>
 
           <div class="col-md-6 mb-3">
@@ -218,9 +248,12 @@
               formControlName="specializationupdate" placeholder="Please enter specialization"
               (keypress)="formValidation.restrictInputallowspicalcharters($event)">
             <div class="error-msg"
-              *ngIf="educationupdateForm.get('specializationupdate')?.invalid && educationupdateForm.get('specializationupdate')?.touched">
+              *ngIf="educationupdateForm.get('specializationupdate')?.errors?.['required'] && educationupdateForm.get('specializationupdate')?.touched">
               Specialization is required
             </div>
+            <div class="error-msg" *ngIf="educationupdateForm.get('specializationupdate')?.errors?.['maxlength']">
+              Specialization
+              cannot exceed 50 characters</div>
           </div>
 
           <div class="col-md-6 mb-3">
@@ -236,8 +269,8 @@
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeStartDateupdate"   onkeypress="return false" [max]="currentDate"
-              class="form-control custom-input" id="degreeStartDate">
+            <input type="date" formControlName="degreeStartDateupdate" [min]="dateofbirth" onkeypress="return false"
+              [max]="currentDate" class="form-control custom-input" id="degreeStartDate">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('degreeStartDateupdate')?.invalid && educationupdateForm.get('degreeStartDateupdate')?.touched">
               From Date is required
@@ -247,7 +280,8 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDateupdate"  onkeypress="return false" [min]="educationupdateForm.get('degreeStartDateupdate')?.value"  class="form-control custom-input"
+            <input type="date" formControlName="degreeEndDateupdate" [min]="getupdateMinEndDate()" onkeypress="return false"
+              [min]="educationupdateForm.get('degreeStartDateupdate')?.value" class="form-control custom-input"
               id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('degreeEndDateupdate')?.invalid && educationupdateForm.get('degreeEndDateupdate')?.touched">
@@ -258,8 +292,8 @@
           <div class="col-md-12 mb-3">
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
-            <input type="file" accept="image/*, application/pdf"
-              (change)="onChangeEducation($event)" class="form-control custom-input" />
+            <input type="file" accept=".pdf, .png, .jpg," (change)="onChangeEducation($event)"
+              class="form-control custom-input" />
             <div class="error-msg"
               *ngIf="educationupdateForm.get('attachmentupdate')?.invalid && educationupdateForm.get('attachmentupdate')?.touched">
               File is required
@@ -275,8 +309,18 @@
         </div>
 
         <div class="d-flex justify-content-end gap-3">
-          <button type="reset" class="custom-btn btn-secondary px-4" (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationupdateForm.invalid">Update</button>
+          <button type="reset" class="custom-btn btn-secondary px-4"
+            (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
+          <button type="submit" class="custom-btn btn-primary px-4"
+            [disabled]="educationupdateForm.invalid || spinnerLoader">
+
+            @if (spinnerLoader) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading' | translate}}...</span>
+            } @else {
+            <span>{{'Update'| translate}}</span>
+            }
+          </button>
         </div>
       </form>
     </div>

@@ -33,6 +33,11 @@ export class ProfileInfoDetailsComponent {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getJobDetails();
     this.getEmployeeId();
+    this.http.basicDetailesadded$.subscribe(() => {
+      this.getJobDetails();
+      this.getEmployeeId();
+    });
+
   }
 
   getJobDetails() {

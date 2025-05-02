@@ -37,6 +37,7 @@ export class OnboardingDetailsComponent {
   traineeForm!: FormGroup;
   isEditing = false;
   empyployeedata={} as any;
+  employeestatus:any
   noticePeriodStatus = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
@@ -80,7 +81,7 @@ export class OnboardingDetailsComponent {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
-    this.getStatus();
+
     this.getEmployeeId();
     this.getBackground();
     this.getBranchLocations();
@@ -97,7 +98,7 @@ export class OnboardingDetailsComponent {
       branchLocation: [{ value: null, disabled: true }],
       probationEndDate: [{ value: null, disabled: true }],
       probationStatus: [{ value: null, disabled: true }],
-      noticePeriodStatus: [{ value: '', disable: true },],
+      noticePeriodStatus: [{ value: null, disabled: true },],
       backgroundCheckStatus: [{ value: null, disabled: true }],
       salaryHold: [{ value: null, disabled: true }],
       pf: [{ value: null, disabled: true }],
@@ -146,6 +147,9 @@ export class OnboardingDetailsComponent {
       next: (data: any) => {
         console.log(data);
         this.empdata = data;
+        this.employeestatus=data?.empstatus?.toLowerCase()
+        console.log("status"+this.employeestatus)
+        this.getStatus();
         this.patchForm(data);
       },
       error: (err: any) => {
@@ -170,9 +174,9 @@ export class OnboardingDetailsComponent {
     const workLocation = this.worklocation.find((item: any) => item.value === data?.workLocation);
     console.log(workLocation);
     this.onboardingForm.patchValue({
-      status: this.Statusdetails?.find((item: any) => item?.statusname === data?.empstatus),
+  
       dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
-      branchLocation: this.branchLocations.find((item: any) => item.branchCode === data?.branchCode),
+      branchLocation: data?.branchCode,
       probationEndDate: this.formatDateToLocal(data.probationEndDate),
       probationStatus: this.probation.find((item: any) => item.probationstatus1 === data?.probationStatus),
       noticePeriodStatus: this.noticePeriod.find((item: any) => item.name === data.noticePeriod),
@@ -194,86 +198,55 @@ export class OnboardingDetailsComponent {
     // Patching values for traineeForm
     this.traineeForm.patchValue({
       empType: data.empType,
-      dateOfJoining: moment(data.dateOfJoining).isValid() ? moment(data.dateOfJoining).format('yyyy-MM-DD') : null,
+      dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
       durationOfTrainee: data.durationOfTrainee,
-      trainingEndDate: moment(data.trainingEndDate).isValid() ? moment(data.trainingEndDate).format('yyyy-MM-DD') : null
+      trainingEndDate: this.formatDateToLocal(data.trainingEndDate)
     });
     
     console.log(this.traineeForm.value); // Check values in the traineeForm
   }
   
-
+//function to get employee status dropdown
   getStatus() {
     this.subscription = this.http.getData(`Status`).subscribe({
       next: (data: any) => {
-        this.Statusdetails = data as IStatus[];
-        console.log(this.Statusdetails);
-        if (this.empdata?.empstatus == 'Prospective') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return (
-              lowerCaseStatusName === 'active' ||
-              lowerCaseStatusName === 'inactive' ||
-              lowerCaseStatusName === 'prospective'
-            );
-          });
-          console.log(filteredData);
-          this.Statusdetails = filteredData;
-        } else if (this.empdata?.empstatus == 'Active') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return (
-              lowerCaseStatusName === 'active' ||
-              lowerCaseStatusName === 'inactive'
-            );
-          });
-          console.log(filteredData);
-          this.Statusdetails = filteredData;
-        } else if (this.empdata?.empstatus?.toLowerCase() == 'inactive') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return (
-              lowerCaseStatusName === 'active' ||
-              lowerCaseStatusName === 'inactive'
-            );
-          });
-          console.log(filteredData);
-          this.Statusdetails = filteredData;
-        }
-        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return lowerCaseStatusName === 'trainee active' 
-            || lowerCaseStatusName === 'inactive' 
-            || lowerCaseStatusName === 'trainee';
-          });
-          this.Statusdetails = filteredData
-        }
-        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee prospective') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return lowerCaseStatusName === 'trainee active' || lowerCaseStatusName === 'trainee prospective';
-          });
-
-          this.Statusdetails = filteredData
-        }
-        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee active') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return lowerCaseStatusName === 'trainee active';
-          });
-          this.Statusdetails = filteredData
-
-        }
-        else if (this.empdata?.empstatus?.toLowerCase() == 'trainee inactive') {
-          const filteredData = data?.filter((status: IStatus) => {
-            const lowerCaseStatusName = status?.statusname?.toLowerCase();
-            return lowerCaseStatusName === 'trainee inactive';
-          });
-          //console.log(filteredData);
-          this.Statusdetails = filteredData
+        const empStatus = this.employeestatus?.toLowerCase();
+        console.log('empStatus:', empStatus);
+      
+        const statusMapping: { [key: string]: string[] } = {
+          prospective: ['active', 'inactive', 'prospective'],
+          active: ['active', 'inactive'],
+          inactive: ['active', 'inactive'],
+          trainee: ['trainee active', 'inactive', 'trainee'],
+          'trainee prospective': ['trainee active', 'trainee prospective'],
+          'trainee active': ['trainee active'],
+          'trainee inactive': ['trainee inactive']
+        };
+      
+        const allowedStatuses = (statusMapping[empStatus] || []).map(s => s.toLowerCase());
+        console.log('Allowed Statuses:', allowedStatuses);
+      
+        console.log('Raw data from API:', data);
+      
+        const filteredData = data?.filter((status: any) =>
+          allowedStatuses.includes(status?.statusname?.toLowerCase()) // change property if needed
+        );
+      
+        this.Statusdetails = filteredData;
+        console.log('Filtered Statusdetails:', this.Statusdetails);
+        const matchedStatus = filteredData.find((s: any) =>
+          s.statusname.toLowerCase() === empStatus
+        );
+  
+        if (matchedStatus) {
+          this.onboardingForm.patchValue({ status: matchedStatus }); // Use correct form name
+          console.log('Form patched with status:', matchedStatus);
         }
       },
+      
+      error: (err: any) => {
+        console.error('Error fetching status:', err);
+      }
     });
   }
 
@@ -299,11 +272,8 @@ export class OnboardingDetailsComponent {
         this.branchLocations = data as IBranchLocation[]
       },
       error: err => console.log(err),
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      complete: () => {
-
-      },
-
+      
+  
     })
   }
 
@@ -388,11 +358,17 @@ export class OnboardingDetailsComponent {
       .postdata(`Employeedata/UPDATER`, payload)
       .subscribe({
         next: (data: any) => {
-          this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully');
-          this.getEmployeeId();
-          this.buttons = !this.buttons;
-          this.onboardingForm.disable();
-          console.log('Data updated successfully:', data);
+          if(data.statusCode === 200){
+            this.conformationPopup.openSuccessModal('Onboarding Details Updated Successfully');
+            this.getEmployeeId();
+            this.buttons = !this.buttons;
+            this.onboardingForm.disable();
+            console.log('Data updated successfully:', data);
+          }else if(data.statusCode === 409){
+            this.conformationPopup.openErrorModal(data.message);
+          this.getEmployeeId(); 
+          }
+         
         },
         error: (reason: any) => {
           console.log(reason);

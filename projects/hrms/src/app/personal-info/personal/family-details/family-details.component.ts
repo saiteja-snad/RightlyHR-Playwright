@@ -43,7 +43,7 @@ export class FamilyDetailsComponent implements OnInit {
 
   initializeFamilyDetailsForm(): void {
     this.familyDetailsForm = this.fb.group({
-      memberName: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
+      memberName: ['', [Validators.required, Validators.maxLength(50)]],
       dateOfBirth: ['', Validators.required],
       relationShipId: ['', Validators.required],
       isDependent: [false],
@@ -52,7 +52,7 @@ export class FamilyDetailsComponent implements OnInit {
 
   initializeFamilyDetailsupdateForm(): void {
     this.familyDetailsupdateForm = this.fb.group({
-      memberNameupdate: ['', [Validators.required, Validators.pattern('^[a-zA-Z ]+$')]],
+      memberNameupdate: ['', [Validators.required, Validators.maxLength(50)]],
       dateOfBirthupdate: ['', Validators.required],
       relationShipIdupdate: ['', Validators.required],
       isDependentupdate: [null],

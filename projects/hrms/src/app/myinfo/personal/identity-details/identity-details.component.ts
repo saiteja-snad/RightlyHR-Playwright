@@ -4,13 +4,14 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { HttpService } from '../../../services/http.service';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { Iidentity, Iidentitydrop } from '../../../Interfaces/personal-modal';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-identity-details',
@@ -32,8 +33,9 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
   IdentityAttachment: any;
   IdentityMaxNumber = 12;
   IdentityMinNumber = 12;
+  selectedIdentityTypetoUpdate: any;
 
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService,public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -49,7 +51,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
       identityType: ['', Validators.required],
       identityNumber: ['', [
         Validators.required,
-        
+        this.invalidIdentityNumberValidator(),
         Validators.minLength(this.IdentityMinNumber),
         Validators.maxLength(this.IdentityMaxNumber)
       ]],
@@ -61,6 +63,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     this.identityupdateForm = this.fb.group({
       identityupdateType: [{ value: null, disabled: true }, Validators.required],
       identityupdateNumber: ['', [Validators.required,
+        this.invalidIdentityNumberValidator(),
         Validators.minLength(this.IdentityMinNumber),Validators.maxLength(this.IdentityMaxNumber)
       ]],
       identityupdateAttachment: [null]
@@ -106,13 +109,34 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
   }
 
 
-
+  invalidIdentityNumberValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (value && /^0+$/.test(value)) {
+        return { invalidIdentityNumber: true }; // Return error if identity number is all zeros
+      }
+      return null; // Valid identity number
+    };
+  }
   onIdentityAttachmentSelected(event: any): void {
+    this.displayidentiydocument = null; // Reset the attachment on new selection
     const file = event.target.files[0];
     if (file) {
       this.IdentityAttachment = file; // Store the selected file
       console.log('Selected file:', file);
+      const fileSizeInMB = file.size / (1024 * 1024);
+      if (fileSizeInMB > 25) {
+        this.IdentityAttachment = null;
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.identityForm.get('identityAttachment')?.reset();
+        this.identityForm.get('identityAttachment')?.markAsUntouched();
+        this.identityupdateForm.get('identityupdateAttachment')?.reset();
+        this.identityupdateForm.get('identityupdateAttachment')?.markAsUntouched();
+       
+        return;
+      }
     }
+  
     const timestamp = new Date().getTime();
     this.IdentityAttachment = this.renameFileAttachment(
       file,
@@ -174,10 +198,10 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
         this.conformationPopup.openSuccessModal('Identity details added successfully');
         console.log('Data saved successfully');
       },
-      error: () => {
+      error: (error) => {
         this.spinnerLoader=false
         console.error('Error saving data');
-        this.conformationPopup.openErrorModal('Identity details added failed');
+        this.conformationPopup.openErrorModal(error.error.Message);
       }
     });
   }
@@ -218,10 +242,14 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
   openModalupdate(content: any, identityDetails: any): void {
     this.selectedIdentityId=identityDetails.identityId;
     const selectedIdentityType = this.getidentitydropdetails.find(
-      (item) => item.documentName === identityDetails.identityType
+      (item) => item.identityType1 === identityDetails.identityType
     );
+
+    console.log('Selected identity type:', selectedIdentityType);
+    this.selectedIdentityTypetoUpdate = selectedIdentityType
+    
     this.identityupdateForm.patchValue({
-      identityupdateType: selectedIdentityType,
+      identityupdateType:selectedIdentityType,
       identityupdateNumber: identityDetails.identityNumber,
 
     });
@@ -241,15 +269,18 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
     //payload
       const payload = {
         identityId: this.selectedIdentityId,
-        identityType: formData.identityupdateType?.identityType1,
+        identityType: this.selectedIdentityTypetoUpdate?.identityType1,
+        identityNumber: formData.identityupdateNumber,
         attachment: this.IdentityAttachment || '',
         empId: this.empinfo.employeeId,
         isDeleted: false
       };
+      console.log('Payload:', payload);
 
       // Check if a new attachment is selected
       if (this.IdentityAttachment instanceof File) {
         this.uploadUpdatedIdentityAttachment(payload);
+        
       } else {
         this.saveUpdatedIdentity(payload);
       }
@@ -265,12 +296,14 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
       .subscribe({
         next: (data: any) => {
           if (data) {
-            payload.attachment = data.path; // Update the payload with the uploaded file path
+            this.spinnerLoader=false
+            payload.attachment = data?.path; // Update the payload with the uploaded file path
             this.saveUpdatedIdentity(payload);
           }
         },
         error: () => {
           console.error('File upload failed');
+          this.spinnerLoader=false
         }
       });
   }
@@ -289,7 +322,7 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
       error: (err: any) => {
         this.spinnerLoader=false
         console.error('Error updating identity:', err);
-        this.conformationPopup.openErrorModal('Failed to update identity details');
+        this.conformationPopup.openErrorModal(err.error.Message);
       }
     });
   }

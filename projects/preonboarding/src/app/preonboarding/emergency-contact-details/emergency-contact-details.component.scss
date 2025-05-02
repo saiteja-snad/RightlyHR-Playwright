@@ -12,3 +12,6 @@ input:focus{
 input[type="text"] {
     text-transform: capitalize;
 }
+input::placeholder {
+    text-transform: none !important;
+}

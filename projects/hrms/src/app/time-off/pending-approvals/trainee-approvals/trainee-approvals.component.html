@@ -121,7 +121,7 @@
                     <span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                     placeholder="Please provide feedback" name="Feedback" #Feedback="ngModel" maxlength="250"
-                    [(ngModel)]="selectedLeaveData.trcomments" pattern="^(?!\s).*" rows="3" required></textarea>
+                    [(ngModel)]="selectedLeaveData.trcomments" (input)="blockLeadingSpace($event,selectedLeaveData.trcomments)" rows="3" required></textarea>
                 <div class="textarea-count-text">{{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
                 <div class="error-msg" *ngIf="(Feedback.touched && Feedback.invalid) || (Feedback.invalid && acceptForm.submitted)">
                     Feedback is required</div>

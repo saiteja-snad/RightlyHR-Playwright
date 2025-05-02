@@ -12,7 +12,7 @@
             <div class="row">
                 <div class="col-md-12 mb-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="checkDefault" formControlName="isPresent" />
+                        <input class="form-check-input" type="checkbox" (change)="checkboxCondition($event)" id="checkDefault" formControlName="isPresent" />
                         <label class="form-check-label custom-label" for="checkDefault">Currently Working</label>
                     </div>
                 </div>
@@ -46,11 +46,11 @@
                 </div>
         
                 <div class="col-md-6 mb-3">
-                    <label class="form-label custom-label mb-2">To Date<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">To Date<span class="error-msg" *ngIf="required">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="toDate" [disabled]="isDisabletoDate" onkeydown="return false;">
-                    <!-- <div *ngIf="experienceForm.get('toDate')?.invalid && experienceForm.get('toDate')?.touched" class="error-msg">
+                    <div *ngIf="experienceForm.get('toDate')?.invalid && experienceForm.get('toDate')?.touched" class="error-msg">
                         To Date is required
-                    </div> -->
+                    </div>
                 </div>
         
                 <div class="col-md-6 mb-3">

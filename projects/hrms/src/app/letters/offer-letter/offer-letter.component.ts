@@ -235,7 +235,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy{
       if (!issuedDate || !expiryDate) {
         return null; // Don’t validate if one of the dates is missing
       }
-      return new Date(expiryDate) < new Date(issuedDate)
+      return new Date(expiryDate) <= new Date(issuedDate)
         ? { offerDateInvalid: true }
         : null;
     };
@@ -817,6 +817,7 @@ pathValuesFuction(){
   }
   //function to updated the data
   updateOfferLetterFieldsDetails(f: NgForm) {
+    debugger;
     const data = JSON.parse(JSON.stringify(this.prospectiveEmpData));
     this.loading = true;
     this.prospectiveEmpData.employeeId= this.prospectiveEmpData.empId,
@@ -836,6 +837,7 @@ pathValuesFuction(){
     this.prospectiveEmpData.substatus= 'Offer Letter Generated',
     this.prospectiveEmpData.password= this.employeeaddress.password
     this.prospectiveEmpData.reportsTo=this.prospectiveEmpData.reportsTo?.toString();
+    this.prospectiveEmpData.note=this.employeeForm?.get('note')?.value?this.employeeForm?.get('note')?.value:null;
     if (this.buttonValue == 'Regenerate Offer Letter' && this.employeeaddress.substatus != 'Offer Letter Rejected By Manager'
     ) {
       this.prospectiveEmpData.substatus = 'Offer Letter Regenerated';

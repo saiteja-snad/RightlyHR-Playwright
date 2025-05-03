@@ -82,8 +82,8 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getseparationforyourequests();
   }
-  resetForm() {
-    this.acceptForm.resetForm(); // resets form state AND ngModel bindings
+  resetForm(f:NgForm) {
+    f.resetForm(); // resets form state AND ngModel bindings
 
     // Clear the selected data structure completely and set defaults
     this.selectedSpRequestData = {
@@ -469,11 +469,11 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       // Clear data related to Extend and Discontinue
       this.clearExtendData();
       this.clearDiscontinueData();
-    } else {
+    }
+     else {
       // Toggle off Early Relieving
       this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
       this.early = false;
-      this.regular = true;
       this.buttondisable = false;
       this.clearEarlyData();
     }

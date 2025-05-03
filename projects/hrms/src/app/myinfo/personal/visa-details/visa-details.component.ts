@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { CommonModule } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,15 +10,17 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
+import { Select } from 'primeng/select';
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-visa-details',
-  imports: [NoDataFoundComponent,CommonModule,ReactiveFormsModule,TranslateModule],
+  imports: [NoDataFoundComponent, CommonModule, ReactiveFormsModule, TranslateModule, Select, DateformatPipe],
   templateUrl: './visa-details.component.html',
   styleUrl: './visa-details.component.scss'
 })
 
-export class VisaDetailsComponent {
+export class VisaDetailsComponent implements OnInit,OnDestroy {
     subscription!: Subscription;
   empinfo: any;
   visa = [] as any;
@@ -26,13 +28,27 @@ export class VisaDetailsComponent {
   Countrydetails: any;
   spinnerLoader=false
   visaForm!: FormGroup;
+  visaupdateForm!:FormGroup;
+  currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
+  dateofbirth: any;
   allCountries: any; 
+  selecteVisaId: any;
+  selectedvisaDetails: any;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getCountry();
-    this.getvisadata();
+    this.getvisatype();
     this.getVisaEmpId()
+    this.intitionfrom()
+    this.getEmployeeId()
+    this.intitionupdatefrom()
+    this.visaForm.get('issueddate')?.valueChanges.subscribe(() => {
+      this.visaForm.get('expirydate')?.reset();
+    });
+    this.visaupdateForm.get('issueddate')?.valueChanges.subscribe(() => {
+      this.visaupdateForm.get('expirydate')?.reset();
+    });
     
   }
 
@@ -46,9 +62,29 @@ export class VisaDetailsComponent {
     });
   }
 
+  
+  intitionupdatefrom(){
+    this.visaupdateForm = this.fb.group({
+      visatype: [null, Validators.required],
+      countryname:[null,Validators.required],
+      issueddate: [null, Validators.required],
+      expirydate: [null, Validators.required],
+      notes: [''],
+    });
+  }
+
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.dateofbirth =this.formatDateToLocal(data.dob)
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
 
   
-  getvisadata() {
+  getvisatype() {
     this.subscription = this.http.getData('Visatype').subscribe({
       next: (data) => {
         this.visa = data;
@@ -83,6 +119,25 @@ export class VisaDetailsComponent {
       },
     });
   }
+  getMinEndDate(): string | null {
+    const startDateValue = this.visaForm.get('issueddate')?.value;
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; // Return null if no start date is selected
+  }
+
+  getupdateMinEndDate(): string | null {
+    const startDateValue = this.visaupdateForm.get('issueddate')?.value;
+    if (startDateValue) {
+      const startDate = new Date(startDateValue);
+      startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
+      return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
+    }
+    return null; 
+  }
 
    formatDateToLocal(dateString: string): string {
     const date = new Date(dateString);
@@ -93,6 +148,125 @@ export class VisaDetailsComponent {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true,  backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size:'lg', backdrop: 'static' });
+  }
+
+  postvisa() {
+    if (this.visaForm.invalid)
+       return;
+  
+    this.spinnerLoader = true;
+    const formValue = this.visaForm.value;
+    const payload = {
+      visatype: formValue.visatype,
+      issueddate: formValue.issueddate,
+      expirydate: formValue.expirydate,
+      employeeId: this.empinfo.employeeId, // set or get dynamically
+      issuedcountry: formValue.countryname,
+      vstatus: 'Active',
+      note:formValue.note
+    };
+  
+    this.http.postdata('Visa',payload).subscribe({
+      next: (res) => {
+        this.spinnerLoader = false;
+        this.modalService.dismissAll()
+        this.conformationPopup.openSuccessModal("Visa details added successfully")
+        this.getVisaEmpId()
+        // handle success
+      },
+      error: (err) => {
+        this.spinnerLoader = false;
+        this.conformationPopup.openErrorModal("Visa details added failed")
+      }
+    });
+  }
+
+  opendeletModal(content: any, visaDetails: any): void {
+    this.selecteVisaId = visaDetails.id;
+    this.selectedvisaDetails = visaDetails;
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  visaDelete() {
+    if (!this.selecteVisaId || !this.selectedvisaDetails) {
+      console.error('No education record selected for deletion');
+      return;
+    }
+    const payload = {
+      status: 'Void',
+      id: this.selectedvisaDetails.id,
+      employeeId: this.selectedvisaDetails.employeeId,
+      visatype: this.selectedvisaDetails.visatype1,
+      expirydate: this.selectedvisaDetails.expirydate,
+      issueddate: this.selectedvisaDetails.issueddate,
+      issuedcountry: this.selectedvisaDetails.issuedcountry,
+      notes: this.selectedvisaDetails.notes,
+      degreeEndDate: this.selectedvisaDetails.degreeEndDate,
+    };
+    // Send the delete request
+    this.subscription = this.http.postdata('Visa/UPDATER', payload).subscribe({
+      next: (data: any) => {
+       
+        this.modalService.dismissAll()
+        this.getVisaEmpId();
+        this.conformationPopup.openSuccessModal('Visa detalis deleted successfully');
+      },
+      error: (err: any) => {
+        console.error('Error deleting education record:', err);
+        this.conformationPopup.openErrorModal('Visa detalis deleted failed');
+      }
+    });
+  }
+  openModalupdate(content: any, visaDetails: any): void {
+    this.selecteVisaId=visaDetails.id
+
+    this.visaupdateForm.patchValue({
+      visatype: visaDetails.visatype,         // assuming value is "B1", "H1B", etc.
+      countryname: visaDetails.issuedcountry, // make sure the value matches the `optionValue`
+      issueddate: this.formatDateToLocal(visaDetails.issueddate),
+      expirydate: this.formatDateToLocal(visaDetails.expirydate),
+      notes: visaDetails.notes || ''          // default to empty if notes are null/undefined
+    });
+   
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+
+  updatevisa() {
+    if (this.visaupdateForm.invalid)
+       return;
+  
+    this.spinnerLoader = true;
+    const formValue = this.visaupdateForm.value;
+    const payload = {
+      id:this.selecteVisaId,
+      visatype: formValue.visatype,
+      issueddate: formValue.issueddate,
+      expirydate: formValue.expirydate,
+      employeeId: this.empinfo.employeeId,
+      issuedcountry: formValue.countryname,
+      vstatus: 'Active',
+      note:formValue.note
+    };
+  
+    this.http.postdata('Visa/UPDATER',payload).subscribe({
+      next: (res) => {
+        this.spinnerLoader = false;
+        this.modalService.dismissAll()
+        this.conformationPopup.openSuccessModal("Visa details updated successfully")
+        this.getVisaEmpId()
+        // handle success
+      },
+      error: (err) => {
+        this.spinnerLoader = false;
+        this.conformationPopup.openErrorModal("Visa details updated failed")
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }

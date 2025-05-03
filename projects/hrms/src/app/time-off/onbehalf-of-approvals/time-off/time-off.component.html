@@ -32,29 +32,19 @@
                     <td>{{item.entity.leaveEndDate | dateformat}}</td>
                     <td>
                         <div>
-                            <span>
-                                <a type="button" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #reason>
-                                    <div>
-                                        <p class="mb-0">{{item.entity.leaveDescription}}</p>
-                                    </div>
-                                </ng-template>
-                            </span>
+                            <a type="button" [ngbPopover]="reason">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #reason>
+                                <p class="mb-0">{{item.entity.leaveDescription}}</p>
+                            </ng-template>
                         </div>
                     </td>
                     <td>
-                        <div>
-                            <span>
-                                <a type="button">
-                                    <img src="images\info-fill.png" alt="info icon"
-                                        (click)="comments(item.entity.leaveApproverComments,commentspopup)"
-                                        class="info-icon">
-                                </a>
-
-                            </span>
-                        </div>
+                        <a type="button">
+                            <img src="images\info-fill.png" alt="info icon" (click)="comments(item.entity.leaveApproverComments,commentspopup)"
+                             class="info-icon">
+                        </a>
                     </td>
                     @if(rbac.allowedToAccess('Time Off (On Behalf Of Approvals).update') || rbac.allowedToAccess('Time Off (On Behalf Of Approvals).delete')) {
 
@@ -93,7 +83,6 @@
                 @else {
                 <tr>
                     <app-no-data-found></app-no-data-found>
-
                 </tr>
                 }
                 
@@ -115,25 +104,17 @@
             </div>
         </div>
 
-        <div class="custom-table-content">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Comments</th>
-                        <th>Commented By</th>
-                        <th>Date</th>
-                        <th>Commented By ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let comment of approverComments">
-                        <td>{{ comment.comments }}</td>
-                        <td>{{ comment.addedName }}</td>
-                        <td>{{ comment.addedDate | dateformat }}</td>
-                        <td>{{ comment.addedByFusionEmpId }}</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="custom-main-popup-content">
+            <div class="card p-3">
+                <div *ngFor="let comment of approverComments">
+                    <div class="mb-0">
+                        <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
+                        <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
+                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
+                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </ng-template>
@@ -146,42 +127,43 @@
                 <p class="popup-heading mb-0">Comments</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-12">
-                <div class="mb-3 mt-2">
-                    <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
-                        Entitiled : {{this.leaveEntitlementsList.allowedDays}}</label>
-                </div>
-                <div class="mb-3 mt-2">
-                    <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
-                        Booked : {{this.leaveEntitlementsList.booked}}</label>
-                </div>
-                <div class="mb-3 mt-2">
-                    <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
-                        Processed : {{this.leaveEntitlementsList.utilizedDays}}</label>
-                </div>
-                <div class="popup-heading mb-0"
-                    *ngIf="(this.leaveEntitlementsList.category?.isProbationAllowed && this.leaveEntitlementsList.probationLeaves > 0);else  untilizeddays">
-                    Available: {{ this.leaveEntitlementsList.probationLeaves -
-                    this.leaveEntitlementsList.utilizedDays }}
-                </div>
-                <ng-template #untilizeddays>
-                    <div class="popup-heading mb-0">
-                        Available: {{ this.leaveEntitlementsList.allowedDays -
+        <div class="custom-main-popup-content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="mb-3 mt-2">
+                        <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
+                            Entitiled : {{this.leaveEntitlementsList.allowedDays}}</label>
+                    </div>
+                    <div class="mb-3 mt-2">
+                        <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
+                            Booked : {{this.leaveEntitlementsList.booked}}</label>
+                    </div>
+                    <div class="mb-3 mt-2">
+                        <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
+                            Processed : {{this.leaveEntitlementsList.utilizedDays}}</label>
+                    </div>
+                    <div class="popup-heading mb-0" *ngIf="(this.leaveEntitlementsList.category?.isProbationAllowed && 
+                    this.leaveEntitlementsList.probationLeaves > 0);else  untilizeddays">
+                        Available: {{ this.leaveEntitlementsList.probationLeaves -
                         this.leaveEntitlementsList.utilizedDays }}
                     </div>
-                </ng-template>
-                <div *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0"
-                    class="mb-3 mt-2">
-                    <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
-                        Probation Leaves: {{ leaveEntitlementsList.category.isProbationAllowed !== null ?
-                        leaveEntitlementsList.probationLeaves : 'N/A' }}
-                    </label>
+                    <ng-template #untilizeddays>
+                        <div class="popup-heading mb-0">
+                            Available: {{ this.leaveEntitlementsList.allowedDays -
+                            this.leaveEntitlementsList.utilizedDays }}
+                        </div>
+                    </ng-template>
+                    <div *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0"
+                        class="mb-3 mt-2">
+                        <label for="exampleFormControlTextarea1" class="popup-heading mb-0">
+                            Probation Leaves: {{ leaveEntitlementsList.category.isProbationAllowed !== null ?
+                            leaveEntitlementsList.probationLeaves : 'N/A' }}
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -196,7 +178,8 @@
             <p class="confirmation-text">Is it a planned leave?</p>
         </div>
 
-        <form name="leaveapprovee" class="w-100" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid ">
+        <form name="leaveapprovee" class="w-100" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid"
+            class="custom-main-popup-content">
             <div class="mb-3 d-flex justify-content-center">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" [value]="true" id="Planned" name="isPlannedLeave"
@@ -213,14 +196,14 @@
             </div>
 
             <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label labell">Comments<span
-                        class="required">*</span></label>
+                <label for="exampleFormControlTextarea1" class="form-label labell">Comments
+                    <span class="required">*</span></label>
                 <textarea class="form-control" id="Reasons" placeholder="Please provide comments" name="Reasons"
                     #Reasons="ngModel" maxlength="250"
                     (keypress)="formValidation.restrictInputallowspicalcharters($event)"
                     [(ngModel)]="selectedLeaveData.comments" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)"
                     rows="3" required></textarea>
-                <span>{{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</span>
+                <div class="textarea-count-text">{{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                 <div class="error-msg"
                     *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
                     Comments are required
@@ -243,12 +226,13 @@
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
         </div>
-        <form name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
+        <form name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid" 
+        class="custom-main-popup-content">
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
                         class="text-danger">*</span></label>
-                <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
-                    name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments" name="Reasons"
+                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
                     (keypress)="formValidation.restrictInputallowspicalcharters($event)"
                     (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
                 <div class="form-label custom-label text-end my-1">

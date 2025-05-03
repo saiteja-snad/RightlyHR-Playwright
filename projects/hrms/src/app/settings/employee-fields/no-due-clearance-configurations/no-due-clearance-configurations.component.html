@@ -135,6 +135,9 @@
               <label class="form-check-label">Role</label>
             </div>
           </div>
+          <div class="error-msg" *ngIf="noDueForm.get('selectedEmpRole')?.touched && noDueForm.get('selectedEmpRole')?.invalid">
+              Please select any of the type
+          </div>
         </div>
 
         <!-- Employee -->
@@ -209,7 +212,7 @@
         }
 
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary px-5 py-2"(click)="closeDelete(modal)">Close</button>
+          <button type="button" class="custom-btn btn-secondary px-5 py-2"(click)="closeDelete(confirmationpopup)">Close</button>
           <button type="submit" class="custom-btn btn-primary px-5 py-2" [disabled]="noDueForm.invalid">Add</button>
         </div>
       </form>
@@ -379,4 +382,22 @@
           </div>
       </div>
 
+</ng-template>
+
+<ng-template #confirmationpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="reset" (click)="model.dismiss()" class="custom-btn btn-secondary">
+        No
+      </button>
+      <button type="submit" class="custom-btn btn-primary" (click)="clearData()">
+        Yes
+      </button>
+    </div>
+  </div>
 </ng-template>

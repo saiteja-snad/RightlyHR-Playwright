@@ -583,37 +583,41 @@
 </div>
 
 <ng-template #confirmationtosaveasdraft let-modal>
-    <div class="modal-body text-center p-5" ngbAutofocus>
-        <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="imgg mb-4"> -->
-        <p class="mb-4 confirm-text text-wrap">Are you sure you want to Save?</p>
-        <div class="d-flex justify-content-around pt-3">
-            <button class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button class="custom-btn btn-primary" (click)="onSaveSubmit();modal.dismiss() ">Yes</button>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/conformation.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Save?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="onSaveSubmit();modal.dismiss()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>
-
 
 <ng-template #confirmationtosave let-modal>
-    <div class="modal-body text-center p-5" ngbAutofocus>
-        <!-- <img src="/assets/images/Vector@2x.png" alt="confirmation icon" class="imgg mb-3"> -->
-        <p class="confirm-text text-wrap mb-4">Are you sure you want to {{statusvalue}}?</p>
-        <div class="d-flex justify-content-around pt-3">
-            <button class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button class="custom-btn btn-primary"
-                (click)="onUpdate(formStatus === 'draft' ? 'submit':'update');modal.dismiss() ">Yes</button>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/conformation.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to {{statusvalue}}?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="onUpdate(formStatus === 'draft' ? 'submit':'update');
+            modal.dismiss()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>
 
-
 <ng-template #navigateToTable let-modal>
-    <div class="modal-body text-center p-5" ngbAutofocus>
-        <!-- <img src="./assets/images/Vector@2x.png" alt="vector image" class="imgg mb-3" /> -->
-        <h5 class="want my-4">Are you sure you want to go back?</h5>
-        <div class="d-flex justify-content-around pt-3">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="button" class="custom-btn btn-primary" (click)="backToTableView()">Yes</button>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <p class="confirmation-text">Are you sure you want to go back?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="backToTableView()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

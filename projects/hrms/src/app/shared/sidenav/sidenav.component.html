@@ -20,12 +20,12 @@
                 <i class="bi bi-calendar2-heart custom-icon"></i>Events
             </li>
             }
-            @if(this.rbac.allowedToAccess('Timeoff.view')){
+            @if(this.rbac.allowedToAccess('Time-Off.view')){
             <li class="nav-item" [routerLink]="['/time-off']" routerLinkActive="active-nav-link">
                 <i class="bi bi-clock-history custom-icon"></i>Time-off
             </li>
             }
-            @if(this.rbac.allowedToAccess('Claims and Expenses.view')){
+            @if(this.rbac.allowedToAccess('Expenses.view')){
             <li class="nav-item" [routerLink]="['/claimsandexpenses']" routerLinkActive="active-nav-link">
                 <i class="bi bi-currency-dollar custom-icon"></i>Expenses
             </li>
@@ -40,12 +40,12 @@
                 <i class="bi bi-file-earmark-text-fill custom-icon"></i>Policies
             </li>
             }
-            @if(this.rbac.allowedToAccess('Pms.view')){
+            @if(this.rbac.allowedToAccess('PMS.view')){
             <li class="nav-item" [routerLink]="['/pms']" routerLinkActive="active-nav-link">
                 <i class="bi bi-graph-up-arrow custom-icon"></i>PMS
             </li>
             }
-            @if(this.rbac.allowedToAccess('Pms-configuration.view')){
+            @if(this.rbac.allowedToAccess('PMS Configurations.view')){
             <li class="nav-item text-wrap" [routerLink]="['/pmsconfiguration']" routerLinkActive="active-nav-link">
                 <i class="bi bi-gear-fill custom-icon"></i>PMS Configurations
             </li>}
@@ -59,17 +59,17 @@
                 <i class="bi bi-pc-display custom-icon"></i>Desk<br>Allocation
             </li>
             }
-            @if(this.rbac.allowedToAccess('Assets Management.view')){
+            @if(this.rbac.allowedToAccess('Asset Allocation.view')){
             <li class="nav-item" [routerLink]="['/assets-management']" routerLinkActive="active-nav-link">
                 <i class="bi bi-display custom-icon"></i>Asset<br>Allocation
             </li>
             }
-            @if(this.rbac.allowedToAccess('Help Desk.view')){
+            @if(this.rbac.allowedToAccess('IT Support.view')){
             <li class="nav-item" [routerLink]="['/it-support']" routerLinkActive="active-nav-link">
                 <i class="bi bi-headset  custom-icon"></i>IT Support
             </li>
             }
-            @if(this.rbac.allowedToAccess('Organizational Hierarchy.view')){
+            @if(this.rbac.allowedToAccess('Org Hierarchy.view')){
             <li class="nav-item p-2 mb-3" [routerLink]="['/organization-chart']" routerLinkActive="active-nav-link">
                 <i class="bi bi-diagram-3  custom-icon"></i>Hierarchy
             </li>}

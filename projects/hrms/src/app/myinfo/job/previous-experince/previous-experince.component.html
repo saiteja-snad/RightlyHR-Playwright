@@ -16,7 +16,7 @@
                     <th>Job Role</th>
                     <th>Currently Working</th>
                     <th>Document</th>
-                    <th class="text-center">Actions</th>
+                    <th class="text-center">Action(S)</th>
                 </tr>
             </thead>
             <tbody>
@@ -73,7 +73,7 @@
 <ng-template #addexperincemodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
-            <div >
+            <div>
                 <p class="popup-heading mb-0">Add Previous Experience Details</p>
             </div>
             <div>
@@ -106,9 +106,10 @@
                                 class="error-msg">
                                 <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['required']">Company
                                     Name is required</div>
-                               <div class="error-msg"  *ngIf="employeeExperienceForm.get('companyName')?.errors?.['pattern']">
-                                Name is canot be spaces 
-                               </div>
+                                <div class="error-msg"
+                                    *ngIf="employeeExperienceForm.get('companyName')?.errors?.['pattern']">
+                                    Name is canot be spaces
+                                </div>
                                 <div class="error-msg"
                                     *ngIf="employeeExperienceForm.get('companyName')?.errors?.['maxlength']">Company
                                     name cannot exceed 100 characters</div>
@@ -148,13 +149,12 @@
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate" formControlName="toDate"
-                                onkeypress="return false" [min]="getMinEndDate()" />
+                                onkeypress="return false" [min]="getMinEndDate()" [max]="currentDate" />
                             <div *ngIf="employeeExperienceForm.get('toDate')?.invalid && employeeExperienceForm.get('toDate')?.touched"
                                 class="error-msg">
                                 To Date is required
                             </div>
-                            <div *ngIf="isInvalidToDate" class="error-msg">To Date cannot be less than From Date</div>
-                            <div *ngIf="isFutureDate" class="error-msg">Future dates cannot be selected</div>
+
                         </div>
 
                         <div class="col-md-6 mb-3">
@@ -186,8 +186,8 @@
                             Contact Name is required
                         </div>
                         <div class="error-msg"
-                        *ngIf="employeeExperienceForm.get('previousContactName')?.errors?.['maxlength']"> Contact
-                        name cannot exceed 100 characters</div>
+                            *ngIf="employeeExperienceForm.get('previousContactName')?.errors?.['maxlength']"> Contact
+                            name cannot exceed 100 characters</div>
                     </div>
 
                     <div class="col-md-6 mb-3">
@@ -266,7 +266,7 @@
 <ng-template #updateexperincemodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
-            <div >
+            <div>
                 <p class="popup-heading mb-0">Update Previous Experience Details</p>
             </div>
             <div>
@@ -303,7 +303,7 @@
                                     *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.errors?.['required']">
                                     Company
                                     Name is required</div>
-                              
+
                                 <div class="error-msg"
                                     *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.errors?.['maxlength']">
                                     Company name cannot exceed 100 characters</div>
@@ -329,7 +329,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="FromDate" class="form-label custom-label mb-2">From Date <span
                                     class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="FromDate"  onkeypress="return false"
+                            <input type="date" class="form-control custom-input" id="FromDate" onkeypress="return false"
                                 formControlName="fromDateupdate" [min]="dateofbirth"
                                 [max]="currentDate | date: 'yyyy-MM-dd'" />
                             <div *ngIf="employeeExperienceupdateForm.get('fromDateupdate')?.invalid && employeeExperienceupdateForm.get('fromDateupdate')?.touched"
@@ -345,15 +345,14 @@
                             <label for="ToDate" class="form-label custom-label mb-2">To Date <span
                                     class="text-danger">*</span></label>
                             <input type="date" class="form-control custom-input" id="ToDate"
-                                formControlName="toDateupdate" [min]="getupdateMinEndDate()" onkeypress="return false"
-                                [min]="" />
+                                formControlName="toDateupdate" [min]="getupdateMinEndDate()" [max]="currentDate"
+                                onkeypress="return false" [min]="" />
 
                             <div *ngIf=" employeeExperienceupdateForm.get('toDateupdate')?.invalid &&
                                 employeeExperienceupdateForm.get('toDateupdate')?.touched" class="error-msg">
                                 To Date is required
                             </div>
-                            <div *ngIf="isInvalidToDate" class="error-msg">To Date cannot be less than From Date</div>
-                            <div *ngIf="isFutureDate" class="error-msg">Future dates cannot be selected</div>
+
                         </div>
                     </div>
 
@@ -388,8 +387,9 @@
                                 Contact Name is required
                             </div>
                             <div class="error-msg"
-                            *ngIf="employeeExperienceupdateForm.get('previousContactNameupdate')?.errors?.['maxlength']">Company
-                            name cannot exceed 100 characters</div>
+                                *ngIf="employeeExperienceupdateForm.get('previousContactNameupdate')?.errors?.['maxlength']">
+                                Company
+                                name cannot exceed 100 characters</div>
                         </div>
 
                         <div class="col-md-6 mb-3">

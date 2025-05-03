@@ -132,12 +132,14 @@
                                     <div class="col-md-3">
                                         <label class="form-label custom-label">{{'Expense Type'  | translate}}<span
                                                 class="text-danger">*</span></label>
-                                                <select  class="form-select custom-input" formControlName="expenseId" (change)="onchangeexpnes()">
+                                           
+                                                <select  class="form-select custom-select" formControlName="expenseId" (change)="onchangeexpnes()">
                                                     <option [ngValue]="null" disabled>Select Expense Type</option>
                                                     <option *ngFor="let item of expense | async" [value]="item.expenseId">
                                                       {{ item.expenseType }}
                                                     </option>
                                                   </select>
+                                              
                                         <div *ngIf="item.get('expenseId')?.invalid && item.get('expenseId')?.touched"
                                             class="error-msg">
                                             <div class="error-msg"
@@ -167,7 +169,7 @@
                                         <label class="form-label custom-label">{{'Expense Date'  | translate}}<span
                                                 class="text-danger">*</span></label>
                                         <input type="date" class="form-control custom-input"
-                                            formControlName="expense_Date" onkeypress="return false;" />
+                                            formControlName="expense_Date" onkeypress="return false;" [min]="joiningDate" [max]="currentDate" />
                                     </div>
 
                                     <!-- Amount -->

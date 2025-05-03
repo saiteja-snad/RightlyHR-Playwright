@@ -33,7 +33,8 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   emails =[];
   timeoffValid = false;
   istimeoffValid = true;
-  currentDate = new Date();
+  currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
+  joiningDate:any
   removeindex:any
   expensetype = [] as Iexpensetype[];
   expenseemployeedata: IExpense[] = [];
@@ -46,7 +47,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     private http: HttpService,private modalService: NgbModal) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-
+    this.getEmployeeId()
     this.initiateForm();
     this.getExpensetype();
     this.getdatabyentriy();
@@ -110,15 +111,24 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
 
   }
 
-  //   vldateofjoin1(): void {
-  //   if (this..expensedate < this.empinfo.dateOfJoining) {
-  //     this.istimeoffValid = false;
-  //     this.timeoffValid = false;
-  //   } else {
-  //     this.istimeoffValid = true;
-  //     this.timeoffValid = true;
-  //   }
-  // }
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.joiningDate =this.formatDateToLocal(data.dateOfJoining)
+       
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
+
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
   removeExpense() {
     this.expenseItems.removeAt(this.removeindex);
     this.calculateTotalExpensesAmount();
@@ -452,24 +462,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     }
   }
 
-  validateDate(expensedate: NgModel) {
-    const inputDate = new Date(expensedate.value);
-    if (inputDate > this.currentDate) {
-      expensedate.control.setErrors({ futureDate: true });
-    } else {
-      expensedate.control.setErrors(null);
-    }
-  }
-  //date validation
-  // vldateofjoin1(): void {
-  //   if (this.expenseheader.expensedate < this.empinfo.dateOfJoining) {
-  //     this.istimeoffValid = false;
-  //     this.timeoffValid = false;
-  //   } else {
-  //     this.istimeoffValid = true;
-  //     this.timeoffValid = true;
-  //   }
-  // }
+
   onAmountInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');

@@ -87,7 +87,7 @@
                             <div class="col-md-2">
                                 <label class="form-label custom-label">{{'Expense Date'  | translate}}<span
                                         class="text-danger">*</span></label>
-                                <input type="date" class="form-control custom-input"  formControlName="expense_Date"
+                                <input type="date" class="form-control custom-input"  formControlName="expense_Date" [min]="joiningDate" [max]="currentDate"
                                     onkeypress="return false;" />
                                     <div *ngIf="item.get('expense_Date')?.invalid && item.get('expense_Date')?.touched"
                                     class="error-msg">

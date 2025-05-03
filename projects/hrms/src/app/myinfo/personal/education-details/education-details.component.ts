@@ -46,6 +46,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
     this.initializeForm();
     this.initializeupdateForm()
     this.getDegree()
+    this.getEmployeeId()
     this.getEducationEmpid();
     this.educationForm.get('degreeStartDate')?.valueChanges.subscribe(() => {
       this.educationForm.get('degreeEndDate')?.reset();
@@ -103,6 +104,16 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
     }
     return null; 
+  }
+
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.dateofbirth =this.formatDateToLocal(data.dob)
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
   }
 
   postEducation(): void {

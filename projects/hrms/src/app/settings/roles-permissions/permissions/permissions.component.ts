@@ -28,6 +28,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
+  
+
   constructor(
     private http: HttpService, 
     private modalService: NgbModal, 

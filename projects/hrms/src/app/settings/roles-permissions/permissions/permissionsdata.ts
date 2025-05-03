@@ -65,10 +65,10 @@ export const permissionsData = [
     { fields: 'Settings', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Events', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Claims and Expenses', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Timeoff', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Timeoff', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Reports', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Help Desk', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Attendance', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Attendance', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Calendar', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Holidays', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Policies', View: false, Update: false, Create: false, Delete: false },
@@ -100,9 +100,9 @@ export const permissionsData = [
     { fields: 'Desk Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Expenses Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Invoices Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Attendance Select Employee For Manager', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Attendance Select Employee For Manager', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Inactive Button', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Attendance Select Employee For HR', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Attendance Select Employee For HR', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Active Employee', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Inactive Employee', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Prospective Employee', View: false, Update: false, Create: false, Delete: false },
@@ -139,7 +139,7 @@ export const permissionsData = [
     { fields: 'Assessor Configuration Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Welcome Letter', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Monthly Attandance Report', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Attendance Regularization Button', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Attendance Regularization Button', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Remote Login Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
     // Settings sidebar    
@@ -238,5 +238,171 @@ export const permissionsData = [
 
     //Custom Fields   
     { fields: 'Custom Events', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Pending Approvals', View: false, Update: false, Create: false, Delete: false }
+    { fields: 'Pending Approvals', View: false, Update: false, Create: false, Delete: false },
+
+
+    //New Side Nav Section
+    { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Events', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Time-Off', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Expenses', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Reports', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Policies', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Calendar', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'IT Support', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Org Hierarchy', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'PMS', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'PMS Configurations', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Desk Allocation', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Allocation', View: false, Update: false, Create: false, Delete: false },
+
+    //Time Off Tabs Section
+    { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'WFH/On Duty Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Remote Login Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Comp Off Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Permissions Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Regularization Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'On Behalf Of Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'On Behalf Of Approvals Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Global-Permissions Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Pending Approvals Module', View: false, Update: false, Create: false, Delete: false },
+
+    //Time Off Module Sub Tabs Section
+    { fields: 'Waiting For Approval (Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Approved (Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Processed (Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Rejected (Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Request Leave Button', View: false, Update: false, Create: false, Delete: false },
+
+    //Work From Home Sub Tabs Section
+    { fields: 'Waiting For Approval (WFH)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Approved (WFH)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Processed (WFH)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Rejected (WFH)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Request WFH Button', View: false, Update: false, Create: false, Delete: false },
+
+
+    //Remote Login
+    { fields: 'Remote Login', View: false, Update: false, Create: false, Delete: false },
+
+
+    //Comp Off Sub Tabs Section    
+    { fields: 'Waiting For Approval (Comp Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Approved (Comp Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Processed (Comp Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Rejected (Comp Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Request Comp Off Button', View: false, Update: false, Create: false, Delete: false },
+
+    //Permissions Sub Tabs Section
+    { fields: 'Waiting For Approval (Permissions)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Approved (Permissions)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Rejected (Permissions)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Request Permission Button', View: false, Update: false, Create: false, Delete: false },
+
+    //Regularization Sub Tabs Section
+    { fields: 'Waiting For Approval (Regularization)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Approved (Regularization)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Processed (Regularization)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Rejected (Regularization)', View: false, Update: false, Create: false, Delete: false },
+
+
+    //On Behalf Of Sub Tabs Section
+    { fields: 'Waiting For Approval (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Approved (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Processed (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Rejected (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Request On Behalf Button', View: false, Update: false, Create: false, Delete: false },
+
+
+    //Attendance 
+    { fields: 'Request Regularization', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Request Leave', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Select Employee For Manager', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Attendance Select Employee For HR', View: false, Update: false, Create: false, Delete: false },
+
+    //Global Permissions 
+    { fields: 'Global Permissions', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Request Global Permission Button', View: false, Update: false, Create: false, Delete: false },
+
+
+    //Pending Approvals Sub Tabs Section
+    { fields: 'Time Off', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'WFH', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'CompOff', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Permissions', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Regularization', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Seperation Request', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Recall Request', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Trainee Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'No Due Clearence Requests', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Claims and Expenses', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Desk Requests', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
+
+    //Pending Approval Time Off Tabs Section
+    { fields: 'For You', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role', View: false, Update: false, Create: false, Delete: false }, 
+
+    //Pending Approval WFH Off Tabs Section
+    { fields: 'For You', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role', View: false, Update: false, Create: false, Delete: false }, 
+
+
+    //Pending Approval Comp Off Tabs Section
+    { fields: 'For You', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role', View: false, Update: false, Create: false, Delete: false }, 
+
+
+    //Pending Approval Permission Tabs Section
+    { fields: 'For You', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role', View: false, Update: false, Create: false, Delete: false }, 
+
+
+    //Pending Approval Regularization Tabs Section
+    { fields: 'For You', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role', View: false, Update: false, Create: false, Delete: false }, 
+
+
+    //Pending Approval Seperation Request Tabs Section
+    { fields: 'For You', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role', View: false, Update: false, Create: false, Delete: false }, 
+ 
+
+    //Pending Approval Recall Requests Tabs Section
+    { fields: 'For You', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role', View: false, Update: false, Create: false, Delete: false }, 
+
+
+    //Pending Approval Trainee Details  Section
+    { fields: 'Trainee Details', View: false, Update: false, Create: false, Delete: false },
+    
+    //Pending Approval No Due Clearance Requests Section
+    { fields: 'No Due Clearance Request', View: false, Update: false, Create: false, Delete: false },
+
+
+    //Pending Approval Claims and Expenses Tabs Section
+    { fields: 'For You', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role', View: false, Update: false, Create: false, Delete: false },
+
+
+    //Pending Approval Desk Requests Tabs Section
+    { fields: 'For You', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role', View: false, Update: false, Create: false, Delete: false },
+
+
+    //Pending Approval Probation Details Section
+    { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
+
+    //On Behalf Of  Approvals Sub Tabs Section
+    { fields: 'Time Off', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Comp Off', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'WFH', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Permission', View: false, Update: false, Create: false, Delete: false },
+ 
+
+
+
 ];

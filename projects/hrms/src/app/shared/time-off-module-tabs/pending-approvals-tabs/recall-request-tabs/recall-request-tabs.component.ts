@@ -9,6 +9,7 @@ import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-recall-request-tabs',
@@ -22,12 +23,13 @@ export class RecallRequestTabsComponent {
   // pendingApprovalCount: ApprovalStatusCount[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
+  filteredTabs: any[] = [];
   navTabs = computed(() => {
     const moduleId = environment.RecallrequestmoduleId;
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
     return [
-      { label: 'For You ', link: 'recall-for-you', count: data?.forYou ?? 0 },
-      { label: 'For Your Role', link: 'recall-for-role', count: data?.forYourRole ?? 0 }
+      { label: 'For You ', link: 'recall-for-you', count: data?.forYou ?? 0,permission: { feature: 'For You (Recall Requests)', action: 'view' } },
+      { label: 'For Your Role', link: 'recall-for-role', count: data?.forYourRole ?? 0,permission: { feature: 'For Role (Recall Requests)', action: 'view' } }
     ];
   });
 
@@ -36,7 +38,7 @@ export class RecallRequestTabsComponent {
     this.getAllSeparationPendingApprovalsCount();
   }
 
-  constructor(public readonly router: Router, private http: HttpService) {
+  constructor(public readonly router: Router, private http: HttpService,private rbac: RbacService) {
     effect(() => {
       if (this.http.tirggerPendingApprovalCountSignal().recall) {
         this.getAllSeparationPendingApprovalsCount();
@@ -52,10 +54,23 @@ export class RecallRequestTabsComponent {
       next: (data: ApprovalStatusCount[]) => {
         const filtered = data.filter(item => item.moduleId === moduleId);
         this.pendingApprovalCount.set(filtered);
+        this.filterTabsByRbac();
       },
       error: (err) => console.error('Error fetching approvals:', err),
     });
   }
+
+
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs()?.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
+    });
+  }
+
+
   
   ngOnDestroy(): void {
     this.destroy$.next(true);

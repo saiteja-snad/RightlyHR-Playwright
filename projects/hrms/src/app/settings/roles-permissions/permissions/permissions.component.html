@@ -1209,7 +1209,7 @@
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"
-                        *ngIf="per.fields === 'Probation Details' ">
+                        *ngIf="per.fields === 'Probation Details'  ">
                         <td class="text-align-center">{{ per.fields }}</td>
                         <td scope="row">
                             <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -1237,8 +1237,8 @@
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"
-                        *ngIf="per.fields === 'Time Off (On Behalf Of  Approvals)'  || per.fields === 'WFH (On Behalf Of  Approvals)' 
-                                        || per.fields === 'Comp Off (On Behalf Of  Approvals)' || per.fields === 'Permission (On Behalf Of  Approvals)' ">
+                        *ngIf="per.fields === 'Time Off (On Behalf Of Approvals)'  || per.fields === 'WFH (On Behalf Of Approvals)' 
+                                        || per.fields === 'Comp Off (On Behalf Of Approvals)' || per.fields === 'Permission (On Behalf Of Approvals)' ">
                         <td class="text-align-center">{{ per.fields }}</td>
                         <td scope="row">
                             <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

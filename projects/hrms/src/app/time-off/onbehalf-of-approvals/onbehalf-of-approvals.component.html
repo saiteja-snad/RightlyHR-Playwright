@@ -28,21 +28,27 @@
     <div class="custom-component-left-content">
       <div class="component-side-nav-tabs-container py-3">
         <ul class="nav flex-column">
+          @if(rbac.allowedToAccess('Time Off (On Behalf Of Approvals).view') ) {
           <li class="nav-item">
             <a class="nav-link" [class.active]="activeTab === 'timeOff'" (click)="setActiveTab('timeOff')">Time Off ({{ timeOffCount }})</a>
           </li>
+        }
+        @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).view') ) {
           <li class="nav-item">
             <a class="nav-link" [class.active]="activeTab === 'compOff'" (click)="setActiveTab('compOff')">Comp Off ({{ compOffCount }})</a>
           </li>
-
+        }
+        @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).view') ) {
           <li class="nav-item">
             <a class="nav-link" [class.active]="activeTab === 'wfh'" (click)="setActiveTab('wfh')">WFH ({{ wfhCount }})</a>
           </li>
-
+        }
+        @if(rbac.allowedToAccess('Permission (On Behalf Of Approvals).view') ) {
           <li class="nav-item">
             <a class="nav-link" [class.active]="activeTab === 'permissions'"
               (click)="setActiveTab('permissions')">Permissions ({{ permissionsCount }})</a>
           </li>
+        }
         </ul>
       </div>
     </div>

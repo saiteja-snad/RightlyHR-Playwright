@@ -1,4 +1,4 @@
-<div class="custom-main-component-container" *ngIf="this.rbac.allowedToAccess('Recall Tab.view')">
+<div class="custom-main-component-container">
   <!--Input search-->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -21,7 +21,9 @@
           <th>{{'Reason' | translate}}</th>
           <th>{{'Request Type' | translate}}</th>
           <th>{{'Approver History' | translate}}</th>
+          @if(rbac.allowedToAccess('For You (Recall Requests).update') || rbac.allowedToAccess('For You (Recall Requests).delete')) {
           <th>{{'Action(s)' | translate}}</th>
+          }
         </tr>
       </thead>
       <tbody>
@@ -61,34 +63,43 @@
             }
             @else{-}
           </td>
+          @if(rbac.allowedToAccess('For You (Recall Requests).update') || rbac.allowedToAccess('For You (Recall Requests).delete')) {
           <td class="text-center">
             <div class="dropdown">
               <a type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
               </a>
               <ul class="dropdown-menu custom-dropdown-menu">
+                @if(rbac.allowedToAccess('For You (Recall Requests).update') ) {
                 @if(item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage){
-                <li (click)="openModal(approval);handleRequest(item)" *ngIf="rbac.allowedToAccess('Recall Tab.update')">
+                <li (click)="openModal(approval);handleRequest(item)" >
                   <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a>
                 </li>
                 }
+              }
+
+              @if( rbac.allowedToAccess('For You (Recall Requests).delete')) {
                 @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage) ||
                 (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
                 <li (click)="openModal(rejectmodal);handleRequest(item)"
-                  *ngIf="rbac.allowedToAccess('Recall Tab.delete')">
+                 >
                   <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a>
                 </li>
                 }
+              }
+              @if(rbac.allowedToAccess('For You (Recall Requests).update') ) {
                 @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
                 <li (click)="openModal(processmodal);handleRequest(item)"
-                  *ngIf="rbac.allowedToAccess('Recall Tab.update')">
+                  >
                   <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
                 </li>
                 }
+              }
               </ul>
             </div>
           </td>
           }
+        }
         </tr>
         <tr *ngIf="filteredData.length === 0">
           <td colspan="9"><app-no-data-found></app-no-data-found></td>

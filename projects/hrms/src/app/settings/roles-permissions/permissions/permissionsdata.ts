@@ -420,12 +420,13 @@ export const permissionsData = [
 
     //Pending Approval Probation Details Section
     { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Probation Assessment Form', View: false, Update: false, Create: false, Delete: false },
 
     //On Behalf Of  Approvals Sub Tabs Section
-    { fields: 'Time Off (On Behalf Of  Approvals)', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Comp Off (On Behalf Of  Approvals)', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'WFH (On Behalf Of  Approvals)', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Permission (On Behalf Of  Approvals)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Time Off (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Comp Off (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'WFH (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Permission (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },
  
 
 

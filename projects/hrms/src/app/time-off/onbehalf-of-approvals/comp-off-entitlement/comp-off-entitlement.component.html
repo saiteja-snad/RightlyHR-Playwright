@@ -10,11 +10,13 @@
                     <th>Reason</th>
                     <th>Approver Comments</th>
                     <th>Applied Date</th>
+                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') || rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')) {
                     <th>Action(s)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Compoff Tab.view')) {
+               
                 <ng-container *ngIf="leaves!.length > 0; else noDataTemplate">
                     <tr *ngFor="let leave of leaves; let i = index">
                         <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
@@ -55,30 +57,43 @@
                             </div>
                         </td>
                         <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
+                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') || rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')) {
+
                         <td>
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu py-0">
+                                @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')) {
+
                                     @if( leave.approvalHeader.currentapprovalStage !=
                                     leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.update')">
+                                    <li (click)="openApproveModal(approval,leave)" >
                                         <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                     </li>
                                     }
+                                }
+
+                                @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')) {
+
                                     @if( leave.approvalHeader.currentapprovalStage ==
                                     leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.update')">
+                                    <li (click)="handleProcess(leave)" >
                                         <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
                                     </li>
                                     }
-                                    <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.delete')">
+                                }
+                                @if( rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')) {
+
+                                    <li (click)="openRejectModal(rejectmodal,leave)" >
                                         <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
                                     </li>
+                                }
                                 </ul>
                             </div>
                         </td>
+                    }
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
@@ -88,7 +103,7 @@
                         </td>
                     </tr>
                 </ng-template>
-                }
+                
             </tbody>
         </table>
     </div>

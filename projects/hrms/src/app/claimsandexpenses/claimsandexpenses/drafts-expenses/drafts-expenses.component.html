@@ -85,7 +85,7 @@
                         <label class="form-label custom-label mb-2">{{'Expense Title' | translate}}<span
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="expensesTitle"
-                            placeholder="Please enter expense title" />
+                            placeholder="Please enter expense title" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                         <div class="error-msg" *ngIf="newExpenseForm.controls['expensesTitle'].invalid && 
                                         (newExpenseForm.controls['expensesTitle'].touched || 
                                          newExpenseForm.controls['expensesTitle'].dirty)">
@@ -101,7 +101,7 @@
                         <label class="form-label custom-label mb-2">{{'Approver Emai' | translate}}l<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="emails" optionLabel="label" placeholder="Please select approval email"
+                            <p-select [options]="emails" optionLabel="label" placeholder="Please select approver email"
                                 formControlName="approvalemail" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
@@ -146,7 +146,7 @@
                                 <label class="form-label custom-label">{{'Expense Item' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input" formControlName="item_Name"
-                                    placeholder="Please enter expense item" />
+                                    placeholder="Please enter expense item"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                                 <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
                                     class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
@@ -193,7 +193,7 @@
                             <div class="col-md-2">
                                 <label class="form-label custom-label">{{'Receipt Number' | translate}}<span
                                         class="text-danger">*</span></label>
-                                <input type="text" class="form-control custom-input" formControlName="receipt_Number"
+                                <input type="text" class="form-control custom-input"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" formControlName="receipt_Number"
                                     placeholder="Please enter receipt number" />
                                 <div *ngIf="item.get('receipt_Number')?.invalid && 
                                                 (item.get('receipt_Number')?.touched || 
@@ -229,7 +229,7 @@
                                 <label class="form-label custom-label">{{'Description' | translate}}</label>
                                 <div class="">
                                     <textarea class="form-control custom-input" type="text" maxlength="250"
-                                        formControlName="item_Description" placeholder="Write description here..."
+                                        formControlName="item_Description" [maxlength]="250"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" placeholder="Please enter description "
                                         rows="1"></textarea>
                                     <div class="character-count mt-2">
                                         {{ item.get("item_Description")?.value?.length || 0 }}/250

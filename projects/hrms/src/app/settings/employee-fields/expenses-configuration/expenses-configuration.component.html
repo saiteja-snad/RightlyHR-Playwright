@@ -44,7 +44,7 @@
                 <p class="popup-heading mb-0">Add Expense Type</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();expenseForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">
@@ -54,9 +54,9 @@
                         Expense Type <span class="text-danger">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" id="expenseType" formControlName="expenseType"
-                        autocomplete="off" placeholder="New Expense Type" maxlength="50" />
+                        autocomplete="off" placeholder="Please enter expense type" maxlength="50" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                     <div class="error-msg"
-                        *ngIf="expenseForm.get('expenseType')?.hasError('required') && (expenseForm.get('expenseType')?.touched || expenseForm.touched)">
+                        *ngIf="expenseForm.get('expenseType')?.hasError('required') && (expenseForm.get('expenseType')?.touched )">
                         Expense Type is required
                     </div>
                     <div class="error-msg"
@@ -69,10 +69,10 @@
                         Expense Code <span class="text-danger">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" id="expensecode" formControlName="expensesCode"
-                        autocomplete="off" placeholder="Expense code" maxlength="50"
+                        autocomplete="off" placeholder="Please enter expense code" maxlength="50" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"
                         (keyup)="expenseForm.get('expensesCode')?.setValue(expenseForm.get('expensesCode')?.value.toUpperCase())" />
                     <div class="error-msg"
-                        *ngIf="expenseForm.get('expensesCode')?.invalid && (expenseForm.get('expensesCode')?.touched || expenseForm.touched)">
+                        *ngIf="expenseForm.get('expensesCode')?.invalid && (expenseForm.get('expensesCode')?.touched)">
                         Expense Code is required
                     </div>
                 </div>
@@ -104,10 +104,10 @@
                         Expense Type <span class="text-danger">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" id="expenseType"
-                        formControlName="expenseTypeupdate" autocomplete="off" placeholder="New Expense Type"
-                        maxlength="50" />
+                        formControlName="expenseTypeupdate" autocomplete="off" placeholder="Please enter expense type"
+                        maxlength="50"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                     <div class="error-msg"
-                        *ngIf="expenseupdateForm.get('expenseTypeupdate')?.hasError('required') && (expenseupdateForm.get('expenseTypeupdate')?.touched || expenseupdateForm.touched)">
+                        *ngIf="expenseupdateForm.get('expenseTypeupdate')?.hasError('required') && (expenseupdateForm.get('expenseTypeupdate')?.touched)">
                         Expense Type is required
                     </div>
                     <div class="error-msg"
@@ -119,10 +119,11 @@
                     <label for="expensecode" class="form-label custom-label mb-2">Expense Code <span
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" id="expensecode"
-                        formControlName="expensesCodeupade" autocomplete="off" placeholder="Expense code" maxlength="50"
+                        formControlName="expensesCodeupade" autocomplete="off" placeholder="Please enter expense code" maxlength="50"
+                        (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"
                         (keyup)="expenseupdateForm.get('expensesCodeupade')?.setValue(expenseupdateForm.get('expensesCodeupade')?.value.toUpperCase())" />
                     <div class="error-msg"
-                        *ngIf="expenseupdateForm.get('expensesCodeupade')?.invalid && (expenseupdateForm.get('expensesCodeupade')?.touched || expenseupdateForm.touched)">
+                        *ngIf="expenseupdateForm.get('expensesCodeupade')?.invalid && (expenseupdateForm.get('expensesCodeupade')?.touched)">
                         Expense Code is required
                     </div>
                 </div>

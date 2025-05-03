@@ -14,6 +14,7 @@ import { Select } from 'primeng/select';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-drafts-expenses',
@@ -48,7 +49,7 @@ export class DraftsExpensesComponent {
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   joiningDate: any;
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
-    private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+    private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer, public formValidation: FormValidationService,) { }
     searchTerm: any = ''
   expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   expense = new BehaviorSubject<IExpenses[]>([])
@@ -383,7 +384,7 @@ export class DraftsExpensesComponent {
               this.modalService.dismissAll()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Expenses save as draft successfully');
+              this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
 
               this.getexpensesheaderbyemployeeid();
               // Call the get function after posting
@@ -404,7 +405,7 @@ export class DraftsExpensesComponent {
           next: (data: any) => {
           
               this.modalService.dismissAll()
-              this.conformationPopup.openSuccessModal('Expenses save as draft successfully');
+              this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
            
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();

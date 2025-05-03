@@ -10,6 +10,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { TabsModule } from 'primeng/tabs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-add-claimsandexpenses',
@@ -44,7 +45,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
    
   ];
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
-    private http: HttpService,private modalService: NgbModal) { }
+    private http: HttpService,private modalService: NgbModal, public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getEmployeeId()
@@ -133,7 +134,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     this.expenseItems.removeAt(this.removeindex);
     this.calculateTotalExpensesAmount();
     this.modalService.dismissAll()
-    this.conformationPopup.openSuccessModal("Expene iteam deleted successfully")
+    this.conformationPopup.openSuccessModal("Expense item deleted successfully")
    
   }
 
@@ -418,7 +419,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
             if (data) {
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal(' Expenses save as draft successfully ');
+              this.conformationPopup.openSuccessModal(' Expenses saved as draft successfully ');
               // this.filterAllExpenses()
       
               this.getexpensesheaderbyid(this.empinfo.employeeId);
@@ -439,7 +440,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         this.http.postdata(`Expenses_Header`, payload).subscribe({
           next: (data: any) => {
             if (data) {
-              this.conformationPopup.openSuccessModal('Expenses save as draft successfully');
+              this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
               //this.filterAllExpenses()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();

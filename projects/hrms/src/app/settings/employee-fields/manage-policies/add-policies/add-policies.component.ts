@@ -83,7 +83,27 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
     removePolicyRow(index: number) {
       this.policies.removeAt(index);
     }
-  
+    onReactiveFileChange(event: any, index: number): void {
+      const file = event.target.files[0];
+      if (!file) return;
+    
+      const d: Date = new Date();
+      const renamedFile = this.renameFile(file, `${this.empinfo.employeeId}_${d.getTime()}_${file.name}`);
+      const filepath = `/FusionDocuments/organizationPolicy/${this.empinfo.employeeId}`;
+    
+      this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, renamedFile).subscribe({
+        next: (response: any) => {
+          const control = this.policies.at(index);
+          control.get('policyFilePath')?.setValue(response.path); // set uploaded file path
+        },
+        error: err => {
+          console.error('File upload failed:', err);
+        }
+      });
+    }
+    renameFile(file: File, newName: string): File {
+      return new File([file], newName, { type: file.type });
+    }
     
     submit() {
       const formValue = this.policiesForm.value;

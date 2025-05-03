@@ -37,12 +37,16 @@ export class RejectedExpensesComponent {
     this.getexpensesheaderbyemployeeid();
   }
 
+  openModalcomments(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true,size:"xl", backdrop: 'static' });
   }
   comments_Function(comments: any) {
     this.commentsrecivced = comments
+    console.log(comments)
   }
 
 

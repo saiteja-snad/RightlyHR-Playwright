@@ -172,6 +172,22 @@
                         Work Location is required
                     </div>
                 </div>
+
+                @if (onboardingForm.get('remoteLogin')?.value === "No") {
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <label for="workLocation" class="form-label custom-label mb-2">Work From Home Manager</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="Manager" formControlName="wfhmanger" optionLabel="name" optionValue="value"
+                                placeholder="Select Work From Home Maner" class="form-control custom-select"
+                              >
+                            </p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="onboardingForm.get('workLocation')?.invalid && onboardingForm.get('workLocation')?.touched">
+                            Work From Home Manager is required
+                        </div>
+                    </div>
+                    }
             </div>
         </form>
     </div>

@@ -29,10 +29,11 @@ export class ExpenesHeaderTabsComponent implements OnInit ,OnDestroy{
   draftsCount = 0;
   navTabs: any[] = [
     { label: 'Draft', link: '/claimsandexpenses/expenses/draft', count: this.draftsCount },
-    { label: 'Approved', link: '/claimsandexpenses/expenses/approved', count: this.ApprovedCount },
     { label: 'Pending', link: '/claimsandexpenses/expenses/pending', count: this.pendingCount },
+    { label: 'Approved', link: '/claimsandexpenses/expenses/approved', count: this.ApprovedCount },
+    { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', count: this.rejectedCount },
     { label: 'Processed', link: '/claimsandexpenses/expenses/processed', count: this.processedCount },
-    { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', count: this.rejectedCount }
+    
   ];
   constructor(
     private http: HttpService ) { }
@@ -60,10 +61,11 @@ export class ExpenesHeaderTabsComponent implements OnInit ,OnDestroy{
   updateNavTabs() {
     this.navTabs = [
       { label: 'Draft', link: '/claimsandexpenses/expenses/draft', count: this.draftsCount },
-      { label: 'Approved', link: '/claimsandexpenses/expenses/approved', count: this.ApprovedCount },
       { label: 'Pending', link: '/claimsandexpenses/expenses/pending', count: this.pendingCount },
+      { label: 'Approved', link: '/claimsandexpenses/expenses/approved', count: this.ApprovedCount },
+      { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', count: this.rejectedCount },
       { label: 'Processed', link: '/claimsandexpenses/expenses/processed', count: this.processedCount },
-      { label: 'Rejected', link: '/claimsandexpenses/expenses/rejected', count: this.rejectedCount }
+     
     ];
   }
   

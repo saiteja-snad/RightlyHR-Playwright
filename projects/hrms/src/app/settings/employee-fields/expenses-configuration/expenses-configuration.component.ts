@@ -10,11 +10,12 @@ import { IExpenses } from '../../../Interfaces/claimsandexpenses.model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 
 @Component({
   selector: 'app-expenses-configuration',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule,],
   templateUrl: './expenses-configuration.component.html',
   styleUrl: './expenses-configuration.component.scss'
 })
@@ -31,6 +32,7 @@ export class ExpensesConfigurationComponent {
     private fb: FormBuilder, 
     private conformationPopup: OpenModalService,
     private http: HttpService,
+    public formValidation: FormValidationService,
     public rbac: RbacService,
   ) { }
   ngOnInit(): void {

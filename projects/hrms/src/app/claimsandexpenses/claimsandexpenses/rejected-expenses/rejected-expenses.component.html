@@ -13,8 +13,8 @@
           <th>{{'Expense Date'  | translate}}</th>
           <th>{{'Total Amount'  | translate}}</th>
           <th>{{'Status'  | translate}}</th>
-          <th class="text-center">{{'Approver Comments' | translate}}</th>
-          <th class="text-center">{{'Actions'  | translate}}</th>
+          <th class="text-center">{{'Rejected Comments' | translate}}</th>
+          <th class="text-center">{{'View Details'  | translate}}</th>
 
         </tr>
       </thead>
@@ -28,7 +28,7 @@
             </td>
             <td class="text-center">
               <i *ngIf="exp.expenseApproverComments.length>0; else na" class="bi bi-info-circle-fill cursor"
-                (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)" ></i>
+                (click)="comments_Function(exp.expenseApproverComments);openModalcomments(viewcomments)" ></i>
               <ng-template #na>
                 N/A
               </ng-template>
@@ -82,10 +82,10 @@
             <th>Expense Type</th>
             <th>Expense Name</th>
             <th>Expense Date</th>
-            <th>Total Amount</th>
+            <th>Expense Amount</th>
             <th>Status</th>
             <th>Receipt Number</th>
-            <th colspan="2">Actions</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -97,7 +97,7 @@
 
             <td>{{ item?.status }}</td>
             <td>{{ item?.receipt_Number }}</td>
-            <td>
+            <td class="text-center">
 
               <div class="d-flex gap-2">
                 <a type="button" class="me-2 dowload-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
@@ -109,9 +109,13 @@
               </div>
 
             </td>
+
           </tr>
         </tbody>
       </table>
+      <div class="text-center mt-3" >
+        <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+    </div>
     </div>
   </div>
 </ng-template>
@@ -143,7 +147,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Approver Comments</p>
+        <p class="popup-heading mb-0">Rejected Comments</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -152,7 +156,7 @@
     <div class="custom-main-popup-content p-4">
       <div class="card p-3">
         <div *ngFor="let comment of commentsrecivced" >
-          <div class="mb-0">
+          <div class="card  p-3 mb-3"  *ngIf="comment.comments !== 'string'">
             <p> <b>Commented by:</b> {{ comment.addedName }} </p>
             <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
             <p> <b>Rejected Date:</b> {{ comment.addedDate | date: 'short' }} </p>

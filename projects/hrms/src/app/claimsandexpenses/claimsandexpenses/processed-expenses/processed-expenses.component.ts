@@ -35,6 +35,9 @@ export class ProcessedExpensesComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getexpensesheaderbyemployeeid();
   }
+  opencommentsModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }

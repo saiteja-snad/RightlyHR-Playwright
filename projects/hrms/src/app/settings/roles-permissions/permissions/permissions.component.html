@@ -1,15 +1,23 @@
 <div class="custom-main-component-container">
-    <div class="d-flex align-items-center w-100 mb-3">
-        <div>
+    <div class="d-flex align-items-center justify-content-between w-100 mb-3">
+        <!--header-->
+        <div class="component-header">Settings</div>
+    
+        <div class="d-flex align-items-center ">
             <p class="component-sub-header mb-0">Select Role</p>
+            <div class="custom-auto-select-dropdown">
+                <p-autoComplete class="pointer ms-2" id="role" [(ngModel)]="roleToFilter" (ngModelChange)="changePermissions()"
+                    [suggestions]="filteredRole" field="name" [dropdown]="true" (completeMethod)="filterRoles($event)"
+                    [minLength]="1" placeholder="Search Role" [required]="true" (onSelect)="onRoleSelect($event)"
+                    [ngModelOptions]="{standalone: true}">
+                </p-autoComplete>
+            </div>
         </div>
-        <div class="custom-auto-select-dropdown">
-            <p-autoComplete class="pointer ms-4" id="role" [(ngModel)]="roleToFilter"
-                (ngModelChange)="changePermissions()" [suggestions]="filteredRole" field="name" [dropdown]="true"
-                (completeMethod)="filterRoles($event)" [minLength]="1" placeholder="Search Role" [required]="true"
-                (onSelect)="onRoleSelect($event)" [ngModelOptions]="{standalone: true}">
-            </p-autoComplete>
-        </div>
+    </div>
+
+    <!--tabs content-->
+    <div class="mb-3">
+        <app-settings-role-permissions-module-tabs />
     </div>
 
     <form #roleForm="ngForm" (ngSubmit)="roleForm.valid && permissionsCreate()">
@@ -1284,7 +1292,7 @@
             </table>
         </div>
         <div class="d-flex justify-content-end p-3">
-            <div >
+            <div>
                 <button class="custom-btn btn-primary py-2 px-5" [disabled]="!roleToFilter?.id">Save</button>
             </div>
         </div>
@@ -1292,8 +1300,7 @@
 </div>
 
 <ng-template #stagingLoadingModal let-modal>
-    <div class="modal-body text-center p-5" ngbAutofocus>
-        <div class="spinner-border text-primary" role="status"></div>
-        <p class="heading4 pt-4">Update in progress...</p>
+    <div class="result-popup-content" ngbAutofocus>
+        <p class="confirmation-text pt-4">Update in progress...</p>
     </div>
 </ng-template>

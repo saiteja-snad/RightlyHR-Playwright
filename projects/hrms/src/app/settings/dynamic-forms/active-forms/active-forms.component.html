@@ -1,91 +1,91 @@
-@if(!loader){
-<div class="card-top-content py-3" *ngIf="rbac.allowedToAccess('Active Forms.view')">
-  <div class="row">
-    <div class="col-md-4">
-      <div class="mb-3">
-        <input type="search" name="searchForms" #search="ngModel" [(ngModel)]="searchValue"
-          class="form-control search-input" id="exampleInputEmail1" placeholder="Search here">
-      </div>
-    </div>
+<div class="custom-main-component-container" *ngIf="rbac.allowedToAccess('Active Forms.view')">
+  @if(!loader){
+  <!--Input search-->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" name="searchForms" #search="ngModel" [(ngModel)]="searchValue"
+      class="form-control custom-search-input" placeholder="Search">
   </div>
-</div>
 
-<div class="custom-table-content " *ngIf="rbac.allowedToAccess('Active Forms.view')">
-  <table class="w-100">
-    <thead>
-      <tr>
-        <th>{{'Module Name' | translate}}</th>
-        <th>{{'Form Name' | translate}}</th>
-        <th>{{'Created By' | translate}}</th>
-        <th>{{'Updated By' | translate}}</th>
-        <th>{{'Status' | translate}}</th>
-        <th *ngIf="rbac.allowedToAccess('Active Forms.update') || rbac.allowedToAccess('Active Forms.view') || rbac.allowedToAccess('Active Forms.delete')">{{'Actions' | translate}}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <ng-container *ngIf="allFormsDetails.length > 0; else noDataTemplate">
-        <ng-container *ngFor="let form of allFormsDetails | searchForm  : searchValue" class="hover">
-          <tr>
-            <td class="text-start">{{ form.moduleName }}</td>
-            <td class="text-start">{{ form.formName }}</td>
-            <td class="text-start">{{ form.createdBy }}</td>
-            <td class="text-start">{{ form.updatedBy ? form.updatedBy : '-' }}</td>
-            <td class="text-start">{{ form.status | titlecase }}</td>
-            <td class="text-center" *ngIf="rbac.allowedToAccess('Active Forms.update') || rbac.allowedToAccess('Active Forms.view') || rbac.allowedToAccess('Active Forms.delete')">
-              <div class="dropdown">
-                <span type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </span>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li *ngIf="rbac.allowedToAccess('Active Forms.update')">
-                    <a class="dropdown-item" (click)="navigateToUpdateComponent(form.formId)">
-                      <i class="bi bi-pencil me-2"></i>Update
-                    </a>
-                  </li>
-                  <li *ngIf="rbac.allowedToAccess('Active Forms.view')">
-                    <a class="dropdown-item" (click)="navigateToViewComponent(form.formId)">
-                      <i class="bi bi-eye me-2"></i>Preview
-                    </a>
-                  </li>
-                  <li *ngIf="rbac.allowedToAccess('Active Forms.delete')">
-                    <a class="dropdown-item" (click)="openmodal(confirmation);setfromid=form.formId">
-                      <i class="bi bi-trash3 me-2"></i>Inactive
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-
-          </tr>
-        </ng-container>
-      </ng-container>
-      <ng-template #noDataTemplate>
+  <div class="custom-table-content" *ngIf="rbac.allowedToAccess('Active Forms.view')">
+    <table class="w-100">
+      <thead>
         <tr>
-          <td colspan="6">
-            <app-no-data-found></app-no-data-found>
-          </td>
+          <th>{{'Module Name' | translate}}</th>
+          <th>{{'Form Name' | translate}}</th>
+          <th>{{'Created By' | translate}}</th>
+          <th>{{'Updated By' | translate}}</th>
+          <th>{{'Status' | translate}}</th>
+          <th *ngIf="rbac.allowedToAccess('Active Forms.update') || rbac.allowedToAccess('Active Forms.view') 
+          || rbac.allowedToAccess('Active Forms.delete')" class="text-center">
+            {{'Actions' | translate}}</th>
         </tr>
-      </ng-template>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="allFormsDetails.length > 0; else noDataTemplate">
+          <ng-container *ngFor="let form of allFormsDetails | searchForm  : searchValue" class="hover">
+            <tr>
+              <td>{{ form.moduleName }}</td>
+              <td>{{ form.formName }}</td>
+              <td>{{ form.createdBy }}</td>
+              <td>{{ form.updatedBy ? form.updatedBy : '-' }}</td>
+              <td>{{ form.status | titlecase }}</td>
+              <td class="text-center"
+                *ngIf="rbac.allowedToAccess('Active Forms.update') || rbac.allowedToAccess('Active Forms.view') || rbac.allowedToAccess('Active Forms.delete')">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li *ngIf="rbac.allowedToAccess('Active Forms.update')">
+                      <a class="dropdown-item" (click)="navigateToUpdateComponent(form.formId)">
+                        <i class="bi bi-pencil me-2"></i>Update
+                      </a>
+                    </li>
+                    <li *ngIf="rbac.allowedToAccess('Active Forms.view')">
+                      <a class="dropdown-item" (click)="navigateToViewComponent(form.formId)">
+                        <i class="bi bi-eye me-2"></i>Preview
+                      </a>
+                    </li>
+                    <li *ngIf="rbac.allowedToAccess('Active Forms.delete')">
+                      <a class="dropdown-item" (click)="openmodal(confirmation);setfromid=form.formId">
+                        <i class="bi bi-trash3 me-2"></i>Inactive
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+        <ng-template #noDataTemplate>
+          <tr>
+            <td colspan="6">
+              <app-no-data-found></app-no-data-found>
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
+  }@else {
+  <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
+  </div>
+  }
 </div>
-}@else { <app-data-loader-content />}
 
-
-
-
-
-
+<!--Status Confirmation popup-->
 <ng-template #confirmation let-modal>
-  <div ngbAutofocus>
-    <div class="modal-body text-center p-5">
-      <!-- <img src="./assets/images/Vector@2x.png" alt="" class="imgg mb-3" /> -->
-      <h5>Are you sure you want to Inactive this form?</h5>
-      <div class="d-flex justify-content-around pt-3">
-        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-        <button type="button" class="custom-btn btn-primary"
-          (click)="deleteFormDestails(setfromid);modal.dismiss()">Yes</button>
-      </div>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/conformation.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to Inactive this form?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+      <button type="button" class="custom-btn btn-primary"
+        (click)="deleteFormDestails(setfromid);modal.dismiss()">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>

@@ -202,6 +202,16 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     const loggedinuser = this.authService.getToken();
     const currentDate = new Date();
+    const today = new Date().setHours(0, 0, 0, 0);
+    const hasPastDeadline = this.assesorDetails.some((row: any) => {
+      const deadline = new Date(row.deadlineindays).setHours(0, 0, 0, 0);
+      return deadline < today;
+    });
+    if (hasPastDeadline) {
+      this.isLoading = false;
+      this.conformationPopup.openErrorModal("Deadline date cannot be in the past");
+      return;
+    }
     if (this.postassesorConfiguration) {
       const payload = {
         reviewCycleId: this.postassesorConfiguration.id,

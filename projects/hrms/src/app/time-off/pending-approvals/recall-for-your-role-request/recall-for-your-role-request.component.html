@@ -2,7 +2,7 @@
   <!--Input search-->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+    <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
       aria-describedby="basic-addon1">
   </div>
 
@@ -25,8 +25,8 @@
         </tr>
       </thead>
       <tbody>
-        @if(((recall_For_Your_role_Details | async) ?? []).length > 0) {
-        <tr *ngFor="let item of recall_For_Your_role_Details|async">
+        <ng-container *ngIf="((recall_For_Your_role_Details | async) ?? [] | pendingapprovalsseparation: searchValue) as filteredData">
+        <tr *ngFor="let item of filteredData">
           @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
           ||item.approvalHeader?.status?.toLowerCase() =='approved'){
           <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
@@ -70,6 +70,12 @@
                   <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a>
                 </li>
                 }
+                @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
+                  <li (click)="openModal(processmodal);handleRequest(item)"
+                    *ngIf="rbac.allowedToAccess('Recall Tab.update')">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
+                  </li>
+                  }
                 @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage) ||
                 (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
                 <li (click)="openModal(rejectmodal);handleRequest(item)"
@@ -77,25 +83,15 @@
                   <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a>
                 </li>
                 }
-                @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
-                <li (click)="openModal(processmodal);handleRequest(item)"
-                  *ngIf="rbac.allowedToAccess('Recall Tab.update')">
-                  <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
-                </li>
-                }
               </ul>
             </div>
           </td>
           }
         </tr>
-        }
-        @else{
-        <tr>
-          <td>
-            <app-no-data-found />
-          </td>
-        </tr>
-        }
+        <tr *ngIf="filteredData.length === 0">
+          <td colspan="9"><app-no-data-found></app-no-data-found></td>
+      </tr>
+    </ng-container>
       </tbody>
     </table>
   </div>

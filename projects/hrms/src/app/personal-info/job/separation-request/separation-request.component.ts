@@ -263,8 +263,23 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   earlyReleivingdata(data: any, content: any) {
     this.modalService.open(content, { centered: true });
     this.postEarlyRelievingRequest = data;
+    console.log(this.postEarlyRelievingRequest.appliedDate);
   }
 
+  get formattedAppliedDate(): string {
+    const date = this.postEarlyRelievingRequest?.appliedDate;
+    console.log(date);
+    const dt = this.formatDate(date)
+    console.log(dt);
+    return dt;
+  }
+
+  closepopup(content:any){
+    this.modalService.open(content,{centered: true,backdrop: 'static'})
+  }
+  popupclose(){
+    this.modalService.dismissAll();
+  }
   //function to recall the request
   postRecallRequest() {
     this.isLoading = true;

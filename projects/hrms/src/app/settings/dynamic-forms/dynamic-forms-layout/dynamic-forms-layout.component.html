@@ -1,25 +1,25 @@
-<div>
+<div class="custom-main-component-container">
+    @if (router.url !== '/settings/dynamic-forms/create-form') {
     <!--header-->
-   <div class="d-flex justify-content-between">
-    <div class="mb-3">
+    <div class="d-flex align-items-center justify-content-between mb-3">
         <div class="component-header">Settings</div>
-    </div>
-    <div class="mb-3" *ngIf="rbac.allowedToAccess('Dynamic Forms Module.create')">
-        <button class="custom-btn btn-primary" (click)="navigateToCreateFormComponent()">Create a Form</button>
-    </div>
-   </div>
-    <!--tabs content-->
-    <div class="mb-3">
-        <div>
-            <app-setting-dynamic-forms-tabs/>
+        <div *ngIf="rbac.allowedToAccess('Dynamic Forms Module.create')">
+            <!-- @if (rbac.allowedToAccess('Dynamic-form.create')) { -->
+            <button class="custom-btn btn-primary" (click)="navigateToCreateFormComponent()">Create a Form</button>
+            <!-- } -->
         </div>
     </div>
-    <!--Content-->
-    <div class="employee-fields-main-container w-100">
-      
-            <div class="custom-setting-right-content p-3">
-                <router-outlet/>
-            </div>
-        
+
+    <!--tabs content-->
+    <div class="mb-3">
+        <app-setting-dynamic-forms-tabs />
     </div>
+
+    <!--Content-->
+    <div class="custom-setting-right-content p-3">
+        <router-outlet />
+    </div>
+    } @else {
+    <router-outlet />
+    }
 </div>

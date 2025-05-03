@@ -17,6 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
+import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 
 @Component({
   selector: 'app-separation-for-you-request',
@@ -30,12 +31,14 @@ import { RbacService } from '../../../services/rbac.service';
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
-  ],
+    PendingapprovalsseparationPipe
+],
   templateUrl: './separation-for-you-request.component.html',
   styleUrl: './separation-for-you-request.component.scss',
 })
 export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
+  searchValue!:string;
   separation_For_You_Details = new BehaviorSubject<ISeparation[]>([]);
   totalRecords = 100;
   first: any = 0;
@@ -82,9 +85,17 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getseparationforyourequests();
   }
+
+  closepopup(content:any){
+    this.isCheckBoxEnabledRegular = false;
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+  rejectpopup(){
+    this.modalService.dismissAll();
+  }
   resetForm(f:NgForm) {
     f.resetForm(); // resets form state AND ngModel bindings
-
+    
     // Clear the selected data structure completely and set defaults
     this.selectedSpRequestData = {
       spIsAcceptEarlyrelievingcheck: false,
@@ -453,6 +464,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
 
     return formattedDate;
   }
+  isCheckBoxEnabledEarly = false;
   toggleEarly() {
     if (!this.early) {
       if (this.selectedSpRequestData.spIsEarlyRelieveing == true) {
@@ -466,6 +478,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       this.extend = false;
       this.early = true;
       this.buttondisable = true;
+      this.isCheckBoxEnabledEarly = true;
       // Clear data related to Extend and Discontinue
       this.clearExtendData();
       this.clearDiscontinueData();
@@ -479,6 +492,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     }
   }
 
+  isCheckBoxEnabledRegular = false
   toggleRegular() {
     this.selectedSpRequestData.spIsAcceptEarlyRelievingcheck = false;
     this.selectedSpRequestData.requestSelectedType = 'Regular';
@@ -488,15 +502,17 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     this.regular = true;
     this.buttondisable = true;
     this.selectedRadio = '';
+    this.isCheckBoxEnabledRegular = true;
     // Clear data related to Early Relieving and Extend
     this.clearEarlyData();
     this.clearExtendData();
   }
-
+  isCheckBoxEnabledExtended = false;
   toggleExtend() {
     this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
     this.selectedSpRequestData.requestSelectedType = 'Extend';
     this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
+    this.isCheckBoxEnabledExtended = true;
     this.regular = false;
     this.early = false;
     this.extend = true;

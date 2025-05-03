@@ -17,11 +17,11 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 @Component({
   selector: 'app-recall-for-your-role-request',
-  imports: [CommonModule, TranslateModule, RouterModule, NgbPopoverModule, FormsModule, ReactiveFormsModule, 
-    PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe,
-  ],
+  imports: [CommonModule, TranslateModule, RouterModule, NgbPopoverModule, FormsModule, ReactiveFormsModule,
+    PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe, PendingapprovalsseparationPipe],
   templateUrl: './recall-for-your-role-request.component.html',
   styleUrl: './recall-for-your-role-request.component.scss',
 })
@@ -31,6 +31,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
+  searchValue!:string;
   recall_For_Your_role_Details = new BehaviorSubject<ISeparation[]>([]);
   options = [
     { label: 10, value: 10 },

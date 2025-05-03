@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-documents-creation',
   imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent, CommonModule, DataLoaderContentComponent, NoDataFoundComponent],
@@ -39,7 +40,7 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
 
 
   constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService,
-    public formValidations: FormValidationsService
+    public formValidations: FormValidationsService, public rbac: RbacService
   ) { }
 
   ngOnInit(): void {

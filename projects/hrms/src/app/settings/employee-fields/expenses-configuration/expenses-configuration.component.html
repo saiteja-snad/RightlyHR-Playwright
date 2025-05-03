@@ -1,32 +1,32 @@
 <div class="custom-main-component-container">
     <div>
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <div><span class="component-sub-header">{{'Expense Configurations'|translate}}</span></div>
-            <div class="custom-add-btn"   (click)="openModal(addExpensesmodal)" *ngIf="rbac.allowedToAccess('Expense Tab.create')">
+            <div><span class="component-sub-header" *ngIf="rbac.allowedToAccess('Expenes Configuartion.view')">{{'Expense Configurations'|translate}}</span></div>
+            <div class="custom-add-btn"   (click)="openModal(addExpensesmodal)" *ngIf="rbac.allowedToAccess('Expenes Configuartion.create')">
               <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
             </div>
           </div>
   
-            <div class="custom-table-content mt-2">
+            <div class="custom-table-content mt-2" *ngIf="rbac.allowedToAccess('Expenes Configuartion.view')">
                 <table class="w-100">
-                    <thead>
+                    <thead> 
                         <th>Expense Type</th>
-                        <th *ngIf="rbac.allowedToAccess('Expense Tab.update') || rbac.allowedToAccess('Expense Tab.delete')">Actions</th>
+                        <th *ngIf="rbac.allowedToAccess('Expenes Configuartion.update') || rbac.allowedToAccess('Expenes Configuartion.delete')">Actions</th>
                     </thead>
                     <tbody>
                      
                         <tr *ngFor="let exp of expense">
                             <td>{{exp?.expenseType}}</td>
-                            <td *ngIf="rbac.allowedToAccess('Expense Tab.update') || rbac.allowedToAccess('Expense Tab.delete')">
+                            <td *ngIf="rbac.allowedToAccess('Expenes Configuartion.update') || rbac.allowedToAccess('Expenes Configuartion.delete')">
                                 <div class="d-flex gap-4">
                                     <!--Update-->
                                     <div>
-                                        <a type="button" (click)="openupdate(updateexpeses, exp)" *ngIf="rbac.allowedToAccess('Expense Tab.update')"><img
+                                        <a type="button" (click)="openupdate(updateexpeses, exp)" *ngIf="rbac.allowedToAccess('Expenes Configuartion.update')"><img
                                                 src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
                                     </div>
                                     <!--Delete-->
                                     <div>
-                                        <a (click)="opendelete(deleteconformation,exp)" *ngIf="rbac.allowedToAccess('Expense Tab.delete')"><img src="/settings-icon/trash-2.png"
+                                        <a (click)="opendelete(deleteconformation,exp)" *ngIf="rbac.allowedToAccess('Expenes Configuartion.delete')"><img src="/settings-icon/trash-2.png"
                                                 alt="edit icon" class="settings-common-icon"></a>
                                     </div>
                                 </div>

@@ -159,9 +159,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 
 isDisabled(field: string, action: string): boolean {
   const viewOnlyFields = ['Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Load Entitlements Tab', 'Attendance Eligibility Criteria Tab', 'Comp Off Entitlement Tab',
-    'WFH Entitlement Tab', 'Permission Elgibility Tab', 'Attendance Regularization Eligibility Tab'
+    'WFH Entitlement Tab', 'Permission Elgibility Tab', 'Attendance Regularization Eligibility Tab', 'Shifts Published Tab', 'Policies Published Tab', 'Holidays Published Tab',
+    'Weekends Published Tab', 'Expense Allowed Days', 'DST Published Tab'
   ];
   return viewOnlyFields.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
+}
+
+isActionEnabled(field: string, action: string): boolean {
+  const enabledTabs = ['Document Tab', 'NoDue Clearance Tab']; // Only these allow edit
+  return enabledTabs.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
 }
 
   changePermissions() {

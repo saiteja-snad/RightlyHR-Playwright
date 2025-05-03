@@ -144,10 +144,24 @@ export const permissionsData = [
     { fields: 'Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
     // Settings sidebar    
     { fields: 'Roles', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Employee Fields', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Timeoff Settings', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Assets Management configuration', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Dynamic-form', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Fields Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Settings Timeoff Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Assets Management configuration Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Dynamic Forms Module', View: false, Update: false, Create: false, Delete: false },
+
+    //Employee Field Tabs Sections
+    { fields: 'Personal Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Job Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Status Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Document Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Manage Shifts Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Manage Policies Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Manage Holidays Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Manage Weekends Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Manage DST Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Expense Types Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Expense Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'NoDue Clearance Tab', View: false, Update: false, Create: false, Delete: false },
 
     //Personal Tab
     { fields: 'Salutation', View: false, Update: false, Create: false, Delete: false },
@@ -183,26 +197,37 @@ export const permissionsData = [
     // { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
 
+    //Manage Shifts tab 
+    { fields: 'Shifts Pending Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Shifts Published Tab', View: false, Update: false, Create: false, Delete: false },
+
+    //Manage Policies tab 
+    { fields: 'Policies Pending Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Policies Published Tab', View: false, Update: false, Create: false, Delete: false },
+
+    //Manage Holidays tab 
+    { fields: 'Holidays Pending Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Holidays Published Tab', View: false, Update: false, Create: false, Delete: false },
+
+    //Manage Weekends tab 
+    { fields: 'Weekends Pending Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Weekends Published Tab', View: false, Update: false, Create: false, Delete: false },
+
+     //Manage Expense tab 
+     { fields: 'Expenes Configuartion', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Expense Allowed Days', View: false, Update: false, Create: false, Delete: false },
+
+    //Manage DST tab 
+    { fields: 'DST Pending Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'DST Published Tab', View: false, Update: false, Create: false, Delete: false },
+
+
     //Status tab 
     { fields: 'Appointment Status', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Offer Status', View: false, Update: false, Create: false, Delete: false },
 
     //Expenses Type
     { fields: 'Expenses Type', View: false, Update: false, Create: false, Delete: false },
-
-    //Employee Field Tabs Sections
-    { fields: 'Personal Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Job Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Status Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Document Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Manage Shifts Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Manage Policies Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Manage Holidays Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Manage Weekends Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Manage DST Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Expense Types Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Expense Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'NoDue Clearance Tab', View: false, Update: false, Create: false, Delete: false },
 
      // Settings Roles Section    
      { fields: 'Role Tab', View: false, Update: false, Create: false, Delete: false },

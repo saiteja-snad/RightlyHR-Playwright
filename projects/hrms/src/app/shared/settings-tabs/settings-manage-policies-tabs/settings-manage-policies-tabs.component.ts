@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { count, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-settings-manage-policies-tabs',
@@ -11,45 +12,69 @@ import { HttpService } from '../../../services/http.service';
   styleUrl: './settings-manage-policies-tabs.component.scss'
 })
 
-export class SettingsManagePoliciesTabsComponent {
-
-  navLinks = [
-    { label: 'Pending For Submission',route: '/settings/employee-fields/manage-policies/pending-for-submit', count: 0},
-    { label: 'Published',route: '/settings/employee-fields/manage-policies/published-policies', count: 0}
-  ];
-  subscription!: Subscription
-  allPoliciesPending = [] as any;
-  allPoliciesPublished = [] as any;
+export class SettingsManagePoliciesTabsComponent implements OnInit, OnDestroy {
+  subscription!: Subscription;
+  allPoliciesPending: any[] = [];
+  allPoliciesPublished: any[] = [];
   pendingcount = 0;
   publishedcount = 0;
 
-  constructor(public router: Router, private http: HttpService,) { }
-  
+  public navLinks: any[] = [];
+
+  allLinks = [
+    { label: 'Pending For Submission', route: '/settings/employee-fields/manage-policies/pending-for-submit', permission: { feature: 'Policies Pending Tab', action: 'view' }
+    },
+    { label: 'Published', route: '/settings/employee-fields/manage-policies/published-policies', permission: { feature: 'Policies Published Tab', action: 'view' }
+    }
+  ];
+
+  constructor(
+    public router: Router,
+    private http: HttpService,
+    public rbac: RbacService
+  ) {
+  }
+
   ngOnInit(): void {
     this.getAllPolicies();
+
+    this.navLinks = this.allLinks.filter(link =>
+      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
+    );
   }
 
   getAllPolicies() {
     this.subscription = this.http.getData('orgPolicies').subscribe({
       next: (data: any) => {
-        console.log(data);
         this.allPoliciesPending = data.filter(
-          (status: { status: string; }) => status.status === 'Pending for submission'
+          (status: { status: string }) => status.status === 'Pending for submission'
         ).reverse();
         this.pendingcount = this.allPoliciesPending.length;
+
         this.allPoliciesPublished = data.filter(
-          (status: { status: string; }) => status.status === 'Published'
+          (status: { status: string }) => status.status === 'Published'
         ).reverse();
         this.publishedcount = this.allPoliciesPublished.length;
-       this.navLinks = [
-          { label: 'Pending For Submission',route: '/settings/employee-fields/manage-policies/pending-for-submit', count: this.pendingcount},
-          { label: 'Published',route: '/settings/employee-fields/manage-policies/published-policies', count: this.publishedcount },
-        ];
-      }, error: (err: any) => {
+
+        // Update counts in already filtered navLinks
+        this.navLinks = this.navLinks.map(link => {
+          if (link.label === 'Pending For Submission') {
+            return { ...link, count: this.pendingcount };
+          } else if (link.label === 'Published') {
+            return { ...link, count: this.publishedcount };
+          }
+          return link;
+        });
+      },
+      error: (err: any) => {
         console.error(err);
       }
-    })
-
+    });
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 }

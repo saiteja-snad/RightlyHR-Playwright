@@ -157,6 +157,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
   onDelete(modal: any) {
     modal.dismiss();
     this.navigation();
+    this.restForm();
   }
 
   closeDelete(modal: any) {
@@ -322,6 +323,11 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
     } else {
       this.shiftDropdown = []; // Reset if no sub-location is selected
     }
+  }
+
+  restForm() {
+    this.policyForm.reset();
+    this.policies.reset();
   }
 
   navigation() {

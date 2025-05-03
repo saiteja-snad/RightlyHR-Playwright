@@ -74,6 +74,10 @@
               <div *ngIf="policy.get('policyName')?.touched && policy.get('policyName')?.invalid" class="error-msg">
                 {{'Policy Name is required'|translate}}
               </div>
+              <div *ngIf="policy.get('policyName')?.touched && policy.get('policyName')?.hasError('pattern')"
+                class="error-msg">
+                {{'Leading spaces are not allowed'|translate}}
+              </div>
             </div>
 
             <div class="w-100">
@@ -110,6 +114,10 @@
               <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.invalid"
                 class="error-msg">
                 {{'Policy Description is required'|translate}}
+              </div>
+              <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('pattern')"
+                class="error-msg">
+                {{'Leading spaces are not allowed'|translate}}
               </div>
             </div>
           </div>

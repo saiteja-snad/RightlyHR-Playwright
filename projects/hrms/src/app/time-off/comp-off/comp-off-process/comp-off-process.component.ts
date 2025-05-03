@@ -66,7 +66,7 @@ export class CompOffProcessComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error fetching data:', error);
-        this.processedCompOffRequests = []; // Set to empty array on error
+        this.processedCompOffRequests = []; 
       },complete:() =>{
         this.dataload = false;
       },

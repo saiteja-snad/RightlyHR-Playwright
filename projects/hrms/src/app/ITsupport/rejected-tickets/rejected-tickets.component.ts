@@ -6,17 +6,21 @@ import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { Subscription } from 'rxjs';
 import { RouterModule } from '@angular/router';
+import { Ticket } from '../../Interfaces/hierachy.modal';
+import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-rejected-tickets',
-  imports: [CommonModule,RouterModule,NoDataFoundComponent],
+  imports: [CommonModule, RouterModule, NoDataFoundComponent,FormsModule,ItsupportPipe],
   templateUrl: './rejected-tickets.component.html',
   styleUrl: './rejected-tickets.component.scss'
 })
 export class RejectedTicketsComponent {
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
-  tickets: any = [];
+  tickets=[] as Ticket[];
+  searchValue!:string;
 
 
   constructor(
@@ -33,7 +37,7 @@ export class RejectedTicketsComponent {
   
   getuserticketsbyempid(){
     let EmpId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Tickets/getnamesbyEmpId/${EmpId}`).subscribe({ 
+    this.subscription = this.http.getData(`Tickets/getTicketsByReportingId/${EmpId}`).subscribe({ 
       next: (data: any) => {
         console.log(data);
         this.tickets = data.filter((ticket: any) => ticket.ticketStatus === 'Rejected')

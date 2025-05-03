@@ -508,7 +508,8 @@ export class AssessmentformComponent {
     this.router.navigate(['/time-off/pending-approvals/probation-request']);
   }
 
-  reset() {
+  reset(content:any) {
+    this.modalService.open(content, { centered: true })
     this.clearApproveData();
     this.clearExtendData();
     this.clearDiscontinueData();
@@ -568,12 +569,15 @@ export class AssessmentformComponent {
 
   handleAccept(f: NgForm) {
     this.isSubmitted = false;
+    this.openModalService.openLoaderModal('Requesting....')
+    let successMessage = '';
     if (this.selected_approve.requestSelectedType == 'Approve') {
       this.jsonData = JSON.stringify({
         Overallrating: this.overallRatingcount,
         status: 'Confirmed',
         responseId: this.responseId,
       });
+      successMessage = 'Probation Request Approved Successfully';
     }
     if (this.selected_approve.requestSelectedType == 'Reject') {
       this.jsonData = JSON.stringify({
@@ -581,6 +585,7 @@ export class AssessmentformComponent {
         status: 'Rejected',
         responseId: this.responseId,
       });
+      successMessage = 'Probation Request Rejected Successfully';
     }
     if (this.selected_approve.requestSelectedType == 'Extend') {
       this.jsonData = JSON.stringify({
@@ -589,6 +594,7 @@ export class AssessmentformComponent {
         status: 'Extended',
         responseId: this.responseId,
       });
+      successMessage = 'Probation Request Extended Successfully';
     }
     let requestBody = {
       status: 'Approved',
@@ -616,7 +622,8 @@ export class AssessmentformComponent {
       )
       .subscribe({
         next: (respone: any) => {
-          this.openModalService.openSuccessModal('Probation Request Submitted Successfully');
+          this.modalService.dismissAll();
+          this.openModalService.openSuccessModal(successMessage);
           setTimeout(() => {
             this.modalService.dismissAll();
             this.router.navigate(['/time-off/pending-approvals/probation-request']);

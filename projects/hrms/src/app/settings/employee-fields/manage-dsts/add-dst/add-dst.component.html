@@ -9,82 +9,75 @@
 
     <div class="custom-setting-right-content w-100 p-3">
         <form [formGroup]="dstForm" (ngSubmit)="onSubmit(dstForm)">
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex gap-3">
-                      <!-- Year -->
-                      <div class="mb-3">
-                        <label for="year" class="form-label custom-label mb-2">
-                            {{ "Year" | translate}}<span class="text-danger">*</span>
-                        </label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
-                                class="form-select custom-select" formControlName="year"
-                                placeholder="Please select year">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
-                                <ng-template let-year #item>{{ year }}</ng-template>
-                            </p-select>
-                        </div>
-                    </div>
-
-                    <!-- Location -->
-                    <div class="mb-3">
-                        <label for="location" class="form-label custom-label mb-2">
-                            {{ "Location" | translate}}<span class="text-danger">*</span>
-                        </label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
-                                class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
-                                formControlName="location" placeholder="Please select location"
-                                (onChange)="onLocationChange($event.value)">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName
-                                    }}</ng-template>
-                                <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
-                            </p-select>
-                        </div>
-                    </div>
-
-                    <!-- Sub Location -->
-                    <div class="mb-3">
-                        <label for="subLocation" class="form-label custom-label mb-2">
-                            {{ "Sub Location" | translate}}<span class="text-danger">*</span>
-                        </label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
-                                class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
-                                formControlName="subLocation" placeholder="Please select sub location"
-                                (onChange)="getAllShifts($event.value)">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
-                                    }}</ng-template>
-                                <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
-                            </p-select>
-                        </div>
-                    </div>
-
-                    <!-- Shifts -->
-                    <div class="mb-3">
-                        <label for="shift" class="form-label custom-label mb-2">
-                            {{ "Shift" | translate}}<span class="text-danger">*</span>
-                        </label>
-                        <div class="custom-p-select-content">
-                            <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true"
-                                filterBy="shiftName" [showClear]="false" formControlName="shift"
-                                placeholder="Please select shift" class="form-select custom-select">
-                                <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName
-                                    }}</ng-template>
-                                <ng-template let-location #item>{{ location.shiftName }}</ng-template>
-                            </p-select>
-                        </div>
-
+            <div class="d-flex gap-3 mb-3">
+                <!-- Year -->
+                <div>
+                    <label for="year" class="form-label custom-label mb-2">
+                        {{ "Year" | translate}}<span class="text-danger">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
+                            class="custom-select w-100" formControlName="year" placeholder="Please select year">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
+                            <ng-template let-year #item>{{ year }}</ng-template>
+                        </p-select>
                     </div>
                 </div>
-
+            
+                <!-- Location -->
                 <div>
-                    <button type="button" class="custom-btn btn-primary" (click)="addMomentRow()">+ {{'Add Row' | translate}}</button>
+                    <label for="location" class="form-label custom-label mb-2">
+                        {{ "Location" | translate}}<span class="text-danger">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
+                            class="custom-select w-100" filterBy="jobLocationName" [showClear]="false" formControlName="location"
+                            placeholder="Please select location" (onChange)="onLocationChange($event.value)">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobLocationName }}</ng-template>
+                            <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
+                        </p-select>
+                    </div>
+                </div>
+            
+                <!-- Sub Location -->
+                <div>
+                    <label for="subLocation" class="form-label custom-label mb-2">
+                        {{ "Sub Location" | translate}}<span class="text-danger">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
+                            class="custom-select w-100" filterBy="jobSubLocationName" [showClear]="false"
+                            formControlName="subLocation" placeholder="Please select sub location"
+                            (onChange)="getAllShifts($event.value)">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName }}</ng-template>
+                            <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
+                        </p-select>
+                    </div>
+                </div>
+            
+                <!-- Shifts -->
+                <div>
+                    <label for="shift" class="form-label custom-label mb-2">
+                        {{ "Shift" | translate}}<span class="text-danger">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
+                            [showClear]="false" formControlName="shift" placeholder="Please select shift"
+                            class="form-select custom-select">
+                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.shiftName }}</ng-template>
+                            <ng-template let-location #item>{{ location.shiftName }}</ng-template>
+                        </p-select>
+                    </div>
+                </div>
+            
+                <div>
+                    <button type="button" class="custom-btn btn-primary" (click)="addMomentRow()">+ {{'Add Row' |
+                        translate}}</button>
                 </div>
             </div>
 
             <!-- Table for Moment Rows -->
-            <div class="custom-table-content mt-2">
+            <div class="custom-table-content">
                 <table class="w-100">
                     <thead>
                         <tr>
@@ -99,10 +92,11 @@
                         <tr *ngFor="let row of momentRows.controls; let i = index" [formGroupName]="i">
                             <td><input type="date" class="form-control custom-input" formControlName="startDate"
                                     onkeydown="return false" [min]="minDate"
-                                    (ngModelChange)="onStartDateChange($event, row)" [min]="minDate" [max]="maxDate" /></td>
+                                    (ngModelChange)="onStartDateChange($event, row)" [min]="minDate" [max]="maxDate" />
+                            </td>
                             <td><input type="date" class="form-control custom-input" formControlName="endDate"
-                                    onkeydown="return false"  [min]="minDate" [max]="maxDate"
-                                    (ngModelChange)="onEndDateChange($event, row)"/></td>
+                                    onkeydown="return false" [min]="minDate" [max]="maxDate"
+                                    (ngModelChange)="onEndDateChange($event, row)" /></td>
                             <td class="custom-p-select-content">
                                 <p-select [options]="momentType" [showClear]="false" formControlName="momentType"
                                     placeholder="Select type" class="form-select custom-select">
@@ -122,26 +116,25 @@
                     </tbody>
                 </table>
             </div>
-            <span class="error-msg">Note: All Fields are Mandatory Fields</span>
+
+            <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
             <div class="d-flex gap-3 justify-content-end">
-                <button class="custom-btn btn-secondary px-4" type="button" (click)="openConfirmation()" id="cancel-btn">{{'Close' | translate}}</button>
-                <button class="custom-btn btn-primary px-4" id="submitButton" [disabled]="dstForm.invalid">{{'Save' | translate}}</button>
+                <button class="custom-btn btn-secondary px-5" type="button" (click)="openConfirmation()">{{'Close' | translate}}</button>
+                <button class="custom-btn btn-primary px-5" [disabled]="dstForm.invalid">{{'Save' | translate}}</button>
             </div>
         </form>
     </div>
 </div>
 
-
-
 <ng-template #confirmation let-modal>
     <div class="result-popup-content text-center" ngbAutofocus>
-        <div class="mt-2">
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon mb-3">
+        <div>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Close?' | translate}}</p>
         </div>
-        <div class="d-flex gap-5 pt-2 w-100">
-            <button class="custom-btn btn-secondary w-50  py-2" (click)="modal.dismiss()">{{'No' | translate}}</button>
-            <button class="custom-btn btn-primary w-50  py-2" (click)="closeAddDST()">{{'Yes' | translate}}</button>
+        <div class="custom-modal-footer">
+            <button class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
+            <button class="custom-btn btn-primary" (click)="closeAddDST()">{{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

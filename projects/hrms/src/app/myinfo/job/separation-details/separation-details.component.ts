@@ -17,6 +17,7 @@ import { Router } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
 import { environment } from '../../../../environments/environment';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-separation-details',
@@ -31,7 +32,8 @@ import { environment } from '../../../../environments/environment';
     DateformatPipe,
     NgxDocViewerModule,
     NoDataFoundComponent,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './separation-details.component.html',
   styleUrl: './separation-details.component.scss',
 })
@@ -55,6 +57,7 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
   isLoading = false;
   requestraise: any;
   profileForm!: FormGroup;
+  isDataLoaded = false;
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
@@ -210,50 +213,59 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
 
   //function to get the separation details of the employee
   fetchSeparationDetails(): void {
+    this.isDataLoaded = true;
     const EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http
       .getData(`SeparationRequests/getbyemployeeId?Id=${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-          this.getSeparationDetails.next(data);
-          this.substatus = this.getSeparationDetails.value.map(
-            (application: { status: any }) => application.status.toLowerCase()
-          );
-          const seperationStatus1 = [
-            'waiting for approval',
-            'approved',
-            'processed',
-            'early relieving processed',
-            'extended',
-          ];
-          this.status = seperationStatus1.some((value) =>
-            this.substatus.includes(value)
-          );
-          this.checkStatus();
-          data.forEach((ele: any) => {
-            if (
-              (ele?.status?.toLowerCase() == 'waiting for approval' ||
-                ele?.status?.toLowerCase() == 'approved') &&
-              ele.recallStatus?.toLowerCase() == 'earlyrelieving'
-            ) {
-              this.recallandearlyrelievingbuttonConditions = true;
+          if(data){
+            this.isDataLoaded=false;
+            this.getSeparationDetails.next(data);
+            this.substatus = this.getSeparationDetails.value.map(
+              (application: { status: any }) => application.status.toLowerCase()
+            );
+            const seperationStatus1 = [
+              'waiting for approval',
+              'approved',
+              'processed',
+              'early relieving processed',
+              'extended',
+            ];
+            this.status = seperationStatus1.some((value) =>
+              this.substatus.includes(value)
+            );
+            this.checkStatus();
+            data.forEach((ele: any) => {
+              if (
+                (ele?.status?.toLowerCase() == 'waiting for approval' ||
+                  ele?.status?.toLowerCase() == 'approved') &&
+                ele.recallStatus?.toLowerCase() == 'earlyrelieving'
+              ) {
+                this.recallandearlyrelievingbuttonConditions = true;
+              }
+              if (
+                (ele?.status?.toLowerCase() == 'recalled' ||
+                  ele?.status?.toLowerCase() == 'approved') &&
+                ele.recallStatus?.toLowerCase() == 'recalled'
+              ) {
+                this.recallbuttonConditions = true;
+              }
+            });
+            const current = this.formatDate(moment());
+            if (this.formatDate(this.empdata.lastworkingday < current)) {
+              this.isLastWorkingDatePassed = true;
             }
-            if (
-              (ele?.status?.toLowerCase() == 'recalled' ||
-                ele?.status?.toLowerCase() == 'approved') &&
-              ele.recallStatus?.toLowerCase() == 'recalled'
-            ) {
-              this.recallbuttonConditions = true;
-            }
-          });
+          }
+         
+        },
+        error: (err: any) => {
+          this.isDataLoaded = false;
+          console.log(err);
+          this.getSeparationDetails.next([]);
         },
       });
-    const current = this.formatDate(moment());
-    if (this.formatDate(this.empdata.lastworkingday < current)) {
-      this.isLastWorkingDatePassed = true;
-    }
-    console.log(current);
+  
   }
   //function to check the status of the request
   checkStatus() {

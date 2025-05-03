@@ -295,12 +295,13 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
             );
           },
           error: (err: any) => {
-            console.error('Error:', err);
             this.isLoading = false;
             if (err.status === 400) {
-              this.conformationPopup.openErrorModal("An Assessor cannot be added more than once");
+              this.conformationPopup.openErrorModal('An Assessor cannot be added more than once');
+            } else if (err.status === 409) {
+              this.conformationPopup.openErrorModal("Assessors cannot have the same Deadline Date");
             } else {
-              this.conformationPopup.openErrorModal("Something went wrong. Please try again.");
+              this.conformationPopup.openErrorModal(err.error.Message);
             }
           },
           complete: () => {

@@ -163,6 +163,11 @@ isDisabled(field: string, action: string): boolean {
   return viewOnlyFields.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
 }
 
+isActionEnabled(field: string, action: string): boolean {
+  const enabledTabs = ['Document Tab', 'NoDue Clearance Tab']; // Only these allow edit
+  return enabledTabs.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
+}
+
   changePermissions() {
     if (!this.roleToFilter?.id) {
       this.permissions.forEach((permission: any) => {

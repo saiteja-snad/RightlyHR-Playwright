@@ -19,16 +19,8 @@ export class ManageDstTabsComponent implements OnInit, OnDestroy {
 
   // Tabs with permissions defined
   allLinks = [
-    {
-      label: 'Pending for submission',
-      route: '/settings/employee-fields/manage-dsts/pending-for-submission',
-      permission: { feature: 'DST Pending Tab', action: 'view' }
-    },
-    {
-      label: 'Published',
-      route: '/settings/employee-fields/manage-dsts/published-dsts',
-      permission: { feature: 'DST Published Tab', action: 'view' }
-    }
+    { label: 'Pending for submission', route: '/settings/employee-fields/manage-dsts/pending-for-submission', permission: { feature: 'DST Pending Tab', action: 'view' } },
+    { label: 'Published', route: '/settings/employee-fields/manage-dsts/published-dsts', permission: { feature: 'DST Published Tab', action: 'view' } }
   ];
 
   constructor(private http: HttpService, public rbac: RbacService) {}

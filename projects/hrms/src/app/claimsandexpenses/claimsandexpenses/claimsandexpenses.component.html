@@ -1,9 +1,9 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container" *ngIf="rbac.allowedToAccess('Expenses Module.view')">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <p class="component-header cursor mb-0">My Expenses</p>
         </div>
-        <div>
+        <div *ngIf="rbac.allowedToAccess('Expenses Module.create')">
             <button type="button" (click)="navigatetoAddExpenses()" class="custom-btn btn-primary">
                 <i class="bi bi-plus me-2"></i>Add New Expense
             </button>

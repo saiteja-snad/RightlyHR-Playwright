@@ -65,6 +65,9 @@ export class SettingsManagePoliciesTabsComponent implements OnInit, OnDestroy {
           }
           return link;
         });
+        this.navLinks = this.allLinks.filter(link =>
+          this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
+        );
       },
       error: (err: any) => {
         console.error(err);

@@ -6,6 +6,7 @@ import { HttpService } from '../../services/http.service';
 import { HolidayTabsComponent } from "../../shared/calendar-tabs/holiday-tabs/holiday-tabs.component";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { Select } from 'primeng/select';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-publicholidays',
   imports: [RouterModule, ReactiveFormsModule, CommonModule, HolidayTabsComponent, NoDataFoundComponent,Select],
@@ -28,7 +29,7 @@ export class PublicholidaysComponent {
   years: number[] = [];
   empinfo = {} as any;
 
-  constructor(public router: Router, private http: HttpService) { }
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.currentYear = new Date().getFullYear();

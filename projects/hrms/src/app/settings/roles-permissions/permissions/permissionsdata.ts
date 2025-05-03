@@ -266,8 +266,31 @@ export const permissionsData = [
      { fields: 'Leave Category Published Tab', View: false, Update: false, Create: false, Delete: false }, 
 
     //Custom Fields   
-    { fields: 'Custom Events', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Events Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Expenses Module', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Pending Approvals', View: false, Update: false, Create: false, Delete: false },
+
+    //Calender Tabs Sections
+    { fields: 'My Tickets Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Team Tickets Tab', View: false, Update: false, Create: false, Delete: false },
+
+    //Team Tickets Tabs Sections
+    { fields: 'All Tickets Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Open Tickets Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Await On User Tickets Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Solved Tickets Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Rejected Tickets Tab', View: false, Update: false, Create: false, Delete: false },
+
+    //Time Off Tabs Sections
+    { fields: 'Draft Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Approved Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Pending Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Processed Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Rejected Tab', View: false, Update: false, Create: false, Delete: false },
+
+    //Calender Tabs Sections
+    { fields: 'Calender Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Holidays Tab', View: false, Update: false, Create: false, Delete: false },
 
 
     //New Side Nav Section

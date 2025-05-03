@@ -1,14 +1,12 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container" *ngIf="rbac.allowedToAccess('Events Module.view')">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
       <p class="component-header mb-0">Events</p>
     </div>
-    @if(this.rbac.allowedToAccess('Events.view')){
-      <div>
+      <div *ngIf="rbac.allowedToAccess('Events Module.create')">
         <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i
             class="bi bi-plus me-2"></i>Add Event</button>
       </div>
-    }
   </div>
 
   <!--tabs content-->
@@ -50,14 +48,14 @@
                     <p class="date mb-0">{{ item.eventDate | date: 'shortDate' }}  {{ item.eventDate  | date: 'shortTime' }}</p>
                   </div>
                 </div>
-                <div class="dropdown">
+                <div class="dropdown" *ngIf="rbac.allowedToAccess('Events Module.update') || rbac.allowedToAccess('Events Module.delete')">
                   <a data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-three-dots-vertical"></i>
                   </a>
                   <ul class="dropdown-menu custom-dropdown-menu">
-                    <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item">
+                    <li (click)="openModalupdate(updateevets,item)" *ngIf="rbac.allowedToAccess('Events Module.update')"><a class="dropdown-item">
                         <i class="bi bi-pencil me-2"></i>Update</a></li>
-                    <li (click)="setdata=item;openmodal(deleteconformation)"><a class="dropdown-item">
+                    <li (click)="setdata=item;openmodal(deleteconformation)" *ngIf="rbac.allowedToAccess('Events Module.delete')"><a class="dropdown-item">
                         <i class="bi bi-trash3 me-2"></i>Delete</a></li>
                   </ul>
                 </div>
@@ -93,14 +91,14 @@
                   <p class="date mb-0">{{ event.eventDate | date: 'shortDate' }}  {{ event.eventDate  | date: 'shortTime' }}</p>
                 </div>
               </div>
-              <div class="dropdown">
+              <div class="dropdown" *ngIf="rbac.allowedToAccess('Events Module.update') || rbac.allowedToAccess('Events Module.delete')">
                 <a class="dropdown-click" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  <li (click)="openModalupdate(updateevets,event)"><a class="dropdown-item">
+                  <li (click)="openModalupdate(updateevets,event)" *ngIf="rbac.allowedToAccess('Events Module.update')"><a class="dropdown-item">
                     <i class="bi bi-pencil me-2"></i>Update</a></li>
-                  <li (click)="setdata=event;openmodal(deleteconformation)"><a class="dropdown-item">
+                  <li (click)="setdata=event;openmodal(deleteconformation)" *ngIf="rbac.allowedToAccess('Events Module.delete')"><a class="dropdown-item">
                     <i class="bi bi-trash3 me-2"></i>Delete</a></li>
                 </ul>
               </div>

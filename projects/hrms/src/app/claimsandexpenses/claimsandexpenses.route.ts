@@ -7,6 +7,7 @@ import { PendingExpensesComponent } from "./claimsandexpenses/pending-expenses/p
 import { ApprovedExpensesComponent } from "./claimsandexpenses/approved-expenses/approved-expenses.component";
 import { ProcessedExpensesComponent } from "./claimsandexpenses/processed-expenses/processed-expenses.component";
 import { RejectedExpensesComponent } from "./claimsandexpenses/rejected-expenses/rejected-expenses.component";
+import { ExpenesHeaderTabsComponent } from "../shared/claimsandexpenses-tabs/expenes-header-tabs/expenes-header-tabs.component";
 
 
 
@@ -23,7 +24,7 @@ export default [
             { path: 'pending', component: PendingExpensesComponent },
             { path: 'processed', component: ProcessedExpensesComponent },
             { path: 'rejected', component: RejectedExpensesComponent },
-            { path: '', redirectTo: 'draft', pathMatch: 'full' },
+            { path: '', component: ExpenesHeaderTabsComponent},
         ]
     }
 

@@ -11,6 +11,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-pending-expenses',
@@ -33,7 +34,7 @@ export class PendingExpensesComponent {
   
   @ViewChild('commentspopup') modalContent: any;
   constructor( 
-    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer, public rbac: RbacService) { }
  
     expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   draftsCount: number = 0;

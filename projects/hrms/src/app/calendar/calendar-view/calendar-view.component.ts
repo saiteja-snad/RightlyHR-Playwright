@@ -21,6 +21,7 @@ import { firstValueFrom, Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../Interfaces/job-model';
 import { HttpService } from '../../services/http.service';
 import { FormsModule } from '@angular/forms';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-calendar-view',
   imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule],
@@ -49,7 +50,8 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private changeDetector: ChangeDetectorRef,
-    private http: HttpService
+    private http: HttpService, 
+    public rbac : RbacService
   ) {}
 
   ngOnInit(): void {

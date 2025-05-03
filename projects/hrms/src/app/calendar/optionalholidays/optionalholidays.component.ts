@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { HolidayTabsComponent } from "../../shared/calendar-tabs/holiday-tabs/holiday-tabs.component";
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-optionalholidays',
   imports: [ReactiveFormsModule, CommonModule, HolidayTabsComponent, Select, NoDataFoundComponent],
@@ -28,7 +29,7 @@ export class OptionalholidaysComponent {
   years: number[] = [];
   empinfo = {} as any;
 
-  constructor(public router: Router, private http: HttpService) { }
+  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.optionalholidaysform = new FormGroup({

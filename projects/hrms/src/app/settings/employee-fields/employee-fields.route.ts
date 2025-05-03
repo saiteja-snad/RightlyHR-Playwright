@@ -1,10 +1,11 @@
 import { Route, } from '@angular/router';
 import { SettingsPersonalTabsComponent } from '../../shared/settings-tabs/settings-personal-tabs/settings-personal-tabs.component';
 import { SettingsJobTabsComponent } from '../../shared/settings-tabs/settings-job-tabs/settings-job-tabs.component';
+import { SettingsEmployeeFieldsModuleTabsComponent } from '../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component';
 
 
 export default [
-    { path: '', redirectTo: '/settings/employee-fields/personal', pathMatch: 'full' },
+    { path: '', component: SettingsEmployeeFieldsModuleTabsComponent },
     {
         path: 'personal', children: [
             { path: '', component : SettingsPersonalTabsComponent },

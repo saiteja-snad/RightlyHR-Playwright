@@ -59,6 +59,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
      return this.fb.group({
         policyName: ['',[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
         policyFile: ['',Validators.required],
+        policyFilePath:[''],
         policyDescription: ['',[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]]
       });
     }
@@ -94,7 +95,9 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, renamedFile).subscribe({
         next: (response: any) => {
           const control = this.policies.at(index);
+          console.log(control)
           control.get('policyFilePath')?.setValue(response.path); // set uploaded file path
+          console.log( control.get('policyFilePath')?.setValue(response.path))
         },
         error: err => {
           console.error('File upload failed:', err);
@@ -121,7 +124,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
         orgPolicyItems: formValue.policies.map((item: any) => ({
           policyName: item.policyName,
           policyDescription: item.policyDescription,
-          policyAttachment: item.policyFile,
+          policyAttachment: item.policyFilePath,
           status: "Pending for submission",
         }))
       };

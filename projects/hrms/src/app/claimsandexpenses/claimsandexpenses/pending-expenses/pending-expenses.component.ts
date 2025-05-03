@@ -162,7 +162,11 @@ export class PendingExpensesComponent {
     this.modalService.dismissAll();
     this.openModal(this.viewattamchment)
   }
-
+  isImageFile(url: any): boolean {
+    if (!url) return false;
+    const lowerUrl = url.toLowerCase();
+    return lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png');
+  }
 
 
   ngOnDestroy(): void {

@@ -70,6 +70,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   substatus: any
   isLoading = false;
   joiningDate: any;
+  selectedlocationid: any;
 
   constructor(private modalService: NgbModal, private authService: AuthService, private fb: FormBuilder, private conformationPopup: OpenModalService,
     private http: HttpService, public formValidations: FormValidationsService,) { }
@@ -90,7 +91,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.getnoticePeriodData();
     this.getSeparationRequest();
     //subdeparment id changes
-    this.jobDetailsupdateForm.get('team')!.valueChanges
+    this.jobDetailsupdateForm.get('team')?.valueChanges
       .subscribe((subdepartmentId: number) => {
         console.log("dataid" + subdepartmentId)
         this.onSubDepartmentNameChangeupdate(subdepartmentId);
@@ -377,6 +378,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   subLocationsDropdown: any = [] // To store the dynamically fetched sub-locations
   getSubLocationByid(selectedLocation: any): void {
+    this.selectedlocationid=selectedLocation.id
     this.jobDetailsForm.get('subLocation')?.reset()
     this.jobDetailsForm.get('shift')?.reset()
     if (selectedLocation && selectedLocation.id) {
@@ -411,7 +413,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   getShiftBYid(selectedSubLocation: any): void {
     this.jobDetailsForm.get('shift')?.reset()
     if (selectedSubLocation && selectedSubLocation.id) {
-      const locationId = this.jobDetailsForm.get('location')?.value?.id ?? this.jobDetailsForm.get('location')?.value; // Get the selected location ID
+      const locationId = this.jobDetailsForm.get('location')?.value?.id ?? this.jobDetailsupdateForm.get('location')?.value?.id; // Get the selected location ID
       const subLocationId = selectedSubLocation.id; // Get the selected sub-location ID
       this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
         next: (data: any) => {
@@ -540,7 +542,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
     });
 
-    this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
+    this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId || this.selectedlocationid}&subLocationId=${subLocationId}`).subscribe({
       next: (response: any) => {
         if (response.length === 0) {
           this.shiftDropdown = []; // Reset if no shifts are found

@@ -6,11 +6,10 @@
     color: #147AB6;
 }
 
-.modal-image {
-    width: 100%;
-    height: 100%;
+.modal-image{
+    width: inherit !important;
+    max-height: 60vh;
 }
-
 .custom-select{
     border: 1px solid #DEE8F3;
     padding: 0.5rem 0.75rem;

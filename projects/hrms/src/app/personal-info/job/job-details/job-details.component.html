@@ -348,7 +348,7 @@
                             <p-select [options]="teamDropdownValues" optionLabel="subdepartmentName" optionValue="subdepartmentId"
                                 formControlName="team" placeholder="Please select team"
                                 class="form-select custom-select"
-                                (onChange)="onSubDepartmentNameChangeupdate($event.value)"></p-select>
+                                ></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsupdateForm.get('team')?.invalid && jobDetailsupdateForm.get('team')?.touched">

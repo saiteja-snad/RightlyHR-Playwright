@@ -81,7 +81,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       gpaupdate: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
       degreeStartDateupdate: ['', Validators.required],
       degreeEndDateupdate: ['', Validators.required],
-      attachmentupdate: ['', Validators.required],
+      attachmentupdate: ['', ],
     });
 
   }

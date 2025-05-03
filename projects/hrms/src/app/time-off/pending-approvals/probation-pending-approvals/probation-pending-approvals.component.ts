@@ -280,7 +280,7 @@ export class ProbationPendingApprovalsComponent {
   }
 
   getBlockedFutureDate(lastWorkingDate: string): string {
-    const lastWorkingDateObj = moment(lastWorkingDate).startOf('day'); // Set time to start of day (midnight)
+    const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
     return formattedDate;

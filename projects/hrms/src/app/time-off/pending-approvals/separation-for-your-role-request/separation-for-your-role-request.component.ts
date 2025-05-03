@@ -21,7 +21,6 @@ import moment from 'moment';
 import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
 import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
-
 @Component({
   selector: 'app-separation-for-your-role-request',
   imports: [
@@ -35,13 +34,14 @@ import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalss
     NoDataFoundComponent,
     DateformatPipe,
     PendingapprovalsseparationPipe
-],
+  ],
   templateUrl: './separation-for-your-role-request.component.html',
   styleUrl: './separation-for-your-role-request.component.scss',
 })
+
 export class SeparationForYourRoleRequestComponent {
   subscription!: Subscription;
-  searchValue!:string;
+  searchValue!: string;
   separation_For_You_Details = new BehaviorSubject<ISeparation[]>([]);
   @ViewChild('acceptForm') acceptForm!: NgForm;
   @ViewChild('acceptFormforprocess') acceptFormforprocess!: NgForm;
@@ -79,20 +79,21 @@ export class SeparationForYourRoleRequestComponent {
   empdata = {} as any;
   jsonData = {} as any;
   myApproverComments = {} as any;
+
   constructor(
     private authService: AuthService,
     private http: HttpService,
-    private router: Router,
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
     public rbac: RbacService,
-  ) {}
+  ) { }
+
   ngOnInit(): void {
     this.getseparationforrolerequests();
   }
+
   resetForm(f: NgForm) {
     f.resetForm();
-
     // Clear the selected data structure completely and set defaults
     this.selectedSpRequestData = {
       spIsAcceptEarlyrelievingcheck: false,
@@ -103,57 +104,58 @@ export class SeparationForYourRoleRequestComponent {
       spRequestAppliedDate: null,
       spRequestLastWorkingDate: null,
       spIsEarlyRelieveing: false,
-      spsalaryhold:null
+      spsalaryhold: null
       // Add any other keys your form uses here
     };
-  
     // Reset condition flags
     this.regular = true;
     this.early = false;
     this.extend = false;
-  
     // Close the modal
     this.modalService.dismissAll();
   }
-  
+
   //function to get the separation request based on the for you
   getseparationforrolerequests() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
-    let moduleId=environment.SeparationrequestmoduleId
-    console.log(EmployeeId);
-    this.subscription = this.http
-      .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=ROLE`
-      )
-      .subscribe({
-        next: (data: any) => {
-          console.log(data.data);
-          this.separation_For_You_Details.next(
-            data.data.filter(
-              (item: any) =>
-                item.approvalHeader.status != 'Processed' &&
-                item.approvalHeader.status != 'Rejected' &&
-                item.approvalHeader.status != 'Withdrawn'
-            )
-          );
-        },
-        error: (reason) => console.log(reason),
-      });
-  }
-  closepopup(content:any){
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
-  }
-  openModal(content: any) {
-    this.modalService.open(content, {
-      centered: true,
-      size: 'lg',
-      backdrop: 'static',
+    let moduleId = environment.SeparationrequestmoduleId
+    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=ROLE`).subscribe({
+      next: (data: any) => {
+        console.log(data.data);
+        this.separation_For_You_Details.next(
+          data.data.filter(
+            (item: any) =>
+              item.approvalHeader.status != 'Processed' &&
+              item.approvalHeader.status != 'Rejected' &&
+              item.approvalHeader.status != 'Withdrawn'
+          )
+        );
+      },
+      error: (reason) => console.log(reason),
     });
   }
-  rejectpopup(){
+
+  closepopup(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static',});
+  }
+ 
+  openModalLarge(content: any) {
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',});
+  }
+ 
+  openModalXLarge(content: any) {
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static',});
+  }
+
+  rejectpopup() {
     this.modalService.dismissAll();
   }
+
   approverCommentsfunction(value: any) {
     this.myApproverComments = value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property
@@ -163,33 +165,33 @@ export class SeparationForYourRoleRequestComponent {
         metadata: parsedMetaData, // Assign parsed metaData to metadata property
       };
     });
-    console.log(this.myApproverComments);
   }
+
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
   }
+
   //function to format the date
   formatDate(date: any) {
     return date?.split('T')[0];
   }
+
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
-    if (
-      (charCode < 65 || charCode > 90) &&
-      (charCode < 97 || charCode > 122) &&
-      charCode !== 32
-    ) {
+    if ((charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)
+       && charCode !== 32) {
       return false;
     }
     return true;
   }
+
   //function to get the requried data
   handleRequest(request: ISeparationRequest) {
-    console.log(request);
     this.regular = true;
     this.requesthandler = request;
     this.selectedSpRequestData = request.entity;
@@ -198,7 +200,6 @@ export class SeparationForYourRoleRequestComponent {
     this.selectedSpRequestData.spRequestLastWorkingDate = this.formatDate(
       this.selectedSpRequestData.spRequestLastWorkingDate
     );
-    console.log(this.selectedSpRequestData);
     this.selectedSpRequestData.spMangerEarlyreliveingDate = this.formatDate(
       this.selectedSpRequestData.spearlyReliveingDate
     );
@@ -206,42 +207,34 @@ export class SeparationForYourRoleRequestComponent {
       this.selectedSpRequestData.spExtendedDate
     );
     this.getEmployeedatabyid(this.selectedSpRequestData);
-    if (
-      this.selectedSpRequestData.sprecalledStatus.toLowerCase() == 'separation'
-    ) {
+    if (this.selectedSpRequestData.sprecalledStatus.toLowerCase() == 'separation') {
       this.requestType = 'Separation Request';
-    } else if (
-      this.selectedSpRequestData.sprecalledStatus.toLowerCase() ==
-      'earlyrelieving'
-    ) {
+    } else if (this.selectedSpRequestData.sprecalledStatus.toLowerCase() == 'earlyrelieving') {
       this.requestType = 'Early Relieving Request';
     }
   }
+
   //function to get the employeedata
   getEmployeedatabyid(Value: any) {
     let employeeId = Value.spRequestEmployeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/${employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          //console.log(data);
-          this.empdata = data as Ipersonal;
-          this.empdata.dateOfJoining = this.formatDate(
-            this.empdata.dateOfJoining
-          );
-        },
-        error: (err: any) => {
-          console.log(err);
-          this.conformationPopup.openErrorModal(err.error.message);
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        //console.log(data);
+        this.empdata = data as Ipersonal;
+        this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error.message);
+      },
+    });
   }
+
   extendCondition(value: any) {
     if (value == true) {
       this.selectedSpRequestData.spExtendedDate = null;
     }
-    console.log(value);
   }
+
   handleAccept(f: NgForm) {
     this.isLoading = true;
     let loggedInUser = this.authService.getToken();
@@ -268,7 +261,6 @@ export class SeparationForYourRoleRequestComponent {
         status: 'Extend',
       });
     }
-
     let requestBody = {
       status: 'Approved',
       comments: this.selectedSpRequestData.comments,
@@ -280,8 +272,6 @@ export class SeparationForYourRoleRequestComponent {
       meta: this.jsonData,
       approvedBy: loggedInUser.employeeId.toString(),
     };
-
-    console.log(requestBody);
     this.subscription = this.http
       .putData(
         `PendingApproval/${this.requesthandler.approvalHeader?.id}`,
@@ -291,7 +281,7 @@ export class SeparationForYourRoleRequestComponent {
         next: (respone: any) => {
           this.isLoading = false;
           this.modalService.dismissAll();
-          this.regular=true;
+          this.regular = true;
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,
             separation: true,
@@ -334,7 +324,6 @@ export class SeparationForYourRoleRequestComponent {
       approvedBy: loginuserdata.employeeId.toString(),
       meta: this.jsonData,
     };
-
     this.subscription = this.http
       .putData(
         `PendingApproval/${this.requesthandler.approvalHeader?.id}`,
@@ -363,7 +352,6 @@ export class SeparationForYourRoleRequestComponent {
           }
           this.getseparationforrolerequests();
         },
-
         error: (reason: any) => {
           this.isLoading = false;
           this.conformationPopup.openErrorModal(reason.error.message);
@@ -373,6 +361,7 @@ export class SeparationForYourRoleRequestComponent {
         },
       });
   }
+
   handleProcess(f: NgForm) {
     this.isLoading = true;
     let loggedInUser = this.authService.getToken();
@@ -401,8 +390,7 @@ export class SeparationForYourRoleRequestComponent {
     let requestBody: any = {
       status: 'Processed',
       comments: this.selectedSpRequestData.comments,
-      isAcceptEarly:
-        this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
+      isAcceptEarly: this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
       noticePeriodType: this.selectedSpRequestData.noticperiodType,
       noticePeriodTypeDays: this.selectedSpRequestData.noticperioddays,
       salaryhold: this.selectedSpRequestData.spsalaryhold,
@@ -423,7 +411,6 @@ export class SeparationForYourRoleRequestComponent {
       requestBody.extendedDate = this.selectedSpRequestData.extenddate;
       requestBody.isAcceptEarly = false;
     }
-
     this.subscription = this.http
       .putData(
         `PendingApproval/process/${this.requesthandler.approvalHeader?.id}`,
@@ -451,22 +438,21 @@ export class SeparationForYourRoleRequestComponent {
         },
       });
   }
+
   getBlockedPastDate(date: string): string {
     const currentDateObj = moment(date).startOf('day'); // Set time to start of day (midnight)
-
     // Format the date as "YYYY-MM-DD"
     const formattedDate = currentDateObj.format('YYYY-MM-DD');
-
     return formattedDate;
   }
+
   getBlockedFutureDate(lastWorkingDate: string): string {
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day'); // Set time to start of day (midnight)
-
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
-
     return formattedDate;
   }
+
   toggleEarly() {
     if (!this.early) {
       if (this.selectedSpRequestData.spIsEarlyRelieveing == true) {
@@ -519,6 +505,7 @@ export class SeparationForYourRoleRequestComponent {
     this.clearEarlyData();
     this.clearDiscontinueData();
   }
+
   // Function to clear data related to Early Relieving
   clearEarlyData() {
     this.selectedSpRequestData.earlyRelievingDate = null;
@@ -536,9 +523,9 @@ export class SeparationForYourRoleRequestComponent {
   clearDiscontinueData() {
     this.selectedSpRequestData.rejectedReason = '';
   }
+
   earlyRelievingValidationCheck() {
-    if (
-      this.selectedSpRequestData.spMangerEarlyreliveingDate !=
+    if (this.selectedSpRequestData.spMangerEarlyreliveingDate !=
       this.selectedSpRequestData.spearlyReliveingDate
     ) {
       this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
@@ -547,6 +534,7 @@ export class SeparationForYourRoleRequestComponent {
       this.selectedSpRequestData.requestSelectedType = 'Early';
     }
   }
+
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

@@ -954,6 +954,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       'Team Manager Over All Rating': employee.tmoverallrating || '-',
       'Reporting Manager Over All Rating': employee.rmoverallrating || '-',
       'HR Over All Rating': employee.hroverallrating || '-',
+      'Final Rating': employee.overallRating || '-',
     }));
 
     const fileType = 'excel'; 

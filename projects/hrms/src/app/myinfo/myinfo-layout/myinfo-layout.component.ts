@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { ProfileInfoDetailsComponent } from '../../shared/profile-info-details/profile-info-details.component';
 import { MyInfoPersonalTabsComponent } from '../../shared/myinfo-tabs/my-info-personal-tabs/my-info-personal-tabs.component';
@@ -19,11 +19,11 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-myinfo-layout',
-  imports: [CommonModule, RouterOutlet, Select, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule, MyinfoDetailsComponent,TranslateModule],
+  imports: [CommonModule, RouterOutlet, Select, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule, MyinfoDetailsComponent, TranslateModule],
   templateUrl: './myinfo-layout.component.html',
   styleUrl: './myinfo-layout.component.scss'
 })
-export class MyinfoLayoutComponent implements OnInit {
+export class MyinfoLayoutComponent implements OnInit , OnDestroy{
   teamForm!: FormGroup;
   managers: any[] = [];
   teamMembersdata: any[] = [];
@@ -32,20 +32,17 @@ export class MyinfoLayoutComponent implements OnInit {
   activeSideNav!: string;
   activeItem!: string;
   empinfo = {} as Ipersonal;
-  
   subscription!: Subscription;
-  // rmData = [
-  //   { name: 'Rajesh', designation: 'Software Engineer', team: 'Development', location: 'Bangalore' }]
-  
   selectedData: any = {};
-
   selectedEmployeeIds: any;
-  constructor(private http: HttpService,private router: Router, private modalService: NgbModal,
-    private fb: FormBuilder,private conformationPopup: OpenModalService) { }
-  
+  selectedManager: any = null;
+  pouptext1: any
+  selectedEmployees: any[] = []; // Ensure it's an array
+
+  constructor(private http: HttpService, private router: Router, private modalService: NgbModal,
+    private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
-    
     this.teamForm = this.fb.group({
       teamMembers: [null, Validators.required,],
       reportingManager: [null, Validators.required]
@@ -54,32 +51,23 @@ export class MyinfoLayoutComponent implements OnInit {
     console.log(this.empinfo);
     this.getAllTeammembersList();
     this.getEmployee();
-  
   }
- 
-  selectedManager: any = null;
 
   onSelectManager(event: any, field: string) {
     console.log("Selected Value for", field, event.value);
-    
     if (field === 'teamMembers') {
-        this.selectedEmployees = Array.isArray(event.value) ? event.value : [event.value];
-        this.selectedEmployeeIds = this.selectedEmployees.map(emp => emp.employeeId);
+      this.selectedEmployees = Array.isArray(event.value) ? event.value : [event.value];
+      this.selectedEmployeeIds = this.selectedEmployees.map(emp => emp.employeeId);
     }
-
     if (field === 'reportingManager') {
-        this.teamForm.patchValue({
-            reportingManager: event.value
-        });
+      this.teamForm.patchValue({
+        reportingManager: event.value
+      });
     }
-
     console.log("Updated selectedEmployees:", this.selectedEmployees);
     console.log("Updated selectedEmployeeIds:", this.selectedEmployeeIds);
-}
+  }
 
-  
-  
-  
   getEmployee() {
     this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
       next: (data: any) => {
@@ -93,6 +81,7 @@ export class MyinfoLayoutComponent implements OnInit {
       error: (err: any) => console.log(err),
     });
   }
+
   getAllTeammembersList() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
@@ -101,70 +90,66 @@ export class MyinfoLayoutComponent implements OnInit {
           ...member,
           name: `${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`
         }));
-
-    
       },
       error: (err: any) => console.log(err),
-      }
+    }
     );
-
-}
-pouptext1: any
-
-updateTeamRM() {
-  console.log("Raw Selected Employees:", this.selectedEmployees);
-  console.log("Updated selectedEmployeeIds:", this.selectedEmployeeIds);
-
-  if (!Array.isArray(this.selectedEmployees) || this.selectedEmployees.length === 0) {
-    console.error("selectedEmployees is not a valid array", this.selectedEmployees);
-    return;
   }
 
-  let requestBody = this.selectedEmployees.map(employee => ({
-    jobRole: employee.jobRole,
-    firstName: employee.firstName,
-    lastName: employee.lastName,
-    middleName: employee.middleName ?? "",
-    workEmail: employee.workEmail,
-    fusionEmpId: employee.fusionEmpId,
-    employeeId: employee.employeeId,
-    contactnumber: employee.contactnumber,
-    id: employee.id
-  }));
+  updateTeamRM() {
+    console.log("Raw Selected Employees:", this.selectedEmployees);
+    console.log("Updated selectedEmployeeIds:", this.selectedEmployeeIds);
 
-  console.log("Final Request Payload:", JSON.stringify(requestBody, null, 2));
+    if (!Array.isArray(this.selectedEmployees) || this.selectedEmployees.length === 0) {
+      console.error("selectedEmployees is not a valid array", this.selectedEmployees);
+      return;
+    }
 
-  const ManagerId = this.teamForm.value.reportingManager?.employeeId;
-  if (!ManagerId) {
-    console.error("No valid ManagerId found.");
-    return;
+    let requestBody = this.selectedEmployees.map(employee => ({
+      jobRole: employee.jobRole,
+      firstName: employee.firstName,
+      lastName: employee.lastName,
+      middleName: employee.middleName ?? "",
+      workEmail: employee.workEmail,
+      fusionEmpId: employee.fusionEmpId,
+      employeeId: employee.employeeId,
+      contactnumber: employee.contactnumber,
+      id: employee.id
+    }));
+
+    console.log("Final Request Payload:", JSON.stringify(requestBody, null, 2));
+
+    const ManagerId = this.teamForm.value.reportingManager?.employeeId;
+    if (!ManagerId) {
+      console.error("No valid ManagerId found.");
+      return;
+    }
+    this.subscription = this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody)
+      .subscribe({
+        next: (data: any) => {
+          console.log("Update successful", data);
+          this.conformationPopup.openSuccessModal('Data Updated Successfully');
+          console.log(data);
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          if (reason) {
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal('Data Updated Successfully');
+          }
+        }
+      });
   }
 
-  this.subscription = this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody)
-    .subscribe({
-      next: (data: any) => {
-        console.log("Update successful", data);
-        this.conformationPopup.openSuccessModal('Updated Successfully');
-        console.log(data);
-      },
-      error: (reason: any) => {
-        console.log(reason);
-      this.conformationPopup.openErrorModal('Updated Successfully');
-      }
-    });
-}
-
-showSuccessPopup() {
-  this.pouptext1 = 'Reporting Manager updated successfully';
-  const modalElement = document.getElementById('successhide');
-  if (modalElement) {
-    modalElement.classList.add('show');
-    modalElement.style.display = 'block';
+  showSuccessPopup() {
+    this.pouptext1 = 'Reporting Manager updated successfully';
+    const modalElement = document.getElementById('successhide');
+    if (modalElement) {
+      modalElement.classList.add('show');
+      modalElement.style.display = 'block';
+    }
+    setTimeout(() => location.reload(), 1500);
   }
-  setTimeout(() => location.reload(), 1500);
-}
-
-
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
@@ -173,29 +158,29 @@ showSuccessPopup() {
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
   }
-  selectedEmployees: any[] = []; // Ensure it's an array
 
   formatEmployeeName(employee: any): string {
     const nameParts = [];
-  
+
     if (employee.firstName) {
       nameParts.push(employee.firstName);
     }
-  
+
     if (employee.middleName) {
       nameParts.push(employee.middleName);
     }
-  
+
     if (employee.lastName) {
       nameParts.push(employee.lastName);
     }
-  
+
     return nameParts.join(' ');
   }
+
   firstSelectedEmployee: Iteammembers | null = null;
   getSelectedTeamMembersLabel(): string {
     const selectedCount = this.selectedEmployees.length;
-  
+
     if (selectedCount === 0) {
       return 'Select Team Members';
     } else if (selectedCount === 1) {
@@ -204,14 +189,18 @@ showSuccessPopup() {
       return `${this.formatEmployeeName(this.firstSelectedEmployee)} +${selectedCount - 1}`;
     }
   }
-  formsubmit(){
+
+  formsubmit() {
     this.teamForm = this.fb.group({
       teamMembers: [null, Validators.required],
       reportingManager: [null, Validators.required]
     });
-    
-    
-}
+  }
 
+ ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 
 }

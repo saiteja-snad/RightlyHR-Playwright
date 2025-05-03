@@ -165,7 +165,7 @@ export class TeamNumbersComponent implements OnInit {
     this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
       next: (data: any) => {
         console.log('Next callback');
-        this.conformationPopup.openSuccessModal('Updated Successfully');
+        this.conformationPopup.openSuccessModal('Data Updated Successfully');
         console.log(data);
       },
       error: (reason: any) => {

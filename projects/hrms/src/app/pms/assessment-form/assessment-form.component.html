@@ -100,8 +100,8 @@
             <tr>
               <th>Competency</th>
               <th>Questions</th>
-              <th>Target</th>
-              <th>Unit of<br> Measurement</th>
+              <!-- <th>Target</th>
+              <th>Unit of<br> Measurement</th> -->
               <th>Question Weightage</th>
               <th>Weightage</th>
               <ng-container *ngFor="let response of assessmentFormData?.formResponses">
@@ -123,8 +123,8 @@
                     <label>{{ option.optionWeightage }} - {{ option.option }}</label>
                   </div>
                 </td>
-                <td>{{question.targetfield}}</td>
-                <td>{{question.unitofmeasurement}}</td>
+                <!-- <td>{{question.targetfield}}</td>
+                <td>{{question.unitofmeasurement}}</td> -->
                 <td>{{ question.questionweightage }}</td>
                 <td *ngIf="j === 0" [attr.rowspan]="section.questions.length">{{ section.sectionweightage }}</td>
                 <!-- Loop through formResponses -->

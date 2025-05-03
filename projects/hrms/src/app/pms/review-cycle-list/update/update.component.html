@@ -63,7 +63,7 @@
                     </div>
                     <div *ngIf="reviewCycleForm.get('subDepartmentId')?.touched && reviewCycleForm.get('subDepartmentId')?.hasError('required')"
                         class="error-msg">
-                        Team is required.
+                        Team is required
                     </div>
                 </div>
 
@@ -75,7 +75,7 @@
                             (onChange)="OnClickLocation($event)" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('locationId')?.touched && reviewCycleForm.get('locationId')?.hasError('required')">
-                        Location is required.
+                        Location is required
                     </div>
                 </div>
 
@@ -87,7 +87,7 @@
                             placeholder="Please select sub location(s)" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('subLocationId')?.touched && reviewCycleForm.get('subLocationId')?.hasError('required')">
-                        Sub Location is required.</div>
+                        Sub Location is required</div>
                 </div>
 
                 <div class="col-md-6 mb-3">
@@ -98,7 +98,7 @@
                         autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('startDate')?.touched && reviewCycleForm.get('startDate')?.hasError('required')"
                         class="error-msg">
-                        Review Cycle Start Date is required.
+                        Review Cycle Start Date is required
                     </div>
                 </div>
 
@@ -109,10 +109,10 @@
                         [disabled]="!reviewCycleForm.get('startDate')?.valid" placeholder="Please select date"
                         aria-label="default input example" onkeypress="return false;" autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('endDate')?.touched && reviewCycleForm.get('endDate')?.hasError('required')"
-                        class="error-msg">Review Cycle End Date is required.
+                        class="error-msg">Review Cycle End Date is required
                     </div>
                     <div *ngIf="reviewCycleForm.errors?.['endDateInvalid']" class="error-msg">
-                        Review Cycle End date should be greater than the review cycle start date.
+                        Review Cycle End date should be greater than the review cycle start date
                     </div>
                 </div>
 
@@ -124,10 +124,10 @@
                         aria-label="default input example" autocomplete="off">
                     <div *ngIf="reviewCycleForm.get('applicableEmployeesJoinedBefore')?.touched && reviewCycleForm.get('applicableEmployeesJoinedBefore')?.hasError('required')"
                         class="error-msg">
-                        Applicable Employees (Joined Before) is required.
+                        Applicable Employees (Joined Before) is required
                     </div>
-                    <div *ngIf="reviewCycleForm.errors?.['joinDateInvalid']" class="error-msg">
-                        Applicable Employees Joined date must be greater than the Review Cycle Start Date and less than Review Cycle End Date.
+                    <div class="error-msg" *ngIf="reviewCycleForm.errors?.['joinDateInvalid']" >
+                        Applicable Employees Joined date must be greater than the Review Cycle Start Date and less than Review Cycle End Date
                     </div>
                 </div>
 
@@ -137,8 +137,8 @@
                         <textarea class="form-control custom-input" id="description" formControlName="description" type="text"
                             placeholder="Please enter description" id="floatingTextarea2" maxlength="250" rows="3"></textarea>
                         <div *ngIf="reviewCycleForm.get('description')?.touched" class="error-msg">
-                            <div *ngIf="reviewCycleForm.get('description')?.errors?.['maxlength']">Description must not exceed 250 characters.</div>
-                            <div *ngIf="reviewCycleForm.get('description')?.errors?.['whitespace']">Description cannot be empty or contain only white spaces.</div>
+                            <div *ngIf="reviewCycleForm.get('description')?.errors?.['maxlength']">Description must not exceed 250 characters</div>
+                            <div *ngIf="reviewCycleForm.get('description')?.errors?.['whitespace']">Description cannot be empty or contain only white spaces</div>
                         </div>
                         <div class="my-1">{{ reviewCycleForm.get("description")?.value?.length || 0 }}/250</div>
                     </div>

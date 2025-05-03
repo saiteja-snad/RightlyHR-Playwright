@@ -4,6 +4,7 @@
             <p class="component-header cursor mb-0">On Behalf Of</p>
         </div>
         <div class="d-flex align-items-center gap-3">
+            @if(rbac.allowedToAccess('Request On Behalf Button.view')) {
             <div class="pt-3">
                 <label class="form-label custom-label">Select Employee</label>
             </div>
@@ -15,6 +16,7 @@
             </div>
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)">
                 <i class="bi bi-plus me-2"></i>Apply Leave On Behalf Of</button>
+            }
         </div>
     </div>
 

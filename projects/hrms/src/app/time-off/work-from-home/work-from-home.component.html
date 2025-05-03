@@ -4,9 +4,11 @@
             <p class="component-header mb-0">WFH</p>
         </div>
         <div class="d-flex align-items-center gap-3">
+            @if(rbac.allowedToAccess('Request WFH Button.view')){
             <div class="component-sub-header" *ngIf="totalbalance">Current Month Balance: {{ availablebalance }} / {{ totalbalance }}</div>
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)"
-             *ngIf="rbac.allowedToAccess('Workfromhome Tab.create')"><i class="bi bi-plus me-2"></i>Request WFH</button>
+             ><i class="bi bi-plus me-2"></i>Request WFH</button>
+            }
         </div>
     </div>
 
@@ -34,8 +36,7 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form [formGroup]="addWFHForm" (ngSubmit)="applyWFH(addWFHForm)" class="custom-form"
-                *ngIf="rbac.allowedToAccess('Workfromhome Tab.create')">
+            <form [formGroup]="addWFHForm" (ngSubmit)="applyWFH(addWFHForm)" class="custom-form">
                 <!-- Worked Date -->
                 <div class="mb-3">
                     <label for="workedDate" class="form-label custom-label mb-2">Worked Date<span

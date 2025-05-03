@@ -17,8 +17,7 @@
                     <th>{{'Raised Date' | translate}}</th>
                     <th>{{'Last Working Day' | translate}}</th>
                     <th>{{'Early Relieving Day' | translate}}</th>
-                    <th>{{'Separation Reason' | translate}}</th>
-                    <th>{{'Early Relieving Reason' | translate}}</th>
+                    <th>{{'Reason' | translate}}</th>
                     <th>{{'Request Type' | translate}}</th>
                     <th>{{'Approver History' | translate}}</th>
                     <th>{{'Action(s)' | translate}}</th>
@@ -38,29 +37,15 @@
                     <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}
                     </td>
                     <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}</td>
+
                     <td>
-                        @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
+                        @if(item.entity?.spRecallReason){
                         <div>
                             <a type="button" [ngbPopover]="reason">
                                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </a>
                             <ng-template #reason>
-                                <p class="mb-0">{{item.entity?.spRequestDescription}} </p>
-                            </ng-template>
-                        </div>
-                        }
-                        @else {
-                        <div>-</div>
-                        }
-                    </td>
-                    <td>
-                        @if(item.entity?.spEarlyRelievingReason){
-                        <div>
-                            <a type="button" [ngbPopover]="reason">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                            </a>
-                            <ng-template #reason>
-                                <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
+                                <p class="mb-0">{{item.entity?.spRecallReason}}</p>
                             </ng-template>
                         </div>
                         }
@@ -148,11 +133,11 @@
                     @if(selectedSpRequestData.spearlyReliveingDate){
                     <div class="mb-3 ps-3">
                         <label>{{'Are you willing to accept an early Relieving?' | translate}}</label>
-                        <div class="form-check">
+                        <div class="form-check ">
                             <input type="hidden"
                                 [value]="selectedSpRequestData.spMangerEarlyreliveingDate ? 'true' : 'false'"
                                 name="isreliving">
-                            <input  type="checkbox" id="earlyrelieving" name="earlyrelieving"
+                            <input  type="checkbox" class="form-check-input" id="earlyrelieving" name="earlyrelieving"
                                 [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck" #isaccept="ngModel"
                                 (click)="toggleEarly()"
                                 (ngModelChange)="extendCondition(selectedSpRequestData.spIsAcceptEarlyrelievingcheck)">
@@ -237,7 +222,7 @@
                         <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                             placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
                             [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3" pattern="^[^\s].*"></textarea>
-                        <div>
+                        <div class="textarea-count-text">
                             <span
                                 class="color">{{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}
                                 /250</span>
@@ -275,7 +260,7 @@
                                 placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                                 #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" pattern="^[^\s].*"
                                 required></textarea>
-                            <div>
+                            <div class="textarea-count-text">
                                 <span
                                     class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
                                     /250</span>
@@ -295,7 +280,7 @@
                 <!-- Buttons -->
                 <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
                     <button type="reset" class="custom-btn btn-secondary"
-                        (click)=" resetForm();">{{'Cancel'|translate}}</button>
+                        (click)=" resetForm(acceptForm);">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="acceptForm.invalid||isLoading||!buttondisable">
                         @if(!isLoading){
                         {{'Approve'|translate}}
@@ -337,7 +322,7 @@
                         <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                             placeholder="Please enter reason" name="notes" #notes="ngModel" [maxLength]="250"
                             [(ngModel)]="selectedSpRequestData.rejectedReason" required rows="3"></textarea>
-                        <div>
+                        <div class="textarea-count-text">
                             <span
                                 class="color">{{selectedSpRequestData?.rejectedReason?.length?selectedSpRequestData?.rejectedReason?.length:0}}/250</span>
                         </div>
@@ -376,7 +361,7 @@
                 <img src="icons\succes.png" alt="succues" class="succes-icon">
             </div>
             <div class="d-flex justify-content-center align-items-center mt-3">
-                <h4 class="text-center">{{"Are you sure you want to approve Separation Request?" | translate}}</h4>
+                <h4 class="text-center">{{"Are you sure you want to process Separation Request?" | translate}}</h4>
             </div>
             <form name="acceptFormforprocess" class="ps-5 mb-3 w-100" #acceptFormforprocess="ngForm"
                 (ngSubmit)="acceptFormforprocess.valid && handleProcess(acceptFormforprocess)">
@@ -395,8 +380,8 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label for="Effective Date ">{{"Salary Hold" | translate}}<span class="error-msg">*</span></label>
-                        <select class="form-select custom-input" aria-label="Default select example" id="holdsalary"
+                        <label for="Effective Date">{{"Salary Hold" | translate}}<span class="error-msg">*</span></label>
+                        <select class="form-select custom-p-select-content" aria-label="Default select example" id="holdsalary"
                             #issalaryhold="ngModel" [(ngModel)]="selectedSpRequestData.spsalaryhold" name="holdsalary"
                             required>
                             <option [ngValue]="undefined" disabled>Select</option>
@@ -411,7 +396,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="notice Type">{{"Notice Period type" | translate}}<span class="error-msg"></span></label>
-                        <select class="form-select custom-input" aria-label="Default select example" id="noticetype"
+                        <select class="form-select custom-p-select-content" aria-label="Default select example" id="noticetype"
                             name="noticetype" #noticetype="ngModel" [(ngModel)]="selectedSpRequestData.noticperiodType">
                             <option [ngValue]="null">Select</option>
                             <option [ngValue]="'Notice Period Recovery'">Notice Period Recovery</option>
@@ -473,7 +458,7 @@
                             placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250" pattern="^[^\s].*"
                             #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
                             required></textarea>
-                        <div>
+                        <div class="textarea-count-text">
                             <span
                                 class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
                                 /250</span>
@@ -509,7 +494,7 @@
                         <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                             placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
                             [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3" pattern="^[^\s].*"></textarea>
-                        <div>
+                        <div class="textarea-count-text">
                             <span
                                 class="color">{{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}
                                 /250</span>
@@ -541,7 +526,7 @@
                             placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                             #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" pattern="^[^\s].*" rows="3"
                             required></textarea>
-                        <div>
+                        <div class="textarea-count-text">
                             <span
                                 class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
                                 /250</span>
@@ -555,7 +540,7 @@
                 </div>
                 <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="resetForm(); modal.dismiss()">{{'Cancel'|translate}}</button>
+                        (click)="resetForm(acceptFormforprocess); modal.dismiss()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="acceptFormforprocess.invalid||isLoading||!buttondisable">
                         @if(!isLoading){

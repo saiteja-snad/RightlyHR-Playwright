@@ -51,6 +51,7 @@ export class SeparationForYourRoleRequestComponent {
     { label: 25, value: 25 },
   ];
   selectedSpRequestData: any = {
+    spsalaryhold: null,
     noticperiodType: null,
     extend: false,
     discontinue: false,
@@ -85,8 +86,8 @@ export class SeparationForYourRoleRequestComponent {
   ngOnInit(): void {
     this.getseparationforrolerequests();
   }
-  resetForm() {
-    this.acceptForm.resetForm();
+  resetForm(f: NgForm) {
+    f.resetForm();
 
     // Clear the selected data structure completely and set defaults
     this.selectedSpRequestData = {
@@ -98,6 +99,7 @@ export class SeparationForYourRoleRequestComponent {
       spRequestAppliedDate: null,
       spRequestLastWorkingDate: null,
       spIsEarlyRelieveing: false,
+      spsalaryhold:null
       // Add any other keys your form uses here
     };
   
@@ -476,7 +478,6 @@ export class SeparationForYourRoleRequestComponent {
       // Toggle off Early Relieving
       this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
       this.early = false;
-      this.regular = true;
       this.buttondisable = false;
       this.clearEarlyData();
     }

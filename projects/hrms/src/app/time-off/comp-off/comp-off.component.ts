@@ -129,8 +129,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
       this.isWeekOffSelected = false;
       return false;
     });
-  
-    console.log(captureHoliday);
     if (captureHoliday && dayPresent) {
       if (weekNumber === 1 && dayPresent) {
         if (captureHoliday.firstweek) {
@@ -138,38 +136,32 @@ export class CompOffComponent implements OnInit, OnDestroy {
         } else {
           this.isWeekOffSelected = false;
         }
-        console.log("First week of the month");
       } else if (weekNumber === 2 && dayPresent) {
         if (captureHoliday.secondweek) {
           this.isWeekOffSelected = true;
         } else {
           this.isWeekOffSelected = false;
         }
-        console.log("Second week of the month");
       } else if (weekNumber === 3) {
         if (captureHoliday.thirdweek) {
           this.isWeekOffSelected = true;
         } else {
           this.isWeekOffSelected = false;
         }
-        console.log("Third week of the month");
       } else if (weekNumber === 4) {
         if (captureHoliday.fourthweek) {
           this.isWeekOffSelected = true;
         } else {
           this.isWeekOffSelected = false;
         }
-        console.log("Fourth week of the month");
       } else if (weekNumber === 5) {
         if (captureHoliday.fifthweek) {
           this.isWeekOffSelected = true;
         } else {
           this.isWeekOffSelected = false;
         }
-        console.log("Fifth week of the month");
       }
     }
-    console.log(this.isWeekOffSelected);
   }
 
   getPastDate(): string {
@@ -227,7 +219,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
-            // this.getCompOffRequest();
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request submitted successfully'
@@ -238,7 +229,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
             }));
             this.http.compOffTriggerSignal.set(true);
             this.addCompOffForm.reset();
-            //write a signal to trigger the get all count in the side bar
           },
           error: (err: any) => {
             this.spinnerLoader = false;
@@ -331,7 +321,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching data:', error);
-          this.compOffEligibilityCriteria = []; // Set to empty array on error
+          this.compOffEligibilityCriteria = [];
         },
       });
   }
@@ -348,20 +338,6 @@ export class CompOffComponent implements OnInit, OnDestroy {
       });
   }
 
-  // Custom Validator: Allow only weekends
-  onlyWeekendsValidator(
-    control: AbstractControl
-  ): { [key: string]: boolean } | null {
-    if (control.value) {
-      const date = new Date(control.value);
-      const day = date.getDay();
-      // Check if the day is not Saturday (6) or Sunday (0)
-      if (day !== 0 && day !== 6) {
-        return { notWeekend: true };
-      }
-    }
-    return null;
-  }
 
   // Custom Validator: Ensure date is after the date of joining
   afterJoiningDateValidator(

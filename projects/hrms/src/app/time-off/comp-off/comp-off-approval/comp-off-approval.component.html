@@ -14,7 +14,7 @@
       </thead>
       <tbody>
       <tbody>
-        @if (rbac.allowedToAccess('Compoff Tab.view')) {
+        
         <ng-container *ngIf="approvalCompOffRequests!.length > 0; else noDataTemplate">
           <tr *ngFor="let compOffRequest of approvalCompOffRequests; let i = index">
             <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
@@ -59,12 +59,12 @@
         </ng-container>
         <ng-template #noDataTemplate>
           <tr>
-            <td colspan="4">
+            <td colspan="6">
               <app-no-data-found></app-no-data-found>
             </td>
           </tr>
         </ng-template>
-        }
+        
       </tbody>
     </table>
     }@else{

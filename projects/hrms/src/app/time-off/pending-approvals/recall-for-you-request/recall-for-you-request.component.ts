@@ -17,17 +17,18 @@ import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 @Component({
   selector: 'app-recall-for-you-request',
   imports: [CommonModule, TranslateModule, RouterModule, NgbPopoverModule, ReactiveFormsModule, FormsModule,
-     PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe,
-  ],
+    PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe, PendingapprovalsseparationPipe],
   templateUrl: './recall-for-you-request.component.html',
   styleUrl: './recall-for-you-request.component.scss',
 })
 
 export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
+  searchValue!:string;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;

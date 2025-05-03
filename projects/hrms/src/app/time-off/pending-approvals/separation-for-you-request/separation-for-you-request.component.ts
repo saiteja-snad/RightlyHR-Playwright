@@ -17,7 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
-
+import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 @Component({
   selector: 'app-separation-for-you-request',
   imports: [
@@ -30,12 +30,15 @@ import { RbacService } from '../../../services/rbac.service';
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
-  ],
+    PendingapprovalsseparationPipe
+],
   templateUrl: './separation-for-you-request.component.html',
   styleUrl: './separation-for-you-request.component.scss',
 })
+
 export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
+  searchValue!:string;
   separation_For_You_Details = new BehaviorSubject<ISeparation[]>([]);
   totalRecords = 100;
   first: any = 0;
@@ -71,6 +74,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   jsonData = {} as any;
   myApproverComments = {} as any;
   @ViewChild('acceptForm') acceptForm!: NgForm;
+
   constructor(
     private authService: AuthService,
     private http: HttpService,
@@ -79,12 +83,22 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     public rbac: RbacService
   ) {}
+
   ngOnInit(): void {
     this.getseparationforyourequests();
   }
+
+  closepopup(content:any){
+    this.isCheckBoxEnabledRegular = false;
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+
+  rejectpopup(){
+    this.modalService.dismissAll();
+  }
+
   resetForm(f:NgForm) {
     f.resetForm(); // resets form state AND ngModel bindings
-
     // Clear the selected data structure completely and set defaults
     this.selectedSpRequestData = {
       spIsAcceptEarlyrelievingcheck: false,
@@ -97,27 +111,25 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       spIsEarlyRelieveing: false,
       // Add any other keys your form uses here
     };
-  
     // Reset condition flags
     this.regular = true;
     this.early = false;
     this.extend = false;
-  
     // Close the modal
     this.modalService.dismissAll();
   }
+
   //function to get the separation request based on the for you
   getseparationforyourequests() {
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
-    let moduleId=environment.SeparationrequestmoduleId
+    let moduleId = environment.SeparationrequestmoduleId
     this.subscription = this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=EMP`
       )
       .subscribe({
         next: (data: any) => {
-          console.log(data.data);
           this.separation_For_You_Details.next(
             data.data.filter(
               (item: any) =>
@@ -132,12 +144,17 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, {
-      centered: true,
-      size: 'lg',
-      backdrop: 'static',
-    });
+    this.modalService.open(content, { centered: true, backdrop: 'static',});
   }
+ 
+  openModalLarge(content: any) {
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',});
+  }
+ 
+  openModalXLarge(content: any) {
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static',});
+  }
+
   approverCommentsfunction(value: any) {
     this.myApproverComments = value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property
@@ -147,19 +164,22 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         metadata: parsedMetaData, // Assign parsed metaData to metadata property
       };
     });
-    console.log(this.myApproverComments);
   }
+
   onRowsChange() {
     this.first = 0;
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
   }
+
   //function to format the date
   formatDate(date: any) {
     return date?.split('T')[0];
   }
+
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
     if (
@@ -171,19 +191,17 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     }
     return true;
   }
+
   //function to get the requried data
   handleRequest(request: ISeparationRequest) {
-    console.log(request);
     this.regular = true;
     this.requesthandler = request;
-
     this.selectedSpRequestData = request.entity;
     this.selectedSpRequestData.noticperiodType = null;
     this.selectedSpRequestDataforheader = request.approvalHeader;
     this.selectedSpRequestData.spRequestLastWorkingDate = this.formatDate(
       this.selectedSpRequestData.spRequestLastWorkingDate
     );
-    console.log(this.selectedSpRequestData);
     this.selectedSpRequestData.spMangerEarlyreliveingDate = this.formatDate(
       this.selectedSpRequestData.spearlyReliveingDate
     );
@@ -202,31 +220,28 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       this.requestType = 'Early Relieving Request';
     }
   }
+
   //function to get the employeedata
   getEmployeedatabyid(Value: any) {
     let employeeId = Value.spRequestEmployeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/${employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          //console.log(data);
-          this.empdata = data as Ipersonal;
-          this.empdata.dateOfJoining = this.formatDate(
-            this.empdata.dateOfJoining
-          );
-        },
-        error: (err: any) => {
-          console.log(err);
-          this.conformationPopup.openErrorModal(err.error.message);
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        //console.log(data);
+        this.empdata = data as Ipersonal;
+        this.empdata.dateOfJoining = this.formatDate(this.empdata.dateOfJoining);
+      },
+      error: (err: any) => {
+        this.conformationPopup.openErrorModal(err.error.message);
+      },
+    });
   }
+
   extendCondition(value: any) {
     if (value == true) {
       this.selectedSpRequestData.spExtendedDate = null;
     }
-    console.log(value);
   }
+
   handleAccept(f: NgForm) {
     this.isLoading = true;
     let loggedInUser = this.authService.getToken();
@@ -253,58 +268,49 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         status: 'Extend',
       });
     }
-
     let requestBody = {
       status: 'Approved',
       comments: this.selectedSpRequestData.comments,
-      isAcceptEarly:
-        this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck ?? false,
+      isAcceptEarly: this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck ?? false,
       lastWorkingDate: this.selectedSpRequestData.spRequestLastWorkingDate,
       earlyRelievingDate: this.selectedSpRequestData.spMangerEarlyreliveingDate,
       extendedDate: this.selectedSpRequestData.extenddate,
       meta: this.jsonData,
       approvedBy: loggedInUser.employeeId.toString(),
     };
-
-    console.log(requestBody);
-    this.subscription = this.http
-      .putData(
-        `PendingApproval/${this.requesthandler.approvalHeader?.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (respone: any) => {
-          this.isLoading = false;
-          this.modalService.dismissAll();
-          this.regular=true;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            separation: true,
-          }));
-          if (this.requestType === 'Separation Request') {
-            this.conformationPopup.openSuccessModal(
-              'Separation Request Approved Successfully'
-            );
-          } else if (this.requestType === 'Early Relieving Request') {
-            this.conformationPopup.openSuccessModal(
-              'Early Relieving Request Approved Successfully'
-            );
-          } else {
-            this.conformationPopup.openSuccessModal(
-              'Separation Request Approved Successfully'
-            );
-          }
-          this.getseparationforyourequests();
-          this.acceptForm.resetForm();
-        },
-        error: (reason: any) => {
-          this.isLoading = false;
-          this.conformationPopup.openErrorModal(reason.error.message);
-        },
-        complete: () => {
-          this.isLoading = false;
-        },
-      });
+    this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
+      next: (respone: any) => {
+        this.isLoading = false;
+        this.modalService.dismissAll();
+        this.regular = true;
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
+        if (this.requestType === 'Separation Request') {
+          this.conformationPopup.openSuccessModal(
+            'Separation Request Approved Successfully'
+          );
+        } else if (this.requestType === 'Early Relieving Request') {
+          this.conformationPopup.openSuccessModal(
+            'Early Relieving Request Approved Successfully'
+          );
+        } else {
+          this.conformationPopup.openSuccessModal(
+            'Separation Request Approved Successfully'
+          );
+        }
+        this.getseparationforyourequests();
+        this.acceptForm.resetForm();
+      },
+      error: (reason: any) => {
+        this.isLoading = false;
+        this.conformationPopup.openErrorModal(reason.error.message);
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
   }
   //function to send the rejected status and comments
 
@@ -320,45 +326,40 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       approvedBy: loginuserdata.employeeId.toString(),
       meta: this.jsonData,
     };
+    this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
+      next: (response: any) => {
+        this.isLoading = false;
+        this.modalService.dismissAll();
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
+        if (this.requestType === 'Separation Request') {
+          this.conformationPopup.openSuccessModal(
+            'Separation Request Rejected Successfully'
+          );
+        } else if (this.requestType === 'Early Relieving Request') {
+          this.conformationPopup.openSuccessModal(
+            'Early Relieving Request Rejected Successfully'
+          );
+        } else {
+          this.conformationPopup.openSuccessModal(
+            'Separation Request Rejected Successfully'
+          );
+        }
+        this.getseparationforyourequests();
+      },
 
-    this.subscription = this.http
-      .putData(
-        `PendingApproval/${this.requesthandler.approvalHeader?.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (response: any) => {
-          this.isLoading = false;
-          this.modalService.dismissAll();
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            separation: true,
-          }));
-          if (this.requestType === 'Separation Request') {
-            this.conformationPopup.openSuccessModal(
-              'Separation Request Rejected Successfully'
-            );
-          } else if (this.requestType === 'Early Relieving Request') {
-            this.conformationPopup.openSuccessModal(
-              'Early Relieving Request Rejected Successfully'
-            );
-          } else {
-            this.conformationPopup.openSuccessModal(
-              'Separation Request Rejected Successfully'
-            );
-          }
-          this.getseparationforyourequests();
-        },
-
-        error: (reason: any) => {
-          this.isLoading = false;
-          this.conformationPopup.openErrorModal(reason.error.message);
-        },
-        complete: () => {
-          this.isLoading = false;
-        },
-      });
+      error: (reason: any) => {
+        this.isLoading = false;
+        this.conformationPopup.openErrorModal(reason.error.message);
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
   }
+
   handleProcess(f: NgForm) {
     this.isLoading = true;
     let loggedInUser = this.authService.getToken();
@@ -409,50 +410,45 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       requestBody.extendedDate = this.selectedSpRequestData.extenddate;
       requestBody.isAcceptEarly = false;
     }
-
-    this.subscription = this.http
-      .putData(
-        `PendingApproval/process/${this.requesthandler.approvalHeader?.id}`,
-        requestBody
-      )
-      .subscribe({
-        next: (respone: any) => {
-          this.isLoading = false;
-          this.modalService.dismissAll();
-          this.getseparationforyourequests();
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            separation: true,
-          }));
-          this.conformationPopup.openSuccessModal(
-            'Separation Request Processed Successfully'
-          );
-        },
-        error: (reason: any) => {
-          this.isLoading = false;
-          this.conformationPopup.openErrorModal(reason.error.message);
-        },
-        complete: () => {
-          this.isLoading = false;
-        },
-      });
+    this.subscription = this.http.putData(`PendingApproval/process/${this.requesthandler.approvalHeader?.id}`,
+       requestBody).subscribe({
+      next: (respone: any) => {
+        this.isLoading = false;
+        this.modalService.dismissAll();
+        this.getseparationforyourequests();
+        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+          ...status,
+          separation: true,
+        }));
+        this.conformationPopup.openSuccessModal(
+          'Separation Request Processed Successfully'
+        );
+      },
+      error: (reason: any) => {
+        this.isLoading = false;
+        this.conformationPopup.openErrorModal(reason.error.message);
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
   }
+
   getBlockedPastDate(date: string): string {
     const currentDateObj = moment(date).startOf('day'); // Set time to start of day (midnight)
-
     // Format the date as "YYYY-MM-DD"
     const formattedDate = currentDateObj.format('YYYY-MM-DD');
-
     return formattedDate;
   }
+
   getBlockedFutureDate(lastWorkingDate: string): string {
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day'); // Set time to start of day (midnight)
-
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
-
     return formattedDate;
   }
+
+  isCheckBoxEnabledEarly = false;
   toggleEarly() {
     if (!this.early) {
       if (this.selectedSpRequestData.spIsEarlyRelieveing == true) {
@@ -466,6 +462,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       this.extend = false;
       this.early = true;
       this.buttondisable = true;
+      this.isCheckBoxEnabledEarly = true;
       // Clear data related to Extend and Discontinue
       this.clearExtendData();
       this.clearDiscontinueData();
@@ -479,6 +476,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     }
   }
 
+  isCheckBoxEnabledRegular = false
   toggleRegular() {
     this.selectedSpRequestData.spIsAcceptEarlyRelievingcheck = false;
     this.selectedSpRequestData.requestSelectedType = 'Regular';
@@ -488,15 +486,18 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     this.regular = true;
     this.buttondisable = true;
     this.selectedRadio = '';
+    this.isCheckBoxEnabledRegular = true;
     // Clear data related to Early Relieving and Extend
     this.clearEarlyData();
     this.clearExtendData();
   }
 
+  isCheckBoxEnabledExtended = false;
   toggleExtend() {
     this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
     this.selectedSpRequestData.requestSelectedType = 'Extend';
     this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
+    this.isCheckBoxEnabledExtended = true;
     this.regular = false;
     this.early = false;
     this.extend = true;
@@ -506,6 +507,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     this.clearEarlyData();
     this.clearDiscontinueData();
   }
+
   // Function to clear data related to Early Relieving
   clearEarlyData() {
     this.selectedSpRequestData.earlyRelievingDate = null;
@@ -523,17 +525,17 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   clearDiscontinueData() {
     this.selectedSpRequestData.rejectedReason = '';
   }
+
   earlyRelievingValidationCheck() {
-    if (
-      this.selectedSpRequestData.spMangerEarlyreliveingDate !=
-      this.selectedSpRequestData.spearlyReliveingDate
-    ) {
+    if (this.selectedSpRequestData.spMangerEarlyreliveingDate !=
+      this.selectedSpRequestData.spearlyReliveingDate) {
       this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
       this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
       this.selectedRadio = 'early';
       this.selectedSpRequestData.requestSelectedType = 'Early';
     }
   }
+
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

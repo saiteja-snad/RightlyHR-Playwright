@@ -49,7 +49,7 @@
                     <td>{{ticket.createdAt | date}} </td>
                     <td>{{ticket.departmentName || '-'}}</td>
                     <td>{{ticket.subdepartmentName || '-'}}</td>
-                    <td>{{ticket.assigneeName || '-'}}</td>
+                    <td>{{ticket.assigneeName ? ticket.assigneeName : '-'}}</td>
                     <td>{{ticket.ticketStatus || '-'}}</td>
                     <td>{{ticket.updatedAt | date}}</td>
                     <td class="text-center">

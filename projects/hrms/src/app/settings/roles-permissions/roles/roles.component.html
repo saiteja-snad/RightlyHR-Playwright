@@ -4,7 +4,7 @@
         <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter role" aria-label="role"
-                    aria-describedby="role" formControlName="role">
+                    aria-describedby="role" formControlName="role" (keypress)="formValidation.restrictInput($event)">
                 <span class="input-group-text" id="role">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="roleForm.invalid">{{'Add'| translate}}</button>
                 </span>
@@ -12,45 +12,65 @@
             <div *ngIf="roleForm.get('role')?.touched || roleForm.get('role')?.dirty" class="error-msg">
                 <!-- Required validation message -->
                 <div *ngIf="roleForm.get('role')?.hasError('required')">Please enter role</div>
+                <div class="error-msg" *ngIf="roleForm.get('role')?.errors?.['pattern']">Enter a valid role </div>
             </div>
         </form>
     </div>
 
     <!--Data Content-->
-    <div class="custom-settings-data-table">
-        <table class="w-100">
-            <thead>
-                <th class="col-span-2"></th>
-            </thead>
-            <tbody>
-                @for(role of rolesdetails ; track role) {
-                <tr>
-                    <td class="w-75">{{role.name}}</td>
-                    <td class="w-25">
-                        <div class="d-flex gap-4">
-                            <!--Update-->
-                            <div>
-                                <a (click)="openupdate(role)"><img src="/settings-icon/edit.png" alt="edit icon"
-                                        class="settings-common-icon">
-                                </a>
-                            </div>
-                            <!--Delete-->
-                            <div>
-                                <a (click)="opendelete(role)"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                        class="settings-common-icon"></a>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+    <ng-container *ngIf="dataLoad; else maincontent">
+        <ng-template #loadingSpinner>
+            <div class="custom-compoent-data-loader">
+                <app-data-loader-content />
+            </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+
+    <ng-template #maincontent>
+        <div class="custom-settings-data-table">
+            <table class="w-100">
+                <thead>
+                    <th class="col-span-2"></th>
+                </thead>
+                <tbody>
+                    @if(rolesdetails.length > 0){
+                        @for(role of rolesdetails ; track role) {
+                            <tr>
+                                <td class="w-75">{{role.name}}</td>
+                                <td class="w-25">
+                                    <div class="d-flex gap-4">
+                                        <!--Update-->
+                                        <div>
+                                            <a (click)="openupdate(role)"><img src="/settings-icon/edit.png" alt="edit icon"
+                                                    class="settings-common-icon">
+                                            </a>
+                                        </div>
+                                        <!--Delete-->
+                                        <div>
+                                            <a (click)="opendelete(role)"><img src="/settings-icon/trash-2.png" alt="edit icon"
+                                                    class="settings-common-icon"></a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }@else {
+                        <tr>
+                            <td colspan="2">
+                                <app-no-data-found></app-no-data-found>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </ng-template>
 </div>
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
-    <form [formGroup]="updateForm">
+    <form [formGroup]="updateForm" (ngSubmit)="updateRole(rolesDeletedata)">
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="d-flex justify-content-between popup-header-border p-3">
                 <div class="pt-2">
@@ -62,19 +82,21 @@
             </div>
             <div class="custom-main-popup-content p-4">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1"
-                        class="form-label custom-label mb-2">{{'roles'|translate}}<span
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Role'|translate}}<span
                             class="error-msg">*</span></label>
-                    <input type="text" class="form-control custom-input" formControlName="firstName"
-                        placeholder="Please enter role">
+                    <input type="text" class="form-control custom-input" formControlName="firstName" placeholder="Please enter role"
+                        (keypress)="formValidation.restrictInput($event)">
+                    <div *ngIf="updateForm.get('firstName')?.touched || updateForm.get('firstName')?.dirty" class="error-msg">
+                        <div *ngIf="updateForm.get('firstName')?.hasError('required')">Please enter role</div>
+                        <div *ngIf="updateForm.get('firstName')?.errors?.['pattern']">Enter a valid role </div>
+                    </div>
                 </div>
-                <div *ngIf="updateForm.get('firstName')?.touched || updateForm.get('firstName')?.dirty" class="error-msg">
-                    <!-- Required validation message -->
-                    <div *ngIf="updateForm.get('firstName')?.hasError('required')">Please enter role</div>
-                </div>
+            
                 <div class="d-flex gap-5 w-100 pt-2">
-                    <button class="custom-btn btn-secondary w-50 py-2" (click)="close(modal)">{{'Close'|translate}}</button>
-                    <button class="custom-btn btn-primary w-50 py-2" (click)="updateRole(rolesDeletedata)">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary w-50 py-2"
+                        (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary w-50 py-2"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>

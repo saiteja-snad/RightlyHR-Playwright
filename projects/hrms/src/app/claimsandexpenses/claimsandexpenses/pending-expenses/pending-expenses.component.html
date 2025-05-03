@@ -22,13 +22,13 @@
       <tbody>
         <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
           <tr *ngFor="let exp of expenesEmplyeedata | async">
-            <td>{{ exp.expenses_Title }}</td>
-            <td>{{ exp.applied_date | dateformat }}</td>
-            <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+            <td>{{ exp?.expenses_Title }}</td>
+            <td>{{ exp?.applied_date | dateformat }}</td>
+            <td>{{ exp?.totalExpenseAmount | number : "1.0-0" }}</td>
             <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
             </td>
             <td class="text-center">
-              <i *ngIf="exp.expenseApproverComments.length>0; else na" class="bi bi-info-circle-fill cursor"
+              <i *ngIf="exp?.expenseApproverComments?.length>0; else na" class="bi bi-info-circle-fill cursor"
                 (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)" ></i>
               <ng-template #na>
                 N/A

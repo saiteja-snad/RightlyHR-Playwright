@@ -5,7 +5,19 @@
 .status-colour {
     color: #147AB6;
 }
-.modal-image{
+
+.modal-image {
     width: 100%;
     height: 100%;
+}
+
+.custom-select{
+    border: 1px solid #DEE8F3;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 400;
+    font-size: var(--fontsize14);
+    vertical-align: middle;
+    color: #222222;
+    background-color: #F8FBFF;
 }

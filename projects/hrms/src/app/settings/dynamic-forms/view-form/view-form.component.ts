@@ -1,18 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, takeUntil } from 'rxjs';
 import { IDynamicForm, IRatingScale } from '../../../Interfaces/dynamic-forms.model';
 import { HttpService } from '../../../services/http.service';
-import { CommonModule,Location } from '@angular/common';
-
+import { CommonModule, Location } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-view-form',
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './view-form.component.html',
   styleUrl: './view-form.component.scss',
 })
+
 export class ViewFormComponent implements OnInit, OnDestroy {
   viewForm!: FormGroup;
   viewDetails = {} as IDynamicForm;
@@ -39,8 +39,6 @@ export class ViewFormComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private modalService: NgbModal,
     config: NgbModalConfig,
-    private router: Router,
-    private route: ActivatedRoute
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -63,21 +61,16 @@ export class ViewFormComponent implements OnInit, OnDestroy {
       formHeaderId: [null, Validators.required],
       sections: this.fb.array([]), // Sections FormArray
     });
-
     this.formId = history.state.formId;
-
     this.viewFormDetails(this.formId);
   }
 
   // form.component.ts
-  getRatingScaleOptions(
-    ratingType: string
-  ): { scale: number; description: string }[] | null {
+  getRatingScaleOptions(ratingType: string): { scale: number; description: string }[] | null {
     // Check if ratingScaleTypes is available
     if (!this.ratingScaleTypes) {
       return null;
     }
-
     const selectedRatingType = this.ratingScaleTypes.find(
       (scale) => scale.ratingType === ratingType
     );
@@ -85,82 +78,67 @@ export class ViewFormComponent implements OnInit, OnDestroy {
   }
 
   getAllRatingScaleTypes() {
-    this.http
-      .getData('Form/getallratings')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.ratingScaleTypes = data as IRatingScale[];
-        },
-      });
+    this.http.getData('Form/getallratings').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.ratingScaleTypes = data as IRatingScale[];
+      },
+    });
   }
 
   viewFormDetails(formId: number) {
-    this.http
-      .getData(`Form/getFormDetailsByFormId/${formId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          // Patch values for the top-level form controls
-          this.viewForm.patchValue({
-            formHeader: data.formName,
-            moduleId: data.moduleId,
-            cutOffRating: data.cutOffRating,
-            overAllRating: data.overAllRating,
-          });
-
-          // Clear existing sections if any
-          this.viewSections.clear();
-
-          // Populate sections and questions dynamically
-          data.sectionDetails.forEach((section: any) => {
-            // Create FormArray for questions
-            const questionsArray = this.fb.array<FormGroup>([]);
-
-            section.questions.forEach((question: any) => {
-              // Create FormArray for options
-              const optionsArray = this.fb.array<FormGroup>([]);
-
-              question.options.forEach((option: any) => {
-                const optionGroup = this.fb.group({
-                  option: [option.option],
-                });
-                optionsArray.push(optionGroup);
+    this.http.getData(`Form/getFormDetailsByFormId/${formId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        // Patch values for the top-level form controls
+        this.viewForm.patchValue({
+          formHeader: data.formName,
+          moduleId: data.moduleId,
+          cutOffRating: data.cutOffRating,
+          overAllRating: data.overAllRating,
+        });
+        // Clear existing sections if any
+        this.viewSections.clear();
+        // Populate sections and questions dynamically
+        data.sectionDetails.forEach((section: any) => {
+          // Create FormArray for questions
+          const questionsArray = this.fb.array<FormGroup>([]);
+          section.questions.forEach((question: any) => {
+            // Create FormArray for options
+            const optionsArray = this.fb.array<FormGroup>([]);
+            question.options.forEach((option: any) => {
+              const optionGroup = this.fb.group({
+                option: [option.option],
               });
-
-              // Create FormGroup for each question
-              const questionGroup = this.fb.group({
-                id: [question.id],
-                required: [question.required],
-                question: [question.question, Validators.required],
-                type: [question.type, Validators.required],
-                options: optionsArray,
-              });
-
-              questionsArray.push(questionGroup);
+              optionsArray.push(optionGroup);
             });
-
-            section.sectionItems.forEach((item: any) => {
-              this.newweightageArray.push(item.weightage);
+            // Create FormGroup for each question
+            const questionGroup = this.fb.group({
+              id: [question.id],
+              required: [question.required],
+              question: [question.question, Validators.required],
+              type: [question.type, Validators.required],
+              options: optionsArray,
             });
-
-            // Create FormGroup for each section
-            const sectionGroup = this.fb.group({
-              id: [section.id],
-              sectionName: [section.sectionName, Validators.required],
-              weightage: this.newweightageArray.at(
-                this.weightageArray.length - 1
-              ),
-              sectionType: [section.sectionType],
-              order: [section.order],
-              questions: questionsArray,
-            });
-
-            this.viewSections.push(sectionGroup);
+            questionsArray.push(questionGroup);
           });
-        },
-        error: (err) => console.error(err),
-      });
+          section.sectionItems.forEach((item: any) => {
+            this.newweightageArray.push(item.weightage);
+          });
+          // Create FormGroup for each section
+          const sectionGroup = this.fb.group({
+            id: [section.id],
+            sectionName: [section.sectionName, Validators.required],
+            weightage: this.newweightageArray.at(
+              this.weightageArray.length - 1
+            ),
+            sectionType: [section.sectionType],
+            order: [section.order],
+            questions: questionsArray,
+          });
+          this.viewSections.push(sectionGroup);
+        });
+      },
+      error: (err) => console.error(err),
+    });
   }
 
   get viewSections(): FormArray {
@@ -180,27 +158,15 @@ export class ViewFormComponent implements OnInit, OnDestroy {
   }
 
   getViewOptions(sectionIndex: number, questionIndex: number): FormArray {
-    return this.getViewQuestions(sectionIndex)
-      .at(questionIndex)
-      .get('options') as FormArray;
+    return this.getViewQuestions(sectionIndex).at(questionIndex).get('options') as FormArray;
   }
 
-  removeCreateOption(
-    sectionIndex: number,
-    questionIndex: number,
-    optionIndex: number
-  ) {
+  removeCreateOption(sectionIndex: number, questionIndex: number, optionIndex: number) {
     this.getViewOptions(sectionIndex, questionIndex).removeAt(optionIndex);
   }
 
-  getViewOptionControl(
-    sectionIndex: number,
-    questionIndex: number,
-    optionIndex: number
-  ): FormControl {
-    return this.getViewOptions(sectionIndex, questionIndex)
-      .at(optionIndex)
-      .get('option') as FormControl;
+  getViewOptionControl(sectionIndex: number, questionIndex: number, optionIndex: number): FormControl {
+    return this.getViewOptions(sectionIndex, questionIndex).at(optionIndex).get('option') as FormControl;
   }
 
   backToTableView() {

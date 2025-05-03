@@ -13,7 +13,7 @@
           <th>Department/Employee Manager</th>
           <th>Employee Name</th>
           <th>Role Name</th>
-          <th>Action</th>
+          <th class="text-center">Action</th>
         </tr>
       </thead>
       <tbody>
@@ -67,7 +67,7 @@
   </div>
 </div>
 
-<!--Add o Due popup-->
+<!--Add Due popup-->
 <ng-template #addnodue let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
@@ -80,7 +80,8 @@
     </div>
 
     <div class="custom-main-popup-content">
-      <form [formGroup]="noDueForm" (ngSubmit)="addNoDue(noDueForm)" *ngIf="rbac.allowedToAccess('No Due Clearance.create')">
+      <form [formGroup]="noDueForm" (ngSubmit)="addNoDue(noDueForm)"
+        *ngIf="rbac.allowedToAccess('No Due Clearance.create')">
         <!-- Select Type -->
         <div class="form-outline p-2 mb-2">
           <label class="form-label custom-label mb-2">Select Type</label>
@@ -99,18 +100,14 @@
         <!-- Department -->
         @if(noDueForm.get('selectedType')?.value === 'DEPT'){
         <div class="mb-3">
-          <label for="dispatcher" class="form-label custom-label mb-2">Department <span
-              class="text-danger">*</span></label>
+          <label for="dispatcher" class="form-label custom-label mb-2">Department
+            <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="departmentList" optionLabel="departmentName" filter="departmentName"
               filterBy="departmentName" class="form-select custom-select" formControlName="department"
               placeholder="Please select department">
-              <ng-template #selectedItem let-selectedOption>
-                {{ selectedOption.departmentName }}
-              </ng-template>
-              <ng-template let-dept #item>
-                {{ dept.departmentName }}
-              </ng-template>
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.departmentName }}</ng-template>
+              <ng-template let-dept #item>{{ dept.departmentName }}</ng-template>
             </p-select>
           </div>
           <!-- Validation Error -->
@@ -140,8 +137,8 @@
         <!-- Employee -->
         @if(noDueForm.get('selectedEmpRole')?.value === 'EMPLOYEE'){
         <div class="mb-3">
-          <label for="dispatcher" class="form-label custom-label mb-2">Employee <span
-              class="text-danger">*</span></label>
+          <label for="dispatcher" class="form-label custom-label mb-2">Employee
+            <span class="text-danger">*</span></label>
           <div class="custom-p-multiSelect-content">
             <p-multiSelect formControlName="employee" [options]="usersList" name="user" id="user" optionLabel="fullName"
               placeholder="Select employee" field="selectedUser" class="form-select custom-select"
@@ -163,16 +160,12 @@
         <!-- Role -->
         @if(noDueForm.get('selectedEmpRole')?.value === 'ROLE'){
         <div class="mb-3">
-          <label for="dispatcher" class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
+          <label for="dispatcher" class="form-label custom-label mb-2">Role<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="roles" optionLabel="name" filter="name" filterBy="name" formControlName="role"
               placeholder="Please select role" class="form-select custom-select">
-              <ng-template #selectedItem let-selectedOption>
-                {{ selectedOption.name }}
-              </ng-template>
-              <ng-template let-dept #item>
-                {{ dept.name }}
-              </ng-template>
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+              <ng-template let-dept #item>{{ dept.name }}</ng-template>
             </p-select>
           </div>
           <!-- Validation Error -->
@@ -192,12 +185,8 @@
           <div class="custom-p-select-content">
             <p-select [options]="managerOptions" optionLabel="label" formControlName="managerType"
               placeholder="Please select manager type" value="selectedOption.value" class="form-select custom-select">
-              <ng-template #selectedItem let-selectedOption>
-                {{ selectedOption.label }}
-              </ng-template>
-              <ng-template let-option #item>
-                {{ option.label }}
-              </ng-template>
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
+              <ng-template let-option #item>{{ option.label }}</ng-template>
             </p-select>
           </div>
           <div class="error-msg" *ngIf="noDueForm.get('managerType')?.touched && noDueForm.get('managerType')?.invalid">
@@ -209,13 +198,14 @@
         }
 
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary px-5 py-2"(click)="closeDelete(modal)">Close</button>
-          <button type="submit" class="custom-btn btn-primary px-5 py-2" [disabled]="noDueForm.invalid">Add</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">Close</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="noDueForm.invalid">Add</button>
         </div>
       </form>
     </div>
   </div>
 </ng-template>
+
 <!-- update no due -->
 <ng-template #updatenodue let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
@@ -229,8 +219,8 @@
     </div>
 
     <div class="custom-main-popup-content">
-      <form [formGroup]="updateDueForm" (ngSubmit)="updateNoDue(updateDueForm)" *ngIf="rbac.allowedToAccess('No Due Clearance.update')">
-        
+      <form [formGroup]="updateDueForm" (ngSubmit)="updateNoDue(updateDueForm)"
+        *ngIf="rbac.allowedToAccess('No Due Clearance.update')">
         <!-- Select Type -->
         <div class="form-outline p-2 mb-2">
           <label class="form-label custom-label mb-2">Select Type</label>
@@ -252,16 +242,14 @@
           <label class="form-label custom-label mb-2">Department <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="departmentList" optionLabel="departmentName" filter="departmentName"
-              formControlName="Updatedepartment" placeholder="Please select department" class="form-select custom-select">
-              <ng-template #selectedItem let-selectedOption>
-                {{ selectedOption.departmentName }}
-              </ng-template>
-              <ng-template let-dept #item>
-                {{ dept.departmentName }}
-              </ng-template>
+              formControlName="Updatedepartment" placeholder="Please select department"
+              class="form-select custom-select">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.departmentName }}</ng-template>
+              <ng-template let-dept #item>{{ dept.departmentName }}</ng-template>
             </p-select>
           </div>
-          <div class="error-msg" *ngIf="updateDueForm.get('Updatedepartment')?.touched && updateDueForm.get('Updatedepartment')?.invalid">
+          <div class="error-msg"
+            *ngIf="updateDueForm.get('Updatedepartment')?.touched && updateDueForm.get('Updatedepartment')?.invalid">
             <div *ngIf="updateDueForm.get('Updatedepartment')?.errors?.['required']">
               Department name is required
             </div>
@@ -290,12 +278,12 @@
             <p-multiSelect formControlName="Updateemployee" [options]="usersList" optionLabel="fullName"
               placeholder="Select employee" field="selectedUser" class="form-select custom-select"
               [selectedItemsLabel]="customLabelTemplate">
-              <ng-template let-user pTemplate="item">
-                <div>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</div>
-              </ng-template>
+              <ng-template let-user pTemplate="item">{{ user.firstName }} {{ user.middleName }} {{ user.lastName
+                }}</ng-template>
             </p-multiSelect>
           </div>
-          <div class="error-msg" *ngIf="updateDueForm.get('Updateemployee')?.touched && updateDueForm.get('Updateemployee')?.invalid">
+          <div class="error-msg" *ngIf="updateDueForm.get('Updateemployee')?.touched && 
+          updateDueForm.get('Updateemployee')?.invalid">
             <div *ngIf="updateDueForm.get('Updateemployee')?.errors?.['required']">
               Please select employee
             </div>
@@ -308,14 +296,10 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Role <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="roles" optionLabel="name" filter="name" filterBy="name"
-              formControlName="role" placeholder="Please select role" class="form-select custom-select">
-              <ng-template #selectedItem let-selectedOption>
-                {{ selectedOption.name }}
-              </ng-template>
-              <ng-template let-role #item>
-                {{ role.name }}
-              </ng-template>
+            <p-select [options]="roles" optionLabel="name" filter="name" filterBy="name" formControlName="role"
+              placeholder="Please select role" class="form-select custom-select">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.name }}</ng-template>
+              <ng-template let-role #item>{{ role.name }}</ng-template>
             </p-select>
           </div>
           <div class="error-msg" *ngIf="updateDueForm.get('role')?.touched && updateDueForm.get('role')?.invalid">
@@ -326,57 +310,46 @@
         </div>
         }
         }
-
         <!-- Manager Type -->
-    <!-- Manager Type -->
-@if(updateDueForm.get('UpdateselectedType')?.value === 'EMPMNGR') {
-  <div class="mb-3">
-    <label class="form-label custom-label mb-2">Manager <span class="text-danger">*</span></label>
-    <div class="custom-p-select-content">
-      <p-select 
-        [options]="managerOptions" 
-        optionLabel="label"
-        field="value" 
-        formControlName="managerType"
-        placeholder="Please select manager type" 
-        class="form-select custom-select">
-        <ng-template #selectedItem let-selectedOption>
-          {{ selectedOption.label }}
-        </ng-template>
-        <ng-template let-option #item>
-          {{ option.label }}
-        </ng-template>
-      </p-select>
-    </div>
-    <div class="error-msg" *ngIf="updateDueForm.get('managerType')?.touched && updateDueForm.get('managerType')?.invalid">
-      <div *ngIf="updateDueForm.get('managerType')?.errors?.['required']">
-        Manager record is required
-      </div>
-    </div>
-  </div>
-}
+        @if(updateDueForm.get('UpdateselectedType')?.value === 'EMPMNGR') {
+        <div class="mb-3">
+          <label class="form-label custom-label mb-2">Manager <span class="text-danger">*</span></label>
+          <div class="custom-p-select-content">
+            <p-select [options]="managerOptions" optionLabel="label" field="value" formControlName="managerType"
+              placeholder="Please select manager type" class="form-select custom-select">
+              <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
+              <ng-template let-option #item>{{ option.label }}</ng-template>
+            </p-select>
+          </div>
+          <div class="error-msg" *ngIf="updateDueForm.get('managerType')?.touched && 
+          updateDueForm.get('managerType')?.invalid">
+            <div *ngIf="updateDueForm.get('managerType')?.errors?.['required']">
+              Manager record is required
+            </div>
+          </div>
+        </div>
+        }
 
         <!-- Footer -->
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary px-5 py-2"(click)="closeDelete(modal)">Close</button>
-          <button type="submit" class="custom-btn btn-primary px-5 py-2"[disabled]="updateDueForm.invalid" >Update</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">Close</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="updateDueForm.invalid">Update</button>
         </div>
       </form>
     </div>
   </div>
 </ng-template>
-<!--Delete Confirmation popup-->
-<ng-template #deletepopup let-modal  *ngIf="rbac.allowedToAccess('No Due Clearance.delete')">
-  <div class="result-popup-content" ngbAutofocus>
-      
-          <div >
-              <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon" >
-              <p class="confirmation-text">{{'Are you sure you want to Delete?'}}</p>
-          </div>
-          <div class="d-flex gap-5 pt-2 w-100">
-              <button class="custom-btn btn-secondary w-50 py-3"(click)="closeDelete(modal)">{{'No'}}</button>
-              <button class="custom-btn btn-primary w-50 py-3" (click)="onDelete(modal)">{{'Yes'}}</button>
-          </div>
-      </div>
 
+<!--Delete Confirmation popup-->
+<ng-template #deletepopup let-modal *ngIf="rbac.allowedToAccess('No Due Clearance.delete')">
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to Delete?'}}</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'}}</button>
+      <button class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'}}</button>
+    </div>
+  </div>
 </ng-template>

@@ -135,7 +135,7 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
         startDate: formData.dateOfJoining?.startDate || null,
         endDate: formData.dateOfJoining?.endDate || null
       },
-      employeeStatus: formData.empStatus.value 
+      employeeStatus: formData.empStatus 
     };
   
     this.subscription = this.reportsService.getStandardReports(request).subscribe({

@@ -1,5 +1,5 @@
 import { Component, model, OnDestroy, OnInit, TemplateRef, viewChild, ViewChild } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { combineLatest, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -72,6 +72,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   modalRef!: NgbModalRef;
 
+  spinnerLoader= false;
+
   promotedOptions = [
     { label: 'Yes', value: true },
     { label: 'No', value: false }
@@ -97,7 +99,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.getAllReviewTemplates();
     this.initiatetemplatedropdownsForm();
     this.initialupdatereviewtemplatedropdownsForm();
-    this.initiondateForm();
+    this.initiateDateForm();
     this.getAuthorityDetails();
     this.getAppraisalAuthorityDetails();
   }
@@ -143,6 +145,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       });
   }
 
+  // private canListenToDropdownChanges = false;
   onReviewCycleChange(selectedValue: any): void {
       
     const selectedId = selectedValue.value;
@@ -156,6 +159,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // this.enableDropDowns();
     this.selectedReviewCycle = selectedCycle;
     this.reviewCycleID = selectedCycle.id
   
@@ -164,9 +168,11 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   
     const { locations, sublocations, departments, subdepartments } = selectedCycle;
     this.updateDropdowns(locations, sublocations, departments, subdepartments);
+    // this.canListenToDropdownChanges = false;
   
     this.patchFormValues(selectedId, departments, subdepartments, locations, sublocations);
   
+    // setTimeout(() => this.canListenToDropdownChanges = true, 0);
     this.setAdditionalFields(locations, sublocations, departments, subdepartments);
   
     const params = this.buildParams(selectedCycle.id);
@@ -174,6 +180,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.searchText = null;
     this.rows= 10;
     this.getEmployeesOfTheReviewCycle(params);
+    // this.listenToDropdownChanges();
   }
   
   getSelectedCycle(selectedId: any) {
@@ -224,14 +231,70 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     };
   }
   
+  enableDropDowns(){
+    this.dependentdropdowns.get('departmentId')?.enable();
+    this.dependentdropdowns.get('subDepartmentId')?.enable();
+    this.dependentdropdowns.get('locationId')?.enable();
+    this.dependentdropdowns.get('subLocationId')?.enable();    
+  }
+
+  private listenersAttached = false;
+
+  // listenToDropdownChanges() {
+  //   if (this.listenersAttached) return;
+  //   this.listenersAttached = true;
+  
+  //   const controlNames = ['departmentId', 'subDepartmentId', 'locationId', 'subLocationId'];
+  //   controlNames.forEach(field => {
+  //     this.dependentdropdowns.get(field)?.valueChanges.subscribe(() => {
+  //       if (!this.canListenToDropdownChanges) return; // 🚫 Skip during patch
+  //       this.callGetEmployeesAPI();
+  //     });
+  //   });
+  // }  
+
+  // callGetEmployeesAPI() {
+  //   const formValue = this.dependentdropdowns.value;
+  
+  //   const extractIds = (items: any[], idKey: string): string => {
+  //     if (!Array.isArray(items) || items.length === 0) return '';
+  
+  //     return items
+  //       .filter(item => item && item[idKey] !== undefined) 
+  //       .map(item => item[idKey])                          
+  //       .join(',');
+  //   };
+  
+  //   const params = {
+  //     page: this.page,
+  //     pageSize: this.pageSize,
+  //     reviewcycleid: this.reviewCycleID,
+  //     promotion: formValue.promoted?.value || '',
+  //     department: extractIds(formValue.departmentId, 'departmentId'),
+  //     subdepartment: extractIds(formValue.subDepartmentId, 'subDepartmentId'),
+  //     location: extractIds(formValue.locationId, 'locationId'),
+  //     sublocation: extractIds(formValue.subLocationId, 'subLocationId'),
+  //   };
+  
+  //   this.getEmployeesOfTheReviewCycle(params);
+  // }
+  
   onPromotedChange(event: any): void {
     this.promoted = this.dependentdropdowns.get('promoted')?.value
-    const params = {
+    const params: { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string } = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
       pageSize: this.pageSize,
-      promotion: this.promoted?.value,
     };
+
+    if(this.promoted){
+      params.promotion = this.promoted.value;
+    }
+
+    if (this.searchText) {
+      params.searchQuery = this.searchText;
+    }
+
     this.getEmployeesOfTheReviewCycle(params);
   }
 
@@ -240,14 +303,19 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.pageSize = event.rows;
     this.first = event.first;
 
-    const params: { reviewcycleid: any; page: number; pageSize: number; searchQuery?: string } = {
+    this.promoted = this.dependentdropdowns.get('promoted')?.value
+    const params: { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string } = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
-      pageSize: this.pageSize
+      pageSize: this.pageSize,
     };
 
     if (this.searchText) {
       params.searchQuery = this.searchText;
+    }
+
+    if(this.promoted){
+      params.promotion = this.promoted.value;
     }
 
     this.getEmployeesOfTheReviewCycle(params);
@@ -259,7 +327,9 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.page = 1;
     this.first = 0;
 
-    const params:  { reviewcycleid: any; page: number; pageSize: number; searchQuery?: string }  = {
+    this.promoted = this.dependentdropdowns.get('promoted')?.value
+
+    const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
       pageSize: this.pageSize
@@ -267,6 +337,10 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
     if (this.searchText) {
       params.searchQuery = this.searchText;
+    }
+
+    if(this.promoted){
+      params.promotion = this.promoted.value;
     }
 
     this.getEmployeesOfTheReviewCycle(params);
@@ -288,8 +362,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   getEmployeesOfTheReviewCycle(params: any): void {
     this.dataload = true;
-    // params.pageSize = fetchAll ? 10000 : this.pageSize;
-    
+
     if (this.searchText) {
       params.searchQuery = this.searchText;
     }
@@ -475,6 +548,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         if (this.modalRef) {
           this.modalRef.close();
         }
+        this.modalService.dismissAll();
         this.modal.openErrorModal( err.error.message? err.error.message : 'Error updating review template');
       },
       complete: () =>{
@@ -496,7 +570,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   assignReviewTemplate(form: FormGroup) {
-    this.modalRef = this.modalService.open(this.loading, { centered: true });
+    this.spinnerLoader= true;
     const formData= form.value;
 
     const payload = {
@@ -506,13 +580,12 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     const id = this.selectedIds.toString();
     this.http.putData(`ReviewCycleItem/update/${id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        if (this.modalRef) {
-          this.modalRef.close();
-        }
         this.modalService.dismissAll();
         this.modal.openSuccessModal('Form Assigned Successfully');
       },
       error: (err) => {
+        this.spinnerLoader= false;
+        this.modalService.dismissAll();
         this.selectedIds = [];
         if (err.status === 404) {
           this.modal.openErrorModal('Select atleast one employee to assign the template');
@@ -522,14 +595,12 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         } else {
           this.modal.openErrorModal(err.error.message || 'An error occurred while assigning the template');
         }
-        if (this.modalRef) {
-          this.modalRef.close();
-        }
+        this.reviewtemplatedropdowns.reset();
       },
       complete: () => {
+        this.spinnerLoader= false;
         this.selectedIds = [];
         this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
-        this.reviewtemplatedropdowns.reset();
         this.reviewtemplatedropdowns.reset();
       },
     });
@@ -550,10 +621,11 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.modal.openSuccessModal('Employee is Resumed Successfully');
       },
       error: (err) => {
-        console.error('Error updating review template:', err);
         if (this.modalRef) {
           this.modalRef.close();
         }
+        this.modalService.dismissAll();
+        this.modal.openErrorModal(err.error.message? err.error.message: 'Error updating review template');
       },
       complete: () => {
         this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
@@ -613,7 +685,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     })
   }
 
-  initiondateForm() {
+  initiateDateForm() {
     this.Effectivedatefrom = this.fb.group({
       effectiveFromDATE: [null, [Validators.required]],
       signaturename: [null, [Validators.required]],
@@ -735,9 +807,11 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   SentpromationLetters(): void {
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
+        this.modalService.dismissAll();
         this.modal.openSuccessModal('Promotion Letter Sent Successfully');
       },
       error: (err: any) => {
+        this.modalService.dismissAll();
         if (err.status === 500) {
           this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
         } else {

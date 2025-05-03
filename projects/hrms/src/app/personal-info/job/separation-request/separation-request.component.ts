@@ -74,7 +74,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to open the modal
   openModal(content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop : 'static'});
   }
 
   removeSection(index: number) {

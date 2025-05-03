@@ -18,7 +18,8 @@ import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-separation-request',
-  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, 
+    DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './separation-request.component.html',
   styleUrl: './separation-request.component.scss'
 })
@@ -237,7 +238,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to open the modal for the comments
   approverCommentsFunction(Value: any, content: any) {
-    this.modalService.open(content, { centered: true , size:'xl'});
+    this.modalService.open(content, { centered: true , size:'xl', backdrop:'static'});
     this.appover_comments = Value.map((ele: any) => {
       const parsedMetaData = JSON.parse(ele.metaData);
       return {

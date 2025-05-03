@@ -156,7 +156,7 @@
     <div class="custom-main-popup-content p-4">
       <div class="card p-3">
         <div *ngFor="let comment of commentsrecivced" >
-          <div class="card  p-3 mb-3"  *ngIf="comment.comments !== 'string'">
+          <div class="card  p-3 mb-3" >
             <p> <b>Commented by:</b> {{ comment.addedName }} </p>
             <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
             <p> <b>Rejected Date:</b> {{ comment.addedDate | date: 'short' }} </p>

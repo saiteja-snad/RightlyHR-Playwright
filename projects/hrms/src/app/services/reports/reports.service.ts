@@ -187,8 +187,8 @@ export class ReportsService {
       params = params.set('Department', request.Department);
     }
   
-    if (request.TeamManagerName) {
-      params = params.set('TeamManagerName', request.TeamManagerName);
+    if (request.Team_Manager) {
+      params = params.set('Team_Manager', request.Team_Manager);
     }
   
     if (request.Shift) {

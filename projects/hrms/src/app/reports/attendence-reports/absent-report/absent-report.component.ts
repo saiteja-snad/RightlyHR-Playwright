@@ -248,7 +248,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
 
     // Manager full name
     if (formValue.manager) {
-      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
+      request.Team_Manager = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
         .filter(Boolean)
         .join(' ');
     }

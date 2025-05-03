@@ -668,6 +668,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modal.openSuccessModal('Appraisal Letter Generated Successfully');
         },
         error: (err) => {
+          this.modalService.dismissAll();
           if (err.status === 500) {
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
@@ -707,6 +708,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modal.openSuccessModal('Appraisal Letter Sent Successfully');
         },
         error: (err: any) => {
+          this.modalService.dismissAll();
           if (err.status === 500) {
             this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
           } else {

@@ -97,7 +97,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };
@@ -124,7 +124,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
         this.teamManagerDetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           };
@@ -187,9 +187,7 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
   
     // Apply manager name if provided
     if (formValue.manager) {
-      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-        .filter(Boolean)
-        .join(' ');
+      request.teamManagerId = formValue.manager.employeeId
     }
   
     // Only include employee filter if not "All Employees"
@@ -317,8 +315,8 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
 
     // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Permission Report');
-    XLSX.writeFile(wb, 'AttendanceRegularization_Report.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, 'Regularization Report');
+    XLSX.writeFile(wb, 'Regularization_Report.xlsx');
   }
 
 

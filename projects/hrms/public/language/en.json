@@ -316,5 +316,8 @@
   "Please select designation": "Please select designation",
   "Please select gradename": "Please select gradename",
   "Assessment Form":"Assessment Form",
-  "Shift is required" : "Shift is required"
+  "Shift is required" : "Shift is required",
+  "Change RM": "Change RM",
+  "Select Team Member(s)": "Select Team Member(s)",
+  "Select Reporting Manager": "Select Reporting Manager"
 }

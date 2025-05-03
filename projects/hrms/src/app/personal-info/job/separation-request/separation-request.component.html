@@ -19,92 +19,98 @@
           <th>{{'APPROVER STATUS'|translate}}</th>
           <th>{{'REQUEST TYPE'|translate}}</th>
           <th>{{'STATUS'|translate}}</th>
-          <th ></th>
+          <th>{{'Action(s)'|translate}}</th>
         </tr>
       </thead>
       <tbody>
-        @if(((getSeparationDetails | async) ?? []).length > 0) {
-        @for (item of (getSeparationDetails|async); track item.id) {
-        <tr>
-          <td>{{ item.appliedDate?(item.appliedDate | dateformat):'-' }}
-          </td>
-          <td>
-            @if(item.recallStatus == 'Recalled'){
-              <div>NA</div>
-            }
-            @else{
-            {{ item.noticePeriodDuration?item.noticePeriodDuration:'NA' }}
-            }
-          </td>
-          <td>
-            {{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}
-          </td>
-          <td>
-            @if(item.description){
-              <div (click)="decription(item.description,openDiscriotionviewpopup)" class="cursor">
-                <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
-              </div>
-            }
-            @else {
-            <div>NA</div>
-            }
-            <div>
-            </div>
-          </td>
-          <td>
-            @if(item.approvers && item.approvers.length > 0;){
-            <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)" class="cursor">
-              <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
-            </div>
-            }
-            @else{
-              <div>NA</div>
-            }
-          </td>
-          <td>
-            @if (item.recallStatus) {
-              @if (item.recallStatus.toLowerCase() == 'recalled') {
-                {{ item.requestType }}
-              }
-              {{ item.recallStatus }}
-            } @else {
-              <div >NA</div>
-            }
-          </td>
-          <td>{{item.status?item.status:'NA'}}</td>
-          <td>
-            <div class="dropdown">
-              @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' && !recallbuttonConditions && 
-              item.status != 'Recalled Processed'){
-              <span type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-three-dots-vertical"></i>
-              </span>
-              }
-              <ul class="dropdown-menu custom-dropdown-menu">
-                <li (click)="recallRequest(item,recallrequestpopup)">
-                  <a class="dropdown-item">
-                    <i class="bi bi-repeat me-2"></i>Recall
-                  </a>
-                </li>
-                @if( item.recallStatus.toLowerCase() != 'earlyrelieving' && !recallandearlyrelievingbuttonConditions){
-                <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
-                  <a class="dropdown-item">Early Relieving</a>
-                </li>
+        @if (!isDataLoaded) {
+          @if(((getSeparationDetails | async) ?? []).length > 0) {
+            @for (item of (getSeparationDetails|async); track item.id) {
+            <tr>
+              <td>{{ item.appliedDate?(item.appliedDate | dateformat):'-' }}
+              </td>
+              <td>
+                @if(item.recallStatus == 'Recalled'){
+                  <div>NA</div>
                 }
-              </ul>
-            </div>
-          </td>
-          <!-- </ng-container> -->
-        </tr>
+                @else{
+                {{ item.noticePeriodDuration?item.noticePeriodDuration:'NA' }}
+                }
+              </td>
+              <td>
+                {{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}
+              </td>
+              <td>
+                @if(item.description){
+                  <div (click)="decription(item.description,openDiscriotionviewpopup)" class="cursor">
+                    <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                  </div>
+                }
+                @else {
+                <div>NA</div>
+                }
+                <div>
+                </div>
+              </td>
+              <td>
+                @if(item.approvers && item.approvers.length > 0;){
+                <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)" class="cursor">
+                  <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                </div>
+                }
+                @else{
+                  <div>NA</div>
+                }
+              </td>
+              <td>
+                @if (item.recallStatus) {
+                  @if (item.recallStatus.toLowerCase() == 'recalled') {
+                    {{ item.requestType }}
+                  }
+                  {{ item.recallStatus }}
+                } @else {
+                  <div >NA</div>
+                }
+              </td>
+              <td>{{item.status?item.status:'NA'}}</td>
+              <td>
+                <div class="dropdown">
+                  @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' && !recallbuttonConditions && 
+                  item.status != 'Recalled Processed'){
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  }
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="recallRequest(item,recallrequestpopup)">
+                      <a class="dropdown-item">
+                        <i class="bi bi-repeat me-2"></i>Recall
+                      </a>
+                    </li>
+                    @if( item.recallStatus.toLowerCase() != 'earlyrelieving' && !recallandearlyrelievingbuttonConditions){
+                    <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
+                      <a class="dropdown-item">Early Relieving</a>
+                    </li>
+                    }
+                  </ul>
+                </div>
+              </td>
+              <!-- </ng-container> -->
+            </tr>
+            }
+            }
+            @else{
+            <tr>
+              <td>
+                <app-no-data-found />
+              </td>
+            </tr>
+            }
         }
-        }
-        @else{
-        <tr>
-          <td>
-            <app-no-data-found />
-          </td>
-        </tr>
-        }
+       @else {
+        <app-data-loader-content/>
+      }
+       
       </tbody>
     </table>
   </div>

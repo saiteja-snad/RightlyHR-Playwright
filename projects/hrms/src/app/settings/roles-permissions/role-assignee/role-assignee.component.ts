@@ -11,10 +11,12 @@ import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 
 @Component({
   selector: 'app-role-assignee',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './role-assignee.component.html',
   styleUrl: './role-assignee.component.scss',
   encapsulation:ViewEncapsulation.None
@@ -29,6 +31,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   createAssigneeForm!: FormGroup;
   roleAssigneeUsers: IUserRoleInfo[] = [];
   roles: IRoles[] = [];
+  dataLoad= false;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   @ViewChild('confirmationModal') confirmationModal: TemplateRef<any> | undefined;
@@ -107,7 +110,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   }
 
   getUsersByRoleId(id: any) {
-    // this.modalService.open(this.stagingLoadingModal, { centered: true });
+    this.dataLoad= true;
     this.http.getData(`FusionRole/roleAssigneeByRoleId/${id}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -115,11 +118,11 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
           this.roleAssigneeUsers = response;
         },
         error: (error: any) => {
-          // this.modalService.dismissAll();
+          this.dataLoad= false;
           this.modal.openErrorModal(error.error.message ? error.error.message : 'Failed to load users');
         },
         complete: () => {
-          // this.modalService.dismissAll();
+          this.dataLoad= false;
         }
       });
   }

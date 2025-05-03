@@ -15,9 +15,10 @@ import moment from 'moment';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { ISeparation } from './separation-request';
 import { environment } from '../../../../environments/environment';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-separation-request',
-  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent],
+  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './separation-request.component.html',
   styleUrl: './separation-request.component.scss'
 })
@@ -41,7 +42,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   earlyReleivingform!: FormGroup;
   isLoading = false;
   profileForm!: FormGroup;
-
+  isDataLoaded = false;
   constructor(private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService,
      private modalService: NgbModal) {
     // Initialize any required services or dependencies here
@@ -173,9 +174,13 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to get the separation details of the employee
   fetchSeparationDetails(): void {
+    this.isDataLoaded=true;
     const EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`SeparationRequests/getbyemployeeId?Id=${EmployeeId}`).subscribe({
       next: (data: any) => {
+        if(data){
+          this.isDataLoaded=false;
+       
         this.getSeparationDetails.next(data);
         this.substatus = this.getSeparationDetails.value.map(
           (application: { status: any }) => application.status.toLowerCase()
@@ -198,12 +203,21 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
             this.recallbuttonConditions = true;
           }
         });
-      },
-    });
-    const current = this.formatDate(moment());
+        const current = this.formatDate(moment());
     if (this.formatDate(this.empdata.lastworkingday < current)) {
       this.isLastWorkingDatePassed = true;
     }
+      }
+
+      },
+      error: (err: any) => {
+        this.isDataLoaded=false;
+        this.getSeparationDetails.next([]);
+      },
+
+
+    });
+  
   }
 
   //function to check the status of the request

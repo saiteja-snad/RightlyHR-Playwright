@@ -71,8 +71,6 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     this.permissionUpdateForm.patchValue({
       name: selectedPermission.name,
     });
-    console.log(this.permissionUpdateForm.value);
-
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -105,7 +103,7 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
           this.modalService.dismissAll();
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
-            'Attendance Regalarization Updated Successfully'
+            'Attendance Regularization type updated successfully'
           );
         },
         error: (err) => {
@@ -128,11 +126,16 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
         next: (data: any) => {
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
-            'Attendance Regalarization Added Successfully'
+            'Attendance Regalarization type added successfully'
           );
         },
         error: (err: any) => {
-          this.sharedModalService.openErrorModal(err.error.message);
+          if(err.error.message === 'Permission type with the same name already exists.'){
+            this.sharedModalService.openErrorModal('Attendance regularization type with the same name already exists');
+          }else{
+            this.sharedModalService.openErrorModal(err.error.message);
+          }
+          
         },
         complete: () => {
           this.getPermissionTypes();
@@ -146,7 +149,7 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
       next: (data: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal(
-          'Attendance Regalarization Deleted Successfully'
+          'Attendance Regalarization type deleted successfully'
         );
       },
       error: (err) => {

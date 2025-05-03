@@ -19,10 +19,11 @@
           <th>{{'APPROVER STATUS'|translate}}</th>
           <th>{{'REQUEST TYPE'|translate}}</th>
           <th>{{'STATUS'|translate}}</th>
-          <th></th>
+          <th>{{'Action(s)'|translate}}</th>
         </tr>
       </thead>
       <tbody>
+        @if (!isDataLoaded) {
         @if(((getSeparationDetails | async) ?? []).length > 0) {
         @for (item of (getSeparationDetails|async); track item.id) {
         <tr>
@@ -107,6 +108,10 @@
           </td>
         </tr>
         }
+      }
+      @else {
+        <app-data-loader-content/>
+      }
       </tbody>
     </table>
   </div>

@@ -8,6 +8,7 @@ import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount, AttendanceRequest } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { SignalsService } from '../../../../services/signals.service';
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
   selector: 'app-attendance-regularization-request-tabs',
   imports: [CommonModule, RouterModule, TabsModule],
@@ -21,13 +22,14 @@ export class AttendanceRegularizationRequestTabsComponent implements OnInit, OnD
   roleWfh: AttendanceRequest[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [];
+  filteredTabs: any[] = [];
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllRegularizationPendingApprovalsCount();
   }
   
-  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService) {
+  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService, private rbac: RbacService) {
     effect(() => {
       if (this.signalService.regularizationForYouTriggerSignal() ||
                this.signalService.regularizationForRoleTriggerSignal()) 
@@ -52,14 +54,25 @@ export class AttendanceRegularizationRequestTabsComponent implements OnInit, OnD
       next: (data: ApprovalStatusCount[]) => {
         this.pendingApprovalCount = data.find(item => item.moduleId === moduleId) ? [data.find(item => item.moduleId === moduleId)!] : [];
         this.navTabs = [
-          { label: 'For You ', link: 'for-you', count: this.pendingApprovalCount.at(0)?.forYou ?? 0 },
-          { label: 'For Your Role', link: 'for-your-role', count: this.pendingApprovalCount.at(0)?.forYourRole ?? 0 },
+          { label: 'For You ', link: 'for-you', count: this.pendingApprovalCount.at(0)?.forYou ?? 0,permission: { feature: 'For You (Regularization)', action: 'view' } },
+          { label: 'For Your Role', link: 'for-your-role', count: this.pendingApprovalCount.at(0)?.forYourRole ?? 0,permission: { feature: 'For Role (Regularization)', action: 'view' } },
         ];
+        this.filterTabsByRbac();
       },
       error: (err) => {
         this.pendingApprovalCount = [] as ApprovalStatusCount[];
         console.error('Error fetching approvals:', err)
       },
+    });
+  }
+
+  
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs?.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
     });
   }
 

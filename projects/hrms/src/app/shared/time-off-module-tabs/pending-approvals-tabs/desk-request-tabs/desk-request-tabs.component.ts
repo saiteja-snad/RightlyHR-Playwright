@@ -7,6 +7,7 @@ import { environment } from '../../../../../environments/environment';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-desk-request-tabs',
@@ -20,12 +21,13 @@ export class DeskRequestTabsComponent {
   // pendingApprovalCount: ApprovalStatusCount[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
+  filteredTabs: any[] = [];
   navTabs = computed(() => {
     const moduleId = environment.deskAllocationModuleId;
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
     return [
-      { label: 'For You ', link: 'for-you', count: data?.forYou ?? 0 },
-      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0 }
+      { label: 'For You ', link: 'for-you', count: data?.forYou ?? 0,permission: { feature: 'For You (Desk Requests)', action: 'view' }  },
+      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0,permission: { feature: 'For Role (Desk Requests)', action: 'view' }  }
     ];
   });
 
@@ -34,7 +36,7 @@ export class DeskRequestTabsComponent {
     this.getAllDeskPendingApprovalsCount();
   }
 
-  constructor(public readonly router: Router, private http: HttpService,) {
+  constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService) {
     effect(() => {
       if (this.http.tirggerPendingApprovalCountSignal().separation) {
         this.getAllDeskPendingApprovalsCount();
@@ -50,8 +52,18 @@ export class DeskRequestTabsComponent {
       next: (data: ApprovalStatusCount[]) => {
         const filtered = data.filter(item => item.moduleId === moduleId);
         this.pendingApprovalCount.set(filtered);
+        this.filterTabsByRbac();
       },
       error: (err) => console.error('Error fetching approvals:', err),
+    });
+  }
+
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs()?.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
     });
   }
 

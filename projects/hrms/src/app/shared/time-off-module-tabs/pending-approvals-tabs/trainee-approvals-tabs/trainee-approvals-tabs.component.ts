@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-trainee-approvals-tabs',
@@ -18,18 +19,19 @@ export class TraineeApprovalsTabsComponent {
   empinfo: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
+  filteredTabs: any[] = [];
   navTabs = computed(() => {
     const moduleId=environment.traineeoffboardingModuleId
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
     return [
-      { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals', count:data?.forYou ?? 0}
+      { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals', count:data?.forYou ?? 0,permission: { feature: 'Trainee Details', action: 'view' } }
     ];
   });
   // navTabs: any[] = [
   //   { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals' },
   // ];
 
-  constructor(public readonly router: Router, private http: HttpService) { 
+  constructor(public readonly router: Router, private http: HttpService,private rbac: RbacService) { 
     effect(() => {
       if (this.http.tirggerPendingApprovalCountSignal().separation) {
         this.getAllTraineePendingApprovalsCount();
@@ -50,8 +52,18 @@ export class TraineeApprovalsTabsComponent {
       next: (data: ApprovalStatusCount[]) => {
         const filtered = data.filter(item => item.moduleId === moduleId);
         this.pendingApprovalCount.set(filtered);
+        this.filterTabsByRbac();
       },
       error: (err) => console.error('Error fetching approvals:', err),
+    });
+  }
+
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs()?.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
     });
   }
 

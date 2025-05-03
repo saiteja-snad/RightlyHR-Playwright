@@ -17,11 +17,13 @@
                     <th>{{'Department' |translate}}</th>
                     <th>{{'Status' |translate}}</th>
                     <th>{{'Employee Emails' |translate}}</th>
-                    <th>{{'Actions' |translate}}</th>
+                    @if(rbac.allowedToAccess('No Due Clearance Request.update') || rbac.allowedToAccess('No Due Clearance Request.delete')) {
+                    <th>{{'Action(s)' |translate}}</th>
+                    }
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('No Due Clearance Tab.view')) {
+               
                 @if (((nodue_Request_data | async) ?? []).length > 0) {
                 @for (item of ((nodue_Request_data | async) ?? []) | nodueDetails : searchValue; track item.id){
                 <tr>
@@ -37,25 +39,31 @@
                         </div>
                         <ng-template #popupcomments>NA</ng-template>
                     </td>
+                    @if(rbac.allowedToAccess('No Due Clearance Request.update') || rbac.allowedToAccess('No Due Clearance Request.delete')) {
                     <td class="text-center">
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu py-0">
+                                @if( rbac.allowedToAccess('No Due Clearance Request.delete')) {
                                 <li>
                                     <a class="dropdown-item" (click)="openModal(item,approval)"
-                                        *ngIf="rbac.allowedToAccess('No Due Clearance Tab.update')">
+                                        >
                                         <i class="bi bi-check-circle me-2"></i>{{'Approve' |translate}}</a>
                                 </li>
+                                }
+                                @if( rbac.allowedToAccess('No Due Clearance Request.delete')) {
                                 <li>
                                     <a class="dropdown-item" (click)="openModal(item,rejectmodal)"
-                                        *ngIf="rbac.allowedToAccess('No Due Clearance Tab.delete')">
+                                        >
                                         <i class="bi bi-x-circle me-2"></i>{{'Reject' |translate}}</a>
                                 </li>
+                                }
                             </ul>
                         </div>
                     </td>
+                    }
                 </tr>
                 }
                 }
@@ -66,7 +74,7 @@
                     </td>
                 </tr>
                 }
-                }
+                
             </tbody>
         </table>
     </div>

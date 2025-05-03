@@ -236,7 +236,6 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
       next: (response) => {
-        this.closeModal();
         this.onCreateCycleFormSubmitted();
         this.conformationPopup.openSuccessModal('Review Cycle is Kept on Hold');
       },
@@ -255,7 +254,6 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     };
     this.http.putData(`reviewCycleHeader/updatestatus/${cycle.id}`, data).subscribe({
       next: (response) => {
-        this.closeModal();
         this.onCreateCycleFormSubmitted();
         this.conformationPopup.openSuccessModal('Review Cycle is Resumed Successfully');
       },

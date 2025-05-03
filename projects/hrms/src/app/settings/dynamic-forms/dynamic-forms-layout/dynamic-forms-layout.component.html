@@ -4,7 +4,7 @@
     <div class="mb-3">
         <div class="component-header">Settings</div>
     </div>
-    <div class="mb-3">
+    <div class="mb-3" *ngIf="rbac.allowedToAccess('Dynamic Forms Module.create')">
         <button class="custom-btn btn-primary" (click)="navigateToCreateFormComponent()">Create a Form</button>
     </div>
    </div>

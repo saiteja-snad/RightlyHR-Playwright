@@ -146,7 +146,7 @@ export const permissionsData = [
     { fields: 'Roles', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Fields Module', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Settings Timeoff Module', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Assets Management configuration Module', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Assets Management Configuration Module', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Dynamic Forms Module', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Field Tabs Sections
@@ -260,6 +260,10 @@ export const permissionsData = [
     { fields: 'Flexible Leave Allocation Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Attendance Eligibility Criteria Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Load Entitlements Tab', View: false, Update: false, Create: false, Delete: false },
+
+     //Settings Time Off Leave Category Tabs Section
+     { fields: 'Leave Category Pending Tab', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Leave Category Published Tab', View: false, Update: false, Create: false, Delete: false }, 
 
     //Custom Fields   
     { fields: 'Custom Events', View: false, Update: false, Create: false, Delete: false },

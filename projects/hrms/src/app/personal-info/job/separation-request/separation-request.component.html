@@ -43,7 +43,7 @@
               <td>
                 @if(item.description){
                   <div (click)="decription(item.description,openDiscriotionviewpopup)" class="cursor">
-                    <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                    <i class="bi bi-info-circle-fill info-icon"></i>
                   </div>
                 }
                 @else {
@@ -55,7 +55,7 @@
               <td>
                 @if(item.approvers && item.approvers.length > 0;){
                 <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)" class="cursor">
-                  <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                  <i class="bi bi-info-circle-fill info-icon"></i>
                 </div>
                 }
                 @else{
@@ -110,7 +110,6 @@
        @else {
         <app-data-loader-content/>
       }
-       
       </tbody>
     </table>
   </div>
@@ -189,21 +188,13 @@
                 <ng-template #popupcomments>NA</ng-template>
               </td>
               <td>
-                <span *ngIf="
-                    comment?.metadata?.splastworkingDate;
-                    else lastworkingdate
-                  ">
+                <span *ngIf="comment?.metadata?.splastworkingDate;else lastworkingdate">
                   {{ comment.metadata.splastworkingDate | dateformat }}</span>
                 <ng-template #lastworkingdate>NA</ng-template>
               </td>
               <td>
-                <span *ngIf="
-                    comment?.metadata?.spearlyReliveingDate;
-                    else earlydate
-                  ">
-                  {{
-                  comment.metadata.spearlyReliveingDate | dateformat
-                  }}</span>
+                <span *ngIf="comment?.metadata?.spearlyReliveingDate; else earlydate">
+                  {{ comment.metadata.spearlyReliveingDate | dateformat }}</span>
                 <ng-template #earlydate>NA</ng-template>
               </td>
               <td>
@@ -212,10 +203,8 @@
                 <ng-template #extenddate>NA</ng-template>
               </td>
               <td>
-                <span *ngIf="
-                    comment?.metadata?.isAcceptEarlyRequest;
-                    else isaccept
-                  ">{{ comment.metadata.isAcceptEarlyRequest }}</span>
+                <span *ngIf="comment?.metadata?.isAcceptEarlyRequest; else isaccept">
+                  {{ comment.metadata.isAcceptEarlyRequest }}</span>
                 <ng-template #isaccept>NA</ng-template>
               </td>
               <td>
@@ -344,8 +333,8 @@
     <div class="custom-main-popup-content p-0 pt-3">
       <form [formGroup]="profileForm">
         <div>
-          <label for="comments" class="form-label custom-label mb-2">Add Emails<span
-              class="text-danger">*</span></label>
+          <label for="comments" class="form-label custom-label mb-2">Add Emails
+            <span class="text-danger">*</span></label>
           <div class="mb-3">
             <div class="d-flex">
               <input name="addemail" class="form-control custom-input" placeholder="Enter email" type="text"
@@ -402,22 +391,17 @@
     </div>
   </div>
 </ng-template>
+
 <ng-template #confirmationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to cancel ?</p>
     </div>
-
-    <div class="d-flex justify-content-center gap-3 mt-4">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-        No
-      </button>
-      <button type="submit" class="custom-btn btn-primary" (click)="popupclose();model.dismiss()">
-        Yes
-      </button>
+    <div class="custom-modal-footer">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="popupclose();model.dismiss()">Yes</button>
     </div>
   </div>
 </ng-template>
-
 <!-- modal end to close the nodue -->

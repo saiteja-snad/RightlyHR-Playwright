@@ -1,11 +1,22 @@
 <div class="custom-main-component-container">
+    <!--header-->
+    <div class="mb-3">
+        <div class="component-header">Settings</div>
+    </div>
+
+    <!--tabs content-->
+    <div class="mb-3">
+        <app-settings-role-permissions-module-tabs />
+    </div>
+
     <div class="d-flex gap-3 w-100">
         <!--sub tabs Content-->
         <div class="custom-component-left-content">
             <div class="component-side-nav-tabs-container py-3">
                 <ul class="nav flex-column">
                     <li class="nav-item" *ngFor="let role of roles">
-                        <a class="nav-link" [ngClass]="{'selected-row': role === selectedRole}" (click)="onRoleClick(role)">
+                        <a class="nav-link" [ngClass]="{'selected-row': role === selectedRole}"
+                            (click)="onRoleClick(role)">
                             {{ role.name }}
                         </a>
                     </li>
@@ -14,7 +25,8 @@
         </div>
 
         <div class="custom-setting-right-content p-3">
-            <form [formGroup]="createAssigneeForm" autocomplete="off" (ngSubmit)="createAssignee(createAssigneeForm)" class="mb-4">
+            <form [formGroup]="createAssigneeForm" autocomplete="off" (ngSubmit)="createAssignee(createAssigneeForm)"
+                class="mb-4">
                 <div class="d-flex align-items-center gap-2">
                     <div class="custom-p-select-content">
                         <p-select formControlName="selected_user" [options]="usersList" name="user" id="user"
@@ -23,20 +35,14 @@
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                             <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                         </p-select>
-                        <!-- <p-multiSelect formControlName="selected_user" [options]="usersList" name="user" id="user"
-                            optionLabel="fullName" placeholder="Search User" field="selectedUser" class="w-100"
-                            [selectedItemsLabel]="customLabelTemplate" (ngModelChange)="selectedUserDetails($event)">
-                            <ng-template let-user pTemplate="item">
-                                <div>{{ user.firstName }} {{ user.middleName }} {{ user.lastName }}</div>
-                            </ng-template>
-                        </p-multiSelect> -->
                     </div>
                     <div>
-                        <button type="submit" class="custom-btn btn-primary py-2 px-4" [disabled]="createAssigneeForm.invalid">Add</button>
+                        <button type="submit" class="custom-btn btn-primary py-2 px-4"
+                            [disabled]="createAssigneeForm.invalid">Add</button>
                     </div>
                 </div>
             </form>
-            
+
             <!--Table content-->
             <ng-container *ngIf="dataLoad; else maincontent">
                 <ng-template #loadingSpinner>
@@ -63,8 +69,8 @@
                                         <span *ngIf="user.middleName"> {{ user.middleName }} </span>
                                         {{ user.lastName }}
                                     </td>
-                                    <td (click)="onUserClick(user)"><img src="/settings-icon/trash-2.png" alt="edit icon"
-                                            class="settings-common-icon">
+                                    <td (click)="onUserClick(user)">
+                                        <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
                                     </td>
                                 </tr>
                             }@else {
@@ -84,24 +90,20 @@
 </div>
 
 <ng-template #confirmationModal let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <div class="custom-main-popup-container">
-            <div class="custom-main-popup-content text-center p-5">
-                <div class="py-5">
-                    <p class="confirmation-text">Are you sure you want to Delete?</p>
-                </div>
-                <div class="d-flex gap-5 pt-4 w-100">
-                    <button class="custom-btn btn-secondary w-50 py-3" (click)="close()">No</button>
-                    <button class="custom-btn btn-primary w-50 py-3" (click)="removeAssignee()">yes</button>
-                </div>
-            </div>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="removeAssignee()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>
 
 <ng-template #stagingLoadingModal let-modal>
-    <div class="modal-body text-center p-5" ngbAutofocus>
-        <div class="spinner-border text-primary" role="status"></div>
-        <p class="heading4 pt-4">Loading...</p>
+    <div class="result-popup-content" ngbAutofocus>
+        <p class="confirmation-text pt-4">Loading...</p>
     </div>
 </ng-template>

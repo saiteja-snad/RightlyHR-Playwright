@@ -1,338 +1,346 @@
-@if(!loader){
-<div class="card-top-content py-3">
-    <div class="row float-end ">
-        <div class="col-md-12">
-            <div class="mb-3" *ngIf="rbac.allowedToAccess('Form Settings.create')">
-               <button class="custom-btn btn-primary"(click)="openModal(addRatingScale,{size:'lg'})" >{{'Add Rating Scale'}}</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="custom-table-content ">
+<div class="custom-main-component-container">
+  @if(!loader){
+  <div class="mb-3" *ngIf="rbac.allowedToAccess('Form Settings.create')">
+    <button class="custom-btn btn-primary" (click)="openModal(addRatingScale,{size:'lg',centered: true})">
+      {{'Add Rating Scale'}}</button>
+  </div>
+
+  <div class="custom-table-content">
     <table class="w-100">
-        <thead>
+      <thead>
+        <tr>
+          <th>{{'Rating Type' | translate}}</th>
+          <th class="text-center">{{'Min-Rating Scale' | translate}}</th>
+          <th class="text-center">{{'Max-Rating Scale' | translate}}</th>
+          <th class="text-center" *ngIf="rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')">
+            {{'Actions' | translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="formSettingDetails.length > 0; else noDataTemplate">
+          <ng-container *ngFor="let formSetting of formSettingDetails">
             <tr>
-                <th>{{'Rating Type' | translate}}</th>
-                <th>{{'Min-Rating Scale' | translate}}</th>
-                <th>{{'Max-Rating Scale' | translate}}</th>
-                <th *ngIf="rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')">{{'Actions' | translate}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            <ng-container *ngIf="formSettingDetails.length > 0; else noDataTemplate">
-                <ng-container *ngFor="let formSetting of formSettingDetails">
-                <tr>
-                <td >{{ formSetting.ratingType }}</td>
-                  <td >{{ formSetting.minimumRatingScale }}</td>
-                  <td >{{ formSetting.maximumRatingScale }}</td>
-                  <td *ngIf="rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')">
-                    <div class="dropdown">
-                      <span type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-three-dots-vertical"></i>
-                      </span>
-                      <ul class="dropdown-menu custom-dropdown-menu">
-                        <li *ngIf="rbac.allowedToAccess('Form Settings.update')">
-                          <a class="dropdown-item" (click)="assignValues(formSetting.ratingType)">
-                            <i class="bi bi-pencil me-2"></i>Update
-                          </a>
-                        </li>
-                        <li *ngIf="rbac.allowedToAccess('Form Settings.delete')">
-                          <a class="dropdown-item" (click)="openDeleteModal(formSetting.ratingType)">
-                            <i class="bi bi-trash3 me-2"></i>Delete
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  </td>
-                </tr>
-                </ng-container>
-            </ng-container>
-          
-            <ng-template #noDataTemplate>
-              <tr>
-                <td colspan="4">
-                  <app-no-data-found></app-no-data-found>
-                </td>
-              </tr>
-            </ng-template>
-          </tbody>
-          
-    </table>
-</div>
-}@else {<app-data-loader-content />}
-
-
-
-
-<ng-template #addRatingScale let-modal>
-<div ngbAutoFocus>
-<h5 class=" text-center pt-2">Add Rating Scale </h5>
-<form [formGroup]="ratingform" (ngSubmit)="onSubmit()">
-  <div>
-    <!-- Rating Scale Section -->
-    <div class="d-flex gap-3 p-3">
-      <div class="col-md-3">
-        <label for="Rating Scale" class="content-heading">Rating Scale:</label>
-      </div>
-      <div class="col-md-4">
-        <label for="minimumRatingScale" class="content-heading">From<span class="text-danger">*</span></label> 
-        <input type="number" formControlName="minimumRatingScale" class="custom-input" placeholder="Enter Rating" min="1" max="10" (input)="restrictToMaxValue($event, ratingform, 'minimumRatingScale', 10, 2)" (input)="restrictDecimal($event)" />
-        <small class="text-danger" *ngIf="ratingform.get('minimumRatingScale')?.errors?.['required'] && ratingform.get('minimumRatingScale')?.touched">
-          Rating Scale is required.
-        </small>
-        <span class="text-danger" *ngIf="ratingform.errors?.['invalidRange']">
-          "From" value cannot be greater than the "To" value.
-        </span>
-      </div>
-
-      <div class="col-md-4">
-        <label for="maximumRatingScale" class="content-heading">To<span class="text-danger">*</span></label>
-        <input type="number" formControlName="maximumRatingScale" class="custom-input" placeholder="Enter Rating" min="1" max="10" (input)="restrictToMaxValue($event, ratingform, 'maximumRatingScale', 10, 2)" (input)="restrictDecimal($event)" />
-        <small class="text-danger" *ngIf="ratingform.get('maximumRatingScale')?.errors?.['required'] && ratingform.get('maximumRatingScale')?.touched">
-          Rating Scale is required.
-        </small>
-      </div>
-
-    </div>
-  </div>
-  <!-- Final Rating Section -->
-  <div class="mb-4 col-md-12 d-flex justify-content-between">
-    <label for="final Rating">Final Rating:<span class="text-danger">*</span></label>
-    <label><input type="radio" formControlName="finalRating" [value]=0> Round Off</label>
-    <label><input type="radio" formControlName="finalRating" [value]=1> Upto 1 decimal</label>
-    <label><input type="radio" formControlName="finalRating" [value]=2> Upto 2 decimal</label>
-    <small class="text-danger" *ngIf="ratingform.controls['finalRating'].invalid && ratingform.controls['finalRating'].touched">
-      Please select an option.
-    </small>
-  </div>
-
-  <!-- Rating Type Section -->
-  <div class="col-md-6 mb-4">
-    <label for="ratingType" class="form-label">Rating Type<span class="text-danger">*</span></label>
-    <input type="text" formControlName="ratingType" class="custom-input"  placeholder="Enter Rating Type" maxlength="50" (input)="validateInput(ratingform.get('ratingType'))" />
-    <div>
-      <small class="text-muted">
-        {{ ratingform.get('ratingType')?.value?.length || 0 }} /50
-      </small>
-    </div>
-    <small class="text-danger" *ngIf="ratingform.get('ratingType')?.errors?.['required'] && ratingform.get('ratingType')?.touched">
-      Rating Type is required.
-    </small>
-    <small class="text-danger" *ngIf="ratingform.get('ratingType')?.hasError('maxlength') && ratingform.get('ratingType')?.touched">
-      Rating Type must not exceed 50 characters.
-    </small>
-
-    <!-- Optional: Show current character count -->
-
-  </div>
-
-  <!-- Scales Section (Automatically Generated) -->
-  <div formArrayName="scales" *ngIf="scales.controls.length > 0 && this.ratingform.get('minimumRatingScale')?.value > 0 && this.ratingform.get('maximumRatingScale')?.value > 0 " class="popup-scroll">
-    <div *ngFor="let scale of scales.controls; let i = index" [formGroupName]="i" class="mb-3">
-      <div class="card w-80">
-        <div class="d-flex gap-3 p-2">
-          <!-- Scale Input -->
-          <div class="w-25">
-            <input readonly type="number" formControlName="scale" class="custom-input" placeholder="Enter Scale" min="1" max="10" />
-            <small class="text-danger" *ngIf="scale.get('scale')?.errors?.['required'] && scale.get('scale')?.touched">
-              Scale is required.
-            </small>
-          </div>
-
-          <!-- Description Input -->
-          <div class="w-75 textarea-container">
-            <input type="text" formControlName="description" class="custom-input" placeholder="Enter Description" maxlength="50" (input)="validateInput(scale.get('description'))" />
-            <div>
-              <small class="character-count mt-2 text-end">
-                {{ scale.get('description')?.value.length? scale.get('description')?.value.length:0}} / 50
-              </small>
-            </div>
-            <small class="text-danger" *ngIf="scale.get('description')?.errors?.['required'] && scale.get('description')?.touched">
-              Description is required.
-            </small>
-            <small class="text-danger" *ngIf="scale.get('description')?.hasError('maxlength') && scale.get('description')?.touched">
-              Description must not exceed 50 characters.
-            </small>
-
-          </div>
-
-
-          <!-- Remove Button -->
-          <div>
-            <button type="button" class="btn btn-lg" (click)="removeScale(i)">
-              <i class="bi bi-trash text-danger"></i>
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Submit Button -->
-  <button type="submit" class="custom-btn btn-primary" [disabled]="ratingform.invalid" >Submit</button>
-  <button class="custom-btn btn-secondary" (click)="onClose();">Close</button>
-</form>
-</div>
-</ng-template>
-
-
-
-
-
-<ng-template #updateform let-modal>
-  <div class="modal-content" ngbAutoFocus>
-    <h5 class=" text-center pt-2">Update Rating Scale </h5>
-    <form [formGroup]="updateFormRating" class="p-4">
-      <div>
-        <!-- Rating Scale Section -->
-        <div class="d-flex gap-3 p-3">
-          <div class="col-md-3">
-            <label for="Rating Scale" class="content-heading">Rating Scale:</label>
-          </div>
-          <div class="col-md-4">
-            <label for="minimumRatingScale" class="content-heading">From<span class="text-danger">*</span></label>
-            <input type="number" formControlName="minimumRatingScale" class="form-control" placeholder="Enter Rating"
-              min="1" max="10" (input)="restrictToMaxValue($event, updateFormRating, 'minimumRatingScale', 10, 2)"
-              (input)="restrictDecimal($event)" />
-            <small class="text-danger"
-              *ngIf="updateFormRating.get('minimumRatingScale')?.errors?.['required'] && updateFormRating.get('minimumRatingScale')?.touched">
-              Rating Scale is required.
-            </small>
-            <span class="text-danger" *ngIf="updateFormRating.errors?.['invalidRange']">
-              "From" value cannot be greater than the "To" value.
-            </span>
-          </div>
-
-          <div class="col-md-4">
-            <label for="maximumRatingScale" class="content-heading">To<span class="text-danger">*</span></label>
-            <input type="number" formControlName="maximumRatingScale" class="form-control" placeholder="Enter Rating"
-              min="1" max="10" (input)="restrictToMaxValue($event, updateFormRating, 'maximumRatingScale', 10, 2)"
-              (input)="restrictDecimal($event)" />
-            <small class="text-danger"
-              *ngIf="updateFormRating.get('maximumRatingScale')?.errors?.['required'] && updateFormRating.get('maximumRatingScale')?.touched">
-              Rating Scale is required.
-            </small>
-          </div>
-
-        </div>
-      </div>
-      <!-- Final Rating Section -->
-      <div class="mb-4 col-md-12 d-flex justify-content-between">
-        <label for="final Rating">Final Rating:<span class="text-danger">*</span></label>
-        <label><input type="radio" formControlName="finalRating" [value]=0> Round Off</label>
-        <label><input type="radio" formControlName="finalRating" [value]=1> Upto 1 decimal</label>
-        <label><input type="radio" formControlName="finalRating" [value]=2> Upto 2 decimal</label>
-        <small class="text-danger"
-          *ngIf="updateFormRating.controls['finalRating'].invalid && updateFormRating.controls['finalRating'].touched">
-          Please select an option.
-        </small>
-      </div>
-
-      <!-- Rating Type Section -->
-      <div class="col-md-6 mb-4">
-        <label for="ratingType" class="form-label">Rating Type<span class="text-danger">*</span></label>
-        <input type="text" formControlName="ratingType" class="form-control" placeholder="Enter Rating Type"
-          maxlength="50" (input)="validateInput(updateFormRating.get('ratingType'))" />
-        <div>
-          <small class="text-muted">
-            {{ updateFormRating.get('ratingType')?.value?.length || 0 }} /50
-          </small>
-        </div>
-        <small class="text-danger"
-          *ngIf="updateFormRating.get('ratingType')?.errors?.['required'] && updateFormRating.get('ratingType')?.touched">
-          Rating Type is required.
-        </small>
-        <small class="text-danger"
-          *ngIf="updateFormRating.get('ratingType')?.hasError('maxlength') && updateFormRating.get('ratingType')?.touched">
-          Rating Type must not exceed 50 characters.
-        </small>
-
-        <!-- Optional: Show current character count -->
-
-      </div>
-
-      <!-- Scales Section (Automatically Generated) -->
-      <div formArrayName="scales"
-        *ngIf="scalesUpdateform.controls.length > 0 && this.updateFormRating.get('minimumRatingScale')?.value > 0 && this.updateFormRating.get('maximumRatingScale')?.value > 0 "
-        class="popup-scroll">
-        <div *ngFor="let scale of scalesUpdateform.controls; let i = index" [formGroupName]="i" class="mb-3">
-          <div class="card w-80">
-            <div class="d-flex gap-3 p-2">
-              <!-- Scale Input -->
-              <div class="w-25">
-                <input readonly type="number" formControlName="scale" class="form-control" placeholder="Enter Scale"
-                  min="1" max="10" />
-                <small class="text-danger"
-                  *ngIf="scale.get('scale')?.errors?.['required'] && scale.get('scale')?.touched">
-                  Scale is required.
-                </small>
-              </div>
-
-              <!-- Description Input -->
-              <div class="w-75 textarea-container">
-                <input type="text" formControlName="description" class="form-control" placeholder="Enter Description"
-                  maxlength="50"  (input)="validateInput(scale.get('description'))" />
-                <div>
-                  <small class="character-count mt-2 text-end">
-                    {{ scale.get('description')?.value.length? scale.get('description')?.value.length:0}} / 50
-                  </small>
+              <td>{{ formSetting.ratingType }}</td>
+              <td class="text-center">{{ formSetting.minimumRatingScale }}</td>
+              <td class="text-center">{{ formSetting.maximumRatingScale }}</td>
+              <td class="text-center" *ngIf="rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li *ngIf="rbac.allowedToAccess('Form Settings.update')">
+                      <a class="dropdown-item" (click)="assignValues(formSetting.ratingType)">
+                        <i class="bi bi-pencil me-2"></i>Update
+                      </a>
+                    </li>
+                    <li *ngIf="rbac.allowedToAccess('Form Settings.delete')">
+                      <a class="dropdown-item" (click)="openDeleteModal(formSetting.ratingType)">
+                        <i class="bi bi-trash3 me-2"></i>Delete
+                      </a>
+                    </li>
+                  </ul>
                 </div>
-                <small class="text-danger"
-                  *ngIf="scale.get('description')?.errors?.['required'] && scale.get('description')?.touched">
-                  Description is required.
-                </small>
-                <small class="text-danger"
-                  *ngIf="scale.get('description')?.hasError('maxlength') && scale.get('description')?.touched">
-                  Description must not exceed 50 characters.
-                </small>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
 
+        <ng-template #noDataTemplate>
+          <tr>
+            <td colspan="4">
+              <app-no-data-found></app-no-data-found>
+            </td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
+  }@else {
+  <div class="custom-compoent-data-loader">
+    <app-data-loader-content />
+  </div>
+  }
+</div>
+
+<!-- Add rating scale popup-->
+<ng-template #addRatingScale let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Add Rating Scale</p>
+      </div>
+      <div>
+        <a (click)="onClose();"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+    <div class="custom-main-popup-content">
+      <form [formGroup]="ratingform" (ngSubmit)="onSubmit()">
+        <div class="custom-popup-height">
+          <!-- Rating Scale Section -->
+          <div class="d-flex gap-3 w-100 mb-4">
+            <div class="pt-4 me-4">
+              <label for="Rating Scale" class="component-sub-header text-nowrap">Rating Scale:</label>
+            </div>
+            <div class="w-100">
+              <label for="minimumRatingScale" class="content-heading">From<span class="text-danger">*</span></label>
+              <input type="number" formControlName="minimumRatingScale" class="form-control custom-input w-100"
+                placeholder="Enter Rating" min="1" max="10"
+                (input)="restrictToMaxValue($event, ratingform, 'minimumRatingScale', 10, 2)"
+                (input)="restrictDecimal($event)" />
+              <div class="error-msg"
+                *ngIf="ratingform.get('minimumRatingScale')?.errors?.['required'] && ratingform.get('minimumRatingScale')?.touched">
+                Rating Scale is required.
               </div>
-
-
-              <!-- Remove Button -->
-              <div>
-                <button type="button" class="btn btn-lg" (click)="removeUpdateScale(i)">
-                  <i class="bi bi-trash text-danger"></i>
-                </button>
+              <div class="error-msg" *ngIf="ratingform.errors?.['invalidRange']">
+                "From" value cannot be greater than the "To" value.
               </div>
             </div>
+            <div class="w-100">
+              <label for="maximumRatingScale" class="content-heading">To<span class="text-danger">*</span></label>
+              <input type="number" formControlName="maximumRatingScale" class="form-control custom-input w-100"
+                placeholder="Enter Rating" min="1" max="10"
+                (input)="restrictToMaxValue($event, ratingform, 'maximumRatingScale', 10, 2)"
+                (input)="restrictDecimal($event)" />
+              <div class="error-msg"
+                *ngIf="ratingform.get('maximumRatingScale')?.errors?.['required'] && ratingform.get('maximumRatingScale')?.touched">
+                Rating Scale is required.
+              </div>
+            </div>
+          </div>
+    
+          <!-- Final Rating Section -->
+          <div class="d-flex gap-3 align-items-center mb-4">
+            <label for="final Rating" class="component-sub-header text-nowrap me-4">Final Rating:
+              <span class="text-danger">*</span></label>
+            <label><input type="radio" formControlName="finalRating" [value]=0> Round Off</label>
+            <label><input type="radio" formControlName="finalRating" [value]=1> Upto 1 decimal</label>
+            <label><input type="radio" formControlName="finalRating" [value]=2> Upto 2 decimal</label>
+            <div class="error-msg"
+              *ngIf="ratingform.controls['finalRating'].invalid && ratingform.controls['finalRating'].touched">
+              Please select an option.
+            </div>
+          </div>
+    
+          <!-- Rating Type Section -->
+          <div class="d-flex mb-4">
+            <label for="ratingType" class="component-sub-header text-nowrap me-5 pt-3">Rating Type
+              <span class="text-danger">*</span></label>
+            <div class="w-75">
+              <input type="text" formControlName="ratingType" class="form-control custom-input w-100" placeholder="Enter Rating Type"
+                maxlength="50" (input)="validateInput(ratingform.get('ratingType'))" />
+              <div class="textarea-count-text">{{ ratingform.get('ratingType')?.value?.length || 0 }}/50</div>
+              <div class="error-msg">
+                <div *ngIf="ratingform.get('ratingType')?.errors?.['required'] && ratingform.get('ratingType')?.touched">
+                  Rating Type is required.
+                </div>
+                <div *ngIf="ratingform.get('ratingType')?.hasError('maxlength') && ratingform.get('ratingType')?.touched">
+                  Rating Type must not exceed 50 characters.
+                </div>
+              </div>
+            </div>
+          </div>
+    
+          <!-- Scales Section (Automatically Generated) -->
+          <div formArrayName="scales" *ngIf="scales.controls.length > 0 && this.ratingform.get('minimumRatingScale')?.value > 0 
+                    && this.ratingform.get('maximumRatingScale')?.value > 0">
+            <div *ngFor="let scale of scales.controls; let i = index" [formGroupName]="i"
+              class="card custom-background-card mb-3 p-3">
+              <div class="d-flex gap-3 p-2">
+                <!-- Scale Input -->
+                <div class="w-25">
+                  <input readonly type="number" formControlName="scale" class="form-control custom-input text-center"
+                    placeholder="Enter Scale" min="1" max="10" />
+                </div>
+                <!-- Description Input -->
+                <div class="w-75">
+                  <input type="text" formControlName="description" class="form-control custom-input"
+                    placeholder="Enter Description" maxlength="50" (input)="validateInput(scale.get('description'))" />
+                  <div class="textarea-count-text">{{ scale.get('description')?.value.length?
+                    scale.get('description')?.value.length:0}}/50</div>
+                  <div class="error-msg">
+                    <div *ngIf="scale.get('description')?.errors?.['required'] && scale.get('description')?.touched">
+                      Description is required.
+                    </div>
+                    <div *ngIf="scale.get('description')?.hasError('maxlength') && scale.get('description')?.touched">
+                      Description must not exceed 50 characters.
+                    </div>
+                  </div>
+                </div>
+                <!-- Remove Button -->
+                <div>
+                  <button type="button" class="btn btn-lg" (click)="removeScale(i)">
+                    <i class="bi bi-trash text-danger"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary" (click)="onClose();">{{'Close'|translate}}</button>
+          <button type="submit" [disabled]="ratingform.invalid" class="custom-btn btn-primary">{{'Add'|translate}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
 
+<!-- Update rating scale popup-->
+<ng-template #updateform let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Update Rating Scale</p>
+      </div>
+      <div>
+        <a (click)="onClose();"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+
+
+    <div class="custom-main-popup-content">
+      <form [formGroup]="updateFormRating">
+        <div class="custom-popup-height">
+          <!-- Rating Scale Section -->
+          <div class="d-flex gap-3 w-100 mb-4">
+            <div class="pt-4 me-4">
+              <label for="Rating Scale" class="component-sub-header text-nowrap">Rating Scale:</label>
+            </div>
+            <div class="w-100">
+              <label for="minimumRatingScale" class="content-heading">From<span class="text-danger">*</span></label>
+              <input type="number" formControlName="minimumRatingScale" class="form-control custom-input w-100"
+                placeholder="Enter Rating" min="1" max="10"
+                (input)="restrictToMaxValue($event, updateFormRating, 'minimumRatingScale', 10, 2)"
+                (input)="restrictDecimal($event)" />
+              <div class="error-msg"
+                *ngIf="updateFormRating.get('minimumRatingScale')?.errors?.['required'] && updateFormRating.get('minimumRatingScale')?.touched">
+                Rating Scale is required.
+              </div>
+              <div class="error-msg" *ngIf="updateFormRating.errors?.['invalidRange']">
+                "From" value cannot be greater than the "To" value.
+              </div>
+            </div>
+            <div class="w-100">
+              <label for="maximumRatingScale" class="content-heading">To<span class="text-danger">*</span></label>
+              <input type="number" formControlName="maximumRatingScale" class="form-control" placeholder="Enter Rating"
+                min="1" max="10" (input)="restrictToMaxValue($event, updateFormRating, 'maximumRatingScale', 10, 2)"
+                (input)="restrictDecimal($event)" />
+              <div class="error-msg"
+                *ngIf="updateFormRating.get('maximumRatingScale')?.errors?.['required'] && updateFormRating.get('maximumRatingScale')?.touched">
+                Rating Scale is required.
+              </div>
+            </div>
           </div>
 
+          <!-- Final Rating Section -->
+          <div class="d-flex gap-3 align-items-center mb-4">
+            <label for="final Rating" class="component-sub-header text-nowrap me-4">Final Rating:<span class="text-danger">*</span></label>
+            <label><input type="radio" formControlName="finalRating" [value]=0> Round Off</label>
+            <label><input type="radio" formControlName="finalRating" [value]=1> Upto 1 decimal</label>
+            <label><input type="radio" formControlName="finalRating" [value]=2> Upto 2 decimal</label>
+            <div class="error-msg"
+              *ngIf="updateFormRating.controls['finalRating'].invalid && updateFormRating.controls['finalRating'].touched">
+              Please select an option.
+            </div>
+          </div>
+
+          <!-- Rating Type Section -->
+          <div class="d-flex mb-4">
+            <label for="ratingType" class="component-sub-header text-nowrap me-5 pt-3">Rating Type<span
+                class="text-danger">*</span></label>
+            <div class="w-75">
+              <input type="text" formControlName="ratingType" class="form-control custom-input w-100"
+                placeholder="Enter Rating Type" maxlength="50" (input)="validateInput(updateFormRating.get('ratingType'))" />
+              <div class="textarea-count-text">{{ updateFormRating.get('ratingType')?.value?.length || 0 }} /50</div>
+              <div class="error-msg">
+                <div *ngIf="updateFormRating.get('ratingType')?.errors?.['required'] && updateFormRating.get('ratingType')?.touched">
+                  Rating Type is required.
+                </div>
+                <div *ngIf="updateFormRating.get('ratingType')?.hasError('maxlength') && updateFormRating.get('ratingType')?.touched">
+                  Rating Type must not exceed 50 characters.
+                </div>
+              </div>
+            </div>
+            <!-- Optional: Show current character count -->
+          </div>
+
+          <!-- Scales Section (Automatically Generated) -->
+          <div formArrayName="scales" *ngIf="scalesUpdateform.controls.length > 0 && this.updateFormRating.get('minimumRatingScale')?.value > 0 && 
+                                this.updateFormRating.get('maximumRatingScale')?.value > 0">
+            <div *ngFor="let scale of scalesUpdateform.controls; let i = index" [formGroupName]="i"
+              class="card custom-background-card mb-3 p-3">
+              <div class="d-flex gap-3 p-2">
+                <!-- Scale Input -->
+                <div class="w-25">
+                  <input readonly type="number" formControlName="scale" class="form-control custom-input text-center"
+                    placeholder="Enter Scale" min="1" max="10" />
+                </div>
+          
+                <!-- Description Input -->
+                <div class="w-75">
+                  <input type="text" formControlName="description" class="form-control" placeholder="Enter Description"
+                    maxlength="50" (input)="validateInput(scale.get('description'))" />
+                  <div class="textarea-count-text">{{ scale.get('description')?.value.length?
+                    scale.get('description')?.value.length:0}}/50</div>
+                  <div class="error-msg">
+                    <div *ngIf="scale.get('description')?.errors?.['required'] && scale.get('description')?.touched">
+                      Description is required.
+                    </div>
+                    <div *ngIf="scale.get('description')?.hasError('maxlength') && scale.get('description')?.touched">
+                      Description must not exceed 50 characters.
+                    </div>
+                  </div>
+                </div>
+          
+                <!-- Remove Button -->
+                <div>
+                  <button type="button" class="btn btn-lg" (click)="removeUpdateScale(i)">
+                    <i class="bi bi-trash text-danger"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- Submit Button -->
-      <button type="submit" class="custom-btn btn-primary me-2" [disabled]="updateFormRating.invalid"
-        (click)="onUpdate(ratingType);modal.dismiss()">Update Form</button>
-      <button class="custom-btn btn-secondary" (click)="onClose();">Close</button>
-    </form>
+        <!-- Submit Button -->
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary" (click)="onClose();">Close</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="updateFormRating.invalid"
+            (click)="onUpdate(ratingType);modal.dismiss()">Update Form</button>
+        </div>
+      </form>
+    </div>
   </div>
 </ng-template>
 
+<!--Status Confirmation popup-->
 <ng-template #confirmPopUp1 let-modal>
-  <div class="modal-body text-center p-5">
-    <!-- <img src="./assets/images/Vector@2x.png" alt="" class="imgg mb-3" /> -->
-    <h5>Are you sure you want to close?</h5>
-    <div class="d-flex justify-content-around pt-3">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-      <button type="button" class="custom-btn btn-primary" (click)="updateAndClose()">Yes</button>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/conformation.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to close?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="updateAndClose()">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>
 
-
-
+<!--Delete Confirmation popup-->
 <ng-template #confirmPopUp let-modal>
-  <div class="modal-body text-center p-5">
-    <!-- <img src="./assets/images/Vector@2x.png" alt="" class="imgg mb-3" /> -->
-    <h5>Are you sure you want to delete?</h5>
-    <div class="d-flex justify-content-around pt-3">
-      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-      <button type="button" class="custom-btn btn-primary" (click)="onDelete();modal.dismiss()">Yes</button>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to delete?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
+      <button type="button" class="custom-btn btn-primary" (click)="onDelete();modal.dismiss()">{{'Yes'|translate}}</button>
     </div>
   </div>
 </ng-template>
-  

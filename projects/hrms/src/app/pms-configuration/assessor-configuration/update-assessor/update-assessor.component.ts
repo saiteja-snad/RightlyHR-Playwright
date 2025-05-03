@@ -238,13 +238,26 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
   Updateassessor() {
     this.isLoading = true;
     const loggedinuser = this.authService.getToken();
-    const currentDate = moment();
+    const currentDate = moment().startOf('day');
+  
+    // Check for past deadline dates
+    const invalidDeadline = this.assesorDetails.some((item: any) => {
+      const deadline = moment(item.deadlineindays).startOf('day');
+      return deadline.isBefore(currentDate);
+    });
+  
+    if (invalidDeadline) {
+      this.isLoading = false;
+      this.conformationPopup.openErrorModal("Deadline date cannot be in the past");
+      return;
+    }
+  
     if (this.updateassesorConfiguration) {
       const payload = {
         reviewCycleId: this.updateassesorConfiguration.reviewCycleId,
         isDeleted: false,
         createdBy: loggedinuser.employeeId,
-        createdAt: currentDate?.toISOString(),
+        createdAt: currentDate.toISOString(),
         reviewAssessorItems: [
           ...this.assesorDetails.map((item: any) => ({
             id: item.id,
@@ -264,17 +277,15 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
             isRatingVisible: item.rating,
             isCommentsVisible: item.comments,
             isView: item.view,
-            isDeleted: true, // Ensure the isDeleted flag is set to true
+            isDeleted: true,
             createdAt: currentDate.toISOString(),
             aessorEmployeeIds: item.assessorempId?.toString(),
           })),
         ],
       };
+  
       this.http
-        .putData(
-          `Assessor/UpdateReviewAssessorHeaderConfig/${this.headerId}`,
-          payload
-        )
+        .putData(`Assessor/UpdateReviewAssessorHeaderConfig/${this.headerId}`, payload)
         .subscribe({
           next: (response: any) => {
             this.isLoading = false;
@@ -286,7 +297,11 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
           error: (err: any) => {
             console.error('Error:', err);
             this.isLoading = false;
-            this.conformationPopup.openErrorModal(err.error);
+            if (err.status === 400) {
+              this.conformationPopup.openErrorModal("An Assessor cannot be added more than once");
+            } else {
+              this.conformationPopup.openErrorModal("Something went wrong. Please try again.");
+            }
           },
           complete: () => {
             this.isLoading = false;
@@ -298,6 +313,7 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
         });
     }
   }
+  
 
   ngOnDestroy(): void {
     if (this.subscription) {

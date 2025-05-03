@@ -20,6 +20,7 @@ import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
+import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 
 @Component({
   selector: 'app-separation-for-your-role-request',
@@ -33,14 +34,17 @@ import { RbacService } from '../../../services/rbac.service';
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
-  ],
+    PendingapprovalsseparationPipe
+],
   templateUrl: './separation-for-your-role-request.component.html',
   styleUrl: './separation-for-your-role-request.component.scss',
 })
 export class SeparationForYourRoleRequestComponent {
   subscription!: Subscription;
+  searchValue!:string;
   separation_For_You_Details = new BehaviorSubject<ISeparation[]>([]);
   @ViewChild('acceptForm') acceptForm!: NgForm;
+  @ViewChild('acceptFormforprocess') acceptFormforprocess!: NgForm;
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -137,13 +141,18 @@ export class SeparationForYourRoleRequestComponent {
         error: (reason) => console.log(reason),
       });
   }
-
+  closepopup(content:any){
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
   openModal(content: any) {
     this.modalService.open(content, {
       centered: true,
       size: 'lg',
       backdrop: 'static',
     });
+  }
+  rejectpopup(){
+    this.modalService.dismissAll();
   }
   approverCommentsfunction(value: any) {
     this.myApproverComments = value.map((ele: any) => {

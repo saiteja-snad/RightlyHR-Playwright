@@ -165,55 +165,68 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
   }
   
   selectedUserDetails(event: any) {
+    // this.noDueForm.get('role')?.clearValidators();
+    // this.noDueForm.get('selectedType')?.clearValidators();
+
     this.selectedUsersCount = event?.length;
     if (this.selectedUsersCount > 0) {
       this.customLabelTemplate = `${this.selectedUsersCount} ${this.selectedUsersCount === 1 ? 'user' : 'users'} selected`;
     } else {
       this.customLabelTemplate = 'Select Users';
     }
+
+    console.log(this.noDueForm);
+    
   }
 
   watchTypeChange() {
     const deptControl = this.noDueForm.get('department');
+    const empRoleControl = this.noDueForm.get('selectedEmpRole');
     const managerControl = this.noDueForm.get('managerType');
-
     const roleControl = this.noDueForm.get('role');
     const employeeControl = this.noDueForm.get('employee');
-
+  
     this.noDueForm.get('selectedType')?.valueChanges.subscribe(value => {
       if (value === 'DEPT') {
         deptControl?.setValidators(Validators.required);
+        empRoleControl?.setValidators(Validators.required);
         managerControl?.clearValidators();
         managerControl?.reset();
-
       } else if (value === 'EMPMNGR') {
         managerControl?.setValidators(Validators.required);
         deptControl?.clearValidators();
         deptControl?.reset();
+        empRoleControl?.clearValidators();
+        empRoleControl?.reset();
         roleControl?.reset();
+        employeeControl?.clearValidators();
         employeeControl?.reset();
+
         this.noDueForm.get('selectedEmpRole')?.reset();
       }
-
+  
       deptControl?.updateValueAndValidity();
       managerControl?.updateValueAndValidity();
     });
-
+  
     this.noDueForm.get('selectedEmpRole')?.valueChanges.subscribe(value => {
       if (value === 'EMPLOYEE') {
         employeeControl?.setValidators(Validators.required);
-        employeeControl?.clearValidators();
+        roleControl?.clearValidators();
         roleControl?.reset();
+        console.log(this.noDueForm);
+        
       } else if (value === 'ROLE') {
         roleControl?.setValidators(Validators.required);
-        roleControl?.clearValidators();
+        employeeControl?.clearValidators();
         employeeControl?.reset();
       }
-
+  
       roleControl?.updateValueAndValidity();
       employeeControl?.updateValueAndValidity();
     });
   }
+  
   watchTypeupdateChange() {
     const deptControl = this.updateDueForm.get('Updatedepartment');
     const managerControl = this.updateDueForm.get('managerType');
@@ -448,10 +461,13 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
   }
   
   
-  closeDelete(modal: any) {
-    modal.dismiss();
+  closeDelete(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
   };
 
+  clearData(){
+    this.modalService.dismissAll();
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

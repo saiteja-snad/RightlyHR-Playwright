@@ -2,7 +2,7 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search">
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here" aria-label="search">
     </div>
 
     <div class="custom-table-content">
@@ -24,8 +24,8 @@
                 </tr>
             </thead>
             <tbody>
-                @if(((separation_For_You_Details | async) ?? []).length > 0) {
-                <tr *ngFor="let item of separation_For_You_Details|async">
+                <ng-container *ngIf="((separation_For_You_Details | async) ?? [] | pendingapprovalsseparation: searchValue) as filteredData">
+                <tr *ngFor="let item of filteredData">
                     @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
                     ||item.approvalHeader?.status?.toLowerCase() =='approved'){
                     <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
@@ -98,14 +98,10 @@
                     </td>
                     }
                 </tr>
-                }
-                @else{
-                <tr>
-                    <td>
-                        <app-no-data-found />
-                    </td>
+                <tr *ngIf="filteredData.length === 0">
+                    <td colspan="9"><app-no-data-found></app-no-data-found></td>
                 </tr>
-                }
+            </ng-container>
             </tbody>
         </table>
     </div>
@@ -187,7 +183,7 @@
                         <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                             placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                             #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" pattern="^[^\s].*"
-                            required></textarea>
+                            required [disabled]="!isCheckBoxEnabledEarly" ></textarea>
                         <div class="textarea-count-text">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
                             /250</div>
                         <div class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptForm.submitted)">
@@ -204,6 +200,7 @@
                         </label>
                         <input class="form-control custom-input" type="date" aria-label="Default select example"
                             id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
+                            
                             [min]="getBlockedFutureDate(selectedSpRequestData.spRequestLastWorkingDate)"
                             (keypress)="letters($event)" [(ngModel)]="selectedSpRequestData.extenddate" required
                             [ngClass]="{ 'is-invalid': !isempeffectivevaild }">
@@ -221,7 +218,7 @@
                         <label>{{"Feedback for Extend" | translate}}<span class="error-msg">*</span></label>
                         <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                             placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
-                            [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3" pattern="^[^\s].*"></textarea>
+                            [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3" pattern="^[^\s].*" [disabled]="!isCheckBoxEnabledExtended"></textarea>
                         <div class="textarea-count-text">
                             <span
                                 class="color">{{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}
@@ -259,7 +256,7 @@
                             <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                                 placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                                 #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" pattern="^[^\s].*"
-                                required></textarea>
+                                required [disabled]="!isCheckBoxEnabledRegular"></textarea>
                             <div class="textarea-count-text">
                                 <span
                                     class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
@@ -280,7 +277,7 @@
                 <!-- Buttons -->
                 <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
                     <button type="reset" class="custom-btn btn-secondary"
-                        (click)=" resetForm(acceptForm);">{{'Cancel'|translate}}</button>
+                        (click)="closepopup(confirmationpopup)">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="acceptForm.invalid||isLoading||!buttondisable">
                         @if(!isLoading){
                         {{'Approve'|translate}}
@@ -332,7 +329,7 @@
                     </div>
                 </div>
                 <div class="d-flex mb-4 pb-2 mt-2 justify-content-around w-100">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()" type="reset">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="closepopup(rejectconfirmationpopup)">
                         {{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="Separationrequestrejected.invalid||isLoading">
@@ -658,3 +655,39 @@
     </div>
 
 </ng-template>
+
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+        <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
+      </div>
+  
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="resetForm(acceptForm);model.dismiss()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #rejectconfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+        <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
+      </div>
+  
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="rejectpopup()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </ng-template>

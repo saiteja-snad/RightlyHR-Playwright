@@ -2,7 +2,7 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search"
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here" aria-label="search"
             autocomplete="off">
     </div>
 
@@ -26,8 +26,9 @@
                 </tr>
             </thead>
             <tbody>
-                @if(((separation_For_You_Details | async) ?? []).length > 0) {
-                <tr *ngFor="let item of separation_For_You_Details|async">
+                <ng-container *ngIf="((separation_For_You_Details | async) ?? [] | pendingapprovalsseparation: searchValue) as filteredData">
+                
+                <tr *ngFor="let item of filteredData">
                     @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval' ||
                     item.approvalHeader?.status?.toLowerCase() =='approved'){
                     <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
@@ -96,6 +97,14 @@
                                         translate}}</a>
                                 </li>
                                 }
+                                @if(item?.approvalHeader?.currentapprovalStage ==
+                                item?.approvalHeader?.finalapprovalStage){
+                                <li (click)="openModal(processmodal);handleRequest(item)"
+                                    *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
+                                        translate}}</a>
+                                </li>
+                                }
                                 @if((item.approvalHeader?.currentapprovalStage !=
                                 item.approvalHeader?.finalapprovalStage) ||
                                 (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
@@ -105,27 +114,16 @@
                                         translate}}</a>
                                 </li>
                                 }
-                                @if(item?.approvalHeader?.currentapprovalStage ==
-                                item?.approvalHeader?.finalapprovalStage){
-                                <li (click)="openModal(processmodal);handleRequest(item)"
-                                    *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
-                                        translate}}</a>
-                                </li>
-                                }
+                                
                             </ul>
                         </div>
                     </td>
                     }
                 </tr>
-                }
-                @else{
-                <tr>
-                    <td>
-                        <app-no-data-found />
-                    </td>
+                <tr *ngIf="filteredData.length === 0">
+                    <td colspan="9"><app-no-data-found></app-no-data-found></td>
                 </tr>
-                }
+            </ng-container>
             </tbody>
         </table>
     </div>
@@ -332,7 +330,7 @@
                 </div>
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss()">{{'Cancel'|translate}}</button>
+                    (click)="closepopup(rejectconfirmationpopup)">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="Separationrequestrejected.invalid||isLoading">
                         @if(!isLoading){
@@ -538,7 +536,7 @@
                 </div>
                 <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="resetForm(acceptFormforprocess); modal.dismiss()">{{'Cancel'|translate}}</button>
+                    (click)="closepopup(confirmationpopup)">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="acceptFormforprocess.invalid||isLoading||!buttondisable">
                         @if(!isLoading){
@@ -644,3 +642,39 @@
         <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">{{'Close'| translate}}</button>
     </div>
 </ng-template>
+
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+        <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
+      </div>
+  
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="resetForm(acceptFormforprocess);model.dismiss()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #rejectconfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+        <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
+      </div>
+  
+      <div class="d-flex justify-content-center gap-3 mt-4">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="rejectpopup()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </ng-template>

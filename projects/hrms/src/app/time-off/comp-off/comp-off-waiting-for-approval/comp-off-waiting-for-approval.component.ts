@@ -75,7 +75,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error fetching data:', error);
-        this.waitingForApprovalCompOff = []; // Set to empty array on error
+        this.waitingForApprovalCompOff = [];
       },complete: () =>{
         this.dataload = false;
       },

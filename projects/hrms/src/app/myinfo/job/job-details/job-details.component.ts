@@ -203,7 +203,16 @@ export class JobDetailsComponent {
       backdrop: 'static',
     });
   }
-
+  closeAll(){
+    this.separationRequestForm.reset();
+    this.modalService.dismissAll();
+  }
+  confirmationopenModal(content:any){
+    this.modalService.open(content, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
   getDepartment() {
     this.subscription = this.http.getData('Department').subscribe({
       next: (data: any) => {

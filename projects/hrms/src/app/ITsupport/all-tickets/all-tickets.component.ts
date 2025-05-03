@@ -6,23 +6,26 @@ import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { Subscription } from 'rxjs';
 import { RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IDepartment } from '../../Interfaces/letters-model';
 import { Select } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
+import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
+import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
 
 @Component({
   selector: 'app-all-tickets',
-  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, ReactiveFormsModule, TranslateModule, ItsupportPipe],
   templateUrl: './all-tickets.component.html',
   styleUrl: './all-tickets.component.scss'
 })
 export class AllTicketsComponent {
 
   subscription!: Subscription;
+  searchValue!:string;
   empinfo = {} as Ipersonal;
-  tickets: any = [];
+  tickets= [] as Ticket[];
   isLoading: boolean = false;
   itSupportForm!: FormGroup;
   ticketRaisedFor: any[] = [];
@@ -34,7 +37,7 @@ export class AllTicketsComponent {
 
   ];
   teamTicketDetails: any = {};
-  allAssigneeEmployees = [] as any[];
+  allAssigneeEmployees = [] as Assignee[];
   selectedTickets: any = {};
   itTicketDetails = {} as any;
   selectedAssigneeId: any;
@@ -53,6 +56,7 @@ export class AllTicketsComponent {
       { value: 'Colleague', label: 'Colleague' }
     ];
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.teamTicketDetails = JSON.parse(localStorage.getItem('ticketDetails') || '{}');
     this.getuserticketsbyempid();
     
     this.itSupportForm = this.fb.group({
@@ -67,8 +71,8 @@ export class AllTicketsComponent {
       priority: [{ value: '', disabled: true }, [Validators.required]],
       subject: [{ value: '', disabled: true }, [Validators.required]],
       description: [{ value: '', disabled: true }, [Validators.required]],
-      comments: ['', [Validators.required]],
-      assignedto: [null, [Validators.required]],
+      comments: [''],
+      assignedto: [null],
       ticketStatus: ['', [Validators.required]]
     });
   }
@@ -85,6 +89,8 @@ export class AllTicketsComponent {
   }
 
   getAllAssigneeEmployees(empId: any) {
+    console.log(empId);
+    
     this.subscription = this.http.getData(`JobDetails/getRMTM?EmployeeId=${empId}`).subscribe({
       next: (data: any) => {
         this.allAssigneeEmployees = data;
@@ -92,6 +98,9 @@ export class AllTicketsComponent {
           ...a,
           fullName: `${a.fusionEmpId} - ${a.assigneeName}`.trim()
         }));
+        this.itSupportForm.patchValue({
+          assignedto : this.allAssigneeEmployees.find((emp) => emp.assigneeId == this.selectedTickets.assigneeId),
+        });
       },
       error: (reason: any) => {
       }
@@ -106,6 +115,10 @@ export class AllTicketsComponent {
 
   openModal(content: any, ticket: any) {
     this.selectedTickets = ticket;
+    this.getAllAssigneeEmployees(this.selectedTickets.empId);
+    console.log(this.selectedTickets);
+    console.log(this.allAssigneeEmployees);
+    
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     this.itSupportForm.patchValue({
       name: this.selectedTickets.employeeName,
@@ -118,12 +131,11 @@ export class AllTicketsComponent {
       priority: this.selectedTickets.priority,
       subject: this.selectedTickets.subject,
       description: this.selectedTickets.description,
-      assignedto : this.allAssigneeEmployees.find((emp) => emp.employeeId === this.selectedTickets.assigneeId),
       ticketStatus: this.status.find((status) => status.label === this.selectedTickets.ticketStatus),
     });
     console.log(this.itSupportForm);
     
-    this.getAllAssigneeEmployees(this.selectedTickets.empId);
+   
    
   }
 
@@ -140,11 +152,17 @@ export class AllTicketsComponent {
     this.itTicketDetails.description = this.teamTicketDetails.description;
     this.itTicketDetails.stepsToReplicate = this.teamTicketDetails.stepsToReplicate;
     this.itTicketDetails.comments = this.itSupportForm.value.comments;
-    this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.toString();
+    
     this.itTicketDetails.attachmentUrl = null;
     this.itTicketDetails.createdAt = this.teamTicketDetails.createdAt;
-    this.itTicketDetails.updatedAt = new Date().toISOString();;
-    this.itTicketDetails.isdeleted = false
+    this.itTicketDetails.updatedAt = new Date().toISOString();
+    this.itTicketDetails.isdeleted = false;
+    if(this.itSupportForm.value.assignedto !== null && this.itSupportForm.value.assignedto !== "" && this.itSupportForm.value.assignedto !== undefined){
+      this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.assigneeId.toString();
+    }
+    if(this.itSupportForm.value.assignedto === undefined){
+      this.itTicketDetails.assigneeId = null;
+    }
     this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Ticket updated successfully');

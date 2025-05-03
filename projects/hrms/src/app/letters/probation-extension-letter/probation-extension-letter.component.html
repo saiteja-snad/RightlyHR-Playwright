@@ -16,7 +16,7 @@
                     <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeedetails" optionLabel="fullName" [filter]="true" filterBy="fullName" (onChange)="onClickEmployee($event)"
-                            [showClear]="true" placeholder="Please select employee" formControlName="employeeId" class="custom-select w-100">
+                             placeholder="Please select employee" formControlName="employeeId" class="custom-select w-100">
                         </p-select>
                     </div>
                     <div *ngIf="probationExtensionForm.get('employeeId')?.invalid && probationExtensionForm.get('employeeId')?.touched">
@@ -28,7 +28,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="issuedDate" placeholder="Please enter Date" 
-                        (change)="pathValuesFuction()"  (keydown)="preventTyping($event)"/>
+                        (change)="pathValuesFuction()" [min]="todayDate" (keydown)="preventTyping($event)"/>
                     <div *ngIf="probationExtensionForm.get('issuedDate')?.invalid && probationExtensionForm.get('issuedDate')?.touched">
                         <div class="error-msg">Issued Date is required</div>
                     </div>
@@ -51,7 +51,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName" [showClear]="true" 
+                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                           placeholder="Please select signature authority name" formControlName="authorityid" class="custom-select w-100" (onChange)="pathValuesFuction()">
                         </p-select>
                     </div>
@@ -121,7 +121,7 @@
                                     </ul>
                                 </div>
                                 <div>
-                                    <p class="letter-sub-header">Issued Date:{{probationExtensionLetterData.dateofprobationextension | dateformat}}</p>
+                                    <p><span class="letter-sub-header">Issued Date:</span> {{probationExtensionLetterData.dateofprobationextension | dateformat}}</p>
                                 </div>
                             </div>
     

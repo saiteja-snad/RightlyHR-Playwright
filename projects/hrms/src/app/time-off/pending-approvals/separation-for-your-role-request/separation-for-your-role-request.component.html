@@ -154,7 +154,7 @@
                         <input type="hidden"
                             [value]="selectedSpRequestData.spMangerEarlyreliveingDate ? 'true' : 'false'"
                             name="isreliving">
-                        <input type="checkbox" id="earlyrelieving" name="earlyrelieving"
+                        <input type="checkbox" class="form-check-input" id="earlyrelieving" name="earlyrelieving"
                             [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck" #isaccept="ngModel"
                             (click)="toggleEarly()"
                             (ngModelChange)="extendCondition(selectedSpRequestData.spIsAcceptEarlyrelievingcheck)">
@@ -287,7 +287,7 @@
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary"
-                        (click)="resetForm();modal.dismiss()">{{'Cancel'|translate}}</button>
+                        (click)="resetForm(acceptForm);modal.dismiss()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="acceptForm.invalid||isLoading||!buttondisable">
                         @if(!isLoading){
@@ -360,7 +360,7 @@
                 <img src="icons\succes.png" alt="succues" class="succes-icon">
             </div>
             <div class="d-flex justify-content-center align-items-center mt-3">
-                <h4 class="text-center">{{'Are you sure you want to approve Separation Request?' | translate}}</h4>
+                <h4 class="text-center">{{'Are you sure you want to process Separation Request?' | translate}}</h4>
             </div>
             <form name="acceptFormforprocess" class="ps-5 mb-3 w-100" #acceptFormforprocess="ngForm"
                 (ngSubmit)="acceptFormforprocess.valid && handleProcess(acceptFormforprocess)">
@@ -380,10 +380,10 @@
                     </div>
                     <div class="mb-3">
                         <label for="Effective Date ">{{'Salary Hold' | translate}}<span class="error-msg">*</span></label>
-                        <select class="form-select custom-input" aria-label="Default select example" id="holdsalary"
+                        <select class="form-select custom-p-select-content" aria-label="Default select example" id="holdsalary"
                             #issalaryhold="ngModel" [(ngModel)]="selectedSpRequestData.spsalaryhold" name="holdsalary"
                             required>
-                            <option [ngValue]="undefined" disabled>Select</option>
+                            <option [ngValue]="null" disabled>Select</option>
                             <option [ngValue]="true">Yes</option>
                             <option [ngValue]="false">No</option>
                         </select>
@@ -394,7 +394,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="notice Type">{{"Notice Period type" | translate}}<span class="error-msg"></span></label>
-                        <select class="form-select custom-input" aria-label="Default select example" id="noticetype"
+                        <select class="form-select custom-p-select-content" aria-label="Default select example" id="noticetype"
                             name="noticetype" #noticetype="ngModel" [(ngModel)]="selectedSpRequestData.noticperiodType">
                             <option [ngValue]="null">Select</option>
                             <option [ngValue]="'Notice Period Recovery'">Notice Period Recovery</option>
@@ -456,7 +456,7 @@
                             placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250" pattern="^[^\s].*"
                             #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
                             required></textarea>
-                        <div>
+                        <div class="textarea-count-text">
                             <span
                                 class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
                                 /250</span>
@@ -492,7 +492,7 @@
                         <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                             placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
                             [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3" pattern="^[^\s].*"></textarea>
-                        <div>
+                        <div class="textarea-count-text">
                             <span
                                 class="color">{{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}
                                 /250</span>
@@ -524,7 +524,7 @@
                             placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                             #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" pattern="^[^\s].*" rows="3"
                             required></textarea>
-                        <div>
+                        <div class="textarea-count-text">
                             <span
                                 class="color">{{selectedSpRequestData?.comments?.length?selectedSpRequestData?.comments?.length:0}}
                                 /250</span>
@@ -538,7 +538,7 @@
                 </div>
                 <div class="d-flex mb-4 pb-2 mt-3 justify-content-around w-100">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="resetForm(); modal.dismiss()">{{'Cancel'|translate}}</button>
+                        (click)="resetForm(acceptFormforprocess); modal.dismiss()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="acceptFormforprocess.invalid||isLoading||!buttondisable">
                         @if(!isLoading){

@@ -13,7 +13,7 @@
         </tr>
       </thead>
       <tbody>
-        @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
+       
         <ng-container *ngIf="waitingForApprovalWFHs!.length > 0; else noDataTemplate">
           <tr *ngFor="let wfhRequest of waitingForApprovalWFHs; let i = index">
             <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
@@ -49,12 +49,12 @@
 
         <ng-template #noDataTemplate>
           <tr>
-            <td colspan="4">
+            <td colspan="5">
               <app-no-data-found></app-no-data-found>
             </td>
           </tr>
         </ng-template>
-        }
+        
       </tbody>
     </table>
   }@else{<app-data-loader-content />}

@@ -17,7 +17,7 @@
                     <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="probationemp" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            [showClear]="true" placeholder="Please select employee" formControlName="employeeId"
+                             placeholder="Please select employee" formControlName="employeeId"
                             (onChange)="onClickEmployee($event)" class="custom-select w-100">
                         </p-select>
                     </div>
@@ -77,7 +77,7 @@
                     <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            [showClear]="true" placeholder="Please select signature authority name" formControlName="authorityid"
+                             placeholder="Please select signature authority name" formControlName="authorityid"
                             (onChange)="pathValuesFuction()" class="custom-select w-100">
                         </p-select>
                     </div>
@@ -150,7 +150,7 @@
                                         <li>{{probationLetterData.workLocation}}</li>
                                     </ul>
                                     <div>
-                                        <p class="letter-sub-header">Issued Date: {{probationLetterData.issuedDate | dateformat }}</p>
+                                        <p><span class="letter-sub-header">Issued Date:</span> {{probationLetterData.issuedDate | dateformat }}</p>
                                     </div>
                                 </div>
         

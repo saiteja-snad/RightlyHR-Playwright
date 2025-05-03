@@ -10,19 +10,18 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th class="text-nowrap">Employee Name</th>
-          <th class="text-nowrap">Employee ID</th>
-          <th class="text-nowrap">Department</th>
-          <th class="text-nowrap">Team</th>
-          <th class="text-nowrap">Designation</th>
-          <th class="text-nowrap">Raised Date</th>
-          <th class="text-nowrap">Last Working Day</th>
-          <th class="text-nowrap">Early Relieving Day</th>
-          <th class="text-nowrap">Separation Reason</th>
-          <th class="text-nowrap">Early Relieving Reason</th>
-          <th class="text-nowrap">Request Type</th>
-          <th class="text-nowrap">Approver History</th>
-          <th class="text-nowrap">Action(s)</th>
+          <th>{{'Employee Name' | translate}}</th>
+          <th>{{'Employee ID' | translate}}</th>
+          <th>{{'Department' | translate}}</th>
+          <th>{{'Team' | translate}}</th>
+          <th>{{'Designation' | translate}}</th>
+          <th>{{'Raised Date' | translate}}</th>
+          <th>{{'Last Working Day' | translate}}</th>
+          <th>{{'Early Relieving Day' | translate}}</th>
+          <th>{{'Reason' | translate}}</th>
+          <th>{{'Request Type' | translate}}</th>
+          <th>{{'Approver History' | translate}}</th>
+          <th>{{'Action(s)' | translate}}</th>
         </tr>
       </thead>
       <tbody>
@@ -39,28 +38,13 @@
           <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}</td>
           <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}</td>
           <td>
-            @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
+            @if(item.entity?.spRecallReason){
             <div>
               <a type="button" [ngbPopover]="reason">
                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
               </a>
               <ng-template #reason>
-                <p class="mb-0">{{item.entity?.spRequestDescription}} </p>
-              </ng-template>
-            </div>
-            }
-            @else {
-            <div>-</div>
-            }
-          </td>
-          <td>
-            @if(item.entity?.spEarlyRelievingReason){
-            <div>
-              <a type="button" [ngbPopover]="reason">
-                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-              </a>
-              <ng-template #reason>
-                <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
+                <p class="mb-0">{{item.entity?.spRecallReason}}</p>
               </ng-template>
             </div>
             }

@@ -460,7 +460,7 @@
                 <p class="popup-heading mb-0">Separation Request</p>
             </div>
             <div>
-                <a (click)="modal.dismiss(); separationRequestForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                <a (click)="confirmationopenModal(closeconformation)"><img src="icons/close.png" alt="Close Icon"
                         class="close-icon"></a>
             </div>
         </div>
@@ -536,7 +536,7 @@
                         <div class="mb-3">
                             <label for="earlyRelievingDate" class="form-label custom-label mb-2">Expected Relieving Date
                                 <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="earlyRelievingDate"
+                            <input type="date" class="form-control custom-input" id="earlyRelievingDate" [min]="separationRequestForm.get('appliedDate')?.value" onkeypress="return false"
                                 formControlName="earlyRelievingDate" />
                             <div class="error-msg"
                                 *ngIf="separationRequestForm.get('earlyRelievingDate')?.invalid && separationRequestForm.get('earlyRelievingDate')?.touched">
@@ -550,7 +550,7 @@
                             <label for="reasonForEarlyRelieving" class="form-label custom-label mb-2">Reason for Early
                                 Relieving<span class="text-danger">*</span></label>
                             <textarea class="form-control custom-input" id="reasonForEarlyRelieving" formControlName="reasonForEarlyRelieving"
-                             rows="3" placeholder="Please provide early relieving reason..." (keydown)="formValidations.restrictInput($event)"></textarea>
+                             rows="3" placeholder="Please provide early relieving reason..."  (keydown)="formValidations.restrictInput($event)"></textarea>
                             <div class="textarea-count-text">{{ separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }}/400</div>
                             <div class="error-msg" *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
                                 <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">
@@ -570,7 +570,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="confirmationopenModal(closeconformation)">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="separationRequestForm.invalid||isLoading">
                         @if(!isLoading){
                         {{'Submit'|translate}}
@@ -587,7 +587,19 @@
         </div>
     </div>
 </ng-template>
-
+<!--separation confirmation popup-->
+<ng-template #closeconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to close?</p>
+        </div>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="closeAll()">Yes</button>
+        </div>
+    </div>
+</ng-template>
 <!--Delete popup-->
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>

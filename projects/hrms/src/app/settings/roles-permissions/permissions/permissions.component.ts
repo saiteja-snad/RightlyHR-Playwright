@@ -28,13 +28,18 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
-  constructor(private http: HttpService, private modalService: NgbModal, private modal: OpenModalService, public rbac: RbacService) { }
+  constructor(
+    private http: HttpService, 
+    private modalService: NgbModal, 
+    private modal: OpenModalService, 
+    public rbac: RbacService
+  ) { }
 
   ngOnInit(): void {
-    this.getAllroles();
     if (this.roleToFilter === null) {
       this.permissions = JSON.parse(JSON.stringify(permissionsData));
     }
+    this.getAllroles();
   }
 
   getAllroles(): void {
@@ -124,7 +129,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
           }
         }
       });
-  
       this.isSaveButtonEnabled = true;
     } else {
       this.isSaveButtonEnabled = false;
@@ -149,6 +153,13 @@ export class PermissionsComponent implements OnInit, OnDestroy {
                             ];
 
     return disabledOptions.includes(field) && (action === 'delete' || action === 'create');
+}
+
+isDisabled(field: string, action: string): boolean {
+  const viewOnlyFields = ['Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Load Entitlements Tab', 'Attendance Eligibility Criteria Tab', 'Comp Off Entitlement Tab',
+    'WFH Entitlement Tab', 'Permission Elgibility Tab', 'Attendance Regularization Eligibility Tab'
+  ];
+  return viewOnlyFields.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
 }
 
   changePermissions() {

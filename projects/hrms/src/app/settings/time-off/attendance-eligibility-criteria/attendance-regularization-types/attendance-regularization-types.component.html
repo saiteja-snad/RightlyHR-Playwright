@@ -1,17 +1,17 @@
 <div class="custom-main-component-container">
-    <div >
+    <div *ngIf="rbac.allowedToAccess('Attendance Regularization Tab.create')">
         <form [formGroup]="permissionsForm" (ngSubmit)="addRegularization(permissionsForm)">
             <!-- Add Input-->
             <div class="mb-4">
                 <div class="custom-settings-add-input input-group">
-                    <input type="text" class="form-control custom-input" placeholder="Please enter attendance regularization" formControlName="name" 
+                    <input type="text" class="form-control custom-input" placeholder="Please enter attendance regularization type" formControlName="name" [maxlength]="100" 
                     (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <span class="input-group-text" id="saluation">
                         <button type="submit" class="custom-btn btn-primary" [disabled]="permissionsForm.invalid">{{'Add'}}</button>
                     </span>
                 </div>
                 <div *ngIf="permissionsForm.get('name')?.touched && permissionsForm.get('name')?.invalid" class="error-msg mt-2">
-                    <div *ngIf="permissionsForm.get('name')?.errors?.['required']">{{'Attendance regularization is required'}}</div>
+                    <div *ngIf="permissionsForm.get('name')?.errors?.['required']">{{'Attendance regularization type is required'}}</div>
                 </div>
             </div>
         </form>
@@ -24,23 +24,23 @@
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th class="text-center">Action<span class="text-lowercase">(s)</span></th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Attendance Regularization Tab.update') || rbac.allowedToAccess('Attendance Regularization Tab.delete')">Action<span class="text-lowercase">(s)</span></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor="let permission of permissionsType">
                         <td>{{permission.name}}</td>
-                        <td class="text-center">
+                        <td class="text-center" *ngIf="rbac.allowedToAccess('Attendance Regularization Tab.update') || rbac.allowedToAccess('Attendance Regularization Tab.delete')">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown"><i
                                         class="bi bi-three-dots-vertical"></i></span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li>
+                                    <li *ngIf="rbac.allowedToAccess('Attendance Regularization Tab.update')">
                                         <a class="dropdown-item" (click)="openModal(updatePermissionModal,permission)">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
-                                    <li>
+                                    <li *ngIf="rbac.allowedToAccess('Attendance Regularization Tab.delete')">
                                         <a class="dropdown-item"
                                             (click)="openDeleteModal(deletePermissionModal,permission)">
                                             <i class="bi bi-trash3 me-2"></i>Delete
@@ -72,7 +72,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div >
-                <p class="popup-heading mb-0">Update Attendance Regularization</p>
+                <p class="popup-heading mb-0">Update Attendance Regularization Type</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -81,11 +81,11 @@
         <div class="custom-main-popup-content">
             <form [formGroup]="permissionUpdateForm"  (ngSubmit)="updateRegularization(permissionUpdateForm)">
                 <div class="mb-4">
-                    <label for="name" class="form-label custom-label mb-2">Attendance Regularization <span class="text-danger">*</span></label>
-                    <input type="text" name="name" formControlName="name" class="form-control" autocomplete="off"
-                        id="backgroundcheckstatus1" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
+                    <label for="name" class="form-label custom-label mb-2">Attendance Regularization Type<span class="text-danger">*</span></label> 
+                    <input type="text" name="name" placeholder="Please enter attendance regularization type" formControlName="name" class="form-control custom-input" autocomplete="off"
+                        id="backgroundcheckstatus1" (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"  [maxlength]="100">
                         <div *ngIf="permissionUpdateForm.get('name')?.touched && permissionUpdateForm.get('name')?.invalid" class="error-msg mt-2">
-                            <div *ngIf="permissionUpdateForm.get('name')?.errors?.['required']">{{'Attendance regularization is required'}}</div>
+                            <div *ngIf="permissionUpdateForm.get('name')?.errors?.['required']">{{'Attendance regularization type is required'}}</div>
                         </div>
                 </div>
                 <div class="custom-modal-footer">
@@ -105,7 +105,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="deletePermission();">Yes</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="deleteRegularization();">Yes</button>
         </div>
     </div>
 </ng-template>

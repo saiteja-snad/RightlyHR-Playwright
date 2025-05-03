@@ -8,26 +8,25 @@
                     <tr>
                         <th>Name</th>
                         <th>Value</th>
-                        <th>Action<span class="text-lowercase">(s)</span></th>
+                        <th *ngIf="rbac.allowedToAccess('Attendance Regularization Eligibility Tab.update')">Action<span class="text-lowercase">(s)</span></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr *ngFor=" let permi of regularizationValues ;let i = index">
                         <td class="table-text">{{ permi.attribute }}</td>
-                        <!-- <td class="table-text">{{permi.value}}</td> -->
                         <td class="table-text">
                             <ng-container *ngIf="editingIndex !== i">
                                 {{ permi.value }}
                             </ng-container>
     
                             <ng-container *ngIf="editingIndex === i">
-                                <input class="form-control custom-input" type="text" [(ngModel)]="temporaryValue"
+                                <input class="form-control custom-input" type="text" placeholder="Please enter value" [(ngModel)]="temporaryValue"
                                     (keypress)="validateDecimal($event, permi.attribute)"
                                     (keydown.tab)="editingIndex === i" />
                             </ng-container>
                         </td>
     
-                        <td>
+                        <td *ngIf="rbac.allowedToAccess('Attendance Regularization Eligibility Tab.update')">
     
                             <div class="dropdown" *ngIf="editingIndex !== i; else editingMode">
                                 <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -48,7 +47,6 @@
                                         Update
                                     </button>
                                     <button class="custom-btn btn-secondary" type="button" (click)="disableEdit()">
-                                        <!-- <i class="bi bi-x-circle-fill"></i> -->
                                         Cancel
                                     </button>
                                 </div>

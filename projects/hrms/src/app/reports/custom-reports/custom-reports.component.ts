@@ -329,18 +329,18 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
   showJobData() {
     this.showCard = false;
     this.JobShowCard = true;
-    this.selectedFields = [
-      'ID',
-      'Employee ID',
-      'First Name',
-      'Middle Name',
-      'Last Name',
-      ...this.selectedFields,
-    ];
+  
+    const defaultFields = ['ID', 'Employee ID', 'First Name', 'Middle Name', 'Last Name'];
+  
+    // Ensure no duplicates
+    const fieldSet = new Set([...defaultFields, ...this.selectedFields]);
+    this.selectedFields = Array.from(fieldSet);
+  
     if (this.fieldGroups['basicInfo']) {
       this.fieldGroups['basicInfo'].selectedFields = [...this.selectedFields];
     }
   }
+  
 
   getCustomReportDetails(): void {
     this.http.getData('Employeedata/Reports/EmployeeData').pipe(takeUntil(this.destroy$)).subscribe({

@@ -53,7 +53,6 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
-          console.log(data);
           this.permissionsType = (data as IPermissionType[])?.sort((a, b) => a.id - b.id);
           this.dataLoad = false;
         },
@@ -72,8 +71,6 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     this.permissionUpdateForm.patchValue({
       name: selectedPermission.name,
     });
-    console.log(this.permissionUpdateForm.value);
-
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -87,10 +84,8 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     if (form.invalid) {
       return;
     }
-
     const now = new Date();
     const formattedDate = now.toISOString().replace(/(\.\d{3})\d+Z$/, '$1');
-
     const payload: any = {
       id: this.selectedPermission.id,
       name: this.permissionUpdateForm.value.name,
@@ -108,11 +103,10 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
           this.modalService.dismissAll();
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
-            'Attendance Regalarization Updated Successfully'
+            'Attendance Regularization type updated successfully'
           );
         },
         error: (err) => {
-          // this.permissionsForm.reset();
           this.sharedModalService.openErrorModal(err.error.message);
         },
         complete: () => {
@@ -132,11 +126,16 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
         next: (data: any) => {
           this.permissionsForm.reset();
           this.sharedModalService.openSuccessModal(
-            'Attendance Regalarization Added Successfully'
+            'Attendance Regalarization type added successfully'
           );
         },
         error: (err: any) => {
-          this.sharedModalService.openErrorModal(err.error.message);
+          if(err.error.message === 'Permission type with the same name already exists.'){
+            this.sharedModalService.openErrorModal('Attendance regularization type with the same name already exists');
+          }else{
+            this.sharedModalService.openErrorModal(err.error.message);
+          }
+          
         },
         complete: () => {
           this.getPermissionTypes();
@@ -145,12 +144,12 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     }
   }
 
-  deletePermission() {
+  deleteRegularization() {
     this.http.deleteData(`PermissionTypes/${this.selectedPermission.id}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal(
-          'Attendance Regalarization Deleted Successfully'
+          'Attendance Regalarization type deleted successfully'
         );
       },
       error: (err) => {

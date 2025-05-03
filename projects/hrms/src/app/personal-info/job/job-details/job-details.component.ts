@@ -198,6 +198,9 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
+  confirmationopenModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
 
   getDepartment() {
     this.subscription = this.http.getData('Department').subscribe({
@@ -467,7 +470,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       this.jobDetailsForm.markAllAsTouched(); // Mark all fields as touched to show validation errors
     }
   }
-
+  closeAll(){
+    this.separationRequestForm.reset();
+    this.modalService.dismissAll();
+  }
   getJobDetails() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({

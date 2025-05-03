@@ -26,10 +26,10 @@ export class SettingsMainHeaderTabsComponent {
   }
 
   private allNavTabs = [
-    { label: 'Employee Fields', link: '/settings/employee-fields', permission: { feature: 'Employee Fields', action: 'view' } },
+    { label: 'Employee Fields', link: '/settings/employee-fields', permission: { feature: 'Employee Fields Module', action: 'view' } },
     { label: 'Roles', link: '/settings/roles-permissions'},
-    { label: 'Time Off', link: '/settings/timeoff-configurations', permission: { feature: 'Timeoff Settings', action: 'view' } },
-    { label: 'Asset Configuration', link: '/settings/assets-configuration', permission: { feature: 'Assets Management configuration', action: 'view' } },
-    { label: 'Dynamic Forms', link: '/settings/dynamic-forms', permission: { feature: 'Dynamic-form', action: 'view' } }
+    { label: 'Time Off', link: '/settings/timeoff-configurations', permission: { feature: 'Settings Timeoff Module', action: 'view' } },
+    { label: 'Asset Configuration', link: '/settings/assets-configuration', permission: { feature: 'Assets Management configuration Module', action: 'view' } },
+    { label: 'Dynamic Forms', link: '/settings/dynamic-forms', permission: { feature: 'Dynamic Forms Module', action: 'view' } }
   ];
 }

@@ -15,17 +15,23 @@ export class ManageWeekendsTabsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   public navLinks: any[] = [];
 
+  // Tabs with permission definitions
+  allLinks = [
+    { label: 'Pending For Submission', route: '/settings/employee-fields/manage-weekends/pending-for-submission', permission: { feature: 'Weekends Pending Tab', action: 'view' } },
+    { label: 'Published', route: '/settings/employee-fields/manage-weekends/published-weekends', permission: { feature: 'Weekends Published Tab', action: 'view' } }
+  ];
+
   constructor(
-    private http: HttpService, 
+    private http: HttpService,
     public rbac: RbacService
   ) {}
 
-  allNavLinks = [
-    { label: 'Pending For Submission',route: '/settings/employee-fields/manage-weekends/pending-for-submission',count: 0 },
-    { label: 'Published',route: '/settings/employee-fields/manage-weekends/published-weekends',count: 0 }
-  ];
-
   ngOnInit(): void {
+    // Filter links based on permission
+    this.navLinks = this.allLinks.filter(link =>
+      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
+    );
+
     this.getAllWeekend();
   }
 
@@ -35,15 +41,18 @@ export class ManageWeekendsTabsComponent implements OnInit, OnDestroy {
         const pendingCount = data.filter((item: any) => item.status === 'Pending for submission').length;
         const publishedCount = data.filter((item: any) => item.status === 'Published').length;
 
-        this.navLinks = this.allNavLinks
-          .map(link => {
-            if (link.label === 'Pending For Submission') {
-              return { ...link, count: pendingCount };
-            } else if (link.label === 'Published') {
-              return { ...link, count: publishedCount };
-            }
-            return link;
-          });
+        // Update counts in permission-filtered navLinks
+        this.navLinks = this.navLinks.map(link => {
+          if (link.label === 'Pending For Submission') {
+            return { ...link, count: pendingCount };
+          } else if (link.label === 'Published') {
+            return { ...link, count: publishedCount };
+          }
+          return link;
+        });
+      },
+      error: (err: any) => {
+        console.error(err);
       }
     });
   }
@@ -53,3 +62,4 @@ export class ManageWeekendsTabsComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 }
+

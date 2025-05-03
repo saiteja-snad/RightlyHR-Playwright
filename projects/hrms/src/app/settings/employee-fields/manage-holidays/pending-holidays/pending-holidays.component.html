@@ -1,12 +1,12 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div><span class="component-sub-header">{{'Holidays Management' | translate}}</span></div>
-    <div class="custom-add-btn" (click)="nagvition()" *ngIf="rbac.allowedToAccess('Manage Holidays Tab.create')">
+    <div><span class="component-sub-header" *ngIf="rbac.allowedToAccess('Holidays Pending Tab.view')">{{'Holidays Management' | translate}}</span></div>
+    <div class="custom-add-btn" (click)="nagvition()" *ngIf="rbac.allowedToAccess('Holidays Pending Tab.create')">
       <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
     </div>
   </div>
 
-  <div class="custom-table-content">
+  <div class="custom-table-content" *ngIf="rbac.allowedToAccess('Holidays Pending Tab.view')">
     <table class="w-100">
       <thead>
         <tr>
@@ -16,7 +16,7 @@
           <th>{{'Shift Name' | translate}}</th>
           <th>{{'Status' | translate}}</th>
           <th>{{'Added By' | translate}}</th>
-          <th *ngIf="rbac.allowedToAccess('Manage Holidays Tab.update')">{{'Action(s)' | translate}}</th>
+          <th *ngIf="rbac.allowedToAccess('Holidays Pending Tab.update')">{{'Action(s)' | translate}}</th>
         </tr>
       </thead>
       <tbody>
@@ -29,7 +29,7 @@
           <td>{{item.shiftName}}</td>
           <td>{{item.status}}</td>
           <td>{{item.addedbyName}}</td>
-          <td *ngIf="rbac.allowedToAccess('Manage Holidays Tab.update')">
+          <td *ngIf="rbac.allowedToAccess('Holidays Pending Tab.update')">
             <div class="dropdown">
               <a type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>

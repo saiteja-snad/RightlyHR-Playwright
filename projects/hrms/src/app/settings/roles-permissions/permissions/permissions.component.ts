@@ -29,13 +29,18 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
-  constructor(private http: HttpService, private modalService: NgbModal, private modal: OpenModalService, public rbac: RbacService) { }
+  constructor(
+    private http: HttpService, 
+    private modalService: NgbModal, 
+    private modal: OpenModalService, 
+    public rbac: RbacService
+  ) { }
 
   ngOnInit(): void {
-    this.getAllroles();
     if (this.roleToFilter === null) {
       this.permissions = JSON.parse(JSON.stringify(permissionsData));
     }
+    this.getAllroles();
   }
 
   getAllroles(): void {
@@ -125,7 +130,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
           }
         }
       });
-  
       this.isSaveButtonEnabled = true;
     } else {
       this.isSaveButtonEnabled = false;

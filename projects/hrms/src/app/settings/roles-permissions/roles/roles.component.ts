@@ -8,11 +8,16 @@ import { Iroles } from './roles.model';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
-import { SettingsRolePermissionsModuleTabsComponent } from "../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { SettingsRolePermissionsModuleTabsComponent } from '../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component';
 
 @Component({
   selector: 'app-roles',
-  imports: [CommonModule, TranslateModule, ReactiveFormsModule, SettingsRolePermissionsModuleTabsComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, DataLoaderContentComponent, NoDataFoundComponent,
+    SettingsRolePermissionsModuleTabsComponent
+  ],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.scss',
   encapsulation:ViewEncapsulation.None
@@ -25,6 +30,7 @@ export class RolesComponent implements OnInit, OnDestroy {
   submitted = false;
   rolesdetails : Iroles[]= [];
   rolesDeletedata! : Iroles;
+  dataLoad= false;
   @ViewChild('deletepopup') deletepopup: any;
   @ViewChild('updatepopup') updatepopup: any;
 
@@ -33,7 +39,8 @@ export class RolesComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private http: HttpService,
     private conformationPopup: OpenModalService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public  formValidation: FormValidationService
   ) { }
 
   ngOnInit(): void {
@@ -43,20 +50,26 @@ export class RolesComponent implements OnInit, OnDestroy {
 
   initializeRoleForm() {
     this.roleForm = this.fb.group({
-      role: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(50)]]
+      role: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)
+      ]]
     });
+
     this.updateForm = this.fb.group({
-      firstName: ['', Validators.required]
+      firstName: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]]
     });
   }
 
   getrole() {
+    this.dataLoad= true;
     this.subscription = this.http.getData("FusionRole").subscribe({
       next: (data: any) => {
         this.rolesdetails = data as Iroles[];
       },
       error: (reason: any) => {
-        console.log(reason);
+        this.dataLoad= false;
+      },
+      complete:()=>{
+        this.dataLoad= false;
       }
     })
   }
@@ -67,13 +80,14 @@ export class RolesComponent implements OnInit, OnDestroy {
     };
     this.subscription = this.http.postdata("FusionRole", request).subscribe({
       next: (data: any) => {
-        console.log(data);
-        this.modalService.dismissAll();
-        this.getrole();
         this.conformationPopup.openSuccessModal('Role added successfully');
       },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Role added data is failed');
+      error: (error: any) => {
+        this.conformationPopup.openErrorModal(error.error.Message? error.error.Message : 'Failed to add role');
+      },
+      complete: ()=>{
+        this.getrole();
+        this.roleForm.reset();
       }
     })
   }
@@ -83,14 +97,14 @@ export class RolesComponent implements OnInit, OnDestroy {
       this.rolesDeletedata.name = this.updateForm.value.firstName,
         this.subscription = this.http.postdata(`FusionRole/Update`, this.rolesDeletedata).subscribe({
           next: (data: any) => {
-            this.getrole();
-            this.updateForm.reset();
-            this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Role updated successfully');
           },
-          error: (err: any) => {
-            console.error('Update failed:', err);
-            this.conformationPopup.openErrorModal('Update failed. Please try again.');
+          error: (error: any) => {
+            this.conformationPopup.openErrorModal(error.error.Message? error.error.Message : 'Failed to update role');
+          },
+          complete: ()=>{
+            this.getrole();
+            this.updateForm.reset();
           }
         });
     } else {
@@ -104,14 +118,12 @@ export class RolesComponent implements OnInit, OnDestroy {
   }
 
   openupdate(roles: any) {
-    console.log(roles)
     this.rolesDeletedata = roles;
     this.updateForm?.patchValue({ firstName: roles.name });
     this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
   }
 
   opendelete(roles: any) {
-    console.log(roles)
     this.rolesDeletedata = roles;
     this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
   }
@@ -126,13 +138,13 @@ export class RolesComponent implements OnInit, OnDestroy {
 
     this.subscription = this.http.postdata('FusionRole/Delete', deleteRequest).subscribe({
       next: () => {
-        this.getrole();
-        this.modalService.dismissAll()
         this.conformationPopup.openSuccessModal('Role deleted successfully');
       },
-      error: (err: any) => {
-        console.error('Delete failed:', err);
-        this.conformationPopup.openErrorModal('Failed to delete the role');
+      error: (error: any) => {
+        this.conformationPopup.openErrorModal(error.error.Message? error.error.Message : 'Failed to delete the role');
+      },
+      complete:()=>{
+        this.getrole();
       }
     });
   }

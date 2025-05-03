@@ -18,6 +18,7 @@ import { AuthService } from '../../../services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [
@@ -33,7 +34,8 @@ import { OpenModalService } from '../../../services/open-modal.service';
     ProbationformViewComponent,
     TranslateModule,
     Select,
-  ],
+    DateformatPipe
+],
   templateUrl: './probation-pending-approvals.component.html',
   styleUrl: './probation-pending-approvals.component.scss',
 })
@@ -140,7 +142,7 @@ export class ProbationPendingApprovalsComponent {
   }
 
   handleRequests(request: Iprobationapproval,content:any) {
-    this.modalService.open(content, { centered: true })
+    this.modalService.open(content, { centered: true, backdrop: 'static' })
     this.requesthandler = request;
     this.selectedData = request.entity;
     this.selectedPrRequestDataforheader = request.approvalHeader;
@@ -296,12 +298,14 @@ export class ProbationPendingApprovalsComponent {
   jsonData = {} as any;
   handleProcess(f: NgForm) {
     this.openModalService.openLoaderModal('Processing....')
+    let successMessage = '';
     if (this.selectedData.requestSelectedType == 'Approve') {
       this.jsonData = JSON.stringify({
         status: 'Processed',
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
+      successMessage = 'Probation Request Processed Successfully';
     }
     if (this.selectedData.requestSelectedType == 'Reject') {
       this.jsonData = JSON.stringify({
@@ -309,6 +313,7 @@ export class ProbationPendingApprovalsComponent {
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
+      successMessage = 'Probation Request Rejected Successfully';
     }
     if (this.selectedData.requestSelectedType == 'Extend') {
       this.jsonData = JSON.stringify({
@@ -317,6 +322,7 @@ export class ProbationPendingApprovalsComponent {
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
+      successMessage = 'Probation Extended Processed Successfully';
     }
     let requestBody = {
       status: 'Processed',
@@ -347,12 +353,15 @@ export class ProbationPendingApprovalsComponent {
       .subscribe({
         next: (respone: any) => {
           this.modalService.dismissAll();
-          this.openModalService.openSuccessModal('Probation Request Processed Successfully');
+          this.openModalService.openSuccessModal(successMessage);
+          this.getAllPendingApprovals();
         },
         error: (reason: any) => {
           this.openModalService.openErrorModal(reason.error.message);
         },
-        complete: () => {},
+        complete: () => {
+          this.getAllPendingApprovals();
+        },
       });
   }
 

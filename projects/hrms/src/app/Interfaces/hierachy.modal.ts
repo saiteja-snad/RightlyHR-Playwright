@@ -17,3 +17,39 @@ export interface TreeNode<T = any> {
     selectable?: boolean;
     key?: string;
 }
+
+export interface Ticket {
+    id: number;
+    empId: number;
+    emailaddress: string;
+    assigneeName: string;
+    assigneeId: string;
+    workEmail: string;
+    contactnumber: number;
+    subdeptId: number;
+    deskNo: string;
+    type: string;
+    priority: string;
+    ticketStatus: string;
+    subject: string;
+    description: string;
+    stepsToReplicate: string;
+    comments: string;
+    createdAt: string;
+    updatedAt: string; 
+    subdepartmentId: number;
+    subdepartmentName: string;
+    departmentId: number;
+    sno: number;
+    departmentName: string;
+    employeeId: number;
+    deskId: string;
+    employeeName: string;
+  }
+
+  export interface Assignee {
+    assigneeId: number;
+    assigneeName: string;
+    fusionEmpId: string;
+    normalizedName : string;
+  }

@@ -11,16 +11,20 @@ import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { SettingsRolePermissionsModuleTabsComponent } from "../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
-
 @Component({
   selector: 'app-role-assignee',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, SettingsRolePermissionsModuleTabsComponent, TranslateModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, DataLoaderContentComponent, NoDataFoundComponent,
+    SettingsRolePermissionsModuleTabsComponent, TranslateModule
+  ],
   templateUrl: './role-assignee.component.html',
   styleUrl: './role-assignee.component.scss',
   encapsulation:ViewEncapsulation.None
 })
+
 export class RoleAssigneeComponent implements OnInit, OnDestroy {
   roleId: string | undefined;
   userId: number | undefined;
@@ -31,8 +35,8 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   createAssigneeForm!: FormGroup;
   roleAssigneeUsers: IUserRoleInfo[] = [];
   roles: IRoles[] = [];
+  dataLoad= false;
   destroy$: Subject<boolean> = new Subject<boolean>();
-
   @ViewChild('confirmationModal') confirmationModal: TemplateRef<any> | undefined;
   @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
 
@@ -74,7 +78,6 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     const payload = {
       status: 'Active'
     };
-
     this.http.getData(`Employeedata/getAll?status=${payload.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.usersList = res.map((employee: any) => {
@@ -109,7 +112,7 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   }
 
   getUsersByRoleId(id: any) {
-    // this.modalService.open(this.stagingLoadingModal, { centered: true });
+    this.dataLoad= true;
     this.http.getData(`FusionRole/roleAssigneeByRoleId/${id}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -117,11 +120,11 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
           this.roleAssigneeUsers = response;
         },
         error: (error: any) => {
-          // this.modalService.dismissAll();
+          this.dataLoad= false;
           this.modal.openErrorModal(error.error.message ? error.error.message : 'Failed to load users');
         },
         complete: () => {
-          // this.modalService.dismissAll();
+          this.dataLoad= false;
         }
       });
   }

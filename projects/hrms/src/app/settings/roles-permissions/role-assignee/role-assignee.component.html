@@ -30,8 +30,8 @@
                 <div class="d-flex align-items-center gap-2">
                     <div class="custom-p-select-content">
                         <p-select formControlName="selected_user" [options]="usersList" name="user" id="user"
-                            optionLabel="fullName" placeholder="Search User" class="w-100" [filter]="true"
-                            filterBy="fullName" [showClear]="true">
+                            optionLabel="fullName" placeholder="Please select user" class="w-100" [filter]="true" filterBy="fullName" 
+                            [showClear]="true" filterPlaceholder="Search user">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                             <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                         </p-select>
@@ -44,24 +44,47 @@
             </form>
 
             <!--Table content-->
-            <div class="custom-table-content">
-                <table class="w-100">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let user of roleAssigneeUsers">
-                            <td>{{ user.firstName }} <span *ngIf="user.middleName">{{ user.middleName }}</span> {{ user.lastName }}</td>
-                            <td class="text-center"><img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon"
-                                    (click)="onUserClick(user)">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <ng-container *ngIf="dataLoad; else maincontent">
+                <ng-template #loadingSpinner>
+                    <div class="custom-compoent-data-loader">
+                        <app-data-loader-content />
+                    </div>
+                </ng-template>
+                <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+            </ng-container>
+
+            <ng-template #maincontent>
+                <div class="custom-table-content">
+                    <table class="w-100">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(roleAssigneeUsers.length > 0){
+                                <tr *ngFor="let user of roleAssigneeUsers">
+                                    <td>{{ user.firstName }}
+                                        <span *ngIf="user.middleName"> {{ user.middleName }} </span>
+                                        {{ user.lastName }}
+                                    </td>
+                                    <td (click)="onUserClick(user)">
+                                        <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                    </td>
+                                </tr>
+                            }@else {
+                                <tr>
+                                    <td colspan="2">
+                                        <app-no-data-found></app-no-data-found>
+                                    </td>
+                                </tr>
+                            }
+                         
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
         </div>
     </div>
 </div>

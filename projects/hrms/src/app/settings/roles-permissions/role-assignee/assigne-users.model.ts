@@ -5,6 +5,5 @@ export interface IUserRoleInfo {
     middleName: string;
     lastName: string;
     employeeId: number;
-    fusionEmpId?: string; 
+    fusionEmpId?: string;
 }
-  

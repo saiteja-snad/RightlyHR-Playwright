@@ -12,14 +12,14 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>{{'RAISED DATE'|translate}}</th>
-          <th>{{'NOTICE PERIOD(In Days)'|translate}}</th>
-          <th>{{'LAST WORKING DAY'|translate}}</th>
-          <th>{{'REASON'|translate}}</th>
-          <th>{{'APPROVER STATUS'|translate}}</th>
-          <th>{{'REQUEST TYPE'|translate}}</th>
-          <th>{{'STATUS'|translate}}</th>
-          <th>{{'Action(s)'|translate}}</th>
+          <th>{{'Raised Date'|translate}}</th>
+          <th>{{'Notice Period(In Days)'|translate}}</th>
+          <th>{{'Last Working Day'|translate}}</th>
+          <th>{{'Reason'|translate}}</th>
+          <th>{{'Approver Status'|translate}}</th>
+          <th>{{'Request Type'|translate}}</th>
+          <th>{{'Status'|translate}}</th>
+          <th>{{'Action(s)'| translate}}</th>
         </tr>
       </thead>
       <tbody>
@@ -257,7 +257,7 @@
           </div>
         </div>
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'No'|translate}}</button>
+          <button type="reset" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopup)">{{'No'|translate}}</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid||isLoading">
             @if(!isLoading){
             {{'Yes'|translate}}
@@ -287,9 +287,9 @@
         <div class="mb-4">
           <label class="form-label custom-label mb-2">Early Relieving Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
-            id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
+            id="Effective Date" [min]="formattedAppliedDate" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
           <div class="error-msg"
-            *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && recallreason.get('earlyReleivingDate')?.touched">
+            *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && earlyReleivingform.get('earlyReleivingDate')?.touched">
             Early relieving Date is required</div>
         </div>
         <div class="mb-3">
@@ -313,7 +313,7 @@
           </div>
         </div>
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|
+          <button type="reset" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopup)">{{'Close'|
             translate}}</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid||isLoading">
             @if(!isLoading){
@@ -402,4 +402,22 @@
     </div>
   </div>
 </ng-template>
+<ng-template #confirmationpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+    </div>
+
+    <div class="d-flex justify-content-center gap-3 mt-4">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+        No
+      </button>
+      <button type="submit" class="custom-btn btn-primary" (click)="popupclose();model.dismiss()">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>
+
 <!-- modal end to close the nodue -->

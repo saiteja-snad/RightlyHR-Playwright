@@ -164,7 +164,7 @@
             <p class="confirmation-text">Is it a planned leave?</p>
         </div>
 
-        <form name="leaveapprovee" class="w-100" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid"
+        <form autocomplete="off" name="leaveapprovee" class="w-100" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid"
             class="custom-main-popup-content">
             <div class="mb-3 d-flex justify-content-center">
                 <div class="form-check">
@@ -221,7 +221,7 @@
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
         </div>
-        <form name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid" 
+        <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid" 
         class="custom-main-popup-content">
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject Reason<span

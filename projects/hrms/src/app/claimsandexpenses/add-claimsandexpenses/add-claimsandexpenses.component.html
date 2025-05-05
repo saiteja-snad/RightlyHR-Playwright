@@ -9,7 +9,7 @@
 
     <div class="card custom-card ">
         <div class="p-3">
-            <form [formGroup]="newExpenseForm" (ngSubmit)="fromdata(newExpenseForm)">
+            <form autocomplete="off" [formGroup]="newExpenseForm" (ngSubmit)="fromdata(newExpenseForm)">
                 <div class="d-flex gap-3 mb-4">
                     <!-- Expense Type  -->
                     <div class="w-25">

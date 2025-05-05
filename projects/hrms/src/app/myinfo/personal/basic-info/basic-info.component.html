@@ -15,7 +15,7 @@
     </div>
 
     <!--input content-->
-    <form [formGroup]="basicInfoForm">
+    <form autocomplete="off" [formGroup]="basicInfoForm">
       <div class="row">
         @if(this.rbac.allowedToAccess('Basic Information.view')){
         <div class="col-md-6 col-lg-4 mb-3">

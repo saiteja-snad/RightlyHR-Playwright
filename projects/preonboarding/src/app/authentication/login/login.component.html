@@ -5,7 +5,7 @@
             <p class="component-header my-4">Login to your account</p>
         </div>
         <div class="px-3">
-            <form [formGroup]="loginform" (ngSubmit)="login(loginform)">
+            <form autocomplete="off" [formGroup]="loginform" (ngSubmit)="login(loginform)">
                 <div class="mb-3">
                     <label for="name" class="form-label custom-label mb-2">Username<span class="text-danger">*</span></label>
                     <div class="input-group custom-input-group" [ngClass]="{'error-border': loginform.get('username')?.touched && loginform.get('username')?.invalid}">

@@ -64,7 +64,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="identityForm" (ngSubmit)="submitIdentityForm(identityForm)">
+            <form autocomplete="off" [formGroup]="identityForm" (ngSubmit)="submitIdentityForm(identityForm)">
                 <div class="row">
                     @if(this.rbac.allowedToAccess('Identity.view')){
                     <div class="col-md-6 mb-3">
@@ -154,7 +154,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="identityupdateForm" (ngSubmit)="updateIdentity(identityupdateForm)">
+            <form autocomplete="off" [formGroup]="identityupdateForm" (ngSubmit)="updateIdentity(identityupdateForm)">
                 <div class="row">
                     @if(this.rbac.allowedToAccess('Identity.view')){
                     <div class="col-md-6 mb-3">

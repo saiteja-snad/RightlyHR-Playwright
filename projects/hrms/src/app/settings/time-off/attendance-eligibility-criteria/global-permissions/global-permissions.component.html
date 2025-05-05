@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div *ngIf="rbac.allowedToAccess('Eligibility Global Permissions Tab.create')">
-        <form [formGroup]="permissionsForm" (ngSubmit)="addPermission(permissionsForm)">
+        <form autocomplete="off" [formGroup]="permissionsForm" (ngSubmit)="addPermission(permissionsForm)">
             <!-- Add Input-->
             <div class="mb-4">
                 <div class="custom-settings-add-input input-group">
@@ -73,7 +73,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="permissionUpdateForm"  (ngSubmit)="updatePermission(permissionUpdateForm)">
+            <form autocomplete="off" [formGroup]="permissionUpdateForm"  (ngSubmit)="updatePermission(permissionUpdateForm)">
                 <div class="mb-4">
                     <label for="name" class="form-label custom-label mb-2">Permission</label>
                     <input title="text" type="text" name="name" formControlName="name" class="form-control" autocomplete="off"

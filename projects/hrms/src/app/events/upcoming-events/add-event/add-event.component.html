@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="custom-main-popup-content">
-        <form [formGroup]="customEventForm" (ngSubmit)="postevents(customEventForm)">
+        <form autocomplete="off" [formGroup]="customEventForm" (ngSubmit)="postevents(customEventForm)">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="eventDate" class="form-label custom-label mb-2">Event Date<span class="text-danger">*</span></label>

@@ -4,7 +4,7 @@
         <div class="component-header">Reports</div>
 
         <!--right data-->
-        <form [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
+        <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
             <div class="d-flex align-items-center gap-3">
                 <div class="d-flex gap-2 align-items-center">
                     <label class="custom-label text-nowrap">Date Of Joining</label>

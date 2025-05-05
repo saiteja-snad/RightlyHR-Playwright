@@ -9,6 +9,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { RouterModule } from '@angular/router';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { IAsset, ICategory, IVendor } from '../../Interfaces/assets-management.model';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-assets-managment',
@@ -44,7 +45,7 @@ export class AssetsManagmentComponent {
   collectionSize = 100;
   constructor(
     private readonly fb: FormBuilder,
-    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,) { }
+    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,public rbac: RbacService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initialform()

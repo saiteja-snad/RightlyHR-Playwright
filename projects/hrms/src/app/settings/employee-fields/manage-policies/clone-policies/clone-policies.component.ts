@@ -351,8 +351,8 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
 
   getPolicyAttachmentName(fullPath: string): string {
     if (!fullPath) return 'No file attached';
-    // Extract the file name from path (like "C:\\fakepath\\file.pdf")
-    return fullPath.split('\\').pop() || fullPath;
+    const fileName = fullPath.split('organizationPolicy/').pop();
+    return fileName || 'No file attached';
   }
 
   navigation(){

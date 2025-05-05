@@ -11,7 +11,7 @@
                     <th>Identity Type</th>
                     <th>Identity Number</th>
                     <th>Attachment</th>
-                    <th class="text-center">Actions</th>
+                    <th class="text-center">Action(S)</th>
                 </tr>
             </thead>
             <tbody>
@@ -204,7 +204,7 @@
                             *ngIf="identityupdateForm.get('identityupdateAttachment')?.invalid && identityupdateForm.get('identityupdateAttachment')?.touched">
                             File is required
                         </div>
-                        <div *ngIf="displayidentiydocument" class="mb-2 mt-2">{{ displayidentiydocument?.name ||
+                        <div *ngIf="displayidentiydocument" class="custom-file-name text-wrap mt-2">{{ displayidentiydocument?.name ||
                             displayidentiydocument }}</div>
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.

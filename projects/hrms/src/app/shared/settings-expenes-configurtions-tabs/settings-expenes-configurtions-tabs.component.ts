@@ -11,8 +11,8 @@ import { TabsModule } from 'primeng/tabs';
 })
 export class SettingsExpenesConfigurtionsTabsComponent {
   navTabs: any[] = [
-    { label: 'Expenes Configuartion', route: '/settings/employee-fields/expenes/configuartion' },
-    { label: 'Expene Allowed Days', route: '/settings/employee-fields/expenes/allowed-days' },
+    { label: 'Expenses Configuartion', route: '/settings/employee-fields/expenes/configuartion' },
+    { label: 'Expenses Allowed Days', route: '/settings/employee-fields/expenes/allowed-days' },
 
   ]
 

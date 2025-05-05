@@ -4,7 +4,6 @@
          <p class="component-sub-header">Folders</p>
          @for(folder of folders; track $index){
          <!-- Loop through main folders -->
-       
          <div (click)="toggleFolder(folder)" class="folder-content cursor px-2"
             [ngClass]="{'active': selectedMainFolder === folder}">
             <i class="bi bi-folder-fill folder-icon"></i>
@@ -19,33 +18,33 @@
                 *ngFor="let subFolder of folder.subfolders"
                 class="folder-content sub-folders cursor px-2"
                 (click)="onSubFolderSelected(subFolder)"
+                [ngClass]="{'active': selectedFile === subFolder}"
               >
                 <i class="bi bi-folder-fill folder-icon"></i>
                 <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
               </div>
             </ng-container>
           
-          <!-- No Data Found Template -->
-          <ng-template #noSubfoldersTemplate>
-            <p class="text-center">No Subfolders Found</p>
-        </ng-template>
+            <!-- No Data Found Template -->
+            <ng-template #noSubfoldersTemplate>
+                <p class="text-center">No Subfolders Found</p>
+            </ng-template>
           </div>
          }
       </div>
 
-     
-      <div class="custom-setting-right-content p-3" > 
+      <div class="custom-setting-right-content p-3">
          <div class="d-flex align-items-center gap-3 mb-3">
             <div class="input-group custom-search">
                <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
                <input type="search" [(ngModel)]="searchfolder" (input)="filterFolder()"
-                  class="form-control custom-search-input" placeholder="Username" aria-label="Username"
+                  class="form-control custom-search-input" placeholder="File name" aria-label="Username"
                   aria-describedby="basic-addon1">
             </div>
 
             <div *ngIf="selectedFile">
                <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
-                     class="bi bi-upload me-2"></i>Upload</button>
+                     class="bi bi-upload me-2"></i>Upload File</button>
             </div>
          </div>
       

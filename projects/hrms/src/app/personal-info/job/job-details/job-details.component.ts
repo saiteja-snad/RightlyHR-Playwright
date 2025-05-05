@@ -70,13 +70,14 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   substatus: any
   isLoading = false;
   joiningDate: any;
+  selectedlocationid: any;
 
   constructor(private modalService: NgbModal, private authService: AuthService, private fb: FormBuilder, private conformationPopup: OpenModalService,
-     private http: HttpService, public formValidations: FormValidationsService,) { }
+    private http: HttpService, public formValidations: FormValidationsService,) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-   
+
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
@@ -89,6 +90,12 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.getJobDesignation();
     this.getnoticePeriodData();
     this.getSeparationRequest();
+    //subdeparment id changes for update
+    this.jobDetailsupdateForm.get('team')?.valueChanges
+      .subscribe((subdepartmentId: number) => {
+        console.log("dataid" + subdepartmentId)
+        this.onSubDepartmentNameChangeupdate(subdepartmentId);
+      });
   }
 
   initializejobForm(): void {
@@ -150,7 +157,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       isRead: false,
       isDelete: false,
       notificationDate: currentDate,
-      notificationType: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? '' } ${loggedInUser.lastName ?? ''}  has raised the separation`,
+      notificationType: `${loggedInUser.firstName ?? ''} ${loggedInUser.middleName ?? ''} ${loggedInUser.lastName ?? ''}  has raised the separation`,
       empId: loggedInUser.employeeId,
     };
     this.subscription = this.http.postdata(`Notification/Notify/Manager`, webdata).subscribe({
@@ -160,7 +167,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         console.log(err);
       },
-      complete: () => { },
+
     });
   }
 
@@ -231,13 +238,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       },
     });
   }
-    //function to get ReportingTo dropdown
+  //function to get ReportingTo dropdown
   getReportingTo(): void {
     this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
       next: (data: any) => {
         this.allempdata = data as IJob[];
         // Map the employee data to the format required by p-select
-        this.allReportees = this.allempdata.map((employee: { employeeId: number; firstName: string; lastName: string,middleName :string, fusionEmpId: any }) => ({
+        this.allReportees = this.allempdata.map((employee: { employeeId: number; firstName: string; lastName: string, middleName: string, fusionEmpId: any }) => ({
           id: employee.employeeId, // Use the employeeId as the unique identifier
           employee: ` ${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
         }));
@@ -254,8 +261,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   }
 
   onSubDepartmentNameChange(selectedSubDepartment: any): void {
-    const selectedSubDepartmentId = selectedSubDepartment.subdepartmentId; 
-    
+    const selectedSubDepartmentId = selectedSubDepartment.subdepartmentId;
+
     this.subscription = this.http.getData(`Subdepartments/${selectedSubDepartmentId}`).subscribe({
       next: (data: any) => {
         this.subdeparmentSingleobj = data;
@@ -267,7 +274,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         }));
         this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
         // Reset the team manager selection
-        this.jobDetailsForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name }) ;
+        this.jobDetailsForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name });
         this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name ?? '' });
       },
       error: (err: any) => {
@@ -279,28 +286,27 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   }
 
   onSubDepartmentNameChangeupdate(selectedSubDepartment: any): void {
-    const selectedSubDepartmentId = selectedSubDepartment.subdepartmentId; 
-    
+    const selectedSubDepartmentId = selectedSubDepartment?.subdepartmentId || selectedSubDepartment;
+
     this.subscription = this.http.getData(`Subdepartments/${selectedSubDepartmentId}`).subscribe({
       next: (data: any) => {
-        if(data){
-          this.subdeparmentSingleobj = data || '' ;
+        if (data) {
+          this.subdeparmentSingleobj = data || '';
           // Update the team manager dropdown values
           this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
             id: manager.reportingmanagerId,
             name: manager.middleName ? `${manager.firstName || ''} ${manager.middleName || ''} ${manager.lastName || ''}`
               : `${manager.firstName} ${manager.lastName}` || '',
           }));
-          this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
-          // Reset the team manager selection
-         
-          this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name ?? ''});
+          this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager Id
+          
+          this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name ?? '' });
         }
-        else{
-          this.subdeparmentSingleobj=''
+        else {
+          this.subdeparmentSingleobj = ''
           this.teamManagerDropdownValues = []; // Reset if no team managers are found
         }
-     
+
       },
       error: (err: any) => {
         this.teamManagerDropdownValues = []; // Reset on error
@@ -371,6 +377,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   subLocationsDropdown: any = [] // To store the dynamically fetched sub-locations
   getSubLocationByid(selectedLocation: any): void {
+    this.selectedlocationid=selectedLocation.id
     this.jobDetailsForm.get('subLocation')?.reset()
     this.jobDetailsForm.get('shift')?.reset()
     if (selectedLocation && selectedLocation.id) {
@@ -401,11 +408,11 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
- 
+
   getShiftBYid(selectedSubLocation: any): void {
     this.jobDetailsForm.get('shift')?.reset()
     if (selectedSubLocation && selectedSubLocation.id) {
-      const locationId = this.jobDetailsForm.get('location')?.value?.id ?? this.jobDetailsForm.get('location')?.value; // Get the selected location ID
+      const locationId = this.jobDetailsForm.get('location')?.value?.id ?? this.jobDetailsupdateForm.get('location')?.value?.id; // Get the selected location ID
       const subLocationId = selectedSubLocation.id; // Get the selected sub-location ID
       this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
         next: (data: any) => {
@@ -474,12 +481,12 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.jobdetails.next(data);
         console.log(this.jobdetails.value);
-        
+
       },
     });
   }
   formatDateToLocal(dateString: string): string {
-   
+
     const date = new Date(dateString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
@@ -494,9 +501,9 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.selectedData = data; // Store the selected job details data for updating
     console.log('Selected Job Details ID:', data);
     this.teamManagerName = data
-    ? `${data.firstName ?? ''} ${data.middleName ?? ''} ${data.lastName ?? ''}`.trim()
-    : null;
-  
+      ? `${data.firstName ?? ''} ${data.middleName ?? ''} ${data.lastName ?? ''}`.trim()
+      : null;
+
     const effectiveDate = this.formatDateToLocal(data.effectiveDate); // Format the effective date
     this.selectedJobRoleObj = this.JobroleDesignation.find(role => role.designationName === data.jobRole);
     this.jobDetailsupdateForm.patchValue({
@@ -508,11 +515,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       department: this.departmentDetails?.find(
         dept => dept.departmentName === data?.departmentName
       ),
-      team: this.teamDropdownValues?.find(
-        team => team.subdepartmentName === data?.subdepartmentName
-      ),
-    
-      
+      team: data.subdepartmentId,
       teamManager: this.teamManagerName || null,
       jobType: this.JobtypeDetails.find(jt => jt.jobType1 === data.jobTypeName),
       reportingManager: this.allReportees.find((report: { id: any; employee: any }) => report.id === data.reportingmanagerId),
@@ -524,9 +527,11 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
           this.subLocationsDropdown = []; // Reset if no sub-locations are found
         } else {
           this.subLocationsDropdown = res.jobSubLocations;
-          this.jobDetailsupdateForm.patchValue({subLocation: this.subLocationsDropdown?.find(
-            (sub: { id: any; }) => sub.id === data?.subLocationId
-          ),});
+          this.jobDetailsupdateForm.patchValue({
+            subLocation: this.subLocationsDropdown?.find(
+              (sub: { id: any; }) => sub.id === data?.subLocationId
+            ),
+          });
           console.log(this.subLocationsDropdown);
         }
       },
@@ -536,22 +541,22 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
     });
 
-    this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
+    this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId || this.selectedlocationid}&subLocationId=${subLocationId}`).subscribe({
       next: (response: any) => {
         if (response.length === 0) {
           this.shiftDropdown = []; // Reset if no shifts are found
         } else {
-          this.shiftDropdown = [].concat(...response?.map((element: any) => element.orgShiftsItems)); 
+          this.shiftDropdown = [].concat(...response?.map((element: any) => element.orgShiftsItems));
           console.log(this.shiftDropdown);
           console.log(this.shiftDropdown?.find(
             (shift: { id: any }) => shift.id === data?.shiftId
           ));
-          
+
           this.jobDetailsupdateForm.patchValue({
             shiftName: this.shiftDropdown?.find(
-            (shift: { id: any }) => shift.id === data?.shiftId
-          )
-        });
+              (shift: { id: any }) => shift.id === data?.shiftId
+            )
+          });
         }
       },
       error: (err: any) => {
@@ -565,8 +570,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         this.teamDropdownValues = teamData || [];
         this.teamManagerDropdownValues = this.teamDropdownValues.map((manager: any) => ({
           id: manager.reportingmanagerId,
-          teamManager: manager.middleName 
-            ? `${manager.firstName} ${manager.middleName} ${manager.lastName}` 
+          teamManager: manager.middleName
+            ? `${manager.firstName} ${manager.middleName} ${manager.lastName}`
             : `${manager.firstName} ${manager.lastName}`,
         }));
       },
@@ -579,7 +584,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   }
 
 
-  
+
   //function to open the separation popup
   openModalforSeparationupdate(content: any, data: any): void {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -718,13 +723,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       effectiveDate: formData.effectiveDate ?? this.selectedData?.effectiveDate,
       reportsto: formData.reportingManager.id ?? this.selectedData?.reportsto,
       jobRole: formData.jobRole.designationName ?? this.selectedData?.jobRole,
-      subdeptId: formData.team.subdepartmentId ?? this.selectedData.subdeptId,
+      subdeptId: formData.team ?? this.selectedData.subdeptId,
       status: "Active",
       shiftId: formData.shiftName?.id ?? this.selectedData?.shiftName?.id,
       locationid: formData.location.id ?? this.selectedData?.locationid,
       sublocationid: formData.subLocation.id ?? this.selectedData.sublocationid,
       gradeId: this.selectedData.gradeId,
-      teamManagerId: formData.team.reportingmanagerId ?? this.selectedData?.teamManagerId,
+      teamManagerId:  this.teammangerid ?? this.selectedData?.teamManagerId,
       updateddate: this.selectedData.updateddate,
       createddate: this.selectedData.createddate,
       jobTypeId: formData.jobType.sno ?? this.selectedData.jobTypeId,

@@ -70,13 +70,13 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.emergencyContactForm = this.fb.group({
       contact1Name: ['', Validators.required],
-      contact1Email: ['', [Validators.required, Validators.email]],
+      contact1Email: ['', [ Validators.email]],
       contact1Phone: ['', Validators.required],
       contact1Relationship: ['', Validators.required],
       contact1CountryCode: ['', Validators.required],
       contact2CountryCode: ['', Validators.required],
       contact2Name: ['', Validators.required],
-      contact2Email: ['', [Validators.required, Validators.email]],
+      contact2Email: ['', [ Validators.email]],
       contact2Phone: ['', Validators.required],
       contact2Relationship: ['', Validators.required],
     });

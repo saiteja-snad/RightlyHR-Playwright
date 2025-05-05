@@ -1,20 +1,23 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Compensation Details</span></div>
-     
+
     </div>
 
     <div class="custom-table-content mt-2">
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>EFFECTIVE DATE</th>
-                    <th>OVERTIME ELIGIBILITY</th>
-                    <th>REASON</th>
-                    <th>FREQUENCY</th>
-                    <th>PAY TYPE</th>
-                    <th>AMOUNT (Yearly CTC) </th>
-                
+              
+                    <th>Effective Date</th>
+                    <th>Overtime Eligibility</th>
+                    <th>Reason</th>
+                    <th>Frequency</th>
+                    <th>Pay Type</th>
+                    <th>Amount (Yearly CTC)</th>
+                    <th>Action(S)</th>
+
+
                 </tr>
             </thead>
             <tbody>
@@ -26,7 +29,7 @@
                         <td>{{item.frequency}}</td>
                         <td>{{item.paytype}}</td>
                         <td>{{item.compensationamount}}</td>
-                      
+
                     </tr>
 
                 </ng-container>
@@ -40,5 +43,3 @@
         </table>
     </div>
 </div>
-
-

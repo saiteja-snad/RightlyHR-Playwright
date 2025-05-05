@@ -14,6 +14,7 @@ import { Select } from 'primeng/select';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-drafts-expenses',
@@ -38,16 +39,17 @@ export class DraftsExpensesComponent {
   minDate!: string;
   maxDate!: string;
   emails = [];
-
+  currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
   expenseheaderiteams: INewExpense[] = [];
   updataid!: number;
   matchingExpense: any;
   saveasDraftloder=false
-  @ViewChild('updateModal') private updateModal!: NgbModal;
+ 
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
+  joiningDate: any;
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
-    private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+    private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer, public formValidation: FormValidationService,) { }
     searchTerm: any = ''
   expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   expense = new BehaviorSubject<IExpenses[]>([])
@@ -55,11 +57,10 @@ export class DraftsExpensesComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
     this.initiateForm();
-   
+   this.getEmployeeId();
     this.getdatabyentriy();
-    this.getexpensesheaderbyemployeeid()
-    this.setDate()
-    this.getExpensestypestopatch()
+    this.getexpensesheaderbyemployeeid();
+    this.getExpensestypestopatch();
 
     this.newExpenseForm.valueChanges.subscribe(() => {
       this.calculateTotalExpensesAmount();
@@ -115,21 +116,7 @@ export class DraftsExpensesComponent {
       }
     })
   }
-  setDate() {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-    const dd = String(today.getDate()).padStart(2, '0');
 
-    this.maxDate = `${yyyy}-${mm}-${dd}`;
-
-    const dateOfJoining = new Date(this.empinfo.dateOfJoining);
-    const yyyyMin = dateOfJoining.getFullYear();
-    const mmMin = String(dateOfJoining.getMonth() + 1).padStart(2, '0');
-    const ddMin = String(dateOfJoining.getDate()).padStart(2, '0');
-    this.minDate = `${yyyyMin}-${mmMin}-${ddMin}`;
-    console.log(this.maxDate, this.minDate);
-  }
 
   duplicateReceiptValidator(formArray: AbstractControl): ValidationErrors | null {
     const formArrayControls = formArray as FormArray; // Cast to FormArray
@@ -175,6 +162,23 @@ export class DraftsExpensesComponent {
   }
 
 
+  getEmployeeId(): void {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.joiningDate =this.formatDateToLocal(data.dateOfJoining)
+       
+      },
+      error: (reason) => console.error('Error fetching employee data:', reason),
+    });
+  }
+  formatDateToLocal(dateString: string): string {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
 
   getdatabyentriy() {
     const params = 'Expense';
@@ -380,7 +384,7 @@ export class DraftsExpensesComponent {
               this.modalService.dismissAll()
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Expenses save as draft successfully');
+              this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
 
               this.getexpensesheaderbyemployeeid();
               // Call the get function after posting
@@ -401,7 +405,7 @@ export class DraftsExpensesComponent {
           next: (data: any) => {
           
               this.modalService.dismissAll()
-              this.conformationPopup.openSuccessModal('Expenses save as draft successfully');
+              this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
            
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
@@ -607,9 +611,7 @@ export class DraftsExpensesComponent {
     this.calculateTotalExpensesAmount();
     // this.modalService.dismissAll()
     this.conformationPopup.openSuccessModal("Expense item deleted successfully")
-    // setTimeout(() => {
-    //   this.openModal(this.updateModal)
-    // }, 2000);
+   
   }
  
 

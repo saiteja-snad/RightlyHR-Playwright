@@ -153,7 +153,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request Rejcted Successfully');
+          this.sharedModalService.openSuccessModal('Request Rejected Successfully');
           this.rejectForm.reset();
           this.selectedLeaveData = {} as ExpenseApprovalResponse;
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({

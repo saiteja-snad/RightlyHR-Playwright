@@ -13,7 +13,6 @@
           <th>Expense Date</th>
           <th>Total Amount</th>
           <th>Status</th>
-          <th class="text-center">Approver Comments</th>
           <th class="text-center">View Details
           </th>
 
@@ -22,18 +21,12 @@
       <tbody>
         <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
           <tr *ngFor="let exp of expenesEmplyeedata | async">
-            <td>{{ exp.expenses_Title }}</td>
-            <td>{{ exp.applied_date | dateformat }}</td>
-            <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
+            <td>{{ exp?.expenses_Title }}</td>
+            <td>{{ exp?.applied_date | dateformat }}</td>
+            <td>{{ exp?.totalExpenseAmount | number : "1.0-0" }}</td>
             <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
             </td>
-            <td class="text-center">
-              <i *ngIf="exp.expenseApproverComments.length>0; else na" class="bi bi-info-circle-fill cursor"
-                (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)" ></i>
-              <ng-template #na>
-                N/A
-              </ng-template>
-            </td>
+         
             <td class="text-center">
               <div class="dropdown">
                 <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -114,7 +107,7 @@
     </div>
 
     <div class="d-flex gap-5 pt-3 ps-4">
-      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
+      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams?.expenses_Title }}</b>
       <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
     </div>
     <div class="custom-table p-3">
@@ -124,10 +117,10 @@
             <th>Expense Type</th>
             <th>Expense Name</th>
             <th>Expense Date</th>
-            <th>Total Amount</th>
+            <th>Expense Amount</th>
             <th>Status</th>
             <th>Receipt Number</th>
-            <th colspan="2">Actions</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -139,21 +132,25 @@
 
             <td>{{ item?.status }}</td>
             <td>{{ item?.receipt_Number }}</td>
-            <td>
+            <td class="text-center">
 
               <div class="d-flex gap-2">
                 <a type="button" class="me-2 dowload-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
                   <i class="bi bi-download me-2"></i>Download
                 </a>
-                <a type="button" class="view-text text-nowrap" (click)="onViewAttachement(item?.attachment_url)">
+                <a type="button" class="dowload-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)" (click)="onViewAttachement(item?.attachment_url)">
                   <i class="bi bi-paperclip"></i>View
                 </a>
               </div>
 
             </td>
+
           </tr>
         </tbody>
       </table>
+      <div class="text-center mt-3" >
+        <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+    </div>
     </div>
   </div>
 </ng-template>
@@ -181,48 +178,3 @@
   </div>
 </ng-template>
 
-<ng-template #viewcomments let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
-        <p class="popup-heading mb-0">Approver Comments</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-      </div>
-    </div>
-    <div class="custom-main-popup-content p-4">
-      <div  *ngFor="let comment of commentsrecivced">
-        <div class="card p-3">
-          <div class="card-body">
-            <div class="row mb-3">
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Comments</p>
-                {{ comment.comments }}
-              </div>
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Commented by</p>
-                {{ comment.addedName }}
-              </div>
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Date</p>
-                {{ comment.addedDate | date: 'short' }}
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Commented by ID</p>
-                {{ comment.addedByFusionEmpId }}
-              </div>
-              <div class="col-4">
-                <p class="component-sub-header mb-1">Status</p>
-                {{ comment.action }}
-              </div>
-            </div>
-          </div>
-        </div>
-        
-      </div>
-    </div>
-  </div>
-</ng-template>

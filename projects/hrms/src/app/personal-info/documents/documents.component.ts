@@ -50,14 +50,7 @@ export class DocumentsComponent {
    
     });
   }
-  ngOnChanges(changes: SimpleChanges) {
-    this.showUploadIcon = true;
-    // if (changes['folder']) {
-    //   console.log(changes['folder']);
-    // }
-    console.log(this.selectedFile);
-    this.getAllFiles();
-  }
+
 
 
   getMainFolders(dirPath?: string) {
@@ -118,7 +111,7 @@ export class DocumentsComponent {
   getAllFiles() {
     if (!this.selectedFile.isEmpDir) {
       this.subscription = this.http
-        .getDataWithQuery('FileSystem/Files', `${this.selectedFile.name}/${this.empdata.employeeId}`)
+        .getDataWithQuery('FileSystem/Files',  `${this.selectedFile.name}/${this.empdata.employeeId}`)
         .subscribe({
           next: (data: any) => {
             console.log(data);
@@ -154,16 +147,22 @@ export class DocumentsComponent {
       backdrop: 'static',
     });
   }
+  
   filechange(event: any) {
     this.file = event.target.files[0];
-    const input = event.target as HTMLInputElement;
-
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.uploadfrom.patchValue({ filename: file.name }); // Update the filename control with the selected file name
-    } else {
-      this.uploadfrom.patchValue({ filename: '' });
+    if ( this.file) {
+      const fileSizeInMB = this.file.size / (1024 * 1024);
+      if (fileSizeInMB > 25) {
+        this.file = null;
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.uploadfrom.get('filename')?.reset();
+        this.uploadfrom.get('filename')?.markAsUntouched();
+        
+        return;
+      }
     }
+
+    
   }
 
   filterFolder() {
@@ -242,9 +241,5 @@ export class DocumentsComponent {
         error: (reason) => console.log(reason),
       });
   }
-
-
-
- 
 
 }

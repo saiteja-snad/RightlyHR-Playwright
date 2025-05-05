@@ -9,48 +9,46 @@
             <i class="bi bi-folder-fill folder-icon"></i>
             <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
          </div>
-         
+
          <!-- Subfolders -->
          <div *ngIf="folder.expanded" class="subfolder-container">
             <!-- Check if there are subfolders -->
             <ng-container *ngIf="(folder?.subfolders ?? []).length > 0; else noSubfoldersTemplate">
-              <div
-                *ngFor="let subFolder of folder.subfolders"
-                class="folder-content sub-folders cursor px-2"
-                (click)="onSubFolderSelected(subFolder)"
-              >
-                <i class="bi bi-folder-fill folder-icon"></i>
-                <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
-              </div>
+               <div *ngFor="let subFolder of folder.subfolders" class="folder-content sub-folders cursor px-2"
+                  (click)="onSubFolderSelected(subFolder)" [ngClass]="{'active': selectedFile === subFolder}">
+                  <i class="bi bi-folder-fill folder-icon"></i>
+                  <span class="folder-name px-2">{{ subFolder.name | lastValue }}</span>
+               </div>
             </ng-container>
-          
+
             <!-- No Data Found Template -->
             <ng-template #noSubfoldersTemplate>
-                <p class="text-center">No Subfolders Found</p>
+               <p class="text-center">No Subfolders Found</p>
             </ng-template>
-          </div>
+         </div>
          }
       </div>
 
       <div class="custom-setting-right-content p-3">
          <div class="d-flex align-items-center gap-3 mb-3">
             <div class="input-group custom-search">
-               <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+               <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                     class="bi bi-search"></i></span>
                <input type="search" [(ngModel)]="searchfolder" (input)="filterFolder()"
-                  class="form-control custom-search-input" placeholder="Username" aria-label="Username"
+                  class="form-control custom-search-input" placeholder="File name" aria-label="Username"
                   aria-describedby="basic-addon1">
             </div>
 
             <div *ngIf="selectedFile">
                <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
-                     class="bi bi-upload me-2"></i>Upload</button>
+                     class="bi bi-upload me-2"></i>Upload File</button>
             </div>
          </div>
-      
+
          <div class="mb-3" *ngIf="selectedFile?.name">
             <span class="component-sub-header">{{selectedFile.name | lastValue}}</span>
          </div>
-      
+
          <div class="custom-table-content">
             <table class="w-100">
                <thead>
@@ -93,7 +91,7 @@
    <div class="custom-main-popup-container" ngbAutofocus>
       <div class="custom-poup-header-content popup-header-border">
          <div>
-            <p class="popup-heading mb-0">Upload Document</p>
+            <p class="popup-heading mb-0">Upload File</p>
          </div>
          <div>
             <a (click)="modal.dismiss();uploadfrom.reset()"><img src="icons/close.png" alt="Close Icon"
@@ -105,10 +103,11 @@
          <form [formGroup]="uploadfrom" (ngSubmit)="fileUploaded()">
             <div class="row mb-3">
                <div class="col-12">
-                  <label class="form-label custom-label mb-2">Upload <span class="text-danger">*</span></label>
+                  <label class="form-label custom-label mb-2">Upload File<span class="text-danger">*</span></label>
                   <input type="file" placeholder="Choose file" class="form-control custom-input"
                      (change)="filechange($event)" formControlName="filename" accept=".pdf, .jpg, .png">
-                  <div class="error-msg" *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">
+                  <div class="error-msg"
+                     *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">
                      File is required
                   </div>
                </div>

@@ -231,7 +231,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="accountNoupdate" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="accountNoupdate"
+                        <input type="number" class="form-control custom-input" id="accountNoupdate"
                             formControlName="accountNoupdate" placeholder="Please enter account number" maxlength="20">
                         <div class="error-msg"
                             *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">

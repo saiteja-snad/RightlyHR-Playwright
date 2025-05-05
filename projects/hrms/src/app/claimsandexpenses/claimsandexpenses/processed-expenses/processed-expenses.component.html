@@ -157,9 +157,9 @@
         <div class="card p-3">
           <div *ngFor="let comment of commentsrecivced" >
             <div class="mb-0">
-              <p> <b>Commented by:</b> {{ comment.addedName }} </p>
-              <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
-              <p> <b>Processed Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+              <p>  <b>{{ comment.action === 'Processed' ? 'Processed by:' : 'Commented by:' }}</b>  {{ comment.addedName }} </p>
+              <p>   <b>{{ comment.action === 'Processed' ? 'Processed by ID:' : 'Commented by ID:' }}</b>  {{ comment.addedByFusionEmpId }} </p>
+              <p> <b> Date:</b> {{ comment.addedDate | date: 'short' }} </p>
               <p><b>Status:</b> {{ comment.action }}</p>
               <!-- <p> <b>Comments:</b> {{ comment.comments }} </p> -->
             </div>

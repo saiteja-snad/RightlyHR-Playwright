@@ -85,7 +85,7 @@
         </div>
 
         <div class="custom-main-popup-content ">
-            <form [formGroup]="assetForm" (ngSubmit)="postvendor(assetForm); modal.dismiss()">
+            <form [formGroup]="assetForm" (ngSubmit)="postvendor(assetForm);" >
                 <div class="row">
                     <!-- Vendor Details -->
                     <div class="col-md-6 mb-3">
@@ -221,8 +221,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="updateinactivevendor(assetverderupdataform);
-            model.dismiss()">Yes</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="updateinactivevendor(assetverderupdataform)">Yes</button>
         </div>
     </div>
 </ng-template>
@@ -254,7 +253,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="assetverderupdataform" (ngSubmit)="updatevendor(assetverderupdataform); modal.dismiss()">
+            <form [formGroup]="assetverderupdataform" (ngSubmit)="updatevendor(assetverderupdataform)">
                 <div class="row">
                     <!-- Vendor Details -->
                     <div class="col-md-6 mb-3">

@@ -436,7 +436,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         empId: parseInt(this.empinfo.employeeId),
         jobTitle: formData.jobTitleupdate,
         companyName: formData.companyNameupdate,
-        employmentType: formData.employmentTypeupdate?.jobType1 || formData.employmentTypeupdate,
+        employmentType: formData.employmentTypeudate?.jobType1 ,
         fromDate: formData.fromDateupdate,
         toDate: formData.isPresentupdate ? null : formData.toDateupdate,
         previousContactName: formData.previousContactNameupdate || null,

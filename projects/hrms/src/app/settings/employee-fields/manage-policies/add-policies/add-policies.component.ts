@@ -60,7 +60,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
         policyName: ['',[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
         policyFile: ['',Validators.required],
         policyFilePath:[''],
-        policyDescription: ['',[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]]
+        policyDescription: ['',[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z0-9][a-zA-Z0-9\s]*$')]]
       });
     }
     getAllYears() {

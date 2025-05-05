@@ -180,9 +180,9 @@ extendCondition(data:any){
   if (data && data.length) {
     const latestRecord = data[data.length - 1]; // Get the last (latest) record
   
-    const isLatestExtended = latestRecord.status?.toLowerCase() === 'extended';
+    const isLatestExtended = latestRecord.status?.toLowerCase() === 'extended' || latestRecord.status?.toLowerCase() === 'Processed' ;
   
-    const allExtended = data.every((ele: any) => ele.status?.toLowerCase() === 'extended');
+    const allExtended = data.every((ele: any) => ele.status?.toLowerCase() === 'extended' || ele.status?.toLowerCase() === 'Processed' );
   
     this.buttonviewwhenExtended = isLatestExtended || allExtended;
   } else {

@@ -106,7 +106,7 @@
               <input type="file" formControlName="policyFile" class="form-control custom-input w-100"
                 (change)="onReactiveFileChange($event, i)" accept=".pdf,image/*" />
               <div *ngIf="policy.get('policyFile')?.touched && policy.get('policyFile')?.hasError('required')" class="error-msg">
-                {{'Policy File is required'|translate}}
+                {{'Attachment is required'|translate}}
               </div>
             </div>
 

@@ -149,7 +149,7 @@ export class OnBeHalfOfComponent {
       halfdayavailing : ['', Validators.required],
       availing: [{value : '',disabled: true}], 
       fulldayavailing: [{value : '',disabled: true}],
-      reason: ['', [Validators.required]]
+      reason: ['', [Validators.required,Validators.maxLength(250)]],
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
@@ -160,14 +160,45 @@ export class OnBeHalfOfComponent {
     const end = this.leaveForm.get('enddate')?.value;
     if (start && end) {
       this.leaveForm.get('halfDay')?.enable();
+      this.leaveForm.get('halfdayavailing')?.enable();
       this.leaveForm.get('availing')?.enable();
+      this.leaveForm.get('fulldayavailing')?.enable();
     } else {
       this.leaveForm.get('halfDay')?.disable();
+      this.leaveForm.get('halfdayavailing')?.disable();
       this.leaveForm.get('availing')?.disable();
+      this.leaveForm.get('fulldayavailing')?.disable();
     }
   }
 
-  Onclick(fusionemployeeId: any) {
+  // Onclick(fusionemployeeId: any) {
+  //   this.empiIdAftersubmission = fusionemployeeId;
+  //   this.showcontent = true;
+  //   this.showbutton = true;
+  //   this.fusionEmployeeId = fusionemployeeId;
+  //   this.leaveapplication = {};
+  //   this.leaveapplication = this.employeeiddetails.find(
+  //     (c: any) => c.employeeId == fusionemployeeId.value
+  //   );
+  //   this.disablebuttonforemployeeid = true;
+  //   this.leaveapplication.dateOfJoining = this.formatDatewithDate(this.leaveapplication?.dateOfJoining);
+  //   this.getCategoryDetails(fusionemployeeId.value);
+  //   this.cadidateEmployeeId = fusionemployeeId.value;
+  //   this.getOrgHolidaysByEmpId(fusionemployeeId.value)
+  //   this.getholidaybyempid(fusionemployeeId.value)
+  //   this.getcustompolicybyempid(fusionemployeeId.value);
+  //   this.getLeavesData(fusionemployeeId.value);
+  //   localStorage.setItem('onbehalfof',fusionemployeeId.value)
+  //   this.http.triggerActionSignal();
+  // }
+  Onclick(fusionemployeeId: any): void {
+    if (!fusionemployeeId || !fusionemployeeId.value) {
+      // Employee deselected (cleared)
+      this.resetOnBehalfOfData();
+      return;
+    }
+  
+    // When employee is selected
     this.empiIdAftersubmission = fusionemployeeId;
     this.showcontent = true;
     this.showbutton = true;
@@ -180,14 +211,26 @@ export class OnBeHalfOfComponent {
     this.leaveapplication.dateOfJoining = this.formatDatewithDate(this.leaveapplication?.dateOfJoining);
     this.getCategoryDetails(fusionemployeeId.value);
     this.cadidateEmployeeId = fusionemployeeId.value;
-    this.getOrgHolidaysByEmpId(fusionemployeeId.value)
-    this.getholidaybyempid(fusionemployeeId.value)
+    this.getOrgHolidaysByEmpId(fusionemployeeId.value);
+    this.getholidaybyempid(fusionemployeeId.value);
     this.getcustompolicybyempid(fusionemployeeId.value);
     this.getLeavesData(fusionemployeeId.value);
-    localStorage.setItem('onbehalfof',fusionemployeeId.value)
+    localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
   }
-
+  
+  resetOnBehalfOfData(): void {
+    this.empiIdAftersubmission = null;
+    this.fusionEmployeeId = null;
+    this.leaveapplication = {};
+    this.showcontent = false;
+    this.showbutton = false;
+    this.disablebuttonforemployeeid = false;
+    this.categoryDetails = [];
+    this.cadidateEmployeeId = 0;
+    localStorage.removeItem('onbehalfof');
+  }
+  
   onleaveSelect(categoryId: number) {
     this.leaveFormData.categoryId = categoryId;
     this.isSubmitted = false;
@@ -602,9 +645,6 @@ export class OnBeHalfOfComponent {
           },
           error: (err: any) => {
             this.conformationPopup.openErrorModal(err.error.message)
-            setTimeout(() => {
-              this.modalService.dismissAll();
-            }, 2000);
           },
           complete: () => {
             this.leaveForm.reset();
@@ -614,9 +654,6 @@ export class OnBeHalfOfComponent {
         // Display modal message and set status
         console.warn('Maximum leave limit reached for this category.');
         this.conformationPopup.openErrorModal('Maximum leave limit reached for this category')
-        setTimeout(() => {
-          this.modalService.dismissAll();
-        }, 2000);
       }
     }
   }
@@ -866,17 +903,27 @@ export class OnBeHalfOfComponent {
   }
 
   onstartdate(action: string) {
+    this.disableSubmitButton = false;
+    this.leaveForm.patchValue({ halfdayavailing: null });
+    this.leaveForm.patchValue({ availing: null });
+    this.leaveForm.patchValue({ fulldayavailing: null });
+    if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
+      this.disableSubmitButton = true;
+    }
+    this.isoptionalnotallowedatWorkingdate = false;
+    this.isstimeoffValid = true;
+    this.startdatevalid = true;
+    this.isNonOptionalHolidaySelected = false;
+    this.isHolidaySelected = false;
+    this.isWeekOffSelectedEndate = false;
+    this.isWeekOffSelected = false;
+    this.isHolidaySelectedEndate = false;
     this.updateStartDateValidity1();
     this.vldateofjoin1();
     this.onEndDateChange();
     this.checkWeekends(action);
-    this.dateCheckWithHolidayOrWeekend(action)
-    if (!this.startDate) {
-      this.endDate = null;
-      this.isWeekOffSelectedEndate = false;
-      this.isHolidaySelectedEndate = false;
-      this.issEndDategreater = true;
-    }
+    this.dateCheckWithHolidayOrWeekend(action);
+    this.issEndDategreater = true;
   }
 
   updateStartDateValidity1(): void {

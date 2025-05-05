@@ -162,7 +162,7 @@ export class PermissionsComponent {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
     };
-    this.spinnerLoader = true;
+    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
     this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
@@ -170,14 +170,12 @@ export class PermissionsComponent {
         this.http.triggerActionSignal();
       },
       error: (reason: any) => {
-        this.spinnerLoader = false;
         this.modalService.dismissAll();
         this.sharedModalService.openErrorModal(
           reason.error.Message
         );
       },
       complete: () => {
-        this.spinnerLoader = false;
         this.getAllPendingApprovals();
       },
     });

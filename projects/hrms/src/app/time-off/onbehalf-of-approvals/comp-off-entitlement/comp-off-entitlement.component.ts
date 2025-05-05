@@ -131,20 +131,19 @@ export class CompOffEntitlementComponent {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
     };
-    this.spinnerLoader = true;
+    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
     this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
       },
       error: (reason: any) => {
-        this.spinnerLoader = false;
+        this.modalService.dismissAll();
         this.sharedModalService.openErrorModal(reason.error.Message);
       },
       complete: () => {
         this.http.triggerActionSignal();
         this.getAllPendingApprovals();
-        this.spinnerLoader = false;
       },
     });
   }
@@ -158,7 +157,6 @@ export class CompOffEntitlementComponent {
         approvedBy: this.empinfo.employeeId?.toString(),
       };
       this.spinnerLoader = true;
-      this.sharedModalService.openLoaderModal('Accepting Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();

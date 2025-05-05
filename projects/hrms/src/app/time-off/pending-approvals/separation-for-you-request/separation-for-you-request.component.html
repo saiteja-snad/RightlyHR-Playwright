@@ -119,7 +119,7 @@
             <p class="confirmation-text">{{"Are you sure you want to approve Separation Request?" | translate}}</p>
         </div>
         <div class="custom-main-popup-content">
-            <form name="acceptForm" #acceptForm="ngForm" (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)">
+            <form autocomplete="off" name="acceptForm" #acceptForm="ngForm" (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)">
                 @if(selectedSpRequestData.spIsEarlyRelieveing){
                 <div class="mb-3 text-center">
                     <label><b>{{"This employee has opted for an Early Relieving!" | translate}}</b></label>
@@ -295,7 +295,7 @@
             <p class="confirmation-text">{{'Are you sure you want to reject this request?' | translate}}</p>
         </div>
         <div class="custom-main-popup-content">
-            <form name="Separationrequestrejected" #Separationrequestrejected="ngForm"
+            <form autocomplete="off" name="Separationrequestrejected" #Separationrequestrejected="ngForm"
                 (ngSubmit)="Separationrequestrejected.valid && handleReject(Separationrequestrejected)">
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label labell">{{"Rejected Reason" |
@@ -338,7 +338,7 @@
             <p class="confirmation-text">{{"Are you sure you want to process Separation Request?" | translate}}</p>
         </div>
         <div class="custom-main-popup-content">
-            <form name="acceptFormforprocess" #acceptFormforprocess="ngForm"
+            <form autocomplete="off" name="acceptFormforprocess" #acceptFormforprocess="ngForm"
                 (ngSubmit)="acceptFormforprocess.valid && handleProcess(acceptFormforprocess)">
                 <div class="mb-3 text-center" *ngIf="selectedSpRequestData.spIsEarlyRelieveing">
                     <label><b>{{"The employee has opted for an early Relieving!" | translate}}</b></label>

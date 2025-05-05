@@ -92,7 +92,7 @@
       </div>
     </div>
     <div class="custom-main-popup-content">
-      <form [formGroup]="educationForm" (ngSubmit)="postEducation()">
+      <form autocomplete="off" [formGroup]="educationForm" (ngSubmit)="postEducation()">
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="education" class="form-label custom-label mb-2">Education<span
@@ -214,7 +214,7 @@
       </div>
     </div>
     <div class="custom-main-popup-content ">
-      <form [formGroup]="educationupdateForm" (ngSubmit)="updateEducation()">
+      <form autocomplete="off" [formGroup]="educationupdateForm" (ngSubmit)="updateEducation()">
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="education" class="form-label custom-label mb-2">Education<span

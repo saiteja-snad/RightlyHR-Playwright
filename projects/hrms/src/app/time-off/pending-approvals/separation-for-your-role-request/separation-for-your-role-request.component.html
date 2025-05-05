@@ -133,7 +133,7 @@
                 <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{'Are you sure you want to approve Separation Request?' | translate}}</p>
             </div>
-            <form name="acceptForm" #acceptForm="ngForm" (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)"
+            <form autocomplete="off" name="acceptForm" #acceptForm="ngForm" (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)"
                 >
                 @if(selectedSpRequestData.spIsEarlyRelieveing){
                 <div class="my-3 text-center">
@@ -312,7 +312,7 @@
             <p class="confirmation-text">{{'Are you sure you want to reject this request?' | translate}}</p>
         </div>
         <div class="custom-main-popup-content">
-            <form name="Separationrequestrejected" class="w-100" #Separationrequestrejected="ngForm"
+            <form autocomplete="off" name="Separationrequestrejected" class="w-100" #Separationrequestrejected="ngForm"
                 (ngSubmit)="Separationrequestrejected.valid && handleReject(Separationrequestrejected)">
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label custom-label mb-2">
@@ -352,7 +352,7 @@
             <p class="confirmation-text">{{'Are you sure you want to process Separation Request?' | translate}}</p>
         </div>
 
-        <form name="acceptFormforprocess" #acceptFormforprocess="ngForm"
+        <form autocomplete="off" name="acceptFormforprocess" #acceptFormforprocess="ngForm"
             (ngSubmit)="acceptFormforprocess.valid && handleProcess(acceptFormforprocess)"
             class="custom-main-popup-content">
             <div class="mb-3 mt-3 text-center" *ngIf="selectedSpRequestData.spIsEarlyRelieveing">

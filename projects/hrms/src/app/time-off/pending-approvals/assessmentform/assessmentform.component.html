@@ -98,7 +98,7 @@
         <p class="text-danger mb-0"><span>{{'Note:'|translate}}</span>{{'Please fill all the fields' | translate}}</p>
       </div>
       <div class="d-flex justify-content-center gap-3">
-        <button class="custom-btn btn-secondary px-5" (click)="openModal(cancelmodal)">{{'Cancel' | translate}}</button>
+        <button class="custom-btn btn-secondary px-5" (click)="openModal(cancelmodal)">{{'Close' | translate}}</button>
         <button class="custom-btn btn-primary px-5" (click)="textArea()"
           [disabled]='!personal.valid || this.selected_questions.length<36'>{{'Save' | translate}}</button>
       </div>
@@ -116,7 +116,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to close?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="closeModal()">{{'No' | translate}}</button>
@@ -249,7 +249,7 @@
       </div>
 
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary" (click)="reset(confirmpopup);modal.dismiss()">
+        <button type="reset" class="custom-btn btn-secondary" (click)="reset(confirmpopup)">
           {{'Close' | translate}}</button>
         <button type="submit" class="custom-btn btn-primary"
           [disabled]="acceptForm.invalid || issubmitdiable || !buttondisable">
@@ -266,7 +266,7 @@
       <p class="confirmation-text">{{'Are you sure you want to close?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="closeModal()">{{'No' | translate}}</button>
+      <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
       <button type="button" class="custom-btn btn-primary" (click)="closeModal()">
         {{'Yes' | translate}}</button>
     </div>

@@ -114,7 +114,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };
@@ -141,7 +141,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
         this.teamdetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           };
@@ -279,14 +279,12 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
       employeeName: 'EMPLOYEE NAME',
       department: 'DEPARTMENT',
       teamManagerName: 'TEAM MANAGER',
-      shift: 'SHIFT',
       location: 'LOCATION',
       subLocation: 'SUB LOCATION',
+      shift: 'SHIFT',
+      monthName: 'MONTH',
       leaveType: 'LEAVE TYPE',
-      startDate: 'YEAR',
-      entitled: 'ENTITLED',
-      availed: 'AVAILED',
-      balanced: 'BALANCED'
+      availed: 'LEAVES AVAILED',
     };
 
     // Define new sequence
@@ -298,11 +296,9 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
       'LOCATION',
       'SUB LOCATION',
       'SHIFT',
+      'MONTH',
       'LEAVE TYPE',
-      'YEAR',
-      'ENTITLED',
-      'AVAILED',
-      'BALANCED'
+      'LEAVES AVAILED',
     ];
 
     // Modify data with renamed headers and new sequence
@@ -367,7 +363,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
 
     // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Yearly Summary Report');
+    XLSX.utils.book_append_sheet(wb, ws, 'Leave Summary Report');
     XLSX.writeFile(wb, 'Leave_Summary_Report.xlsx');
     this.spinnerLoader2= false;
   }

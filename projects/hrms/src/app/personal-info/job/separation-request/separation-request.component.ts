@@ -18,7 +18,8 @@ import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-separation-request',
-  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, 
+    DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './separation-request.component.html',
   styleUrl: './separation-request.component.scss'
 })
@@ -74,7 +75,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to open the modal
   openModal(content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop : 'static'});
   }
 
   removeSection(index: number) {
@@ -237,7 +238,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to open the modal for the comments
   approverCommentsFunction(Value: any, content: any) {
-    this.modalService.open(content, { centered: true , size:'xl'});
+    this.modalService.open(content, { centered: true , size:'xl', backdrop:'static'});
     this.appover_comments = Value.map((ele: any) => {
       const parsedMetaData = JSON.parse(ele.metaData);
       return {
@@ -263,8 +264,23 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   earlyReleivingdata(data: any, content: any) {
     this.modalService.open(content, { centered: true });
     this.postEarlyRelievingRequest = data;
+    console.log(this.postEarlyRelievingRequest.appliedDate);
   }
 
+  get formattedAppliedDate(): string {
+    const date = this.postEarlyRelievingRequest?.appliedDate;
+    console.log(date);
+    const dt = this.formatDate(date)
+    console.log(dt);
+    return dt;
+  }
+
+  closepopup(content:any){
+    this.modalService.open(content,{centered: true,backdrop: 'static'})
+  }
+  popupclose(){
+    this.modalService.dismissAll();
+  }
   //function to recall the request
   postRecallRequest() {
     this.isLoading = true;

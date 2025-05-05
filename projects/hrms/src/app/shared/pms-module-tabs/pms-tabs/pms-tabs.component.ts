@@ -12,9 +12,9 @@ import { TabsModule } from 'primeng/tabs';
 
 export class PmsTabsComponent {
   navTabs: any[] = [
-    { label: 'Review Cycle', link: '/pms/review-cycle' },
-    { label: 'Review Cycle Employee Lists', link: '/pms/apprisal' },
+    { label: 'Review Cycle List', link: '/pms/review-cycle' },
+    { label: 'Review Cycle Employee List', link: '/pms/apprisal' },
     { label: 'My Performance Review', link: '/pms/myPerformance' },
-    { label: 'Team Performance Review', link: '/pms/team-performance' },
+    { label: 'My Team Performance Review', link: '/pms/team-performance' },
   ];
 }

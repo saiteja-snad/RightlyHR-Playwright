@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -12,14 +11,13 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
-
-
 @Component({
   selector: 'app-asset-vendor',
   imports: [CommonModule, ReactiveFormsModule, TranslateModule, NoDataFoundComponent],
   templateUrl: './asset-vendor.component.html',
   styleUrl: './asset-vendor.component.scss'
 })
+
 export class AssetVendorComponent {
   assetForm!: FormGroup;
   assetverderupdataform!: FormGroup;
@@ -37,38 +35,37 @@ export class AssetVendorComponent {
     private http: HttpService,
     public formValidation: FormValidationService,
     public rbac: RbacService,
-    
   ) { }
+
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getvendor()
     this.initialform()
     this.initialvedorupdateform()
-  
   }
-
 
   initialform() {
     this.assetForm = this.fb.group({
-      phonenumber: [null, [Validators.required, Validators.maxLength(10),Validators.minLength(10)]],
+      phonenumber: [null, [Validators.required, Validators.maxLength(10), Validators.minLength(10)]],
       vendordetailes: [null, [Validators.required, Validators.maxLength(50)]],
-      email: [null, [Validators.required, Validators.email, Validators.maxLength(30),this.customEmailValidator()]],
+      email: [null, [Validators.required, Validators.email, Validators.maxLength(30), this.customEmailValidator()]],
       address: [null, [Validators.required, Validators.maxLength(50)]],
-      secondaryphonenumber: [null, [ Validators.maxLength(10),Validators.minLength(10)]],
+      secondaryphonenumber: [null, [Validators.maxLength(10), Validators.minLength(10)]],
     }
     )
   }
 
   initialvedorupdateform() {
     this.assetverderupdataform = this.fb.group({
-      phonenumber: [null, [Validators.required, Validators.maxLength(10),Validators.minLength(10) ]],
+      phonenumber: [null, [Validators.required, Validators.maxLength(10), Validators.minLength(10)]],
       vendordetailes: [null, [Validators.required, Validators.maxLength(50)]],
-      email: [null, [Validators.required, Validators.email, Validators.maxLength(30),this.customEmailValidator()]],
+      email: [null, [Validators.required, Validators.email, Validators.maxLength(30), this.customEmailValidator()]],
       address: [null, [Validators.required, Validators.maxLength(50)]],
-      secondaryphonenumber: [null, [ Validators.maxLength(10),Validators.minLength(10)]],
+      secondaryphonenumber: [null, [Validators.maxLength(10), Validators.minLength(10)]],
     }
     )
   }
+
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -77,7 +74,6 @@ export class AssetVendorComponent {
     if (assetForm.valid) {
       // Construct the payload for the API request
       const payload = {
-
         name: assetForm.value.vendordetailes,
         contactnumber: assetForm.value.phonenumber,
         emailaddress: assetForm.value.email,
@@ -89,20 +85,14 @@ export class AssetVendorComponent {
         status: "Active",
         meta: 'Additional info'
       };
-
-      this.http.postdata('AssetVendor', payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
+      this.http.postdata('AssetVendor', payload).pipe(takeUntil(this.destroy$)).subscribe({
           next: (res: any) => {
-            console.log("Asset Vendor added:", res);
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Vendor Details added Successfully ');
             this.getvendor()
             this.assetForm.reset()
           },
           error: (error) => {
-            console.error("Error adding Asset Vendor:", error);
-
             this.modalService.dismissAll();
             if(error.status!==500){
               this.conformationPopup.openErrorModal(error.error?.message);
@@ -110,14 +100,13 @@ export class AssetVendorComponent {
             else{
               this.conformationPopup.openErrorModal("There was a problem on our side. Please try again later, or contact the administrator if the issue persists.")
             }
-            //this.dataFailureMsg(error.error?.Message || 'Error occurred while adding asset vendor.',)
-           
           }
         });
     } else {
       console.log("Asset Form is invalid.");
     }
   }
+
   customEmailValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const email = control.value;
@@ -127,23 +116,20 @@ export class AssetVendorComponent {
       return null;
     }
   }
+
   getvendor() {
-    this.http.getData('AssetVendor')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.vendor.next(res)
-        },
-        error: (errormessage) => {
-          console.log(errormessage);
-        }
-      });
+    this.http.getData('AssetVendor').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        this.vendor.next(res)
+      },
+      error: (errormessage) => {
+        console.log(errormessage);
+      }
+    });
   }
 
-  
   viewdata(data: any) {
-    this.updatevedorid = data.id
-    console.log(data)
+    this.updatevedorid = data.id;
     this.assetverderupdataform.patchValue({
       phonenumber: data.contactnumber,
       vendordetailes: data.name,
@@ -151,12 +137,10 @@ export class AssetVendorComponent {
       address: data.address,
       secondaryphonenumber:data.secondaryContactNumber
     })
-
   }
 
   updateinactivevendor(assetverderupdataform: FormGroup) {
     if (assetverderupdataform.valid) {
-
       const payload = {
         id: this.selectedAsset.id,
         name: this.selectedAsset.name,
@@ -169,7 +153,6 @@ export class AssetVendorComponent {
         createdBy: this.empinfo.employeeId,
         meta: 'Additional info'
       };
-
       this.http.putData(`AssetVendor/${this.updatevedorid}`, payload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -201,15 +184,12 @@ export class AssetVendorComponent {
         createdBy: this.empinfo.employeeId,
         meta: 'Additional info'
       };
-
       this.http.putData(`AssetVendor/${this.updatevedorid}`, payload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
-            console.log("Asset Vendor added:", res);
-
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal(' Vendor Activated Successfully ');
+            this.conformationPopup.openSuccessModal('Vendor Activated Successfully ');
             this.getvendor()
           },
           error: (error) => {
@@ -224,6 +204,7 @@ export class AssetVendorComponent {
       console.log("Asset Form is invalid.");
     }
   }
+
   updatevendor(assetverderupdataform: FormGroup) {
     if (assetverderupdataform.valid) {
       const payload = {
@@ -239,7 +220,6 @@ export class AssetVendorComponent {
         createdBy: this.empinfo.employeeId,
         meta: 'Additional info'
       };
-
       this.http.putData(`AssetVendor/${this.updatevedorid}`, payload)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -255,11 +235,8 @@ export class AssetVendorComponent {
     } else {
       console.log("Asset Form is invalid.");
     }
-
-
   }
 
- 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

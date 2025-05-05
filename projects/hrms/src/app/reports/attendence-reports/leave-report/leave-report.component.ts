@@ -121,7 +121,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };
@@ -147,7 +147,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
         this.teamdetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           };
@@ -270,14 +270,15 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       employeeName: 'EMPLOYEE NAME',
       department: 'DEPARTMENT',
       teamManagerName: 'TEAM MANAGER',
-      shift: 'SHIFT',
       location: 'LOCATION',
-      subLocation: 'SUB LOCATION',
+      sublocation: 'SUB LOCATION',
+      shift: 'SHIFT',
       leaveType: 'LEAVE TYPE',
-      startDate: 'YEAR',
-      entitled: 'ENTITLED',
-      availed: 'AVAILED',
-      balanced: 'BALANCED'
+      startdate: 'LEAVE START DATE',
+      enddate: 'LEAVE END DATE',
+      availed: 'AVAILED', 
+      appliedDate: 'APPLIED DATE',
+      days: 'DAYS'
     };
 
     // Define new sequence
@@ -290,10 +291,11 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       'SUB LOCATION',
       'SHIFT',
       'LEAVE TYPE',
-      'YEAR',
-      'ENTITLED',
+      'LEAVE START DATE',
+      'LEAVE END DATE',
       'AVAILED',
-      'BALANCED'
+      'APPLIED DATE',
+      'DAYS'
     ];
 
     // Modify data with renamed headers and new sequence
@@ -358,12 +360,11 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
 
     // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Yearly Summary Report');
+    XLSX.utils.book_append_sheet(wb, ws, 'Leave Report');
     XLSX.writeFile(wb, 'Leave_Report.xlsx');
 
     this.spinnerLoader2= false;
   }
-
 
   getColumnWidth(data: any[], columnName: string): number {
     // Find the maximum width of data in the column

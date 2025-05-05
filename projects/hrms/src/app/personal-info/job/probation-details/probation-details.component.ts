@@ -107,7 +107,7 @@ export class ProbationDetailsComponent implements OnInit {
       },
       error: (reason: any) => {
         console.log(reason);
-        
+        this.modalService.dismissAll();
         this.openModalService.openErrorModal(reason.error.message);
       }
     })

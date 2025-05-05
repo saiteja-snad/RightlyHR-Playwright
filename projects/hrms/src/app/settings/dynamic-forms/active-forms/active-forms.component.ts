@@ -13,7 +13,6 @@ import { SearchFormPipe } from "../search-form.pipe";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-
 @Component({
   selector: 'app-active-forms',
   imports: [
@@ -24,10 +23,11 @@ import { RbacService } from '../../../services/rbac.service';
     FormsModule,
     SearchFormPipe,
     DataLoaderContentComponent
-],
+  ],
   templateUrl: './active-forms.component.html',
   styleUrl: './active-forms.component.scss',
 })
+
 export class ActiveFormsComponent implements OnInit, OnDestroy {
   dynamicForm = {} as IDynamicForm;
   updateDetails = {} as IDynamicForm;
@@ -49,7 +49,6 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
     private router: Router,
     private modalService: NgbModal,
     config: NgbModalConfig,
-    private route: ActivatedRoute,
     private sharedModalService: OpenModalService,
     public rbac: RbacService
   ) {
@@ -81,41 +80,37 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
   openModal(content: any, options: any = { size: 'xl', centered: true }) {
     this.modalService.open(content, options);
   }
+
   openmodal(content: any) {
     this.modalService.open(content, { centered: true });
   }
+
   getAllFormDetails() {
     this.loader = true;
-    this.http
-      .getData('Form/getAllFormDetails')
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.allFormsDetails = (data as IAllFormsData[]).filter(
-            (form) => form.status === 'active'
-          );
-          this.loader = false;
-        },error: (err) => {
-          this.allFormsDetails = [];
-          this.loader = false;
-        },
-      });
+    this.http.getData('Form/getAllFormDetails').pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.allFormsDetails = (data as IAllFormsData[]).filter(
+          (form) => form.status === 'active'
+        );
+        this.loader = false;
+      }, error: (err) => {
+        this.allFormsDetails = [];
+        this.loader = false;
+      },
+    });
   }
+
   deleteFormDestails(formId: number) {
-    this.http
-      .getData(`Form/getFormDetailsByFormId/${formId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.assignValuestoDeleteForm(data);
-          this.onDelete();
-        },
-        error: (err) => console.error(err),
-        complete:() =>{
-          
-        }
-      });
+    this.http.getData(`Form/getFormDetailsByFormId/${formId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.assignValuestoDeleteForm(data);
+        this.onDelete();
+      },
+      error: (err) => console.error(err),
+      complete: () => { }
+    });
   }
+
   assignValuestoDeleteForm(data: any) {
     this.updateForm.patchValue({
       formHeader: data.formName,
@@ -131,16 +126,12 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
       sectionId: data.sectionId,
       formHeaderId: data.formHeaderId,
     });
-
     const sectionsArray = this.updateForm.get('sections') as FormArray;
     sectionsArray.clear(); // Clear existing sections
-
     data.sectionDetails.forEach((section: any, sectionIndex: number) => {
       const questionsArray = this.fb.array<FormGroup>([]);
-
       section.questions.forEach((question: any) => {
         const optionsArray = this.fb.array<FormGroup>([]);
-
         if (Array.isArray(question.options)) {
           question.options.forEach((option: any) => {
             if (typeof option === 'object') {
@@ -155,7 +146,6 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
                 updatedBy: [this.updateDetails.employeeId],
                 meta: [option.meta],
               });
-
               optionsArray.push(optionGroup);
             }
           });
@@ -192,17 +182,11 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
         } else {
           questionGroup.get('type')?.clearValidators();
         }
-
         questionGroup.get('type')?.updateValueAndValidity(); // Update validity after setting/clearing validators
-
         questionsArray.push(questionGroup);
       });
-
-      const ratingScaleType =
-        section.sectionType === 'rating' && questionsArray.length > 0
-          ? questionsArray.at(0).get('type')?.value
-          : null;
-
+      const ratingScaleType = section.sectionType === 'rating' && questionsArray.length > 0 ? 
+      questionsArray.at(0).get('type')?.value : null;
       const sectionGroup = this.fb.group({
         id: [section.id],
         order: [section.order],
@@ -216,15 +200,11 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
         questions: questionsArray,
         createdBy: section.createdBy || this.updateDetails.createdBy,
       });
-
       if (section.sectionType === 'normal') {
-        sectionGroup
-          .get('ratingScaleType')
-          ?.setValidators([Validators.required]);
+        sectionGroup.get('ratingScaleType')?.setValidators([Validators.required]);
       } else {
         sectionGroup.get('ratingScaleType')?.clearValidators();
       }
-
       sectionsArray.push(sectionGroup);
     });
   }
@@ -270,22 +250,18 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
                 updatedBy: this.updateDetails.employeeId,
                 meta: '',
               };
-
               // Conditionally add 'optionId' if present
               if (option.optionId) {
                 optionObj.optionId = option.optionId;
               }
-
               return optionObj;
             }),
           };
-
           // Conditionally add 'id' to question object if present
           if (question.id) {
             questionObj.id = question.id;
             questionObj.createdBy = question.createdBy;
           }
-
           return questionObj;
         }),
         sectionItems: [
@@ -298,7 +274,6 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
           },
         ],
       };
-
       // Conditionally add 'id' to section object if present
       if (section.id) {
         sectionObj.id = section.id;
@@ -307,10 +282,10 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
         sectionObj.sectionItems[0].sectionHeaderId = section.id;
         sectionObj.sectionItems[0].createdBy = section.createdBy;
       }
-
       return sectionObj;
     });
   }
+
   onDelete() {
     this.updateDetails.formName = this.updateForm.value.formHeader;
     this.updateDetails.formId = this.updateForm.value.formId;
@@ -326,22 +301,18 @@ export class ActiveFormsComponent implements OnInit, OnDestroy {
     this.updateDetails.sectionDetails = this.convertUpdateOptionsArray(
       this.updateForm.value.sections
     );
-
-    this.http
-      .postData(`Form/SubmitFormDetails`, this.updateDetails, {
-        responseType: 'text',
-      })
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          this.sharedModalService.openSuccessModal('Form inactivated successfully');
-        },
-        error: (error) => {
-          console.log(error);
-        },complete: () => {
-          this.getAllFormDetails();
-        },
-      });
+    this.http.postData(`Form/SubmitFormDetails`, this.updateDetails, {
+      responseType: 'text',
+    }).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.sharedModalService.openSuccessModal('Form inactivated successfully');
+      },
+      error: (error) => {
+        console.log(error);
+      }, complete: () => {
+        this.getAllFormDetails();
+      },
+    });
   }
 
   ngOnDestroy(): void {

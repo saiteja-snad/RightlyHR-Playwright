@@ -164,7 +164,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };
@@ -191,7 +191,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
             this.teamdetails = data.map((employee: any) => {
               return {
                 ...employee,
-                fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                   }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                   }${employee.lastName}`,
               };
@@ -248,7 +248,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
 
     // Manager full name
     if (formValue.manager) {
-      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
+      request.Team_Manager = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
         .filter(Boolean)
         .join(' ');
     }
@@ -295,7 +295,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
       teamManagerName: 'TEAM MANAGER',
       shift: 'SHIFT',
       location: 'LOCATION',
-      subLocation: 'SUB LOCATION',
+      sublocation: 'SUB LOCATION',
       leaveType: 'LEAVE TYPE',
       startDate: 'START DATE',
       endDate: 'END DATE',

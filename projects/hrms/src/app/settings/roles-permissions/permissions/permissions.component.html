@@ -1628,6 +1628,49 @@
 
 
 
+            <!-- Asset Allocation Tabs -->
+            <!-- Asset Allocation Tabs -->
+            <tr>
+                <th colspan="5" class="custom-header">Asset Allocation</th>
+            </tr>
+            <ng-container *ngFor="let per of permissions">
+                <tr class="text-align-center" *ngIf="per.fields === 'Asset Allocation - Create'  || per.fields === 'Asset Allocation - All'
+                || per.fields === 'Asset Allocation - Available'  || per.fields === 'Asset Allocation - Available'
+                || per.fields === 'Asset Allocation - Under Maintenance'  || per.fields === 'Asset Allocation - Inactive' 
+                 ">
+                    <td class="text-align-center">{{ per.fields }}</td>
+
+                    <!-- View -->
+                    <td>
+                        <input type="checkbox" [(ngModel)]="per.View" [name]="per.fields + '.view'"
+                            (change)="onCheckboxChange(per, 'View')"
+                            [disabled]="!roleToFilter?.id || isFieldDisabled(per.fields, 'View')">
+                    </td>
+
+                    <!-- Update -->
+                    <td>
+                        <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'"
+                            (change)="onCheckboxChange(per, 'Update')"
+                            [disabled]="!roleToFilter?.id || isFieldDisabled(per.fields, 'Update')">
+                    </td>
+
+                    <!-- Create -->
+                    <td>
+                        <input type="checkbox" [(ngModel)]="per.Create" [name]="per.fields + '.create'"
+                            [disabled]="true || isFieldDisabled(per.fields, 'Create')">
+                    </td>
+
+                    <!-- Delete -->
+                    <td>
+                        <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'"
+                            [disabled]="true || isFieldDisabled(per.fields, 'Delete')">
+                    </td>
+                </tr>
+            </ng-container>
+  
+
+
+
 
 
                 </tbody>

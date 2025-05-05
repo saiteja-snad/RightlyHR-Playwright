@@ -529,4 +529,13 @@ export const permissionsData = [
     { fields: 'Regularization Report - Generate', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Regularization Report - Export', View: false, Update: false, Create: false, Delete: false },
 
+
+    //Asset Allocation Sub Tabs Section
+    { fields: 'Asset Allocation - Create', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Allocation - All', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Allocation - Available', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Allocation - Allocated', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Allocation - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Allocation - Inactive', View: false, Update: false, Create: false, Delete: false }, 
+
 ];

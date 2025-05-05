@@ -161,7 +161,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 isDisabled(field: string, action: string): boolean {
   const viewOnlyFields = ['Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Load Entitlements Tab', 'Attendance Eligibility Criteria Tab', 'Comp Off Entitlement Tab',
     'WFH Entitlement Tab', 'Permission Elgibility Tab', 'Attendance Regularization Eligibility Tab', 'Shifts Published Tab', 'Policies Published Tab', 'Holidays Published Tab',
-    'Weekends Published Tab', 'Expense Allowed Days', 'DST Published Tab', 'Leave Category Published Tab','Active Forms','Inactive Forms','Draft Forms'
+    'Weekends Published Tab', 'Expense Allowed Days', 'DST Published Tab', 'Leave Category Published Tab','Active Forms','Inactive Forms','Draft Forms','Asset Allocation','Asset Allocation - Inactive'
   ];
   return viewOnlyFields.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
 }
@@ -257,6 +257,22 @@ isActionEnabled(field: string, action: string): boolean {
       }
     }
     return claims;
+  }
+
+  isFieldDisabled(field: string, permission: string): boolean {
+    if (field === 'Asset Allocation - Create') {
+      return permission !== 'View'; // Only 'View' is enabled
+    }
+  
+    if (['Asset Allocation - All', 'Asset Allocation - Available'].includes(field)) {
+      return permission === 'Create'; // Disable only 'Create'
+    }
+  
+    if (['Asset Allocation - Under Maintenance', 'Asset Allocation - Inactive'].includes(field)) {
+      return !['View', 'Update'].includes(permission); // Enable only 'View' and 'Update'
+    }
+  
+    return false; // Default: all enabled
   }
 
   ngOnDestroy(): void {

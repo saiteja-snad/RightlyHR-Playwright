@@ -91,7 +91,7 @@
                         {{ 'Document Name' | translate }} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="PreOnboardDocuments"
-                        placeholder="Enter document name" maxlength="101" (keydown)="formValidations.restrictInput($event); 
+                        placeholder="Please enter document name" maxlength="101" (keydown)="formValidations.restrictInput($event); 
                         formValidations.blockNonAlphabets($event)" />
                     <!-- <div class="textarea-count-text">{{AddForm.get('PreOnboardDocuments')?.value?.length || 0}}/100 -->
                     <!-- </div> -->

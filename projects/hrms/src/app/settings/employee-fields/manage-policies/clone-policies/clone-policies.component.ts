@@ -62,7 +62,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
         this.fb.group({
           policyName : [row.policyName,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
           policyFile : [row.policyAttachment],
-          policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
+          policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z0-9][a-zA-Z0-9\s]*$')]],
           policyNewFile: ['']
          
         })
@@ -127,7 +127,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     const policyGroup = this.fb.group({
       policyName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
       policyFile: [''],
-      policyDescription: ['',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
+      policyDescription: ['',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z0-9][a-zA-Z0-9\s]*$')]],
       policyNewFile: ['', Validators.required]
     });
     this.policies.push(policyGroup);

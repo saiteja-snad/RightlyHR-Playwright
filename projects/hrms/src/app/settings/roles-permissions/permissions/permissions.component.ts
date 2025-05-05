@@ -268,7 +268,7 @@ isActionEnabled(field: string, action: string): boolean {
       return permission === 'Create'; // Disable only 'Create'
     }
   
-    if (['Asset Allocation - Under Maintenance', 'Asset Allocation - Inactive'].includes(field)) {
+    if (['Asset Allocation - Under Maintenance', 'Asset Allocation - Inactive','Asset Allocation - Allocated'].includes(field)) {
       return !['View', 'Update'].includes(permission); // Enable only 'View' and 'Update'
     }
   

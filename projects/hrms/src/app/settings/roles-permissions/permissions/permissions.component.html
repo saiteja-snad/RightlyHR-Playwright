@@ -1635,7 +1635,7 @@
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center" *ngIf="per.fields === 'Asset Allocation - Create'  || per.fields === 'Asset Allocation - All'
-                    || per.fields === 'Asset Allocation - Available'  || per.fields === 'Asset Allocation - Available'
+                    || per.fields === 'Asset Allocation - Available'  || per.fields === 'Asset Allocation - Available' || per.fields === 'Asset Allocation - Allocated'
                     || per.fields === 'Asset Allocation - Under Maintenance'  || per.fields === 'Asset Allocation - Inactive' 
                     ">
                         <td class="text-align-center">{{ per.fields }}</td>

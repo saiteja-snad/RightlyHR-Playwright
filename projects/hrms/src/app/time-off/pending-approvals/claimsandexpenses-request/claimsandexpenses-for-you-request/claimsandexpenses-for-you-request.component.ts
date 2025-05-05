@@ -87,11 +87,11 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
 
   openModalview(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
 
   onRowsChange() {

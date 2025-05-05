@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -38,6 +38,7 @@ export class ClaimsandexpensesForYouRequestComponent
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
+    subscription!: Subscription;
   destroy$: Subject<boolean> = new Subject<boolean>();
   expenseheaderpending = [] as ExpenseApprovalResponse[];
   approverComments = [] as any[];
@@ -86,7 +87,11 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+
+  openModalview(content: any) {
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
   onRowsChange() {
@@ -147,6 +152,7 @@ export class ClaimsandexpensesForYouRequestComponent
       const requestBody = {
         status: 'Rejected',
         comments: formData.comments,
+        approvedBy: this.empinfo.employeeId.toString(),
       };
       this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -197,7 +203,7 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', size: 'lg' });
+    this.modalService.open(commentspopup, { centered: true, backdrop: 'static',  });
     this.approverComments = value;
   }
 
@@ -252,26 +258,45 @@ export class ClaimsandexpensesForYouRequestComponent
     });
   }
 
+
+
+
+ 
   onViewAttachement(url: any) {
-    if (url?.endsWith('jpg') || url?.endsWith('png') || url?.endsWith('jpeg')) {
-      this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          const blob = new Blob([res['body']], { type: 'image/png' });
-          const objectURL = URL.createObjectURL(blob);
-          this.expenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          this.toggleViewModal();
-        },
-        error: (reason) => console.log(reason),
-      });
+    const lowerUrl = url?.toLowerCase();
+  
+    if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
+      this.subscription = this.http
+        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
+        .subscribe({
+          next: (res: any) => {
+            const blob = new Blob([res['body']], { type: 'image/png' });
+            const objectURL = URL.createObjectURL(blob);
+            this.expenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            this.expenseViewURL = null;
+            this.toggleViewModal();
+          },
+          error: (err) => console.error('Error downloading image:', err),
+        });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.expenseImageUrl = null;
+      this.expenseViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModal();
     } else {
+      // fallback for other types if needed
+      this.expenseImageUrl = null;
       this.expenseViewURL = `${environment.viewUrl}${url}`;
       this.toggleViewModal();
     }
   }
-
   toggleViewModal() {
     this.modalService.dismissAll();
-    this.openModal(this.viewattamchment);
+    this.openModal(this.viewattamchment)
+  }
+  isImageFile(url: any): boolean {
+    if (!url) return false;
+    const lowerUrl = url.toLowerCase();
+    return lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png');
   }
 
   ngOnDestroy(): void {

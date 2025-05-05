@@ -85,7 +85,7 @@
                 {{'Upload New Policy Attachment' | translate}}
               </label>
               <div class="d-flex align-items-center gap-2">
-                <input type="file" (change)="onPolicyFileChange($event, i)" class="form-control custom-input w-100" />
+                <input type="file" (change)="onPolicyFileChange($event, i)" class="form-control custom-input w-100" accept=".pdf,image/*"/>
                 <div [ngbPopover]="oldPopContent" triggers="click" placement="top">
                   <i class="bi bi-info-circle-fill cursor"></i>
                 </div>

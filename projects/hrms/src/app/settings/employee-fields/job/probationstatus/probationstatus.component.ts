@@ -69,12 +69,12 @@ export class ProbationstatusComponent {
       next: () => {
         this.getprobitiontype();
         this.conformationPopup.openSuccessModal('Probation Status added successfully');
-        // this.resetForm();
+        this.resetForm();
       },
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        // this.resetForm();
+        this.resetForm();
       }
     });
   }

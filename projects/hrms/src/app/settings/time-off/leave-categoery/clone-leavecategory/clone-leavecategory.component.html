@@ -31,9 +31,9 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="Location">Location<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" optionValue="id"
+            <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" optionValue=""
               placeholder="Select location" formControlName="locationID" class="custom-select w-100"
-              (onChange)="OnClickLocation($event.value)">
+              (onChange)="getSubLocationByid($event.value)">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('locationID')?.invalid && 
@@ -47,8 +47,8 @@
           <label class="form-label custom-label mb-2" for="subLocation">Sub Location<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue="id"
-              placeholder="Select sub-location" (onChange)="subloactionid($event.value)" formControlName="subLocation"
+            <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName" optionValue=""
+              placeholder="Select sub-location" (onChange)="getShiftBYid($event.value)" formControlName="subLocation"
               class="custom-select w-100">
             </p-select>
           </div>

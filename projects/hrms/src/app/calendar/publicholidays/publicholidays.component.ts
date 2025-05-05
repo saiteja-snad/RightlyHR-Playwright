@@ -32,18 +32,16 @@ export class PublicholidaysComponent {
   constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
-    this.currentYear = new Date().getFullYear();
-    this.selectedYear = this.currentYear; // Move this up
-    // Populate years list
-    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
-      this.years.push(i);
-    }
-    // Now initialize the form with the selectedYear
-    this.holidaysform = new FormGroup({
-      selectedYear: new FormControl(this.selectedYear)
-    });
+  
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.getjobDetails();
+    
+    this.http.selectedYear$.subscribe((year) => {
+      if (year) {
+        this.selectedYear = year;
+        this.getHoliday(this.jobshiftdetails);
+      }
+    });
   }
 
   getjobDetails() {
@@ -56,28 +54,24 @@ export class PublicholidaysComponent {
     });
   }
 
-  onYearChange() {
-    this.selectedYear = this.holidaysform.get('selectedYear')?.value;
-    this.getHoliday(this.jobshiftdetails);
-  }
 
   getHoliday(jobshiftdetails: any) {
     this.orgHolidayItemsArrayTrue = [];
     this.orgHolidayItemsArrayFalse = [];
     this.length = 0;
     this.optional = 0;
-    const selectedYearFromForm = this.holidaysform.get('selectedYear')?.value;
+   
     let holiday = {
       locationId: jobshiftdetails[0].locationid,
       subLocationId: jobshiftdetails[0].sublocationid,
       shiftId: jobshiftdetails[0].shiftId,
-      Applicableyear: selectedYearFromForm
+      Applicableyear:   this.selectedYear 
     };
     this.subscription = this.http.getDataWithQueryParams(`orgHolidays/getHolidaysbylocation`, holiday).subscribe({
       next: (response: any) => {
         this.Policies = response;
-        this.orgHolidayItemsArray = response[0].orgHolidaysItems;
-        this.orgHolidayItemsArray.forEach(item => {
+        this.orgHolidayItemsArray = response[0]?.orgHolidaysItems;
+        this.orgHolidayItemsArray?.forEach(item => {
           if (item.isOptional) {
             this.orgHolidayItemsArrayTrue.push(item);
             this.length = this.orgHolidayItemsArrayTrue.length;

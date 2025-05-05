@@ -103,7 +103,7 @@
                 <a type="button" class="me-2 dowload-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
                   <i class="bi bi-download me-2"></i>Download
                 </a>
-                <a type="button" class="dowload-text  text-nowrap" (click)="onViewAttachement(item?.attachment_url)">
+                <a type="button" class="dowload-text  text-nowrap"  *ngIf="isImageFile(item?.attachment_url)"  (click)="onViewAttachement(item?.attachment_url)">
                   <i class="bi bi-paperclip"></i>View
                 </a>
               </div>
@@ -159,7 +159,7 @@
           <div class="card  p-3 mb-3" >
             <p> <b>Commented by:</b> {{ comment.addedName }} </p>
             <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
-            <p> <b>Rejected Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+            <p> <b> Date:</b> {{ comment.addedDate | date: 'short' }} </p>
             <p><b>Status:</b> {{ comment.action }}</p>
             <p> <b>Comments:</b> {{ comment.comments }} </p>
           </div>

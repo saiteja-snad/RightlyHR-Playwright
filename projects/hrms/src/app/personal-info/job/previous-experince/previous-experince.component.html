@@ -175,8 +175,7 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="previousContactName" class="form-label custom-label mb-2">Contact Name <span
-                                class="text-danger">*</span></label>
+                        <label for="previousContactName" class="form-label custom-label mb-2">Contact Name</label>
                         <input type="text" class="form-control custom-input" formControlName="previousContactName"
                             placeholder="Please enter contact name" (keypress)="restrictInput($event)" />
                         <div *ngIf="employeeExperienceForm.get('previousContactName')?.invalid && employeeExperienceForm.get('previousContactName')?.touched"
@@ -188,8 +187,7 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="previousContactNumber" class="form-label custom-label mb-2">Contact Number <span
-                                class="text-danger">*</span></label>
+                        <label for="previousContactNumber" class="form-label custom-label mb-2">Contact Number</label>
                         <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
                             [maxlength]="10" [minlength]="10" (keypress)="restrictInputaccteponlynumber($event)"
                             placeholder="Contact number" />
@@ -201,12 +199,13 @@
                                 Contact Number must be 10 digits</div>
                             <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['maxlength']">
                                 Contact Number must be 10 digits</div>
+                                <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['pattern']">
+                                    Contact Number can be all zeroes </div>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email <span
-                                class="text-danger">*</span></label>
+                        <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email</label>
                         <input type="text" class="form-control custom-input" formControlName="previousContactEmail"
                             placeholder="Contact Email" />
                         <div *ngIf="employeeExperienceForm.get('previousContactEmail')?.invalid && employeeExperienceForm.get('previousContactEmail')?.touched"
@@ -367,8 +366,7 @@
 
                     <div class="row mb-3">
                         <div class="col-md-6 mb-3">
-                            <label for="previousContactName" class="form-label custom-label mb-2">Contact Name <span
-                                    class="text-danger">*</span></label>
+                            <label for="previousContactName" class="form-label custom-label mb-2">Contact Name </label>
                             <input type="text" class="form-control custom-input"
                                 formControlName="previousContactNameupdate" placeholder="Please enter contact name"
                                 (keypress)="restrictInput($event)" />
@@ -381,8 +379,7 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="previousContactNumber" class="form-label custom-label mb-2">Contact Number <span
-                                    class="text-danger">*</span></label>
+                            <label for="previousContactNumber" class="form-label custom-label mb-2">Contact Number </label>
                             <input type="text" class="form-control custom-input"
                                 formControlName="previousContactNumberupdate" [maxlength]="10" [minlength]="10"
                                 (keypress)="restrictInputaccteponlynumber($event)" placeholder="Contact number" />
@@ -397,12 +394,16 @@
                                 <div
                                     *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['maxlength']">
                                     Contact Number must be 10 digits</div>
+
+                                    <div
+                                    *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['pattern']">
+                                    Contact Number cannot be all zeroes</div>
+
                             </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email <span
-                                    class="text-danger">*</span></label>
+                            <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email</label>
                             <input type="text" class="form-control custom-input"
                                 formControlName="previousContactEmailupdate" placeholder="Contact Email" />
                             <div *ngIf="employeeExperienceupdateForm.get('previousContactEmailupdate')?.invalid && employeeExperienceupdateForm.get('previousContactEmailupdate')?.touched"

@@ -1609,3 +1609,8 @@ input[type=number]::-webkit-outer-spin-button {
     width: 70%;
     text-wrap: wrap;
  }
+
+ .modal-image{
+    width: inherit !important;
+    max-height: 60vh;
+}

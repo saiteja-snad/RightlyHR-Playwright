@@ -50,7 +50,7 @@
                 <label for="department" class="form-label custom-label custom-label mb-2"><b>{{ "Department" | translate }}</b>
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
-                    <p-multiSelect formControlName="departmentId" [options]="departmentDetails" optionLabel="departmentName"
+                    <p-multiSelect formControlName="departmentId" [options]="departmentDetails" optionLabel="departmentName" optionValue="departmentId"
                         placeholder="Search department" class="w-100">
                         <ng-template let-dept pTemplate="item">{{ dept.departmentName }}</ng-template>
                     </p-multiSelect>
@@ -70,7 +70,6 @@
                 </div>
             </div>
 
-    
             <!-- Location -->
             <div>
                 <label for="location" class="form-label custom-label custom-label mb-2"><b>{{ "Location" | translate }}</b>
@@ -476,7 +475,7 @@
                     <label for="" class="form-label custom-label">{{'Signature Authority Name' | translate}}
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetailsForAppraisal" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                        <p-select [options]="authorityDetailsForPromotion" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="false" formControlName="signaturename" placeholder="Please select signature authority name"
                             class="form-select custom-select">
                             <ng-template #selectedItem let-selectedOption> {{ selectedOption.firstName }} {{ selectedOption.middleName }}
@@ -628,14 +627,23 @@
                 <div class="mb-3">
                     <label for="" class="form-label custom-label">{{'Signature Authority Name' | translate}}
                         <span class="text-danger">*</span></label>
-                    <select type="date" class="form-control custom-input" formControlName="signaturename"
+                        <div class="custom-p-select-content">
+                            <p-select [options]="authorityDetailsForAppraisal" optionLabel="fullName" [filter]="true"
+                                class="form-select custom-select" filterBy="fullName" [showClear]="false" formControlName="signaturename"
+                                placeholder="Please select signature authority name">
+                                <ng-template #selectedItem let-selectedOption> {{ selectedOption.firstName }} {{ selectedOption.middleName }}
+                                    {{ selectedOption.lastName }}</ng-template>
+                                <ng-template let-item #item>{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</ng-template>
+                            </p-select>
+                        </div>
+                    <!-- <select type="date" class="form-control custom-input" formControlName="signaturename"
                         id="signaturename" name="signaturename" placeholder="Select Signature Authority Name"
                         onkeypress="return false">
                         <option [ngValue]="null" disabled selected>Please Select Signature Authority Name</option>
                         <option *ngFor="let item of authorityDetailsForAppraisal" [value]="item.employeeId">
                             {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}
                         </option>
-                    </select>
+                    </select> -->
                     <div *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')"
                         class="error-msg">Signature Authority Name is required
                     </div>
@@ -653,7 +661,7 @@
 <!-- Promotion letter Generation -->
 <ng-template #promationletter let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <form [formGroup]="Effectivedatefrom" (ngSubmit)="generatepromationLetters()">
+        <form [formGroup]="Effectivedatefrom" (ngSubmit)="generatePromotionLetters(Effectivedatefrom)">
             <div class="custom-poup-header-content popup-header-border">
                 <div>
                     <p class="popup-heading mb-0">{{'Generate Promotion Letter' | translate}}</p>
@@ -677,12 +685,16 @@
                 <div class="mb-3">
                     <label for="" class="form-label custom-label">{{'Signature Authority Name' | translate}}
                         <span class="text-danger">*</span></label>
-                    <select type="date" class="form-control custom-input" formControlName="signaturename" id="signaturename"
-                        name="signaturename" placeholder="Select Signature Authority Name" onkeypress="return false">
-                        <option [ngValue]="null" disabled selected>Please Select Signature Authority Name</option>
-                        <option *ngFor="let item of authorityDetailsForPromotion" [value]="item.employeeId">
-                            {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</option>
-                    </select>
+                    <div class="custom-p-select-content">
+                        <p-select [options]="authorityDetailsForPromotion" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                            [showClear]="false" formControlName="signaturename" placeholder="Please select signature authority name"
+                            class="form-select custom-select">
+                            <ng-template #selectedItem let-selectedOption> {{ selectedOption.firstName }} {{ selectedOption.middleName
+                                }}
+                                {{ selectedOption.lastName }}</ng-template>
+                            <ng-template let-item #item>{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</ng-template>
+                        </p-select>
+                    </div>
                     <div *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')"
                         class="error-msg">
                         Signature Authority Name is required

@@ -14,7 +14,7 @@
         </div>
 
         <!--input content-->
-        <form [formGroup]="onboardingForm" (ngSubmit)="onSubmit()">
+        <form autocomplete="off" [formGroup]="onboardingForm" (ngSubmit)="onSubmit()">
             <div class="row">
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="status" class="form-label custom-label mb-2">Status</label>

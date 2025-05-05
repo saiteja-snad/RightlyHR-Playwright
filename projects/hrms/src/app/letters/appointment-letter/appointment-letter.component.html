@@ -15,7 +15,7 @@
   <!--letter content-->
   <div class="main-letter-content gap-4 d-flex w-100">
     <div class="card letter-fields-content p-4">
-      <form [formGroup]="employeeForm" (ngSubmit)="onAppointmentLetterSubmit(employeeForm)">
+      <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="onAppointmentLetterSubmit(employeeForm)">
 
         <!-- Employee Name -->
         <div class="mb-3">

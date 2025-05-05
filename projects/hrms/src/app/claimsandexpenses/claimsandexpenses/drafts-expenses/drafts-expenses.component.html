@@ -78,7 +78,7 @@
         </div>
         
         <div class="custom-main-popup-content">
-            <form [formGroup]="newExpenseForm" (ngSubmit)="submitepxenses(newExpenseForm)">
+            <form autocomplete="off" [formGroup]="newExpenseForm" (ngSubmit)="submitepxenses(newExpenseForm)">
                 <div class="d-flex gap-3 mb-3">
                     <!-- Expense Type  -->
                     <div class="w-25">

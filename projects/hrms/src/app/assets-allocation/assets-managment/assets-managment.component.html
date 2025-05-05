@@ -12,7 +12,7 @@
 
 
   <div>
-    <form [formGroup]="locationfromdata">
+    <form autocomplete="off" [formGroup]="locationfromdata">
         <div class="row mb-3 ps-2 ">
             <div class="col-md-4 ">
                 <label for="location" class="form-label custom-label mb-2">Locations</label>
@@ -75,7 +75,7 @@
 
       <div class="custom-main-popup-content p-3">
 
-        <form [formGroup]="assetForm" (ngSubmit)="postassets(assetForm)">
+        <form autocomplete="off" [formGroup]="assetForm" (ngSubmit)="postassets(assetForm)">
 
           <div class="row ">
             <!-- Location Field -->

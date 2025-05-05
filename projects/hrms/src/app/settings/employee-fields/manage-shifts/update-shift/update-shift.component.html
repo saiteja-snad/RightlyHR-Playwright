@@ -7,7 +7,7 @@
     </div>
 
     <div class="custom-setting-right-content w-100 p-3">
-        <form [formGroup]="shiftForm" (ngSubmit)="updateshift(shiftForm)">
+        <form autocomplete="off" [formGroup]="shiftForm" (ngSubmit)="updateshift(shiftForm)">
             <div class="d-flex gap-3 mb-3">
                 <!-- Year -->
                 <div>

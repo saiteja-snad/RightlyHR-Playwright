@@ -80,9 +80,11 @@ export class RolesComponent implements OnInit, OnDestroy {
     };
     this.subscription = this.http.postdata("FusionRole", request).subscribe({
       next: (data: any) => {
+        this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Role added successfully');
       },
       error: (error: any) => {
+        this.modalService.dismissAll();
         this.conformationPopup.openErrorModal(error.error.Message? error.error.Message : 'Failed to add role');
       },
       complete: ()=>{
@@ -97,9 +99,11 @@ export class RolesComponent implements OnInit, OnDestroy {
       this.rolesDeletedata.name = this.updateForm.value.firstName,
         this.subscription = this.http.postdata(`FusionRole/Update`, this.rolesDeletedata).subscribe({
           next: (data: any) => {
+            this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Role updated successfully');
           },
           error: (error: any) => {
+            this.modalService.dismissAll();
             this.conformationPopup.openErrorModal(error.error.Message? error.error.Message : 'Failed to update role');
           },
           complete: ()=>{
@@ -138,9 +142,11 @@ export class RolesComponent implements OnInit, OnDestroy {
 
     this.subscription = this.http.postdata('FusionRole/Delete', deleteRequest).subscribe({
       next: () => {
+        this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Role deleted successfully');
       },
       error: (error: any) => {
+        this.modalService.dismissAll();
         this.conformationPopup.openErrorModal(error.error.Message? error.error.Message : 'Failed to delete the role');
       },
       complete:()=>{

@@ -35,7 +35,7 @@
                     <label for="" class="form-label custom-label">{{'Review Cycle Type' |translate}}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="ReviewCycleTypes" optionLabel="value" optionValue="value"
+                        <p-select [options]="ReviewCycleTypes" optionLabel="value" optionValue="value" 
                             placeholder="Please select review cycle type" formControlName="reviewCycleType"
                             class="form-select custom-select">
                         </p-select>
@@ -51,7 +51,7 @@
                             class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="departmentDetails"
-                            formControlName="departmentId" optionLabel="departmentName" optionValue="sno"
+                            formControlName="departmentId" optionLabel="departmentName" resetFilterOnHide="true" optionValue="sno"
                             placeholder="Please select department(s)" (onChange)="onDepartmentNameChange($event);" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('departmentId')?.touched && reviewCycleForm.get('departmentId')?.hasError('required')"
@@ -68,7 +68,7 @@
                             formControlName="subDepartmentId" optionValue="subdepartmentId" optionLabel="subdepartmentName"
                             placeholder="Please select team(s)" /> -->
                         <p-multiselect class="form-select custom-select" [options]="subDepartmentsDropdownValues"
-                            formControlName="subDepartmentId" optionValue="subdepartmentId"
+                            formControlName="subDepartmentId" optionValue="subdepartmentId" resetFilterOnHide="true"
                             optionLabel="subdepartmentName" placeholder="Please select team(s)"
                             [resetFilterOnHide]="true" />
                     </div>
@@ -83,7 +83,7 @@
                             class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="jobLocationDropDownData"
-                            optionValue="id" optionLabel="jobLocationName" formControlName="locationId"
+                            optionValue="id" optionLabel="jobLocationName" resetFilterOnHide="true" formControlName="locationId"
                             placeholder="Please select location(s)" (onChange)="OnClickLocation($event)" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('locationId')?.touched && reviewCycleForm.get('locationId')?.hasError('required')"
@@ -95,7 +95,7 @@
                             class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="subLocationsDropdown"
-                            formControlName="subLocationId" optionLabel="jobSubLocationName" optionValue="id"
+                            formControlName="subLocationId" optionLabel="jobSubLocationName" optionValue="id" resetFilterOnHide="true"
                             placeholder="Please select sub location(s)" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('subLocationId')?.touched && reviewCycleForm.get('subLocationId')?.hasError('required')"

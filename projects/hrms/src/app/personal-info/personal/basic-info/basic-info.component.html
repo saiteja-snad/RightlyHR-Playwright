@@ -6,7 +6,9 @@
       empyployeedata?.empstatus?.toLowerCase() !== 'trainee prospective'
       && empyployeedata?.empstatus?.toLowerCase() !== 'inactive' && empyployeedata?.empstatus?.toLowerCase() !==
       'trainee inactive' )){
-      <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+     <div>
+      <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+     </div>
       }
       @if(buttons){
       <div class="d-flex justify-content-end gap-2">

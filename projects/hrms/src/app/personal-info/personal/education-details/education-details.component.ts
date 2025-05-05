@@ -375,14 +375,14 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
         this.getEducationEmpid()
         this.educationupdateForm.reset()
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal('Education updated successfully')
+        this.conformationPopup.openSuccessModal('Education details updated successfully')
 
       },
       error: (reason: any) => {
         this.spinnerLoader=false
         console.error('Error updating education:', reason);
-        if (reason.error.includes('is already')) {
-          this.conformationPopup.openErrorModal(reason.error);
+        if (reason?.error?.includes('is already')) {
+          this.conformationPopup.openErrorModal(reason.error.Message);
         } else {
           this.conformationPopup.openErrorModal('Something went wrong. Please check all the fields.');
         }

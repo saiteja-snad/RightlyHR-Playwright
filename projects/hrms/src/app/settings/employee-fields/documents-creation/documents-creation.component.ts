@@ -111,7 +111,7 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
   }
 
   openmodel(content: any) {
-    this.modalService.open(content, { centered: true })
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   createSubDirectory(f: NgForm) {
@@ -122,7 +122,11 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal("Sub Folder created sucessfully");
       },
-      error: (reason) => console.log(reason),
+      error: (reason) => {
+        this.modalService.dismissAll();
+        this.conformationPopup.openErrorModal("Sub Folder already exists");
+        console.log(reason)
+      },
       complete: () => f.resetForm()
     });
   }
@@ -136,7 +140,11 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
           this.conformationPopup.openSuccessModal("Sub Folder deleted sucessfully");
           this.getMainFolders(undefined, currentSelectedFolder);
         },
-        error: (reason) => console.log(reason),
+        error: (reason) => {
+          this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal("Failed to delete sub folder");
+          console.log(reason)
+        },
       });
     }
   }

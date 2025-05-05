@@ -13,10 +13,20 @@
                     <td class="W-25">{{value}}</td>
                     <td class="text-center" *ngIf="rbac.allowedToAccess('Expense Allowed Days.update')">
                          <!--Update-->
-                         <div>
-                            <a type="button" (click)="openModal(expensesallowmodal)" ><img
-                                    src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
-                        </div>
+                         <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                              <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                              <li (click)="openModal(expensesallowmodal)" >
+                                <a class="dropdown-item">
+                                  <i class="bi bi-pencil me-2"></i>Update
+                                </a>
+                              </li>
+                        
+                            </ul>
+                          </div>
+                      
                     </td>
                 </tr>
             </tbody>

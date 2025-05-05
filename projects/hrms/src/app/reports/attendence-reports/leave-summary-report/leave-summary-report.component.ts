@@ -29,11 +29,11 @@ import { RbacService } from '../../../services/rbac.service';
     TranslateModule,
     ReactiveFormsModule, NoDataFoundComponent,
     DataLoaderContentComponent
-],
+  ],
   templateUrl: './leave-summary-report.component.html',
   styleUrl: './leave-summary-report.component.scss'
 })
-export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
+export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -143,9 +143,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
         this.teamdetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
       },
@@ -164,7 +162,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
 
   extractUniqueYearlyFilters(data: any[]): void {
     const uniqueCategories = Array.from(new Set(data.map((item: any) => item.leaveType))).filter(Boolean);
-  
+
     this.uniqueLeaveCategory = uniqueCategories.map(category => ({
       label: category,
       value: category
@@ -182,7 +180,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
     return date instanceof Date ? date : new Date(date);
   }
 
-  
+
   get isLeaveGenerateDisabled(): boolean {
     const form = this.lvSummeryReportForm;
     return !(
@@ -191,7 +189,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
       form.get('year')?.value ||
       form.get('leaveCategory')?.value
     );
-  } 
+  }
 
   leavesummeryReport(): void {
     this.spinnerLoader1 = true;
@@ -275,7 +273,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
 
   exportToExcelYearly(): void {
     // Define header mappings
-    this.spinnerLoader2= true;
+    this.spinnerLoader2 = true;
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -367,7 +365,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy{
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Leave Summary Report');
     XLSX.writeFile(wb, 'Leave_Summary_Report.xlsx');
-    this.spinnerLoader2= false;
+    this.spinnerLoader2 = false;
   }
 
 

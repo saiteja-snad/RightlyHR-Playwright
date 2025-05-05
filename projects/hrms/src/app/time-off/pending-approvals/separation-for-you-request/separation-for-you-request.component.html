@@ -124,12 +124,12 @@
             <form name="acceptForm" #acceptForm="ngForm" (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)">
                 @if(selectedSpRequestData.spIsEarlyRelieveing){
                 <div class="mb-3 text-center">
-                    <label><b>{{"This employee has opted for an early Relieving!" | translate}}</b></label>
+                    <label><b>{{"This employee has opted for an Early Relieving!" | translate}}</b></label>
                 </div>
                 }
                 @if(selectedSpRequestData.spearlyReliveingDate){
                 <div class="mb-3">
-                    <label>{{'Are you willing to accept an early Relieving?' | translate}}</label>
+                    <label>{{'Are you willing to accept an Early Relieving?' | translate}}</label>
                     <div class="form-check">
                         <input type="hidden" [value]="selectedSpRequestData.spMangerEarlyreliveingDate ? 
                                       'true' : 'false'" name="isreliving">
@@ -260,7 +260,7 @@
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary"
-                        (click)="closepopup(confirmationpopup)">{{'close'|translate}}</button>
+                        (click)="closepopup(confirmationpopup)">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="acceptForm.invalid || isLoading || !buttondisable">
                         @if(!isLoading){ {{'Approve'|translate}} }
@@ -289,8 +289,7 @@
             <form name="Separationrequestrejected" #Separationrequestrejected="ngForm"
                 (ngSubmit)="Separationrequestrejected.valid && handleReject(Separationrequestrejected)">
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label labell">{{"Enter reason" |
-                        translate}}<span class="error-msg">*</span></label>
+                    <label for="exampleFormControlTextarea1" class="form-label labell">{{"Rejected Reason" | translate}}<span class="tect-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1" placeholder="Please enter reason"
                         name="notes" #notes="ngModel" [maxLength]="250" [(ngModel)]="selectedSpRequestData.rejectedReason" required
                         rows="3"></textarea>
@@ -500,7 +499,7 @@
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="resetForm(acceptFormforprocess); modal.dismiss()">
-                        {{'Cancel'|translate}}</button>
+                        {{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="acceptFormforprocess.invalid||isLoading||!buttondisable">
                         @if(!isLoading){ {{'Approve'|translate}} }
@@ -607,7 +606,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to cancel?</p>
+            <p class="confirmation-text">Are you sure you want to close?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
@@ -622,7 +621,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text"> Are you sure you want to cancel?</p>
+            <p class="confirmation-text"> Are you sure you want to close?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>

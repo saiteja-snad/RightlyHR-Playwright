@@ -10,6 +10,7 @@ import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SignalsService } from '../../../../services/signals.service';
 
 @Component({
   selector: 'app-recall-request-tabs',
@@ -38,13 +39,28 @@ export class RecallRequestTabsComponent {
     this.getAllSeparationPendingApprovalsCount();
   }
 
-  constructor(public readonly router: Router, private http: HttpService,private rbac: RbacService) {
+  constructor(public readonly router: Router, private http: HttpService,private rbac: RbacService,private signalService:SignalsService) {
     effect(() => {
-      if (this.http.tirggerPendingApprovalCountSignal().recall) {
+      if (this.signalService.recallSeparationForYouTriggerSignal() || this.signalService.recallSeparationForRoleTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
         this.getAllSeparationPendingApprovalsCount();
-      this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, recall: false }));
+
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.recallSeparationForYouTriggerSignal()) {
+          this.signalService.recallSeparationForYouTriggerSignal.set(false);
+        }
+
+        if (this.signalService.recallSeparationForRoleTriggerSignal()) {
+          this.signalService.recallSeparationForRoleTriggerSignal.set(false);
+        }
       }
     });
+    // effect(() => {
+    //   if (this.http.tirggerPendingApprovalCountSignal().recall) {
+    //     this.getAllSeparationPendingApprovalsCount();
+    //   this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, recall: false }));
+    //   }
+    // });
   }
 
   getAllSeparationPendingApprovalsCount() {

@@ -46,7 +46,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.bankDetailsForm = this.fb.group({
       bankName: ['', Validators.required],
       accountName: ['', [Validators.required,]],
-      accountNo: ['', [Validators.required]],
+      accountNo: ['', [Validators.required,Validators.pattern('^[0-9]{12,20}$'),]],
       ifscCode: ['',[Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'),this.invalidIfscCodeValidator(),]],
       isPrimary: [false],
       attachment: [null, Validators.required]
@@ -57,7 +57,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.bankDetailsUpdateForm = this.fb.group({
       bankNameupdate: ['', Validators.required],
       accountNameupdate: ['', [Validators.required,]],
-      accountNoupdate: ['', [Validators.required]],
+      accountNoupdate: ['', [Validators.required,Validators.pattern('^[0-9]{12,20}$'),]],
       ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
       isPrimaryupdate: [false],
       attachmentupdate: [null]

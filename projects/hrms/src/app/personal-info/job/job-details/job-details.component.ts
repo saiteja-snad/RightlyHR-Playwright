@@ -90,7 +90,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.getJobDesignation();
     this.getnoticePeriodData();
     this.getSeparationRequest();
-    //subdeparment id changes
+    //subdeparment id changes for update
     this.jobDetailsupdateForm.get('team')?.valueChanges
       .subscribe((subdepartmentId: number) => {
         console.log("dataid" + subdepartmentId)
@@ -298,9 +298,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
             name: manager.middleName ? `${manager.firstName || ''} ${manager.middleName || ''} ${manager.lastName || ''}`
               : `${manager.firstName} ${manager.lastName}` || '',
           }));
-          this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
-          // Reset the team manager selection
-
+          this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager Id
+          
           this.jobDetailsupdateForm.patchValue({ teamManager: this.teamManagerDropdownValues[0].name ?? '' });
         }
         else {
@@ -730,7 +729,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       locationid: formData.location.id ?? this.selectedData?.locationid,
       sublocationid: formData.subLocation.id ?? this.selectedData.sublocationid,
       gradeId: this.selectedData.gradeId,
-      teamManagerId: formData.team.reportingmanagerId ?? this.selectedData?.teamManagerId,
+      teamManagerId:  this.teammangerid ?? this.selectedData?.teamManagerId,
       updateddate: this.selectedData.updateddate,
       createddate: this.selectedData.createddate,
       jobTypeId: formData.jobType.sno ?? this.selectedData.jobTypeId,

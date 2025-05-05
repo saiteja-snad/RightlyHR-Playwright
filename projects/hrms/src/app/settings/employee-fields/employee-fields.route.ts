@@ -6,10 +6,10 @@ import { SettingsManageShitsTabsComponent } from '../../shared/settings-tabs/set
 
 
 export default [
-    { path: '', component: SettingsEmployeeFieldsModuleTabsComponent },
+    { path: '', redirectTo: 'personal', pathMatch: 'full' },
     {
         path: 'personal', children: [
-            { path: '', component : SettingsPersonalTabsComponent },
+            { path: '', redirectTo: 'salutation', pathMatch: 'full' },
             { path: 'salutation', loadComponent: () => import('./personal/salutation/salutation.component').then(m => m.SalutationComponent) },
             { path: 'gender', loadComponent: () => import('./personal/gender/gender.component').then(m => m.GenderComponent) },
             { path: 'maritalstatus', loadComponent: () => import('./personal/maritalstatus/maritalstatus.component').then(m => m.MaritalstatusComponent) },
@@ -23,7 +23,7 @@ export default [
     },
     {
         path: 'job', children: [
-            { path: '', component : SettingsJobTabsComponent },
+            { path: '', redirectTo : 'jobrole', pathMatch: 'full' },
             { path: 'location', loadComponent: () => import('./job/location/location.component').then((m) => m.LocationComponent) },
             { path: 'sub-location', loadComponent: () => import('./job/sub-location/sub-location.component').then((m) => m.SubLocationComponent) },
             { path: 'termination', loadComponent: () => import('./job/termination/termination.component').then((m) => m.TerminationComponent) },

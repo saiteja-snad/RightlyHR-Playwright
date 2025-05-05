@@ -128,6 +128,7 @@ export class MyinfoLayoutComponent implements OnInit , OnDestroy{
       .subscribe({
         next: (data: any) => {
           console.log("Update successful", data);
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Data Updated Successfully');
           console.log(data);
         },

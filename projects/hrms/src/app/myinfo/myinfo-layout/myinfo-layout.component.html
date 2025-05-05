@@ -31,7 +31,7 @@
     </div>
   </div>
 </div>
-  
+
 <ng-template #changermmodal let-modal>
   <div class="custom-main-popup-container">
     <div class="d-flex justify-content-between popup-header-border p-3">
@@ -39,7 +39,8 @@
         <p class="popup-heading mb-0">{{'Change RM'| translate}}</p>
       </div>
       <div>
-        <a (click)="modal.dismiss();teamForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="modal.dismiss();teamForm.reset()"><img src="icons/close.png" alt="Close Icon"
+            class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content p-4">
@@ -55,14 +56,14 @@
                 (onChange)="onSelectManager($event, 'teamMembers')">
               </p-select>
             </div>
-            <div class="error-msg"
-            *ngIf="teamForm.get('teamMembers')?.invalid && teamForm.get('teamMembers')?.touched">
-            Team Members is required
-        </div>
+            <div class="error-msg" *ngIf="teamForm.get('teamMembers')?.invalid && teamForm.get('teamMembers')?.touched">
+              Team Members is required
+            </div>
           </div>
 
           <div class="col-md-6 mb-3">
-            <label class="form-label custom-label mb-2">{{'Select Reporting Manager' | translate}} <span class="text-danger">*</span></label>
+            <label class="form-label custom-label mb-2">{{'Select Reporting Manager' | translate}} <span
+                class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name" [options]="managers"
                 placeholder="Select Reporting Manager" class="form-select custom-select"
@@ -70,16 +71,18 @@
               </p-select>
             </div>
             <div class="error-msg"
-            *ngIf="teamForm.get('reportingManager')?.invalid && teamForm.get('reportingManager')?.touched">
-            Reporting Manager is required
-        </div>
+              *ngIf="teamForm.get('reportingManager')?.invalid && teamForm.get('reportingManager')?.touched">
+              Reporting Manager is required
+            </div>
           </div>
         </div>
 
         <!-- Buttons -->
         <div class="d-flex justify-content-end gap-3">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();teamForm.reset()">{{'Close' | translate}}</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="teamForm.invalid">{{'Submit' | translate}}</button>
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();teamForm.reset()">{{'Close' |
+            translate}}</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="teamForm.invalid">{{'Submit' |
+            translate}}</button>
         </div>
       </form>
     </div>

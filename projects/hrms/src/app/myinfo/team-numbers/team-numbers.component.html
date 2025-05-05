@@ -17,30 +17,43 @@
                     <th class="text-center">Action</th>
                 </tr>
             </thead>
-            <tbody>
-                <tr
-                    *ngFor="let details of TeamMemberArray| searchfilter: searchValue : ['fusionEmpId', 'firstName','middleName', 'lastName','workEmail', 'contactnumber', 'jobRole']">
-                    <td>{{details.fusionEmpId}}</td>
-                    <td>{{details.firstName}} {{details.middleName}} {{details.lastName}}</td>
-                    <td>{{details.workEmail}}</td>
-                    <td>{{details.contactnumber}}</td>
-                    <td>{{details.jobRole}}</td>
-                    <td class="text-center">
-                        <div class="dropdown">
-                            <a type="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </a>
-                            <ul class="dropdown-menu py-0">
-                                <li (click)="openModal(changermmodal)">
-                                    <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change RM</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
+
+            <!-- Filter and assign result -->
+            <tbody
+                *ngIf="(TeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'firstName','middleName', 'lastName','workEmail', 'contactnumber', 'jobRole']) as filteredTeam">
+                <!-- If data exists, show rows -->
+                <ng-container *ngIf="filteredTeam.length > 0; else noDataFound">
+                    <tr *ngFor="let details of filteredTeam">
+                        <td>{{details.fusionEmpId}}</td>
+                        <td>{{details.firstName}} {{details.middleName}} {{details.lastName}}</td>
+                        <td>{{details.workEmail}}</td>
+                        <td>{{details.contactnumber}}</td>
+                        <td>{{details.jobRole}}</td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu py-0">
+                                    <li (click)="openModal(changermmodal)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-pencil me-2"></i>Change RM
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-container>
             </tbody>
         </table>
+
+        <!-- Show shared no data component if no results -->
+        <ng-template #noDataFound>
+            <app-no-data-found></app-no-data-found>
+        </ng-template>
     </div>
+
 </div>
 
 <ng-template #changermmodal let-modal>
@@ -56,12 +69,17 @@
         <div class="custom-main-popup-content p-4">
             <form [formGroup]="rmForm" (ngSubmit)="updateRM()">
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Select Reporting Manager<span class="text-danger">*</span></label>
+                    <label class="form-label custom-label mb-2">Select Reporting Manager<span
+                            class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select optionLabel="name" [options]="managers" placeholder="Select Reporting Manager"
                             class="form-select custom-select" id="mReportingto" formControlName="mReportingto"
                             (onChange)="onSelectManager($event)">
                         </p-select>
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="rmForm.get('mReportingto')?.invalid && rmForm.get('mReportingto')?.touched">
+                        Reporting Manager is required
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">

@@ -167,11 +167,14 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody).subscribe({
       next: (data: any) => {
+        this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Updated Successfully');
       },
       error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Updated Successfully');
+        if (reason) {
+          this.modalService.dismissAll();
       }
+    }
     });
   }
 

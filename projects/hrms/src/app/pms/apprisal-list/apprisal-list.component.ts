@@ -75,6 +75,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   spinnerLoader= false;
 
   promotedOptions = [
+    { label: 'All', value: '' },
     { label: 'Yes', value: true },
     { label: 'No', value: false }
   ];
@@ -159,7 +160,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.enableDropDowns();
+    // this.enableDropDowns();
     this.selectedReviewCycle = selectedCycle;
     this.reviewCycleID = selectedCycle.id
   
@@ -247,7 +248,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     const controlNames = ['departmentId', 'subDepartmentId', 'locationId', 'subLocationId'];
     controlNames.forEach(field => {
       this.dependentdropdowns.get(field)?.valueChanges.subscribe(() => {
-        if (!this.canListenToDropdownChanges) return; // 🚫 Skip during patch
+        if (!this.canListenToDropdownChanges) return; 
         this.callGetEmployeesAPI();
       });
     });
@@ -280,7 +281,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
   
   onPromotedChange(event: any): void {
-    this.promoted = this.dependentdropdowns.get('promoted')?.value
+    this.promoted = event.value
     const params: { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string } = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,

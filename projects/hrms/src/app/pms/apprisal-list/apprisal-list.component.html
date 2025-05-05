@@ -50,7 +50,7 @@
                 <label for="department" class="form-label custom-label custom-label mb-2"><b>{{ "Department" | translate }}</b>
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
-                    <p-multiSelect formControlName="departmentId" [options]="departmentDetails" optionLabel="departmentName"
+                    <p-multiSelect formControlName="departmentId" [options]="departmentDetails" optionLabel="departmentName" optionValue="departmentId"
                         placeholder="Search department" class="w-100">
                         <ng-template let-dept pTemplate="item">{{ dept.departmentName }}</ng-template>
                     </p-multiSelect>
@@ -70,7 +70,6 @@
                 </div>
             </div>
 
-    
             <!-- Location -->
             <div>
                 <label for="location" class="form-label custom-label custom-label mb-2"><b>{{ "Location" | translate }}</b>

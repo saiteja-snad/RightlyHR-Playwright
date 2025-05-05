@@ -29,7 +29,7 @@ export class ReportsService {
 
     if (
       request.selectedBranchLocation &&
-      request.selectedBranchLocation !== 'All Branch Locations'
+      request.selectedBranchLocation !== 'All'
     ) {
       params = params.append('BranchCode', request.selectedBranchLocation);
     }

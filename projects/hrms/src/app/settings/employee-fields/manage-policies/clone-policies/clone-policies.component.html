@@ -50,7 +50,7 @@
             {{ "Shift" | translate }}<span class="text-danger">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="" formControlName="shift"
+            <p-select [options]="shiftDropdown" optionLabel="shiftName"  formControlName="shift"
               placeholder="Select shift" class="form-select custom-select"></p-select>
           </div>
         </div>
@@ -85,7 +85,7 @@
                 {{'Upload New Policy Attachment' | translate}}
               </label>
               <div class="d-flex align-items-center gap-2">
-                <input type="file" formControlName="policyNewFile" class="form-control custom-input w-100" />
+                <input type="file" (change)="onPolicyFileChange($event, i)" class="form-control custom-input w-100" />
                 <div [ngbPopover]="oldPopContent" triggers="click" placement="top">
                   <i class="bi bi-info-circle-fill cursor"></i>
                 </div>

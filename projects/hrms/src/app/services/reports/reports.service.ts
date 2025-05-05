@@ -187,8 +187,8 @@ export class ReportsService {
       params = params.set('Department', request.Department);
     }
   
-    if (request.TeamManagerName) {
-      params = params.set('TeamManagerName', request.TeamManagerName);
+    if (request.Team_Manager) {
+      params = params.set('Team_Manager', request.Team_Manager);
     }
   
     if (request.Shift) {
@@ -239,7 +239,7 @@ export class ReportsService {
 
     if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
     if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
-    if (request.TeamManagerName) params = params.set('TeamManagerName', request.TeamManagerName);
+    if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
     if (request.StartDate && request.EndDate) {
       params = params.set('StartDate', request.StartDate);
       params = params.set('EndDate', request.EndDate);
@@ -253,7 +253,7 @@ export class ReportsService {
 
     if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
     if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
-    if (request.TeamManagerName) params = params.set('TeamManagerName', request.TeamManagerName);
+    if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
     if (request.StartDate && request.EndDate) {
       params = params.set('StartDate', request.StartDate);
       params = params.set('EndDate', request.EndDate);

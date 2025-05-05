@@ -135,7 +135,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };
@@ -165,7 +165,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
             this.teamdetails = data.map((employee: any) => {
               return {
                 ...employee,
-                fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                   }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                   }${employee.lastName}`,
               };

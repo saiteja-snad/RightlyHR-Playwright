@@ -69,6 +69,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
   selectedFields: string[] = [
     'ID',
     'Employee ID',
+    'Salutation',
     'First Name',
     'Middle Name',
     'Last Name',
@@ -80,6 +81,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
   lockedFields: string[] = [
     'ID',
     'Employee ID',
+    'Salutation',
     'First Name',
     'Middle Name',
     'Last Name',
@@ -96,10 +98,10 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       fields: [
         'ID',
         'Employee ID',
+        'Salutation',
         'First Name',
         'Middle Name',
         'Last Name',
-        'Salutation',
         'Status',
         'Marital Status',
         'Gender',
@@ -109,6 +111,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       selectedFields: [
         'ID',
         'Employee ID',
+        'Salutation',
         'First Name',
         'Middle Name',
         'Last Name',
@@ -435,14 +438,22 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     const endDate = formData.dateOfJoining?.endDate ? new Date(formData.dateOfJoining.endDate) : null;
     // Step 1: Filter employees based on DoJ if date range is provided
     const filteredEmployees = this.emp.filter((user: Ipersonal) => {
-      const doj = user.dateOfJoining ? new Date(user.dateOfJoining) : null;
-      if (!doj || user.dateOfJoining === '0001-01-01T00:00:00' || isNaN(doj.getTime()))
-        return false;
-      if (startDate && doj < startDate) return false;
-      if (endDate && doj > endDate) return false;
+      const status = this.reportForm.get('status')?.value;
+      console.log(status)
+      const empStatus = status.toLowerCase(); 
+      const dateToCheck =
+        empStatus === 'active'
+          ? (user.dateOfJoining ? new Date(user.dateOfJoining) : null)
+          : (user.lastworkingday ? new Date(user.lastworkingday) : null);
+    
+      if (!dateToCheck || isNaN(dateToCheck.getTime())) return false;
+    
+      if (startDate && dateToCheck < startDate) return false;
+      if (endDate && dateToCheck > endDate) return false;
+    
       return true;
     });
-
+    
     filteredEmployees.forEach((user: Ipersonal) => {
       const data: { [key: string]: any } = {};
       this.selectedFields.forEach((field: string) => {

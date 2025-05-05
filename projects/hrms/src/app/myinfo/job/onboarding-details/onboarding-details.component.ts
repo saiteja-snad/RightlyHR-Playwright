@@ -7,10 +7,11 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { IProbation } from '../../../Interfaces/job-model';
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-onboarding-details',
-  imports: [CommonModule,ReactiveFormsModule,],
+  imports: [CommonModule,ReactiveFormsModule,Select],
   templateUrl: './onboarding-details.component.html',
   styleUrl: './onboarding-details.component.scss'
 })
@@ -18,6 +19,7 @@ export class OnboardingDetailsComponent {
   subscription!:Subscription;
   buttons= false;
   Statusdetails: any;
+  Manager: any = [];
   probation = [] as IProbation[];
   empinfo = {} as IJob;
   branchLocations = [] as IBranchLocation[] 
@@ -37,6 +39,7 @@ export class OnboardingDetailsComponent {
     this.initializeForm();
     this.getBranchLocations();
     this.getprobation();
+    this.getWorkfromhomeManager()
     this.onboardingForm.get('status')?.setValue(this.empinfo.empstatus);
   }
 
@@ -58,6 +61,7 @@ export class OnboardingDetailsComponent {
       totalExperience:  [{ value: '', disabled: true } ],
       remoteLogin:  [{ value: '', disabled: true } ],
       workLocation:  [{ value: '', disabled: true } ],
+      wfhmanger: [{ value: null, disabled: true }],
     });
   }
 
@@ -97,14 +101,15 @@ export class OnboardingDetailsComponent {
             probationEndDate: this.empdata.probationEndDate || '', 
             probationStatus: this.empdata.probationStatus || '', 
             noticePeriodStatus: this.empdata.noticePeriod || '',
-            backgroundCheckStatus: this.empdata.bgc ? 'Completed' : 'Pending', // Map boolean to string
+            backgroundCheckStatus: this.empdata.backgroundCheckStatus , // Map boolean to string
             salaryHold: this.empdata.issalaryhold ? 'Yes' : 'No', // Map boolean to string
             pf: this.empdata.pf ? 'Yes' : 'No', // Map boolean to string
             esic: this.empdata.esic ? 'Yes' : 'No', 
             pt: this.empdata.pt ? 'Yes' : 'No', // Map boolean to string
             totalExperience: this.empdata.totalYearsOfExperience || '', // Default to empty if undefined
-            remoteLogin: this.empdata.allowWFH ? 'Allowed' : 'Not Allowed', // Map boolean to string
+            remoteLogin: this.empdata.allowWFH ? 'Yes' : 'No', // Map boolean to string
             workLocation: this.empdata.workLocation || '', // Default to empty if undefined
+            wfhmanger: data.wfhManagerId,
           });
         },
         error: (err: any) => {
@@ -154,6 +159,24 @@ export class OnboardingDetailsComponent {
     });
   }
 
+  getWorkfromhomeManager() {
+    this.subscription = this.http.getData('FusionRole/getbyNormalizedName?Nname=WORK FROM HOME MANAGER&includeAssignee=true').subscribe({
+      next: (data: any) => {
+        console.log(data);
+        // Assuming IWfh is your interface/model for the Manager data
+        this.Manager = data.getUserWithRoleNames.map((user: { firstName: any; middleName: any; lastName: any; employeeId: any; fusionEmpId: any }) => ({
+          ...user,
+          name: ` ${user.fusionEmpId ?? ''} -${user.firstName} ${user.middleName ?? ''} ${user.lastName ?? ''}`.trim(),
+          value: user.employeeId
+        }));
+        console.log(this.Manager);
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+
+      }
+    });
+  }
     //function to get probition dropdown
     getprobation() {
       this.subscription = this.http.getData("ProbationStatus").subscribe({

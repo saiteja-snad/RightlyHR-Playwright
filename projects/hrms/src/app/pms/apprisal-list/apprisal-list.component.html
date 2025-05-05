@@ -33,10 +33,10 @@
         <div class="d-flex flex-wrap gap-3 w-100 mb-3">
             <!-- Review Cycle Name -->
             <div>
-                <label for="reviewCycle" class="form-label custom-label custom-label mb-2">{{ "Review Cycle" | translate }}
+                <label for="reviewCycle" class="form-label custom-label custom-label mb-2"><b>{{ "Review Cycle Name" | translate }}</b>
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-select-content">
-                    <p-select [options]="reviewCyclesList" optionLabel="reviewCycleName" [filter]="true"
+                    <p-select [options]="reviewCyclesList" optionLabel="reviewCycleName" [filter]="true" 
                         filterBy="reviewCycleName" [showClear]="false" formControlName="selectedReviewCycle"
                         placeholder="Please select review cycle" (onChange)="onReviewCycleChange($event)">
                         <ng-template #selectedItem let-selectedOption>{{ selectedOption.reviewCycleName }}</ng-template>
@@ -47,7 +47,7 @@
     
             <!-- Department -->
             <div>
-                <label for="department" class="form-label custom-label custom-label mb-2">{{ "Department" | translate }}
+                <label for="department" class="form-label custom-label custom-label mb-2"><b>{{ "Department" | translate }}</b>
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="departmentId" [options]="departmentDetails" optionLabel="departmentName"
@@ -60,7 +60,7 @@
             <!-- Sub Department -->
             <div>
                 <label for="subDepartment" class="form-label custom-label custom-label mb-2">
-                    {{ "Sub Department" | translate }}<span class="text-danger">*</span>
+                    <b>{{ "Sub Department" | translate }}</b><span class="text-danger">*</span>
                 </label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="subDepartmentId" [options]="subDepartmentsDropdownValues"
@@ -69,10 +69,11 @@
                     </p-multiSelect>
                 </div>
             </div>
+
     
             <!-- Location -->
             <div>
-                <label for="location" class="form-label custom-label custom-label mb-2">{{ "Location" | translate }}
+                <label for="location" class="form-label custom-label custom-label mb-2"><b>{{ "Location" | translate }}</b>
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="locationId" [options]="jobLocationDropDownData"
@@ -84,7 +85,7 @@
     
             <!-- Sub Location -->
             <div>
-                <label for="subLocation" class="form-label custom-label custom-label mb-2">{{ "Sub Location" | translate }}
+                <label for="subLocation" class="form-label custom-label custom-label mb-2"><b>{{ "Sub Location" | translate }}</b>
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="subLocationId" [options]="subLocationsDropdown"
@@ -96,11 +97,11 @@
     
             <!-- Promoted -->
             <div>
-                <label for="promted" class="form-label custom-label custom-label mb-2">{{ "Promoted" | translate }}
+                <label for="promted" class="form-label custom-label custom-label mb-2"><b>{{ "Promoted" | translate }}</b>
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-select-content">
                     <p-select formControlName="promoted" (onChange)="onPromotedChange($event)" [options]="promotedOptions"
-                        optionLabel="label" placeholder="Select Promoted" class="w-100">
+                        optionLabel="label" placeholder="Select Promoted" class="w-100" [showClear]="true">
                         <ng-template let-option pTemplate="item">{{ option.label }}</ng-template>
                     </p-select>
                 </div>
@@ -133,6 +134,7 @@
                         <th *ngIf="filteredEmployees.length > 0">
                             <input class="form-check-input" type="checkbox" (change)="onHeaderCheckboxChange($event)" id="flexCheckDefaultHeader">
                         </th>
+                        <th>{{'Employee ID' | translate}}</th>
                         <th>{{'Employee Name' | translate}}</th>
                         <th>{{'Review Cycle Name' | translate}}</th>
                         <th>{{'Department' | translate}}</th>
@@ -154,7 +156,8 @@
                                     (change)="onCheckboxChange($event, employee.id)"
                                     [disabled]="employee.status === 'Review on Hold'" id="flexCheckDefault">
                             </td>
-                            <td>{{employee.reviewEmployeeIdName }}</td>
+                            <td>{{employee.reviewEmployeeId }}</td>
+                            <td>{{employee.reviewEmployeeIdName}}</td>
                             <td>{{employee.reviewCycleHeaderIdName }}</td>
                             <td>{{employee.departmentName}}</td>
                             <td>{{employee.subDepartmentName}}</td>
@@ -323,7 +326,7 @@
                 <p class="popup-heading mb-0">{{'Assign Review Template' | translate}}</p>
             </div>
             <div>
-                <a><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a  (click)="openConfirmation()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 
@@ -340,7 +343,7 @@
                             <ng-template let-form #item>{{ form.formName }}</ng-template>
                         </p-select>
                     </div>
-                    <div *ngIf="reviewtemplatedropdowns.get('reviewTemplateId')?.touched && reviewtemplatedropdowns.get('reviewTemplateId')?.hasError('required')">
+                    <div  class="error-msg" *ngIf="reviewtemplatedropdowns.get('reviewTemplateId')?.touched && reviewtemplatedropdowns.get('reviewTemplateId')?.hasError('required')">
                         Please select review template
                     </div>
                 </div>
@@ -348,8 +351,17 @@
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openConfirmation()">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="reviewtemplatedropdowns.invalid">{{'Assign' | translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="reviewtemplatedropdowns.invalid || spinnerLoader">
+                        <ng-container *ngIf="spinnerLoader; else addText">
+                            <div class="button-loader-content">
+                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span>{{'Loading...'}}</span>
+                            </div>
+                        </ng-container>
+                        <ng-template #addText>
+                            <span>{{'Assign' | translate}}</span>
+                        </ng-template>
+                    </button>
                 </div>
             </form>
         </div>

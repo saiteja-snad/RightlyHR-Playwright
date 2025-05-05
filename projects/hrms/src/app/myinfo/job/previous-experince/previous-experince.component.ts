@@ -14,7 +14,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-previous-experince',
-  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, NoDataFoundComponent, TranslateModule],
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
@@ -30,15 +30,12 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   isCurrentdateDisable = false;
   isDisabletoDate = false;
   disableFromandtovalidationbutton = false;
-  isFutureDate = false;
-  isInvalidToDate = false;
-  showError = false;
-  showErrorr = false;
-  spinnerLoader=false;
+
+  spinnerLoader = false;
   empinfo: any
   previousexperincedocument: any
   dateofbirth: any
-  displaypreviousexperincedocument:any
+  displaypreviousexperincedocument: any
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
 
 
@@ -63,13 +60,13 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.employeeExperienceForm = this.fb.group({
       isPresent: [false],
-      companyName: ['', [Validators.required, Validators.pattern('^[a-zA-Z\\s]+$'),Validators.maxLength(100)]],
+      companyName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(100)]],
       employmentType: [null, Validators.required],
       fromDate: ['', [Validators.required]],
       toDate: ['', [Validators.required]],
-      jobTitle: ['', [Validators.required,Validators.maxLength(50)]],
+      jobTitle: ['', [Validators.required, Validators.maxLength(50)]],
 
-      previousContactName: ['', [Validators.pattern('^[a-zA-Z\\s]*$'),Validators.maxLength(50)]],
+      previousContactName: ['', [Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50)]],
       previousContactNumber: [
         '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
@@ -100,13 +97,13 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeupdateForm(): void {
     this.employeeExperienceupdateForm = this.fb.group({
       isPresentupdate: [false],
-      companyNameupdate: ['', [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]'),Validators.maxLength(50)]],
+      companyNameupdate: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(50)]],
       employmentTypeudate: [null, Validators.required],
       fromDateupdate: ['', [Validators.required]],
       toDateupdate: ['', [Validators.required]],
-      jobTitleupdate: ['', [Validators.required,Validators.maxLength(50)]],
+      jobTitleupdate: ['', [Validators.required, Validators.maxLength(50)]],
 
-      previousContactNameupdate: ['', [Validators.pattern('^[a-zA-Z\\s]*$'),Validators.maxLength(50)]],
+      previousContactNameupdate: ['', [Validators.pattern(/^[^\s].*$/), Validators.maxLength(50)]],
       previousContactNumberupdate: [
         '',
         [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
@@ -115,7 +112,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         '',
         [Validators.required, Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
-      attachmentupdate: [null, Validators.required],
+      attachmentupdate: [null],
     });
 
     // Disable "toDate" field if "isPresent" is checked
@@ -138,21 +135,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     console.log(content)
   }
 
-  currentDateValidation(): void {
-    const fromDate = this.employeeExperienceForm.get('fromDate')?.value;
-    const currentDate = new Date().toISOString().split('T')[0];
-    this.isCurrentdateDisable = fromDate > currentDate;
-  }
 
-  toDateValidation(): void {
-    const fromDate = this.employeeExperienceForm.get('fromDate')?.value;
-    const toDate = this.employeeExperienceForm.get('toDate')?.value;
-
-    if (toDate && fromDate) {
-      this.isInvalidToDate = toDate < fromDate;
-      this.isFutureDate = toDate > new Date().toISOString().split('T')[0];
-    }
-  }
 
   getMinEndDate(): string | null {
     const startDateValue = this.employeeExperienceForm.get('fromDate')?.value;
@@ -174,7 +157,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     return null; // Return null if no start date is selected
   }
   onChangeExperience(event: any): void {
-  
+
     this.displaypreviousexperincedocument = null
     const file = event.target.files[0];
     if (file) {
@@ -186,7 +169,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         this.employeeExperienceForm.get('attachment')?.markAsUntouched();
         this.employeeExperienceupdateForm.get('attachmentupdate')?.reset();
         this.employeeExperienceupdateForm.get('attachmentupdate')?.markAsUntouched();
-       
+
         return;
       }
     }
@@ -207,7 +190,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
   postExperienceDetails(): void {
     if (this.employeeExperienceForm.valid) {
-      this.spinnerLoader=true
+      this.spinnerLoader = true
       const payload = this.createExperiencePayload();
 
       if (this.previousexperincedocument) {
@@ -244,7 +227,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   saveExperienceData(payload: any): void {
     this.subscription = this.http.postdata('ExperienceDetail', payload).subscribe({
       next: () => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         this.employeeExperienceForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Experience details added successfully');
@@ -252,7 +235,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         this.getexperiencedetailsbyemployeid()
       },
       error: (err: any) => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         console.error('Error saving experience data:', err);
         this.conformationPopup.openErrorModal(err.error?.message || 'Failed to save experience details.');
       }
@@ -277,12 +260,12 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   }
 
   getJobtypes() {
-    this.subscription= this.http.getData("Jobtype").subscribe({
-      next:(data: any) => {
+    this.subscription = this.http.getData("Jobtype").subscribe({
+      next: (data: any) => {
         this.JobtypeDetails = data as IJobtype[];
       }
     })
-    
+
   }
 
 
@@ -293,12 +276,12 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       })
     );
   }
-  
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.dateofbirth =this.formatDateToLocal(data.dob)
+        this.dateofbirth = this.formatDateToLocal(data.dob)
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
@@ -311,7 +294,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`ExperienceDetail/${EmployeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-   
+
         this.getempexpdata.next(data);
       }
     })
@@ -446,7 +429,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     const currentDate = new Date().toISOString().split('T')[0];
     if (this.employeeExperienceupdateForm.valid) {
       const formData = this.employeeExperienceupdateForm.value;
-      this.spinnerLoader=true
+      this.spinnerLoader = true
       // Prepare the payload
       const payload = {
         id: this.selectedid,
@@ -463,6 +446,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         createdAt: currentDate,
         updatedAt: currentDate,
         isDeleted: false,
+        attachment: this.previousexperincedocument
       };
 
       console.log('Payload being sent:', payload);
@@ -499,7 +483,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   saveupdateExperienceData(payload: any): void {
     this.subscription = this.http.postdata('ExperienceDetail/Update', payload).subscribe({
       next: (data: any) => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         console.log('Experience details updated successfully:', data);
         this.employeeExperienceupdateForm.reset();
         this.modalService.dismissAll();
@@ -507,9 +491,9 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         this.getexperiencedetailsbyemployeid(); // Refresh the experience details list
       },
       error: (reason: any) => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         console.error('Error updating experience details:', reason);
-        this.conformationPopup.openErrorModal('Failed to update experience details. Please check all fields.');
+        this.conformationPopup.openErrorModal(reason.error.message || 'Failed to update experience details. Please check all fields.');
       }
     });
   }
@@ -543,8 +527,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
   resetFrom() {
     this.employeeExperienceForm.reset()
-    this.isInvalidToDate = false;
-    this.isFutureDate = false
+
   }
 
   ngOnDestroy(): void {

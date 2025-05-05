@@ -147,8 +147,21 @@ export class DocumentsComponent {
       backdrop: 'static',
     });
   }
+  
   filechange(event: any) {
     this.file = event.target.files[0];
+    if ( this.file) {
+      const fileSizeInMB = this.file.size / (1024 * 1024);
+      if (fileSizeInMB > 25) {
+        this.file = null;
+        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.uploadfrom.get('filename')?.reset();
+        this.uploadfrom.get('filename')?.markAsUntouched();
+        
+        return;
+      }
+    }
+
     
   }
 

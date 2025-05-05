@@ -81,7 +81,7 @@ export class OnboardingDetailsComponent {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
-
+    this.remoteLoginChange()
     this.getEmployeeId();
     this.getBackground();
     this.getBranchLocations();
@@ -382,10 +382,11 @@ export class OnboardingDetailsComponent {
     this.buttons = !this.buttons;
 
     if (this.buttons) {
-      // Enable the form when the user clicks "Edit"
+      
       this.onboardingForm.enable();
+      this.getEmployeeId()
     } else {
-      // Disable the form when the user clicks "Close"
+      this.getEmployeeId()
       this.onboardingForm.disable();
     }
   }

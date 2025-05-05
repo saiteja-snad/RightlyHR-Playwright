@@ -38,6 +38,7 @@ export interface IAbsentReportRequest {
   StartDate?: string;
   EndDate?: string;
   Worked_Month?: number;
+  Team_Manager?:string
 }
 
 export interface IInactiveReportRequest {
@@ -69,6 +70,7 @@ export interface IPermissionReportRequest {
   TeamManagerName?: string;
   StartDate?: string;
   EndDate?: string;
+  teamManagerId?:number;
 }
 
 export interface IFamilyDetails{
@@ -197,6 +199,7 @@ export interface IAttendanceDetails{
   StartDate?: string;
   EndDate?: string;
   Worked_Month?: number;
+  teamManagerId?:number;
 }
 //leave summmery
 export interface ILeavesummery{

@@ -9,18 +9,18 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>EFFECTIVE DATE</th>
-                    <th>JOB ROLE</th>
-                    <th>GRADE</th>
-                    <th>DEPARTMENT</th>
-                    <th>TEAM</th>
-                    <th>TEAM MANAGER</th>
-                    <th>REPORTING MANAGER</th>
-                    <th>LOCATION</th>
-                    <th>SUB LOCATION</th>
-                    <th>SHIFT</th>
-                    <th>JOB TYPE</th>
-                    <th class="text-center">ACTIONS</th>
+                    <th>Effective date</th>
+                    <th>Job role</th>
+                    <th>Grade</th>
+                    <th>Department</th>
+                    <th>Team</th>
+                    <th>Team manager</th>
+                    <th>Reporting manager</th>
+                    <th>Location</th>
+                    <th>Sub location</th>
+                    <th>Shift</th>
+                    <th>Job type</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -345,10 +345,10 @@
                         <label for="team" class="form-label custom-label mb-2">Team<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="teamDropdownValues" optionLabel="subdepartmentName"
+                            <p-select [options]="teamDropdownValues" optionLabel="subdepartmentName" optionValue="subdepartmentId"
                                 formControlName="team" placeholder="Please select team"
                                 class="form-select custom-select"
-                                (onChange)="onSubDepartmentNameChangeupdate($event.value)"></p-select>
+                                ></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsupdateForm.get('team')?.invalid && jobDetailsupdateForm.get('team')?.touched">

@@ -15,7 +15,7 @@
           <th>Status</th>
           <th class="text-center">Approver Comments</th>
           <th class="text-center">View Details</th>
-          <th class="text-center">Actions</th>
+          
         </tr>
       </thead>
       <tbody>
@@ -27,7 +27,7 @@
             <td><span class="me-2 status-colour">● {{ exp.status }}</span></td>
             <td class="text-center">
               <i *ngIf="exp.expenseApproverComments.length>0; else na" class="bi bi-info-circle-fill cursor"
-                (click)="comments_Function(exp.expenseApproverComments);openModal(viewcomments)" ></i>
+                (click)="comments_Function(exp.expenseApproverComments);opencommentsModal(viewcomments)" ></i>
               <ng-template #na>
                 N/A
               </ng-template>
@@ -82,10 +82,10 @@
             <th>Expense Type</th>
             <th>Expense Name</th>
             <th>Expense Date</th>
-            <th>Total Amount</th>
+            <th>Expense Amount</th>
             <th>Status</th>
             <th>Receipt Number</th>
-            <th colspan="2">Actions</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -97,21 +97,25 @@
 
             <td>{{ item?.status }}</td>
             <td>{{ item?.receipt_Number }}</td>
-            <td>
+            <td class="text-center">
 
               <div class="d-flex gap-2">
                 <a type="button" class="me-2 dowload-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
                   <i class="bi bi-download me-2"></i>Download
                 </a>
-                <a type="button" class="view-text text-nowrap" (click)="onViewAttachement(item?.attachment_url)">
+                <a type="button" class="dowload-text text-nowrap"  *ngIf="isImageFile(item?.attachment_url)" (click)="onViewAttachement(item?.attachment_url)">
                   <i class="bi bi-paperclip"></i>View
                 </a>
               </div>
 
             </td>
+
           </tr>
         </tbody>
       </table>
+      <div class="text-center mt-3" >
+        <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+    </div>
     </div>
   </div>
 </ng-template>
@@ -157,7 +161,7 @@
               <p> <b>Commented by ID:</b> {{ comment.addedByFusionEmpId }} </p>
               <p> <b>Processed Date:</b> {{ comment.addedDate | date: 'short' }} </p>
               <p><b>Status:</b> {{ comment.action }}</p>
-              <p> <b>Comments:</b> {{ comment.comments }} </p>
+              <!-- <p> <b>Comments:</b> {{ comment.comments }} </p> -->
             </div>
           </div>
         </div>

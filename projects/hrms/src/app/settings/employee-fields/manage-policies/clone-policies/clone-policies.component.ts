@@ -140,6 +140,35 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
   }
 
   hidePublishCloneButtons : boolean = false
+  onPolicyFileChange(event: any, index: number): void {
+    const file = event.target.files[0];
+    if (!file) return;
+  
+    const timestamp = new Date().getTime();
+    const renamedFile = this.renameFile(file, `${this.empinfo.employeeId}_${timestamp}_${file.name}`);
+    const filepath = `/FusionDocuments/organizationPolicy/${this.empinfo.employeeId}`;
+  
+    const control = this.policies.at(index);
+  
+    // Save original file object (for validation or display if needed)
+    control.get('policyNewFile')?.setValue(file);
+  
+    this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, renamedFile).subscribe({
+      next: (response: any) => {
+        control.get('policyNewFile')?.setValue(response.path);  // save uploaded file path instead
+      
+      },
+      error: (err) => {
+        console.error('Upload failed:', err);
+      }
+    });
+  }
+
+  renameFile(file: File, newName: string): File {
+    return new File([file], newName, { type: file.type });
+  }
+  
+  
 
   submit() {
       
@@ -158,9 +187,9 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
       orgPolicyItems: formValue.policies.map((item: any) => ({
         policyName: item.policyName,
         policyDescription: item.policyDescription,
-        policyAttachment: (item.policyNewFile && item.policyNewFile !== '') 
-              ? item.policyNewFile 
-              : item.policyFile,
+        policyAttachment:  (item.policyNewFile && item.policyNewFile !== '') 
+        ? item.policyNewFile 
+        : item.policyFile,
         status: "Pending for submission",
       }))
     };

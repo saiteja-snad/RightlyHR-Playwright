@@ -3,3 +3,7 @@
     height: calc(100dvh - 20rem);
     overflow: auto;
 } 
+.modal-image{
+    width: inherit !important;
+    max-height: 60vh;
+}

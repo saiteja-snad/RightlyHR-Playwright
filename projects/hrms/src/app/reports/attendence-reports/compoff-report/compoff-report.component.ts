@@ -125,7 +125,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };
@@ -152,7 +152,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
         this.teamdetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           };
@@ -244,14 +244,12 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       employeeName: 'EMPLOYEE NAME',
       department: 'DEPARTMENT',
       teamManagerName: 'TEAM MANAGER',
-      shift: 'SHIFT',
       location: 'LOCATION',
       subLocation: 'SUB LOCATION',
-      leaveType: 'LEAVE TYPE',
-      startDate: 'YEAR',
-      entitled: 'ENTITLED',
-      availed: 'AVAILED',
-      balanced: 'BALANCED'
+      shift: 'SHIFT',
+      worked_Date: 'WORKED DATE',
+      entitlementDays: 'ENTITLED DAYS',
+      duration: 'DURATION'
     };
 
     // Define new sequence
@@ -263,12 +261,17 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       'LOCATION',
       'SUB LOCATION',
       'SHIFT',
-      'LEAVE TYPE',
-      'YEAR',
-      'ENTITLED',
-      'AVAILED',
-      'BALANCED'
+      'WORKED DATE',
+      'ENTITLED DAYS',
+      'DURATION'
     ];
+
+     // Function to format date in dd-MMM-yyyy format
+     const formatDate = (dateString: string): string => {
+      const date = new Date(dateString);
+      const options = { day: '2-digit', month: 'short', year: 'numeric' } as const;
+      return date.toLocaleDateString('en-GB', options).replace(/ /g, '-');
+    };
 
     // Modify data with renamed headers and new sequence
     const modifiedData = this.filteredCompoffRecord.map(record => {
@@ -276,10 +279,8 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       NEW_SEQUENCE.forEach(columnName => {
         const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
         if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-          if (originalColumnName === 'startDate') {
-            // Extract the year part from the date
-            const year = new Date(record[originalColumnName]).getFullYear();
-            modifiedRecord[columnName] = year;
+          if (originalColumnName === 'worked_Date') {
+            modifiedRecord[columnName] = formatDate(record[originalColumnName]);
           } else {
             modifiedRecord[columnName] = record[originalColumnName];
           }
@@ -332,8 +333,8 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
 
     // Generate Excel file and trigger download
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Yearly Summary Report');
-    XLSX.writeFile(wb, 'Compoff_Summary_Report.xlsx');
+    XLSX.utils.book_append_sheet(wb, ws, 'CompOff Report');
+    XLSX.writeFile(wb, 'Compoff_Report.xlsx');
     this.spinnerLoader2= false;
   }
 

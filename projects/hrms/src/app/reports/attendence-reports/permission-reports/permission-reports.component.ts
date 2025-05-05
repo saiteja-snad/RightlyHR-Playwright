@@ -97,7 +97,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
           const employeedata = data.map((employee: any) => {
             return {
               ...employee,
-              fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
                 }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
                 }${employee.lastName}`,
             };
@@ -124,7 +124,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
         this.teamManagerDetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
               }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName}`,
           };
@@ -184,12 +184,10 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       request.StartDate = startDate;
       request.EndDate = endDate;
     }
-  
+    
     // Apply manager name if provided
     if (formValue.manager) {
-      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-        .filter(Boolean)
-        .join(' ');
+      request.teamManagerId = formValue.manager.employeeId
     }
   
     // Only include employee filter if not "All Employees"
@@ -197,6 +195,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       request.FusionEmpId = formValue.employee.fusionEmpId;
     }
   
+    console.log(request)
     this.reportsService.gterPermissionReports(request).subscribe({
       next: (response: any) => {
         this.filteredPermissionData = response ?? [];

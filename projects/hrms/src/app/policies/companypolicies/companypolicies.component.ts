@@ -148,26 +148,33 @@ export class CompanypoliciesComponent {
     this.openModal(this.viewattamchment);
 }
 
-onViewAttachement(url: any) {
- 
+ onViewAttachement(url: any) {
+    const lowerUrl = url?.toLowerCase();
   
-  if (url?.endsWith('jpg') || url?.endsWith('png') || url?.endsWith('jpeg')) {
-    this.subscription = this.http
-      .DownloadDataWithQuery('FileSystem/Downloadfile', url)
-      .subscribe({
-        next: (res: any) => {
-          const blob = new Blob([res['body']], { type: 'image/png' });
-          const objectURL = URL.createObjectURL(blob);
-          this.ExpenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          this.toggleViewModal();
-        },
-        error: (reason) => console.log(reason),
-      });
-  } else {
-    this.ExpenseViewURL = `${environment.viewUrl}${url}`;
-    this.toggleViewModal();
+    if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
+      this.subscription = this.http
+        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
+        .subscribe({
+          next: (res: any) => {
+            const blob = new Blob([res['body']], { type: 'image/png' });
+            const objectURL = URL.createObjectURL(blob);
+            this.ExpenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            this.ExpenseViewURL = null;
+            this.toggleViewModal();
+          },
+          error: (err) => console.error('Error downloading image:', err),
+        });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.ExpenseImageUrl = null;
+      this.ExpenseViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModal();
+    } else {
+      // fallback for other types if needed
+      this.ExpenseImageUrl = null;
+      this.ExpenseViewURL = `${environment.viewUrl}${url}`;
+      this.toggleViewModal();
+    }
   }
-}
 toggleViewModal() {
   this.modalService.dismissAll();
   this.openModal(this.viewattamchment)

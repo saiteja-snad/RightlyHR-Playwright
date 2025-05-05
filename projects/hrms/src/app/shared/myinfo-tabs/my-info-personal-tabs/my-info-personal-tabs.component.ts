@@ -21,7 +21,9 @@ export class MyInfoPersonalTabsComponent implements OnInit {
     { label: 'Education Details', link: '/myinfo/personal/education-details',permission: { feature: 'Education', action: 'view' } },
     { label: 'Identity Details', link: '/myinfo/personal/identity-details',permission: { feature: 'Identity', action: 'view' } },
     { label: 'Family Details', link: '/myinfo/personal/family-details',permission: { feature: 'Family Details', action: 'view' } },
-    { label: 'Bank Details', link: '/myinfo/personal/bank-details',permission: { feature: 'Bank Details', action: 'view' } }
+    { label: 'Bank Details', link: '/myinfo/personal/bank-details',permission: { feature: 'Bank Details', action: 'view' } },
+    { label: 'Visa Details', link: '/myinfo/personal/visa-details',permission: { feature: 'Visa Information', action: 'view' } },
+
   ];
 
   constructor(public rbac: RbacService) { }

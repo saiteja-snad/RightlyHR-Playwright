@@ -593,6 +593,18 @@ export const permissionsData = [
     { fields: 'My Info Bank Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Visa Details', View: false, Update: false, Create: false, Delete: false },
 
+    //My Info Job Sub Tabs Section
+  { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Job Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info No Due Clearance Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Probation Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Previous Experience Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Certification Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Compensation Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Desk Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Asset Details', View: false, Update: false, Create: false, Delete: false },
 
 
 ];

@@ -202,7 +202,7 @@
                                 Contact Number must be 10 digits</div>
                             <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['maxlength']">
                                 Contact Number must be 10 digits</div>
-                                <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['maxlength']">
+                                <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['pattern']">
                                     Contact Number cannot be all zeroes </div>
                         </div>
                     </div>
@@ -407,7 +407,7 @@
                                     *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['maxlength']">
                                     Contact Number must be 10 digits</div>
                                     <div
-                                    *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['maxlength']">
+                                    *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['pattern']">
                                     Contact Number cannot be all zeroes</div>
 
                             </div>

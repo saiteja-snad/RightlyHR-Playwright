@@ -595,6 +595,7 @@ export const permissionsData = [
 
     //My Info Job Sub Tabs Section
   { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Job Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
@@ -606,5 +607,13 @@ export const permissionsData = [
   { fields: 'My Info Desk Details', View: false, Update: false, Create: false, Delete: false },
   { fields: 'My Info Asset Details', View: false, Update: false, Create: false, Delete: false },
 
+   //My Info Separation Request Details
+   { fields: 'Raise No Due', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Recall', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Early relieving', View: false, Update: false, Create: false, Delete: false },
+
+    //My Info No Due Clearance Details
+    { fields: 'Submission Of No Due Clearance', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Re-request for no due', View: false, Update: false, Create: false, Delete: false }, 
 
 ];

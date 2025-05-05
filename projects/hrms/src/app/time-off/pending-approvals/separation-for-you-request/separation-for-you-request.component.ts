@@ -18,6 +18,7 @@ import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
 import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-separation-for-you-request',
   imports: [
@@ -81,7 +82,8 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     private router: Router,
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
-    public rbac: RbacService
+    public rbac: RbacService,
+    private signalService:SignalsService
   ) {}
 
   ngOnInit(): void {
@@ -302,6 +304,10 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         }
         this.getseparationforyourequests();
         this.acceptForm.resetForm();
+        this.signalService.separationForYouTriggerSignal.set(true);
+        this.signalService.separationForRoleTriggerSignal.set(true);
+        this.signalService.separationSidNavCountTriggerSignal.set(true);
+
       },
       error: (reason: any) => {
         this.isLoading = false;
@@ -348,6 +354,9 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
           );
         }
         this.getseparationforyourequests();
+        this.signalService.separationForYouTriggerSignal.set(true);
+        this.signalService.separationForRoleTriggerSignal.set(true);
+        this.signalService.separationSidNavCountTriggerSignal.set(true);
       },
 
       error: (reason: any) => {
@@ -423,6 +432,9 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
         this.conformationPopup.openSuccessModal(
           'Separation Request Processed Successfully'
         );
+        this.signalService.separationForYouTriggerSignal.set(true);
+        this.signalService.separationForRoleTriggerSignal.set(true);
+        this.signalService.separationSidNavCountTriggerSignal.set(true);
       },
       error: (reason: any) => {
         this.isLoading = false;

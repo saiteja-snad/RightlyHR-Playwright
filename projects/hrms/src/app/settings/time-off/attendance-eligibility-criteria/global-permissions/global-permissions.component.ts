@@ -97,7 +97,9 @@ export class GlobalPermissionsComponent {
     };
     console.log(payload);
     this.http
-      .putData(`PermissionTypes/${this.selectedPermission.id}`, payload)
+      .put(`PermissionTypes/${this.selectedPermission.id}`, payload, {
+        responseType: 'text',
+      })
       .subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
@@ -108,7 +110,7 @@ export class GlobalPermissionsComponent {
         },
         error: (err) => {
           // this.permissionsForm.reset();
-          this.sharedModalService.openErrorModal(err.error.message);
+          this.sharedModalService.openErrorModal(err.error);
         },
         complete: () => {
           this.getPermissionTypes();
@@ -120,7 +122,7 @@ export class GlobalPermissionsComponent {
     if (permissionForm.valid) {
       const payload: Ipermissions = {
         name: permissionForm.value.name,
-        isDeleted: true,
+        isDeleted: false,
         type: 'Global Permissions',
       };
       this.http.postdata(`PermissionTypes`, payload).subscribe({

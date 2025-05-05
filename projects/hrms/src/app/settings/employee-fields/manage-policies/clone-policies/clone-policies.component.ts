@@ -125,9 +125,9 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
   
   addPolicyRow() {
     const policyGroup = this.fb.group({
-      policyName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
+      policyName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       policyFile: [''],
-      policyDescription: ['',[ Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z0-9][a-zA-Z0-9\s]*$')]],
+      policyDescription: ['',[ Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       policyNewFile: ['', Validators.required]
     });
     this.policies.push(policyGroup);

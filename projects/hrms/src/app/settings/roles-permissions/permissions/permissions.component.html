@@ -786,13 +786,39 @@
 
                 <!-- Org Hierarchy Tabs -->
                 <tr>
-                    <th colspan="5" class="custom-header">Org Hierarchy Tabs</th>
+                    <th colspan="5" class="custom-header">Org Hierarchy Module</th>
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"
                         *ngIf="per.fields === 'Organization Hierarchy - HR' || per.fields === 'Organization Hierarchy - TM'
                         || per.fields === 'Organization Hierarchy - Compensation' || per.fields === 'Organization Hierarchy - Download JPG' 
                         || per.fields === 'Organization Hierarchy - Download PDF'">
+                        <td class="text-align-center">{{ per.fields }}</td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
+                        </td>
+                    </tr>
+                </ng-container>
+
+
+                <tr>
+                    <th colspan="5" class="custom-header">Desk Allocation Module</th>
+                </tr>
+                <ng-container *ngFor="let per of permissions">
+                    <tr class="text-align-center"
+                        *ngIf="per.fields === 'Desk Allocation - Available'
+                        || per.fields === 'Desk Allocation - Allocated' || per.fields === 'Desk Allocation - Under Maintenance' 
+                        || per.fields === 'Desk Allocation - Inactive' || per.fields === 'Desk Allocation - Waiting For Approval'">
                         <td class="text-align-center">{{ per.fields }}</td>
                         <td scope="row">
                             <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

@@ -299,6 +299,13 @@ export const permissionsData = [
      { fields: 'Organization Hierarchy - Download PDF', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Organization Hierarchy - Download JPG', View: false, Update: false, Create: false, Delete: false },
 
+     //Desk Management Tabs Section
+     { fields: 'Desk Allocation - Available', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Desk Allocation - Allocated', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Desk Allocation - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Desk Allocation - Inactive', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Desk Allocation - Waiting For Approval', View: false, Update: false, Create: false, Delete: false }, 
+
     //New Side Nav Section
     { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info', View: false, Update: false, Create: false, Delete: false },

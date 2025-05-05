@@ -102,7 +102,7 @@
                                 <span class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="CompanyName"
                                 formControlName="companyName" placeholder="Please enter company name"
-                                (keypress)="formValidation.restrictInput($event)" />
+                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                             <div *ngIf="employeeExperienceForm.get('companyName')?.invalid && employeeExperienceForm.get('companyName')?.touched"
                                 class="error-msg">
                                 <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['required']">Company
@@ -290,7 +290,7 @@
                             </label>
                             <input type="text" class="form-control custom-input" id="CompanyName"
                                 formControlName="companyNameupdate" placeholder="Please enter company name"
-                                (keypress)="restrictInput($event)" />
+                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                             <div *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.invalid && employeeExperienceupdateForm.get('companyNameupdate')?.touched"
                                 class="error-msg">
                                 <div

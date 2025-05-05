@@ -32,7 +32,7 @@ export class JobDetailsComponent {
   separationRequestForm!: FormGroup;
   jobDetailsupdateForm!: FormGroup;
   jobdetails = new BehaviorSubject<any[]>([]);
-  
+  shiftDropdown: any[] = []; // To store the dynamically fetched shifts
   subLocationsDropdown: any = []; 
   teamDropdownValues: any[] = [];
   teamManagerDropdownValues: any[] = [];
@@ -420,6 +420,8 @@ export class JobDetailsComponent {
 
 
   getSubLocationByid(selectedLocation: any): void {
+    this.jobDetailsForm.get('subLocation')?.reset()
+    this.jobDetailsForm.get('shift')?.reset()
     if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http
         .getData(
@@ -439,6 +441,8 @@ export class JobDetailsComponent {
             this.jobDetailsForm.patchValue({ subLocation: null });
           },
           error: (err: any) => {
+            this.jobDetailsForm.get('subLocation')?.reset()
+            this.jobDetailsForm.get('shift')?.reset()
             console.error('Error fetching sub-location data:', err);
             this.subLocationsDropdown = []; // Reset on error
             this.jobDetailsForm.patchValue({ subLocation: null }); // Reset the sub-location field
@@ -450,7 +454,7 @@ export class JobDetailsComponent {
     }
   }
 
-  shiftDropdown: any[] = []; // To store the dynamically fetched shifts
+ 
 
   getShiftBYid(selectedSubLocation: any): void {
     if (selectedSubLocation && selectedSubLocation.id) {

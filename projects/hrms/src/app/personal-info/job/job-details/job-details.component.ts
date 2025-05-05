@@ -183,6 +183,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   onCheckEarlyRelieving(): void {
     const isEarlyRelieving = this.separationRequestForm.get('isEarlyRelieving')?.value;
+    if (!isEarlyRelieving) {
+      this.separationRequestForm.get('earlyRelievingDate')?.reset();
+      this.separationRequestForm.get('earlyRelievingDate')?.setErrors(null);
+  
+      this.separationRequestForm.get('reasonForEarlyRelieving')?.reset();
+      this.separationRequestForm.get('reasonForEarlyRelieving')?.setErrors(null);
+    }
     this.toggleEarlyRelievingFields(isEarlyRelieving);
   }
 

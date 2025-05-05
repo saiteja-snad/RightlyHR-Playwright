@@ -279,7 +279,9 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     this.modalService.open(content,{centered: true,backdrop: 'static'})
   }
   popupclose(){
+    this.profileForm.reset();
     this.modalService.dismissAll();
+    
   }
   //function to recall the request
   postRecallRequest() {

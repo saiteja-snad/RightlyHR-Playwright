@@ -300,11 +300,45 @@ export const permissionsData = [
      { fields: 'Organization Hierarchy - Download JPG', View: false, Update: false, Create: false, Delete: false },
 
      //Desk Management Tabs Section
+     { fields: 'Desk Allocation - Create', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Desk Allocation - All', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Desk Allocation - Available', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Desk Allocation - Allocated', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Desk Allocation - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Desk Allocation - Inactive', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Desk Allocation - Waiting For Approval', View: false, Update: false, Create: false, Delete: false }, 
+
+     //Desk Management All Tab Actions
+    { fields: 'Request for Allocation', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Inactive desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Schedule for Maintenance', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Reallocate desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Release Desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Mark as Active', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Mark as Available', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'View Desk Details', View: false, Update: false, Create: false, Delete: false },
+
+     //Desk Management Available Tab Actions
+    { fields: 'Available Request for Allocation', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Available Inactive desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Available Schedule for Maintenance', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Available View Desk Details', View: false, Update: false, Create: false, Delete: false }, 
+
+      //Desk Management Allocated Tab Actions
+    { fields: 'Allocated Reallocate desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Allocated Release Desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Allocated View Desk Details', View: false, Update: false, Create: false, Delete: false },
+
+    //Desk Management Under Maintenance Tab Actions
+    { fields: 'Under Maintenance Mark as Available', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Under Maintenance View Desk Details', View: false, Update: false, Create: false, Delete: false },
+
+    //Desk Management Inactive Tab Actions
+    { fields: 'Inactive Mark as Available', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Inactive View Desk Details', View: false, Update: false, Create: false, Delete: false },
+
+     //Desk Management Waiting For Approval Tab Actions
+    { fields: 'Waiting For Approval View Desk Details', View: false, Update: false, Create: false, Delete: false },
 
     //New Side Nav Section
     { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },

@@ -29,7 +29,8 @@
                         <th>Location</th>
                         <th>Sub Location</th>
                         <th>Desk Status</th>       
-                        <th class="text-center">Action(s)</th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') || 
+                            rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')">Action(s)</th>
 
                     </tr>
                 </thead>
@@ -42,7 +43,8 @@
                             <td>{{ desk.location?.jobLocationName }}</td>
                             <td>{{ desk.subLocation?.jobSubLocationName }}</td>
                             <td>{{ desk.deskStatus }}</td>
-                            <td class="text-center">
+                            <td class="text-center" *ngIf="rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') || 
+                            rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -50,19 +52,19 @@
 
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <ng-container *ngIf="desk.deskStatus==='Available'">
-                                            <li>
+                                            <li *ngIf="rbac.allowedToAccess('Available Request for Allocation.view')">
                                                 <a class="dropdown-item"
                                                     (click)="openModal(assigindesk); viewdata(desk); selectedAsset=desk;viewasetsdata(desk)">
                                                     Request for Allocation
                                                 </a>
                                             </li>
-                                            <li>
+                                            <li *ngIf="rbac.allowedToAccess('Available Inactive desk.view')">
                                                 <a class="dropdown-item"
                                                     (click)="openModal(deleteasstes); viewdata(desk); selectedAsset=desk">
                                                     Inactive desk
                                                 </a>
                                             </li>
-                                            <li>
+                                            <li *ngIf="rbac.allowedToAccess('Available Schedule for Maintenance.view')">
                                                 <a class="dropdown-item"
                                                     (click)="openModal(undermaintance); viewdata(desk); selectedAsset=desk">
                                                     Schedule for Maintenance
@@ -71,7 +73,7 @@
 
                                         </ng-container>
 
-                                        <li>
+                                        <li *ngIf="rbac.allowedToAccess('Available View Desk Details.view')">
                                             <a class="dropdown-item"
                                                 (click)="viewdata(desk);navigateToAsset(desk.deskId)">
                                                 View Desk Details

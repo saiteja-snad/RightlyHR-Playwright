@@ -10,6 +10,7 @@ import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-available-desk-list',
@@ -81,6 +82,7 @@ export class AvailableDeskListComponent {
     private readonly modalService: NgbModal,
     private readonly router: Router,
     public conformationPopup: OpenModalService,
+    public rbac: RbacService,
 
     config: NgbModalConfig) {
     config.backdrop = 'static';

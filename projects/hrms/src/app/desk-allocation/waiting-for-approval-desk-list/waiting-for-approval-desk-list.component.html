@@ -30,7 +30,7 @@
             <th>Shift</th>
             <th>Desk Status</th>
             <th>Approver</th>
-            <th class="text-center">Action(s)</th>
+            <th class="text-center" *ngIf="rbac.allowedToAccess('Waiting For Approval View Desk Details.view')">Action(s)</th>
   
             </tr>
           </thead>
@@ -48,7 +48,7 @@
                 <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
                 
   
-                <td class="text-center">
+                <td class="text-center" *ngIf="rbac.allowedToAccess('Waiting For Approval View Desk Details.view')">
                   <div class="dropdown">
                     <a data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="bi bi-three-dots-vertical"></i>

@@ -31,7 +31,8 @@
   
               <th>Desk Status</th>
               <th>Approver</th>
-              <th class="text-center">Action(s)</th>
+              <th class="text-center" *ngIf="rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') || 
+                rbac.allowedToAccess('Allocated View Desk Details.view')">Action(s)</th>
   
             </tr>
           </thead>
@@ -48,7 +49,8 @@
                 <td>{{ desk.deskStatus }}</td>
                 <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
   
-                <td class="text-center">
+                <td class="text-center" *ngIf="rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') || 
+                rbac.allowedToAccess('Allocated View Desk Details.view')">
                   <div class="dropdown">
                     <a data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="bi bi-three-dots-vertical"></i>
@@ -57,19 +59,19 @@
                     <ul class="dropdown-menu custom-dropdown-menu">
                 
                 
-                        <li>
+                        <li *ngIf="rbac.allowedToAccess('Allocated Reallocate desk.view')">
                           <a class="dropdown-item"
                             (click)="openModal(reallcatedeskmodal);viewdata(desk);viewasetsdata(desk);selectedAsset=desk">
                             Reallocate desk
                           </a>
                         </li>
-                        <li>
+                        <li *ngIf="rbac.allowedToAccess('Allocated Release Desk.view')">
                           <a class="dropdown-item" (click)="openModal(relasedesk); viewdata(desk); selectedAsset=desk">
                             Release Desk
                           </a>
                         </li>
   
-                      <li>
+                      <li *ngIf="rbac.allowedToAccess('Allocated View Desk Details.view')">
                         <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
                           View Desk Details
                         </a>

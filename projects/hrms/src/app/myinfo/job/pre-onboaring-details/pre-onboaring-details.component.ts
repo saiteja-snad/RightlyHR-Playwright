@@ -168,7 +168,7 @@ export class PreOnboaringDetailsComponent {
         
           // Patch the form with employee data
           this.preOnboardingForm.patchValue({
-            traineeOfferSentDate: this.traineeofferDetails.offerSentDate || '',
+            traineeOfferSentDate: this.formatDate( this.traineeofferDetails.offerSentDate) || '',
             traineeOfferSentBy: this.traineeofferDetails.offerSentByName || '',
             traineeOfferSentStatus: this.traineeofferDetails.offerSentStatus || ''
           });

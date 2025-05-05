@@ -540,11 +540,11 @@ export const permissionsData = [
 
 
     // My Info Sub Tabs Section
-    { fields: 'My Info Personal', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'My Info Job', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'My Info Documents', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'My Info Team Members', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'My Info Onboard Request', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Personal Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Job Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Documents Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
 
 
 
@@ -558,6 +558,18 @@ export const permissionsData = [
     { fields: 'My Info Family Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Bank Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Visa Details', View: false, Update: false, Create: false, Delete: false },
+
+    //My Info Documents Sub Tabs Section
+    { fields: 'My Info Documents', View: false, Update: false, Create: false, Delete: false },
+
+    //My Info Team Members Sub Tabs Section
+    { fields: 'My Info Team Members', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Change RM Button', View: false, Update: false, Create: false, Delete: false },
+
+    //My Info Onboard Request Sub Tabs Section
+    { fields: 'Onboard Request', View: false, Update: false, Create: false, Delete: false },
+
+   
 
 
 

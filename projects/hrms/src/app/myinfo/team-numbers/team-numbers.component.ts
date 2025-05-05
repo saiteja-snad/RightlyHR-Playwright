@@ -13,6 +13,7 @@ import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from 
 import { OpenModalService } from '../../services/open-modal.service';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-team-numbers',
   imports: [CommonModule, Select, FormsModule, PaginatorModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
@@ -49,7 +50,7 @@ export class TeamNumbersComponent implements OnInit {
   constructor(
     private http: HttpService,
     private router: Router,
-    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService) { }
 
   onRowsChange() {
     this.first = 0;

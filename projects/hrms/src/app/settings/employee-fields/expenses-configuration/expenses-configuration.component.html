@@ -11,16 +11,18 @@
                 <table class="w-100">
                     <thead> 
                         <th>Expense Type</th>
-                        <th *ngIf="rbac.allowedToAccess('Expenes Configuartion.update') || rbac.allowedToAccess('Expenes Configuartion.delete')">Actions</th>
+                     
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Expenes Configuartion.update') || rbac.allowedToAccess('Expenes Configuartion.delete')">Actions</th>
                     </thead>
                     <tbody>
                      
                         <tr *ngFor="let exp of expense">
 
                             <td>{{exp?.expenseType}}</td>
-                            <td *ngIf="rbac.allowedToAccess('Expenes Configuartion.update') || rbac.allowedToAccess('Expenes Configuartion.delete')">
-                                <div class="d-flex gap-4">
-                                    <!--Update-->
+                          
+                            <td   class="text-center" *ngIf="rbac.allowedToAccess('Expenes Configuartion.update') || rbac.allowedToAccess('Expenes Configuartion.delete')">
+                                <!-- <div class="d-flex gap-4 justify-content-center">
+                                   
                                     <div>
                                         <a type="button" (click)="openupdate(updateexpeses, exp)" *ngIf="rbac.allowedToAccess('Expenes Configuartion.update')"><img
                                                 src="/settings-icon/edit.png" alt="edit icon" class="settings-common-icon"></a>
@@ -36,12 +38,12 @@
                                       <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                     <ul class="dropdown-menu custom-dropdown-menu">
-                                      <li (click)="openupdate(updateexpeses, exp)" *ngIf="rbac.allowedToAccess('Expense Tab.update')">
+                                      <li (click)="openupdate(updateexpeses, exp)" *ngIf="rbac.allowedToAccess('Expenes Configuartion.update')">
                                         <a class="dropdown-item">
                                           <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                       </li>
-                                      <li (click)="opendelete(deleteconformation,exp)" *ngIf="rbac.allowedToAccess('Expense Tab.delete')">
+                                      <li (click)="opendelete(deleteconformation,exp)" *ngIf="rbac.allowedToAccess('Expenes Configuartion.delete')">
                                         <a class="dropdown-item">
                                           <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>

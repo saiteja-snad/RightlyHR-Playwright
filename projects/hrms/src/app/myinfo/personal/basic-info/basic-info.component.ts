@@ -44,7 +44,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    console.log(this.empinfo)
+    
     this.initializeForm();
     this.getEmployeeId();
     this.getGender()
@@ -59,7 +59,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.onsalutationvalidation();
     });
     this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
-      console.log(data)
+    
       this.emsployedata.dob=null
       this.changeingdob=data
     });
@@ -116,7 +116,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   
   getdateofbirth(): string | null {
     const startDateValue = this.formatDateToLocal(this.emsployedata.dob) || this.formatDateToLocal(this.changeingdob);
-    console.log(startDateValue);
+ 
     
     if (startDateValue) {
       const startDate = new Date(startDateValue);
@@ -151,13 +151,13 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
       maritalStatus: this.Maritaldetails.find(((item: any) => item.maritalstatus1 === data.maritalStatus)),
     });
-    console.log('datapatch', this.basicInfoForm.value);
+ 
 
   }
 
   updateBasicInfo(): void {
     const formValue = this.basicInfoForm.value;
-    console.log(formValue);
+    
 
     const updatePayload = {
       ...this.emsployedata,
@@ -173,7 +173,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       marriageDate: formValue.marriageDate,
       empStatus: 'Active',
     };
-    console.log(updatePayload);
+    
 
     this.subscription = this.http
       .postdata(`Employeedata/UPDATER`, updatePayload)
@@ -193,7 +193,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
         },
         error: (reason: any) => {
-          console.log(reason);
+        
           this.conformationPopup.openErrorModal('Basic Info update failed')
 
 
@@ -229,8 +229,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.buttons = !this.buttons;
   
     if (this.buttons) {
-      // Enable the form when the user clicks "Edit"
-   
       this.basicInfoForm.enable();
       this.basicInfoForm.get('fusionEmpId')?.disable();
 

@@ -15,6 +15,7 @@ import { IAttendanceDetails } from '../../../Interfaces/reports.model';
 import * as XLSX from 'xlsx';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-regularization-reports',
@@ -57,7 +58,8 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
     private authService: AuthService,
     private reportsService: ReportsService,
     private http: HttpService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public rbac:RbacService
   ) { }
 
   ngOnInit(): void {

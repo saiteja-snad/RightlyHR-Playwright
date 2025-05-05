@@ -17,7 +17,7 @@ export class AttandaceReportTabsComponent implements OnInit{
     { label: 'Comp Off Report', route: '/reports/attendence-reports/compoff-report',permission: { feature: 'Comp Off Report', action: 'view' }  },
     { label: 'WFH Report', route: '/reports/attendence-reports/wfh-report',permission: { feature: 'WFH Report', action: 'view' } },
     { label: 'Absent Report', route: '/reports/attendence-reports/absent-report',permission: { feature: 'Absent Report', action: 'view' } },
-    { label: 'Inactive Employee Report', route: '/reports/attendence-reports/inactive-employee-report',permission: { feature: 'Inactive Empoyee Report', action: 'view' } },
+    { label: 'Inactive Employee Report', route: '/reports/attendence-reports/inactive-employee-report',permission: { feature: 'Inactive Empolyee Report', action: 'view' } },
     { label: 'Yearly Summary Report', route: '/reports/attendence-reports/yearly-summary-report',permission: { feature: 'Yearly Summary Report', action: 'view' } },
     { label: 'Permission Report', route: '/reports/attendence-reports/permission-report',permission: { feature: 'Permission Report', action: 'view' } },
     { label: 'Regularization Report', route: '/reports/attendence-reports/regularization-report',permission: { feature: 'Regularization Report', action: 'view' } },

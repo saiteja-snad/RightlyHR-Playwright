@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Bank Details</span></div>
-        @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' 
-        && employedata.empstatus.toLowerCase() !== 'inactive' && employedata.empstatus.toLowerCase() !== 'trainee inactive')){
+        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
+        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
             <div class="custom-add-btn" (click)="openModal(addBankModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
         }
     </div>
@@ -17,7 +17,7 @@
                     <th>IFSC Code</th>
                     <th>Proof</th>
                     <th class="text-center">Primary Bank</th>
-                    @if((employedata.empstatus.toLowerCase() !== 'prospective' && employedata.empstatus.toLowerCase() !== 'trainee prospective' )){
+                    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' )){
                     <th class="text-center">Action(s)</th>}
                 </tr>
             </thead>
@@ -231,7 +231,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="accountNoupdate" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="accountNoupdate"
+                        <input type="number" class="form-control custom-input" id="accountNoupdate"
                             formControlName="accountNoupdate" placeholder="Please enter account number">
                             <div class="error-msg"
                             *ngIf="bankDetailsForm.get('accountNo')?.invalid && bankDetailsForm.get('accountNo')?.touched">
@@ -270,8 +270,8 @@
                             *ngIf="bankDetailsUpdateForm.get('attachmentupdate')?.invalid && bankDetailsUpdateForm.get('attachmentupdate')?.touched">
                             Flie is required
                         </div>
-                        <div *ngIf="displayblankdocument" class="custom-file-name text-wrap my-3" >{{ displayblankdocument.name ||
-                            displayblankdocument }}</div>
+                        <div class="custom-file-name my-2" *ngIf="displayblankdocument">{{ displayblankdocument.name || displayblankdocument }}</div>
+                       
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                                 The file size should be less than 25MB.</p>

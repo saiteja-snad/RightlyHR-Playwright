@@ -149,7 +149,8 @@
                         <div id="halfDayCheck">
                             <div class="form-check form-check-inline">
                                 <label class="form-check-label" for="halfday">
-                                    <input class="form-check-input" type="radio" id="halfday" value="1" name="halfdayavailing" formControlName="halfdayavailing" [checked]="leaveForm.get('halfdayavailing')?.value === '1'"
+                                    <input class="form-check-input" type="radio" id="halfday" value="1"
+                                     name="halfdayavailing" formControlName="halfdayavailing" [checked]="leaveForm.get('halfdayavailing')?.value === '1'"
                                          [disabled]="enableHalfDayOptions === false" (change)="toggleHalfDayOptions(true)"
                                         required>{{'Half Day'| translate}}
                                 </label>

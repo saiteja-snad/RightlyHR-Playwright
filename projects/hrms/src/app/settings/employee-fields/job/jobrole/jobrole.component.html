@@ -80,7 +80,7 @@
               </div>
           </div>
           <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxCharacters']" class="error-msg">
-              {{ 'Max 100 characters allowed' | translate }}
+              {{ 'Please limit your input to 100 characters' | translate }}
           </div>
         </div>
 
@@ -141,7 +141,7 @@
               </div>
           </div>
           <div *ngIf="AddForm.get('Addjobrole')?.errors?.['maxCharacters']" class="error-msg">
-              {{ 'Max 100 characters allowed' | translate }}
+              {{ 'Please limit your input to 100 characters' | translate }}
           </div>
         </div>
 

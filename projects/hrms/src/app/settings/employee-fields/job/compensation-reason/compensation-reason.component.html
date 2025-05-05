@@ -12,7 +12,7 @@
             </div>
             <div *ngIf="CompensationForm.get('Reason')?.touched && CompensationForm.get('Reason')?.invalid" class="error-msg">
                 <div *ngIf="CompensationForm.get('Reason')?.errors?.['required']">
-                    {{ 'Conpensation Reason is required' | translate }}
+                    {{ 'Compensation Reason is required' | translate }}
                 </div>
             </div>
             <div *ngIf="CompensationForm.get('Reason')?.errors?.['maxCharacters']" class="error-msg">
@@ -77,7 +77,7 @@
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="101">
                         <div *ngIf="updateForm.get('UpdateReason')?.touched && updateForm.get('UpdateReason')?.invalid" class="error-msg">
                             <div *ngIf="updateForm.get('UpdateReason')?.errors?.['required']">
-                                {{ 'Conpensation Reason is required' | translate }}
+                                {{ 'Compensation Reason is required' | translate }}
                             </div>
                         </div>
                         <div *ngIf="updateForm.get('UpdateReason')?.errors?.['maxCharacters']" class="error-msg">

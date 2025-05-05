@@ -341,7 +341,8 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
 
   getPolicyAttachmentName(fullPath: string): string {
     if (!fullPath) return 'No file attached';
-    return fullPath.split('\\').pop() || fullPath;
+    const fileName = fullPath.split('organizationPolicy/').pop();
+    return fileName || 'No file attached';
   }
 
   navigation() {

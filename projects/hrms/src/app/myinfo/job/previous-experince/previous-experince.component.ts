@@ -69,11 +69,11 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       previousContactName: ['', [Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50)]],
       previousContactNumber: [
         '',
-        [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
+        [ Validators.minLength(10), Validators.maxLength(10),  Validators.pattern(/^(?!0{10})\d{10}$/)],
       ],
       previousContactEmail: [
         '',
-        [Validators.required, Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
+        [Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
       attachment: ['', Validators.required],
     });
@@ -106,11 +106,11 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       previousContactNameupdate: ['', [Validators.pattern(/^[^\s].*$/), Validators.maxLength(50)]],
       previousContactNumberupdate: [
         '',
-        [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
+        [  Validators.pattern(/^(?!0{10})\d{10}$/), Validators.minLength(10), Validators.maxLength(10)],
       ],
       previousContactEmailupdate: [
         '',
-        [Validators.required, Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
+        [ Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
       attachmentupdate: [null],
     });
@@ -250,9 +250,9 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       fromDate: this.employeeExperienceForm.get('fromDate')?.value,
       toDate: this.employeeExperienceForm.get('isPresent')?.value ? null : this.employeeExperienceForm.get('toDate')?.value,
       jobTitle: this.employeeExperienceForm.get('jobTitle')?.value,
-      previousContactName: this.employeeExperienceForm.get('previousContactName')?.value,
-      previousContactNumber: this.employeeExperienceForm.get('previousContactNumber')?.value,
-      previousContactEmail: this.employeeExperienceForm.get('previousContactEmail')?.value,
+      previousContactName: this.employeeExperienceForm.get('previousContactName')?.value || null,
+      previousContactNumber: this.employeeExperienceForm.get('previousContactNumber')?.value || null,
+      previousContactEmail: this.employeeExperienceForm.get('previousContactEmail')?.value || null,
       isPresent: this.employeeExperienceForm.get('isPresent')?.value,
       isDeleted: false,
       attachment: attachmentPath || '',
@@ -439,9 +439,9 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         employmentType: formData.employmentTypeupdate?.jobType1 || formData.employmentTypeupdate,
         fromDate: formData.fromDateupdate,
         toDate: formData.isPresentupdate ? null : formData.toDateupdate,
-        previousContactName: formData.previousContactNameupdate,
-        previousContactNumber: formData.previousContactNumberupdate,
-        previousContactEmail: formData.previousContactEmailupdate,
+        previousContactName: formData.previousContactNameupdate || null,
+        previousContactNumber: formData.previousContactNumberupdate || null,
+        previousContactEmail: formData.previousContactEmailupdate || null,
         isPresent: formData.isPresentupdate,
         createdAt: currentDate,
         updatedAt: currentDate,

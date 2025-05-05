@@ -41,6 +41,9 @@ export class ProcessedExpensesComponent {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
+  openimgaeModal(content: any) {
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
+  }
   getexpensesheaderbyemployeeid(): void {
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
@@ -146,7 +149,7 @@ export class ProcessedExpensesComponent {
   }
   toggleViewModal() {
     this.modalService.dismissAll();
-    this.openModal(this.viewattamchment)
+    this.openimgaeModal(this.viewattamchment)
   }
   isImageFile(url: any): boolean {
     if (!url) return false;

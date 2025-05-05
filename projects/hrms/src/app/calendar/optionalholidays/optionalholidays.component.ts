@@ -31,16 +31,18 @@ export class OptionalholidaysComponent {
   constructor(public router: Router, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.optionalholidaysform = new FormGroup({
-      selectedYear: new FormControl(this.selectedYear)
-    });
+  
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.getjobDetails();
-    this.currentYear = new Date().getFullYear();
-    for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
-      this.years.push(i);
-    }
-    this.selectedYear = this.currentYear;
+  
+
+    this.http.selectedYear$.subscribe((year) => {
+      if (year) {
+        this.selectedYear = year;
+        this.getHoliday(this.jobshiftdetails);
+      }
+    });
+
   }
 
   getjobDetails() {
@@ -59,16 +61,16 @@ export class OptionalholidaysComponent {
     this.length = 0;
     this.optional = 0;
     let holiday = {
-      locationId: jobshiftdetails[0].locationid,
-      subLocationId: jobshiftdetails[0].sublocationid,
-      shiftId: jobshiftdetails[0].shiftId,
+      locationId: jobshiftdetails[0]?.locationid,
+      subLocationId: jobshiftdetails[0]?.sublocationid,
+      shiftId: jobshiftdetails[0]?.shiftId,
       Applicableyear: this.selectedYear
     }
     this.subscription = this.http.getDataWithQueryParams(`orgHolidays/getHolidaysbylocation`, holiday).subscribe({
       next: (response: any) => {
         this.Policies = response;
-        this.orgHolidayItemsArray = response[0].orgHolidaysItems;
-        this.orgHolidayItemsArray.forEach(item => {
+        this.orgHolidayItemsArray = response[0]?.orgHolidaysItems;
+        this.orgHolidayItemsArray?.forEach(item => {
           if (item.isOptional) {
             this.orgHolidayItemsArrayTrue.push(item);
             this.length = this.orgHolidayItemsArrayTrue.length
@@ -82,8 +84,5 @@ export class OptionalholidaysComponent {
     });
   }
 
-  onYearChange() {
-    this.selectedYear = this.optionalholidaysform.get('selectedYear')?.value;
-    this.getHoliday(this.jobshiftdetails);
-  }
+
 }

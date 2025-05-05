@@ -62,7 +62,7 @@ export class EligibleForRehireComponent {
     this.subscription = this.http.postdata('Eligibleforrehire', request).subscribe({
       next: () => {
         this.getEligibility();
-        this.conformationPopup.openSuccessModal('Eligibility For Rehire added successfully');
+        this.conformationPopup.openSuccessModal('Eligible For Rehire added successfully');
         this.resetForm();
       },
       error: (error: any) => {

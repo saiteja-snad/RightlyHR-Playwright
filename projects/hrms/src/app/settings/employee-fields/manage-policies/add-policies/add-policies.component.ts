@@ -57,10 +57,10 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
     
     addPolicyRow() {
      return this.fb.group({
-        policyName: ['',[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
+        policyName: ['',[Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
         policyFile: ['',Validators.required],
         policyFilePath:[''],
-        policyDescription: ['',[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z0-9][a-zA-Z0-9\s]*$')]]
+        policyDescription: ['',[Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]]
       });
     }
     getAllYears() {

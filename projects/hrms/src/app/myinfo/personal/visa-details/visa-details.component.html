@@ -1,7 +1,9 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Visa Details</span></div>
+    @if(  rbac.allowedToAccess('My Info Visa Details.create')) {
     <div class="custom-add-btn" (click)="openModal(addvisamodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+    }
   </div>
 
   <div class="custom-table-content">
@@ -14,7 +16,9 @@
           <th>Expiry Date</th>
           <th>Issued Country</th>
           <th>Status</th>
+          @if(rbac.allowedToAccess('My Info Visa Details.update') || rbac.allowedToAccess('My Info Visa Details.delete')) {
           <th class="text-center">Action(S)</th>
+          }
         </tr>
       </thead>
       <tbody>
@@ -26,25 +30,31 @@
             <td>{{ visa.expirydate  | dateformat  }}</td>
             <td>{{ visa.issuedcountry }}</td>
             <td>{{ visa.status }}</td>
+            @if(rbac.allowedToAccess('My Info Visa Details.update') || rbac.allowedToAccess('My Info Visa Details.delete')) {
             <td class="text-center">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
                 </span>
                 <ul class="dropdown-menu custom-dropdown-menu">
+                  @if(rbac.allowedToAccess('My Info Visa Details.update')) {
                   <li (click)="openModalupdate(updatevisamodal, visa)">
                     <a class="dropdown-item">
                       <i class="bi bi-pencil me-2"></i>Update
                     </a>
                   </li>
+                }
+                @if( rbac.allowedToAccess('My Info Visa Details.delete')) {
                   <li (click)="opendeletModal(deleteconformation,visa)">
                     <a class="dropdown-item">
                       <i class="bi bi-trash3 me-2"></i>Delete
                     </a>
                   </li>
+                }
                 </ul>
               </div>
             </td>
+          }
           </tr>
         </ng-container>
     

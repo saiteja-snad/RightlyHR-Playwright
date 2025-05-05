@@ -11,7 +11,6 @@
                     <th>Permission Type</th>
                     <th>Reason</th>
                     <th >Approver Comments</th>
-                    <!-- <th >Approver Comments</th> -->
                     @if(rbac.allowedToAccess('Permission (On Behalf Of Approvals).update') || rbac.allowedToAccess('Permission (On Behalf Of Approvals).delete')) {
                         <th>Action<span class="text-lowercase">(s)</span></th>
                     }

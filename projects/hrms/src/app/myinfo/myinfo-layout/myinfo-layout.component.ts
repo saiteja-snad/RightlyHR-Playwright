@@ -16,6 +16,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { MyinfoDetailsComponent } from "../../shared/myinfo-details/myinfo-details.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-myinfo-layout',
@@ -40,7 +41,7 @@ export class MyinfoLayoutComponent implements OnInit , OnDestroy{
   selectedEmployees: any[] = []; // Ensure it's an array
 
   constructor(private http: HttpService, private router: Router, private modalService: NgbModal,
-    private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+    private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.teamForm = this.fb.group({

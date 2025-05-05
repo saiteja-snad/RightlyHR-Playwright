@@ -12,21 +12,31 @@ import { CommonModule } from '@angular/common';
 import { HttpService } from '../../services/http.service';
 import { FileSizePipe } from "../../Pipes/file-size.pipe";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../services/rbac.service';
 
 
 @Component({
   selector: 'app-documents',
-  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent],
+  imports: [
+    LastValuePipe,
+    DateformatPipe,
+    ReactiveFormsModule,
+    FormsModule,
+    TranslateModule,
+    CommonModule,
+    FileSizePipe,
+    NoDataFoundComponent,
+  ],
   templateUrl: './documents.component.html',
-  styleUrl: './documents.component.scss'
+  styleUrl: './documents.component.scss',
 })
 export class DocumentsComponent {
   subscription!: Subscription;
-  spinnerLoader=false;
-  selectedMainFolder = {} as IFolders
+  spinnerLoader = false;
+  selectedMainFolder = {} as IFolders;
   isMainfolderTouched: boolean = false;
   folders = [] as IFolders[];
-  selectedFile !: IFolders;
+  selectedFile!: IFolders;
   selectedFolder = [] as IFolders[];
   mainDir = {} as ICreateSubDir;
   Files = [] as IFolders[];
@@ -36,22 +46,25 @@ export class DocumentsComponent {
   file: any;
   showUploadIcon: boolean = false;
   subDir = {} as ICreateSubDir;
-  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService) { }
+  constructor(
+    private documentService: DocumentService,
+    private modalService: NgbModal,
+    private conformationPopup: OpenModalService,
+    private fb: FormBuilder,
+    private http: HttpService,
+    public rbac: RbacService
+  ) {}
 
   ngOnInit(): void {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getMainFolders()
+    this.getMainFolders();
     this.initializejobForm();
-
   }
   initializejobForm(): void {
     this.uploadfrom = this.fb.group({
-      filename: ['',Validators.required],
-   
+      filename: ['', Validators.required],
     });
   }
-
-
 
   getMainFolders(dirPath?: string) {
     dirPath = dirPath ? dirPath : '/FusionDocuments';
@@ -66,7 +79,7 @@ export class DocumentsComponent {
       },
       error: (error) => {
         console.error(error);
-      }
+      },
     });
   }
 
@@ -75,14 +88,14 @@ export class DocumentsComponent {
       next: (data: any) => {
         folder.subfolders = data as IFolders[];
         folder.subfolders.forEach((subfolder: any) => {
-          subfolder['isCompanyDir'] = subfolder.name.includes('Company Documents');
+          subfolder['isCompanyDir'] =
+            subfolder.name.includes('Company Documents');
         });
       },
       error: (reason) => console.log(reason),
     });
   }
 
-  
   toggleFolder(folder: any): void {
     // Collapse all other folders
     this.folders.forEach((f) => {
@@ -90,9 +103,9 @@ export class DocumentsComponent {
         f.expanded = false; // Collapse other folders
       }
     });
-  
+
     folder.expanded = !folder.expanded;
- 
+
     this.selectedMainFolder = folder;
   }
   onSubFolderSelected(subFolder: any): void {
@@ -105,13 +118,16 @@ export class DocumentsComponent {
     }
   }
   getVisibleFiles() {
-    return this.Files.filter(file => file && !file.isNotVisible);
+    return this.Files.filter((file) => file && !file.isNotVisible);
   }
 
   getAllFiles() {
     if (!this.selectedFile.isEmpDir) {
       this.subscription = this.http
-        .getDataWithQuery('FileSystem/Files',  `${this.selectedFile.name}/${this.empdata.employeeId}`)
+        .getDataWithQuery(
+          'FileSystem/Files',
+          `${this.selectedFile.name}/${this.empdata.employeeId}`
+        )
         .subscribe({
           next: (data: any) => {
             console.log(data);
@@ -135,7 +151,6 @@ export class DocumentsComponent {
           error: (err: any) => {
             console.error(err);
             this.Files = [];
-
           },
         });
     }
@@ -147,22 +162,22 @@ export class DocumentsComponent {
       backdrop: 'static',
     });
   }
-  
+
   filechange(event: any) {
     this.file = event.target.files[0];
-    if ( this.file) {
+    if (this.file) {
       const fileSizeInMB = this.file.size / (1024 * 1024);
       if (fileSizeInMB > 25) {
         this.file = null;
-        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.conformationPopup.openErrorModal(
+          'The file size should be less than 25MB.'
+        );
         this.uploadfrom.get('filename')?.reset();
         this.uploadfrom.get('filename')?.markAsUntouched();
-        
+
         return;
       }
     }
-
-    
   }
 
   filterFolder() {
@@ -186,10 +201,9 @@ export class DocumentsComponent {
     });
   }
 
-
   fileUploaded() {
     if (this.selectedFile.name) {
-        this.spinnerLoader=true;
+      this.spinnerLoader = true;
       let filePath = `${this.selectedFile.name}/${this.empdata.employeeId}`;
 
       this.subscription = this.http
@@ -200,23 +214,19 @@ export class DocumentsComponent {
         )
         .subscribe({
           next: (data: any) => {
-      
-              this.spinnerLoader=false;
-              this.getAllFiles();
-              this.uploadfrom.reset();
-              this.conformationPopup.openSuccessModal(
-                'File uploaded successfully',
-              );
-              this.modalService.dismissAll();
-            
+            this.spinnerLoader = false;
+            this.getAllFiles();
+            this.uploadfrom.reset();
+            this.conformationPopup.openSuccessModal(
+              'File uploaded successfully'
+            );
+            this.modalService.dismissAll();
           },
           error: (reason: any) => {
-            this.spinnerLoader=false;
-            this.conformationPopup.openErrorModal(reason.error.message,)
+            this.spinnerLoader = false;
+            this.conformationPopup.openErrorModal(reason.error.message);
           },
-
         });
-
     }
   }
 
@@ -241,9 +251,4 @@ export class DocumentsComponent {
         error: (reason) => console.log(reason),
       });
   }
-
-
-
- 
-
 }

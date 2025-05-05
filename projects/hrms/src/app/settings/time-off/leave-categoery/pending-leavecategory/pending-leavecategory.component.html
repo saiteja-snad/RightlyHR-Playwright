@@ -31,7 +31,8 @@
             <td>{{details.type ? 'General' : 'Flexible'}}</td>
             <td>{{details.name}}</td>
             <td>{{details.categoryCode}}</td>
-            <td><input type="color" readonly disabled></td>
+            <td class="center"><input type="color" [(ngModel)]="details.categoryColor"
+              readonly disabled></td>
             <td>{{details.validity}}</td>
             <td>{{details.status}}</td>
             <td class="text-center" *ngIf="rbac.allowedToAccess('Leave Category Tab.update')">

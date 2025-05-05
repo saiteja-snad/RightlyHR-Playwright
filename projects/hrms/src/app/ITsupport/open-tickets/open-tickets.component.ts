@@ -13,6 +13,7 @@ import { IDepartment } from '../../Interfaces/letters-model';
 import { OpenModalService } from '../../services/open-modal.service';
 import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
 import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-open-tickets',
@@ -45,7 +46,8 @@ export class OpenTicketsComponent {
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private fb: FormBuilder,
-    private confirmation: OpenModalService
+    private confirmation: OpenModalService,
+    public rbac: RbacService,
   ) { }
 
   ngOnInit() {

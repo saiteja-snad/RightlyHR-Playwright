@@ -12,6 +12,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import {  NgxDocViewerModule } from 'ngx-doc-viewer';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../services/rbac.service';
 
 
 @Component({
@@ -30,7 +31,7 @@ export class ApprovedExpensesComponent implements OnInit,OnDestroy{
    expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   constructor(public router: Router, private fb: FormBuilder, 
-    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer, public rbac: RbacService) { }
  
     searchTerm: any = ''
   expenesEmplyeedata=new BehaviorSubject< ExpenseEntity[]>([])

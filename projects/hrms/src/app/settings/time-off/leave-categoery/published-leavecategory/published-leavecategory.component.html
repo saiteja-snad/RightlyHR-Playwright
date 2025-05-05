@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Leave Category</span></div>
-    <div class="custom-add-btn" (click)="navigateToAddLeaveCategory()" *ngIf="rbac.allowedToAccess('Leave Category Tab.create')">
+    <div class="custom-add-btn" (click)="navigateToAddLeaveCategory()" *ngIf="rbac.allowedToAccess('Leave Category Published Tab.create')">
       <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
     </div>
   </div>
@@ -19,7 +19,7 @@
         <th>Display Color</th>
         <th>Expires After (Days)</th>
         <th>Status</th>
-        <th *ngIf="rbac.allowedToAccess('Leave Category Tab.create') || rbac.allowedToAccess('Leave Category Tab.view')">Actions</th>
+        <th *ngIf="rbac.allowedToAccess('Leave Category Published Tab.create') || rbac.allowedToAccess('Leave Category Published Tab.view')">Actions</th>
       </thead>
       <tbody>
         <ng-container *ngIf="(submissiondata).length; else noResults">
@@ -34,19 +34,19 @@
             <td><input type="color" readonly disabled></td>
             <td>{{details.validity}}</td>
             <td>{{details.status}}</td>
-            <td class="text-center" *ngIf="rbac.allowedToAccess('Leave Category Tab.create') || rbac.allowedToAccess('Leave Category Tab.view')">
+            <td class="text-center" *ngIf="rbac.allowedToAccess('Leave Category Published Tab.create') || rbac.allowedToAccess('Leave Category Published Tab.view')">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
                 </span>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  <li *ngIf="rbac.allowedToAccess('Leave Category Tab.view')">
+                  <li *ngIf="rbac.allowedToAccess('Leave Category Published Tab.view')">
                     <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" 
                     (click)="navigateToViewLeaveCategory(details)">
                     <i class="bi bi-eye-fill me-2"></i>{{'View' | translate}}
                     </a>
                   </li>
-                  <li *ngIf="rbac.allowedToAccess('Leave Category Tab.create')">
+                  <li *ngIf="rbac.allowedToAccess('Leave Category Published Tab.create')">
                     <a *ngIf="details.status === 'Published'" class="dropdown-item cursor" 
                     (click)="navigateToCloneLeaveCategory(details)">
                     <i class="bi bi-copy me-2"></i>{{'Clone' | translate}}

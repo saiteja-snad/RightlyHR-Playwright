@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-rejected-expenses',
@@ -28,10 +29,10 @@ export class RejectedExpensesComponent {
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   constructor(
-    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
-
-  searchTerm: any = ''
-  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
+    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer, public rbac: RbacService) { }
+ 
+    searchTerm: any = ''
+    expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getexpensesheaderbyemployeeid();

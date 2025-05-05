@@ -12,6 +12,7 @@ import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
 import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
 import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-await-on-user-tickets',
@@ -44,7 +45,8 @@ export class AwaitOnUserTicketsComponent {
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private fb: FormBuilder,
-    private confirmation: OpenModalService
+    private confirmation: OpenModalService,
+    public rbac: RbacService,
   ) { }
 
   ngOnInit() {

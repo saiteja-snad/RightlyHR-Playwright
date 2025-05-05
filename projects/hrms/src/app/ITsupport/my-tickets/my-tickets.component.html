@@ -4,7 +4,7 @@
             <p class="component-header mb-0">IT Support</p>
         </div>
 
-        <div>
+        <div *ngIf="rbac.allowedToAccess('My Tickets Tab.view')">
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)"><i
                     class="bi bi-plus me-2"></i>Add Ticket</button>
         </div>

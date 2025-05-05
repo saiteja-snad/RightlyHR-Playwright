@@ -13,7 +13,7 @@
           <th>Department/Employee Manager</th>
           <th>Employee Name</th>
           <th>Role Name</th>
-          <th class="text-center">Action</th>
+          <th class="text-center" *ngIf="rbac.allowedToAccess('No Due Clearance.update') || rbac.allowedToAccess('No Due Clearance.delete')">Action</th>
         </tr>
       </thead>
       <tbody>

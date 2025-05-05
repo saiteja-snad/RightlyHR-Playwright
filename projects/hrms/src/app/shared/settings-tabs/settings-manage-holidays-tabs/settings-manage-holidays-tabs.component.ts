@@ -21,25 +21,49 @@ export class SettingsManageHolidaysTabsComponent implements OnInit, OnDestroy {
 
   public navLinks: any[] = [];
 
-  // Define all tabs with permission metadata
+  // All possible tabs with permissions
   allLinks = [
-    { label: 'Pending For Submission', route: '/settings/employee-fields/manage-holidays/pending-for-submit', permission: { feature: 'Holidays Pending Tab', action: 'view' } },
-    { label: 'Published', route: '/settings/employee-fields/manage-holidays/published-holidays', permission: { feature: 'Holidays Published Tab', action: 'view' } }
+    {
+      label: 'Pending For Submission',
+      route: '/settings/employee-fields/manage-holidays/pending-for-submit',
+      permission: { feature: 'Holidays Pending Tab', action: 'view' }
+    },
+    {
+      label: 'Published',
+      route: '/settings/employee-fields/manage-holidays/published-holidays',
+      permission: { feature: 'Holidays Published Tab', action: 'view' }
+    }
   ];
 
   constructor(
     public router: Router,
     private http: HttpService,
     public rbac: RbacService
-  ) {}
-
-  ngOnInit() {
+  ) {
     // Filter links based on permission
     this.navLinks = this.allLinks.filter(link =>
+      link.permission &&
+      link.permission.feature &&
+      link.permission.action &&
       this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
     );
+  }
 
+  ngOnInit() {
     this.getAllHolidays();
+
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields/manage-holidays';
+
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
+
+    const isAllowed = this.navLinks.some(link => link.route === currentUrl);
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
   }
 
   getAllHolidays() {
@@ -55,7 +79,7 @@ export class SettingsManageHolidaysTabsComponent implements OnInit, OnDestroy {
         ).reverse();
         this.publishedcount = this.allHolidaysPublished.length;
 
-        // Update counts in permission-filtered navLinks
+        // Update count dynamically based on label
         this.navLinks = this.navLinks.map(link => {
           if (link.label === 'Pending For Submission') {
             return { ...link, count: this.pendingcount };
@@ -77,4 +101,5 @@ export class SettingsManageHolidaysTabsComponent implements OnInit, OnDestroy {
     }
   }
 }
+
 

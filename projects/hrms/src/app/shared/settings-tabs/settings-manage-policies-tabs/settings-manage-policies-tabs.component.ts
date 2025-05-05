@@ -13,19 +13,17 @@ import { RbacService } from '../../../services/rbac.service';
 })
 
 export class SettingsManagePoliciesTabsComponent implements OnInit, OnDestroy {
+
+  navLinks: any[] = [];
   subscription!: Subscription;
   allPoliciesPending: any[] = [];
   allPoliciesPublished: any[] = [];
   pendingcount = 0;
   publishedcount = 0;
 
-  public navLinks: any[] = [];
-
   allLinks = [
-    { label: 'Pending For Submission', route: '/settings/employee-fields/manage-policies/pending-for-submit', permission: { feature: 'Policies Pending Tab', action: 'view' }
-    },
-    { label: 'Published', route: '/settings/employee-fields/manage-policies/published-policies', permission: { feature: 'Policies Published Tab', action: 'view' }
-    }
+    { label: 'Pending For Submission', route: '/settings/employee-fields/manage-policies/pending-for-submit', permission: { feature: 'Policies Pending Tab', action: 'view' }, count: 0 },
+    { label: 'Published', route: '/settings/employee-fields/manage-policies/published-policies', permission: { feature: 'Policies Published Tab', action: 'view' }, count: 0 }
   ];
 
   constructor(
@@ -33,14 +31,30 @@ export class SettingsManagePoliciesTabsComponent implements OnInit, OnDestroy {
     private http: HttpService,
     public rbac: RbacService
   ) {
+    // Filter based on permission
+    this.navLinks = this.allLinks.filter(link =>
+      link.permission &&
+      link.permission.feature &&
+      link.permission.action &&
+      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
+    );
   }
 
   ngOnInit(): void {
     this.getAllPolicies();
 
-    this.navLinks = this.allLinks.filter(link =>
-      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
-    );
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields/manage-policies';
+
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
+
+    const isAllowed = this.navLinks.some(link => link.route === currentUrl);
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
   }
 
   getAllPolicies() {
@@ -56,11 +70,11 @@ export class SettingsManagePoliciesTabsComponent implements OnInit, OnDestroy {
         ).reverse();
         this.publishedcount = this.allPoliciesPublished.length;
 
-        // Update counts in already filtered navLinks
+        // Update counts inside navLinks
         this.navLinks = this.navLinks.map(link => {
-          if (link.label === 'Pending For Submission') {
+          if (link.route.includes('pending-for-submit')) {
             return { ...link, count: this.pendingcount };
-          } else if (link.label === 'Published') {
+          } else if (link.route.includes('published-policies')) {
             return { ...link, count: this.publishedcount };
           }
           return link;

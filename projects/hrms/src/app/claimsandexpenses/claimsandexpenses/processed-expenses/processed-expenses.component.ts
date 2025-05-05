@@ -10,6 +10,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-processed-expenses',
@@ -27,7 +28,7 @@ export class ProcessedExpensesComponent {
   updataid!: number;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   constructor(
-    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer, public rbac: RbacService) { }
     searchTerm: any = ''
     expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   draftsCount: number = 0;

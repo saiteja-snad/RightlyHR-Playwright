@@ -1,4 +1,4 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container" *ngIf="rbac.allowedToAccess('Active Forms.view')">
   @if(!loader){
   <!--Input search-->
   <div class="input-group custom-search mb-3">
@@ -7,7 +7,7 @@
       class="form-control custom-search-input" placeholder="Search">
   </div>
 
-  <div class="custom-table-content">
+  <div class="custom-table-content" *ngIf="rbac.allowedToAccess('Active Forms.view')">
     <table class="w-100">
       <thead>
         <tr>

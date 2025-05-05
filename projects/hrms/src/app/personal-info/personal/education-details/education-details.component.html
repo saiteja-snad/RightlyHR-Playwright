@@ -1,7 +1,9 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Education Details</span></div>
-    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'&& employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee
+    prospective'&& employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
+    'trainee inactive')){
     <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New
     </div>
     }
@@ -21,7 +23,7 @@
           @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
           'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
           employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-          <th class="text-center">Actions</th>
+          <th class="text-center">Action(S)</th>
           }
         </tr>
       </thead>
@@ -80,8 +82,8 @@
 <!--Add Modal-->
 <ng-template #addEducationmodal let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
         <p class="popup-heading mb-0">Add Education Details</p>
       </div>
       <div>
@@ -89,7 +91,7 @@
             class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
+    <div class="custom-main-popup-content">
       <form [formGroup]="educationForm" (ngSubmit)="postEducation()">
         <div class="row">
           <div class="col-md-6 mb-3">
@@ -157,8 +159,9 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDate" [min]="getMinEndDate()" onkeypress="return false"
-              [min]="educationForm.get('degreeStartDate')?.value" class="form-control custom-input" id="degreeEndDate">
+            <input type="date" formControlName="degreeEndDate" [min]="getMinEndDate()" [max]="currentDate"
+              onkeypress="return false" [min]="educationForm.get('degreeStartDate')?.value"
+              class="form-control custom-input" id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationForm.get('degreeEndDate')?.invalid && educationForm.get('degreeEndDate')?.touched">
               To Date is required
@@ -185,7 +188,7 @@
           <button type="reset" class="custom-btn btn-secondary px-4"
             (click)="educationForm.reset();modal.dismiss()">Close</button>
           <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationForm.invalid || spinnerLoader">
-           
+
             @if (spinnerLoader) {
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
             <span>{{'Loading' | translate}}...</span>
@@ -202,15 +205,15 @@
 <!--update Modal-->
 <ng-template #updateEducationmodal let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
         <p class="popup-heading mb-0">Update Education Details</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
+    <div class="custom-main-popup-content ">
       <form [formGroup]="educationupdateForm" (ngSubmit)="updateEducation()">
         <div class="row">
           <div class="col-md-6 mb-3">
@@ -269,8 +272,8 @@
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeStartDateupdate" [min]="dateofbirth" onkeypress="return false"
-              [max]="currentDate" class="form-control custom-input" id="degreeStartDate">
+            <input type="date" formControlName="degreeStartDateupdate" [min]="dateofbirth" [max]="currentDate"
+              onkeypress="return false" class="form-control custom-input" id="degreeStartDate">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('degreeStartDateupdate')?.invalid && educationupdateForm.get('degreeStartDateupdate')?.touched">
               From Date is required
@@ -280,9 +283,9 @@
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
-            <input type="date" formControlName="degreeEndDateupdate" [min]="getupdateMinEndDate()" onkeypress="return false"
-              [min]="educationupdateForm.get('degreeStartDateupdate')?.value" class="form-control custom-input"
-              id="degreeEndDate">
+            <input type="date" formControlName="degreeEndDateupdate" [min]="getupdateMinEndDate()" [max]="currentDate"
+              onkeypress="return false" [min]="educationupdateForm.get('degreeStartDateupdate')?.value"
+              class="form-control custom-input" id="degreeEndDate">
             <div class="error-msg"
               *ngIf="educationupdateForm.get('degreeEndDateupdate')?.invalid && educationupdateForm.get('degreeEndDateupdate')?.touched">
               To Date is required
@@ -298,9 +301,9 @@
               *ngIf="educationupdateForm.get('attachmentupdate')?.invalid && educationupdateForm.get('attachmentupdate')?.touched">
               File is required
             </div>
-            <div *ngIf="displalyeducationattachment" class="mb-2 mt-2">
-              <b>{{ displalyeducationattachment?.name || displalyeducationattachment }}</b>
-            </div>
+            <div *ngIf="displalyeducationattachment" class="custom-file-name text-wrap">{{
+              displalyeducationattachment?.name
+              || displalyeducationattachment }}</div>
             <div class="d-flex justify-content-between align-items-center mt-3">
               <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                 The file size should be less than 25MB.</p>
@@ -308,10 +311,10 @@
           </div>
         </div>
 
-        <div class="d-flex justify-content-end gap-3">
-          <button type="reset" class="custom-btn btn-secondary px-4"
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary "
             (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary px-4"
+          <button type="submit" class="custom-btn btn-primary "
             [disabled]="educationupdateForm.invalid || spinnerLoader">
 
             @if (spinnerLoader) {
@@ -331,10 +334,10 @@
 <ng-template #deleteconformation let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+      <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
       <p class="confirmation-text mb-4">Are you sure you want to delete the Education Details?</p>
     </div>
-    <div class="d-flex justify-content-center gap-3 mt-4">
+    <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
       <button type="submit" class="custom-btn btn-primary" (click)="educationDelete()">Yes</button>
     </div>

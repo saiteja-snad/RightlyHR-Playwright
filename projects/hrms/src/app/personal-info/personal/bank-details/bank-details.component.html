@@ -69,15 +69,15 @@
 <!--Add popup-->
 <ng-template #addBankModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
                 <p class="popup-heading mb-0">Add New Bank Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();bankDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content ">
             <form [formGroup]="bankDetailsForm" (ngSubmit)="postBankDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -169,9 +169,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="bankDetailsForm.reset();modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="bankDetailsForm.invalid || spinnerLoader">
+                <div class="custom-modal-footer">
+                    <button type="reset" class="custom-btn btn-secondary" (click)="bankDetailsForm.reset();modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsForm.invalid || spinnerLoader">
                         @if (spinnerLoader) {
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                             <span>{{'Loading' | translate}}...</span>
@@ -188,8 +188,8 @@
 <!--Update popup-->
 <ng-template #updateBankmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div >
                 <p class="popup-heading mb-0">Update Bank Details</p>
             </div>
             <div>
@@ -197,7 +197,7 @@
                     <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content">
             <form [formGroup]="bankDetailsUpdateForm" (ngSubmit)="updateBankDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -270,7 +270,7 @@
                             *ngIf="bankDetailsUpdateForm.get('attachmentupdate')?.invalid && bankDetailsUpdateForm.get('attachmentupdate')?.touched">
                             Flie is required
                         </div>
-                        <div *ngIf="displayblankdocument" class="custom-file-name my-3">{{ displayblankdocument.name ||
+                        <div *ngIf="displayblankdocument" class="custom-file-name text-wrap my-3" >{{ displayblankdocument.name ||
                             displayblankdocument }}</div>
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
@@ -289,9 +289,9 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary px-4" (click)="bankDetailsUpdateForm.reset();modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary px-4" [disabled]="bankDetailsUpdateForm.invalid">
+                <div class="custom-modal-footer">
+                    <button type="reset" class="custom-btn btn-secondary " (click)="bankDetailsUpdateForm.reset();modal.dismiss()">Close</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="bankDetailsUpdateForm.invalid">
                         @if (spinnerLoader) {
                             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                             <span>{{'Loading' | translate}}...</span>
@@ -309,10 +309,10 @@
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text mb-4">Are you sure you want to delete the Bank details?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3">
+        <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="bankDelete()">Yes</button>
         </div>

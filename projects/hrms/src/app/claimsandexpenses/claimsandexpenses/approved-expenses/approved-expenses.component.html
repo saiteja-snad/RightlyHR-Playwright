@@ -80,10 +80,10 @@
             <th>Expense Type</th>
             <th>Expense Name</th>
             <th>Expense Date</th>
-            <th>Total Amount</th>
+            <th>Expense Amount</th>
             <th>Status</th>
             <th>Receipt Number</th>
-            <th colspan="2">Actions</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -92,9 +92,11 @@
             <td>{{ item?.item_Name }}</td>
             <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
             <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+
             <td>{{ item?.status }}</td>
             <td>{{ item?.receipt_Number }}</td>
-            <td>
+            <td class="text-center">
+
               <div class="d-flex gap-2">
                 <a type="button" class="me-2 dowload-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
                   <i class="bi bi-download me-2"></i>Download
@@ -103,10 +105,15 @@
                   <i class="bi bi-paperclip"></i>View
                 </a>
               </div>
+
             </td>
+
           </tr>
         </tbody>
       </table>
+      <div class="text-center mt-3" >
+        <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+    </div>
     </div>
   </div>
 </ng-template>

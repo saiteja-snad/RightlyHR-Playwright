@@ -107,7 +107,11 @@
             <div class="w-100">
               <label class="form-label custom-label">{{'Policy Attachment (Image and PDF only)' | translate}}<span
                   class="text-danger">*</span></label>
-              <input type="file" formControlName="policyFile" class="form-control custom-input w-100" />
+                  <input type="file"
+                  formControlName="policyFile"
+                  class="form-control custom-input w-100"
+                  (change)="onReactiveFileChange($event, i)"
+                  accept=".pdf,image/*" />
               <div *ngIf="policy.get('policyFile')?.touched && policy.get('policyFile')?.hasError('required')"
                 class="error-msg">
                 {{'Policy File is required'|translate}}

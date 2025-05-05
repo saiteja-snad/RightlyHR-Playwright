@@ -15,7 +15,7 @@
                     <th>Attachment</th>
                     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase()
                     !== 'trainee prospective')){
-                    <th class="text-center">Actions</th>}
+                    <th class="text-center">Action(S)</th>}
                 </tr>
             </thead>
             <tbody>
@@ -151,15 +151,15 @@
 <!--Update popup-->
 <ng-template #updateidentityModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
                 <p class="popup-heading mb-0">Update Identity Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+        <div class="custom-main-popup-content">
             <form [formGroup]="identityupdateForm" (ngSubmit)="updateIdentity(identityupdateForm)">
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -210,16 +210,15 @@
                             *ngIf="identityupdateForm.get('identityupdateAttachment')?.invalid && identityupdateForm.get('identityupdateAttachment')?.touched">
                             Attachment is required
                         </div>
-                        <div *ngIf="displayidentiydocument" class="mb-2 mt-2">
-                            <b>{{ displayidentiydocument?.name || displayidentiydocument }}</b>
-                        </div>
+                        <div *ngIf="displayidentiydocument" class="custom-file-name text-wrap mt-2">{{ displayidentiydocument?.name ||
+                            displayidentiydocument }}</div>
                         <div class="d-flex justify-content-between align-items-center mt-2">
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed. The file size should be less than 25MB.</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3">
+                <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid">Update</button>
                 </div>
@@ -232,10 +231,10 @@
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon ">
             <p class="confirmation-text mb-4">Are you sure you want to delete the Identity Details?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3">
+        <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary" (click)="identityDelete()">Yes</button>
         </div>

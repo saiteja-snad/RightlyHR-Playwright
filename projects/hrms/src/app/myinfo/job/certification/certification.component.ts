@@ -49,7 +49,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.certificationForm = this.fb.group({
       certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(100)]],
-      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(50)]],
+      certificationId: ['', [Validators.required,Validators.pattern(/^(?=.*[A-Za-z0-9])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]+$/), Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
@@ -75,7 +75,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
   initializeupdateForm(): void {
     this.updateCertificationForm = this.fb.group({
       certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(100)]],
-      certificationId: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(50)]],
+      certificationId: ['', [Validators.required,Validators.pattern(/^(?=.*[A-Za-z0-9])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]+$/), Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
       expiryDate: [null, Validators.required],
       isExpired: [false],
@@ -326,8 +326,8 @@ export class CertificationComponent implements OnInit, OnDestroy {
     if (this.updateCertificationForm.valid) {
       this.spinnerLoader = true
       const payload = this.createUpdateCertificationPayload();
-
-      if (this.certificationDocument) {
+    
+      if (this.certificationDocument instanceof File) {
         this.uploadUpdatedCertificationAttachment(payload);
       } else {
         this.saveUpdatedCertificationData(payload);
@@ -395,7 +395,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
       isExpired: this.updateCertificationForm.get('isExpired')?.value || false,
       isDeleted: false,
       isdeleted: false,
-      attachment: attachmentPath || '',
+      attachment: this.certificationDocument ,
       createdAt: currentDate,
       updatedAt: currentDate,
 

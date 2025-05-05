@@ -65,7 +65,7 @@
     <div class="custom-main-popup-content text-center">
       <div class="Image-content-view">
         <div *ngIf="!ExpenseImageUrl; else imageView">
-          <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google"></ngx-doc-viewer>
+          <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
         </div>
         <ng-template #imageView>
           <img [src]="ExpenseImageUrl" alt="My Image" class="modal-image" />

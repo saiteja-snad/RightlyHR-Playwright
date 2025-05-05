@@ -15,7 +15,7 @@ import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-rejected-expenses',
-  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent,TranslateModule],
+  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule],
   templateUrl: './rejected-expenses.component.html',
   styleUrl: './rejected-expenses.component.scss'
 })
@@ -29,30 +29,34 @@ export class RejectedExpensesComponent {
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   constructor(
-    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer, public rbac: RbacService) { }
- 
-    searchTerm: any = ''
-    expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
+    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,public rbac: RbacService) { }
+
+  searchTerm: any = ''
+  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getexpensesheaderbyemployeeid();
   }
 
+  openModalcomments(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, size: "xl", backdrop: 'static' });
   }
   comments_Function(comments: any) {
     this.commentsrecivced = comments
+    console.log(comments)
   }
 
 
   getexpensesheaderbyemployeeid(): void {
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Rejected&searchQuery=${cleanSearchQuery}`, ).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Rejected&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
-          this.expenesEmplyeedata.next(data) 
+          this.expenesEmplyeedata.next(data)
 
         }, error(err) {
           console.log("expensesheadererror", err)
@@ -121,21 +125,28 @@ export class RejectedExpensesComponent {
   }
 
   onViewAttachement(url: any) {
-    if (url?.endsWith('jpg') || url?.endsWith('png') || url?.endsWith('jpeg') ) {
+    const lowerUrl = url?.toLowerCase();
+
+    if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http
         .DownloadDataWithQuery('FileSystem/Downloadfile', url)
         .subscribe({
           next: (res: any) => {
             const blob = new Blob([res['body']], { type: 'image/png' });
             const objectURL = URL.createObjectURL(blob);
-            this.ExpenseImageUrl =
-              this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            this.ExpenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            this.ExpenseViewURL = null;
             this.toggleViewModal();
           },
-
-          error: (reason) => console.log(reason),
+          error: (err) => console.error('Error downloading image:', err),
         });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.ExpenseImageUrl = null;
+      this.ExpenseViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModal();
     } else {
+      // fallback for other types if needed
+      this.ExpenseImageUrl = null;
       this.ExpenseViewURL = `${environment.viewUrl}${url}`;
       this.toggleViewModal();
     }
@@ -143,6 +154,11 @@ export class RejectedExpensesComponent {
   toggleViewModal() {
     this.modalService.dismissAll();
     this.openModal(this.viewattamchment)
+  }
+  isImageFile(url: any): boolean {
+    if (!url) return false;
+    const lowerUrl = url.toLowerCase();
+    return lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png');
   }
   ngOnDestroy(): void {
     if (this.subscription) {

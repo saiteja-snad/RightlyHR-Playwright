@@ -27,7 +27,7 @@
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-                placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                placeholder="Search Here" aria-label="Username" aria-describedby="basic-addon1">
         </div>
 
         <div class="custom-table-content">
@@ -46,8 +46,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if(probationemp.length > 0){
-                        <tr *ngFor="let item of probationemp | probationpipe : searchValue">
+                    <ng-container *ngIf="(probationemp | probationpipe: searchValue) as filteredData">
+                        <tr *ngFor="let item of filteredData">
                             <td>
                                 <span *ngIf="item.fusionEmpId;else fusionid"> {{item.fusionEmpId}}</span>
                                 <ng-template #fusionid> - </ng-template>
@@ -84,15 +84,10 @@
                                 <ng-template #designation> - </ng-template>
                             </td>
                         </tr>
-                    }
-                    @else{
-                        <tr>
-                          <td>
-                            <app-no-data-found />
-                          </td>
+                        <tr *ngIf="filteredData.length === 0">
+                            <td colspan="9"><app-no-data-found></app-no-data-found></td>
                         </tr>
-                        }
-                
+                  </ng-container>
                 </tbody>
             </table>
             } @else {

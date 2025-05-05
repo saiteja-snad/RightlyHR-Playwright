@@ -115,9 +115,7 @@
           <td class="td-center">{{ record.subLocation ?? '-' }}</td>
           <td class="td-center">{{ record.shift ?? '-' }}</td>
           <!-- <td class="td-center">{{record.leaveType ?? '-' }}</td> -->
-          <td class="td-center">
-            {{ record.worked_Date ? (record.worked_Date | date: 'dd-MMM-yyyy') : '-' }}
-          </td>
+          <td class="td-center">{{ record.worked_Date | date: 'dd-MMM-yyyy' : '-' }}</td>
           <td class="td-center">{{record.entitlementDays ?? '-' }}</td>
           <td class="td-center">{{record.duration ?? '-'}}</td>
         </tr>

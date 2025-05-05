@@ -9,7 +9,9 @@
   
   <ng-container *ngIf="dataload; else maincontent">
     <ng-template #loadingSpinner>
-      <app-data-loader-content />
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
     </ng-template>
     <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
   </ng-container>
@@ -100,8 +102,8 @@
             <tr>
               <th>Competency</th>
               <th>Questions</th>
-              <th>Target</th>
-              <th>Unit of<br> Measurement</th>
+              <!-- <th>Target</th>
+              <th>Unit of<br> Measurement</th> -->
               <th>Question Weightage</th>
               <th>Weightage</th>
               <ng-container *ngFor="let response of assessmentFormData?.formResponses">
@@ -123,8 +125,8 @@
                     <label>{{ option.optionWeightage }} - {{ option.option }}</label>
                   </div>
                 </td>
-                <td>{{question.targetfield}}</td>
-                <td>{{question.unitofmeasurement}}</td>
+                <!-- <td>{{question.targetfield}}</td>
+                <td>{{question.unitofmeasurement}}</td> -->
                 <td>{{ question.questionweightage }}</td>
                 <td *ngIf="j === 0" [attr.rowspan]="section.questions.length">{{ section.sectionweightage }}</td>
                 <!-- Loop through formResponses -->
@@ -136,45 +138,33 @@
                         <!-- Rating Input -->
                         <!--  oninput="this.value = (this.value > 5 || this.value < 1 || this.value == 6) ? '' : this.value" -->
                         <input type="number" placeholder="Enter rating" id="ratingfield-{{i}}-{{j}}-{{k}}"
-                          name="ratingfield-{{i}}-{{j}}-{{k}}" #rating="ngModel"
-                          class="form-control table-input"
-                          [(ngModel)]="sectionDetail.questions[j].optionsData?.meta.rating" [min]="min" [max]="max"
-                          step="1" pattern="^[1-9]$" maxlength="1"
-                          oninput="this.value = (this.value < min ) ? '' : this.value"
+                          name="ratingfield-{{i}}-{{j}}-{{k}}" #rating="ngModel" class="form-control table-input text-center"
+                          [(ngModel)]="sectionDetail.questions[j].optionsData?.meta.rating" [min]="min" [max]="max" step="1" pattern="^[1-9]$"
+                          maxlength="1" oninput="this.value = (this.value < min ) ? '' : this.value"
                           [disabled]="(currentStage !== formResponse?.order)|| formResponse.status!=='Pending'&&formResponse.status!=='Draft'"
                           (ngModelChange)="updateRating( section, question, formResponse, sectionDetail.questions[j].optionsData?.meta.rating, 
-                          sectionDetail.questions[j].optionsData?.meta.comments)" required />
-                        <div>
-                          <div class="error-msg"
-                            *ngIf="rating.invalid &&(rating.dirty ||rating.touched ||form.submitted)">
-                            <span *ngIf="rating.errors?.['required']">Rating is required</span>
-                            <span *ngIf="rating.errors?.['min']">Rating must be at least {{min}}</span>
-                            <span *ngIf="rating.errors?.['max']">Rating must not be greater than {{max}}</span>
-                            <span *ngIf="rating.errors?.['pattern']">Please enter rating between {{min}} and {{max}}</span>
-                          </div>
+                                                sectionDetail.questions[j].optionsData?.meta.comments)" required />
+                        <div class="error-msg" *ngIf="rating.invalid &&(rating.dirty ||rating.touched ||form.submitted)">
+                          <span *ngIf="rating.errors?.['required']">Rating is required</span>
+                          <span *ngIf="rating.errors?.['min']">Rating must be at least {{min}}</span>
+                          <span *ngIf="rating.errors?.['max']">Rating must not be greater than {{max}}</span>
+                          <span *ngIf="rating.errors?.['pattern']">Please enter rating between {{min}} and {{max}}</span>
                         </div>
                       </td>
                       <td *ngIf="formResponse.isCommentsVisible">
                         <!-- Comment Input -->
                         <textarea class="form-control table-input" rows="3"
                           placeholder="Please provide Comments" id="commentsfield-{{i}}-{{j}}-{{k}}"
-                          #ratingcomments="ngModel" name="commentsfield-{{i}}-{{j}}-{{k}}" [maxLength]="250"
-                          [minLength]="1"
+                          #ratingcomments="ngModel" name="commentsfield-{{i}}-{{j}}-{{k}}" [maxLength]="250" [minLength]="1"
                           [disabled]="(currentStage !== formResponse?.order)|| (formResponse.status!=='Pending'&&formResponse.status!=='Draft')"
                           [(ngModel)]="sectionDetail.questions[j].optionsData?.meta.comments" (ngModelChange)="updateRating( section, question, formResponse, sectionDetail.questions[j].optionsData?.meta.rating, 
                           sectionDetail.questions[j].optionsData?.meta.comments)" required=""></textarea>
                         <div *ngIf="ratingcomments.invalid &&(ratingcomments.dirty ||ratingcomments.touched ||form.submitted)" class="error-msg">
                             <span *ngIf="ratingcomments.errors?.['required']">Comments is required</span>
                         </div>
-
-                        <div class="my-1">
-                          <span *ngIf="sectionDetail.questions[j].optionsData?.meta.comments">
-                            {{sectionDetail.questions[j].optionsData?.meta.comments?.length?sectionDetail.questions[j].optionsData?.meta.comments?.length:0}}
-                            /250</span>
+                        <div class="textarea-count-text" *ngIf="sectionDetail.questions[j].optionsData?.meta.comments">
+                            {{sectionDetail.questions[j].optionsData?.meta.comments?.length?sectionDetail.questions[j].optionsData?.meta.comments?.length:0}}/250
                         </div>
-                        <!-- <small *ngIf="sectionDetail.questions[j].optionsData.meta.comments.errors?.['required']">
-                         Comments is required.</small> -->
-                        <!-- <small *ngIf="employeeCommentsControl.errors?.['minlength']">Minimum length is 10 characters.</small>   minlength="10"-->
                       </td>
                     </ng-container>
                   </ng-container>
@@ -191,46 +181,42 @@
                   <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall
                     Rating</label>
                   <input *ngIf="response.name === 'Employee'" type="number" id="overallrating-{{i}}"
-                    name="overallrating-{{i}}" #overallrating="ngModel" class="form-control footer-input"
+                    name="overallrating-{{i}}" #overallrating="ngModel" class="form-control footer-input text-center"
                     [(ngModel)]="response.formresponse.employeeOverAllRating"
                     [disabled]="currentStage !== response.order" readonly>
                 </td>
                 <td *ngIf="response.name === 'Employee' && response.isCommentsVisible">
                   <p></p>
                 </td>
-
                 <td *ngIf="response.name === 'Team Manager' && response.isRatingVisible">
                   <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall Rating</label>
                   <input *ngIf="response.name === 'Team Manager'" type="number" id="overallrating-{{i}}"
-                    name="overallrating-{{i}}" #overallrating="ngModel" class="form-control footer-input"
+                    name="overallrating-{{i}}" #overallrating="ngModel" class="form-control footer-input text-center"
                     [(ngModel)]="response.formresponse.tmOverrAllRating" [disabled]="currentStage !== response.order"
                     readonly>
                 </td>
                 <td *ngIf="response.name === 'Team Manager' && response.isCommentsVisible">
                   <p></p>
                 </td>
-
                 <td *ngIf="response.name === 'Reporting Manager' && response.isRatingVisible">
                   <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall
                     Rating</label>
                   <input *ngIf="response.name === 'Reporting Manager'" type="number" id="overallrating-{{i}}"
-                    name="overallrating-{{i}}" #overallrating="ngModel" class="form-control footer-input"
+                    name="overallrating-{{i}}" #overallrating="ngModel" class="form-control footer-input text-center"
                     [(ngModel)]="response.formresponse.rmOverAllRating" [disabled]="currentStage !== response.order"
                     readonly>
                 </td>
                 <td *ngIf="response.name === 'Reporting Manager' && response.isCommentsVisible">
                   <p></p>
                 </td>
-
                 <td *ngIf="response.name === 'HR' && response.isRatingVisible">
                   <label for="exampleInputEmail1" class="form-label custom-label">{{ response.name }} Overall
                     Rating</label>
                   <input *ngIf="response.name === 'HR'" type="number" id="overallrating-{{i}}"
                     name="overallrating-{{i}}" #overallrating="ngModel"
-                    [(ngModel)]=" response.formresponse.hrOverAllRating" class="form-control footer-input"
+                    [(ngModel)]=" response.formresponse.hrOverAllRating" class="form-control footer-input text-center"
                     [disabled]="currentStage !== response.order" readonly>
                 </td>
-
                 <td *ngIf="response.name === 'HR' && response.isCommentsVisible">
                   <p></p>
                 </td>
@@ -260,14 +246,12 @@
               (ngModelChange)="postcomments(response?.formresponse.employeeComments)" required
               #employeeCommentsControl="ngModel">
               </textarea>
-            <div>
-              <span *ngIf="response?.formresponse.employeeComments"
-                class="color">{{response?.formresponse.employeeComments?.length?response?.formresponse.employeeComments?.length:0}}
-                /500</span>
+            <div class="textarea-count-text" *ngIf="response?.formresponse.employeeComments">
+              {{response?.formresponse.employeeComments?.length?response?.formresponse.employeeComments?.length:0}}/500
             </div>
-            <div *ngIf="employeeCommentsControl.touched && employeeCommentsControl.invalid" class="text-danger">
-              <small *ngIf="employeeCommentsControl.errors?.['required']">
-                {{response.name}} Comment is required.</small>
+            <div *ngIf="employeeCommentsControl.touched && employeeCommentsControl.invalid" class="error-msg">
+              <span *ngIf="employeeCommentsControl.errors?.['required']">
+                {{response.name}} Comment is required.</span>
               <!-- <small *ngIf="employeeCommentsControl.errors?.['minlength']">Minimum length is 10 characters.</small>   minlength="10"-->
             </div>
           </div>
@@ -276,7 +260,6 @@
 
       <ng-container *ngIf="(currentStage>1 && currentStage===lastStage || ((currentStage>=lastStage) && assessmentFormData.hrratingexist))">
         <div *ngIf="assessmentFormData.isApplicableForIncrement">
-
           <div class="row mb-4">
             <div class="col-lg-12 col-md-6">
               <div class="row">

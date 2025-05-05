@@ -235,7 +235,7 @@ export class ProbationExtensionLetterComponent {
       raisedBy : this.getProbationDetails.raisedBy,
       documentURL : docurl,
       parentId : this.getProbationDetails.parentId,
-      probationExtendedCount : this.getProbationDetails.probationExtendedCount,
+      probationExtendCount : this.getProbationDetails.probationExtendCount,
       meta : this.getProbationDetails.meta,
       appliedDate : this.getProbationDetails.appliedDate,
       comments : this.getProbationDetails.comments

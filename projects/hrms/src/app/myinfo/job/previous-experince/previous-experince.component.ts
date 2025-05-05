@@ -69,11 +69,11 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       previousContactName: ['', [Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50)]],
       previousContactNumber: [
         '',
-        [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
+        [ Validators.minLength(10), Validators.maxLength(10),  Validators.pattern(/^(?!0{10})\d{10}$/)],
       ],
       previousContactEmail: [
         '',
-        [Validators.required, Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
+        [Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
       attachment: ['', Validators.required],
     });
@@ -106,11 +106,11 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       previousContactNameupdate: ['', [Validators.pattern(/^[^\s].*$/), Validators.maxLength(50)]],
       previousContactNumberupdate: [
         '',
-        [Validators.required, Validators.minLength(10), Validators.maxLength(10)],
+        [  Validators.pattern(/^(?!0{10})\d{10}$/), Validators.minLength(10), Validators.maxLength(10)],
       ],
       previousContactEmailupdate: [
         '',
-        [Validators.required, Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
+        [ Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
       attachmentupdate: [null],
     });

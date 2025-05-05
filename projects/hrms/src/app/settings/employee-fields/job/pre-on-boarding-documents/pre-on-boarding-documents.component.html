@@ -172,7 +172,7 @@
                         {{'Document Name' | translate}} <span class="error-msg">*</span>
                     </label>
                     <input type="text" class="form-control custom-input" formControlName="UpdatePreOnboardDocuments"
-                        placeholder="Enter document name " maxlength="101"
+                        placeholder="Please enter document name " maxlength="101"
                         (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)">
                     <!-- <div>{{updateForm.get('UpdatePreOnboardDocuments')?.value?.length || 0}}/100</div> -->
                     <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.touched && updateForm.get('UpdatePreOnboardDocuments')?.invalid" class="error-msg">

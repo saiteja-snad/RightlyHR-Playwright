@@ -6,7 +6,7 @@ import { SettingsManageShitsTabsComponent } from '../../shared/settings-tabs/set
 
 
 export default [
-    { path: '', redirectTo: 'personal', pathMatch: 'full' },
+    { path: '', redirectTo: '/settings/employee-fields/personal', pathMatch: 'full' },
     {
         path: 'personal', children: [
             { path: '', redirectTo: 'salutation', pathMatch: 'full' },

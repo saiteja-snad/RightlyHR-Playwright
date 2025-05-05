@@ -46,7 +46,7 @@ export class WfhComponent {
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   searchValue: any;
-
+  spinnerLoader = false;
   constructor(
     private modalService: NgbModal, 
     private fb: FormBuilder, 
@@ -136,21 +136,23 @@ export class WfhComponent {
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
       };
-      this.sharedModalService.openLoaderModal('Approving Request, Please wait...');
+      this.spinnerLoader = true;
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request Approved Successfully');
+          this.sharedModalService.openSuccessModal('Request Accepted Successfully');
           this.approveForm.reset();
           this.selectedLeaveData = {} as AttendanceRequest;
           this.http.triggerActionSignal();
         },
         error: (reason: any) => {
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
           this.getAllPendingApprovals();
+          this.spinnerLoader = false;
         },
       });
     }
@@ -163,7 +165,7 @@ export class WfhComponent {
         status: 'Rejected',
         comments: formData.comments,
       };
-      this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
+      this.spinnerLoader = true;
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
@@ -173,11 +175,13 @@ export class WfhComponent {
           this.http.triggerActionSignal();
         },
         error: (reason: any) => {
+          this.spinnerLoader = false;
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
           this.getAllPendingApprovals();
+          this.spinnerLoader = false;
         },
       });
     }
@@ -188,7 +192,7 @@ export class WfhComponent {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
     };
-    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
+    this.spinnerLoader = true;
     this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
@@ -196,11 +200,13 @@ export class WfhComponent {
         this.http.triggerActionSignal();
       },
       error: (reason: any) => {
+        this.spinnerLoader = false;
         this.modalService.dismissAll();
         this.sharedModalService.openErrorModal(reason.error.Message);
       },
       complete: () => {
         this.getAllPendingApprovals();
+        this.spinnerLoader = false;
       },
     });
   }

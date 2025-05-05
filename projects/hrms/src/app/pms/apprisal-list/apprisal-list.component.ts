@@ -75,6 +75,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   spinnerLoader= false;
 
   promotedOptions = [
+    { label: 'All', value: '' },
     { label: 'Yes', value: true },
     { label: 'No', value: false }
   ];
@@ -145,7 +146,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       });
   }
 
-  // private canListenToDropdownChanges = false;
+  private canListenToDropdownChanges = false;
   onReviewCycleChange(selectedValue: any): void {
       
     const selectedId = selectedValue.value;
@@ -168,11 +169,11 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   
     const { locations, sublocations, departments, subdepartments } = selectedCycle;
     this.updateDropdowns(locations, sublocations, departments, subdepartments);
-    // this.canListenToDropdownChanges = false;
+    this.canListenToDropdownChanges = false;
   
     this.patchFormValues(selectedId, departments, subdepartments, locations, sublocations);
   
-    // setTimeout(() => this.canListenToDropdownChanges = true, 0);
+    setTimeout(() => this.canListenToDropdownChanges = true, 0);
     this.setAdditionalFields(locations, sublocations, departments, subdepartments);
   
     const params = this.buildParams(selectedCycle.id);
@@ -180,7 +181,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.searchText = null;
     this.rows= 10;
     this.getEmployeesOfTheReviewCycle(params);
-    // this.listenToDropdownChanges();
+    this.listenToDropdownChanges();
   }
   
   getSelectedCycle(selectedId: any) {
@@ -240,47 +241,47 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   private listenersAttached = false;
 
-  // listenToDropdownChanges() {
-  //   if (this.listenersAttached) return;
-  //   this.listenersAttached = true;
+  listenToDropdownChanges() {
+    if (this.listenersAttached) return;
+    this.listenersAttached = true;
   
-  //   const controlNames = ['departmentId', 'subDepartmentId', 'locationId', 'subLocationId'];
-  //   controlNames.forEach(field => {
-  //     this.dependentdropdowns.get(field)?.valueChanges.subscribe(() => {
-  //       if (!this.canListenToDropdownChanges) return; // 🚫 Skip during patch
-  //       this.callGetEmployeesAPI();
-  //     });
-  //   });
-  // }  
+    const controlNames = ['departmentId', 'subDepartmentId', 'locationId', 'subLocationId'];
+    controlNames.forEach(field => {
+      this.dependentdropdowns.get(field)?.valueChanges.subscribe(() => {
+        if (!this.canListenToDropdownChanges) return; 
+        this.callGetEmployeesAPI();
+      });
+    });
+  }  
 
-  // callGetEmployeesAPI() {
-  //   const formValue = this.dependentdropdowns.value;
+  callGetEmployeesAPI() {
+    const formValue = this.dependentdropdowns.value;
   
-  //   const extractIds = (items: any[], idKey: string): string => {
-  //     if (!Array.isArray(items) || items.length === 0) return '';
+    const extractIds = (items: any[], idKey: string): string => {
+      if (!Array.isArray(items) || items.length === 0) return '';
   
-  //     return items
-  //       .filter(item => item && item[idKey] !== undefined) 
-  //       .map(item => item[idKey])                          
-  //       .join(',');
-  //   };
+      return items
+        .filter(item => item && item[idKey] !== undefined) 
+        .map(item => item[idKey])                          
+        .join(',');
+    };
   
-  //   const params = {
-  //     page: this.page,
-  //     pageSize: this.pageSize,
-  //     reviewcycleid: this.reviewCycleID,
-  //     promotion: formValue.promoted?.value || '',
-  //     department: extractIds(formValue.departmentId, 'departmentId'),
-  //     subdepartment: extractIds(formValue.subDepartmentId, 'subDepartmentId'),
-  //     location: extractIds(formValue.locationId, 'locationId'),
-  //     sublocation: extractIds(formValue.subLocationId, 'subLocationId'),
-  //   };
+    const params = {
+      page: this.page,
+      pageSize: this.pageSize,
+      reviewcycleid: this.reviewCycleID,
+      promotion: formValue.promoted?.value || '',
+      department: extractIds(formValue.departmentId, 'departmentId'),
+      subdepartment: extractIds(formValue.subDepartmentId, 'subDepartmentId'),
+      location: extractIds(formValue.locationId, 'locationId'),
+      sublocation: extractIds(formValue.subLocationId, 'subLocationId'),
+    };
   
-  //   this.getEmployeesOfTheReviewCycle(params);
-  // }
+    this.getEmployeesOfTheReviewCycle(params);
+  }
   
   onPromotedChange(event: any): void {
-    this.promoted = this.dependentdropdowns.get('promoted')?.value
+    this.promoted = event.value
     const params: { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string } = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
@@ -762,7 +763,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.http.getData(`SignaturesList?LetterType=${offertype}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         // this.authorityDetailsForPromotion = data
-        this.authorityDetailsForAppraisal = data.map((user: any) => ({
+        this.authorityDetailsForPromotion = data.map((user: any) => ({
           ...user,
           fullName: `${user.firstName} ${user.middleName ? user.middleName + ' ' : ''}${user.lastName}`
         })); 
@@ -996,13 +997,15 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   generateLetters(): void {
-    this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value}&status=${this.status}`)
+    this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value.employeeId
+    }&status=${this.status}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
           this.modal.openSuccessModal('Appraisal Letters Generated Successfully');
         },
         error: (err: any) => {
+          this.modalService.dismissAll();
           if (err.status === 500) {
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
           }
@@ -1030,29 +1033,62 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.SentpromationLetters();
   }
 
-  generatepromationLetters(): void {
-    this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value}&status=${this.status}`)
-      .pipe(takeUntil(this.destroy$)).subscribe({
-        next: (data: any) => { 
-          this.modal.openSuccessModal('Promotion Letter Generated Successfully');
-        },
-        error: (err: any) => {
-          if (err.status === 500) {
-            this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
-          }
-          else if (err.status === 409) {
-            this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
-          }
-          else {
-            this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
-          }
-        },
-        complete: () =>{
-          this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
-          this.Effectivedatefrom.reset();
-        }
-      });
-  }
+  // generatepromationLetters(): void {
+  //   this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value}&status=${this.status}`)
+  //     .pipe(takeUntil(this.destroy$)).subscribe({
+  //       next: (data: any) => { 
+  //         this.modal.openSuccessModal('Promotion Letter Generated Successfully');
+  //       },
+  //       error: (err: any) => {
+  //         if (err.status === 500) {
+  //           this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
+  //         }
+  //         else if (err.status === 409) {
+  //           this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
+  //         }
+  //         else {
+  //           this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
+  //         }
+  //       },
+  //       complete: () =>{
+  //         this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
+  //         this.Effectivedatefrom.reset();
+  //       }
+  //     });
+  // }
+
+  generatePromotionLetters(f: FormGroup): void {
+    const form= f.value;
+    console.log(form)
+    const reviewCycleItemId = this.selectedIds || this.allSelected;
+    const employeeId = this.empinfo.employeeId;
+    const letterType = 'PromotionLetter';
+    const effectiveDate = form.effectiveFromDATE; 
+    const signatureEmpId = form.signaturename.employeeId    ; 
+    const status = this.status;
+  
+    const url = `AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${reviewCycleItemId}&employeeId=${employeeId}&lettertype=${letterType}&effectivedate=${effectiveDate}&signatureempId=${signatureEmpId}&status=${status}`;
+  
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.modalService.dismissAll();
+        this.modal.openSuccessModal('Promotion Letter Generated Successfully');
+      },
+      error: (err: any) => {
+        this.modalService.dismissAll();
+        const errorMessage = err?.error?.details || 'An error occurred while generating letters';
+        this.modal.openErrorModal(errorMessage);
+      },
+      complete: () => {
+        this.getEmployeesOfTheReviewCycle({
+          reviewcycleid: this.selectedReviewCycle.id,
+          page: this.page,
+          pageSize: this.pageSize
+        });
+        this.Effectivedatefrom.reset();
+      }
+    });
+  }  
 
   closeModal() {
     this.reviewtemplatedropdowns.reset();

@@ -45,6 +45,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   standardReportData = [] as EmployeeDetails[];
   branchLocations = [] as Branch[];
+
   localeOptions: any = {
     applyLabel: 'ok',
     format: environment.dateformat.toUpperCase(),
@@ -91,15 +92,38 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       location: [''],
       dateOfJoining: [null],
     });
+  }
 
+  getBranchLocations() {
+    this.http.getData('BranchLocation').pipe(takeUntil(this.destroy$)).subscribe({
+        next: (res: any) => {
+          if (res) {
+            this.branchLocations = res;
+            console.log(this.branchLocations)
+            if (this.branchLocations.length > 0) {
+              this.branchLocations.unshift({
+                sno: -1,
+                branchCode: 'All',
+                branchLocation1: 'All Branch Locations',
+                isDeleted: false,
+              });
+
+              this.reportForm.patchValue({
+                location: 'All',
+              });
+            }
+          }
+        },
+        error: (err) => { }
+      });
   }
 
   onSubmit(form: FormGroup) {
     this.dataload = true;
     this.spinnerLoader1 = true;
+    
     if (form.valid) {
       const formData = form.value;
-
       const request: IStandardReportRequest = {
         dateRange: {
           startDate: formData.dateOfJoining?.startDate,
@@ -107,6 +131,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
         },
         selectedBranchLocation: formData.location,
       };
+      console.log(request)
       this.reportService.getStandardReports(request).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
@@ -261,29 +286,6 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     }, 0);
 
     return Math.max(10, maxWidth);
-  }
-
-  getBranchLocations() {
-    this.http.getData('BranchLocation').pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          if (res) {
-            this.branchLocations = res;
-            if (this.branchLocations.length > 0) {
-              this.branchLocations.unshift({
-                sno: -1,
-                branchCode: 'ALL',
-                branchLocation1: 'All Branch Locations',
-                isDeleted: false,
-              });
-
-              this.reportForm.patchValue({
-                location: 'All Branch Locations',
-              });
-            }
-          }
-        },
-        error: (err) => { }
-      });
   }
 
   ngOnDestroy(): void {

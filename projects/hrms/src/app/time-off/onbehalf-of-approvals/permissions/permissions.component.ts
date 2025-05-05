@@ -43,6 +43,7 @@ export class PermissionsComponent {
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  spinnerLoader = false;
 
   constructor(
     private modalService: NgbModal, 
@@ -135,21 +136,22 @@ export class PermissionsComponent {
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
       };
-      this.sharedModalService.openLoaderModal('Accepting Request, Please wait...');
-
+      this.spinnerLoader = true;
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request Approved Successfully');
+          this.sharedModalService.openSuccessModal('Request Accepted Successfully');
           this.approveForm.reset();
           this.selectedLeaveData = {} as PermissionRequestResponse;
           this.http.triggerActionSignal();
         },
         error: (reason: any) => {
+          this.spinnerLoader = false;
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
           this.getAllPendingApprovals();
+          this.spinnerLoader = false;
         },
       });
     }
@@ -160,7 +162,7 @@ export class PermissionsComponent {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
     };
-    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
+    this.spinnerLoader = true;
     this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
@@ -168,12 +170,14 @@ export class PermissionsComponent {
         this.http.triggerActionSignal();
       },
       error: (reason: any) => {
+        this.spinnerLoader = false;
         this.modalService.dismissAll();
         this.sharedModalService.openErrorModal(
           reason.error.Message
         );
       },
       complete: () => {
+        this.spinnerLoader = false;
         this.getAllPendingApprovals();
       },
     });
@@ -186,7 +190,7 @@ export class PermissionsComponent {
         status: 'Rejected',
         comments: formData.comments,
       };
-      this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
+      this.spinnerLoader = true;
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
@@ -198,10 +202,12 @@ export class PermissionsComponent {
           this.http.triggerActionSignal();
         },
         error: (reason: any) => {
+          this.spinnerLoader = false;
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
           this.getAllPendingApprovals();
+          this.spinnerLoader = false;
         },
       });
     }

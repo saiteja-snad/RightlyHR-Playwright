@@ -136,7 +136,7 @@ export class ExpensesConfigurationComponent {
       },
       error: (err) => {
         console.error('Update failed', err);
-        this.conformationPopup.openErrorModal('Expense Type updated failed')
+        this.conformationPopup.openErrorModal(err.error.Message)
       }
     });
   }

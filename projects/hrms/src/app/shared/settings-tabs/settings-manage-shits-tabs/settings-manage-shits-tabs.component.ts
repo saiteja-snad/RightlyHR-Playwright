@@ -34,6 +34,19 @@ export class SettingsManageShitsTabsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getShifts();
+
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields/manage-shifts';
+
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
+
+    const isAllowed = this.navLinks.some(link => link.route === currentUrl);
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
   }
 
   getShifts(): void {

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../services/rbac.service';
 
@@ -13,19 +13,39 @@ import { RbacService } from '../../services/rbac.service';
 export class SettingsExpenesConfigurtionsTabsComponent implements OnInit {
   public navTabs: any[] = [];
 
-  // Define all tabs with associated permissions
   allTabs = [
-    { label: 'Expenes Configuartion', route: '/settings/employee-fields/expenes/configuartion', permission: { feature: 'Expenes Configuartion', action: 'view' } },
-    { label: 'Expense Allowed Days', route: '/settings/employee-fields/expenes/allowed-days', permission: { feature: 'Expense Allowed Days', action: 'view' } }
+    {
+      label: 'Expenes Configuartion',
+      route: '/settings/employee-fields/expenes/configuartion',
+      permission: { feature: 'Expenes Configuartion', action: 'view' }
+    },
+    {
+      label: 'Expense Allowed Days',
+      route: '/settings/employee-fields/expenes/allowed-days',
+      permission: { feature: 'Expense Allowed Days', action: 'view' }
+    }
   ];
 
-  constructor(public rbac: RbacService) {}
-
-  ngOnInit(): void {
-    // Filter tabs based on permission
+  constructor(
+    public rbac: RbacService,
+    public router: Router
+  ) {
     this.navTabs = this.allTabs.filter(tab =>
+      tab.permission &&
+      tab.permission.feature &&
+      tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+  }
+
+  ngOnInit(): void {
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields/expenes';
+
+    // If current URL is base or invalid, redirect to first allowed tab
+    if ((currentUrl === baseUrl || !this.navTabs.some(tab => tab.route === currentUrl)) && this.navTabs.length > 0) {
+      this.router.navigateByUrl(this.navTabs[0].route);
+    }
   }
 }
 

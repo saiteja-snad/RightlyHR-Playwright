@@ -50,7 +50,7 @@
                 <label for="department" class="form-label custom-label custom-label mb-2"><b>{{ "Department" | translate }}</b>
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
-                    <p-multiSelect formControlName="departmentId" [options]="departmentDetails" optionLabel="departmentName" optionValue="departmentId"
+                    <p-multiSelect formControlName="departmentId" [options]="departmentDetails" optionLabel="departmentName"
                         placeholder="Search department" class="w-100">
                         <ng-template let-dept pTemplate="item">{{ dept.departmentName }}</ng-template>
                     </p-multiSelect>
@@ -171,32 +171,32 @@
                                 <ng-template #rating>--</ng-template>
                             </td>
                             <td class="text-center">
-                                <div class="dropdown" *ngIf="employee.status === 'Created'||employee.status === 'Review Template Assigned'|| employee.status ==='Completed' 
+                                <div class="dropdown" *ngIf="employee.status === 'Created'|| employee.status === 'Review Template Assigned'|| employee.status ==='Completed' 
                                 || employee.status === 'Review on Hold'||employee.status === 'Promotion Letter Sent' || employee.status === 'Promotion Letter Generated' 
                                 || employee.status === 'Appraisal Letter Sent' || employee.status === 'Appraisal Letter Generated'">
                                     <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
                                     <ul class="dropdown-menu">
-                                        <ng-container *ngIf="employee.status !== 'Review on Hold'">
-                                            <li *ngIf="employee.status !== 'Promotion Letter Sent' && employee.status !=='Completed' && employee.status !== 'Appraisal Letter Sent'&&employee.rchstatus === 'Created'"
+                                        <li *ngIf="employee.status !== 'Review on Hold'"
                                                 class="dropdown-item border-bottom" (click)="openModal(holdconformation);seletedid=employee.id">
-                                                <a class="dropdown-custom-btn">{{'Hold' | translate }}</a>
-                                            </li>
-
-                                            <li class="dropdown-item" *ngIf="employee.rchstatus === 'Created' && employee.status === 'Created'">
-                                                <a class="dropdown-custom-btn" (click)="OnClickToassesinreviewTemplate(employee.id);openModal(reviewtemplate)">
-                                                    {{'Assign Review Template' | translate}}
+                                                <a class="dropdown-custom-btn">Hold</a>
+                                        </li>
+                                        <ng-container *ngIf="employee.status !== 'Review on Hold'">
+                                            <li class="dropdown-item" *ngIf="(employee.rchstatus === 'Created' && employee.status === 'Created') || (employee.rchstatus === 'Initiated' && employee.status === 'Created')">
+                                                <a class="dropdown-custom-btn"
+                                                    (click)="OnClickToassesinreviewTemplate(employee.id);openModal(reviewtemplate)">Assign
+                                                    Review Template
                                                 </a>
                                             </li>
-
                                             <li class="dropdown-item" *ngIf="employee.status === 'Review Template Assigned'">
-                                                <a class="dropdown-custom-btn" (click)="OnClickToassesinreviewTemplate(employee.id);openModal(reviewtemplate)">
-                                                    {{'Update Review Template' | translate}}
+                                                <a class="dropdown-custom-btn"
+                                                    (click)="OnClickToassesinreviewTemplate(employee.id);openModal(reviewtemplate)">
+                                                    Update Review Template
                                                 </a>
                                             </li>
-
                                         </ng-container>
+
                                         <li class="dropdown-item" *ngIf="employee.status === 'Review on Hold'" (click)="openModal(Resumeconformation);seletedid=employee.id">
                                             <a class="dropdown-custom-btn">{{'Resume' | translate}}</a></li>
 
@@ -215,6 +215,10 @@
                                             <a class="dropdown-custom-btn">{{'Generate Appraisal Letter' | translate}}</a>
                                         </li>
 
+                                        <li class="dropdown-item" *ngIf="employee.applicableForPromotion===false && employee.status ==='Appraisal Letter Generated'"
+                                        (click)="seletedid=employee.id;onclickstatusforappraisalById('Appraisal Letter Sent',employee.id)"><a
+                                            class="dropdown-custom-btn">Send Appraisal Letter</a></li>
+
                                         <li class="dropdown-item" *ngIf="employee.applicableForPromotion===false && (employee.status ==='Appraisal Letter Generated' 
                                         || employee.status ==='Appraisal Letter Sent')" (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' | translate}}</a>
@@ -227,7 +231,7 @@
                                         </li>
 
                                         <li class="dropdown-item"
-                                            *ngIf="employee.applicableForPromotion===false && (employee.status ==='Promotion Letter Generated'||employee.status ==='Promotion Letter Sent')"
+                                            *ngIf="employee.applicableForPromotion===false && (employee.status ==='Promotion Letter Generated'|| employee.status ==='Promotion Letter Sent')"
                                             (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' | translate}}</a>
                                         </li>
@@ -250,6 +254,10 @@
                                             <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' | translate}}</a>
                                         </li>
 
+                                        <li class="dropdown-item " *ngIf="employee.applicableForPromotion===true && employee.status ==='Promotion Letter Generated'"
+                                        (click)="seletedid=employee.id;onclickstatusforPromotionById('Promotion Letter Sent',employee.id)"><a
+                                            class="dropdown-custom-btn">Send Promotion Letter</a></li>
+
                                         <li class="dropdown-item"
                                             *ngIf="employee.applicableForPromotion===true && (employee.status ==='Promotion Letter Sent')"
                                             (click)="openModal(resendpromotion);Click(employee.id,'Re-Send Promotion Letter')">
@@ -266,6 +274,7 @@
                                             (click)="openModal(resendpromotion);Click(employee.id,'Re-Send Promotion Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Send Promotion Letter' | translate}}</a>
                                         </li>
+                                        
                                     </ul>
                                 </div>
                             </td>

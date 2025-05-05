@@ -11,6 +11,7 @@ import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-available-assets-list',
@@ -80,6 +81,7 @@ export class AvailableAssetsListComponent {
     private readonly router: Router,
     public conformationPopup: OpenModalService,
     private readonly datepipe: DatePipe,
+    public rbac: RbacService,
 
     config: NgbModalConfig) {
     config.backdrop = 'static';

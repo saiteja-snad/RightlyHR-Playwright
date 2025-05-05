@@ -149,15 +149,13 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
         this.teamdetails = data.map((employee: any) => {
           return {
             ...employee,
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
+            fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
           };
         });
       },
       error: (reason: any) => console.log(reason),
     });
-  }
+  }  
   
   getAttendanceReports() {
     this.subscription = this.reportsService.getAttendanceReports({}).subscribe({
@@ -266,7 +264,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
 
   exportToExcelYearly(): void {
     // Define header mappings
-    this.spinnerLoader2= true;
+    this.spinnerLoader2 = true;
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -278,7 +276,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       leaveType: 'LEAVE TYPE',
       startdate: 'LEAVE START DATE',
       enddate: 'LEAVE END DATE',
-      availed: 'AVAILED', 
+      availed: 'AVAILED',
       appliedDate: 'APPLIED DATE',
       days: 'DAYS'
     };
@@ -300,16 +298,22 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       'DAYS'
     ];
 
+    // Function to format date in dd-MMM-yyyy format
+    const formatDate = (dateString: string): string => {
+      const date = new Date(dateString);
+      const options = { day: '2-digit', month: 'short', year: 'numeric' } as const;
+      return date.toLocaleDateString('en-GB', options).replace(/ /g, '-');
+    };
+
     // Modify data with renamed headers and new sequence
     const modifiedData = this.filteredleaveRecord.map(record => {
       const modifiedRecord: any = {};
       NEW_SEQUENCE.forEach(columnName => {
         const originalColumnName = Object.keys(HEADER_MAPPINGS).find(key => HEADER_MAPPINGS[key] === columnName);
         if (originalColumnName && record.hasOwnProperty(originalColumnName)) {
-          if (originalColumnName === 'startDate') {
+          if (originalColumnName === 'startdate' || originalColumnName === 'enddate' || originalColumnName === 'appliedDate') {
             // Extract the year part from the date
-            const year = new Date(record[originalColumnName]).getFullYear();
-            modifiedRecord[columnName] = year;
+            modifiedRecord[columnName] = formatDate(record[originalColumnName]);
           } else {
             modifiedRecord[columnName] = record[originalColumnName];
           }
@@ -365,7 +369,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     XLSX.utils.book_append_sheet(wb, ws, 'Leave Report');
     XLSX.writeFile(wb, 'Leave_Report.xlsx');
 
-    this.spinnerLoader2= false;
+    this.spinnerLoader2 = false;
   }
 
   getColumnWidth(data: any[], columnName: string): number {

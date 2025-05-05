@@ -11,6 +11,7 @@ import { Select } from 'primeng/select';
 import { AssetTransaction, IAsset, IAssetAllocation, IAssetid, ICategory, IVendor } from '../../Interfaces/assets-management.model';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-inactive-assets-list',
@@ -67,6 +68,7 @@ export class InactiveAssetsListComponent {
     private readonly router: Router,
     public conformationPopup: OpenModalService,
     private readonly datepipe: DatePipe,
+    public rbac: RbacService,
 
     config: NgbModalConfig) {
     config.backdrop = 'static';

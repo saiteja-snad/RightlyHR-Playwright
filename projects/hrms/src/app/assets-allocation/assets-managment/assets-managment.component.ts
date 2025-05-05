@@ -9,6 +9,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { RouterModule } from '@angular/router';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { IAsset, ICategory, IVendor } from '../../Interfaces/assets-management.model';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-assets-managment',
@@ -44,7 +45,7 @@ export class AssetsManagmentComponent {
   collectionSize = 100;
   constructor(
     private readonly fb: FormBuilder,
-    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,) { }
+    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,public rbac: RbacService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initialform()
@@ -55,12 +56,19 @@ export class AssetsManagmentComponent {
     this.getcount(null, null)
     this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
     this.navTabs = [
-      { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject },
-      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject },
-      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject },
-      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject },
-      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject },
+      { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject,permission: { feature: 'Asset Allocation - All', action: 'view'} },
+      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject,permission: { feature: 'Asset Allocation - Available', action: 'view'} },
+      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject,permission: { feature: 'Asset Allocation - Allocated', action: 'view'} },
+      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject,permission: { feature: 'Asset Allocation - Under Maintenance', action: 'view'} },
+      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject,permission: { feature: 'Asset Allocation - Inactive', action: 'view'} },
     ];
+
+    this.navTabs = this.navTabs.filter(tab =>
+      tab.permission &&
+      tab.permission.feature &&
+      tab.permission.action &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+    );
   }
 
 

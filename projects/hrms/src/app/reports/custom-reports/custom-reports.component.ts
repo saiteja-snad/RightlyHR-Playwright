@@ -294,6 +294,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
   hasPendingChanges = false;
   spinnerLoader1 = false;
   spinnerLoader2 = false;
+  disableBtn = false;
 
   constructor(
     private fb: FormBuilder,
@@ -320,6 +321,10 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     this.reportForm.get('status')?.valueChanges.subscribe(() => {
       this.reportForm.get('dateOfJoining')?.reset();
     });
+
+    this.reportForm.valueChanges.subscribe(() => {
+      this.disableBtn = true;
+    })
   }
 
   showPersonalData() {
@@ -441,7 +446,6 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     // Step 1: Filter employees based on DoJ if date range is provided
     const filteredEmployees = this.emp.filter((user: Ipersonal) => {
       const status = this.reportForm.get('status')?.value;
-      console.log(status)
       const empStatus = status.toLowerCase(); 
       const dateToCheck =
         empStatus === 'active'
@@ -608,6 +612,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       this.selectedData.push(data);
     });
     this.spinnerLoader1 = false;
+    this.disableBtn = false;
   }
 
   getStatus() {

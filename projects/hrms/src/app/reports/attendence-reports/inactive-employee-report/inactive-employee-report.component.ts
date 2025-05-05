@@ -26,7 +26,7 @@ import { RbacService } from '../../../services/rbac.service';
   templateUrl: './inactive-employee-report.component.html',
   styleUrl: './inactive-employee-report.component.scss'
 })
-export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
+export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -46,9 +46,9 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
   selectedWfhManager: string | null = null;
   selectedMonth: string | null = null;
   inactiveReportForm!: FormGroup;
-  spinnerLoader1= false;
-  spinnerLoader2= false;
-  disableBtn= false;
+  spinnerLoader1 = false;
+  spinnerLoader2 = false;
+  disableBtn = false;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -104,7 +104,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
     this.getTeam();
   }
 
-  initializeForm(){
+  initializeForm() {
     this.inactiveReportForm = this.fb.group({
       employee: [null, Validators.required],
       manager: [null],
@@ -112,8 +112,8 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
       // dateRange: [null]
     });
 
-    this.inactiveReportForm.valueChanges.subscribe(()=>{
-      this.disableBtn= true;
+    this.inactiveReportForm.valueChanges.subscribe(() => {
+      this.disableBtn = true;
     })
   }
 
@@ -167,9 +167,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
             this.teamdetails = data.map((employee: any) => {
               return {
                 ...employee,
-                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
-                  }${employee.lastName}`,
+                fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
               };
             });
           }
@@ -194,25 +192,25 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
       !formValue.dateRange?.endDate &&
       !formValue.month &&
       !formValue.manager;
-  
+
     if (noFilterProvided) {
       this.spinnerLoader1 = false;
       this.isLoading = false;
       this.filteredInactiveRecord = [];
       return;
     }
-  
+
     const request: IInactiveReportRequest = {};
-  
+
     if (formValue.employee?.fusionEmpId) {
       request.FusionEmpId = formValue.employee.fusionEmpId;
     }
-  
+
     // Month filter
     if (formValue.month) {
       request.Month = formValue.month;
     }
-  
+
     // Manager full name
     if (formValue.manager) {
       const fullName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
@@ -221,7 +219,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
       request.TeamManagerName = fullName;
     }
 
-   
+
     // Only include employee filter if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
       request.FusionEmpId = formValue.employee.fusionEmpId;
@@ -233,7 +231,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
         this.filteredInactiveRecord = response ?? [];
       },
       error: (error) => {
-         this.spinnerLoader1 = false;
+        this.spinnerLoader1 = false;
         this.disableBtn = true;
         this.isLoading = false;
         this.filteredInactiveRecord = [];
@@ -263,7 +261,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
 
   exportToExcelInactive(): void {
     // Define header mappings
-    this.spinnerLoader2= true;
+    this.spinnerLoader2 = true;
     const HEADER_MAPPINGS: { [key: string]: string } = {
       fusionEmpId: 'EMPLOYEE ID',
       employeeName: 'EMPLOYEE NAME',
@@ -364,7 +362,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy{
     const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Inactive Employees Report');
     XLSX.writeFile(wb, 'Inactive_Employees_Report.xlsx');
-    this.spinnerLoader2= false;
+    this.spinnerLoader2 = false;
   }
 
   getColumnWidth(data: any[], columnName: string): number {

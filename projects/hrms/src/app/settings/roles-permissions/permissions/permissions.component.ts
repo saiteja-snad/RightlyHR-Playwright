@@ -261,6 +261,22 @@ isActionEnabled(field: string, action: string): boolean {
     return claims;
   }
 
+  isFieldDisabled(field: string, permission: string): boolean {
+    if (field === 'Asset Allocation - Create') {
+      return permission !== 'View'; // Only 'View' is enabled
+    }
+  
+    if (['Asset Allocation - All', 'Asset Allocation - Available'].includes(field)) {
+      return permission === 'Create'; // Disable only 'Create'
+    }
+  
+    if (['Asset Allocation - Under Maintenance', 'Asset Allocation - Inactive','Asset Allocation - Allocated'].includes(field)) {
+      return !['View', 'Update'].includes(permission); // Enable only 'View' and 'Update'
+    }
+  
+    return false; // Default: all enabled
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

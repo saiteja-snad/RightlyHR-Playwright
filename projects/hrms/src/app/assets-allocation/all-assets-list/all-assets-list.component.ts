@@ -11,6 +11,7 @@ import { AssetTransaction, IAsset, IAssetAllocation, IAssetid, ICategory, IVendo
 import { Select } from 'primeng/select';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-all-assets-list',
@@ -81,6 +82,7 @@ export class AllAssetsListComponent {
     private readonly router: Router,
     public conformationPopup: OpenModalService,
     private readonly datepipe: DatePipe,
+    public rbac: RbacService,
 
     config: NgbModalConfig) {
     config.backdrop = 'static';

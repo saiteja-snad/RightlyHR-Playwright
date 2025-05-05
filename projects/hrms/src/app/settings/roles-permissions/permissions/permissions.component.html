@@ -1783,6 +1783,122 @@
 
 
 
+            
+                <!-- Asset Allocation Tabs -->
+                <tr>
+                    <th colspan="5" class="custom-header">Asset Allocation</th>
+                </tr>
+                <ng-container *ngFor="let per of permissions">
+                    <tr class="text-align-center" *ngIf="per.fields === 'Asset Allocation - Create'  || per.fields === 'Asset Allocation - All'
+                    || per.fields === 'Asset Allocation - Available'  || per.fields === 'Asset Allocation - Available' || per.fields === 'Asset Allocation - Allocated'
+                    || per.fields === 'Asset Allocation - Under Maintenance'  || per.fields === 'Asset Allocation - Inactive' 
+                    ">
+                        <td class="text-align-center">{{ per.fields }}</td>
+
+                        <!-- View -->
+                        <td>
+                            <input type="checkbox" [(ngModel)]="per.View" [name]="per.fields + '.view'"
+                            (change)="onCheckboxChange(per, 'View')"
+                            [disabled]="!roleToFilter?.id || isFieldDisabled(per.fields, 'View')">
+                        </td>
+                    
+                        <!-- Update -->
+                        <td>
+                            <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'"
+                            (change)="onCheckboxChange(per, 'Update')"
+                            [disabled]="!roleToFilter?.id || isFieldDisabled(per.fields, 'Update')">
+                        </td>
+                    
+                        <!-- Create -->
+                        <td>
+                            <input type="checkbox" [(ngModel)]="per.Create" [name]="per.fields + '.create'"
+                            [disabled]="!roleToFilter?.id || isFieldDisabled(per.fields, 'Create')">
+                        </td>
+                    
+                        <!-- Delete -->
+                        <td>
+                            <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'"  (change)="onCheckboxChange(per, 'Delete')"
+                            [disabled]="!roleToFilter?.id || isFieldDisabled(per.fields, 'Delete')">
+                        </td>
+                    </tr>
+                </ng-container>
+
+
+                <!-- My Info Sub tabs -->
+                <tr>
+                    <th colspan="5" class="custom-header">My Info Sub Tabs</th>
+                </tr>
+                <ng-container *ngFor="let per of permissions">
+                    <tr class="text-align-center"
+                        *ngIf="per.fields === 'My Info Personal' ||  per.fields === 'My Info Job' || per.fields === 'My Info Documents'
+                        ||  per.fields === 'My Info Team Members' || per.fields === 'My Info Onboard Request' " >
+
+                        <td class="text-align-center">{{ per.fields }}</td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
+                        </td>
+                    </tr>
+                </ng-container>
+
+
+                <!-- My Info Personal Sub tabs -->
+                <tr>
+                    <th colspan="5" class="custom-header">My Info Personal Sub tabs</th>
+                </tr>
+                <ng-container *ngFor="let per of permissions">
+                    <tr class="text-align-center"
+                        *ngIf="per.fields === 'My Info Basic Information' ||  per.fields === 'My Info Address Details' || per.fields === 'My Info Contact Details'
+                        ||  per.fields === 'My Info Emergency Contact Details' || per.fields === 'My Info Education Details'  || per.fields === 'My Info Identity Details'
+                        ||  per.fields === 'My Info Family Details' || per.fields === 'My Info Bank Details'  || per.fields === 'My Info Visa Details' " >
+
+                        <td class="text-align-center">{{ per.fields }}</td>
+                    <!-- View -->
+                    <td>
+                        <input type="checkbox" [(ngModel)]="per.View" [name]="per.fields + '.view'" [disabled]="!roleToFilter?.id">
+                    </td>
+                    
+                    <!-- Update -->
+                    <td>
+                        <input type="checkbox" [(ngModel)]="per.Update" [name]="per.fields + '.update'" [disabled]="!roleToFilter?.id">
+                    </td>
+                    
+                    <!-- Create -->
+                    <td>
+                        <input type="checkbox" [(ngModel)]="per.Create" [name]="per.fields + '.create'" [disabled]="!roleToFilter?.id || ![
+                                'My Info Education Details',
+                                'My Info Identity Details',
+                                'My Info Family Details',
+                                'My Info Bank Details',
+                                'My Info Visa Details'
+                            ].includes(per.fields)">
+                    </td>
+                    
+                    <!-- Delete -->
+                    <td>
+                        <input type="checkbox" [(ngModel)]="per.Delete" [name]="per.fields + '.delete'" [disabled]="!roleToFilter?.id || ![
+                                'My Info Education Details',
+                                'My Info Identity Details',
+                                'My Info Family Details',
+                                'My Info Bank Details',
+                                'My Info Visa Details'
+                            ].includes(per.fields)">
+                    </td>
+                    </tr>
+                </ng-container>
+  
+
+
+
 
 
                 </tbody>

@@ -39,7 +39,7 @@ export class RecallRequestTabsComponent {
     this.getAllSeparationPendingApprovalsCount();
   }
 
-  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService, private rbac: RbacService) {
+  constructor(public readonly router: Router, private http: HttpService,private rbac: RbacService,private signalService:SignalsService) {
     effect(() => {
       if (this.signalService.recallSeparationForYouTriggerSignal() || this.signalService.recallSeparationForRoleTriggerSignal()) {
         // Call the function to fetch the pending approvals count

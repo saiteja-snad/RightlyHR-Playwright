@@ -36,7 +36,7 @@ export class SeparationRequestTabsComponent {
     this.getAllSeparationPendingApprovalsCount();
   }
 
-  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService,  private rbac: RbacService) {
+  constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService,private signalService:SignalsService) {
     effect(() => {
       if (this.signalService.separationForYouTriggerSignal() || this.signalService.separationForRoleTriggerSignal()) {
         // Call the function to fetch the pending approvals count

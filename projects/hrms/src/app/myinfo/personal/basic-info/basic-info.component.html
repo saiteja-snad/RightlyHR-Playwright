@@ -5,7 +5,9 @@
         <span class="component-sub-header">Basic Information</span>
       </div>
       <div *ngIf="!buttons">
+        @if(rbac.allowedToAccess('My Info Basic Information.update')){
         <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+        }
       </div>
       <div class="d-flex gap-3" *ngIf="buttons">
         <button type="reset" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>

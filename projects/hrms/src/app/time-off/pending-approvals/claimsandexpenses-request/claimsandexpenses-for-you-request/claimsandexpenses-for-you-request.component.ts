@@ -147,7 +147,7 @@ export class ClaimsandexpensesForYouRequestComponent
       const requestBody = {
         status: 'Rejected',
         comments: formData.comments,
-        approvedBy:this.empinfo.employeeId
+        approvedBy: this.empinfo.employeeId.toString(),
       };
       this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({

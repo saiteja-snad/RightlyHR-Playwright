@@ -307,7 +307,7 @@
                             <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
                                 filterBy="designationName" formControlName="jobRole"
                                 placeholder="Please select job role" class="form-select custom-select"
-                                (onChange)="onDesignationChange($event.value)"></p-select>
+                                (onChange)="onDesignationChangeforupdate($event.value)"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsupdateForm.get('jobRole')?.invalid && jobDetailsupdateForm.get('jobRole')?.touched">
@@ -424,7 +424,7 @@
                                 class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
-                            *ngIf="jobDetailsupdateForm.get('shift')?.invalid && jobDetailsupdateForm.get('shift')?.touched">
+                            *ngIf="jobDetailsupdateForm.get('shiftName')?.invalid && jobDetailsupdateForm.get('shiftName')?.touched">
                             Shift is required
                         </div>
                     </div>

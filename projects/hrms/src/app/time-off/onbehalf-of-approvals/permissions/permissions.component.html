@@ -10,12 +10,12 @@
                     <th>Duration(InHours)</th>
                     <th>Permission Type</th>
                     <th>Reason</th>
-                    <!-- <th >Approver Comments</th> -->
-                    <th>Action(s)</th>
+                    <th >Approver Comments</th>
+                    <th>Action<span class="text-lowercase">(s)</span></th>
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Permissions.view')) {
+                @if (rbac.allowedToAccess('Permissions Tab.view')) {
                 <ng-container *ngIf="leaves!.length > 0; else noDataTemplate">
                     <tr *ngFor="let leave of leaves; let i = index">
                         <td>{{leave.entity.fusionempId}}</td>
@@ -35,6 +35,14 @@
                             </div>
                         </td>
                         <td>
+                            <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else compoffcomments">
+                                <div (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </div>
+                            </div>
+                            <ng-template #compoffcomments>-</ng-template>
+                        </td>
+                        <td>
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -42,17 +50,17 @@
                                 <ul class="dropdown-menu py-0">
                                     @if( leave.approvalHeader.currentapprovalStage !=
                                     leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                    <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Permissions Tab.update')">
                                         <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                     </li>
                                     }
                                     @if( leave.approvalHeader.currentapprovalStage ==
                                     leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                    <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Permissions Tab.update')">
                                         <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
                                     </li>
                                     }
-                                    <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Permissions.delete')">
+                                    <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Permissions Tab.delete')">
                                         <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
                                     </li>
                                 </ul>
@@ -80,21 +88,31 @@
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
         </div>
-        <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
+        <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)" class="custom-main-popup-content">
             <div class="mb-3">
-                <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span class="text-danger">*</span></label>
+                <label for="comments" class="form-label custom-label mb-2">{{'Approve Reason' | translate}}<span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
                     formControlName="comments" (keypress)="formValidation.restrictInputallowspicalcharters($event)" maxlength="250"></textarea>
                 <!-- Character counter -->
                 <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
-                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters</div>
                 </div>
             </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'| translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'| translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <div class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Loading...'}}</div>
+                    </div>
+                    }@else {
+                    <span>{{'Approve'| translate}}</span>
+                    }
+                </button>
+                <!-- <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'| translate}}</button> -->
             </div>
         </form>
     </div>
@@ -106,21 +124,31 @@
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
         </div>
-        <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
+        <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)" class="custom-main-popup-content">
             <div class="mb-3">
-                <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
+                <label for="comments" class="form-label custom-label mb-2">{{"Reject Reason" | translate}}
                     <span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection" 
                  formControlName="comments" (keypress)="formValidation.restrictInputallowspicalcharters($event)" maxlength="250"></textarea>
                 <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Rejected Reason is required.</div>
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reason cannot exceed 250 characters.</div>
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Rejected Reason is required</div>
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reason cannot exceed 250 characters</div>
                 </div>
             </div>
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' | translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <div class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Loading...'}}</div>
+                    </div>
+                    }@else {
+                    <span>{{'Reject' | translate}}</span>
+                    }
+                </button>
+                <!-- <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' | translate}}</button> -->
             </div>
         </form>
     </div>
@@ -131,7 +159,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Comments</p>
+                <p class="popup-heading mb-0">Approver History Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"

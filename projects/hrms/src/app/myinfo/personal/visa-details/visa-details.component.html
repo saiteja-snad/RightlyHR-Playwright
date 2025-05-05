@@ -88,7 +88,7 @@
             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country Name<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="Countrydetails" optionLabel="countryName" optionValue="countryName"
+              <p-select [options]="Countrydetails" optionLabel="countryName" [filter]="true" filterBy="countryName" optionValue="countryName"
                 formControlName="countryname" placeholder="Please select country "
                 class="form-select custom-select"></p-select>
             </div>
@@ -166,7 +166,7 @@
             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country Name<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="Countrydetails" optionLabel="countryName" optionValue="countryName"
+              <p-select [options]="Countrydetails" [filter]="true" filterBy="countryName" optionLabel="countryName" optionValue="countryName"
                 formControlName="countryname" placeholder="Please select country "
                 class="form-select custom-select"></p-select>
             </div>

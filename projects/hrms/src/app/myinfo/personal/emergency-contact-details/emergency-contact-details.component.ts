@@ -149,14 +149,14 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
     const contact2Phone = cleanPhoneNumber(formValue.contact2Phone || this.employedata?.emergencyNumber1 || '');
     const updatePayload = {
       ...this.employedata,
-      emailId: formValue.contact1Email || this.employedata.emailId,
+      emailId: formValue.contact1Email || null ,
       emergencycode: this.selectedDialCode,
       emergencycode1: this.selectedDialCode1,
       emergencyName: formValue.contact1Name || this.employedata.emergencyName,
       relationShip: this.emergencyContactForm.get('contact1Relationship')?.value?.relationship1 || this.employedata.relationShip,
       emergencynumber: contact1Phone,
       emergencyName1: formValue.contact2Name || this.employedata.emergencyName1,
-      emergencyEmail1: formValue.contact2Email || this.employedata.emergencyEmail1,
+      emergencyEmail1: formValue.contact2Email  || null,
       emergencyNumber1: contact2Phone,
       relationship1: this.emergencyContactForm.get('contact2Relationship')?.value?.relationship1 || this.employedata.relationship1,
       emergencyphonecountryflag: this.selectedCountryflag,

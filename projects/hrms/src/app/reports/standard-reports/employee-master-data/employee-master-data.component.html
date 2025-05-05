@@ -5,6 +5,7 @@
     <form [formGroup]="masterDataForm" (ngSubmit)="onSubmit(masterDataForm)">
       <!-- DOJ -->
       <div class="d-flex gap-3">
+        @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){
         <div class="d-flex align-items-center gap-2">
           <label class="custom-label text-nowrap">Date of Joining</label>
           <div>
@@ -14,6 +15,7 @@
               class="form-control custom-input w-100" [startKey]="'startDate'" [endKey]="'endDate'" readonly />
           </div>
         </div>
+      
 
         <!-- Employee Status -->
         <div class="d-flex align-items-center gap-2">
@@ -24,8 +26,10 @@
             </p-select>
           </div>
         </div>
+      }
 
         <div class="d-flex gap-2">
+          @if(rbac.allowedToAccess('Employee Master Data - Generate.view')){
           <button type="submit" class="custom-btn btn-secondary"
             [disabled]="!masterDataForm.get('empStatus')?.value && !masterDataForm.get('dateOfJoining')?.value">
             @if(spinnerLoader1){
@@ -35,6 +39,8 @@
               <span>{{'Generate'}}</span>
             }
           </button>
+        }
+        @if(rbac.allowedToAccess('Employee Master Data - Generate.view') && rbac.allowedToAccess('Employee Master Data - Export.view') ){
           <button type="button" [disabled]="employeeMasterData.length === 0 || disableBtn" (click)="onClickEmpMasterExport()"
             class="custom-btn btn-primary">
             @if(spinnerLoader2){
@@ -44,6 +50,7 @@
               <span>{{'Export'}}</span>
               }
           </button>
+        }
         </div>
       </div>
     </form>

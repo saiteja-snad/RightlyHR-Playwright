@@ -15,7 +15,9 @@
                     <th>{{'Probation Start Date' | translate}}</th>
                     <th>{{'Probation End Date' | translate}}</th>
                     <th class="text-center">{{'Approved History' | translate}}</th>
+                    @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
                     <th class="text-center">Action(s)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -41,18 +43,24 @@
                             <ng-template #approvercomments>-</ng-template>
                         </div>
                     </td>
+                    @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
                     <td class="text-center">
                         <div>
+                            @if(rbac.allowedToAccess('Probation Details.update') ) {
                             <button class="custom-btn btn-primary"
                                 (click)="handleRequests(item,ProbationProcess); getComments(item.entity?.prApproverComments)"
                                 *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage"
                                 >{{'Process' | translate}}</button>
+                            }
+                            @if(rbac.allowedToAccess('Probation Details.update') ) {
                             <button class="custom-btn btn-primary"
                                 *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
                                 [routerLink]="['/time-off/pending-approvals/assessmentform']"
                                 (click)="setData(item)">{{'Assessment form' | translate}}</button>
+                            }
                         </div>
                     </td>
+                }
                 </tr>
                 <tr *ngIf="filteredDetails.length === 0">
                     <td colspan="9"><app-no-data-found></app-no-data-found></td>

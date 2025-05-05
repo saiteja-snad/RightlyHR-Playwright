@@ -29,10 +29,10 @@ export class RejectedExpensesComponent {
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   constructor(
-    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,public rbac: RbacService) { }
-
-  searchTerm: any = ''
-  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
+    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer, public rbac: RbacService) { }
+ 
+    searchTerm: any = ''
+    expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getexpensesheaderbyemployeeid();

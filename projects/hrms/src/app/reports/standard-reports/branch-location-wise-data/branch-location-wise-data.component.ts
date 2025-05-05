@@ -21,6 +21,7 @@ import dayjs from 'dayjs';
 import { ReportsService } from '../../../services/reports/reports.service';
 import { IJob } from '../../../Interfaces/letters-model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-branch-location-wise-data',
@@ -75,6 +76,7 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private modal: OpenModalService,
     private reportService: ReportsService,
+     public rbac:RbacService
   ) { }
 
   ngOnInit(): void {

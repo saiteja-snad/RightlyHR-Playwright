@@ -5,7 +5,7 @@
     <div>
       <form [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
         <div class="d-flex align-items-center gap-3">
-
+          @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view')){
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
             Clear All
           </button>
@@ -41,9 +41,11 @@
               </p-select>
             </div>
           </div>
+        }
 
           <!-- Buttons -->
           <div class="d-flex gap-2">
+            @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view')){
             <button type="submit" class="custom-btn btn-secondary" [disabled]="isLeaveGenerateDisabled">
               @if(spinnerLoader1){
               <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -52,7 +54,8 @@
               <span>{{'Generate'}}</span>
               }
             </button>
-
+          }
+          @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view') && rbac.allowedToAccess('Inactive Empolyee Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelInactive()"
               [disabled]="filteredInactiveRecord.length == 0 || disableBtn">
               @if(spinnerLoader2){
@@ -62,6 +65,7 @@
               <span>{{'Export'}}</span>
               }
             </button>
+          }
           </div>
         </div>
       </form>

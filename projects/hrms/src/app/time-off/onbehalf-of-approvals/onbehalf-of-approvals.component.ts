@@ -13,6 +13,7 @@ import { CompOffEntitlementComponent } from "./comp-off-entitlement/comp-off-ent
 import { TimeOffComponent } from "./time-off/time-off.component";
 import { Select } from 'primeng/select';
 import { environment } from '../../../environments/environment';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -46,7 +47,7 @@ export class OnbehalfOfApprovalsComponent {
   permissionsCount = 0;
   employeeiddetails = [] as any;
 
-  constructor(private http: HttpService, private authService: AuthService) {
+  constructor(private http: HttpService, private authService: AuthService,public rbac: RbacService) {
     // Signal reaction for employee switch
     effect(() => {
       if (this.http.trigger()) {   

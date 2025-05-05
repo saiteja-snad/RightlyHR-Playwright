@@ -189,7 +189,7 @@ export class PremissionForYourRoleRequestComponent
           this.approveForm.reset();
 
           this.signalService.permissionForRoleTriggerSignal.set(true);
-            this.signalService.permissionSidNavCountTriggerSignal.set(true);
+          this.signalService.permissionSidNavCountTriggerSignal.set(true);
         },
         error: (reason: any) => {
           this.modalService.dismissAll();

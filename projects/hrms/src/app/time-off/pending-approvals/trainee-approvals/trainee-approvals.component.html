@@ -20,7 +20,9 @@
                     <th class="text-nowrap">{{'Training Start Date'|translate}}</th>
                     <th class="text-nowrap">{{'Training End Date'|translate}}</th>
                     <th class="text-nowrap">{{'Approver Comments'|translate}}</th>
-                    <th class="text-nowrap"></th>
+                    @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('Trainee Details.delete')) {
+                    <th class="text-nowrap">{{'Action(s)' | translate}}</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -59,40 +61,50 @@
                         </div>
                         }
                     </td>
+                    @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('Trainee Details.delete')) {
                     <td>
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </span>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
-                                <li>
-                                    <a class="dropdown-item" (click)="openModal(PermissionsApprove);handleRequests(trn)"
-                                        *ngIf="rbac.allowedToAccess('Trainee Tab.update')">Approve</a>
-                                </li>
+                                @if(rbac.allowedToAccess('Trainee Details.update') ) {
+                                    @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
+                                    <li>
+                                        <a class="dropdown-item" (click)="openModal(PermissionsApprove);handleRequests(trn)"
+                                            >Approve</a>
+                                    </li>
+                                    }
                                 }
-                                @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
-                                <li>
-                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"
-                                        *ngIf="rbac.allowedToAccess('Trainee Tab.delete')">Reject</a>
-                                </li>
-                                }
+                                @if( rbac.allowedToAccess('Trainee Details.delete')) {
+                                    @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
+                                    <li>
+                                        <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"
+                                            >Reject</a>
+                                    </li>
+                                    }
+                               }
+                               @if(rbac.allowedToAccess('Trainee Details.update')) {
+                                    @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
+                                    <li>
+                                        <a class="dropdown-item" (click)="handleProcess(trn)"
+                                            >
+                                            Process</a>
+                                    </li>
+                                    }
+                              } 
+                              @if( rbac.allowedToAccess('Trainee Details.delete')) {
                                 @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
                                 <li>
-                                    <a class="dropdown-item" (click)="handleProcess(trn)"
-                                        *ngIf="rbac.allowedToAccess('Trainee Tab.update')">
-                                        Process</a>
-                                </li>
-                                }
-                                @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
-                                <li>
                                     <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"
-                                        *ngIf="rbac.allowedToAccess('Trainee Tab.delete')">Reject</a>
+                                       >Reject</a>
                                 </li>
                                 }
+                            }
                             </ul>
                         </div>
                     </td>
+                    }
                 </tr>
                 }
                 @else{

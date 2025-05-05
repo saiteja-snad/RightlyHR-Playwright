@@ -18,11 +18,12 @@
                     <th>{{'Reason' | translate}}</th>
                     <th>{{'Approver Comments' | translate}}</th>
                     <th>{{'Applied Date' | translate}}</th>
+                    @if(rbac.allowedToAccess('For Role (WFH).update') || rbac.allowedToAccess('For Role (WFH).delete')) {
                     <th>{{'Action(s)' | translate}}</th>
+                    }
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
                 @if ((((leaves | async) ?? [])| wfhsearchfilter: searchValue).length > 0) {
                 @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ; track leave.approvalHeader.id){
                 <tr>
@@ -53,36 +54,46 @@
                         </div>
                     </td>
                     <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
+                    @if(rbac.allowedToAccess('For Role (WFH).update') || rbac.allowedToAccess('For Role (WFH).delete')) {
                     <td>
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                @if( leave.approvalHeader.currentapprovalStage !=
-                                leave.approvalHeader.finalapprovalStage){
-                                <li (click)="openApproveModal(approval,leave)"
-                                    *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
-                                        translate}}</a>
-                                </li>
+
+                                @if(rbac.allowedToAccess('For Role (WFH).update')){
+                                    @if( leave.approvalHeader.currentapprovalStage !=
+                                        leave.approvalHeader.finalapprovalStage){
+                                        <li (click)="openApproveModal(approval,leave)"
+                                            >
+                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
+                                                translate}}</a>
+                                        </li>
+                                        }
                                 }
-                                @if( leave.approvalHeader.currentapprovalStage ==
-                                leave.approvalHeader.finalapprovalStage){
-                                <li (click)="handleProcess(leave)"
-                                    *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
-                                        translate}}</a>
-                                </li>
+
+                                @if(rbac.allowedToAccess('For Role (WFH).update')){
+                                        @if( leave.approvalHeader.currentapprovalStage ==
+                                        leave.approvalHeader.finalapprovalStage){
+                                        <li (click)="handleProcess(leave)"
+                                            >
+                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
+                                                translate}}</a>
+                                        </li>
+                                        }
                                 }
-                                <li (click)="openRejectModal(rejectmodal,leave)"
-                                    *ngIf="rbac.allowedToAccess('Workfromhome Tab.delete')">
-                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
-                                        translate}}</a>
-                                </li>
+                                @if(rbac.allowedToAccess('For Role (WFH).delete')){
+                                    <li (click)="openRejectModal(rejectmodal,leave)"
+                                        >
+                                        <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                            translate}}</a>
+                                    </li>
+                                }
                             </ul>
                         </div>
                     </td>
+                    }   
                 </tr>
                 }
                 }@else {
@@ -92,7 +103,7 @@
                     </td>
                 </tr>
                 }
-                }
+                
             </tbody>
         </table>
         }@else{

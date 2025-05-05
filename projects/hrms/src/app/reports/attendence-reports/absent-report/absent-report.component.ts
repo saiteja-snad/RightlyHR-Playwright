@@ -17,6 +17,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { SelectModule } from 'primeng/select';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-absent-report',
@@ -109,6 +110,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
+    public rbac:RbacService
   ) { }
 
   getParsedEmployee(event: Event): any {

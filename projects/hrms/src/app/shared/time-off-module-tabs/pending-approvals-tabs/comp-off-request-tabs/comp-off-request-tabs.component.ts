@@ -7,6 +7,7 @@ import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount, AttendanceRequest } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { SignalsService } from '../../../../services/signals.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-comp-off-request-tabs',
@@ -21,11 +22,12 @@ export class CompOffRequestTabsComponent implements OnInit, OnDestroy {
   pendingApprovalCount: ApprovalStatusCount[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   navTabs: any[] = [];
-
+  filteredTabs: any[] = [];
   constructor(
     public readonly router: Router,
     private http: HttpService,
-    private signalService: SignalsService
+    private signalService: SignalsService,
+    private rbac: RbacService
   ) {
     effect(() => {
       if (this.signalService.compOffForRoleTriggerSignal() || this.signalService.compOffForYouTriggerSignal()) {
@@ -79,11 +81,21 @@ export class CompOffRequestTabsComponent implements OnInit, OnDestroy {
   
     // Update navTabs with safe access to data
     this.navTabs = [
-      { label: 'For You', link: 'for-you', count: data?.forYou ?? 0 },
-      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0 },
+      { label: 'For You', link: 'for-you', count: data?.forYou ?? 0,permission: { feature: 'For You (Comp Off)', action: 'view' }  },
+      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0,permission: { feature: 'For Role (Comp Off)', action: 'view' }  },
     ];
+    this.filterTabsByRbac(); // Call the filter function after updating navTabs
   }
   
+
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs?.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
+    });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

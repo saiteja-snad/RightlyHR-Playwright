@@ -1,4 +1,4 @@
-<div class="custom-main-component-container" *ngIf="rbac.allowedToAccess('Separation Requests Tab.view')">
+<div class="custom-main-component-container">
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -21,7 +21,9 @@
                     <th>{{'Reason' | translate}}</th>
                     <th>{{'Request Type' | translate}}</th>
                     <th>{{'Approver History' | translate}}</th>
+                    @if(rbac.allowedToAccess('For You (Seperation Request).update') || rbac.allowedToAccess('For You (Seperation Request).delete')) {
                     <th>{{'Action(s)' | translate}}</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -61,34 +63,45 @@
                         }
                         @else{-}
                     </td>
+                    @if(rbac.allowedToAccess('For You (Seperation Request).update') || rbac.allowedToAccess('For You (Seperation Request).delete')) {
+
                     <td class="text-center">
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                @if(item.approvalHeader?.currentapprovalStage !=
-                                item.approvalHeader?.finalapprovalStage){
-                                <li (click)="openModalLarge(approval);handleRequest(item)" *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Approve" | translate}}</a>
-                                </li>
-                                }
+                            @if(rbac.allowedToAccess('For You (Seperation Request).update') ) {
+                            
+                            @if(item.approvalHeader?.currentapprovalStage !=
+                            item.approvalHeader?.finalapprovalStage){
+                            <li (click)="openModalLarge(approval);handleRequest(item)">
+                                <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Approve" | translate}}</a>
+                            </li>
+                            }
+                            }
+                            @if(rbac.allowedToAccess('For You (Seperation Request).delete') ) {
+
                                 @if((item.approvalHeader?.currentapprovalStage !=
                                 item.approvalHeader?.finalapprovalStage) ||
                                 (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
-                                <li (click)="openModal(rejectmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Separation Requests Tab.delete')">
+                                <li (click)="openModal(rejectmodal);handleRequest(item)" >
                                     <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{"Reject" | translate}}</a>
                                 </li>
                                 }
+                            }
+                            @if(rbac.allowedToAccess('For You (Seperation Request).update') ) {
                                 @if(item?.approvalHeader?.currentapprovalStage ==
                                 item?.approvalHeader?.finalapprovalStage){
-                                <li (click)="openModalLarge(processmodal);handleRequest(item)" *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
+                                <li (click)="openModalLarge(processmodal);handleRequest(item)">
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Process" | translate}}</a>
                                 </li>
                                 }
+                            }
                             </ul>
                         </div>
                     </td>
+                }
                     }
                 </tr>
                 <tr *ngIf="filteredData.length === 0">

@@ -14,6 +14,7 @@ import { SelectModule } from 'primeng/select';
 import { IYearlyReportRequest } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-yearly-summary-report',
@@ -59,6 +60,7 @@ export class YearlySummaryReportComponent {
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
+    public rbac:RbacService
   ) { }
 
   ngOnInit(): void {

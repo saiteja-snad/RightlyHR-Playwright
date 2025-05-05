@@ -80,9 +80,9 @@ export class NoDueClearanceComponent {
     this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
       next: (data: any) => {
         this.nodue_Clearance_Details.next(data);
-        const nodueapprovecount = data.filter((ele: any) => ele.status?.toLowerCase() === 'approved')
-        this.nodueapprovalcount = nodueapprovecount.length
-        if (nodueapprovecount.length > 0) {
+        //const nodueapprovecount = data.filter((ele: any) => ele.status?.toLowerCase() === 'approved')
+        this.nodueapprovalcount = data.length
+        if (data.length > 0) {
           const lineOrders = data.map((item: any) => item.lineOrder);
           const highestLineOrder = Math.max(...lineOrders);
           if (highestLineOrder == this.nodueapprovalcount) {

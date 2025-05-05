@@ -95,7 +95,9 @@ export class OrganizationchartComponent {
     html2canvas(chartElement as HTMLElement, {
       width: originalWidth,
       height: originalHeight,
-      scale: 2,
+      scale: 1.5,
+      useCORS: true,
+      allowTaint: true,
       
     })
       .then((canvas) => {

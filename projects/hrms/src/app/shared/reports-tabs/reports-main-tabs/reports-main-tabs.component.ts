@@ -13,6 +13,13 @@ import { RbacService } from '../../../services/rbac.service';
 export class ReportsMainTabsComponent implements OnInit{
   navTabs: any[] = [];
 
+  allTabs: any[] = [
+    { label: 'Standard Reports', link: '/reports/standard-reports', permission: { feature: 'Standard Reports', action: 'view'}},
+    { label: 'Custom Reports', link: '/reports/custom-reports' ,permission: { feature: 'Custom Reports', action: 'view'}},
+    { label: 'Attendance Reports',link: '/reports/attendence-reports', permission: { feature: 'Attendance reports', action: 'view' }},
+    { label: 'Monthly Attendance Report', link: '/reports/monthly-attandance-reports' ,permission: { feature: 'Monthly Attendance Reports', action: 'view'}},
+  ];
+
   constructor(
     private rbac: RbacService
   ){ }
@@ -28,11 +35,6 @@ export class ReportsMainTabsComponent implements OnInit{
     console.log(this.navTabs)
   }
 
-  allTabs: any[] = [
-    { label: 'Standard Reports', link: '/reports/standard-reports', permission: { feature: 'Standard Reports', action: 'view'}},
-    { label: 'Custom Reports', link: '/reports/custom-reports' ,permission: { feature: 'Custom Reports', action: 'view'}},
-    { label: 'Attendance Reports',link: '/reports/attendence-reports', permission: { feature: 'Attendance Reports', action: 'view' }},
-    { label: 'Monthly Attendance Report', link: '/reports/monthly-attandance-reports' ,permission: { feature: 'Monthly Attandance Report', action: 'view'}},
-  ];
+  
 
 }

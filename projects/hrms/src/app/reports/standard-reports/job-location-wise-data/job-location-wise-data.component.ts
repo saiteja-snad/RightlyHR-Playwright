@@ -17,6 +17,7 @@ import { StandardReportTabsComponent } from "../../../shared/reports-tabs/standa
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-job-location-wise-data',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent, NoDataFoundComponent, DataLoaderContentComponent],
@@ -41,7 +42,8 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     private reports: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
-    private modal: OpenModalService
+    private modal: OpenModalService,
+    public rbac:RbacService
   ) { }
 
   ngOnInit(): void {

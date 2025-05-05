@@ -6,6 +6,7 @@
     <!--right data-->
     <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
       <div class="d-flex gap-3">
+        @if(rbac.allowedToAccess('Custom Reports - Generate.view')){
         <div class="d-flex gap-2 align-items-center">
           <div class="custom-label text-nowrap">Employee Status</div>
           <div class="custom-p-select-content">
@@ -28,8 +29,10 @@
             formControlName="dateOfJoining" [placeholder]="getDatePlaceholder()" class="form-control custom-input w-100"
             [startKey]="'startDate'" [endKey]="'endDate'" readonly />
         </div>
+      }
 
         <div class="d-flex gap-2">
+          @if(rbac.allowedToAccess('Custom Reports - Generate.view')){
           <button type="submit" class="custom-btn btn-secondary"
             [disabled]="selectedFields.length == 0 || spinnerLoader1">
             @if(spinnerLoader1){
@@ -39,6 +42,9 @@
             <span>{{ 'Generate'  }}</span>
             }
           </button>
+        }
+
+        @if(rbac.allowedToAccess('Custom Reports - Generate.view') && rbac.allowedToAccess('Custom Reports - Export.view')){
           <button type="button" class="custom-btn btn-primary" [disabled]="selectedData.length == 0 || hasPendingChanges"
             (click)="generateExcel()">
             @if(spinnerLoader2){
@@ -48,6 +54,7 @@
             <span>{{'Export'}}</span>
             }
           </button>
+        }
         </div>
       </div>
     </form>

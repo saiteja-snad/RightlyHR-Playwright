@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-standard-report-tabs',
   imports: [RouterModule, CommonModule, TabsModule],
@@ -10,11 +11,26 @@ import { TabsModule } from 'primeng/tabs';
   encapsulation:ViewEncapsulation.None
 })
 
-export class StandardReportTabsComponent {
+export class StandardReportTabsComponent implements OnInit{
   navTabs = [
-    { label: 'Employee Master Data', route: '/reports/standard-reports/employee-data' },
-    { label: 'Job Location Wise Data', route: '/reports/standard-reports/job-data' },
-    { label: 'Branch Location Wise Data', route: '/reports/standard-reports/branch-data' },
-    { label: 'Family Members Data', route: '/reports/standard-reports/family-data' },
+    { label: 'Employee Master Data', route: '/reports/standard-reports/employee-data',permission: { feature: 'Employee Master Data', action: 'view'} },
+    { label: 'Job Location Wise Data', route: '/reports/standard-reports/job-data',permission: { feature: 'Job Location Wise Data', action: 'view'} },
+    { label: 'Branch Location Wise Data', route: '/reports/standard-reports/branch-data',permission: { feature: 'Branch Location Wise Data', action: 'view'} },
+    { label: 'Family Members Data', route: '/reports/standard-reports/family-data',permission: { feature: 'Family Members Data', action: 'view'} },
   ];
+
+
+    constructor(
+      private rbac: RbacService
+    ){ }
+
+
+    ngOnInit(): void {
+      this.navTabs = this.navTabs.filter(tab =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+      );
+    }
 }

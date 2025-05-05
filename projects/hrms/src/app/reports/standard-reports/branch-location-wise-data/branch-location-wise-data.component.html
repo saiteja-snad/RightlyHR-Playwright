@@ -6,6 +6,7 @@
         <!--right data-->
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
             <div class="d-flex align-items-center gap-3">
+                @if(rbac.allowedToAccess('Branch Location Wise Data - Generate.view')){
                 <div class="d-flex gap-2 align-items-center">
                     <label class="custom-label text-nowrap">Date Of Joining</label>
                     <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
@@ -27,8 +28,10 @@
                         </p-select>
                     </div>
                 </div>
+                }
 
                 <div class="d-flex gap-2">
+                    @if(rbac.allowedToAccess('Branch Location Wise Data - Generate.view')){
                     <button type="submit" class="custom-btn btn-secondary"
                         [disabled]="!reportForm.get('location')?.value && !reportForm.get('dateOfJoining')?.value || spinnerLoader1">
                         @if(spinnerLoader1){
@@ -38,6 +41,9 @@
                         <span>{{'Generate'}}</span>
                         }
                     </button>
+                    }
+
+                    @if(rbac.allowedToAccess('Branch Location Wise Data - Generate.view') && rbac.allowedToAccess('Branch Location Wise Data - Export.view') ){
                     <button type="button" class="custom-btn btn-primary" [disabled]="standardReportData.length === 0 || disableBtn"
                         (click)="onClickBranchLocationExport() ">
                         @if(spinnerLoader){
@@ -47,6 +53,7 @@
                         <span>{{'Export'}}</span>
                         }
                     </button>
+                }
                 </div>
             </div>
         </form>

@@ -51,19 +51,19 @@ export class SettingsJobTabsComponent implements OnInit {
       this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
     );
 
-    const currentUrl = this.router.url;
-    const baseUrl = '/settings/employee-fields/job';
+    // const currentUrl = this.router.url;
+    // const baseUrl = '/settings/employee-fields/job';
 
-    // Step 2: Redirect to first allowed tab if on base URL
-    if (currentUrl === baseUrl && this.navLinks.length > 0) {
-      this.router.navigateByUrl(this.navLinks[0].route);
-      return;
-    }
+    // // Step 2: Redirect to first allowed tab if on base URL
+    // if (currentUrl === baseUrl && this.navLinks.length > 0) {
+    //   this.router.navigateByUrl(this.navLinks[0].route);
+    //   return;
+    // }
 
-    // Step 3: Redirect if current path is inaccessible
-    const isAllowed = this.navLinks.some(link => link.route === currentUrl);
-    if (!isAllowed && this.navLinks.length > 0) {
-      this.router.navigateByUrl(this.navLinks[0].route);
-    }
+    // // Step 3: Redirect if current path is inaccessible
+    // const isAllowed = this.navLinks.some(link => link.route === currentUrl);
+    // if (!isAllowed && this.navLinks.length > 0) {
+    //   this.router.navigateByUrl(this.navLinks[0].route);
+    // }
   }
 }

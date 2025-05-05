@@ -29,24 +29,24 @@ export class SettingsEmployeeFieldsModuleTabsComponent implements OnInit {
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
 
-    if (this.navTabs.length > 0) {
-      this.defaultRoute = this.navTabs[0].link;
-    }
+    // if (this.navTabs.length > 0) {
+    //   this.defaultRoute = this.navTabs[0].link;
+    // }
 
-    const currentUrl = this.router.url;
-    const baseUrl = '/settings/employee-fields';
+    // const currentUrl = this.router.url;
+    // const baseUrl = '/settings/employee-fields';
 
-    // If at base URL, redirect to the first allowed route
-    if (currentUrl === baseUrl && this.defaultRoute) {
-      this.router.navigateByUrl(this.defaultRoute);
-      return;
-    }
+    // // If at base URL, redirect to the first allowed route
+    // if (currentUrl === baseUrl && this.defaultRoute) {
+    //   this.router.navigateByUrl(this.defaultRoute);
+    //   return;
+    // }
 
-    // If the current route is not allowed, redirect to first accessible
-    const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
-    if (!isAllowed && this.defaultRoute) {
-      this.router.navigateByUrl(this.defaultRoute);
-    }
+    // // If the current route is not allowed, redirect to first accessible
+    // const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
+    // if (!isAllowed && this.defaultRoute) {
+    //   this.router.navigateByUrl(this.defaultRoute);
+    // }
   }
 
   allTabs: any[] = [

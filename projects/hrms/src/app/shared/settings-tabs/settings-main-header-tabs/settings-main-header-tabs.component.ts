@@ -30,19 +30,19 @@ export class SettingsMainHeaderTabsComponent implements OnInit {
       return this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`);
     });
 
-    const currentUrl = this.router.url;
-    const baseUrl = '/settings';
+    // const currentUrl = this.router.url;
+    // const baseUrl = '/settings';
 
-    // If at base URL, navigate to the first accessible tab
-    if (currentUrl === baseUrl && this.navTabs.length > 0) {
-      this.router.navigateByUrl(this.navTabs[0].link);
-      return;
-    }
+    // // If at base URL, navigate to the first accessible tab
+    // if (currentUrl === baseUrl && this.navTabs.length > 0) {
+    //   this.router.navigateByUrl(this.navTabs[0].link);
+    //   return;
+    // }
 
-    // If current route is not one of the accessible links, redirect
-    const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
-    if (!isAllowed && this.navTabs.length > 0) {
-      this.router.navigateByUrl(this.navTabs[0].link);
-    }
+    // // If current route is not one of the accessible links, redirect
+    // const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
+    // if (!isAllowed && this.navTabs.length > 0) {
+    //   this.router.navigateByUrl(this.navTabs[0].link);
+    // }
   }
 }

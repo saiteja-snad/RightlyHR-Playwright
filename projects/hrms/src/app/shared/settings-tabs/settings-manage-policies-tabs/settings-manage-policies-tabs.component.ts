@@ -43,18 +43,18 @@ export class SettingsManagePoliciesTabsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getAllPolicies();
 
-    const currentUrl = this.router.url;
-    const baseUrl = '/settings/employee-fields/manage-policies';
+    // const currentUrl = this.router.url;
+    // const baseUrl = '/settings/employee-fields/manage-policies';
 
-    if (currentUrl === baseUrl && this.navLinks.length > 0) {
-      this.router.navigateByUrl(this.navLinks[0].route);
-      return;
-    }
+    // if (currentUrl === baseUrl && this.navLinks.length > 0) {
+    //   this.router.navigateByUrl(this.navLinks[0].route);
+    //   return;
+    // }
 
-    const isAllowed = this.navLinks.some(link => link.route === currentUrl);
-    if (!isAllowed && this.navLinks.length > 0) {
-      this.router.navigateByUrl(this.navLinks[0].route);
-    }
+    // const isAllowed = this.navLinks.some(link => link.route === currentUrl);
+    // if (!isAllowed && this.navLinks.length > 0) {
+    //   this.router.navigateByUrl(this.navLinks[0].route);
+    // }
   }
 
   getAllPolicies() {

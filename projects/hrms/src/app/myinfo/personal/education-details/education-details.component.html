@@ -1,7 +1,9 @@
  <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Education Details</span></div>
+    @if(rbac.allowedToAccess('My Info Education Details.create')){
     <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+    }
   </div>
   
   <div class="custom-table-content">
@@ -15,7 +17,9 @@
           <th>From Date</th>
           <th>To Date</th>
           <th>Document</th>
+          @if(rbac.allowedToAccess('My Info Education Details.update') || rbac.allowedToAccess('My Info Education Details.delete')){
           <th class="text-center">Action(S)</th>
+          }
         </tr>
       </thead>
       <tbody>
@@ -30,25 +34,31 @@
             <td><span *ngIf="edacationDetails.attachment;else noData" class="dowload-text"
                 (click)="onSelectIdentityAttachmentDownload(edacationDetails)" style="cursor: pointer;"><i
                   class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template></td>
+            @if(rbac.allowedToAccess('My Info Education Details.update') || rbac.allowedToAccess('My Info Education Details.delete')){
             <td class="text-center">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
                 </span>
                 <ul class="dropdown-menu custom-dropdown-menu">
+                  @if(rbac.allowedToAccess('My Info Education Details.update') ){
                   <li (click)="openModalupdate(updateEducationmodal, edacationDetails)">
                     <a class="dropdown-item">
                       <i class="bi bi-pencil me-2"></i>Update
                     </a>
                   </li>
+                }
+                @if( rbac.allowedToAccess('My Info Education Details.delete')){
                   <li (click)="opendeletModal(deleteconformation,edacationDetails)">
                     <a class="dropdown-item">
                       <i class="bi bi-trash3 me-2"></i>Delete
                     </a>
                   </li>
+                }
                 </ul>
               </div>
             </td>
+          }
           </tr>
         </ng-container>
         <!-- No Data Found Template -->

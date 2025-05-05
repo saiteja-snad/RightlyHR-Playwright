@@ -14,20 +14,26 @@ import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
+  imports: [
+    CommonModule,
+    Select,
+    ReactiveFormsModule,
+    DateformatPipe,
+    NoDataFoundComponent,
+    TranslateModule,
+  ],
   templateUrl: './education-details.component.html',
-  styleUrl: './education-details.component.scss'
+  styleUrl: './education-details.component.scss',
 })
-
-export class EducationDetailsComponent implements OnInit,OnDestroy {
+export class EducationDetailsComponent implements OnInit, OnDestroy {
   educationForm!: FormGroup;
   educationupdateForm!: FormGroup;
-  selectedEducationId: any
-  educationData = new BehaviorSubject<Ieducation[]>([])
+  selectedEducationId: any;
+  educationData = new BehaviorSubject<Ieducation[]>([]);
   degreeDetails: IDegre[] = [];
   educationAttachment: any;
-  displalyeducationattachment:any
-  selectedEducationDetails: any
+  displalyeducationattachment: any;
+  selectedEducationDetails: any;
   subscription!: Subscription;
   currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
   showError = false;
@@ -36,54 +42,99 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   issEndDateValid = true;
   islistedItem = true;
   buttondisable = true;
-  spinnerLoader=false;
-  empinfo: any = {}
+  spinnerLoader = false;
+  empinfo: any = {};
   dateofbirth: any;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,) { }
+  constructor(
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private conformationPopup: OpenModalService,
+    private http: HttpService,
+    public rbac: RbacService,
+    public formValidation: FormValidationService
+  ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeForm();
-    this.initializeupdateForm()
-    this.getDegree()
-    this.getEmployeeId()
+    this.initializeupdateForm();
+    this.getDegree();
+    this.getEmployeeId();
     this.getEducationEmpid();
     this.educationForm.get('degreeStartDate')?.valueChanges.subscribe(() => {
       this.educationForm.get('degreeEndDate')?.reset();
     });
-    this.educationupdateForm.get('degreeStartDateupdate')?.valueChanges.subscribe(() => {
-      this.educationupdateForm.get('degreeEndDateupdate')?.reset();
-    });
+    this.educationupdateForm
+      .get('degreeStartDateupdate')
+      ?.valueChanges.subscribe(() => {
+        this.educationupdateForm.get('degreeEndDateupdate')?.reset();
+      });
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
   }
 
   initializeForm(): void {
     this.educationForm = this.fb.group({
       education: ['', Validators.required],
-      university: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),Validators.maxLength(50)]],  
-      specialization: ['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),,Validators.maxLength(50)],],
-      gpa: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
-      degreeStartDate: ['',[ Validators.required]],
+      university: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),
+          Validators.maxLength(50),
+        ],
+      ],
+      specialization: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),
+          ,
+          Validators.maxLength(50),
+        ],
+      ],
+      gpa: ['', [Validators.required, Validators.min(1), Validators.max(10)]],
+      degreeStartDate: ['', [Validators.required]],
       degreeEndDate: ['', [Validators.required]],
       attachment: [null, Validators.required],
     });
-    
   }
 
   initializeupdateForm(): void {
     this.educationupdateForm = this.fb.group({
       educationupdate: ['', Validators.required],
-      universityupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),,Validators.maxLength(50)]],
-      specializationupdate: ['', [Validators.required,Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),,Validators.maxLength(50)],],
-      gpaupdate: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
+      universityupdate: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),
+          ,
+          Validators.maxLength(50),
+        ],
+      ],
+      specializationupdate: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"),
+          ,
+          Validators.maxLength(50),
+        ],
+      ],
+      gpaupdate: [
+        '',
+        [Validators.required, Validators.min(1), Validators.max(10)],
+      ],
       degreeStartDateupdate: ['', Validators.required],
       degreeEndDateupdate: ['', Validators.required],
-      attachmentupdate: ['', ],
+      attachmentupdate: [''],
     });
-
   }
 
   getMinEndDate(): string | null {
@@ -97,28 +148,33 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   }
 
   getupdateMinEndDate(): string | null {
-    const startDateValue = this.educationupdateForm.get('degreeStartDateupdate')?.value;
+    const startDateValue = this.educationupdateForm.get(
+      'degreeStartDateupdate'
+    )?.value;
     if (startDateValue) {
       const startDate = new Date(startDateValue);
       startDate.setDate(startDate.getDate() + 1); // Add one day to the start date
       return startDate.toISOString().split('T')[0]; // Return the date in 'YYYY-MM-DD' format
     }
-    return null; 
+    return null;
   }
 
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.dateofbirth =this.formatDateToLocal(data.dob)
-      },
-      error: (reason) => console.error('Error fetching employee data:', reason),
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.dateofbirth = this.formatDateToLocal(data.dob);
+        },
+        error: (reason) =>
+          console.error('Error fetching employee data:', reason),
+      });
   }
 
   postEducation(): void {
     if (this.educationForm.valid) {
-      this.spinnerLoader=true
+      this.spinnerLoader = true;
       const payload = this.createEducationPayload();
       if (this.educationAttachment) {
         this.uploadEducationAttachment(payload);
@@ -133,7 +189,11 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   uploadEducationAttachment(payload: any): void {
     const filePath = `/FusionDocuments/Employee Documents/Education Documents/${this.empinfo.employeeId}`;
     this.subscription = this.http
-      .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.educationAttachment)
+      .uploadFileWithQuery(
+        'FileSystem/uploadfiletodirectory',
+        filePath,
+        this.educationAttachment
+      )
       .subscribe({
         next: (data: any) => {
           if (data) {
@@ -143,7 +203,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
         },
         error: () => {
           console.error('File upload failed');
-        }
+        },
       });
   }
 
@@ -152,15 +212,17 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       next: () => {
         this.educationForm.reset();
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Education details added successfully');
+        this.conformationPopup.openSuccessModal(
+          'Education details added successfully'
+        );
         this.getEducationEmpid();
-        this.spinnerLoader=false
+        this.spinnerLoader = false;
       },
       error: (err: any) => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false;
         console.error('Error saving education data:', err);
         this.conformationPopup.openErrorModal(err.error.Message);
-      }
+      },
     });
   }
 
@@ -186,19 +248,22 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       const fileSizeInMB = file.size / (1024 * 1024);
       if (fileSizeInMB > 25) {
         this.educationAttachment = null;
-        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+        this.conformationPopup.openErrorModal(
+          'The file size should be less than 25MB.'
+        );
         this.educationForm.get('attachment')?.reset();
         this.educationForm.get('attachment')?.markAsUntouched();
         this.educationupdateForm.get('attachmentupdate')?.reset();
         this.educationupdateForm.get('attachmentupdate')?.markAsUntouched();
-       
+
         return;
       }
     }
-  
+
     const timestamp = new Date().getTime();
     this.educationAttachment = this.renameFileAttachment(
-      file,`${this.empinfo.employeeId}_${timestamp}_${file.name}`
+      file,
+      `${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
 
     console.log('Identity attachment:', this.educationAttachment);
@@ -207,7 +272,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   private renameFileAttachment(originalFile: File, newName: string): File {
     return new File([originalFile], newName, {
       type: originalFile.type,
-      lastModified: originalFile.lastModified
+      lastModified: originalFile.lastModified,
     });
   }
 
@@ -244,10 +309,9 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
     let employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Education/${employeeId}`).subscribe({
       next: (data: any) => {
-       this.dateofbirth=this.formatDateToLocal(data.dob)
+        this.dateofbirth = this.formatDateToLocal(data.dob);
         localStorage.setItem('educationinfodata', JSON.stringify(data));
         this.educationData.next(data);
-      
       },
     });
   }
@@ -261,13 +325,15 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
 
   //openupdate
   openModalupdate(content: any, educationDetails: any): void {
-    this.selectedEducationId=educationDetails.id
+    this.selectedEducationId = educationDetails.id;
     const selectedEducationType = this.degreeDetails.find(
       (item) => item.degreeName === educationDetails.degree
     );
     // Convert dates to 'YYYY-MM-DD' format
-    const degreeStartDate = this.formatDateToLocal(educationDetails.degreeStartDate) || null;
-    const degreeEndDate = this.formatDateToLocal(educationDetails.degreeEndDate) || null;
+    const degreeStartDate =
+      this.formatDateToLocal(educationDetails.degreeStartDate) || null;
+    const degreeEndDate =
+      this.formatDateToLocal(educationDetails.degreeEndDate) || null;
     this.educationupdateForm.patchValue({
       educationupdate: selectedEducationType,
       universityupdate: educationDetails.university,
@@ -276,26 +342,32 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       degreeStartDateupdate: degreeStartDate,
       degreeEndDateupdate: degreeEndDate,
     });
-    this.educationAttachment = educationDetails.attachment
-    this.displalyeducationattachment=educationDetails.attachment ? educationDetails.attachment.split('/').pop() : null;
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.educationAttachment = educationDetails.attachment;
+    this.displalyeducationattachment = educationDetails.attachment
+      ? educationDetails.attachment.split('/').pop()
+      : null;
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
   }
 
   updateEducation(): void {
     if (this.educationupdateForm.valid) {
-      this.spinnerLoader=true
+      this.spinnerLoader = true;
       const formData = this.educationupdateForm.value;
       const payload = {
-        id:this.selectedEducationId,
-        university:formData.universityupdate,
+        id: this.selectedEducationId,
+        university: formData.universityupdate,
         degree: formData.educationupdate?.degreeName,
         specialization: formData.specializationupdate,
         gpa: formData.gpaupdate,
-        status: "Active",
+        status: 'Active',
         degreeStartDate: formData.degreeStartDateupdate,
         degreeEndDate: formData.degreeEndDateupdate,
         attachment: this.educationAttachment || '', // Use the existing attachment or the new one
-        employeeId: this.empinfo.employeeId // Add employee ID if required
+        employeeId: this.empinfo.employeeId, // Add employee ID if required
       };
 
       // Check if a new attachment is selected
@@ -312,7 +384,11 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   uploadUpdatedEducationAttachment(payload: any): void {
     const filePath = `/FusionDocuments/Employee Documents/Education Documents/${this.empinfo.employeeId}`;
     this.subscription = this.http
-      .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.educationAttachment)
+      .uploadFileWithQuery(
+        'FileSystem/uploadfiletodirectory',
+        filePath,
+        this.educationAttachment
+      )
       .subscribe({
         next: (data: any) => {
           if (data) {
@@ -322,28 +398,30 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
         },
         error: () => {
           console.error('File upload failed');
-
-        }
+        },
       });
   }
 
   saveUpdatedEducation(payload: any): void {
-    this.subscription = this.http.postdata(`Education/UPDATER`, payload).subscribe({
-      next: (data: any) => {
-        console.log('Education updated successfully', data);
-        this.getEducationEmpid()
-        this.educationupdateForm.reset()
-        this.modalService.dismissAll()
-        this.spinnerLoader=false
-        this.conformationPopup.openSuccessModal('Education updated successfully')
-      },
-      error: (reason: any) => {
-        this.spinnerLoader=false
-        this.conformationPopup.openErrorModal(reason.error.Message);
-        console.error('Error updating education:', reason);
-      
-      }
-    });
+    this.subscription = this.http
+      .postdata(`Education/UPDATER`, payload)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Education updated successfully', data);
+          this.getEducationEmpid();
+          this.educationupdateForm.reset();
+          this.modalService.dismissAll();
+          this.spinnerLoader = false;
+          this.conformationPopup.openSuccessModal(
+            'Education updated successfully'
+          );
+        },
+        error: (reason: any) => {
+          this.spinnerLoader = false;
+          this.conformationPopup.openErrorModal(reason.error.Message);
+          console.error('Error updating education:', reason);
+        },
+      });
   }
 
   opendeletModal(content: any, educationDetails: any): void {
@@ -369,23 +447,29 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
       degreeEndDate: this.selectedEducationDetails.degreeEndDate,
     };
     // Send the delete request
-    this.subscription = this.http.postdata('Education/UPDATER', payload).subscribe({
-      next: (data: any) => {
-        console.log('Education record deleted successfully:', data);
-        this.modalService.dismissAll()
-        this.getEducationEmpid();
-        this.conformationPopup.openSuccessModal('Education detalis deleted successfully');
-      },
-      error: (err: any) => {
-        console.error('Error deleting education record:', err);
-        this.conformationPopup.openErrorModal('Education detalis deleted failed');
-      }
-    });
+    this.subscription = this.http
+      .postdata('Education/UPDATER', payload)
+      .subscribe({
+        next: (data: any) => {
+          console.log('Education record deleted successfully:', data);
+          this.modalService.dismissAll();
+          this.getEducationEmpid();
+          this.conformationPopup.openSuccessModal(
+            'Education detalis deleted successfully'
+          );
+        },
+        error: (err: any) => {
+          console.error('Error deleting education record:', err);
+          this.conformationPopup.openErrorModal(
+            'Education detalis deleted failed'
+          );
+        },
+      });
   }
 
   ngOnDestroy(): void {
     if (this.subscription) {
-      this.subscription.unsubscribe()
+      this.subscription.unsubscribe();
     }
   }
 }

@@ -59,7 +59,7 @@ export default [
     {
         path: 'manage-shifts',
         children: [
-            { path: '', component: SettingsManageShitsTabsComponent },
+            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
             { path: 'pending-for-submit', loadComponent: () => import('./manage-shifts/pending-shifts/pending-shifts.component').then((m) => m.PendingShiftsComponent) },
             { path: 'published-shifts', loadComponent: () => import('./manage-shifts/published-shifts/published-shifts.component').then((m) => m.PublishedShiftsComponent) },
         ]

@@ -85,7 +85,7 @@
     <div class="custom-main-popup-content ">
       <form [formGroup]="educationForm" (ngSubmit)="postEducation()">
         <div class="row">
-          @if(this.rbac.allowedToAccess('Education.view')){
+          
           <div class="col-md-6 mb-3">
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
@@ -98,8 +98,8 @@
               *ngIf="educationForm.get('education')?.invalid && educationForm.get('education')?.touched">
               Education is required
             </div>
-          </div>}
-          @if(this.rbac.allowedToAccess('Education.view')){
+          </div>
+          
           <div class="col-md-6 mb-3">
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
@@ -112,7 +112,7 @@
             <div class="error-msg" *ngIf="educationForm.get('university')?.errors?.['maxlength']">University
               cannot exceed 50 characters</div>
           </div>
-          }@if(this.rbac.allowedToAccess('Education.view')){
+         
           <div class="col-md-6 mb-3">
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
@@ -125,7 +125,7 @@
             <div class="error-msg" *ngIf="educationForm.get('specialization')?.errors?.['maxlength']">Specialization
               cannot exceed 50 characters</div>
           </div>
-          }@if(this.rbac.allowedToAccess('Education.view')){
+        
           <div class="col-md-6 mb-3">
             <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
             <input type="number" class="form-control custom-input" id="gpa" formControlName="gpa"
@@ -134,7 +134,7 @@
               GPA is required and should be between 1 and 10
             </div>
           </div>
-          }@if(this.rbac.allowedToAccess('Education.view')){
+          
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
@@ -149,7 +149,7 @@
               </div>
 
           </div>
-          }@if(this.rbac.allowedToAccess('Education.view')){
+          
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
@@ -161,8 +161,7 @@
             <div class="error-msg" *ngIf="educationForm.get('degreeEndDate')?.hasError('endDateInvalid')">
               To Date must be after From Date.
             </div>
-          </div>}
-          @if(this.rbac.allowedToAccess('Education.view')){
+          </div>
           <div class="col-md-12 mb-3">
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
@@ -176,7 +175,7 @@
               <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                 The file size should be less than 25MB.</p>
             </div>
-          </div>}
+          </div>
         </div>
 
         <div class="custom-modal-footer">
@@ -210,7 +209,7 @@
     <div class="custom-main-popup-content ">
       <form [formGroup]="educationupdateForm" (ngSubmit)="updateEducation()">
         <div class="row">
-          @if(this.rbac.allowedToAccess('Education.view')){
+          
           <div class="col-md-6 mb-3">
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
@@ -224,9 +223,9 @@
               Education is required
             </div>
           </div>
-        }
+        
 
-          @if(this.rbac.allowedToAccess('Education.view')){
+        
           <div class="col-md-6 mb-3">
             <label for="university" class="form-label custom-label mb-2">University<span
                 class="text-danger">*</span></label>
@@ -239,9 +238,9 @@
             <div class="error-msg" *ngIf="educationupdateForm.get('universityupdate')?.errors?.['maxlength']">University
               cannot exceed 50 characters</div>
           </div>
-        }
+        
 
-          @if(this.rbac.allowedToAccess('Education.view')){
+          
           <div class="col-md-6 mb-3">
             <label for="specialization" class="form-label custom-label mb-2">Specialization<span
                 class="text-danger">*</span></label>
@@ -255,9 +254,9 @@
             <div class="error-msg" *ngIf="educationupdateForm.get('specializationupdate')?.errors?.['maxlength']">Specialization
               cannot exceed 50 characters</div>
           </div>
-        }
+    
 
-          @if(this.rbac.allowedToAccess('Education.view')){
+          
           <div class="col-md-6 mb-3">
             <label for="gpa" class="form-label custom-label mb-2">GPA<span class="text-danger">*</span></label>
             <input type="number" class="form-control custom-input" id="gpa" formControlName="gpaupdate"
@@ -267,9 +266,7 @@
               GPA is required and should be between 1 and 10
             </div>
           </div>
-        }
-
-          @if(this.rbac.allowedToAccess('Education.view')){
+        
           <div class="col-md-6 mb-3">
             <label for="degreeStartDate" class="form-label custom-label mb-2">From Date<span
                 class="text-danger">*</span></label>
@@ -280,9 +277,7 @@
               From Date is required
             </div>
           </div>
-        }
-
-          @if(this.rbac.allowedToAccess('Education.view')){
+        
           <div class="col-md-6 mb-3">
             <label for="degreeEndDate" class="form-label custom-label mb-2">To Date<span
                 class="text-danger">*</span></label>
@@ -293,9 +288,7 @@
               To Date is required
             </div>
           </div>
-        }
-
-          @if(this.rbac.allowedToAccess('Education.view')){
+  
           <div class="col-md-12 mb-3">
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
@@ -312,7 +305,7 @@
                 The file size should be less than 25MB.</p>
             </div>
           </div>
-        }
+        
         
         </div>
         <div class="custom-modal-footer">

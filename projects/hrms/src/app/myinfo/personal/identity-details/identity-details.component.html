@@ -1,8 +1,10 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Identity Details</span></div>
+        @if(rbac.allowedToAccess('My Info Identity Details.create')){
         <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add
             New</div>
+        }
     </div>
     <div class="custom-table-content">
         <table class="w-100">
@@ -11,7 +13,9 @@
                     <th>Identity Type</th>
                     <th>Identity Number</th>
                     <th>Attachment</th>
+                    @if(rbac.allowedToAccess('My Info Identity Details.update') || rbac.allowedToAccess('My Info Identity Details.delete')){
                     <th class="text-center">Action(S)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -24,21 +28,27 @@
                                 <i class="bi bi-download clip-icon px-2"></i>Download</span>
                             <ng-template #noData>-</ng-template>
                         </td>
+                        @if(rbac.allowedToAccess('My Info Identity Details.update') || rbac.allowedToAccess('My Info Identity Details.delete')){
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('My Info Identity Details.update')){
                                     <li (click)="openModalupdate(updateidentityModal, identityDetails)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
                                     </li>
+                                 }
+                                 @if( rbac.allowedToAccess('My Info Identity Details.delete')){
                                     <li (click)="opendeletModal(deleteconformation,identityDetails)">
                                         <a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a>
                                     </li>
+                                }
                                 </ul>
                             </div>
                         </td>
+                        }
                     </tr>
                 </ng-container>
             </tbody>
@@ -66,7 +76,7 @@
         <div class="custom-main-popup-content p-4">
             <form [formGroup]="identityForm" (ngSubmit)="submitIdentityForm(identityForm)">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Identity.view')){
+                   
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Type<span
                                 class="text-danger">*</span></label>
@@ -80,7 +90,7 @@
                             Identity Type is required
                         </div>
                     </div>
-                    } @if(this.rbac.allowedToAccess('Identity.view')){
+                    
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
@@ -107,8 +117,8 @@
                                 Identity Number cannot be all zeroes
                             </div>
                         </div>
-                    </div>}
-                    @if(this.rbac.allowedToAccess('Identity.view')){
+                    </div>
+                
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
@@ -122,7 +132,7 @@
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                                 The file size should be less than 25MB.</p>
                         </div>
-                    </div>}
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
@@ -156,7 +166,7 @@
         <div class="custom-main-popup-content p-4">
             <form [formGroup]="identityupdateForm" (ngSubmit)="updateIdentity(identityupdateForm)">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Identity.view')){
+                    
                     <div class="col-md-6 mb-3">
                         <label for="identityType" class="form-label custom-label mb-2">Identity Type<span
                                 class="text-danger">*</span></label>
@@ -169,8 +179,8 @@
                             *ngIf="identityupdateForm.get('identityupdateType')?.invalid && identityupdateForm.get('identityupdateType')?.touched">
                             Identity Type is required
                         </div>
-                    </div>}
-                    @if(this.rbac.allowedToAccess('Identity.view')){
+                    </div>
+               
                     <div class="col-md-6 mb-3">
                         <label for="identityNumber" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
@@ -193,8 +203,8 @@
                                 Identity Number cannot be all zeroes
                             </div>
                         </div>
-                    </div>}
-                    @if(this.rbac.allowedToAccess('Identity.view')){
+                    </div>
+                   
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
@@ -210,7 +220,7 @@
                             <p class="note-text"><span class="note">Note:</span> Only Pdf and image files are allowed.
                                 The file size should be less than 25MB.</p>
                         </div>
-                    </div>}
+                    </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>

@@ -1,8 +1,10 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div> <span class="component-sub-header">Family Details</span></div>
+        @if(rbac.allowedToAccess('My Info Family Details.create')){
         <div class="custom-add-btn" (click)="openModal(addFamilyModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New
         </div>
+        }
     </div>
     <div class="custom-table-content">
         <table class="w-100">
@@ -12,7 +14,9 @@
                     <th>Relationship</th>
                     <th>Date of Birth</th>
                     <th>Dependent</th>
+                    @if( rbac.allowedToAccess('My Info Family Details.update') || rbac.allowedToAccess('My Info Family Details.delete')) {
                     <th class="text-center">Action(S)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -23,25 +27,31 @@
                         <td>{{ familyDetail.relationShipName }}</td>
                         <td>{{ familyDetail.dateOfBirth | dateformat }}</td>
                         <td>{{ familyDetail.isDependent ? 'Yes' : 'No' }}</td>
+                        @if( rbac.allowedToAccess('My Info Family Details.update') || rbac.allowedToAccess('My Info Family Details.delete')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if( rbac.allowedToAccess('My Info Family Details.update')) {
                                     <li (click)="openModalupdate(updateFamilyModal, familyDetail)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
+                                    }
+                                    @if(  rbac.allowedToAccess('My Info Family Details.delete')) {
                                     <li (click)="opendeletModal(deleteconformation,familyDetail)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
                                     </li>
+                                    }
                                 </ul>
                             </div>
                         </td>
+                        }
                     </tr>
                 </ng-container>
             </tbody>
@@ -68,7 +78,7 @@
         <div class="custom-main-popup-content ">
             <form [formGroup]="familyDetailsForm" (ngSubmit)="postFamilyDetails()">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    
                     <div class="col-md-6 mb-3">
                         <label for="memberName" class="form-label custom-label mb-2">Name<span
                                 class="text-danger">*</span></label>
@@ -83,8 +93,8 @@
                                 cannot exceed 50 characters</div>
                         </div>
                     </div>
-                    } 
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    
+                  
                     <div class="col-md-6 mb-3">
                         <label for="dateOfBirth" class="form-label custom-label mb-2">Date of Birth<span
                                 class="text-danger">*</span></label>
@@ -95,8 +105,8 @@
                             Date of Birth is required
                         </div>
                     </div>
-                }
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                
+                    
                     <div class="col-md-12 mb-3">
                         <label for="relationShipId" class="form-label custom-label mb-2">Relationship<span
                                 class="text-danger">*</span></label>
@@ -110,8 +120,8 @@
                             Relationship is required
                         </div>
                     </div>
-                }
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                
+                   
                     <div class="col-md-6">
                         <div class="custom-toggle-btn">
                             <div class="form-check form-switch">
@@ -121,7 +131,7 @@
                             <label for="isDependent" class="form-label custom-label mb-0">Dependent</label>
                         </div>
                     </div>
-                }
+                
                 </div>
 
                 <div class="custom-modal-footer">
@@ -153,7 +163,7 @@
         <div class="custom-main-popup-content ">
             <form [formGroup]="familyDetailsupdateForm" (ngSubmit)="updatefamilyDetails()">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    
                     <div class="col-md-6 mb-3">
                         <label for="memberNameupdate" class="form-label custom-label mb-2">Name<span
                                 class="text-danger">*</span></label>
@@ -168,8 +178,7 @@
                                     cannot exceed 50 characters</div>
                         </div>
                     </div>
-                }
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+        
                     <div class="col-md-6 mb-3">
                         <label for="dateOfBirthupdate" class="form-label custom-label mb-2">Date of Birth<span
                                 class="text-danger">*</span></label>
@@ -180,8 +189,7 @@
                             Date of Birth is required
                         </div>
                     </div>
-                }
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+              
                     <div class="col-md-12 mb-3">
                         <label for="relationShipIdupdate" class="form-label custom-label mb-2">Relationship<span
                                 class="text-danger">*</span></label>
@@ -195,8 +203,7 @@
                             Relationship is required
                         </div>
                     </div>
-                }
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                
                     <div class="col-md-6 mb-3">
                         <div class="custom-toggle-btn">
                             <div class="form-check form-switch">
@@ -206,7 +213,7 @@
                             <label for="isDependentupdate" class="form-label custom-label mb-0">Dependent</label>
                         </div>
                     </div>
-                }
+                
                 </div>
 
                 <div class="custom-modal-footer">

@@ -72,7 +72,7 @@
 
 <!-- Add Popup Modal -->
 <ng-template #addpopup let-modal>
-    <form [formGroup]="AddForm">
+    <form autocomplete="off" [formGroup]="AddForm">
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div>
@@ -153,7 +153,7 @@
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
-    <form [formGroup]="updateForm">
+    <form autocomplete="off" [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div>

@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="custom-main-popup-content">
-        <form [formGroup]="employeeForm" (ngSubmit)="postEmpData()">
+        <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="postEmpData()">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'First Name'|translate}}

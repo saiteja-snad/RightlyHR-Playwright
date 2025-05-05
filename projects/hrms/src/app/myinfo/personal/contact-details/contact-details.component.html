@@ -15,7 +15,7 @@
     </div>
 
     <!-- Reactive Form -->
-    <form [formGroup]="contactForm">
+    <form autocomplete="off" [formGroup]="contactForm">
       <div class="row">
         @if(this.rbac.allowedToAccess('Contact Details.view')){
         <div class="col-lg-4 col-md-6 mb-3">

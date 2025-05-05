@@ -111,7 +111,7 @@
 <!--Documents upload popup-->
 <ng-template #uploadPopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <form [formGroup]="documentForm" (ngSubmit)="updateDocuments()">
+        <form autocomplete="off" [formGroup]="documentForm" (ngSubmit)="updateDocuments()">
             <div class="d-flex justify-content-between popup-header-border p-3">
                 <div class="pt-2">
                     <p class="popup-heading mb-0">{{documentSelectFields.documentType}}</p>

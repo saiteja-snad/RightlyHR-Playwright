@@ -81,7 +81,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="certificationForm" (ngSubmit)="postCertificationDetails()">
+            <form autocomplete="off" [formGroup]="certificationForm" (ngSubmit)="postCertificationDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="certificationName" class="form-label custom-label mb-2">
@@ -197,7 +197,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="updateCertificationForm" (ngSubmit)="updateCertificationDetails()">
+            <form autocomplete="off" [formGroup]="updateCertificationForm" (ngSubmit)="updateCertificationDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="certificationName" class="form-label custom-label mb-2">

@@ -4,7 +4,7 @@
         <div class="component-header">Reports</div>
       
         <div>
-          <form [formGroup]="lvSummeryReportForm" (ngSubmit)="leavesummeryReport()">
+          <form autocomplete="off" [formGroup]="lvSummeryReportForm" (ngSubmit)="leavesummeryReport()">
             <div class="d-flex align-items-center gap-3">
               <button type="button"  class="clear-all-btn" (click)="clearAllFilters()">
                 Clear All

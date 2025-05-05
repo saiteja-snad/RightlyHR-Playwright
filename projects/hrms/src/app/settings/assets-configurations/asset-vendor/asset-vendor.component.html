@@ -85,7 +85,7 @@
         </div>
 
         <div class="custom-main-popup-content ">
-            <form [formGroup]="assetForm" (ngSubmit)="postvendor(assetForm); modal.dismiss()">
+            <form autocomplete="off" [formGroup]="assetForm" (ngSubmit)="postvendor(assetForm); modal.dismiss()">
                 <div class="row">
                     <!-- Vendor Details -->
                     <div class="col-md-6 mb-3">
@@ -254,7 +254,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="assetverderupdataform" (ngSubmit)="updatevendor(assetverderupdataform); modal.dismiss()">
+            <form autocomplete="off" [formGroup]="assetverderupdataform" (ngSubmit)="updatevendor(assetverderupdataform); modal.dismiss()">
                 <div class="row">
                     <!-- Vendor Details -->
                     <div class="col-md-6 mb-3">

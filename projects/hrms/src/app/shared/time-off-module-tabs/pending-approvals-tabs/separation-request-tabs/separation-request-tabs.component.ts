@@ -8,6 +8,7 @@ import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { SignalsService } from '../../../../services/signals.service';
 
 @Component({
   selector: 'app-separation-request-tabs',
@@ -35,13 +36,28 @@ export class SeparationRequestTabsComponent {
     this.getAllSeparationPendingApprovalsCount();
   }
 
-  constructor(public readonly router: Router, private http: HttpService, private rbac: RbacService) {
+  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService,  private rbac: RbacService) {
     effect(() => {
-      if (this.http.tirggerPendingApprovalCountSignal().separation) {
+      if (this.signalService.separationForYouTriggerSignal() || this.signalService.separationForRoleTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
         this.getAllSeparationPendingApprovalsCount();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, separation: false }));
+
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.separationForRoleTriggerSignal()) {
+          this.signalService.separationForRoleTriggerSignal.set(false);
+        }
+
+        if (this.signalService.separationForYouTriggerSignal()) {
+          this.signalService.separationForYouTriggerSignal.set(false);
+        }
       }
     });
+    // effect(() => {
+    //   if (this.http.tirggerPendingApprovalCountSignal().separation) {
+    //     this.getAllSeparationPendingApprovalsCount();
+    //     this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, separation: false }));
+    //   }
+    // });
   }
 
   getAllSeparationPendingApprovalsCount() {

@@ -96,7 +96,9 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     };
     console.log(payload);
     this.http
-      .putData(`PermissionTypes/${this.selectedPermission.id}`, payload)
+      .put(`PermissionTypes/${this.selectedPermission.id}`, payload, {
+        responseType: 'text',
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
@@ -107,7 +109,11 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
           );
         },
         error: (err) => {
-          this.sharedModalService.openErrorModal(err.error.message);
+          
+          if(err.error === 'Permission Type already exists'){
+            this.sharedModalService.openErrorModal('Attendance regularization type with the same name already exists');
+          }else{this.sharedModalService.openErrorModal(err.error);}
+          
         },
         complete: () => {
           this.getPermissionTypes();
@@ -119,7 +125,7 @@ export class AttendanceRegularizationTypesComponent implements OnInit, OnDestroy
     if (permissionForm.valid) {
       const payload: Ipermissions = {
         name: permissionForm.value.name,
-        isDeleted: true,
+        isDeleted: false,
         type: 'Regularization',
       };
       this.http.postdata(`PermissionTypes`, payload).pipe(takeUntil(this.destroy$)).subscribe({

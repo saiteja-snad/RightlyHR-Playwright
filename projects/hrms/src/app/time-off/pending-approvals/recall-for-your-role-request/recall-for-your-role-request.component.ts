@@ -18,6 +18,7 @@ import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-recall-for-your-role-request',
   imports: [CommonModule, TranslateModule, RouterModule, NgbPopoverModule, FormsModule, ReactiveFormsModule,
@@ -52,7 +53,7 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
   rejectSeparationForm!: FormGroup;
 
   constructor(private authService: AuthService, private http: HttpService, private conformationPopup: OpenModalService, 
-    private modalService: NgbModal, private fb: FormBuilder, public rbac: RbacService,
+    private modalService: NgbModal, private fb: FormBuilder, public rbac: RbacService,private signalService:SignalsService
   ) { }
 
   ngOnInit(): void {
@@ -192,6 +193,9 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
         }));
         this.conformationPopup.openSuccessModal('Recall Request Approved Successfully');
         this.getAllPendingApprovals();
+        this.signalService.recallSeparationForYouTriggerSignal.set(true);
+        this.signalService.recallSeparationForRoleTriggerSignal.set(true);
+        this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
       },
       error: (reason: any) => {
         this.conformationPopup.openErrorModal(reason.error.message);
@@ -223,6 +227,9 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
         }));
         this.conformationPopup.openSuccessModal('Recall Request Rejected Successfully');
         this.getAllPendingApprovals();
+        this.signalService.recallSeparationForYouTriggerSignal.set(true);
+        this.signalService.recallSeparationForRoleTriggerSignal.set(true);
+        this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
       },
       error: (reason: any) => {
         this.isLoading = false;
@@ -267,6 +274,9 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
         }));
         this.conformationPopup.openSuccessModal('Recall Request Processed Successfull');
         this.isLoading = false;
+        this.signalService.recallSeparationForYouTriggerSignal.set(true);
+        this.signalService.recallSeparationForRoleTriggerSignal.set(true);
+        this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
       },
       error: (reason: any) => {
         this.isLoading = false;

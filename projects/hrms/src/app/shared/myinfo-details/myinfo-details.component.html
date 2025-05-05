@@ -10,7 +10,7 @@
                 </div>
             </div>
             <div class="pt-2">
-                <p class="name mb-0">{{empdata.firstName ?? ''}} {{empdata.middleName ?? ''}} {{empdata.lastName ?? ''}}</p>
+                <p class="name mb-0">{{empdata?.firstName ?? ''}} {{empdata?.middleName ?? ''}} {{empdata?.lastName ?? ''}}</p>
                 <p class="sub-text mb-0">{{jobRole }}</p>
                 <p class="sub-text mb-0">{{empdata.fusionEmpId}}</p>
             </div>
@@ -48,8 +48,8 @@
         <div class="mb-3 text-truncate">
             <i class="bi bi-person-circle profile-data-icon me-2"></i><span class="details-text"><b>Team Manager</b> :
                 {{
-                    (reportesto?.firstname || reportesto?.middlename || reportesto?.lastname)
-                      ? (reportesto?.firstname || '') + ' ' + (reportesto?.middlename || '') + ' ' + (reportesto?.lastname || '')
+                    (reportesto?.fistname || reportesto?.middlename || reportesto?.lastname)
+                      ? (reportesto?.fistname || '') + ' ' + (reportesto?.middlename || '') + ' ' + (reportesto?.lastname || '')
                       : 'N/A'
                   }}</span>
         </div>

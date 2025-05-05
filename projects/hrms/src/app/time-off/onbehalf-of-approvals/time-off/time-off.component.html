@@ -12,8 +12,8 @@
                     <th>Start Date</th>
                     <th>End Date</th>
                     <th>Reason</th>
-                    <th>Comments</th>
-                    <th class="text-center">Actions</th>
+                    <th>Approver Comments</th>
+                    <th>Action<span class="text-lowercase">(s)</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -183,7 +183,7 @@
 
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label labell">Comments
-                    <span class="required">*</span></label>
+                    <span class="error-msg">*</span></label>
                 <textarea class="form-control" id="Reasons" placeholder="Please provide comments" name="Reasons"
                     #Reasons="ngModel" maxlength="250"
                     (keypress)="formValidation.restrictInputallowspicalcharters($event)"
@@ -199,7 +199,16 @@
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(selectedLeaveData)"
-                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable">Approve</button>
+                [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable|| spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <div class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Loading...'}}</div>
+                    </div>
+                    }@else {
+                    <span>{{'Approve'| translate}}</span>
+                    }
+                </button>
             </div>
         </form>
     </div>
@@ -215,7 +224,7 @@
         <form name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid" 
         class="custom-main-popup-content">
             <div class="mb-3">
-                <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
+                <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject Reason<span
                         class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments" name="Reasons"
                     #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
@@ -231,7 +240,16 @@
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleReject(selectedLeaveData)"
-                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable">Reject</button>
+                [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable || spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <div class="spinner-border button-spinner text-light" role="status"></div>
+                        <div>{{'Loading...'}}</div>
+                    </div>
+                    }@else {
+                    <span>{{'Reject' | translate}}</span>
+                    }
+                </button>
             </div>
         </form>
     </div>

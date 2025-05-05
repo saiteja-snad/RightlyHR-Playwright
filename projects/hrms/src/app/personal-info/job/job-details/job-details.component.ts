@@ -350,11 +350,32 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.getGradeid = designation?.gradeId; // Store the selected grade ID
     if (designation) {
       this.jobDetailsForm.patchValue({ grade: designation.gradeId }); // Update the grade in the form
+    
       // Call the API to fetch the grade name based on gradeId
       this.getGradeNameById(designation.gradeId);
     } else {
       this.selectedGradeName = ''; // Reset if no designation is found
       this.jobDetailsForm.patchValue({ grade: '' });
+  
+    }
+  }
+
+
+  onDesignationChangeforupdate(selectedDesignation: any): void {
+    // Find the selected designation in the JobroleDesignation array
+    const designation = this.JobroleDesignation.find(
+      (item) => item.id === selectedDesignation.id
+    );
+    this.getGradeid = designation?.gradeId; // Store the selected grade ID
+    if (designation) {
+    
+      this.jobDetailsupdateForm.patchValue({ grade: designation.gradeName });
+      // Call the API to fetch the grade name based on gradeId
+      this.getGradeNameById(designation.gradeId);
+    } else {
+      this.selectedGradeName = ''; // Reset if no designation is found
+  
+      this.jobDetailsupdateForm.patchValue({ grade:''});
     }
   }
 
@@ -387,6 +408,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.selectedlocationid=selectedLocation.id
     this.jobDetailsForm.get('subLocation')?.reset()
     this.jobDetailsForm.get('shift')?.reset()
+    this.jobDetailsupdateForm.get('subLocation')?.reset()
+    this.jobDetailsupdateForm.get('shiftName')?.reset()
+    this.jobDetailsupdateForm.get('shiftName')?.setValue(null);
+    
     if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
         next: (data: any) => {
@@ -399,18 +424,22 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
           this.jobDetailsForm.get('subLocation')?.reset()
           this.jobDetailsupdateForm.get('subLocation')?.reset()
           this.jobDetailsForm.get('shift')?.reset()
-          this.jobDetailsupdateForm.get('shift')?.reset()
+          this.jobDetailsupdateForm.get('shiftName')?.reset()
         },
         error: (err: any) => {
           this.subLocationsDropdown = []; // Reset on error
           this.jobDetailsForm.get('subLocation')?.reset()
           this.jobDetailsupdateForm.get('subLocation')?.reset()
           this.jobDetailsForm.get('shift')?.reset()
-          this.jobDetailsupdateForm.get('shift')?.reset()
+          this.jobDetailsupdateForm.get('shiftName')?.reset()
         },
       });
     } else {
       this.subLocationsDropdown = []; // Reset if no location is selected
+      this.jobDetailsForm.get('subLocation')?.reset()
+      this.jobDetailsupdateForm.get('subLocation')?.reset()
+      this.jobDetailsForm.get('shift')?.reset()
+     this.jobDetailsupdateForm.get('shiftName')?.reset()
       //this.jobDetailsForm.patchValue({ subLocation: null }); // Reset the sub-location field
     }
   }
@@ -418,6 +447,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
 
   getShiftBYid(selectedSubLocation: any): void {
     this.jobDetailsForm.get('shift')?.reset()
+    this.jobDetailsupdateForm.get('shiftName')?.reset()
     if (selectedSubLocation && selectedSubLocation.id) {
       const locationId = this.jobDetailsForm.get('location')?.value?.id ?? this.jobDetailsupdateForm.get('location')?.value?.id; // Get the selected location ID
       const subLocationId = selectedSubLocation.id; // Get the selected sub-location ID
@@ -425,7 +455,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           if (data.length === 0) {
             this.jobDetailsForm.get('shift')?.reset()
-            this.jobDetailsupdateForm.get('shift')?.reset()
+            this.jobDetailsupdateForm.get('shiftName')?.reset()
             this.shiftDropdown = []; // Reset if no shifts are found
           } else {
             this.shiftDropdown = [].concat(...data.map((element: any) => element.orgShiftsItems)); // Flatten the shift data
@@ -433,12 +463,15 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.shiftDropdown = []; // Reset on error
-          this.jobDetailsForm.get('shiftName')?.reset()
+          this.jobDetailsForm.get('shift')?.reset()
+       
+          this.jobDetailsupdateForm.get('shiftName')?.reset()
         },
       });
     } else {
       this.shiftDropdown = []; // Reset if no sub-location is selected
-      this.jobDetailsForm.get('shiftName')?.reset()
+      this.jobDetailsForm.get('shift')?.reset()
+      this.jobDetailsupdateForm.get('shiftName')?.reset()
     }
   }
 
@@ -735,7 +768,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       shiftId: formData.shiftName?.id ?? this.selectedData?.shiftName?.id,
       locationid: formData.location.id ?? this.selectedData?.locationid,
       sublocationid: formData.subLocation.id ?? this.selectedData.sublocationid,
-      gradeId: this.selectedData.gradeId,
+      gradeId: this.getGradeid  ?? this.selectedData.gradeId,
       teamManagerId:  this.teammangerid ?? this.selectedData?.teamManagerId,
       updateddate: this.selectedData.updateddate,
       createddate: this.selectedData.createddate,

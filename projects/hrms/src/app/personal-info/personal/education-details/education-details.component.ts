@@ -375,7 +375,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
         this.getEducationEmpid()
         this.educationupdateForm.reset()
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal('Education updated successfully')
+        this.conformationPopup.openSuccessModal('Education details updated successfully')
 
       },
       error: (reason: any) => {

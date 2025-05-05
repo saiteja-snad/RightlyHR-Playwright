@@ -292,6 +292,12 @@ export const permissionsData = [
     { fields: 'Calender Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Holidays Tab', View: false, Update: false, Create: false, Delete: false },
 
+     //Org Hirarchy Tabs Section
+     { fields: 'Organization Hierarchy - HR', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Organization Hierarchy - TM', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Organization Hierarchy - Compensation', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Organization Hierarchy - Download PDF', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Organization Hierarchy - Download JPG', View: false, Update: false, Create: false, Delete: false },
 
     //New Side Nav Section
     { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },

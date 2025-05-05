@@ -203,7 +203,7 @@ export class ClaimsandexpensesForYouRequestComponent
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', size: 'lg' });
+    this.modalService.open(commentspopup, { centered: true, backdrop: 'static',  });
     this.approverComments = value;
   }
 

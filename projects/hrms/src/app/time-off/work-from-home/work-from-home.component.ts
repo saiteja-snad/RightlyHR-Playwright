@@ -13,13 +13,14 @@ import { RbacService } from '../../services/rbac.service';
 import { WfhApprovaltabsComponent } from "../../shared/time-off-module-tabs/wfh-approvaltabs/wfh-approvaltabs.component";
 import { environment } from '../../../environments/environment';
 import { FormValidationsService } from '../../services/form-validations.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-work-from-home',
   imports: [
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
-    WfhApprovaltabsComponent,
+    WfhApprovaltabsComponent,TranslateModule
   ],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',

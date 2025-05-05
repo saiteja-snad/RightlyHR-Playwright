@@ -198,7 +198,7 @@
 
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
-                            class="required">*</span></label>
+                            class="error-msg">*</span></label>
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments" name="Reasons"
                         #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
                         (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>

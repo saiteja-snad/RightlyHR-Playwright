@@ -33,12 +33,12 @@
                     <td>
                         <ul class="mb-0">
                             <li [ngClass]="{
-                                    'text-danger fw-bold': ticket.priority === 'High',
-                                    'text-warning fw-bold': ticket.priority === 'Normal',
-                                    'text-success fw-bold': ticket.priority === 'Low',
-                                    'text-red fw-bold': ticket.priority === 'Urgent'
+                                    'text-danger': ticket.priority === 'High',
+                                    'text-warning': ticket.priority === 'Normal',
+                                    'text-success': ticket.priority === 'Low',
+                                    'text-red': ticket.priority === 'Urgent'
                                 }">
-                                {{ticket.priority || '-'}}
+                                <b>{{ticket.priority || '-'}}</b>
                             </li>
                         </ul>
                     </td>

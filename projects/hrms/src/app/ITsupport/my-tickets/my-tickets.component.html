@@ -6,7 +6,7 @@
 
         <div>
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)"><i
-                    class="bi bi-plus me-2"></i>Add Ticket</button>
+                    class="bi bi-plus me-2"></i>Add New Ticket</button>
         </div>
 
     </div>
@@ -30,12 +30,12 @@
                     <td>
                         <ul class="mb-0">
                             <li [ngClass]="{
-                                    'text-danger fw-bold': ticket.priority === 'High',
-                                    'text-warning fw-bold': ticket.priority === 'Normal',
-                                    'text-success fw-bold': ticket.priority === 'Low',
-                                    'text-red fw-bold': ticket.priority === 'Urgent'
+                                    'text-danger': ticket.priority === 'High',
+                                    'text-warning': ticket.priority === 'Normal',
+                                    'text-success': ticket.priority === 'Low',
+                                    'text-red': ticket.priority === 'Urgent'
                                 }">
-                                {{ticket.priority || '-'}}
+                                <b>{{ticket.priority || '-'}}</b>
                             </li>
                         </ul>
                     </td>
@@ -63,7 +63,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Tickets </p>
+                <p class="popup-heading mb-0">Add New Ticket </p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -242,7 +242,7 @@
                     <button type="button" class="custom-btn btn-secondary" (click)="cleardata()">{{'Close'}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">
-                            {{'Add new'}}
+                            {{'Submit'}}
                         </span>
                         <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
                         </div>

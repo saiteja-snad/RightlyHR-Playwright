@@ -53,8 +53,7 @@
                     <td>{{ticket.ticketStatus || '-'}}</td>
                     <td>{{ticket.updatedAt | date}}</td>
                     <td class="text-center">
-                        <div class="dropdown"
-                            *ngIf="ticket.ticketStatus === 'Open' || ticket.ticketStatus === 'Await On User'">
+                        <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </span>

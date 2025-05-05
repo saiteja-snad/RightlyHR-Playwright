@@ -283,8 +283,11 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.isLoading = false;
-        this.modalService.dismissAll();
         this.regular = true;
+        this.early = false;
+        this.extend = false;
+        
+        this.modalService.dismissAll();
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           separation: true,

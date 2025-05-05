@@ -1,5 +1,5 @@
-import { Component, model, OnDestroy, OnInit, TemplateRef, viewChild, ViewChild } from '@angular/core';
-import { combineLatest, distinctUntilChanged, Subject, takeUntil } from 'rxjs';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -7,7 +7,7 @@ import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { environment } from '../../../environments/environment';
-import { NgbModal, NgbModalRef, NgbPagination } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { IReviewCycleEmployee } from './review-cycle-emp.model';
 import { PaginatorModule } from 'primeng/paginator';
@@ -75,7 +75,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   spinnerLoader= false;
 
   promotedOptions = [
-    { label: 'All', value: '' },
+    // { label: 'All', value: '' },
     { label: 'Yes', value: true },
     { label: 'No', value: false }
   ];
@@ -146,7 +146,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       });
   }
 
-  private canListenToDropdownChanges = false;
+  // private canListenToDropdownChanges = false;
   onReviewCycleChange(selectedValue: any): void {
       
     const selectedId = selectedValue.value;
@@ -169,11 +169,11 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   
     const { locations, sublocations, departments, subdepartments } = selectedCycle;
     this.updateDropdowns(locations, sublocations, departments, subdepartments);
-    this.canListenToDropdownChanges = false;
+    // this.canListenToDropdownChanges = false;
   
     this.patchFormValues(selectedId, departments, subdepartments, locations, sublocations);
   
-    setTimeout(() => this.canListenToDropdownChanges = true, 0);
+    // setTimeout(() => this.canListenToDropdownChanges = true, 0);
     this.setAdditionalFields(locations, sublocations, departments, subdepartments);
   
     const params = this.buildParams(selectedCycle.id);
@@ -181,7 +181,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.searchText = null;
     this.rows= 10;
     this.getEmployeesOfTheReviewCycle(params);
-    this.listenToDropdownChanges();
+    // this.listenToDropdownChanges();
   }
   
   getSelectedCycle(selectedId: any) {
@@ -224,61 +224,70 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
   
   buildParams(reviewCycleId: any) {
+    const promoted = this.dependentdropdowns.get('promoted')?.value;
     return {
       page: 1,
       pageSize: 10,
       reviewcycleid: reviewCycleId,
-      promotion: this.promoted?.value || '',
+      promotion: (promoted && promoted.value !== undefined && promoted.value !== null) ? promoted.value : ''
     };
   }
   
-  enableDropDowns(){
-    this.dependentdropdowns.get('departmentId')?.enable();
-    this.dependentdropdowns.get('subDepartmentId')?.enable();
-    this.dependentdropdowns.get('locationId')?.enable();
-    this.dependentdropdowns.get('subLocationId')?.enable();    
-  }
+  // enableDropDowns(){
+  //   this.dependentdropdowns.get('departmentId')?.enable();
+  //   this.dependentdropdowns.get('subDepartmentId')?.enable();
+  //   this.dependentdropdowns.get('locationId')?.enable();
+  //   this.dependentdropdowns.get('subLocationId')?.enable();    
+  // }
 
-  private listenersAttached = false;
+  // private listenersAttached = false;
 
-  listenToDropdownChanges() {
-    if (this.listenersAttached) return;
-    this.listenersAttached = true;
+  // listenToDropdownChanges() {
+  //   if (this.listenersAttached) return;
+  //   this.listenersAttached = true;
   
-    const controlNames = ['departmentId', 'subDepartmentId', 'locationId', 'subLocationId'];
-    controlNames.forEach(field => {
-      this.dependentdropdowns.get(field)?.valueChanges.subscribe(() => {
-        if (!this.canListenToDropdownChanges) return; 
-        this.callGetEmployeesAPI();
-      });
-    });
-  }  
+  //   const controlNames = ['departmentId', 'subDepartmentId', 'locationId', 'subLocationId'];
+  //   controlNames.forEach(field => {
+  //     this.dependentdropdowns.get(field)?.valueChanges.subscribe(() => {
+  //       if (!this.canListenToDropdownChanges) return; 
+  //       this.callGetEmployeesAPI();
+  //     });
+  //   });
+  // }  
 
-  callGetEmployeesAPI() {
-    const formValue = this.dependentdropdowns.value;
+  // callGetEmployeesAPI() {
+  //   const formValue = this.dependentdropdowns.value;
   
-    const extractIds = (items: any[], idKey: string): string => {
-      if (!Array.isArray(items) || items.length === 0) return '';
+  //   const extractIds = (items: any[], idKey: string): string => {
+  //     if (!Array.isArray(items) || items.length === 0) return '';
   
-      return items
-        .filter(item => item && item[idKey] !== undefined) 
-        .map(item => item[idKey])                          
-        .join(',');
-    };
+  //     return items
+  //       .map(item => {
+  //         // If it's an object, get the idKey
+  //         if (typeof item === 'object' && item !== null) {
+  //           return item[idKey];
+  //         }
+  //         // If it's a primitive (string/number), return as-is
+  //         return item;
+  //       })
+  //       .filter(id => id !== undefined && id !== null && id !== '')
+  //       .join(',');
+  //   };
   
-    const params = {
-      page: this.page,
-      pageSize: this.pageSize,
-      reviewcycleid: this.reviewCycleID,
-      promotion: formValue.promoted?.value || '',
-      department: extractIds(formValue.departmentId, 'departmentId'),
-      subdepartment: extractIds(formValue.subDepartmentId, 'subDepartmentId'),
-      location: extractIds(formValue.locationId, 'locationId'),
-      sublocation: extractIds(formValue.subLocationId, 'subLocationId'),
-    };
+  //   const params = {
+  //     page: this.page,
+  //     pageSize: this.pageSize,
+  //     reviewcycleid: this.reviewCycleID,
+  //     promotion: formValue.promoted?.value || '',
+  //     department: extractIds(formValue.departmentId, 'departmentId'),
+  //     subdepartment: extractIds(formValue.subDepartmentId, 'subDepartmentId'),
+  //     location: extractIds(formValue.locationId, 'locationId'),
+  //     sublocation: extractIds(formValue.subLocationId, 'subLocationId'),
+  //   };
   
-    this.getEmployeesOfTheReviewCycle(params);
-  }
+  //   this.getEmployeesOfTheReviewCycle(params);
+  // }
+  
   
   onPromotedChange(event: any): void {
     this.promoted = event.value
@@ -1033,6 +1042,57 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.SentpromationLetters();
   }
 
+  onclickstatusforPromotionById(Value:string,id:any){
+    this.status=Value;
+    this.SentpromationLetterById(id);
+  }
+
+  onclickstatusforappraisalById(Value:string,id:any){
+    this.status=Value;
+    this.SentLettersById(id);
+  }
+
+  SentLettersById(id:any): void {
+    console.log(this.selectedIds);
+    this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.modalService.dismissAll();
+         this.modal.openSuccessModal('Appraisal Letter Sent Successfully');
+      },
+      error: (err: any) => {
+        if(err.status===500){
+          this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
+        }else{
+          this.modal.openErrorModal(err.error.message || 'An error occurred while sending letters');
+        }
+      },
+      complete: ()=>{
+        this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
+      }
+    });
+  }
+
+  SentpromationLetterById(id:any): void {
+    console.log(this.selectedIds);
+    this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (data: any) => {
+        this.modalService.dismissAll();
+        this.modal.openSuccessModal('Promotion Letter Sent Successfully');
+      },
+      error: (err: any) => {
+        console.error('Error generating letters:', err);
+        if(err.status===500){
+          this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
+        }else{
+          this.modal.openErrorModal(err.error.message || 'An error occurred while sending letters');
+        }
+      },
+      complete: ()=>{
+        this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
+      }
+    });
+  }
+
   // generatepromationLetters(): void {
   //   this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value}&status=${this.status}`)
   //     .pipe(takeUntil(this.destroy$)).subscribe({
@@ -1059,7 +1119,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   generatePromotionLetters(f: FormGroup): void {
     const form= f.value;
-    console.log(form)
     const reviewCycleItemId = this.selectedIds || this.allSelected;
     const employeeId = this.empinfo.employeeId;
     const letterType = 'PromotionLetter';

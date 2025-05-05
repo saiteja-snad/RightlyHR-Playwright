@@ -318,6 +318,11 @@ resetTriggerSignal() {
     return this.http.put(`${this.ApiUrl}${url}`, data);
   }
 
+  /* put with options */
+  put(url: string, data: any, options: any) {
+    return this.http.put(`${this.ApiUrl}${url}`, data, options);
+  }
+
   putFormsData(url: string) {
     return this.http.put(`${this.ApiUrl}${url}`, null);
   }

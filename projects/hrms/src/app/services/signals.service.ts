@@ -22,6 +22,16 @@ export class SignalsService {
   // RemoteLoginRequest Signal
   remoteLoginRequestTriggerSignal = signal<boolean>(false);
 
+  //Separation request
+  separationForYouTriggerSignal = signal<boolean>(false);
+  separationForRoleTriggerSignal = signal<boolean>(false);
+  separationSidNavCountTriggerSignal = signal<boolean>(false);
+
+  //Recall request
+  recallSeparationForYouTriggerSignal = signal<boolean>(false);
+  recallSeparationForRoleTriggerSignal = signal<boolean>(false);
+  recallSeparationSidNavCountTriggerSignal = signal<boolean>(false);
+
   // Regularization PendingApprovals Signals
   regularizationForYouTriggerSignal = signal<boolean>(false);
   regularizationForRoleTriggerSignal = signal<boolean>(false);

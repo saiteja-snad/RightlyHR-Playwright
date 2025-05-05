@@ -341,8 +341,8 @@ export class CloneLeavecategoryComponent {
     console.log('Form Data:', formData);
     let payload = {
       applicableYear: this.leavePolicyForm.value.applicableYear,
-      locationID: this.leavePolicyForm.value.locationID,
-      subLocation: this.leavePolicyForm.value.subLocation,
+      locationID: this.leavePolicyForm.value.locationID.id,
+      subLocation: this.leavePolicyForm.value.subLocation.id,
       shiftId: this.leavePolicyForm.value.shiftId,
       type: this.leavePolicyForm.value.type,
       name: this.leavePolicyForm.value.name,
@@ -379,10 +379,12 @@ export class CloneLeavecategoryComponent {
     this.http.postdata('OrgLeavesCategories', payload).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Leave Category added successfully');
-        this.router.navigate(['/settings/employee-fields/manage-leave-categories/pending-for-submit']);
+        this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
         this.leavePolicyForm.reset();
       },
       error: (err: any) => {
+        console.log(err);
+        
         this.confirmation.openErrorModal(err.error.message);
       }
     });

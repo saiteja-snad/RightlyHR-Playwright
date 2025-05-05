@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -52,6 +52,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   // approverComments = [] as AttendanceRequestC[];
   @ViewChild('commentspopup') modalContent: any;
+  subscription!: Subscription;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private sharedModalService: OpenModalService,
      private sanitizer: DomSanitizer, public rbac: RbacService) { }
@@ -256,27 +257,42 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     });
   }
 
+ 
   onViewAttachement(url: any) {
-    if (url?.endsWith('jpg') || url?.endsWith('png') || url?.endsWith('jpeg')) {
-      this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (res: any) => {
-          const blob = new Blob([res['body']], { type: 'image/png' });
-          const objectURL = URL.createObjectURL(blob);
-          this.expenseImageUrl =
-            this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          this.toggleViewModal();
-        },
-        error: (reason) => console.log(reason),
-      });
+    const lowerUrl = url?.toLowerCase();
+  
+    if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
+      this.subscription = this.http
+        .DownloadDataWithQuery('FileSystem/Downloadfile', url)
+        .subscribe({
+          next: (res: any) => {
+            const blob = new Blob([res['body']], { type: 'image/png' });
+            const objectURL = URL.createObjectURL(blob);
+            this.expenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+            this.expenseViewURL = null;
+            this.toggleViewModal();
+          },
+          error: (err) => console.error('Error downloading image:', err),
+        });
+    } else if (lowerUrl?.endsWith('pdf')) {
+      this.expenseImageUrl = null;
+      this.expenseViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
+      this.toggleViewModal();
     } else {
+      // fallback for other types if needed
+      this.expenseImageUrl = null;
       this.expenseViewURL = `${environment.viewUrl}${url}`;
       this.toggleViewModal();
     }
   }
-
   toggleViewModal() {
     this.modalService.dismissAll();
-    this.openModal(this.viewattamchment);
+    this.openModal(this.viewattamchment)
+  }
+  isImageFile(url: any): boolean {
+    if (!url) return false;
+    const lowerUrl = url.toLowerCase();
+    return lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png');
   }
 
   ngOnDestroy(): void {

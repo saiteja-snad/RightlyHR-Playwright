@@ -20,7 +20,7 @@
         <app-settings-role-permissions-module-tabs />
     </div>
 
-    <form #roleForm="ngForm" (ngSubmit)="roleForm.valid && permissionsCreate()">
+    <form autocomplete="off" #roleForm="ngForm" (ngSubmit)="roleForm.valid && permissionsCreate()">
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>

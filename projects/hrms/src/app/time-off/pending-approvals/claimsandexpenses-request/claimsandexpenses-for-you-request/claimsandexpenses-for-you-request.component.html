@@ -106,7 +106,7 @@
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
     </div>
-    <form [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
+    <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
@@ -133,7 +133,7 @@
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
     </div>
-    <form [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
+    <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
           <span class="text-danger">*</span></label>

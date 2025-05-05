@@ -36,7 +36,8 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form [formGroup]="addWFHForm" (ngSubmit)="applyWFH(addWFHForm)" class="custom-form">
+            <form autocomplete="off" [formGroup]="addWFHForm" (ngSubmit)="applyWFH(addWFHForm)" class="custom-form"
+                *ngIf="rbac.allowedToAccess('Workfromhome Tab.create')">
                 <!-- Worked Date -->
                 <div class="mb-3">
                     <label for="workedDate" class="form-label custom-label mb-2">Worked Date<span

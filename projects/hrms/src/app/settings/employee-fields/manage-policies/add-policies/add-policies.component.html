@@ -7,7 +7,7 @@
     </div>
   </div>
 
-  <form [formGroup]="policiesForm" (ngSubmit)="submit()">
+  <form autocomplete="off" [formGroup]="policiesForm" (ngSubmit)="submit()">
     <div class="custom-setting-right-content w-100 p-3">
       <!--Select Fields-->
       <div class="d-flex gap-3">
@@ -110,7 +110,7 @@
               <input type="file" formControlName="policyFile" class="form-control custom-input w-100"
                 (change)="onReactiveFileChange($event, i)" accept=".pdf,image/*" />
               <div *ngIf="policy.get('policyFile')?.touched && policy.get('policyFile')?.hasError('required')" class="error-msg">
-                {{'Policy File is required'|translate}}
+                {{'Attachment is required'|translate}}
               </div>
             </div>
 

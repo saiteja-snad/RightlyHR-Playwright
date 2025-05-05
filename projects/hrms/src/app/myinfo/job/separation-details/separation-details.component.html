@@ -255,7 +255,7 @@
       <p class="popup-heading mb-0">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early Relieving'}} Request?</p>
     </div>
     <div class="custom-main-popup-content">
-      <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
+      <form autocomplete="off" [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Reason For Recall<span class="error-msg">*</span></label>
           <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
@@ -304,7 +304,7 @@
       <p class="popup-heading mb-0">Request For Early Relieving</p>
     </div>
     <div class="custom-main-popup-content">
-      <form [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
+      <form autocomplete="off" [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="Effective Date ">Early Relieving Date <span class="error-msg">*</span></label>
@@ -371,7 +371,7 @@
       <p class="popup-heading">Provide your official work email addresses!</p>
     </div>
     <div class="custom-main-popup-content">
-      <form [formGroup]="profileForm">
+      <form autocomplete="off" [formGroup]="profileForm">
         <div class="mb-3">
           <p class="popup-heading mb-2">Add Emails<span class="error-msg">*</span></p>
 

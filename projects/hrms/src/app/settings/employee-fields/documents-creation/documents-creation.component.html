@@ -83,7 +83,7 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form name="AddSubDirectory" #AddSubDirectory="ngForm"
+            <form autocomplete="off" name="AddSubDirectory" #AddSubDirectory="ngForm"
                 (ngSubmit)="AddSubDirectory.valid && createSubDirectory(AddSubDirectory)">
                 <div class="mb-3">
                     <label for="subDirName" class="form-label custom-label mb-2">

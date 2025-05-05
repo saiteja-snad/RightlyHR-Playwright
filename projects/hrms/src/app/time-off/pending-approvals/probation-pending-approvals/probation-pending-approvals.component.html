@@ -143,7 +143,7 @@
             <p class="confirmation-text">{{'Are you sure you want to Process?' | translate}}</p>
         </div>
 
-        <form name="ProcessacceptForm" class="w-100" #ProcessacceptForm="ngForm"
+        <form autocomplete="off" name="ProcessacceptForm" class="w-100" #ProcessacceptForm="ngForm"
             (ngSubmit)="ProcessacceptForm.valid && handleProcess(ProcessacceptForm)">
             <div class="custom-main-popup-content">
                 <div class="mb-3">

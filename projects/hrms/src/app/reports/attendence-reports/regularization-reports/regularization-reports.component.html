@@ -4,7 +4,7 @@
     <div class="component-header">Reports</div>
 
     <div>
-      <form [formGroup]="regularizationReportForm" (ngSubmit)="generateRegularizationReport()">
+      <form autocomplete="off" [formGroup]="regularizationReportForm" (ngSubmit)="generateRegularizationReport()">
         <div class="d-flex align-items-center gap-3">
           @if(rbac.allowedToAccess('Regularization Report - Generate.view')){
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">

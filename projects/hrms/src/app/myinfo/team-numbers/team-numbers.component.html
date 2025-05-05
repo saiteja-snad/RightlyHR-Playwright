@@ -58,7 +58,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="rmForm" (ngSubmit)="updateRM()">
+            <form autocomplete="off" [formGroup]="rmForm" (ngSubmit)="updateRM()">
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Select Reporting Manager<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">

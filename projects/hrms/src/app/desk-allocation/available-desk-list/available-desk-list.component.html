@@ -136,7 +136,7 @@
 
         <div class="custom-main-popup-content p-3">
 
-            <form [formGroup]="assiginForm" (ngSubmit)="postAllocateAssets(assiginForm);modal.dismiss();">
+            <form autocomplete="off" [formGroup]="assiginForm" (ngSubmit)="postAllocateAssets(assiginForm);modal.dismiss();">
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -206,7 +206,7 @@
             <h5 class="confirmation-text mb-2"> Are you sure you want to Inactive this Desk ?</h5>
         </div>
         <div class="custom-main-popup-content  p-4">
-            <form [formGroup]="inactiveForm" (ngSubmit)="inactivedesk(inactiveForm)">
+            <form autocomplete="off" [formGroup]="inactiveForm" (ngSubmit)="inactivedesk(inactiveForm)">
                 <div class="row ">
                     <div class="col-md-12 mb-3">
                         <label for="Department" class="form-label custom-label mb-2">Select Reason <span
@@ -294,7 +294,7 @@
         </div>
         <div class="custom-main-popup-content  p-4">
 
-            <form [formGroup]="undermaintancedata" (ngSubmit)="undermaintancedesk(undermaintancedata)">
+            <form autocomplete="off" [formGroup]="undermaintancedata" (ngSubmit)="undermaintancedesk(undermaintancedata)">
 
                 <div class="row ">
                     <div class="col-md-12 mb-3">

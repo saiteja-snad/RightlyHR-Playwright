@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="component-header">Reports</div>
 
-    <form [formGroup]="absentReportForm" (ngSubmit)="generateAbsentReport()">
+    <form autocomplete="off" [formGroup]="absentReportForm" (ngSubmit)="generateAbsentReport()">
       <div class="d-flex align-items-center gap-3 flex-wrap">
         @if(rbac.allowedToAccess('Absent Report - Generate.view')){
         <button type="button" class="clear-all-btn" (click)="clearAllFilters()">

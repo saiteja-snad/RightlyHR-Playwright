@@ -81,7 +81,7 @@
       </div>
     </div>
     <div class="custom-main-popup-content ">
-      <form [formGroup]="visaForm" (ngSubmit)="postvisa()">
+      <form autocomplete="off" [formGroup]="visaForm" (ngSubmit)="postvisa()">
         <div class="row mb-3">
           <div class="col-6 mb-3">
             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Visa Type<span
@@ -159,7 +159,7 @@
       </div>
     </div>
     <div class="custom-main-popup-content ">
-      <form [formGroup]="visaupdateForm" (ngSubmit)="updatevisa()">
+      <form autocomplete="off" [formGroup]="visaupdateForm" (ngSubmit)="updatevisa()">
         <div class="row mb-3">
           <div class="col-6 mb-3">
             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Visa Type<span

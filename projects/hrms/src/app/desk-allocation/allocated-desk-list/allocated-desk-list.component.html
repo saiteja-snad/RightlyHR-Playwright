@@ -112,7 +112,7 @@
       </div>
       <div class="custom-main-popup-content p-3">
   
-        <form [formGroup]="reassiginForm" (ngSubmit)="postReallocateAssets(reassiginForm)">
+        <form autocomplete="off" [formGroup]="reassiginForm" (ngSubmit)="postReallocateAssets(reassiginForm)">
   
           <div class="row">
             <div class="col-md-6 mb-3">
@@ -186,7 +186,7 @@
       </div>
   
       <div class="custom-main-popup-content p-3">
-        <form [formGroup]="realseForm" (ngSubmit)="updatedeskitemrelease(realseForm)">
+        <form autocomplete="off" [formGroup]="realseForm" (ngSubmit)="updatedeskitemrelease(realseForm)">
   
           <div class="row ">
             <div class="col-md-12 mb-3">

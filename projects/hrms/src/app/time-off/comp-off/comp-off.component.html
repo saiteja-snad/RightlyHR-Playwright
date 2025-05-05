@@ -36,7 +36,8 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form [formGroup]="addCompOffForm" (ngSubmit)="applyCompOff(addCompOffForm)" class="custom-form">
+            <form autocomplete="off" [formGroup]="addCompOffForm" (ngSubmit)="applyCompOff(addCompOffForm)" class="custom-form"
+                *ngIf="rbac.allowedToAccess('Compoff Tab.create')">
                 <!-- Worked Date -->
                 <div class="row">
                     <div class="col-md-12 mb-3">

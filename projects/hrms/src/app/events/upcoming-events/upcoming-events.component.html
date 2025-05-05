@@ -133,7 +133,7 @@
       </div>
     </div>
     <div class="custom-main-popup-content">
-      <form [formGroup]="customEventupdateForm" (ngSubmit)="updateEvents(customEventupdateForm)">
+      <form autocomplete="off" [formGroup]="customEventupdateForm" (ngSubmit)="updateEvents(customEventupdateForm)">
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="eventDate" class="form-label custom-label mb-2">Event Date<span

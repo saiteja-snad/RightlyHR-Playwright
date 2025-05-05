@@ -94,7 +94,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="certificationForm" (ngSubmit)="postCertificationDetails()">
+            <form autocomplete="off" [formGroup]="certificationForm" (ngSubmit)="postCertificationDetails()">
                 <div class="row">
                     @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
@@ -221,7 +221,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="updateCertificationForm" (ngSubmit)="updateCertificationDetails()">
+            <form autocomplete="off" [formGroup]="updateCertificationForm" (ngSubmit)="updateCertificationDetails()">
                 <div class="row">
                     @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">

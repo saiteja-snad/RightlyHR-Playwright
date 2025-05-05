@@ -776,7 +776,7 @@
 <!--Reject popup-->
 <ng-template #rejectpopup let-modal>
     <div class="custom-main-popup-container p-5" ngbAutofocus>
-        <form [formGroup]="rejectForm" (ngSubmit)="submitRejectReason()">
+        <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="submitRejectReason()">
             <div class="custom-main-popup-content">
                 <div class="text-center mb-3">
                     <img src="images\reject.png" alt="reject Icon" class="confirmation-icon mb-3">

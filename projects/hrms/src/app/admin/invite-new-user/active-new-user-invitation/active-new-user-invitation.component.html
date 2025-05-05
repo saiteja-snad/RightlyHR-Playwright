@@ -12,7 +12,7 @@
     <app-new-user-invitation-tabs />
   </div>
 
-  <form [formGroup]="inviteActiveEmployeeForm" (ngSubmit)="activeInviteEmployee()">
+  <form autocomplete="off" [formGroup]="inviteActiveEmployeeForm" (ngSubmit)="activeInviteEmployee()">
     <div class="card custom-content-data p-4">
       <div class="input-content mb-4">
         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Select Employee' | translate}}<span

@@ -68,7 +68,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="expenseForm" (ngSubmit)="postExpenses(expenseForm)">
+            <form autocomplete="off" [formGroup]="expenseForm" (ngSubmit)="postExpenses(expenseForm)">
                 <div class="mb-3">
                     <label for="expenseType" class="form-label custom-label mb-2">
                         Expense Type <span class="text-danger">*</span>
@@ -118,7 +118,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="expenseupdateForm" (ngSubmit)="onUpdateSubmit()">
+            <form autocomplete="off" [formGroup]="expenseupdateForm" (ngSubmit)="onUpdateSubmit()">
                 <div class="mb-3">
                     <label for="expenseType" class="form-label custom-label mb-2">
                         Expense Type <span class="text-danger">*</span>

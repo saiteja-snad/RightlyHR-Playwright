@@ -540,7 +540,7 @@
     </div>
 
     <div class="custom-main-popup-content p-3">
-      <form autocomplete="off" [formGroup]="releaseform" (ngSubmit)="updaterealse(releaseform,storeassetid);modal.dismiss();">
+      <form autocomplete="off" [formGroup]="releaseform" (ngSubmit)="updaterealse(releaseform,storeassetid)">
         <div class="row">
           <div class="col-md-12 mb-3">
             <label for="Department" class="form-label custom-label mb-2">Reason for Release <span
@@ -626,7 +626,7 @@
     </div>
 
     <div class="custom-main-popup-content p-3">
-      <form autocomplete="off" [formGroup]="assiginForm" (ngSubmit)="postAssignAssets(assiginForm,storeassetid);modal.dismiss();">
+      <form autocomplete="off" [formGroup]="assiginForm" (ngSubmit)="postAssignAssets(assiginForm,storeassetid)">
         <div class="row">
 
           <div class="col-md-12 mb-3">
@@ -662,8 +662,6 @@
 
         </div>
       </form>
-
-
     </div>
   </div>
 
@@ -700,7 +698,7 @@
     </div>
 
     <div class="custom-main-popup-content p-3">
-      <form autocomplete="off" [formGroup]="reassiginForm" (ngSubmit)="updatereallowed(reassiginForm,storeassetid);modal.dismiss()">
+      <form autocomplete="off" [formGroup]="reassiginForm" (ngSubmit)="updatereallowed(reassiginForm,storeassetid)">
         <div class="row">
           <div class="col-md-12 mb-3">
             <label for="asseTID" class="form-label custom-label mb-2">Asset ID<span class="text-danger">*</span></label>
@@ -767,7 +765,7 @@
     <div class="custom-main-popup-content p-3">
 
       <form autocomplete="off" [formGroup]="locationfromdata"
-        (ngSubmit)="updatetranferlocation(locationfromdata,storeassetid);modal.dismiss()">
+        (ngSubmit)="updatetranferlocation(locationfromdata,storeassetid)">
         <div class="row ">
           <div class="col-md-6 mb-3">
             <label for="perlocation" class="form-label custom-label mb-2">Location<span

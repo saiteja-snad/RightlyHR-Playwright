@@ -7,9 +7,10 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
+import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-published-leavecategory',
-  imports: [CommonModule, TranslateModule, NoDataFoundComponent],
+  imports: [CommonModule, TranslateModule, NoDataFoundComponent,FormsModule],
   templateUrl: './published-leavecategory.component.html',
   styleUrl: './published-leavecategory.component.scss'
 })

@@ -104,7 +104,9 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       updatedAt: this.selectedPermission.updatedAt,
     };
     this.http
-      .putData(`PermissionTypes/${this.selectedPermission.id}`, payload)
+      .put(`PermissionTypes/${this.selectedPermission.id}`, payload, {
+        responseType: 'text',
+      })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
@@ -115,7 +117,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
           );
         },
         error: (err) => {
-          this.sharedModalService.openErrorModal(err.error.message);
+          this.sharedModalService.openErrorModal(err.error);
         },
         complete: () => {
           this.getPermissionTypes();
@@ -127,7 +129,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     if (permissionForm.valid) {
       const payload: Ipermissions = {
         name: permissionForm.value.name,
-        isDeleted: true,
+        isDeleted: false,
         type: 'Permissions',
       };
       this.http.postdata(`PermissionTypes`, payload).pipe(takeUntil(this.destroy$)).subscribe({

@@ -182,7 +182,7 @@ export class CompensationComponent {
     
         this.modalService.dismissAll()
         this.getCompensationempid()
-        this.conformationPopup.openSuccessModal("Compensation added successfully")
+        this.conformationPopup.openSuccessModal("Compensation details added successfully")
 
       },
       error: (reason: any) => {
@@ -244,7 +244,7 @@ export class CompensationComponent {
       next: (data: any) => {
         console.log(data)
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal("Compensation Updated successfully")
+        this.conformationPopup.openSuccessModal("Compensation details Updated successfully")
         this.getCompensationempid()
 
       },
@@ -286,7 +286,7 @@ export class CompensationComponent {
       next: (data: any) => {
         console.log(data)
         this.modalService.dismissAll()
-        this.conformationPopup.openSuccessModal("Compensation Deleted successfully")
+        this.conformationPopup.openSuccessModal("Compensation details deleted successfully")
         this.getCompensationempid()
 
       },

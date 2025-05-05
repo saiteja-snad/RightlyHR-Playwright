@@ -330,12 +330,12 @@ export class EducationDetailsComponent implements OnInit,OnDestroy {
   saveUpdatedEducation(payload: any): void {
     this.subscription = this.http.postdata(`Education/UPDATER`, payload).subscribe({
       next: (data: any) => {
-        console.log('Education updated successfully', data);
+        console.log('Education details updated successfully', data);
         this.getEducationEmpid()
         this.educationupdateForm.reset()
         this.modalService.dismissAll()
         this.spinnerLoader=false
-        this.conformationPopup.openSuccessModal('Education updated successfully')
+        this.conformationPopup.openSuccessModal('Education details updated successfully')
       },
       error: (reason: any) => {
         this.spinnerLoader=false

@@ -7,7 +7,7 @@ export const permissionsData = [
     {  fields: 'Contact Details', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Emergency Contact Details', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Onboarding Documents', View: false, Update: false, Create: false, Delete: false },
-    {  fields: 'Team Members', View: false, Update: false, Create: false, Delete: false },
+    // {  fields: 'Team Members', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Separation Request', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Education', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Visa Information', View: false, Update: false, Create: false, Delete: false },
@@ -17,13 +17,13 @@ export const permissionsData = [
     {  fields: 'Identity', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Bank Details', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Pre Onboarding Details', View: false, Update: false, Create: false, Delete: false },
-    {  fields: 'Onboarding Details', View: false, Update: false, Create: false, Delete: false },
+    // {  fields: 'Onboarding Details', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Offboarding Details', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Employment Type', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Job Details', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Compensation Details', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Assets', View: false, Update: false, Create: false, Delete: false },
-    {  fields: 'Onboard Request', View: false, Update: false, Create: false, Delete: false },
+    // {  fields: 'Onboard Request', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'Change RM button', View: false, Update: false, Create: false, Delete: false },
     {  fields: 'No Due Clearance', View: false, Update: false, Create: false, Delete: false },
     // {  fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false},
@@ -537,5 +537,28 @@ export const permissionsData = [
     { fields: 'Asset Allocation - Allocated', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Asset Allocation - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Asset Allocation - Inactive', View: false, Update: false, Create: false, Delete: false }, 
+
+
+    // My Info Sub Tabs Section
+    { fields: 'My Info Personal', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Job', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Documents', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Team Members', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Onboard Request', View: false, Update: false, Create: false, Delete: false },
+
+
+
+    //My Info Personal Sub Tabs Section
+    { fields: 'My Info Basic Information', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Address Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Contact Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Emergency Contact Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Education Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Identity Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Family Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Bank Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Visa Details', View: false, Update: false, Create: false, Delete: false },
+
+
 
 ];

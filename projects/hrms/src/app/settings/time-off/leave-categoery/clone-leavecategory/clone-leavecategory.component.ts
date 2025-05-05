@@ -112,6 +112,10 @@ export class CloneLeavecategoryComponent {
     this.subscription = this.http.getData(`JobLocation`).subscribe({
       next: (data: any) => {
         this.jobLocationDropDownData = data.jobLocations;
+        this.leavePolicyForm.patchValue({
+          locationID: this.jobLocationDropDownData.find((x: any) => x.jobLocationName === this.updatecloneLeaveCategoryData.locationName),
+        });
+        this.getSubLocationByid(this.updatecloneLeaveCategoryData.locationID)
       }
     })
   } 
@@ -121,10 +125,19 @@ export class CloneLeavecategoryComponent {
     this.getSubLocationByid(locationID);
   }
   getSubLocationByid(locationID: any) {
-    this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${locationID}`).subscribe({
+    let sublocid = locationID ?? this.updatecloneLeaveCategoryData.locationID
+    this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${sublocid}`).subscribe({
       next: (data: any) => {
         this.subLocationsDropdown = data.jobSubLocations;
+        this.leavePolicyForm.patchValue({
+          subLocation: this.subLocationsDropdown.find((x: any) => x.jobSubLocationName === this.updatecloneLeaveCategoryData.subLocationName),
+        });
         this.subloactionid();
+        let locsublocid = {
+          jobLocationId: this.updatecloneLeaveCategoryData.locationID,
+          id: this.updatecloneLeaveCategoryData.subLocation
+        }
+        this.getShiftBYid(locsublocid)
       }
     })
   }
@@ -149,6 +162,9 @@ export class CloneLeavecategoryComponent {
             label: shift.shiftName,
             value: shift.id
           }));
+          this.leavePolicyForm.patchValue({
+            shiftId: this.shiftsArray.find((x: any) => x.label === this.updatecloneLeaveCategoryData.shiftName).value,
+          });
         }
       })
     } else {

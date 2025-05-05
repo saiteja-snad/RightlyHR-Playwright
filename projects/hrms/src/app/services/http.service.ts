@@ -78,6 +78,13 @@ export class HttpService {
     this.basicDetailes.next();
   }
 
+   //holidays year
+   public selectedYearSubject = new BehaviorSubject<number | null>(null);
+   selectedYear$ = this.selectedYearSubject.asObservable();
+  //holidays year
+   setSelectedYear(year: number) {
+     this.selectedYearSubject.next(year);
+   }
  private triggerSignal = signal(false);
  readonly trigger = this.triggerSignal;
  triggerActionSignal() {
@@ -91,7 +98,6 @@ resetTriggerSignal() {
     this.activeTabSubject.next(isActive);
   }
 
-  
 
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();

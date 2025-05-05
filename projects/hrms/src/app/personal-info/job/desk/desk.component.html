@@ -1,30 +1,31 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Desk Details</span></div>
-        </div>
+    </div>
     <div class="custom-table-content mt-2">
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>DESK ID </th>
-                    <th>DESK TYPE</th>
-                    <th>DESK STAUS</th>
-                    <th>ALLOCATED DATE</th>
-                    <th>RELEASED DATE</th>
+                 
+                    <th>Desk Id</th>
+                    <th>Desk Type</th>
+                    <th>Desk Staus</th>
+                    <th>Allocated Date</th>
+                    <th>Released Date</th>
                 </tr>
             </thead>
             <tbody>
                 <ng-container *ngIf="((deskdata | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let data of deskdata | async">
                         <td>{{ data.deskName }}</td>
-                         <td>{{ data.deskType }}</td>  
-                         <td>{{ data.status }}</td>
-                         <td>{{ data.allocatedDate |dateformat }}</td>
-                         <td>{{ data.releavedDate ? (data.releavedDate | dateformat) : 'N/A' }}</td>
+                        <td>{{ data.deskType }}</td>
+                        <td>{{ data.status }}</td>
+                        <td>{{ data.allocatedDate |dateformat }}</td>
+                        <td>{{ data.releavedDate ? (data.releavedDate | dateformat) : 'N/A' }}</td>
 
-                       </tr>
+                    </tr>
                 </ng-container>
-            
+
                 <ng-template #noDataTemplate>
                     <tr>
                         <td>

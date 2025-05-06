@@ -49,7 +49,7 @@
                     <td>{{ticket.createdAt | date}} </td>
                     <td>{{ticket.departmentName || '-'}}</td>
                     <td>{{ticket.subdepartmentName || '-'}}</td>
-                    <td>{{ticket.assigneeName ? ticket.assigneeName : '-'}}</td>
+                    <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
                     <td>{{ticket.ticketStatus || '-'}}</td>
                     <td>{{ticket.updatedAt | date}}</td>
                     <td class="text-center">
@@ -229,10 +229,11 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Action'| translate}}<span
                                 class="text-danger">*</span></label>
-                        <p-select [options]="status" optionLabel="label" optionValue=""
-                            placeholder="Please select status" formControlName="ticketStatus"
-                            class="custom-select w-100">
-                        </p-select>
+                                <div class="custom-p-select-content">
+                                    <p-select [options]="status" optionLabel="label" optionValue="" placeholder="Please select status"
+                                        formControlName="ticketStatus" class="custom-select w-100">
+                                    </p-select>
+                                </div>
                         <div
                             *ngIf="itSupportForm.get('ticketStatus')?.invalid && itSupportForm.get('ticketStatus')?.touched">
                             <div class="error-msg">{{'Status is required' | translate}}</div>

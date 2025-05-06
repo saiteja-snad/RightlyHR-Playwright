@@ -63,7 +63,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add New Ticket </p>
+                <p class="popup-heading mb-0">Add New Ticket</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -156,10 +156,12 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="departmentDetails" [filter]="true" filterBy="departmentName" 
-                            optionLabel="departmentName" placeholder="Please select department"
-                            formControlName="department" class="custom-select w-100" (onChange)="onDepartmentChange($event.value)">
-                        </p-select>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="departmentDetails" [filter]="true" filterBy="departmentName" optionLabel="departmentName"
+                                    placeholder="Please select department" formControlName="department" class="custom-select w-100"
+                                    (onChange)="onDepartmentChange($event.value)">
+                                </p-select>
+                            </div>
                         
                     <div *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
                         <div class="error-msg">{{'Department is required' | translate}}</div>
@@ -171,10 +173,12 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="teamDropdownValues" [filter]="true" filterBy="subdepartmentName" 
-                            optionLabel="subdepartmentName"  placeholder="Please select team"
-                            formControlName="team" class="custom-select w-100" (onChange)="onSubDepartmentNameChange($event.value)">
-                        </p-select>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="teamDropdownValues" [filter]="true" filterBy="subdepartmentName"
+                                    optionLabel="subdepartmentName" placeholder="Please select team" formControlName="team"
+                                    class="custom-select w-100" (onChange)="onSubDepartmentNameChange($event.value)">
+                                </p-select>
+                            </div>
                     <div *ngIf="itSupportForm.get('team')?.invalid && itSupportForm.get('team')?.touched">
                         <div class="error-msg">{{'Team is required' | translate}}</div>
                     </div>
@@ -201,11 +205,12 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Priority' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="priorityDetails"
-                            optionLabel="label" optionValue="value" placeholder="Please select priority"
-                            formControlName="priority" class="custom-select w-100">
+                            <div class="custom-p-select-content">
+                                <p-select [options]="priorityDetails" optionLabel="label" optionValue="value" placeholder="Please select priority"
+                                    formControlName="priority" class="custom-select w-100">
                             
-                        </p-select>
+                                </p-select>
+                            </div>
                     <div *ngIf="itSupportForm.get('priority')?.invalid && itSupportForm.get('priority')?.touched">
                         <div class="error-msg">{{'Priority is required' | translate}}</div>
                     </div>

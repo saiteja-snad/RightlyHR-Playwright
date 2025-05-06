@@ -24,7 +24,7 @@ import { RbacService } from '../../services/rbac.service';
   templateUrl: './myinfo-layout.component.html',
   styleUrl: './myinfo-layout.component.scss'
 })
-export class MyinfoLayoutComponent implements OnInit , OnDestroy{
+export class MyinfoLayoutComponent implements OnInit, OnDestroy {
   teamForm!: FormGroup;
   managers: any[] = [];
   teamMembersdata: any[] = [];
@@ -39,6 +39,7 @@ export class MyinfoLayoutComponent implements OnInit , OnDestroy{
   selectedManager: any = null;
   pouptext1: any
   selectedEmployees: any[] = []; // Ensure it's an array
+  spinnerLoader = false;
 
   constructor(private http: HttpService, private router: Router, private modalService: NgbModal,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService) { }
@@ -100,7 +101,7 @@ export class MyinfoLayoutComponent implements OnInit , OnDestroy{
   updateTeamRM() {
     console.log("Raw Selected Employees:", this.selectedEmployees);
     console.log("Updated selectedEmployeeIds:", this.selectedEmployeeIds);
-
+    this.spinnerLoader = true;
     if (!Array.isArray(this.selectedEmployees) || this.selectedEmployees.length === 0) {
       console.error("selectedEmployees is not a valid array", this.selectedEmployees);
       return;
@@ -129,27 +130,19 @@ export class MyinfoLayoutComponent implements OnInit , OnDestroy{
       .subscribe({
         next: (data: any) => {
           console.log("Update successful", data);
-          this.conformationPopup.openSuccessModal('Data Updated Successfully');
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
           console.log(data);
         },
         error: (reason: any) => {
           console.log(reason);
           if (reason) {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Data Updated Successfully');
+            this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+            this.spinnerLoader = false;
           }
         }
       });
-  }
-
-  showSuccessPopup() {
-    this.pouptext1 = 'Reporting Manager updated successfully';
-    const modalElement = document.getElementById('successhide');
-    if (modalElement) {
-      modalElement.classList.add('show');
-      modalElement.style.display = 'block';
-    }
-    setTimeout(() => location.reload(), 1500);
   }
 
   openModal(content: any) {
@@ -198,7 +191,12 @@ export class MyinfoLayoutComponent implements OnInit , OnDestroy{
     });
   }
 
- ngOnDestroy(): void {
+  resetAndClose(modal: any): void {
+    this.teamForm.reset(); 
+    modal.dismiss();      
+  }
+
+  ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }

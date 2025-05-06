@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -8,12 +8,12 @@ import { Select } from 'primeng/select';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-
 import { SearchfilterPipe } from "../../Pipes/searchfilter.pipe";
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
-//import { Iteammembers } from '../../models/teammembers';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 
 @Component({
@@ -23,24 +23,26 @@ import { RbacService } from '../../services/rbac.service';
     Select,
     FormsModule,
     PaginatorModule,
+    TranslateModule,
     DropdownModule,
     SearchfilterPipe,
     ReactiveFormsModule,
+    NoDataFoundComponent,
   ],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss',
 })
-export class TeamNumbersComponent implements OnInit {
+export class TeamNumbersComponent implements OnInit, OnDestroy {
   rmForm!: FormGroup;
   managers: any[] = [];
   subscription!: Subscription;
   TeamMemberArray: Iteammembers[] = [];
-  // rmData=[
-  //   {name:'Rajesh',designation:'Software Engineer',team:'Development',location:'Bangalore'}]
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
-
+  pouptext1: any;
+  selectedEmployees: Iteammembers[] = [];
+  selectedEmployeeIds: string[] = [];
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -49,6 +51,16 @@ export class TeamNumbersComponent implements OnInit {
   ];
   empinfo = {} as Ipersonal;
   searchValue: any;
+  spinnerLoader = false;
+  selectedData: any = {}; // Initialize properly
+  employees: any[] = [];
+  employeeIds: number[] = [];
+  selectedReportingManager: any = {};
+  isDropdownOpen: boolean = false;
+  reportingManager: any;
+  fusionEmpId: any;
+  disablebuttonforemployeeid: boolean = true;
+  searchText = '';
 
   constructor(
     private http: HttpService,
@@ -58,9 +70,11 @@ export class TeamNumbersComponent implements OnInit {
     private conformationPopup: OpenModalService,
     public rbac: RbacService
   ) {}
+
   onRowsChange() {
     this.first = 0;
   }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     console.log(this.empinfo);
@@ -68,22 +82,21 @@ export class TeamNumbersComponent implements OnInit {
     this.getEmployee();
     this.formsubmit();
   }
+
   formsubmit() {
     this.rmForm = this.fb.group({
       mReportingto: [null, Validators.required],
     });
   }
+
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
   }
 
-  employees: any[] = [];
-  employeeIds: number[] = [];
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  selectedData: any = {}; // Initialize properly
 
   onclick(details: any) {
     console.log('Original Details:', details); // Check if details contain data
@@ -94,19 +107,14 @@ export class TeamNumbersComponent implements OnInit {
     }
 
     this.selectedData = JSON.parse(JSON.stringify(details));
-
     this.selectedData.jobId = details.jobId;
     this.selectedData.reportingToEmployeeId = details.reportingToEmployeeId;
-
-    console.log('Selected Data after assignment:', this.selectedData); // Verify assigned data
   }
 
   selectedManager: any = null; // Store selected manager object
 
   onSelectManager(event: any) {
     this.selectedManager = event.value; // Capture selected object
-    console.log('Selected Manager:', this.selectedManager);
-
     if (!this.selectedManager) {
       console.error('Error: No manager selected.');
       alert('Please select a reporting manager.');
@@ -115,16 +123,8 @@ export class TeamNumbersComponent implements OnInit {
 
     this.selectedData.employeeId = this.selectedManager.employeeId ?? '';
     this.selectedData.id = this.selectedManager.jobId ?? ''; // Ensure jobId is correctly assigned
-
-    console.log('Updated selectedData:', this.selectedData);
   }
 
-  selectedReportingManager: any = {};
-  isDropdownOpen: boolean = false;
-  reportingManager: any;
-  fusionEmpId: any;
-  disablebuttonforemployeeid: boolean = true;
-  searchText = '';
   searchEmployeeSinglerecord(employee: any, searchTerms: string[]): boolean {
     return searchTerms.every(
       (term) =>
@@ -135,11 +135,13 @@ export class TeamNumbersComponent implements OnInit {
         employee.lastName.toLowerCase().includes(term)
     );
   }
+
   toggleDropdown(dropcategory: string) {
     if (dropcategory == 'reporting') {
       this.isDropdownOpen = !this.isDropdownOpen;
     }
   }
+
   onSearchTextChange(value: string) {
     if (!value.trim()) {
       this.selectedReportingManager = {};
@@ -147,6 +149,7 @@ export class TeamNumbersComponent implements OnInit {
       this.disablebuttonforemployeeid = false;
     }
   }
+
   onClickValidation(employee: any) {
     this.selectedReportingManager = employee;
     this.reportingManager = this.selectedReportingManager.fusionEmpId;
@@ -174,6 +177,7 @@ export class TeamNumbersComponent implements OnInit {
       this.disablebuttonforemployeeid = false;
     }
   }
+
   filterEmployees(): any[] {
     return this.employees
       .filter((emp) => emp && emp.fusionEmpId)
@@ -185,15 +189,8 @@ export class TeamNumbersComponent implements OnInit {
       }));
   }
 
-  // filterEmployees(): any[] {
-  //   const searchTerms = this.searchText.toLowerCase().split(' ');
-
-  //   return this.employees.filter((item) =>
-  //       this.searchEmployeeSinglerecord(item, searchTerms)
-  //   );
-  // }
-
   updateRM() {
+    this.spinnerLoader = true;
     let jobid = this.selectedData.id;
     let ManagerEmployeeId = this.selectedData.employeeId;
     this.subscription = this.http
@@ -211,6 +208,7 @@ export class TeamNumbersComponent implements OnInit {
           console.log('Error callback');
           console.log(reason);
           this.conformationPopup.openErrorModal('Updated Successfully');
+          this.spinnerLoader = false;
         },
       });
   }
@@ -230,6 +228,7 @@ export class TeamNumbersComponent implements OnInit {
         }
       );
   }
+
   getEmployee() {
     this.subscription = this.http
       .getData('JobDetails/getAllReportingManagers')
@@ -249,45 +248,13 @@ export class TeamNumbersComponent implements OnInit {
                 }${emp.lastName}`,
               })
             );
-
-          //console.log('Managers:', this.managers);
         },
         error: (err) => console.log(err),
       });
   }
 
-  // getEmployee() {
-  //   this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
-  //     next: (data: any) => {
-  //       this.employees = data;
-
-  //       const uniqueEmployeeIdsSet = new Set();
-
-  //       this.employees = this.employees.filter((employee: any) => {
-  //         if (employee.fusionEmpId !== null && employee.fusionEmpId !== undefined) {
-
-  //           if (!uniqueEmployeeIdsSet.has(employee.employeeId)) {
-  //             uniqueEmployeeIdsSet.add(employee.employeeId);
-  //             return true;
-  //           }
-  //         }
-  //         return false;
-  //       });
-
-  //       console.log('Employees (Unique and with fusionEmpId):', this.employees);
-  //     },
-  //     error: (reason: any) => {
-  //       console.log(reason);
-  //     },
-  //   });
-  // }
-  pouptext1: any;
-  selectedEmployees: Iteammembers[] = [];
-  selectedEmployeeIds: string[] = [];
   updateTeamRM() {
     let ManagerId = this.selectedEmployeeIds[0];
-
-    // Prepare the request body
     let requestBody = this.selectedEmployees.map((employee) => {
       return {
         jobRole: employee.jobRole,
@@ -301,6 +268,17 @@ export class TeamNumbersComponent implements OnInit {
         id: employee.id,
       };
     });
+  }
+
+  resetAndClose(modal: any): void {
+    this.rmForm.reset(); // clear the form
+    modal.dismiss(); // close the popup
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }
 

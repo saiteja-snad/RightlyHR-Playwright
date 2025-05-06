@@ -300,11 +300,45 @@ export const permissionsData = [
      { fields: 'Organization Hierarchy - Download JPG', View: false, Update: false, Create: false, Delete: false },
 
      //Desk Management Tabs Section
+     { fields: 'Desk Allocation - Create', View: false, Update: false, Create: false, Delete: false },
+     { fields: 'Desk Allocation - All', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Desk Allocation - Available', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Desk Allocation - Allocated', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Desk Allocation - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Desk Allocation - Inactive', View: false, Update: false, Create: false, Delete: false },
      { fields: 'Desk Allocation - Waiting For Approval', View: false, Update: false, Create: false, Delete: false }, 
+
+     //Desk Management All Tab Actions
+    { fields: 'Request for Allocation', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Inactive desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Schedule for Maintenance', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Reallocate desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Release Desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Mark as Active', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Mark as Available', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'View Desk Details', View: false, Update: false, Create: false, Delete: false },
+
+     //Desk Management Available Tab Actions
+    { fields: 'Available Request for Allocation', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Available Inactive desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Available Schedule for Maintenance', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Available View Desk Details', View: false, Update: false, Create: false, Delete: false }, 
+
+      //Desk Management Allocated Tab Actions
+    { fields: 'Allocated Reallocate desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Allocated Release Desk', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Allocated View Desk Details', View: false, Update: false, Create: false, Delete: false },
+
+    //Desk Management Under Maintenance Tab Actions
+    { fields: 'Under Maintenance Mark as Available', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Under Maintenance View Desk Details', View: false, Update: false, Create: false, Delete: false },
+
+    //Desk Management Inactive Tab Actions
+    { fields: 'Inactive Mark as Available', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Inactive View Desk Details', View: false, Update: false, Create: false, Delete: false },
+
+     //Desk Management Waiting For Approval Tab Actions
+    { fields: 'Waiting For Approval View Desk Details', View: false, Update: false, Create: false, Delete: false },
 
     //New Side Nav Section
     { fields: 'Dashboard', View: false, Update: false, Create: false, Delete: false },
@@ -559,6 +593,19 @@ export const permissionsData = [
     { fields: 'My Info Bank Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Visa Details', View: false, Update: false, Create: false, Delete: false },
 
+    //My Info Job Sub Tabs Section
+  { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Job Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info No Due Clearance Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Probation Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Previous Experience Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Certification Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Compensation Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Desk Details', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'My Info Asset Details', View: false, Update: false, Create: false, Delete: false },
     //My Info Documents Sub Tabs Section
     { fields: 'My Info Documents', View: false, Update: false, Create: false, Delete: false },
 
@@ -572,5 +619,13 @@ export const permissionsData = [
    
 
 
+   //My Info Separation Request Details
+   { fields: 'Raise No Due', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Recall', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Early relieving', View: false, Update: false, Create: false, Delete: false },
+
+    //My Info No Due Clearance Details
+    { fields: 'Submission Of No Due Clearance', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Re-request for no due', View: false, Update: false, Create: false, Delete: false }, 
 
 ];

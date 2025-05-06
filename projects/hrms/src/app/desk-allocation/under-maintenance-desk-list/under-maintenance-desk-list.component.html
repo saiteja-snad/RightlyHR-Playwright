@@ -27,7 +27,7 @@
               <th>Location</th>
               <th>Sub Location</th>
               <th>Desk Status</th>
-              <th class="text-center">Action(s)</th>
+              <th class="text-center" *ngIf="rbac.allowedToAccess('Under Maintenance Mark as Available.view') || rbac.allowedToAccess('Under Maintenance View Desk Details.view')">Action(s)</th>
   
             </tr>
           </thead>
@@ -43,19 +43,19 @@
                 <td>{{ desk.deskStatus }}</td>
                 
   
-                <td class="text-center">
+                <td class="text-center" *ngIf="rbac.allowedToAccess('Under Maintenance Mark as Available.view') || rbac.allowedToAccess('Under Maintenance View Desk Details.view')">
                   <div class="dropdown">
                     <a data-bs-toggle="dropdown" aria-expanded="false">
                       <i class="bi bi-three-dots-vertical"></i>
                     </a>
   
                     <ul class="dropdown-menu custom-dropdown-menu">
-                        <li>
+                        <li *ngIf="rbac.allowedToAccess('Under Maintenance Mark as Available.view')">
                             <a class="dropdown-item" (click)="openModal(avitivedest);selectedAsset=desk;viewdata(desk) ">
                               Mark as Available
                             </a>
                           </li>
-                          <li>
+                          <li *ngIf="rbac.allowedToAccess('Under Maintenance View Desk Details.view')">
                             <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
                               View Desk Details
                             </a>

@@ -161,13 +161,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
 isDisabled(field: string, action: string): boolean {
   const viewOnlyFields = ['Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Load Entitlements Tab', 'Attendance Eligibility Criteria Tab', 'Comp Off Entitlement Tab',
     'WFH Entitlement Tab', 'Permission Elgibility Tab', 'Attendance Regularization Eligibility Tab', 'Shifts Published Tab', 'Policies Published Tab', 'Holidays Published Tab',
-    'Weekends Published Tab', 'Expense Allowed Days', 'DST Published Tab', 'Leave Category Published Tab','Active Forms','Inactive Forms','Draft Forms','Asset Allocation','Asset Allocation - Inactive'
+    'Weekends Published Tab', 'Expense Allowed Days', 'DST Published Tab', 'Leave Category Published Tab','Active Forms','Inactive Forms','Draft Forms', 'Desk Allocation - Inactive',
+    'Desk Allocation - Create'
   ];
   return viewOnlyFields.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
 }
 
 isActionEnabled(field: string, action: string): boolean {
-  const enabledTabs = ['Document Tab', 'NoDue Clearance Tab', 'Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Dynamic Forms Module'];
+  const enabledTabs = ['Document Tab', 'NoDue Clearance Tab', 'Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Dynamic Forms Module', 'Desk Allocation - All', 
+    'Manage Policies Tab', 'Manage Weekends Tab', 'Manage DST Tab', 'My Info Job Details', 'My Info Previous Experience Details', 'My Info Certification Details'];
   return enabledTabs.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
 }
 

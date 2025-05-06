@@ -60,8 +60,8 @@
 
                                     @if( leave.approvalHeader.currentapprovalStage !=
                                     leave.approvalHeader.finalapprovalStage){
-                                    <li (click)="openApproveModal(approval,leave)" >
-                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
+                                    <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')">
+                                        <a class="dropdown-item"><i  class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
                                     </li>
                                     }
                                 }

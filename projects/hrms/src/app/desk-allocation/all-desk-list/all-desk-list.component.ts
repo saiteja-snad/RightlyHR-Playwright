@@ -11,6 +11,7 @@ import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { RbacService } from '../../services/rbac.service';
 
 
 @Component({
@@ -84,6 +85,7 @@ export class AllDeskListComponent {
     private readonly modalService: NgbModal,
     private readonly router: Router,
     public conformationPopup: OpenModalService,
+    public rbac: RbacService,
 
     config: NgbModalConfig) {
     config.backdrop = 'static';

@@ -1,9 +1,10 @@
 <div class="custom-main-component-container">
+    @if(rbac.allowedToAccess('My Info Job Details.create')){
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Job Details</span></div>
         <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
     </div>
-
+    }
     <div class="custom-table-content mt-2">
         <table class="w-100">
             <thead>
@@ -19,7 +20,9 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
+                    @if(rbac.allowedToAccess('My Info Job Details.delete') || rbac.allowedToAccess('Separation Request.view')){
                     <th class="text-center">Action(S)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -86,7 +89,7 @@
                                 <div class="centerhypen">-</div>
                             </ng-template>
                         </td>
-
+                        @if(rbac.allowedToAccess('My Info Job Details.delete') || rbac.allowedToAccess('Separation Request.view')){
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
@@ -106,6 +109,7 @@
                                         </li>
                                     }
                                     
+                                    @if(rbac.allowedToAccess('My Info Job Details.delete')){}
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
@@ -114,6 +118,7 @@
                                 </ul>
                             </div>
                         </td>
+                    }
                     </tr>
                 </ng-container>
 

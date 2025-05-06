@@ -3,7 +3,7 @@
         <div>
             <p class="component-header mb-0">Desk Management</p>
         </div>
-        <div>
+        <div *ngIf="rbac.allowedToAccess('Desk Allocation - Create.view')">
             <button type="button" class="custom-btn btn-primary" (click)="openModal(createDeskModal)"><i
                     class="bi bi-plus me-2"></i>Register an
                 Desk</button>

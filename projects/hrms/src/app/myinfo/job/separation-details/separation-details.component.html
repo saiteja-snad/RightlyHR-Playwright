@@ -1,10 +1,12 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="component-sub-header">Separation Details</div>
+    @if(rbac.allowedToAccess('Raise No Due.view')){
     @if(isLastWorkingDate(this.empdata.lastworkingday)&&nodueclearancedetails.length <= 0
       &&getSeparationDetails.value.length>0){
       <div class="custom-add-btn" (click)="openModal(raiseNodue)"><i class="bi bi-plus plus-icon me-1"></i>Raise No Due</div>
       }
+    }
   </div>
 
   <!--Input search-->
@@ -19,7 +21,9 @@
           <th>{{'APPROVER STATUS'|translate}}</th>
           <th>{{'REQUEST TYPE'|translate}}</th>
           <th>{{'STATUS'|translate}}</th>
+          @if(rbac.allowedToAccess('Recall.view') || rbac.allowedToAccess('Early relieving.view')){
           <th>{{'Action(s)'|translate}}</th>
+          }
         </tr>
       </thead>
       <tbody>
@@ -75,6 +79,7 @@
           <td>
             {{item.status?item.status:'NA'}}
           </td>
+          @if(rbac.allowedToAccess('Recall.view') || rbac.allowedToAccess('Early relieving.view')){
           <td>
             <div class="dropdown">
               @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' &&
@@ -85,20 +90,24 @@
               }
 
               <ul class="dropdown-menu custom-dropdown-menu">
+                @if(rbac.allowedToAccess('Recall.view')){
                 <li (click)="recallRequest(item,recallrequestpopup)">
                   <a class="dropdown-item">
                     <i class="bi bi-repeat me-2 fs-5"></i>Recall
                   </a>
                 </li>
+              }
+                @if(rbac.allowedToAccess('Early relieving.view')){
                 @if( item.recallStatus.toLowerCase() !='earlyrelieving' && !recallandearlyrelievingbuttonConditions){
                 <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
                   <a class="dropdown-item"> <i class="bi bi-trash3 me-2"></i>Early relieving</a>
                 </li>
                 }
-
+              }
               </ul>
             </div>
           </td>
+        }
           <!-- </ng-container> -->
         </tr>}}
         @else{

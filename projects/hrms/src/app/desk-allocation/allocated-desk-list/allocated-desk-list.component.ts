@@ -8,6 +8,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-allocated-desk-list',
@@ -65,6 +66,7 @@ export class AllocatedDeskListComponent {
     private readonly modalService: NgbModal,
     private readonly router: Router,
     public conformationPopup: OpenModalService,
+    public rbac: RbacService,
 
     config: NgbModalConfig) {
     config.backdrop = 'static';

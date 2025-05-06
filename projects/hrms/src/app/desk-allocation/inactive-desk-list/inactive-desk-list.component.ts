@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-inactive-desk-list',
@@ -46,7 +47,7 @@ export class InactiveDeskListComponent {
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private readonly router: Router,
-
+    public rbac: RbacService,
     public conformationPopup: OpenModalService,
 
     config: NgbModalConfig) {

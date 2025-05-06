@@ -34,7 +34,8 @@ export class CertificationComponent implements OnInit, OnDestroy {
   displaycertification: any
   dateofbirth: any;
 
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, public rbac: RbacService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, 
+    private conformationPopup: OpenModalService, public formValidation: FormValidationService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

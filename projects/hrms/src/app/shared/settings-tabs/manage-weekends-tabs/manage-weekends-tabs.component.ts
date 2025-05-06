@@ -45,19 +45,19 @@ export class ManageWeekendsTabsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getAllWeekend();
 
-    const currentUrl = this.router.url;
-    const baseUrl = '/settings/employee-fields/manage-weekends';
+    // const currentUrl = this.router.url;
+    // const baseUrl = '/settings/employee-fields/manage-weekends';
 
-    // Redirect to first allowed tab if at base or unauthorized route
-    if (currentUrl === baseUrl && this.navLinks.length > 0) {
-      this.router.navigateByUrl(this.navLinks[0].route);
-      return;
-    }
+    // // Redirect to first allowed tab if at base or unauthorized route
+    // if (currentUrl === baseUrl && this.navLinks.length > 0) {
+    //   this.router.navigateByUrl(this.navLinks[0].route);
+    //   return;
+    // }
 
-    const isAllowed = this.navLinks.some(link => link.route === currentUrl);
-    if (!isAllowed && this.navLinks.length > 0) {
-      this.router.navigateByUrl(this.navLinks[0].route);
-    }
+    // const isAllowed = this.navLinks.some(link => link.route === currentUrl);
+    // if (!isAllowed && this.navLinks.length > 0) {
+    //   this.router.navigateByUrl(this.navLinks[0].route);
+    // }
   }
 
   getAllWeekend() {

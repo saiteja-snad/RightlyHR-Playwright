@@ -18,6 +18,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
 import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-separation-details',
@@ -64,7 +65,8 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public rbac: RbacService
   ) {
     // Initialize any required services or dependencies here
   }

@@ -31,7 +31,7 @@ export class ViewHolidaysComponent {
 // ng oninit method start
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.updateHolidaysData = JSON.parse(localStorage.getItem('viewholidays') ?? '{}');
+    this.updateHolidaysData = JSON.parse(localStorage.getItem('updateholidays') ?? '{}');
     this.getjobLocationList();
     const currentYear = new Date().getFullYear();
     this.yearDetails = this.generateYears(2000, currentYear);
@@ -154,7 +154,7 @@ export class ViewHolidaysComponent {
   }
   //cancel button click navigation
   nagvition() {
-    this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+    this.router.navigate(['/settings/employee-fields/manage-holidays/published-holidays']);
   }
 
   ngOnDestroy() {

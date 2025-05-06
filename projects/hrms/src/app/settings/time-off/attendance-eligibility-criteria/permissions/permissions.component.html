@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div *ngIf="rbac.allowedToAccess('Attendance Eligibility Permissions Tab.create')">
-        <form [formGroup]="permissionsForm" (ngSubmit)="addPermission(permissionsForm)">
+        <form [formGroup]="permissionsForm"  autocomplete="off"  (ngSubmit)="addPermission(permissionsForm)">
             <!-- Add Input-->
             <div class="mb-4">
                 <div class="custom-settings-add-input input-group">

@@ -12,26 +12,40 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { IProbationEmployees } from '../../../Interfaces/letters-model';
 import { IJob } from '../../../Interfaces/job-model';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-family-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
+  imports: [
+    CommonModule,
+    Select,
+    ReactiveFormsModule,
+    DateformatPipe,
+    NoDataFoundComponent,
+  ],
   templateUrl: './family-details.component.html',
-  styleUrl: './family-details.component.scss'
+  styleUrl: './family-details.component.scss',
 })
 export class FamilyDetailsComponent implements OnInit {
   subscription!: Subscription;
   familyRelations: IRelation[] = [];
-  selectedFamilyMembername: any
-  empinfo = {} as IJob; 
+  selectedFamilyMembername: any;
+  empinfo = {} as IJob;
   familyDetailsForm!: FormGroup;
-  selectedFamilyMember: any
-  familyDetailsupdateForm!: FormGroup
-  selectedFamilyMemberid:any
+  selectedFamilyMember: any;
+  familyDetailsupdateForm!: FormGroup;
+  selectedFamilyMemberid: any;
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
- 
-    employedata={} as IProbationEmployees;
-  constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder,   public formValidation: FormValidationService,) { }
+
+  employedata = {} as IProbationEmployees;
+  constructor(
+    private modalService: NgbModal,
+    private conformationPopup: OpenModalService,
+    private http: HttpService,
+    private fb: FormBuilder,
+    public formValidation: FormValidationService,
+    public rbac: RbacService
+  ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeFamilyDetailsForm();
@@ -59,35 +73,43 @@ export class FamilyDetailsComponent implements OnInit {
     });
   }
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
   }
 
   //post family details
   postFamilyDetails(): void {
     if (this.familyDetailsForm.valid) {
-
       const payload = {
         memberName: this.familyDetailsForm.get('memberName')?.value,
         dateOfBirth: this.familyDetailsForm.get('dateOfBirth')?.value,
-        relationShipId: this.familyDetailsForm.get('relationShipId')?.value?.sno,
+        relationShipId:
+          this.familyDetailsForm.get('relationShipId')?.value?.sno,
         isDependent: this.familyDetailsForm.get('isDependent')?.value ?? false,
         isDeleted: false,
         employeeId: parseInt(this.empinfo.employeeId),
       };
-      this.subscription = this.http.postdata('FamilyMembers', payload).subscribe({
-        next: (data: any) => {
-          this.familyDetailsForm.reset();
-          this.modalService.dismissAll();
-          this.getfamilyDetailsByEmployeid();
-          this.conformationPopup.openSuccessModal('Family details added successfully');
-
-        },
-        error: (err: any) => {
-          console.error('Error saving family details:', err);
-          this.conformationPopup.openErrorModal('Family details added failed');
-
-        },
-      });
+      this.subscription = this.http
+        .postdata('FamilyMembers', payload)
+        .subscribe({
+          next: (data: any) => {
+            this.familyDetailsForm.reset();
+            this.modalService.dismissAll();
+            this.getfamilyDetailsByEmployeid();
+            this.conformationPopup.openSuccessModal(
+              'Family details added successfully'
+            );
+          },
+          error: (err: any) => {
+            console.error('Error saving family details:', err);
+            this.conformationPopup.openErrorModal(
+              'Family details added failed'
+            );
+          },
+        });
     } else {
       this.familyDetailsForm.markAllAsTouched();
     }
@@ -95,13 +117,11 @@ export class FamilyDetailsComponent implements OnInit {
 
   //get family relations dropdown
   getFamilyRelations() {
-    this.subscription = this.http
-      .getData('Relationship')
-      .subscribe({
-        next: (data: any) => {
-          this.familyRelations = data as IRelation[];
-        },
-      });
+    this.subscription = this.http.getData('Relationship').subscribe({
+      next: (data: any) => {
+        this.familyRelations = data as IRelation[];
+      },
+    });
   }
 
   //get family details by employee id
@@ -120,27 +140,30 @@ export class FamilyDetailsComponent implements OnInit {
   }
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.employedata = data as IProbationEmployees;;
-        this.patchForm(data);
-        localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
-      },
-      error: (reason) => console.error('Error fetching employee data:', reason),
-    });
+    this.subscription = this.http
+      .getData(`Employeedata/${employeeId}`)
+      .subscribe({
+        next: (data: any) => {
+          this.employedata = data as IProbationEmployees;
+          this.patchForm(data);
+          localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
+        },
+        error: (reason) =>
+          console.error('Error fetching employee data:', reason),
+      });
   }
 
   patchForm(data: any): void {
     this.familyDetailsForm.patchValue({
-      memberName: data.familyMemberName || '', 
-      dateOfBirth: data.familyMemberDOB || '', 
-      relationShipId: data.familyMemberRelation || '',  
-      isDependent: data.isDependent || false,  
+      memberName: data.familyMemberName || '',
+      dateOfBirth: data.familyMemberDOB || '',
+      relationShipId: data.familyMemberRelation || '',
+      isDependent: data.isDependent || false,
     });
-  
-    console.log(this.familyDetailsForm.value); 
+
+    console.log(this.familyDetailsForm.value);
   }
-  
+
   formatDateToLocal(dateString: string): string {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -148,78 +171,97 @@ export class FamilyDetailsComponent implements OnInit {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-  
+
   openModalupdate(content: any, familyDetail: any): void {
-    console.log(familyDetail)
-    this.selectedFamilyMembername = familyDetail.relationShipName
+    console.log(familyDetail);
+    this.selectedFamilyMembername = familyDetail.relationShipName;
     this.selectedFamilyMember = familyDetail.id;
     const selectedRelationship = this.familyRelations.find(
       (relation) => relation.sno === familyDetail.relationShipId
     );
-    const formattedDateOfBirth =this.formatDateToLocal(familyDetail.dateOfBirth)
-   
+    const formattedDateOfBirth = this.formatDateToLocal(
+      familyDetail.dateOfBirth
+    );
+
     this.familyDetailsupdateForm.patchValue({
       memberNameupdate: familyDetail.memberName,
       dateOfBirthupdate: formattedDateOfBirth,
       relationShipIdupdate: selectedRelationship,
-      isDependentupdate: familyDetail.isDependent
+      isDependentupdate: familyDetail.isDependent,
     });
 
     // Open the modal
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
+    });
   }
   updatefamilyDetails(): void {
     if (this.familyDetailsupdateForm.valid) {
       const EmpId = parseInt(this.empinfo.employeeId);
-      const selectedRelationship = this.familyDetailsupdateForm.get('relationShipIdupdate')?.value;
+      const selectedRelationship = this.familyDetailsupdateForm.get(
+        'relationShipIdupdate'
+      )?.value;
       console.log('Selected Relationship:', selectedRelationship);
       const payload = {
         id: this.selectedFamilyMember,
         employeeId: EmpId,
         memberName: this.familyDetailsupdateForm.get('memberNameupdate')?.value,
-        dateOfBirth: this.familyDetailsupdateForm.get('dateOfBirthupdate')?.value,
-        relationShipId: this.familyDetailsupdateForm.get('relationShipIdupdate')?.value?.sno,
+        dateOfBirth:
+          this.familyDetailsupdateForm.get('dateOfBirthupdate')?.value,
+        relationShipId: this.familyDetailsupdateForm.get('relationShipIdupdate')
+          ?.value?.sno,
         relationShipName: this.selectedFamilyMembername,
-        employeeStatus: "Active",
-        isDependent: this.familyDetailsupdateForm.get('isDependentupdate')?.value ?? false,
-        isDeleted: false
+        employeeStatus: 'Active',
+        isDependent:
+          this.familyDetailsupdateForm.get('isDependentupdate')?.value ?? false,
+        isDeleted: false,
       };
 
-      this.subscription = this.http.postdata(`FamilyMembers/UPDATE`, payload).subscribe({
-        next: (data: any) => {
-          this.getfamilyDetailsByEmployeid();
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Family details updated successfully')
-
-        },
-        error: (err: any) => {
-          console.error('Error updating family details:', err);
-          this.conformationPopup.openErrorModal('Failed to update family details');
-        }
-      });
+      this.subscription = this.http
+        .postdata(`FamilyMembers/UPDATE`, payload)
+        .subscribe({
+          next: (data: any) => {
+            this.getfamilyDetailsByEmployeid();
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Family details updated successfully'
+            );
+          },
+          error: (err: any) => {
+            console.error('Error updating family details:', err);
+            this.conformationPopup.openErrorModal(
+              'Failed to update family details'
+            );
+          },
+        });
     } else {
       this.familyDetailsupdateForm.markAllAsTouched();
     }
   }
 
   opendeletModal(content: any, educationDetails: any): void {
-   this.selectedFamilyMemberid=educationDetails
+    this.selectedFamilyMemberid = educationDetails;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
- 
   familyDelete() {
     this.subscription = this.http
       .getData(`FamilyMembers/deleteById/${this.selectedFamilyMemberid.id}`)
       .subscribe({
         next: (data: any) => {
-          this.modalService.dismissAll()
-          this.getfamilyDetailsByEmployeid()
-          this.conformationPopup.openSuccessModal('Family details deleted successfully')
+          this.modalService.dismissAll();
+          this.getfamilyDetailsByEmployeid();
+          this.conformationPopup.openSuccessModal(
+            'Family details deleted successfully'
+          );
         },
         error: (err: any) => {
           console.log(err);
-          this.conformationPopup.openErrorModal('Family details deleted failed')
+          this.conformationPopup.openErrorModal(
+            'Family details deleted failed'
+          );
         },
       });
   }
@@ -229,5 +271,4 @@ export class FamilyDetailsComponent implements OnInit {
       this.subscription.unsubscribe();
     }
   }
-  
 }

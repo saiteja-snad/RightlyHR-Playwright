@@ -4,12 +4,14 @@
       <div>
         <span class="component-sub-header">Contact Details</span>
       </div>
-      @if(!buttons &&(employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase()
-      !==
-      'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
-      employedata?.empstatus?.toLowerCase()
-      !== 'trainee inactive')){
-      <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+      @if(rbac.allowedToAccess('Employee Info Contact Details.update')){
+          @if(!buttons &&(employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase()
+          !==
+          'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+          employedata?.empstatus?.toLowerCase()
+          !== 'trainee inactive')){
+          <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+          }
       }
       @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee
       prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==

@@ -4,10 +4,12 @@
       <div>
         <span class="component-sub-header">Current Address</span>
       </div>
-      @if(!buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
-      && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
-      <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
-      }
+      @if(rbac.allowedToAccess('Employee Info Address Details.update')){
+          @if(!buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
+          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
+            <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+          }
+     }
       @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
       && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
       <div class="d-flex justify-content-end gap-2">

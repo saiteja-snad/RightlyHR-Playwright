@@ -4,12 +4,14 @@
       <div>
         <span class="component-sub-header">Emergency Contact 1</span>
       </div>
-      @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !==
-      'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
-      employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-      <div *ngIf="!buttons">
-        <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
-      </div>}
+      @if(rbac.allowedToAccess('Employee Info Emergency Contact Details.update')){
+        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !==
+        'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+        employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+        <div *ngIf="!buttons">
+          <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+        </div>}
+      }
       
       <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
         <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>

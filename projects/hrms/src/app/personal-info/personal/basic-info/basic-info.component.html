@@ -7,7 +7,9 @@
       && empyployeedata?.empstatus?.toLowerCase() !== 'inactive' && empyployeedata?.empstatus?.toLowerCase() !==
       'trainee inactive' )){
      <div>
+      @if(rbac.allowedToAccess('Employee Info Basic Information.update')){
       <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+      }
      </div>
       }
       @if(buttons){

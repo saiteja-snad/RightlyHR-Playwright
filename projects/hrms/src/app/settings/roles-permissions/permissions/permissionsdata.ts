@@ -641,6 +641,7 @@ export const permissionsData = [
 
     //Employee Info Personal Sub Tabs Section
     { fields: 'Employee Info Basic Information', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Documents Verification', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Address Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Contact Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Emergency Contact Details', View: false, Update: false, Create: false, Delete: false },
@@ -648,7 +649,7 @@ export const permissionsData = [
     { fields: 'Employee Info Identity Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Family Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Bank Details', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Employee Info Visa Details', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Employee Info Visa Details', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Documents Sub Tabs Section
     { fields: 'Employee Info Documents', View: false, Update: false, Create: false, Delete: false },

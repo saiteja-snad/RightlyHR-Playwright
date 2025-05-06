@@ -96,7 +96,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.selectedworkcoutrycode.set(data.workphonecountryflag);
     
-        this.selectedpersonalnumbercode.set(data.mobilephonecountryflag);
+        this.selectedpersonalnumbercode.set(data.contactnumbercountryflag);
        
       },
       error: (reason) =>{
@@ -135,7 +135,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       workPhone: worknumber,
       mobilePhoneCountryCode: this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode,
       workPhoneCountryCode: this.selectedDialCode || this.employedata.workPhoneCountryCode,
-      mobilephonecountryflag:this.selectedCountryCodephoneflag  || this.employedata.mobilephonecountryflag,
+      contactnumbercountryflag:this.selectedCountryCodephoneflag  || this.employedata.contactnumbercountryflag,
       workPhoneCountryFlag:this.selectedCountryCodegflag ||  this.employedata.workPhoneCountryFlag
      };
 

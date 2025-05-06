@@ -19,6 +19,7 @@ export class PersonalPersonalTabsComponent {
     { label: 'Education Details', link: '/personalinfo/personal/education-details' ,permission: { feature: 'Employee Education', action: 'view' }},
     { label: 'Identity Details', link: '/personalinfo/personal/identity-details' ,permission: { feature: 'Employee Identity', action: 'view' }},
     { label: 'Family Details', link: '/personalinfo/personal/family-details',permission: { feature: 'Employee Family Details', action: 'view' } },
-    { label: 'Bank Details', link: '/personalinfo/personal/bank-details',permission: { feature: 'Employee Bank Details', action: 'view' } }
+    { label: 'Bank Details', link: '/personalinfo/personal/bank-details',permission: { feature: 'Employee Bank Details', action: 'view' } },
+    { label: 'Visa Details', link: '/personalinfo/personal/visa-details', }
   ];
 }

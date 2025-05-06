@@ -132,8 +132,8 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         this.empyployeedata = data;
         this.patchForm(data);
         this.dateofbirth = this.formatDateToLocal(this.empyployeedata.dob)
-
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
+        this.changemaritalstatus(); 
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
@@ -196,7 +196,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
       empStatus: 'Active',
-      marriageDate: formValue.marriageDate,
+      marriedDate: formValue.marriageDate,
     };
 
     console.log(updatePayload);
@@ -253,9 +253,11 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
   changemaritalstatus(): void {
-    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married' || this.empyployeedata?.maritalStatus === 'Married';
-
-    if (maritalStatus) {
+    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 || this.basicInfoForm.get('maritalStatus')?.value ||this.empyployeedata.maritalStatus;
+  
+    console.log('Marital Status:', maritalStatus);
+  
+    if (maritalStatus === 'Married') {
       // Add the required validator to the marriageDate field
       this.basicInfoForm.get('marriageDate')?.setValidators([Validators.required]);
     } else {
@@ -263,7 +265,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.basicInfoForm.get('marriageDate')?.clearValidators();
       this.basicInfoForm.get('marriageDate')?.setValue(null); // Reset the marriage date field
     }
-
+  
     // Update the validation state of the marriageDate field
     this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
   }

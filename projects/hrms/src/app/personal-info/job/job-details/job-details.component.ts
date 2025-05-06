@@ -31,6 +31,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   jobDetailsForm!: FormGroup;
   subscription!: Subscription;
   empinfo: any;
+  employedata:any
   departmentDetails = [] as IDepartment[];
   JobroleDetails: any;
   JobtypeDetails = [] as IJobtype[];
@@ -197,6 +198,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.employedata=data
         this.joiningDate = this.formatDateToLocal(data.dateOfJoining)
       },
       error: (reason: any) => console.error('Error fetching employee data:', reason),
@@ -411,6 +413,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.jobDetailsupdateForm.get('subLocation')?.reset()
     this.jobDetailsupdateForm.get('shiftName')?.reset()
     this.jobDetailsupdateForm.get('shiftName')?.setValue(null);
+    this.shiftDropdown=[]
     
     if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
@@ -805,12 +808,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata("JobDetails/UPDATER", sdata).subscribe({
       next: (data: any) => {
         // Show success modal
+        this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Job Details deleted successfully');
         // Refresh the job details list
         this.getJobDetails();
         this.http.setBasicDetails();
         // Close the modal
-        this.modalService.dismissAll();
+      
       },
       error: (err: any) => {
         console.error('Error deleting job details:', err);

@@ -31,18 +31,19 @@
     </div>
   </div>
 </div>
-  
+
 <ng-template #changermmodal let-modal>
-  <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-3">
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">{{'Change RM'| translate}}</p>
       </div>
       <div>
-        <a (click)="modal.dismiss();teamForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="closeModal()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
+    
+    <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="teamForm" (ngSubmit)="updateTeamRM()">
         <div class="row">
           <div class="col-md-6 mb-3">
@@ -50,36 +51,46 @@
               {{'Select Team Member(s)'| translate}} <span class="text-danger">*</span>
             </label>
             <div class="custom-p-select-content">
-              <p-select formControlName="teamMembers" id="teamMembers" optionLabel="name" [options]="teamMembersdata"
-                placeholder="Select Team Member(s)" class="form-select custom-select" multiple="true"
+              <p-select formControlName="teamMembers"  id="teamMembers" optionLabel="name" [options]="teamMembersdata"
+                placeholder="Select Team Member(s)" class="form-select custom-select" multiple="true" filterBy="name" filter="true"
                 (onChange)="onSelectManager($event, 'teamMembers')">
               </p-select>
             </div>
-            <div class="error-msg"
-            *ngIf="teamForm.get('teamMembers')?.invalid && teamForm.get('teamMembers')?.touched">
-            Team Members is required
-        </div>
+            <div class="error-msg" *ngIf="teamForm.get('teamMembers')?.invalid && teamForm.get('teamMembers')?.touched">
+              Team Members is required
+            </div>
           </div>
 
           <div class="col-md-6 mb-3">
-            <label class="form-label custom-label mb-2">{{'Select Reporting Manager' | translate}} <span class="text-danger">*</span></label>
+            <label class="form-label custom-label mb-2">{{'Select Reporting Manager' | translate}} <span
+                class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name" [options]="managers"
+              <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name" [options]="managers" filterBy="name" filter="true"
                 placeholder="Select Reporting Manager" class="form-select custom-select"
                 (onChange)="onSelectManager($event, 'reportingManager')">
               </p-select>
             </div>
             <div class="error-msg"
-            *ngIf="teamForm.get('reportingManager')?.invalid && teamForm.get('reportingManager')?.touched">
-            Reporting Manager is required
-        </div>
+              *ngIf="teamForm.get('reportingManager')?.invalid && teamForm.get('reportingManager')?.touched">
+              Reporting Manager is required
+            </div>
           </div>
         </div>
 
         <!-- Buttons -->
-        <div class="d-flex justify-content-end gap-3">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();teamForm.reset()">{{'Close' | translate}}</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="teamForm.invalid">{{'Submit' | translate}}</button>
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();teamForm.reset()">{{'Close' |
+            translate}}</button>
+            <button type="submit" class="custom-btn btn-primary"[disabled]="teamForm.invalid || spinnerLoader">
+              @if(spinnerLoader){
+                  <div class="button-loader-content">
+                      <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                      <span>{{'Loading...'}}</span>
+                  </div>
+              }@else {
+              <span>{{'Submit'| translate}}</span>
+              }
+          </button>
         </div>
       </form>
     </div>

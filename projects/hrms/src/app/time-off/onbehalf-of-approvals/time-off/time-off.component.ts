@@ -38,6 +38,7 @@ export class TimeOffComponent {
   approverComments = [] as LeaveApproverComment[];
   leaveEntitlementsList = {} as ICategoryDetails;
   selectedLeaveData = {} as any;
+  spinnerLoader = false;
   @ViewChild('commentspopup') modalContent: any;
   options = [
     { label: 10, value: 10 },
@@ -198,8 +199,7 @@ export class TimeOffComponent {
       comments: this.selectedLeaveData.comments,
       approvedBy: this.empinfo.employeeId.toString()
     }
-    this.sharedModalService.openLoaderModal('Accepting Request, Please wait...');
-
+    this.spinnerLoader = true;
     this.subscription = this.http.putData(`PendingApproval/${data.request.approvalHeader.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
@@ -210,10 +210,12 @@ export class TimeOffComponent {
         }, 2000);
       },
       error: (reason: any) => {
+        this.spinnerLoader = false;
         this.sharedModalService.openErrorModal('Request Accepted Failed');
       },
       complete: () => {
         this.http.triggerActionSignal();
+        this.spinnerLoader = false;
        },
     })
   }
@@ -224,8 +226,7 @@ export class TimeOffComponent {
       comments: this.selectedLeaveData.comments,
       approvedBy: this.empinfo.employeeId.toString()
     }
-    this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
-
+    this.spinnerLoader = true;
     this.subscription = this.http.putData(`PendingApproval/${data.request.approvalHeader.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
@@ -236,10 +237,12 @@ export class TimeOffComponent {
         }, 2000);
       },
       error: (reason: any) => {
+        this.spinnerLoader = false;
         this.sharedModalService.openErrorModal('Request Rejected Failed');
       },
       complete: () => { 
         this.http.triggerActionSignal();
+        this.spinnerLoader = false;
       },
     })
   }
@@ -249,7 +252,7 @@ export class TimeOffComponent {
       status: "Processed",
       approvedBy: this.empinfo.employeeId.toString()
     }
-    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
+    this.spinnerLoader = true;
     this.subscription = this.http.putData(`PendingApproval/process/${data.approvalHeader.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
@@ -261,10 +264,12 @@ export class TimeOffComponent {
         }, 2000);
       },
       error: (reason: any) => {
+        this.spinnerLoader = false;
         this.sharedModalService.openSuccessModal('Request Processed Failed');
       },
       complete: () => { 
         this.http.triggerActionSignal();
+        this.spinnerLoader = false;
       },
     })
   }

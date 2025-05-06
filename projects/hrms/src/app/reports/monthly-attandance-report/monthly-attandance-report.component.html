@@ -6,7 +6,7 @@
 
     <div class="card custom-component-right-content p-3">
         <!--right data-->
-        <form [formGroup]="monthlyReportForm" (ngSubmit)="generateReport(monthlyReportForm)" class="custom-width">
+        <form autocomplete="off" [formGroup]="monthlyReportForm" (ngSubmit)="generateReport(monthlyReportForm)" class="custom-width">
             <div class="mb-3">
                 <label class="form-label custom-label mb-2">{{ "Month" | translate }}<span class="text-danger">*</span></label>
                 <div class="custom-p-select-content">

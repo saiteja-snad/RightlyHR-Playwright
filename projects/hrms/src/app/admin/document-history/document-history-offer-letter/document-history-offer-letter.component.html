@@ -73,7 +73,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="rejectDocument" (ngSubmit)="PostReasonandUpdateOfferDetails()">
+            <form autocomplete="off" [formGroup]="rejectDocument" (ngSubmit)="PostReasonandUpdateOfferDetails()">
                 <div class="mb-3">
                     <label for="rejectReason">Reject Reason<span class="error-msg">*</span></label>
                     <textarea type="text" name="rejectReason" class="form-control" placeholder="Please provide reason for rejection" 

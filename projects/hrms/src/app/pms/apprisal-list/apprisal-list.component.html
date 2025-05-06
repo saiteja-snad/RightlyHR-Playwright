@@ -29,7 +29,7 @@
     </div>
 
     <!-- Drop downs -->
-    <form [formGroup]="dependentdropdowns">
+    <form autocomplete="off" [formGroup]="dependentdropdowns">
         <div class="d-flex flex-wrap gap-3 w-100 mb-3">
             <!-- Review Cycle Name -->
             <div>
@@ -339,7 +339,7 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form [formGroup]="reviewtemplatedropdowns" (ngSubmit)="assignReviewTemplate(reviewtemplatedropdowns)">
+            <form autocomplete="off" [formGroup]="reviewtemplatedropdowns" (ngSubmit)="assignReviewTemplate(reviewtemplatedropdowns)">
                 <div>
                     <label for="" class="form-label custom-label custom-label">{{'Review Template' | translate}}<span
                             class="text-danger">*</span></label>
@@ -403,7 +403,7 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form [formGroup]="Effectivedatefrom" (ngSubmit)="genarateAppraisalletter(seletedid, Effectivedatefrom)">
+            <form autocomplete="off" [formGroup]="Effectivedatefrom" (ngSubmit)="genarateAppraisalletter(seletedid, Effectivedatefrom)">
                 <div class="mb-3">
                     <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}<span class="text-danger">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE" id="effectiveFrom"
@@ -462,7 +462,7 @@
 <!-- Generate Promotion Letter Modal -->
 <ng-template #singlepromationletter let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <form [formGroup]="Effectivedatefrom" (ngSubmit)="genaratePromotionletter(seletedid, Effectivedatefrom)">
+        <form autocomplete="off" [formGroup]="Effectivedatefrom" (ngSubmit)="genaratePromotionletter(seletedid, Effectivedatefrom)">
             <div class="custom-poup-header-content popup-header-border">
                 <div>
                     <p class="popup-heading mb-0">{{'Generate Promotion Letter' | translate}}</p>
@@ -538,7 +538,7 @@
 <!-- Add Employee Modal -->
 <ng-template #addEmployee let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <form [formGroup]="addEmployeeForm" (ngSubmit)="addEmployeetoreviewcylce()">
+        <form autocomplete="off" [formGroup]="addEmployeeForm" (ngSubmit)="addEmployeetoreviewcylce()">
             <div class="custom-poup-header-content popup-header-border">
                 <div>
                     <p class="popup-heading mb-0">{{'Add Employee' | translate}}</p>
@@ -626,7 +626,7 @@
 <!-- Generate Multiple Appraisal Letters Modal -->
 <ng-template #appraisaletters let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <form [formGroup]="Effectivedatefrom" (ngSubmit)="generateLetters()">
+        <form autocomplete="off" [formGroup]="Effectivedatefrom" (ngSubmit)="generateLetters()">
             <div class="custom-poup-header-content popup-header-border">
                 <div>
                     <p class="popup-heading mb-0">{{'Generate Appraisal Letter' | translate}}</p>
@@ -688,7 +688,7 @@
 <!-- Promotion letter Generation -->
 <ng-template #promationletter let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <form [formGroup]="Effectivedatefrom" (ngSubmit)="generatePromotionLetters(Effectivedatefrom)">
+        <form autocomplete="off" [formGroup]="Effectivedatefrom" (ngSubmit)="generatePromotionLetters(Effectivedatefrom)">
             <div class="custom-poup-header-content popup-header-border">
                 <div>
                     <p class="popup-heading mb-0">{{'Generate Promotion Letter' | translate}}</p>

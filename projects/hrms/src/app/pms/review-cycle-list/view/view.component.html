@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="custom-main-popup-content">
-        <form [formGroup]="reviewCycleupdateForm" (ngSubmit)="onReviewCycleintialUpdate()">
+        <form autocomplete="off" [formGroup]="reviewCycleupdateForm" (ngSubmit)="onReviewCycleintialUpdate()">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="" class="form-label custom-label">{{'Review Cycle Name'|translate}}<span

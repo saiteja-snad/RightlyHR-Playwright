@@ -4,7 +4,7 @@
     <div class="component-header">Reports</div>
 
     <div>
-      <form [formGroup]="yearlyReportForm" (ngSubmit)="generateYearlyReport()">
+      <form autocomplete="off" [formGroup]="yearlyReportForm" (ngSubmit)="generateYearlyReport()">
         <div class="d-flex align-items-center gap-3">
 
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">

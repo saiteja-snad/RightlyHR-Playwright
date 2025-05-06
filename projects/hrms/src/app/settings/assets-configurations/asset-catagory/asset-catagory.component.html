@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <!-- Add Input-->
     <div class="mb-3">
-        <form [formGroup]="assetCategorydata" (ngSubmit)="postasset(assetCategorydata)" 
+        <form autocomplete="off" [formGroup]="assetCategorydata" (ngSubmit)="postasset(assetCategorydata)" 
         *ngIf="rbac.allowedToAccess('Asset Catagory.create')">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter asset Category"
@@ -70,7 +70,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content ">
-            <form [formGroup]="assetCategorydataForm" (ngSubmit)="updateassetscategory(assetCategorydataForm);modal.dismiss()">
+            <form autocomplete="off" [formGroup]="assetCategorydataForm" (ngSubmit)="updateassetscategory(assetCategorydataForm);modal.dismiss()">
                 <div class="mb-3">
                     <label for="assetCategory" class="form-label custom-label mb-2">Asset Category
                         <span class="text-danger">*</span></label>

@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-3">
-            <form [formGroup]="compForm" (ngSubmit)="postcompensation(compForm)">
+            <form autocomplete="off" [formGroup]="compForm" (ngSubmit)="postcompensation(compForm)">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
@@ -189,7 +189,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-3">
-            <form [formGroup]="compupdateForm" (ngSubmit)="updatecompensation(compupdateForm)">
+            <form autocomplete="off" [formGroup]="compupdateForm" (ngSubmit)="updatecompensation(compupdateForm)">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">

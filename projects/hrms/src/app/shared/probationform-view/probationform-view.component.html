@@ -26,7 +26,7 @@
                 </div>
             </div>
 
-            <form name="personal" #personal="ngForm">
+            <form autocomplete="off" name="personal" #personal="ngForm">
                 <div *ngFor="let section of dynamicFormQuestions;let sectionIndex=index">
                     <div class="mb-2"><b>{{section.sectionName}}</b></div>
                     <div class="row mt-2">

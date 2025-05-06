@@ -84,7 +84,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="certificationForm" (ngSubmit)="postCertificationDetails()">
+            <form autocomplete="off" [formGroup]="certificationForm" (ngSubmit)="postCertificationDetails()">
                 <div class="row">
                     @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
@@ -93,7 +93,7 @@
                         </label>
                         <input type="text" class="form-control custom-input" id="certificationName"
                             formControlName="certificationName" placeholder="Please enter certification name"
-                            (keypress)="formValidation.restrictInput($event)" />
+                            (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                         <div class="error-msg"
                             *ngIf="certificationForm.get('certificationName')?.invalid && certificationForm.get('certificationName')?.touched">
                             <div *ngIf="certificationForm.get('certificationName')?.errors?.['required']">Certification
@@ -211,7 +211,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="updateCertificationForm" (ngSubmit)="updateCertificationDetails()">
+            <form autocomplete="off" [formGroup]="updateCertificationForm" (ngSubmit)="updateCertificationDetails()">
                 <div class="row">
                     @if(this.rbac.allowedToAccess('Certification Details.view')){
                     <div class="col-md-6 mb-3">
@@ -220,7 +220,7 @@
                         </label>
                         <input type="text" class="form-control custom-input" id="certificationName"
                             formControlName="certificationName" placeholder="Please enter certification name"
-                            (keypress)="formValidation.restrictInput($event)" />
+                            (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('certificationName')?.invalid && updateCertificationForm.get('certificationName')?.touched">
                             <div *ngIf="updateCertificationForm.get('certificationName')?.errors?.['required']">

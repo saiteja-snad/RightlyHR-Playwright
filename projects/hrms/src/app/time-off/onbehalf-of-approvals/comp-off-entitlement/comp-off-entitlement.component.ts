@@ -44,6 +44,7 @@ export class CompOffEntitlementComponent {
   @ViewChild('commentspopup') modalContent: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  spinnerLoader = false;
 
   constructor(
     private modalService: NgbModal, 
@@ -130,19 +131,20 @@ export class CompOffEntitlementComponent {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
     };
-    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
-
+    this.spinnerLoader = true;
     this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
       },
       error: (reason: any) => {
+        this.spinnerLoader = false;
         this.sharedModalService.openErrorModal(reason.error.Message);
       },
       complete: () => {
         this.http.triggerActionSignal();
         this.getAllPendingApprovals();
+        this.spinnerLoader = false;
       },
     });
   }
@@ -155,18 +157,21 @@ export class CompOffEntitlementComponent {
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId?.toString(),
       };
+      this.spinnerLoader = true;
       this.sharedModalService.openLoaderModal('Accepting Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request Approved Successfully');
+          this.sharedModalService.openSuccessModal('Request Accepted Successfully');
           this.http.triggerActionSignal();
         },
         error: (reason: any) => {
+          this.spinnerLoader = false;
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
           this.getAllPendingApprovals();
+          this.spinnerLoader = false;
         },
       });
     }
@@ -179,8 +184,7 @@ export class CompOffEntitlementComponent {
         status: 'Rejected',
         comments: formData.comments,
       };
-      this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
-
+      this.spinnerLoader = true;
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
@@ -190,10 +194,12 @@ export class CompOffEntitlementComponent {
           this.http.triggerActionSignal();
         },
         error: (reason: any) => {
+          this.spinnerLoader = true;
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
           this.getAllPendingApprovals();
+          this.spinnerLoader = false;
         },
       });
     }

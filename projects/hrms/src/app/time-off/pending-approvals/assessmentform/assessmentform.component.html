@@ -27,7 +27,7 @@
         </div>
   
         <!--form Content-->
-        <form name="personal" #personal="ngForm">
+        <form autocomplete="off" name="personal" #personal="ngForm">
           <div *ngFor="let section of dynamicFormQuestions;let i=index">
             <div class="space" [ngClass]="{ 'set-height': i === indexspace }"></div>
             <div class="mb-2"><b>{{section.sectionName}}</b><span class="text-danger" *ngIf="displayTextArea">*</span></div>
@@ -168,7 +168,7 @@
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text">{{'Confirm Probation status?' | translate}}</p>
     </div>
-    <form *ngIf="formemployeedetails.approvalHeader?.currentapprovalStage != formemployeedetails.approvalHeader?.finalapprovalStage"
+    <form autocomplete="off" *ngIf="formemployeedetails.approvalHeader?.currentapprovalStage != formemployeedetails.approvalHeader?.finalapprovalStage"
       name="acceptForm" #acceptForm="ngForm" (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)">
       <div class="custom-main-popup-content">
         <div class="form-outline d-flex justify-content-center align-items-center gap-3 mb-4">

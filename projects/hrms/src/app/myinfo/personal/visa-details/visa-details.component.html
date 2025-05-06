@@ -71,7 +71,7 @@
       </div>
     </div>
     <div class="custom-main-popup-content ">
-      <form [formGroup]="visaForm" (ngSubmit)="postvisa()">
+      <form autocomplete="off" [formGroup]="visaForm" (ngSubmit)="postvisa()">
         <div class="row mb-3">
           <div class="col-6 mb-3">
             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Visa Type<span
@@ -88,7 +88,7 @@
             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country Name<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="Countrydetails" optionLabel="countryName" optionValue="countryName"
+              <p-select [options]="Countrydetails" optionLabel="countryName" [filter]="true" filterBy="countryName" optionValue="countryName"
                 formControlName="countryname" placeholder="Please select country "
                 class="form-select custom-select"></p-select>
             </div>
@@ -149,7 +149,7 @@
       </div>
     </div>
     <div class="custom-main-popup-content ">
-      <form [formGroup]="visaupdateForm" (ngSubmit)="updatevisa()">
+      <form autocomplete="off" [formGroup]="visaupdateForm" (ngSubmit)="updatevisa()">
         <div class="row mb-3">
           <div class="col-6 mb-3">
             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Visa Type<span
@@ -166,7 +166,7 @@
             <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country Name<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="Countrydetails" optionLabel="countryName" optionValue="countryName"
+              <p-select [options]="Countrydetails" [filter]="true" filterBy="countryName" optionLabel="countryName" optionValue="countryName"
                 formControlName="countryname" placeholder="Please select country "
                 class="form-select custom-select"></p-select>
             </div>

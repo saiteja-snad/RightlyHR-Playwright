@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="bankDetailsForm" (ngSubmit)="postBankDetails()">
+            <form autocomplete="off" [formGroup]="bankDetailsForm" (ngSubmit)="postBankDetails()">
                 <div class="row">
                     @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">
@@ -197,7 +197,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content ">
-            <form [formGroup]="bankDetailsUpdateForm" (ngSubmit)="updateBankDetails()">
+            <form autocomplete="off" [formGroup]="bankDetailsUpdateForm" (ngSubmit)="updateBankDetails()">
                 <div class="row">
                     @if(this.rbac.allowedToAccess('Bank Details.view')){
                     <div class="col-md-6 mb-3">

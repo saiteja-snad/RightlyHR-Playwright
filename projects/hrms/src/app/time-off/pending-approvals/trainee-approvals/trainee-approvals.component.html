@@ -115,7 +115,7 @@
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
         </div>
-        <form name="acceptForm" #acceptForm="ngForm" (ngSubmit)=" handleAccept(acceptForm)">
+        <form autocomplete="off" name="acceptForm" #acceptForm="ngForm" (ngSubmit)=" handleAccept(acceptForm)">
             <div class="custom-main-popup-content">
                 <label for="exampleFormControlTextarea1" class="form-label custom-label">Feedback
                     <span class="error-msg">*</span></label>
@@ -150,7 +150,7 @@
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
         </div>
-        <form name="acceptForm"  #acceptForm="ngForm">
+        <form autocomplete="off" name="acceptForm"  #acceptForm="ngForm">
             <div class="custom-main-popup-content">
                 <div class="form-outline d-flex justify-content-center  gap-3 mb-3 ">
                     <div class="form-check form-check-inline">

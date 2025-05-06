@@ -134,7 +134,7 @@
                 <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
                 <p class="confirmation-text">{{'Are you sure you want to approve Separation Request?' | translate}}</p>
             </div>
-            <form name="acceptForm" #acceptForm="ngForm" (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)"
+            <form autocomplete="off" name="acceptForm" #acceptForm="ngForm" (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)"
                 >
                 @if(selectedSpRequestData.spIsEarlyRelieveing){
                 <div class="my-3 text-center">
@@ -313,25 +313,24 @@
             <p class="confirmation-text">{{'Are you sure you want to reject this request?' | translate}}</p>
         </div>
         <div class="custom-main-popup-content">
-            <form name="Separationrequestrejected" class="w-100" #Separationrequestrejected="ngForm"
+            <form autocomplete="off" name="Separationrequestrejected" class="w-100" #Separationrequestrejected="ngForm"
                 (ngSubmit)="Separationrequestrejected.valid && handleReject(Separationrequestrejected)">
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label custom-label mb-2">
-                        {{'Enter reason' | translate}}
-                        <span class="error-msg">*</span></label>
+                        {{'Reject Reason' | translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please enter reason" name="notes" #notes="ngModel" [maxLength]="250"
+                        placeholder="Please enter comments" name="notes" #notes="ngModel" [maxLength]="250"
                         [(ngModel)]="selectedSpRequestData.rejectedReason" required rows="3"></textarea>
                     <div class="textarea-count-text">
                         {{selectedSpRequestData?.rejectedReason?.length?selectedSpRequestData?.rejectedReason?.length:0}}/250
                     </div>
                     <div class="error-msg" *ngIf="(notes.touched && notes.invalid) || 
-                    (notes.invalid && Separationrequestrejected.submitted) || (notes.errors?.['pattern'])">Reason is
+                    (notes.invalid && Separationrequestrejected.submitted) || (notes.errors?.['pattern'])">Reject Reason is
                         required</div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary"
-                    (click)="closepopup(rejectconfirmationpopup)">{{'Cancel'|translate}}</button>
+                    (click)="closepopup(rejectconfirmationpopup)">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="Separationrequestrejected.invalid||isLoading">
                         @if(!isLoading){ {{'Approve'|translate}} }
                         @else {
@@ -354,7 +353,7 @@
             <p class="confirmation-text">{{'Are you sure you want to process Separation Request?' | translate}}</p>
         </div>
 
-        <form name="acceptFormforprocess" #acceptFormforprocess="ngForm"
+        <form autocomplete="off" name="acceptFormforprocess" #acceptFormforprocess="ngForm"
             (ngSubmit)="acceptFormforprocess.valid && handleProcess(acceptFormforprocess)"
             class="custom-main-popup-content">
             <div class="mb-3 mt-3 text-center" *ngIf="selectedSpRequestData.spIsEarlyRelieveing">
@@ -510,11 +509,11 @@
 
             <div class="custom-modal-footer">
                 <button type="button" class="custom-btn btn-secondary"
-                    (click)="closepopup(confirmationpopup)">{{'Cancel'|translate}}</button>
+                    (click)="closepopup(confirmationpopup)">{{'Close'|translate}}</button>
                 <button type="submit" class="custom-btn btn-primary"
                     [disabled]="acceptFormforprocess.invalid||isLoading||!buttondisable">
                     @if(!isLoading){
-                    {{'Approve'|translate}}
+                    {{'Process'|translate}}
                     }
                     @else {
                     <div class="button-loader-content" *ngIf="isLoading">
@@ -619,7 +618,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to cancel?</p>
+            <p class="confirmation-text">Are you sure you want to close?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
@@ -633,7 +632,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text"> Are you sure you want to cancel?</p>
+            <p class="confirmation-text"> Are you sure you want to close?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>

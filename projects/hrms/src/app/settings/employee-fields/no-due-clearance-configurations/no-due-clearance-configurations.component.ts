@@ -46,11 +46,11 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     public rbac: RbacService,
     private conformationPopup: OpenModalService
   ) { }
-  currentItem:any;
+  currentItem: any;
   ngOnInit(): void {
-    this.employeeData = JSON.parse(localStorage.getItem('rightlyHrUser')||'{}')
+    this.employeeData = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}')
     this.getAllNoDues();
-    
+
   }
 
   getAllNoDues() {
@@ -84,17 +84,17 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       role: [''],
       employee: [''],
     });
-    
-    
+
+
   }
   intializeForm2() {
     this.updateDueForm = this.fb.group({
       UpdateselectedType: ['', Validators.required],
       Updatedepartment: [''],
       UpdateselectedEmpRole: [''],
-      Updateemployee: [], 
+      Updateemployee: [],
       role: [''],
-      managerType: [''] 
+      managerType: ['']
     });
   }
   getAllRoles(): void {
@@ -129,7 +129,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
   //         ...user,
   //         fullName: `${user.firstName} ${user.middleName ? user.middleName + ' ' : ''}${user.lastName}`
   //       }));
-       
+
   //       if (this.currentItem) {
   //         this.patchUpdateDueForm(this.currentItem);
   //       }
@@ -143,7 +143,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     const payload = {
       status: 'Active'
     };
-  
+
     return new Promise((resolve, reject) => {
       this.http.getData(`Employeedata/getAll?status=${payload.status}`).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res: any) => {
@@ -152,7 +152,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
             ...user,
             fullName: `${user.firstName} ${user.middleName ? user.middleName + ' ' : ''}${user.lastName}`
           }));
-  
+
           // Resolve the promise when users are loaded
           resolve(this.usersList);
         },
@@ -163,7 +163,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       });
     });
   }
-  
+
   selectedUserDetails(event: any) {
     // this.noDueForm.get('role')?.clearValidators();
     // this.noDueForm.get('selectedType')?.clearValidators();
@@ -176,7 +176,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     }
 
     console.log(this.noDueForm);
-    
+
   }
 
   watchTypeChange() {
@@ -185,7 +185,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     const managerControl = this.noDueForm.get('managerType');
     const roleControl = this.noDueForm.get('role');
     const employeeControl = this.noDueForm.get('employee');
-  
+
     this.noDueForm.get('selectedType')?.valueChanges.subscribe(value => {
       if (value === 'DEPT') {
         deptControl?.setValidators(Validators.required);
@@ -204,29 +204,29 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
 
         this.noDueForm.get('selectedEmpRole')?.reset();
       }
-  
+
       deptControl?.updateValueAndValidity();
       managerControl?.updateValueAndValidity();
     });
-  
+
     this.noDueForm.get('selectedEmpRole')?.valueChanges.subscribe(value => {
       if (value === 'EMPLOYEE') {
         employeeControl?.setValidators(Validators.required);
         roleControl?.clearValidators();
         roleControl?.reset();
         console.log(this.noDueForm);
-        
+
       } else if (value === 'ROLE') {
         roleControl?.setValidators(Validators.required);
         employeeControl?.clearValidators();
         employeeControl?.reset();
       }
-  
+
       roleControl?.updateValueAndValidity();
       employeeControl?.updateValueAndValidity();
     });
   }
-  
+
   watchTypeupdateChange() {
     const deptControl = this.updateDueForm.get('Updatedepartment');
     const managerControl = this.updateDueForm.get('managerType');
@@ -274,7 +274,6 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       form.markAllAsTouched();
       return;
     }
-  
     const formValues = this.noDueForm.value;
     const currentDate = new Date().toISOString();
     let authorityEntity = '';
@@ -288,12 +287,9 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       updatedAt: currentDate,
       approverType: formValues.selectedType.toString(),
     };
-  
     if (formValues.selectedType === 'DEPT') {
       authorityEntity = 'DEPT'.toString();
-  
       postData.departmentId = formValues.department?.sno;
-  
       if (formValues.selectedEmpRole === 'EMPLOYEE') {
         authorityEntityValue = (formValues.employee || [])
           .map((emp: any) => emp.employeeId)
@@ -301,24 +297,21 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       } else if (formValues.selectedEmpRole === 'ROLE') {
         authorityEntityValue = formValues.role?.id ?? '';
       }
-  
     } else if (formValues.selectedType === 'EMPMNGR') {
       authorityEntity = 'EMPMNGR'.toString();
       authorityEntityValue = formValues.managerType?.value ?? '';
     }
-  
     postData.authorityEntity = authorityEntity;
     postData.authorityEntityValue = authorityEntityValue;
-  
     this.http.postdata('NoDueCleranceConfiguration', postData).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.modalService.dismissAll();
         this.modal.openSuccessModal('No Due Clearance Added Successfully');
       },
       error: (err) => {
-        this.modal.openErrorModal("Failed to add No Due Clearance");
+        this.modal.openErrorModal(err.error.message);
       },
-      complete: () =>{
+      complete: () => {
         this.noDueForm.reset();
         this.getAllNoDues();
       }
@@ -345,29 +338,22 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       updatedAt: currentDate,
       approverType: formValues.UpdateselectedType.toString(),
     };
-  
     if (formValues.UpdateselectedType === 'DEPT') {
       authorityEntity = 'DEPT'.toString();
-  
       postData.departmentId = formValues.Updatedepartment?.sno;
-  
       if (formValues.UpdateselectedEmpRole === 'EMPLOYEE') {
         authorityEntityValue = (formValues.Updateemployee || [])
           .map((emp: any) => emp.employeeId)
           .join(',');
       } else if (formValues.UpdateselectedEmpRole === 'ROLE') {
         authorityEntityValue = formValues.role?.id ?? '';
-        
       }
-  
     } else if (formValues.UpdateselectedType === 'EMPMNGR') {
       authorityEntity = 'EMPMNGR'.toString();
       authorityEntityValue = formValues.managerType?.value ?? '';
     }
-  
     postData.authorityEntity = authorityEntity;
     postData.authorityEntityValue = authorityEntityValue;
-  console.log("postData",postData);
     this.http.putData(`NoDueCleranceConfiguration/UpdateNoDueConfig/${this.currentItem.id}`, postData).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.modalService.dismissAll();
@@ -377,97 +363,89 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
         console.log(err);
         this.modal.openErrorModal("Failed to Update No Due Clearance");
       },
-      complete: () =>{
+      complete: () => {
         this.updateDueForm.reset();
         this.getAllNoDues();
       }
     });
   }
+
   // Method to open the update modal dialog
   openupdateDialog(item: any) {
-    this.currentItem = item;  
+    this.currentItem = item;
     this.intializeForm2();
     this.watchTypeupdateChange();
     this.getAllRoles();
     this.getAllDepartments();
     this.getUsers().then(() => {
-      this.patchUpdateDueForm(this.currentItem);  
+      this.patchUpdateDueForm(this.currentItem);
     }).catch(err => {
-      console.error('Failed to load users:', err); 
+      console.error('Failed to load users:', err);
     });
   }
-  
-    patchUpdateDueForm(item: any) {
-      const approverEmpRoleValue = item.roleType === 'Employee' ? 'EMPLOYEE' : 'ROLE';
-    
-      let selectedEmployees: any[] = [];
-      
-      if (item.approverType === 'DEPT' && approverEmpRoleValue === 'EMPLOYEE') {
-        const employeeIds = (item.authorityEntityValue || '').split(',').map((id: string) => id.trim());
-        selectedEmployees = this.usersList.filter(user => employeeIds.includes(String(user.employeeId)));
-      }
-    
-      const selectedDepartment = this.departmentList.find(dept => dept.departmentName === item.departmentName) || null;
-      const selectedManager = this.managerOptions.find(opt => opt.value === item.authorityEntityValue) || null;
-      const selectedRole = this.roles.find(r => r.name.toLowerCase() === item.roleName.toLowerCase()) || null;
 
-      this.updateDueForm.patchValue({
-        UpdateselectedType: item.approverType,
-        Updatedepartment: selectedDepartment || '',  
-        UpdateselectedEmpRole: approverEmpRoleValue,
-        Updateemployee: selectedEmployees,
-        role: approverEmpRoleValue === 'ROLE' ? selectedRole : '',
-        managerType: item.approverType === 'EMPMNGR' ? selectedManager : ''
-      });
-    
-      this.modalService.open(this.updatenodue, {
-        backdrop: 'static',
-        size: 'lg',
-        centered: true
-      });
+  patchUpdateDueForm(item: any) {
+    const approverEmpRoleValue = item.roleType === 'Employee' ? 'EMPLOYEE' : 'ROLE';
+    let selectedEmployees: any[] = [];
+    if (item.approverType === 'DEPT' && approverEmpRoleValue === 'EMPLOYEE') {
+      const employeeIds = (item.authorityEntityValue || '').split(',').map((id: string) => id.trim());
+      selectedEmployees = this.usersList.filter(user => employeeIds.includes(String(user.employeeId)));
     }
-    
-    capitalizeFirstLetter(text: string): string {
-      if (!text) return '';
-      return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
-    }
-    
+    const selectedDepartment = this.departmentList.find(dept => dept.departmentName === item.departmentName) || null;
+    const selectedManager = this.managerOptions.find(opt => opt.value === item.authorityEntityValue) || null;
+    const selectedRole = this.roles.find(r => r.name.toLowerCase() === item.roleName.toLowerCase()) || null;
+    this.updateDueForm.patchValue({
+      UpdateselectedType: item.approverType,
+      Updatedepartment: selectedDepartment || '',
+      UpdateselectedEmpRole: approverEmpRoleValue,
+      Updateemployee: selectedEmployees,
+      role: approverEmpRoleValue === 'ROLE' ? selectedRole : '',
+      managerType: item.approverType === 'EMPMNGR' ? selectedManager : ''
+    });
+
+    this.modalService.open(this.updatenodue, {
+      backdrop: 'static',
+      size: 'lg',
+      centered: true
+    });
+  }
+
+  capitalizeFirstLetter(text: string): string {
+    if (!text) return '';
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
+
   opendelete(jobroletypelist: any) {
     this.selectedDeleteRole = jobroletypelist;
     this.modalService.open(this.deletepopup, { backdrop: 'static', centered: true });
   }
-  onDelete(modal: any) {
+
+  onDelete() {
     if (!this.selectedDeleteRole) return;
-  
-    this.subscription = this.http
-      .deleteData(`NoDueCleranceConfiguration/DeleteNoDueConfig/${this.selectedDeleteRole.id}`)
-      .subscribe({
-        next: (response) => {
-          console.log('Delete response:', response); // Log the raw text response
-          
-                    modal.close();
-          this.conformationPopup.openSuccessModal('NoDueClerance deleted successfully');
-         
-        },
-        error: (error: any) => {
-          console.log('Delete failed', error); // Log error if something goes wrong
-          this.conformationPopup.openErrorModal('Insertion of data failed');
-        },
-        complete: () => {
-        //  this.noDueForm.reset();
-          this.getAllNoDues();
-        }
-      });
+    this.subscription = this.http.deleteData(`NoDueCleranceConfiguration/DeleteNoDueConfig/${this.selectedDeleteRole.id}`).subscribe({
+      next: (response) => {
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('NoDueClerance deleted successfully');
+
+      },
+      error: (error: any) => {
+        console.log('Delete failed', error);
+        this.conformationPopup.openErrorModal('Insertion of data failed');
+      },
+      complete: () => {
+        this.getAllNoDues();
+      }
+    });
   }
-  
-  
+
   closeDelete(content: any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   };
 
-  clearData(){
+  clearData() {
     this.modalService.dismissAll();
   }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

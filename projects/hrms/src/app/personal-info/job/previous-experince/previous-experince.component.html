@@ -83,7 +83,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-3">
-            <form [formGroup]="employeeExperienceForm" (ngSubmit)="postExperienceDetails()">
+            <form autocomplete="off" [formGroup]="employeeExperienceForm" (ngSubmit)="postExperienceDetails()">
                 <div class="card-body pt-0">
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -102,7 +102,7 @@
                                 <span class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="CompanyName"
                                 formControlName="companyName" placeholder="Please enter company name"
-                                (keypress)="formValidation.restrictInput($event)" />
+                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                             <div *ngIf="employeeExperienceForm.get('companyName')?.invalid && employeeExperienceForm.get('companyName')?.touched"
                                 class="error-msg">
                                 <div *ngIf="employeeExperienceForm.get('companyName')?.errors?.['required']">Company
@@ -271,7 +271,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="employeeExperienceupdateForm" (ngSubmit)="saveUpdatedExperienceDetails()">
+            <form autocomplete="off" [formGroup]="employeeExperienceupdateForm" (ngSubmit)="saveUpdatedExperienceDetails()">
                 <div class="card-body pt-0">
                     <div class="row">
                         <div class="col-md-12 mb-3">
@@ -290,7 +290,7 @@
                             </label>
                             <input type="text" class="form-control custom-input" id="CompanyName"
                                 formControlName="companyNameupdate" placeholder="Please enter company name"
-                                (keypress)="restrictInput($event)" />
+                                (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
                             <div *ngIf="employeeExperienceupdateForm.get('companyNameupdate')?.invalid && employeeExperienceupdateForm.get('companyNameupdate')?.touched"
                                 class="error-msg">
                                 <div
@@ -311,7 +311,7 @@
                                     placeholder="Please select job role" formControlName="employmentTypeudate"
                                     class="form-select custom-select"></p-select>
                             </div>
-                            <div *ngIf="employeeExperienceupdateForm.get('employmentTypeupdate')?.invalid && employeeExperienceupdateForm.get('employmentTypeupdate')?.touched"
+                            <div *ngIf="employeeExperienceupdateForm.get('employmentTypeudate')?.invalid && employeeExperienceupdateForm.get('employmentTypeudate')?.touched"
                                 class="error-msg">
                                 Employment Type is required
                             </div>

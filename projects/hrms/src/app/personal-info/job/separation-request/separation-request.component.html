@@ -227,7 +227,7 @@
       <p class="confirmation-text">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early Relieving'}} Request?</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
-      <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
+      <form autocomplete="off" [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Reason For Recall<span class="error-msg">*</span></label>
           <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
@@ -272,7 +272,7 @@
       <p class="confirmation-text">Request For Early Relieving</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
-      <form [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
+      <form autocomplete="off" [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
         <div class="mb-4">
           <label class="form-label custom-label mb-2">Early Relieving Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
@@ -331,7 +331,7 @@
       <p class="confirmation-text">Provide your official work email addresses!</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
-      <form [formGroup]="profileForm">
+      <form autocomplete="off" [formGroup]="profileForm">
         <div>
           <label for="comments" class="form-label custom-label mb-2">Add Emails
             <span class="text-danger">*</span></label>
@@ -372,7 +372,7 @@
           </div>
         </div>
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss(); profileForm.reset(); formemailsfornodue.clear()">
+          <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">
             {{'Close'|translate}}</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="profileForm.invalid||isLoading"
             (click)="requestNoDue(profileForm)">
@@ -396,7 +396,20 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to cancel ?</p>
+      <p class="confirmation-text">Are you sure you want to close?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+      <button type="submit" class="custom-btn btn-primary" (click)="popupclose();model.dismiss()">Yes</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #confirmationpopupfornodue let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to close?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>

@@ -114,7 +114,7 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form [formGroup]="rejectDocument" (ngSubmit)="updaterejectdocs()">
+            <form autocomplete="off" [formGroup]="rejectDocument" (ngSubmit)="updaterejectdocs()">
                 <div class="mb-3">
                     <label for="rejectReason" class="form-label custom-label mb-2">Reject Reason<span
                             class="error-msg">*</span></label>
@@ -166,7 +166,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="reRequestForm" (ngSubmit)="reRequestEmail(reRequestForm)" class="w-100">
+            <form autocomplete="off" [formGroup]="reRequestForm" (ngSubmit)="reRequestEmail(reRequestForm)" class="w-100">
                 <div class="mb-3">
                     <label for="comments" class="form-label custom-label mb-2"> {{'Comments'|translate}} <span
                             class="error-msg">*</span></label>

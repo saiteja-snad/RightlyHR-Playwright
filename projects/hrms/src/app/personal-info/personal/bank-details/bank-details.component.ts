@@ -208,7 +208,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.spinnerLoader=false
-        this.conformationPopup.openErrorModal('Bank details added failed')
+        this.conformationPopup.openErrorModal( err.error.Message ||'Bank details added failed')
       }
     });
   }

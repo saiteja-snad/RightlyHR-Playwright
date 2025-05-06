@@ -4,7 +4,7 @@
     <div class="component-header">Reports</div>
 
     <!--right data-->
-    <form [formGroup]="reportForm" (ngSubmit)="onSubmit()">
+    <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit()">
       <div class="d-flex gap-3">
         <div class="d-flex gap-2 align-items-center">
           <div class="custom-label text-nowrap">Employee Status</div>
@@ -39,7 +39,7 @@
             <span>{{ 'Generate'  }}</span>
             }
           </button>
-          <button type="button" class="custom-btn btn-primary" [disabled]="selectedData.length == 0 || hasPendingChanges"
+          <button type="button" class="custom-btn btn-primary" [disabled]="selectedData.length == 0 || hasPendingChanges ||   disableBtn"
             (click)="generateExcel()">
             @if(spinnerLoader2){
             <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>

@@ -206,7 +206,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
       error: (err: any) => {
         this.spinnerLoader=false
         console.error('Error saving bank details:', err);
-        this.conformationPopup.openErrorModal('Bank details added failed')
+        this.conformationPopup.openErrorModal(err.error.Message ||'Bank details added failed')
       }
     });
   }
@@ -355,7 +355,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
       error: (reason: any) => {
         this.spinnerLoader=false
         console.error('Error updating bank details:', reason);
-        this.conformationPopup.openErrorModal('Failed to update bank details. Please check all fields.');
+        this.conformationPopup.openErrorModal( reason.error.Message ||'Failed to update bank details. Please check all fields.');
       }
     });
   }

@@ -6,7 +6,9 @@
       empyployeedata?.empstatus?.toLowerCase() !== 'trainee prospective'
       && empyployeedata?.empstatus?.toLowerCase() !== 'inactive' && empyployeedata?.empstatus?.toLowerCase() !==
       'trainee inactive' )){
-      <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+     <div>
+      <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+     </div>
       }
       @if(buttons){
       <div class="d-flex justify-content-end gap-2">
@@ -18,7 +20,7 @@
     </div>
 
     <!--input content-->
-    <form [formGroup]="basicInfoForm">
+    <form autocomplete="off" [formGroup]="basicInfoForm">
       <div class="row">
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="employeeId" class="form-label custom-label mb-2">Employee ID<span class="text-danger">*</span></label>

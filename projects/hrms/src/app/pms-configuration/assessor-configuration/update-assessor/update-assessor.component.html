@@ -9,13 +9,13 @@
         </div>
     </div>
     <div class="custom-main-popup-content">
-        <form name="Postincrementalpercentage" #UpdateAssesorDetails="ngForm" (ngSubmit)="UpdateAssesorDetails.valid && Updateassessor()">
+        <form autocomplete="off" name="Postincrementalpercentage" #UpdateAssesorDetails="ngForm" (ngSubmit)="UpdateAssesorDetails.valid && Updateassessor()">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="reviewcycle" class="form-label custom-label">Review Cycle Name<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="reviewCycleDropDownData" optionValue="id" optionLabel="reviewCycleName"
-                            [filter]="true" id="reviewcycle" name="reviewcycle" #reviewcycle="ngModel" [disabled]="true"
+                            [filter]="true" resetFilterOnHide="true" id="reviewcycle" name="reviewcycle" #reviewcycle="ngModel" [disabled]="true"
                             [(ngModel)]="updateassesorConfiguration.reviewCycleId" filterBy="reviewCycleName"
                             [showClear]="true" placeholder="Please Select Review Cycle Name" class="form-select custom-select">
                         </p-select>

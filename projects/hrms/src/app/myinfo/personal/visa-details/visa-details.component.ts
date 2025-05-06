@@ -169,6 +169,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   
     this.http.postdata('Visa',payload).subscribe({
       next: (res) => {
+        this.visaForm.reset()
         this.spinnerLoader = false;
         this.modalService.dismissAll()
         this.conformationPopup.openSuccessModal("Visa details added successfully")
@@ -210,11 +211,11 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
        
         this.modalService.dismissAll()
         this.getVisaEmpId();
-        this.conformationPopup.openSuccessModal('Visa detalis deleted successfully');
+        this.conformationPopup.openSuccessModal('Visa details deleted successfully');
       },
       error: (err: any) => {
         console.error('Error deleting education record:', err);
-        this.conformationPopup.openErrorModal('Visa detalis deleted failed');
+        this.conformationPopup.openErrorModal('Visa details deleted failed');
       }
     });
   }

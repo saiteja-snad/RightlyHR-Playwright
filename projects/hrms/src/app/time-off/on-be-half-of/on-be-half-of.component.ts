@@ -113,6 +113,8 @@ export class OnBeHalfOfComponent {
   isoptionalnotallowedatWorkingdate: boolean = false;
   isNonOptionalHolidaySelected: boolean = false;
   isHolidaySelectedEndate: boolean = false;
+  blockDates: any;
+  blockedData: any;
 
   constructor(
     private conformationPopup: OpenModalService, 
@@ -144,8 +146,9 @@ export class OnBeHalfOfComponent {
       leaveType: [null, Validators.required],
       startdate: [null, Validators.required],
       enddate: [null, Validators.required],
-      availing: [{ value: '', disabled: true }, Validators.required,],
-      availingType: [null, Validators.required],
+      halfdayavailing : ['', Validators.required],
+      availing: [{value : '',disabled: true}], 
+      fulldayavailing: [{value : '',disabled: true}],
       reason: ['', [Validators.required]]
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
@@ -176,7 +179,6 @@ export class OnBeHalfOfComponent {
     this.disablebuttonforemployeeid = true;
     this.leaveapplication.dateOfJoining = this.formatDatewithDate(this.leaveapplication?.dateOfJoining);
     this.getCategoryDetails(fusionemployeeId.value);
-    // this.getDataByLPID(fusionemployeeId.value);
     this.cadidateEmployeeId = fusionemployeeId.value;
     this.getOrgHolidaysByEmpId(fusionemployeeId.value)
     this.getholidaybyempid(fusionemployeeId.value)
@@ -230,7 +232,15 @@ export class OnBeHalfOfComponent {
 
   toggleHalfDayOptions(isHalfDay: boolean) {
     this.enableButton = isHalfDay;
-    this.leaveForm.patchValue({ availing: '' }); // Reset selection
+    this.leaveForm.get('fulldayavailing')?.clearValidators();
+    this.leaveForm.patchValue({ fulldayavailing: null });
+  }
+
+  toggleFullDayOptions(isFullDay: boolean) {
+    this.enableButton = isFullDay;
+    this.leaveForm.get('halfdayavailing')?.clearValidators();
+    this.leaveForm.get('availing')?.clearValidators();
+    this.leaveForm.patchValue({ halfdayavailing: null, availing: null });
   }
 
   getEmployeeId() {
@@ -317,41 +327,7 @@ export class OnBeHalfOfComponent {
     })
   }
 
-  // getDataByLPID(empId: any) {
-  //   this.subscription = this.http.getData(`Timeoff/${empId}`).subscribe({
-  //     next: (response: any) => {
-  //       this.lpdata = response;
-  //       this.waitingforapprovalCount = this.lpdata.filter((element: any) => {
-  //         return element.status === 'Waiting for Approval';
-  //       }).length;
-
-  //       this.draftsCount = this.lpdata.filter((element: any) => {
-  //         return element.status === 'Draft';
-  //       }).length;
-
-  //       this.approvedCount = this.lpdata.filter((element: any) => {
-  //         return element.status === 'Approved';
-  //       }).length;
-
-  //       this.rejectedCount = this.lpdata.filter((element: any) => {
-  //         return element.status === 'Rejected';
-  //       }).length;
-
-  //       this.processedCount = this.lpdata.filter((element: any) => {
-  //         return element.status === 'Processed'
-  //       }).length;
-
-  //       this.cancelledCount = this.lpdata.filter((element: any) => {
-  //         return element.status === 'Cancelled';
-  //       }).length;
-
-  //     },
-  //     error: (reason: any) => console.log(reason)
-  //   });
-  // }
-
-  blockDates: any;
-  blockedData: any;
+ 
   getOrgHolidaysByEmpId(employeeId: number): any {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${employeeId}`).subscribe({
@@ -464,7 +440,6 @@ export class OnBeHalfOfComponent {
       next: (response: any) => {
 
         this.leavedatatimeoff = response;
-        // this.getDataByLPID(this.leaveapplication.employeeId)
       },
       error: (reason: any) => console.log(reason)
     })
@@ -534,7 +509,6 @@ export class OnBeHalfOfComponent {
       this.leaveFormData.notes = this.leaveForm.get('reason')?.value
       if (this.leaveapplication.probationEndDate) {
         // Check if the employee is still on probation
-        // this.getDataByLPID(this.leaveapplication.employeeId);
         let currentDate = moment();
         let probationEndDate = moment(this.leaveapplication.probationEndDate);
         // Create new Moment objects without time information
@@ -658,7 +632,6 @@ export class OnBeHalfOfComponent {
     this.subscription = this.http.postdata(`LeaveBalance`, data).subscribe({
       next: (data: any) => {
         this.getCategoryDetails(data.empId);
-        // this.getDataByLPID(data.empId);
       }
 
     })
@@ -814,14 +787,45 @@ export class OnBeHalfOfComponent {
 
   chooseDayType(daytype: any) {
     this.isDayTypeselected = true;
-    if (daytype == 'half') {
+    if (daytype === 'half') {
+      this.disableSubmitButton = false;
       this.leaveFormData.isDaytype = true;
+      this.leaveForm.patchValue({ 
+        halfdayavailing: '1',   // Half day selected
+        fulldayavailing: null   // Clear full day selection
+      });
       this.enableButton = true;
-      this.selectedValue = '';
+      
+      if(this.leaveForm.get('availing')?.value === 'firsthalf'){
+        this.selectedValue = '1'
+        this.leaveForm.patchValue({ 
+          halfdayavailing: '1',   // Half day selected
+          fulldayavailing: null   // Clear full day selection
+        });
+      }
+      if(this.leaveForm.get('availing')?.value === 'secondhalf'){
+        this.selectedValue = '3'
+        this.leaveForm.patchValue({ 
+          halfdayavailing: '1',   // Half day selected
+          fulldayavailing: null   // Clear full day selection
+        });
+      }
     }
-    else if (daytype == 'full') {
+    else if (daytype === 'full') {
+      this.disableSubmitButton = false;
       this.leaveFormData.isDaytype = false;
       this.enableButton = false;
+      if(this.enableHalfDayOptions === false){
+        this.leaveForm.get('halfdayavailing')?.disable();
+        this.leaveForm.get('availing')?.disable();
+      }
+      this.toggleFullDayOptions(false);
+      if(this.dateDifference > 1){
+        this.leaveForm.get('halfdayavailing')?.disable();
+        this.leaveForm.get('availing')?.disable();
+        this.leaveForm.patchValue({ fulldayavailing: '2' });
+        this.leaveForm.patchValue({ halfdayavailing: null, availing: null });
+      }
       this.selectedValue = '2'
     }
   }
@@ -1112,5 +1116,6 @@ export class OnBeHalfOfComponent {
       this.issEndDategreater = true;
     }
   }
+  
   
 }

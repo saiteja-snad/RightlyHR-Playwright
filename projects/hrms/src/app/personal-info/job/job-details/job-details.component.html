@@ -114,7 +114,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="jobDetailsForm" (ngSubmit)="postJobDetails()">
+            <form autocomplete="off" [formGroup]="jobDetailsForm" (ngSubmit)="postJobDetails()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date
@@ -287,7 +287,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="jobDetailsupdateForm">
+            <form autocomplete="off" [formGroup]="jobDetailsupdateForm">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span
@@ -307,7 +307,7 @@
                             <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
                                 filterBy="designationName" formControlName="jobRole"
                                 placeholder="Please select job role" class="form-select custom-select"
-                                (onChange)="onDesignationChange($event.value)"></p-select>
+                                (onChange)="onDesignationChangeforupdate($event.value)"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsupdateForm.get('jobRole')?.invalid && jobDetailsupdateForm.get('jobRole')?.touched">
@@ -424,7 +424,7 @@
                                 class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
-                            *ngIf="jobDetailsupdateForm.get('shift')?.invalid && jobDetailsupdateForm.get('shift')?.touched">
+                            *ngIf="jobDetailsupdateForm.get('shiftName')?.invalid && jobDetailsupdateForm.get('shiftName')?.touched">
                             Shift is required
                         </div>
                     </div>
@@ -465,7 +465,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="separationRequestForm" (ngSubmit)="postSeparationRequestForm()">
+            <form autocomplete="off" [formGroup]="separationRequestForm" (ngSubmit)="postSeparationRequestForm()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="applieddate" class="form-label custom-label mb-2">Raised Date<span class="text-danger">*</span></label>

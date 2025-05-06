@@ -325,7 +325,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (respnose: any) => {
           this.sharedModalService.openSuccessModal(
-            'Manage DST Published Successfully'
+            'DST Published Successfully'
           );
           this.navigate();
         },

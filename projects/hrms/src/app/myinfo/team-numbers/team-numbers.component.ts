@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -13,13 +13,14 @@ import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from 
 import { OpenModalService } from '../../services/open-modal.service';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule, Select, FormsModule, PaginatorModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule,DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })
-export class TeamNumbersComponent implements OnInit {
+export class TeamNumbersComponent implements OnInit,OnDestroy {
   rmForm!: FormGroup;
   managers: any[] = [];
   subscription!: Subscription;
@@ -45,6 +46,7 @@ export class TeamNumbersComponent implements OnInit {
   employees: any[] = [];
   employeeIds: number[] = [];
   selectedManager: any = null; // Store selected manager object
+  spinnerLoader = false;
 
   constructor(
     private http: HttpService,
@@ -87,13 +89,11 @@ export class TeamNumbersComponent implements OnInit {
     this.selectedData = JSON.parse(JSON.stringify(details));
     this.selectedData.jobId = details.jobId;
     this.selectedData.reportingToEmployeeId = details.reportingToEmployeeId;
-    console.log("Selected Data after assignment:", this.selectedData); // Verify assigned data
   }
 
 
   onSelectManager(event: any) {
     this.selectedManager = event.value; // Capture selected object
-    console.log("Selected Manager:", this.selectedManager);
 
     if (!this.selectedManager) {
       console.error("Error: No manager selected.");
@@ -103,8 +103,6 @@ export class TeamNumbersComponent implements OnInit {
 
     this.selectedData.employeeId = this.selectedManager.employeeId ?? "";
     this.selectedData.id = this.selectedManager.jobId ?? ""; // Ensure jobId is correctly assigned
-
-    console.log("Updated selectedData:", this.selectedData);
   }
 
   searchEmployeeSinglerecord(employee: any, searchTerms: string[]): boolean {
@@ -160,6 +158,7 @@ export class TeamNumbersComponent implements OnInit {
   }
 
   updateRM() {
+    this.spinnerLoader = true;
     let jobid = this.selectedData.id;
     let ManagerEmployeeId = this.selectedData.employeeId;
     this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
@@ -172,7 +171,7 @@ export class TeamNumbersComponent implements OnInit {
         console.log('Error callback');
         console.log(reason);
         this.conformationPopup.openErrorModal('Updated Successfully');
-        ;
+        this.spinnerLoader = false;
       }
     });
   }
@@ -184,7 +183,6 @@ export class TeamNumbersComponent implements OnInit {
         console.log(responseData);
         this.TeamMemberArray = responseData as Iteammembers[];
         this.TeamMemberArray.forEach(member => member.selected = false);
-
       },
       error => {
         console.error(error);
@@ -201,8 +199,6 @@ export class TeamNumbersComponent implements OnInit {
             ...emp,
             name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
           }));
-
-        //console.log('Managers:', this.managers);
       },
       error: (err) => console.log(err),
     });
@@ -231,10 +227,15 @@ export class TeamNumbersComponent implements OnInit {
   }
 
   resetAndClose(modal: any): void {
-    this.rmForm.reset();   // clear the form
-    modal.dismiss();       // close the popup
+    this.rmForm.reset(); 
+    modal.dismiss();      
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }
 
 

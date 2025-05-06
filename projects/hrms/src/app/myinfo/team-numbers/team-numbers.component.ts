@@ -76,7 +76,9 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
-  openModal(content: any) {
+  selectedEmployeeDetails = {} as any;
+  openModal(content: any,details: any) {
+    this.selectedEmployeeDetails = details;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -153,13 +155,15 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
       .filter(emp => emp && emp.fusionEmpId)
       .map(emp => ({
         ...emp,
-        name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+        name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
       }));
   }
 
   updateRM() {
     this.spinnerLoader = true;
-    let jobid = this.selectedData.id;
+    console.log(this.selectedEmployeeDetails);
+    
+    let jobid = this.selectedEmployeeDetails.id;
     let ManagerEmployeeId = this.selectedData.employeeId;
     this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
       next: (data: any) => {
@@ -182,7 +186,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   getAllTeammembersList() {
     let EmployeeId = (this.empinfo.employeeId)
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
+    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
       (responseData: any) => {
         console.log(responseData);
         this.TeamMemberArray = responseData as Iteammembers[];
@@ -199,9 +203,9 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.managers = data
           .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: { firstName: any; middleName?: string; lastName: any }) => ({
+          .map((emp: { fusionEmpId : string;firstName: string; middleName?: string; lastName: string }) => ({
             ...emp,
-            name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
           }));
       },
       error: (err) => console.log(err),

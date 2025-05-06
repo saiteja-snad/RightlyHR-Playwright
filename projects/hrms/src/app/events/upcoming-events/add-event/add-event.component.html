@@ -13,7 +13,7 @@
                 <div class="col-md-6 mb-3">
                     <label for="eventDate" class="form-label custom-label mb-2">Event Date<span class="text-danger">*</span></label>
                     <input type="datetime-local" class="form-control custom-input" id="eventDate"  onkeypress="return false;" [min]="getToday()" formControlName="eventDate">
-                    <div *ngIf="customEventForm.get('required')?.touched" class="error-msg">Event date is required.</div>
+                    <div *ngIf="customEventForm.get('eventDate')?.touched" class="error-msg">Event date is required.</div>
                     <div *ngIf="customEventForm.get('eventDate')?.touched && customEventForm.get('eventDate')?.hasError('pastDate')"
                         class="error-msg">Event date cannot be in the past.
                     </div>
@@ -24,16 +24,16 @@
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" id="title"
                         placeholder="Please enter event title" formControlName="eventTitle">
-                    <div *ngIf="customEventForm.get('title')?.touched && customEventForm.get('title')?.invalid"
+                    <div *ngIf="customEventForm.get('eventTitle')?.touched "
                         class="error-msg">
-                        <div *ngIf="customEventForm.get('title')?.errors?.['required']">Title is required.</div>
+                        Event Title is required
                     </div>
                 </div>
 
                 <div class="col-md-12">
                     <label for="description" class="form-label custom-label mb-2">Event Description<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" formControlName="eventMessage" placeholder="Please enter description" id="description"></textarea>
-                    <div *ngIf="customEventForm.get('eventMessage')?.errors?.['required']  && customEventForm.get('title')?.touched" class="error-msg">
+                    <div *ngIf=" customEventForm.get('eventMessage')?.touched" class="error-msg">
                         Event Description is requied
                     </div>
                     <div class="textarea-count-text">{{ customEventForm.get("eventMessage")?.value?.length || 0 }}/250</div>

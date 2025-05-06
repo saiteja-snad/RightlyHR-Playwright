@@ -117,7 +117,11 @@
       </div>
 
       <div class="no-data-wrapper"  *ngIf="(getEventsData$ | async)?.length === 0">
-        <app-no-data-found></app-no-data-found>
+        <div class="no-data-placeholder-container">
+          <div class="text-center">
+              <img src="images\events.png" alt="No Data" class="no-data-image mb-4" />
+          </div>
+      </div>
       </div>
     </div>
   </ng-template>
@@ -141,7 +145,7 @@
             <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
                 class="text-danger">*</span></label>
             <input type="datetime-local" class="form-control custom-input" id="eventDate"  onkeypress="return false;" [min]="getToday()" formControlName="eventDate">
-            <div *ngIf="customEventupdateForm.get('required')?.touched" class="error-msg">Event date is required.</div>
+            <div *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.errors?.['required']" class="error-msg">Event date is required.</div>
             <div *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.hasError('pastDate')"
                 class="error-msg">Event date cannot be in the past.
             </div>
@@ -151,9 +155,9 @@
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="title" placeholder="Please enter event title"
               formControlName="eventTitle">
-            <div *ngIf="customEventupdateForm.get('title')?.touched && customEventupdateForm.get('title')?.invalid"
+            <div *ngIf="customEventupdateForm.get('eventTitle')?.touched && customEventupdateForm.get('eventTitle')?.invalid"
               class="error-msg">
-              <div *ngIf="customEventupdateForm.get('title')?.errors?.['required']">Title is required.</div>
+              <div *ngIf="customEventupdateForm.get('eventTitle')?.errors?.['required']"> Event Title is required.</div>
             </div>
           </div>
           <div class="col-md-12">

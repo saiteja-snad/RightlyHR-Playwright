@@ -61,7 +61,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     console.log(this.empinfo);
     this.getAllTeammembersList();
     this.getEmployee();
@@ -187,7 +187,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   getAllTeammembersList() {
     let EmployeeId = (this.empinfo.employeeId)
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
+    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
       (responseData: any) => {
         console.log(responseData);
         this.TeamMemberArray = responseData as Iteammembers[];
@@ -204,9 +204,9 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.managers = data
           .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: { firstName: any; middleName?: string; lastName: any }) => ({
+          .map((emp: { fusionEmpId:string; firstName: string; middleName?: string; lastName: string }) => ({
             ...emp,
-            name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
           }));
       },
       error: (err) => console.log(err),

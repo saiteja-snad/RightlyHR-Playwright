@@ -34,7 +34,7 @@
         </div>
         
         <div class="custom-main-popup-content">
-            <form [formGroup]="permissionForm" (ngSubmit)="applyPermission(permissionForm)">
+            <form autocomplete="off" [formGroup]="permissionForm" (ngSubmit)="applyPermission(permissionForm)">
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label for="Date" class="form-label custom-label mb-2">Date<span class="text-danger">*</span></label>

@@ -14,7 +14,7 @@
 
     <div class="main-letter-content gap-4 d-flex w-100">
         <div class="card letter-fields-content p-4">
-            <form [formGroup]="employeeForm" (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
+            <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="onTraineeOfferLetterFormSubmitForGenerateDoc(employeeForm)">
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Select Employee'|translate}}<span
                             class="error-msg">*</span></label>

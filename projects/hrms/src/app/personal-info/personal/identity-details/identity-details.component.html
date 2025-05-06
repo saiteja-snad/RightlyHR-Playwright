@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="identityForm" (ngSubmit)="submitIdentityForm(identityForm)">
+            <form autocomplete="off" [formGroup]="identityForm" (ngSubmit)="submitIdentityForm(identityForm)">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Type<span
@@ -160,7 +160,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="identityupdateForm" (ngSubmit)="updateIdentity(identityupdateForm)">
+            <form autocomplete="off" [formGroup]="identityupdateForm" (ngSubmit)="updateIdentity(identityupdateForm)">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="identityType" class="form-label custom-label mb-2">Identity Type<span

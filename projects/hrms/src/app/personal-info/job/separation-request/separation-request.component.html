@@ -227,7 +227,7 @@
       <p class="confirmation-text">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early Relieving'}} Request?</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
-      <form [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
+      <form autocomplete="off" [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
         <div class="mb-3">
           <label class="form-label custom-label mb-2">Reason For Recall<span class="error-msg">*</span></label>
           <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
@@ -272,7 +272,7 @@
       <p class="confirmation-text">Request For Early Relieving</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
-      <form [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
+      <form autocomplete="off" [formGroup]="earlyReleivingform" (ngSubmit)="postEarlyrelieving()">
         <div class="mb-4">
           <label class="form-label custom-label mb-2">Early Relieving Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
@@ -331,7 +331,7 @@
       <p class="confirmation-text">Provide your official work email addresses!</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
-      <form [formGroup]="profileForm">
+      <form autocomplete="off" [formGroup]="profileForm">
         <div>
           <label for="comments" class="form-label custom-label mb-2">Add Emails
             <span class="text-danger">*</span></label>

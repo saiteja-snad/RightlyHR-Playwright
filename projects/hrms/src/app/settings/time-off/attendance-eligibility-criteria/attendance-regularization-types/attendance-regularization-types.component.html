@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
     <div *ngIf="rbac.allowedToAccess('Attendance Regularization Tab.create')">
-        <form [formGroup]="permissionsForm" (ngSubmit)="addRegularization(permissionsForm)">
+        <form autocomplete="off" [formGroup]="permissionsForm" (ngSubmit)="addRegularization(permissionsForm)">
             <!-- Add Input-->
             <div class="mb-4">
                 <div class="custom-settings-add-input input-group">
@@ -79,7 +79,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="permissionUpdateForm"  (ngSubmit)="updateRegularization(permissionUpdateForm)">
+            <form autocomplete="off" [formGroup]="permissionUpdateForm"  (ngSubmit)="updateRegularization(permissionUpdateForm)">
                 <div class="mb-4">
                     <label for="name" class="form-label custom-label mb-2">Attendance Regularization Type<span class="text-danger">*</span></label> 
                     <input type="text" name="name" placeholder="Please enter attendance regularization type" formControlName="name" class="form-control custom-input" autocomplete="off"

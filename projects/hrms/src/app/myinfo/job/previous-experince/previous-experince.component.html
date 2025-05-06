@@ -224,7 +224,7 @@
                             'Experience/Relieving Letter' }}
                             <span class="text-danger">*</span>
                         </label>
-                        <input class="form-control custom-input mb-3" type="file" id="attachment"
+                        <input class="form-control custom-input px-0" type="file" id="attachment"
                             formControlName="attachment" (change)="onChangeExperience($event)"
                             accept=".pdf,image/*,.png" />
                         <div *ngIf="employeeExperienceForm.get('attachment')?.invalid && employeeExperienceForm.get('attachment')?.touched"
@@ -433,7 +433,7 @@
                                 'Experience/Relieving Letter' }}
                                 <span class="text-danger">*</span>
                             </label>
-                            <input class="form-control custom-input mb-3" type="file" id="attachment"
+                            <input class="form-control custom-input px-0" type="file" id="attachment"
                                 formControlName="attachmentupdate" (change)="onChangeExperience($event)"
                                 accept=".pdf,image/*,.png" />
                             <div *ngIf="employeeExperienceupdateForm.get('attachmentupdate')?.invalid && employeeExperienceupdateForm.get('attachmentupdate')?.touched"

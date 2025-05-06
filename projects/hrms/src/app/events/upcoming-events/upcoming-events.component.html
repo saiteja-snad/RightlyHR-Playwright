@@ -167,7 +167,7 @@
           </div>
           <div class="col-md-12 mb-3">
             <label for="file" class="form-label custom-label mb-2">Attachment</label>
-            <input type="file" class="form-control custom-input" id="file" (change)="onFileSelected($event)" >
+            <input type="file" class="form-control custom-input px-0" id="file" (change)="onFileSelected($event)" >
             <div *ngIf="selectedImagePreview" class="my-2 text-wrap w-100 text-truncate">
               <b>{{ selectedImagePreview }}</b>
               <div class="d-flex justify-content-between align-items-center mt-3">

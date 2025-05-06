@@ -154,7 +154,7 @@
                         <label for="attachment" class="form-label custom-label mb-2">
                             Attachment <span class="text-danger">*</span>
                         </label>
-                        <input class="form-control custom-input mb-3" type="file" id="attachment"
+                        <input class="form-control custom-input px-0" type="file" id="attachment"
                             formControlName="attachment" (change)="onFileChange($event)" accept=".pdf,image/*,.png" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('attachment')?.invalid && certificationForm.get('attachment')?.touched">
@@ -271,7 +271,7 @@
                         <label for="attachment" class="form-label custom-label mb-2">
                             Attachment <span class="text-danger">*</span>
                         </label>
-                        <input class="form-control custom-input mb-3" type="file" id="attachment"
+                        <input class="form-control custom-input px-0" type="file" id="attachment"
                             formControlName="attachment" (change)="onFileChange($event)" accept=".pdf,image/*,.png" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('attachment')?.invalid && updateCertificationForm.get('attachment')?.touched">

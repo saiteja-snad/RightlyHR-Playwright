@@ -7,7 +7,9 @@
 
             <!-- Show edit icon if employee status is 'Active' and buttons are not visible -->
             <div *ngIf="!buttons && (empdata?.empstatus?.toLowerCase() === 'active'||empdata.substatus === 'Offer Letter Accepted')">
+                @if(rbac.allowedToAccess('Employee Info Onboarding Details.update')){
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+                }
             </div>
 
             <!-- Show buttons if 'buttons' is true -->

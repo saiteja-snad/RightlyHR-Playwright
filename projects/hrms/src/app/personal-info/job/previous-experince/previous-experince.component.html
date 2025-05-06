@@ -1,8 +1,10 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Previous Experience Details</span></div>
+        @if(rbac.allowedToAccess('Employee Info Previous Experience Details.create')){
         <div class="custom-add-btn" (click)="openModal(addexperincemodal)"><i class="bi bi-plus plus-icon me-1"></i>Add
             New</div>
+        }
     </div>
 
     <div class="custom-table-content">
@@ -16,7 +18,9 @@
                     <th>Job Role</th>
                     <th>Currently Working</th>
                     <th>Document</th>
+                    @if(rbac.allowedToAccess('Employee Info Previous Experience Details.update') || rbac.allowedToAccess('Employee Info Previous Experience Details.delete')){
                     <th class="text-center">Action(S)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -37,25 +41,31 @@
                                 <i class="bi bi-download clip-icon px-2"></i>Download</span>
                             <ng-template #noData>-</ng-template>
                         </td>
+                        @if(rbac.allowedToAccess('Employee Info Previous Experience Details.update') || rbac.allowedToAccess('Employee Info Previous Experience Details.delete')){
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('Employee Info Previous Experience Details.update')){
                                     <li (click)="openModalupdate(updateexperincemodal, empexperimentdata)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
+                                    }
+                                    @if(rbac.allowedToAccess('Employee Info Previous Experience Details.delete')){
                                     <li (click)="opendeletModal(deleteconformation,empexperimentdata)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
                                     </li>
+                                }
                                 </ul>
                             </div>
                         </td>
+                    }
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>

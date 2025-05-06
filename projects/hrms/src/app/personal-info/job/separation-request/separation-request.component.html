@@ -1,11 +1,13 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="component-sub-header">Separation Details</div>
+    @if(rbac.allowedToAccess('Employee Raise No Due.view')){
     <!-- @if(isLastWorkingDate(this.empdata.lastworkingday) && nodueclearancedetails.length <= 0 && getSeparationDetails.value.length> 0){ -->
       <div class="custom-add-btn" (click)="openModal(raiseNodue)">
         <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
       </div>
       <!-- } -->
+    }
   </div>
 
   <div class="custom-table-content">
@@ -19,7 +21,9 @@
           <th>{{'Approver Status'|translate}}</th>
           <th>{{'Request Type'|translate}}</th>
           <th>{{'Status'|translate}}</th>
+          @if(rbac.allowedToAccess('Employee Recall.view')|| rbac.allowedToAccess('Employee Early relieving.view')){
           <th>{{'Action(s)'| translate}}</th>
+          }
         </tr>
       </thead>
       <tbody>
@@ -73,6 +77,7 @@
                 }
               </td>
               <td>{{item.status?item.status:'NA'}}</td>
+              @if(rbac.allowedToAccess('Employee Recall.view')|| rbac.allowedToAccess('Employee Early relieving.view')){
               <td>
                 <div class="dropdown">
                   @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' && !recallbuttonConditions && 
@@ -82,20 +87,25 @@
                   </span>
                   }
                   <ul class="dropdown-menu custom-dropdown-menu">
+                    @if(rbac.allowedToAccess('Employee Recall.view')){
                     <li (click)="recallRequest(item,recallrequestpopup)">
                       <a class="dropdown-item">
                         <i class="bi bi-repeat me-2"></i>Recall
                       </a>
                     </li>
+                  }
+                  @if(rbac.allowedToAccess('Employee Early relieving.view')){
                     @if( item.recallStatus.toLowerCase() != 'earlyrelieving' && !recallandearlyrelievingbuttonConditions){
                     <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
                       <a class="dropdown-item">Early Relieving</a>
                     </li>
                     }
+                  }
                   </ul>
                 </div>
               </td>
               <!-- </ng-container> -->
+            }
             </tr>
             }
             }

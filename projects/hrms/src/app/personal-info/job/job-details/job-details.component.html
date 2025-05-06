@@ -1,9 +1,11 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Job Details</span></div>
+        @if(rbac.allowedToAccess('Employee Info Job Details.create')){
         <div class="custom-add-btn" (click)="openModal(addEducationmodal)">
             <i class="bi bi-plus plus-icon me-1"></i>Add New
         </div>
+        }
     </div>
     <div class="custom-table-content">
         <table class="w-100">
@@ -20,7 +22,9 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
+                    @if(rbac.allowedToAccess('Employee Info Job Details.update') || rbac.allowedToAccess('Employee Info Separation Request.view') || rbac.allowedToAccess('Employee Info Job Details.update')){
                     <th class="text-center">Actions</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -70,26 +74,34 @@
                             <span *ngIf="item.jobTypeName;else jobtype"> {{item.jobTypeName}}</span>
                             <ng-template #jobtype><div>-</div></ng-template>
                         </td>
+                        @if(rbac.allowedToAccess('Employee Info Job Details.update') || rbac.allowedToAccess('Employee Info Separation Request.view') || rbac.allowedToAccess('Employee Info Job Details.update')){
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('Employee Info Job Details.update')){
                                     <li (click)="openModalupdate(updatejobmodal, item)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
                                     </li>
+                                    }
+                                    @if(rbac.allowedToAccess('Employee Info Separation Request.view')){
                                     @if (first && showSaperationDots ) {
                                     <li (click)="openModalforSeparationupdate(seprationModal, item)">
                                         <a class="dropdown-item"> <img src="icons/sepration.png" alt=""  class="speration-icon"/> Separation Request</a>
                                     </li>
                                     }
+                                    }
+                                    @if(rbac.allowedToAccess('Employee Info Job Details.update')){
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a>
                                     </li>
+                                    }
                                 </ul>
                             </div>
                         </td>
+                    }
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>

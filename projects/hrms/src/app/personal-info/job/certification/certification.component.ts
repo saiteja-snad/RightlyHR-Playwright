@@ -10,6 +10,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-certification',
@@ -33,7 +34,8 @@ export class CertificationComponent implements OnInit, OnDestroy {
   dateofbirth: any;
   displaycertification: any
   spinnerLoader = false;
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, 
+    private conformationPopup: OpenModalService, public formValidation: FormValidationService, public rbac : RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');

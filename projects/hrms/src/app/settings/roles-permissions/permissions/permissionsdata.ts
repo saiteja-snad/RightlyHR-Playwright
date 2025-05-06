@@ -593,7 +593,7 @@ export const permissionsData = [
     { fields: 'My Info Bank Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Visa Details', View: false, Update: false, Create: false, Delete: false },
 
-      //My Info Job Sub Tabs Section
+    //My Info Job Sub Tabs Section
     { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
@@ -606,6 +606,7 @@ export const permissionsData = [
     { fields: 'My Info Compensation Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Desk Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Asset Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Separation Request', View: false, Update: false, Create: false, Delete: false },
 
     //My Info Documents Sub Tabs Section
     { fields: 'My Info Documents', View: false, Update: false, Create: false, Delete: false },
@@ -650,6 +651,22 @@ export const permissionsData = [
     { fields: 'Employee Info Bank Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Visa Details', View: false, Update: false, Create: false, Delete: false },
 
+    //My Info Job Sub Tabs Section
+    { fields: 'Employee Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Job Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info No Due Clearance Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Probation Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Previous Experience Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Certification Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Onboarding Request Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Compensation Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Desk Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Asset Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Separation Request', View: false, Update: false, Create: false, Delete: false },
+
     //Employee Info Documents Sub Tabs Section
     { fields: 'Employee Info Documents', View: false, Update: false, Create: false, Delete: false },
 
@@ -659,5 +676,18 @@ export const permissionsData = [
 
     //Employee Info Onboard Request Sub Tabs Section
     { fields: 'Employee Info Onboard Request', View: false, Update: false, Create: false, Delete: false },
+
+   //Employee Info Separation Request Details
+   { fields: 'Employee Raise No Due', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Employee Recall', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Employee Early relieving', View: false, Update: false, Create: false, Delete: false },
+
+   //Employee Info No Due Clearance Details
+   { fields: 'Employee Submission Of No Due Clearance', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Employee Re-request for no due', View: false, Update: false, Create: false, Delete: false }, 
+
+  //Employee Info Probation Details
+  { fields: 'Employee Request for Probation Confirmation', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Employee Re-Request for Probation Confirmation', View: false, Update: false, Create: false, Delete: false },
 
 ];

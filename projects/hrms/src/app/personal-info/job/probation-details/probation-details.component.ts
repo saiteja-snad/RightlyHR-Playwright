@@ -10,6 +10,7 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '../../../../environments/environment';
 import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-probation-details',
   standalone: true,
@@ -29,7 +30,7 @@ export class ProbationDetailsComponent implements OnInit {
   loggedinuser = {} as any;
 
   constructor(private http: HttpService, private authService: AuthService, private openModalService: OpenModalService,
-     private modalService: NgbModal) { }
+     private modalService: NgbModal, public rbac : RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');

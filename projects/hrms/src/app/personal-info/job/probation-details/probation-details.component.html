@@ -13,7 +13,9 @@
                     <th>probation extended date</th>
                     <th>approved status</th>
                     <th>status</th>
+                    @if(rbac.allowedToAccess('Employee Request for Probation Confirmation.view') || rbac.allowedToAccess('Employee Re-Request for Probation Confirmation.view')){
                     <th class="text-center">Action(s)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -34,26 +36,32 @@
                         }
                     </td>
                     <td>{{probation.status}}</td>
+                    @if(rbac.allowedToAccess('Employee Request for Probation Confirmation.view') || rbac.allowedToAccess('Employee Re-Request for Probation Confirmation.view')){
                     <td class="text-center">
                         @if (probation.status === 'Pending' || probation.status === 'Rejected' || probation.status === 'Extended') {
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 <!--status pending-->
+                                @if(rbac.allowedToAccess('Employee Request for Probation Confirmation.view')){
                                 @if(probation.status === 'Pending' && shouldprobationShowButton(empdata.probationEndDate) && probation.status!='Extended'){
                                 <li>
                                     <a (click)="requestForProbation(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
                                 </li>
                                 }
+                                }
                                 <!--status Rejected-->
+                                @if(rbac.allowedToAccess('Employee Re-Request for Probation Confirmation.view')){
                                 @if(probation.status === 'Rejected' && shouldprobationShowButton(empdata.probationEndDate)){
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Re-Request for Probation Confirmation</a>
                                 </li>
                                 }
+                                }
                                 <!--status extended-->
+                                @if(rbac.allowedToAccess('Employee Request for Probation Confirmation.view')){
                                 @if(probation.status === 'Extended' && shouldprobationShowButton(empdata.probationEndDate)
                                 && probation.probationExtendCount < probationExtendTimes){ 
                                 <li>
@@ -61,12 +69,14 @@
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
                                 </li>
                                 }
+                                }
                             </ul>
                         </div>
                         } @else {
                         <div>-</div>
                         }
                     </td>
+                }
                 </tr>
                 }
             </tbody>

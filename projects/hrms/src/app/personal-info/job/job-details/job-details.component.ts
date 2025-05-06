@@ -14,6 +14,7 @@ import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-job-details',
   imports: [CommonModule, TranslateModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
@@ -73,7 +74,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   selectedlocationid: any;
 
   constructor(private modalService: NgbModal, private authService: AuthService, private fb: FormBuilder, private conformationPopup: OpenModalService,
-    private http: HttpService, public formValidations: FormValidationsService,) { }
+    private http: HttpService, public formValidations: FormValidationsService, public rbac : RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');

@@ -169,7 +169,8 @@ isDisabled(field: string, action: string): boolean {
 
 isActionEnabled(field: string, action: string): boolean {
   const enabledTabs = ['Document Tab', 'NoDue Clearance Tab', 'Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Dynamic Forms Module', 'Desk Allocation - All', 
-    'Manage Policies Tab', 'Manage Weekends Tab', 'Manage DST Tab', 'My Info Job Details', 'My Info Previous Experience Details', 'My Info Certification Details'];
+    'Manage Policies Tab', 'Manage Weekends Tab', 'Manage DST Tab', 'My Info Job Details', 'My Info Previous Experience Details', 'My Info Certification Details', 
+    'Employee Info Onboarding Details', 'Employee Info Job Details', 'Employee Info Previous Experience Details', 'Employee Info Certification Details', 'Employee Info Compensation Details'];
   return enabledTabs.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
 }
 

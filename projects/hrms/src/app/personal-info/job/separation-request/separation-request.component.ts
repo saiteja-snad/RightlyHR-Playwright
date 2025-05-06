@@ -16,6 +16,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { ISeparation } from './separation-request';
 import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-separation-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, 
@@ -45,7 +46,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   profileForm!: FormGroup;
   isDataLoaded = false;
   constructor(private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService,
-     private modalService: NgbModal) {
+     private modalService: NgbModal, public rbac : RbacService) {
     // Initialize any required services or dependencies here
   }
 

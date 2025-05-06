@@ -36,7 +36,7 @@
 
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="dateOfJoining" class="form-label custom-label mb-2">Date Of Joining</label>
-                    <input type="date" class="form-control custom-input" id="dateOfJoining"
+                    <input type="date" class="form-control custom-input" id="dateOfJoining" [min]="offerletttersentdate"
                         formControlName="dateOfJoining">
                     <div class="error-msg"
                         *ngIf="onboardingForm.get('dateOfJoining')?.invalid && onboardingForm.get('dateOfJoining')?.touched">
@@ -101,7 +101,7 @@
                         Status</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="backgroundDetails" optionLabel="backgroundcheckstatus1"
-                            formControlName="backgroundCheckStatus" placeholder="Please enter trainee offer sent status"
+                            formControlName="backgroundCheckStatus" placeholder="Please select background check status"
                             class="form-select custom-select">
                         </p-select>
                     </div>
@@ -221,7 +221,7 @@
     </div>
 
     @if(this.rbac.allowedToAccess('Employee Trainee Details.view')){
-    <div class="card custom-background-card p-4" *ngIf="empdata.empType==='Trainee'">
+    <div class="card custom-background-card p-4" *ngIf="empdata.empstatus === 'Trainee Prospective' || empdata.empstatus === 'Trainee Active'">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <span class="component-sub-header">Trainee Details</span>

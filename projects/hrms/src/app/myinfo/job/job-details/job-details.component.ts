@@ -422,6 +422,7 @@ export class JobDetailsComponent {
   getSubLocationByid(selectedLocation: any): void {
     this.jobDetailsForm.get('subLocation')?.reset()
     this.jobDetailsForm.get('shift')?.reset()
+   this.shiftDropdown=[]
     if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http
         .getData(

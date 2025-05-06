@@ -45,6 +45,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   headerName!: string;
   isLoading: boolean = false;
   spinnerLoader = false;
+  
   constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
@@ -582,10 +583,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     localStorage.setItem("offBoardingemplist", JSON.stringify(this.emppersonalinfo));
     this.router.navigate(['/personalinfo/job/employee-off-boarding']);
   }
-resetAndClose(modal: any): void {
-    this.teamForm.reset(); 
-    modal.dismiss();      
+
+  resetAndClose(modal: any): void {
+    this.teamForm.reset();
+    this.modalService.dismissAll();
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

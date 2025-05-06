@@ -60,6 +60,7 @@
                   @if(rbac.allowedToAccess('My Info Documents.update')) {
                   <th class="text-center">ACTION</th>
                   }
+
                </thead>
                <tbody>
                   <ng-container *ngIf="getVisibleFiles().length > 0; else noDataTemplate">

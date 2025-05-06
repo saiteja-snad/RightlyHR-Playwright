@@ -533,7 +533,7 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
       console.error('Form with the given rating type not found');
     }
 
-    // Optionally, trigger the modal or other actions here if needed
+    // Optionally, trigger the modal or other Action(S) here if needed
   }
   get scalesUpdateform(): FormArray {
     return this.updateFormRating.get('scales') as FormArray;

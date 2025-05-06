@@ -131,7 +131,7 @@
                                     class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="JobtypeDetails" optionLabel="jobType1"
-                                    placeholder="Please select job role" formControlName="employmentType"
+                                    placeholder="Please select employment type" formControlName="employmentType"
                                     class="form-select custom-select"></p-select>
                             </div>
                             <div *ngIf="employeeExperienceForm.get('employmentType')?.invalid && employeeExperienceForm.get('employmentType')?.touched"
@@ -171,7 +171,7 @@
                             <label for="jobRole" class="form-label custom-label mb-2">Job Role <span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="jobRole" formControlName="jobTitle"
-                                (keypress)="restrictInput($event)" placeholder="Job Role" />
+                                (keypress)="restrictInput($event)" placeholder="Please enter job role" />
                             <div *ngIf="employeeExperienceForm.get('jobTitle')?.errors?.['required'] && employeeExperienceForm.get('jobTitle')?.touched"
                                 class="error-msg">
                                 Job Role is required
@@ -203,7 +203,7 @@
                         <label for="previousContactNumber" class="form-label custom-label mb-2">Contact Number </label>
                         <input type="text" class="form-control custom-input" formControlName="previousContactNumber"
                             [maxlength]="10" [minlength]="10" (keypress)="restrictInputaccteponlynumber($event)"
-                            placeholder="Contact number" />
+                            placeholder="Please enter contact number" />
                         <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.invalid && employeeExperienceForm.get('previousContactNumber')?.touched"
                             class="error-msg">
                             <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['required']">
@@ -220,7 +220,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email</label>
                         <input type="text" class="form-control custom-input" formControlName="previousContactEmail"
-                            placeholder="Contact Email" />
+                            placeholder="Please enter contact Email" />
                         <div *ngIf="employeeExperienceForm.get('previousContactEmail')?.invalid && employeeExperienceForm.get('previousContactEmail')?.touched"
                             class="error-msg">
                             <div *ngIf="employeeExperienceForm.get('previousContactEmail')?.errors?.['pattern']">
@@ -324,7 +324,7 @@
                                     class="text-danger">*</span></label>
                             <div class="custom-p-select-content">
                                 <p-select [options]="JobtypeDetails" optionLabel="jobType1"
-                                    placeholder="Please select job role" formControlName="employmentTypeudate"
+                                    placeholder="Please select employment type" formControlName="employmentTypeudate"
                                     class="form-select custom-select"></p-select>
                             </div>
                             <div *ngIf="employeeExperienceupdateForm.get('employmentTypeudate')?.invalid && employeeExperienceupdateForm.get('employmentTypeudate')?.touched"
@@ -371,7 +371,7 @@
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control custom-input" id="jobRole"
                                 formControlName="jobTitleupdate" (keypress)="restrictInput($event)"
-                                placeholder="Job Role" />
+                                placeholder=" Please enter job role" />
                             <div *ngIf="employeeExperienceupdateForm.get('jobTitleupdate')?.errors?.['required'] && employeeExperienceupdateForm.get('jobTitleupdate')?.touched"
                                 class="error-msg">
                                 Job Role is required
@@ -404,7 +404,7 @@
                             <label for="previousContactNumber" class="form-label custom-label mb-2">Contact Number </label>
                             <input type="text" class="form-control custom-input"
                                 formControlName="previousContactNumberupdate" [maxlength]="10" [minlength]="10"
-                                (keypress)="restrictInputaccteponlynumber($event)" placeholder="Contact number" />
+                                (keypress)="restrictInputaccteponlynumber($event)" placeholder="Please enter contact number" />
                             <div *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.invalid && employeeExperienceupdateForm.get('previousContactNumber')?.touched"
                                 class="error-msg">
                                 <div
@@ -428,7 +428,7 @@
                         <div class="col-md-6 mb-3">
                             <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email </label>
                             <input type="text" class="form-control custom-input"
-                                formControlName="previousContactEmailupdate" placeholder="Contact Email" />
+                                formControlName="previousContactEmailupdate" placeholder="Please enter contact email" />
                             <div *ngIf="employeeExperienceupdateForm.get('previousContactEmailupdate')?.invalid && employeeExperienceupdateForm.get('previousContactEmailupdate')?.touched"
                                 class="error-msg">
                                 <div

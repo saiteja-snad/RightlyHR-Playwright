@@ -1,11 +1,18 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Job Details</span></div>
-        @if(rbac.allowedToAccess('Employee Info Job Details.create')){
-        <div class="custom-add-btn" (click)="openModal(addEducationmodal)">
-            <i class="bi bi-plus plus-icon me-1"></i>Add New
-        </div>
+
+    @if(rbac.allowedToAccess('Employee Info Job Details.create')){
+        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
+        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
+        'trainee inactive' )){
+            <div class="custom-add-btn" (click)="openModal(addEducationmodal)">
+                <i class="bi bi-plus plus-icon me-1"></i>Add New
+            </div>
         }
+    }
+
     </div>
     <div class="custom-table-content">
         <table class="w-100">
@@ -74,8 +81,13 @@
                             <span *ngIf="item.jobTypeName;else jobtype"> {{item.jobTypeName}}</span>
                             <ng-template #jobtype><div>-</div></ng-template>
                         </td>
-                        @if(rbac.allowedToAccess('Employee Info Job Details.update') || rbac.allowedToAccess('Employee Info Separation Request.view') || rbac.allowedToAccess('Employee Info Job Details.update')){
-                        <td class="text-center">
+
+                        @if(rbac.allowedToAccess('Employee Info Job Details.update') || rbac.allowedToAccess('Employee Info Separation Request.view') || 
+                        rbac.allowedToAccess('Employee Info Job Details.update')){
+                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
+                        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
+                        'trainee inactive' )){<td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -101,6 +113,7 @@
                                 </ul>
                             </div>
                         </td>
+                    }
                     }
                     </tr>
                 </ng-container>

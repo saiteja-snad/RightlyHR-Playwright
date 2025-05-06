@@ -99,7 +99,7 @@
                         </label>
                         <input type="text" class="form-control custom-input" id="certificationName"
                             formControlName="certificationName" placeholder="Please enter certification name"
-                            (keypress)="formValidation.restrictInput($event)" />
+                            (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('certificationName')?.invalid && certificationForm.get('certificationName')?.touched">
                             <div *ngIf="certificationForm.get('certificationName')?.errors?.['required']">Certification
@@ -215,7 +215,7 @@
                         </label>
                         <input type="text" class="form-control custom-input" id="certificationName"
                             formControlName="certificationName" placeholder="Please enter certification name"
-                            (keypress)="formValidation.restrictInput($event)" />
+                            (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('certificationName')?.invalid && updateCertificationForm.get('certificationName')?.touched">
                             <div *ngIf="updateCertificationForm.get('certificationName')?.errors?.['required']">

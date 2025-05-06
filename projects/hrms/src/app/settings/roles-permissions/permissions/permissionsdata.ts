@@ -690,6 +690,21 @@ export const permissionsData = [
   { fields: 'Employee Request for Probation Confirmation', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Employee Re-Request for Probation Confirmation', View: false, Update: false, Create: false, Delete: false },
 
+
+  //Dashboard Section
+  { fields: 'Dashboard Current Openings', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Dashboard Generate Documents', View: false, Update: false, Create: false, Delete: false },
+
+   //Dashboard Card Items
+   { fields: 'Dashboard Prospective Employees Card', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Dashboard Active Employees Card', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Dashboard Inactive Employees Card', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Dashboard Prospective Trainee Card', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Dashboard Active Trainees Card', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Dashboard Inactive Trainees Card', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Dashboard Current Openings Card', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Dashboard Probation Employees Card', View: false, Update: false, Create: false, Delete: false },
+
   //Dashboard Documents History
   { fields: 'Documents History Offer Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Documents History Appointment Letter', View: false, Update: false, Create: false, Delete: false },

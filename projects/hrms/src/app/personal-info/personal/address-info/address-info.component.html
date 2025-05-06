@@ -6,7 +6,10 @@
       </div>
       @if(!buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
       && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
-      <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+     
+      <div>
+        <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+       </div>
       }
       @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
       && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){

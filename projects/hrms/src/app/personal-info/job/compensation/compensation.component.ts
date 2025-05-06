@@ -79,6 +79,7 @@ export class CompensationComponent {
     this.modalService.open(content, {
       centered: true,
       backdrop: 'static',
+      size:'lg'
     });
   }
 
@@ -219,6 +220,7 @@ export class CompensationComponent {
     this.modalService.open(content, {
       centered: true,
       backdrop: 'static',
+      size:'lg'
     });
   }
 

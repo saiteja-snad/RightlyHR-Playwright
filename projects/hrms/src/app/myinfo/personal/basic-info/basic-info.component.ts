@@ -44,7 +44,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    console.log(this.empinfo)
+    
     this.initializeForm();
     this.getEmployeeId();
     this.getGender()
@@ -59,7 +59,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.onsalutationvalidation();
     });
     this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
-      console.log(data)
+    
       this.emsployedata.dob=null
       this.changeingdob=data
     });
@@ -107,6 +107,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.emsployedata = data;
         this.dateofbirth =this.formatDateToLocal(this.emsployedata.dob)
+        this.changemaritalstatus(); 
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
@@ -116,7 +117,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   
   getdateofbirth(): string | null {
     const startDateValue = this.formatDateToLocal(this.emsployedata.dob) || this.formatDateToLocal(this.changeingdob);
-    console.log(startDateValue);
+ 
     
     if (startDateValue) {
       const startDate = new Date(startDateValue);
@@ -147,17 +148,17 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       lastName: data.lastName,
       gender: data.gender,
       dob: this.formatDateToLocal(data.dob) || null,
-      marriageDate: this.formatDateToLocal(data.marriedDate) || null,
+      marriageDate: this.formatDateToLocal(data?.marriedDate) || null,
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
       maritalStatus: this.Maritaldetails.find(((item: any) => item.maritalstatus1 === data.maritalStatus)),
     });
-    console.log('datapatch', this.basicInfoForm.value);
+ 
 
   }
 
   updateBasicInfo(): void {
     const formValue = this.basicInfoForm.value;
-    console.log(formValue);
+    
 
     const updatePayload = {
       ...this.emsployedata,
@@ -170,10 +171,10 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
-      marriageDate: formValue.marriageDate,
+      marriedDate: formValue.marriageDate,
       empStatus: 'Active',
     };
-    console.log(updatePayload);
+    
 
     this.subscription = this.http
       .postdata(`Employeedata/UPDATER`, updatePayload)
@@ -193,7 +194,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
         },
         error: (reason: any) => {
-          console.log(reason);
+        
           this.conformationPopup.openErrorModal('Basic Info update failed')
 
 
@@ -229,8 +230,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.buttons = !this.buttons;
   
     if (this.buttons) {
-      // Enable the form when the user clicks "Edit"
-   
       this.basicInfoForm.enable();
       this.basicInfoForm.get('fusionEmpId')?.disable();
 
@@ -242,21 +241,23 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
   }
 // Function to open the modal for confirmation
-  changemaritalstatus(): void {
-    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'  || this.emsployedata?.maritalStatus === 'Married';
-  
-    if (maritalStatus) {
-      // Add the required validator to the marriageDate field
-      this.basicInfoForm.get('marriageDate')?.setValidators([Validators.required]);
-    } else {
-      // Clear the validators if marital status is not "Married"
-      this.basicInfoForm.get('marriageDate')?.clearValidators();
-      this.basicInfoForm.get('marriageDate')?.setValue(null); // Reset the marriage date field
-    }
-  
-    // Update the validation state of the marriageDate field
-    this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
+changemaritalstatus(): void {
+  const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 || this.basicInfoForm.get('maritalStatus')?.value  ||this.emsployedata.maritalStatus;;
+
+  console.log('Marital Status:', maritalStatus);
+
+  if (maritalStatus === 'Married') {
+    // Add the required validator to the marriageDate field
+    this.basicInfoForm.get('marriageDate')?.setValidators([Validators.required]);
+  } else {
+    // Clear the validators if marital status is not "Married"
+    this.basicInfoForm.get('marriageDate')?.clearValidators();
+    this.basicInfoForm.get('marriageDate')?.setValue(null); // Reset the marriage date field
   }
+
+  // Update the validation state of the marriageDate field
+  this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
+}
 
   onsalutationvalidation(): void {
     const gender = this.basicInfoForm.get('gender')?.value;

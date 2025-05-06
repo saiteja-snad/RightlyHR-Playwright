@@ -654,6 +654,15 @@ input:focus, textarea:focus, select:focus {
         color: #A1A1A1 !important;
     }
 
+    p-multiselect.ng-invalid.ng-dirty .p-multiselect-label.p-placeholder {
+        color: #A1A1A1 !important;
+    }
+
+    .p-checkbox-checked .p-checkbox-box {
+        border-color: #305889 !important;
+        background: #305889 !important;
+    }
+
     .p-iconfield {
         margin: 0.5rem 0rem !important;
     }

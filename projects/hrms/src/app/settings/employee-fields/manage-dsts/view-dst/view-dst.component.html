@@ -12,7 +12,7 @@
             <div class="d-flex gap-3 mb-3">
                 <!-- Year -->
                 <div>
-                    <label for="year" class="form-label custom-label mb-2">{{ "Year" | translate }}</label>
+                    <label for="year" class="form-label custom-label mb-2">{{ "Year" | translate }}</label><span class="text-danger">*</span>
                     <div class="custom-p-select-content">
                         <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
                             class="form-select custom-select" formControlName="year" placeholder="Please select year">
@@ -24,7 +24,7 @@
             
                 <!-- Location -->
                 <div>
-                    <label for="location" class="form-label custom-label mb-2">{{ "Location" | translate}}</label>
+                    <label for="location" class="form-label custom-label mb-2">{{ "Location" | translate}}</label><span class="text-danger">*</span>
                     <div class="custom-p-select-content">
                         <p-select [options]="locationDetails" optionLabel="jobLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobLocationName" [showClear]="false"
@@ -38,7 +38,7 @@
             
                 <!-- Sub Location -->
                 <div>
-                    <label for="subLocation" class="form-label custom-label mb-2">{{ "Sub Location" | translate}}</label>
+                    <label for="subLocation" class="form-label custom-label mb-2">{{ "Sub Location" | translate}}</label><span class="text-danger">*</span>
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
@@ -52,7 +52,7 @@
             
                 <!-- Shifts -->
                 <div>
-                    <label for="shift" class="form-label custom-label mb-2">{{ "Shift"| translate }}</label>
+                    <label for="shift" class="form-label custom-label mb-2">{{ "Shift"| translate }}</label><span class="text-danger">*</span>
                     <div class="custom-p-select-content">
                         <p-select [options]="shiftDetails" optionLabel="shiftName" [filter]="true" filterBy="shiftName"
                             [showClear]="false" formControlName="shift" placeholder="Please select shift"
@@ -72,7 +72,7 @@
                             <th>{{'Start Date' | translate}}</th>
                             <th>{{'End Date' | translate}}</th>
                             <th>{{'Moment Type' | translate}}</th>
-                            <th>{{'Duration' | translate}}</th>
+                            <th>{{'Duration(Hrs)' | translate}}</th>
                         </tr>
                     </thead>
                     <tbody formArrayName="momentRows">

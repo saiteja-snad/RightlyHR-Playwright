@@ -256,8 +256,8 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       error: (err: any) => {
         this.spinnerLoader = false;
         console.error('Error saving bank details:', err);
-        this.conformationPopup.openErrorModal('Bank details added failed');
-      },
+        this.conformationPopup.openErrorModal(err.error.Message ||'Bank details added failed')
+      }
     });
   }
 
@@ -403,26 +403,20 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   }
 
   saveUpdatedBankDetails(payload: any): void {
-    this.subscription = this.http
-      .postdata(`BankDetail/Update`, payload)
-      .subscribe({
-        next: (data: any) => {
-          this.spinnerLoader = false;
-          this.bankDetailsUpdateForm.reset();
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(
-            'Bank details updated successfully'
-          );
-          this.getbankempid(); // Refresh the bank details list
-        },
-        error: (reason: any) => {
-          this.spinnerLoader = false;
-          console.error('Error updating bank details:', reason);
-          this.conformationPopup.openErrorModal(
-            'Failed to update bank details. Please check all fields.'
-          );
-        },
-      });
+    this.subscription = this.http.postdata(`BankDetail/Update`, payload).subscribe({
+      next: (data: any) => {
+       this.spinnerLoader=false;
+        this.bankDetailsUpdateForm.reset();
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Bank details updated successfully');
+        this.getbankempid(); // Refresh the bank details list
+      },
+      error: (reason: any) => {
+        this.spinnerLoader=false
+        console.error('Error updating bank details:', reason);
+        this.conformationPopup.openErrorModal( reason.error.Message ||'Failed to update bank details. Please check all fields.');
+      }
+    });
   }
   opendeletModal(content: any, bankDetail: any): void {
     this.bankid = bankDetail.bankId;

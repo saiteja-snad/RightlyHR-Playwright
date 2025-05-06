@@ -10,7 +10,7 @@
     <!--letter content-->
     <div class="main-letter-content row">
         <div class="card letter-fields-content p-4">
-            <form [formGroup]="employeeForm" (ngSubmit)="postAppraisalLetterFormSubmit(employeeForm)">
+            <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="postAppraisalLetterFormSubmit(employeeForm)">
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
                         {{'Select Employee'| translate }}<span class="text-danger">*</span></label>

@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="custom-main-popup-content p-4">
-        <form [formGroup]="educationForm" (ngSubmit)="postEducation()">
+        <form autocomplete="off" [formGroup]="educationForm" (ngSubmit)="postEducation()">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="education" class="form-label custom-label mb-2">Education<span class="text-danger">*</span></label>

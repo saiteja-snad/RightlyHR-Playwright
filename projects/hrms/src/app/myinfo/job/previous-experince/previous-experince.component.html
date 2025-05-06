@@ -82,7 +82,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="employeeExperienceForm" (ngSubmit)="postExperienceDetails()">
+            <form autocomplete="off" [formGroup]="employeeExperienceForm" (ngSubmit)="postExperienceDetails()">
                 <div class="card-body pt-0">
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -202,7 +202,7 @@
                                 Contact Number must be 10 digits</div>
                             <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['maxlength']">
                                 Contact Number must be 10 digits</div>
-                                <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['maxlength']">
+                                <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['pattern']">
                                     Contact Number cannot be all zeroes </div>
                         </div>
                     </div>
@@ -274,7 +274,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content ">
-            <form [formGroup]="employeeExperienceupdateForm" (ngSubmit)="saveUpdatedExperienceDetails()">
+            <form autocomplete="off" [formGroup]="employeeExperienceupdateForm" (ngSubmit)="saveUpdatedExperienceDetails()">
                 <div class="card-body pt-0">
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -407,7 +407,7 @@
                                     *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['maxlength']">
                                     Contact Number must be 10 digits</div>
                                     <div
-                                    *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['maxlength']">
+                                    *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['pattern']">
                                     Contact Number cannot be all zeroes</div>
 
                             </div>

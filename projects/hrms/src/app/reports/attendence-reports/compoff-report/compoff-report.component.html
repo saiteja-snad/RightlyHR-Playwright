@@ -4,7 +4,7 @@
     <div class="component-header">Reports</div>
 
     <div>
-      <form [formGroup]="compoffReportForm" (ngSubmit)="generateCompoffReport()">
+      <form autocomplete="off" [formGroup]="compoffReportForm" (ngSubmit)="generateCompoffReport()">
         <div class="d-flex align-items-center gap-3">
           @if(rbac.allowedToAccess('Comp Off Report - Generate.view')){
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">

@@ -106,7 +106,7 @@
       </div>
 
       <div class="custom-main-popup-content">
-         <form [formGroup]="uploadfrom" (ngSubmit)="fileUploaded()">
+         <form autocomplete="off" [formGroup]="uploadfrom" (ngSubmit)="fileUploaded()">
             <div class="row mb-3">
                <div class="col-12">
                   <label class="form-label custom-label mb-2">Upload File<span class="text-danger">*</span></label>

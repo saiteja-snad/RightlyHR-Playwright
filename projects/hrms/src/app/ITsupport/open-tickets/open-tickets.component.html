@@ -88,7 +88,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
-            <form [formGroup]="itSupportForm" (ngSubmit)="onUpdate()">
+            <form autocomplete="off" [formGroup]="itSupportForm" (ngSubmit)="onUpdate()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Ticket Raised For' | translate}}<span

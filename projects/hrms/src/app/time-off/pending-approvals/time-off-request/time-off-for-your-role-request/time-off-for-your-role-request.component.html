@@ -134,7 +134,7 @@
             <p class="confirmation-text">Are you sure you want to reject?</p>
         </div>
 
-        <form name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
+        <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
             <div class="custom-main-popup-content">
                 <div class="mb-3 mt-2">
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span class="text-danger">*</span></label>

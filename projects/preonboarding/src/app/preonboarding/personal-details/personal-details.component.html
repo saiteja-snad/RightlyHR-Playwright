@@ -5,7 +5,7 @@
     
     <div class="component-data-content">
         <div class="component-header mb-4">Personal Details</div>
-        <form [formGroup]="personalDetailsForm" (ngSubmit)="onSubmit()">
+        <form autocomplete="off" [formGroup]="personalDetailsForm" (ngSubmit)="onSubmit()">
             <div class="row custom-main-sub-content">
                 <!-- First Name -->
                 <div class="col-lg-4 col-md-6 mb-3">

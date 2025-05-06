@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <form [formGroup]="RelationForm" (ngSubmit)="addRelationship()" *ngIf="rbac.allowedToAccess('Relationship.create')">
+    <form autocomplete="off" [formGroup]="RelationForm" (ngSubmit)="addRelationship()" *ngIf="rbac.allowedToAccess('Relationship.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
@@ -58,7 +58,7 @@
 
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
-    <form [formGroup]="updateForm">
+    <form autocomplete="off" [formGroup]="updateForm">
         <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div class="pt-2">

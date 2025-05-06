@@ -3,7 +3,7 @@
     <div class="component-header">Reports</div>
 
     <div>
-      <form [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
+      <form autocomplete="off" [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
         <div class="d-flex align-items-center gap-3">
           @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view')){
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">

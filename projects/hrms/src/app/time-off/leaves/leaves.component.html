@@ -67,7 +67,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form [formGroup]="leaveForm" (ngSubmit)="onSubmit()">
+            <form [formGroup]="leaveForm" autocomplete="off"  (ngSubmit)="onSubmit()">
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Leave Type'| translate}}<span

@@ -199,7 +199,7 @@
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
     </div>
-    <form [formGroup]="recallAcceptForm" (ngSubmit)="handleAccept()">
+    <form autocomplete="off" [formGroup]="recallAcceptForm" (ngSubmit)="handleAccept()">
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
@@ -241,7 +241,7 @@
       <p class="confirmation-text">Are you sure you want to reject this request?</p>
     </div>
 
-    <form [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()">
+    <form autocomplete="off" [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()">
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">Enter reason
           <span class="text-danger">*</span></label>
@@ -287,7 +287,7 @@
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
       <p class="confirmation-text">Are you sure you want to Process this request?</p>
     </div>
-    <form [formGroup]="recallAcceptFormForProcess" (ngSubmit)="handlerecallProcess()">
+    <form autocomplete="off" [formGroup]="recallAcceptFormForProcess" (ngSubmit)="handlerecallProcess()">
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>

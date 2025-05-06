@@ -1,28 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { ProfileInfoDetailsComponent } from '../../shared/profile-info-details/profile-info-details.component';
 import { MyInfoPersonalTabsComponent } from '../../shared/myinfo-tabs/my-info-personal-tabs/my-info-personal-tabs.component';
 import { MyinfoJobTabsComponent } from "../../shared/myinfo-tabs/myinfo-job-tabs/myinfo-job-tabs.component";
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
-
 import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
-
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { MyinfoDetailsComponent } from "../../shared/myinfo-details/myinfo-details.component";
 import { TranslateModule } from '@ngx-translate/core';
-
 @Component({
   selector: 'app-myinfo-layout',
   imports: [CommonModule, RouterOutlet, Select, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule, MyinfoDetailsComponent, TranslateModule],
   templateUrl: './myinfo-layout.component.html',
-  styleUrl: './myinfo-layout.component.scss'
+  styleUrl: './myinfo-layout.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
+
 export class MyinfoLayoutComponent implements OnInit, OnDestroy {
   teamForm!: FormGroup;
   managers: any[] = [];
@@ -44,12 +42,8 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
     private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
-    this.teamForm = this.fb.group({
-      teamMembers: [null, Validators.required,],
-      reportingManager: [null, Validators.required]
-    });
+    this.formsubmit();
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    console.log(this.empinfo);
     this.getAllTeammembersList();
     this.getEmployee();
   }
@@ -65,8 +59,6 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
         reportingManager: event.value
       });
     }
-    console.log("Updated selectedEmployees:", this.selectedEmployees);
-    console.log("Updated selectedEmployeeIds:", this.selectedEmployeeIds);
   }
 
   getEmployee() {
@@ -105,7 +97,6 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
       console.error("selectedEmployees is not a valid array", this.selectedEmployees);
       return;
     }
-
     let requestBody = this.selectedEmployees.map(employee => ({
       jobRole: employee.jobRole,
       firstName: employee.firstName,
@@ -117,9 +108,6 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
       contactnumber: employee.contactnumber,
       id: employee.id
     }));
-
-    console.log("Final Request Payload:", JSON.stringify(requestBody, null, 2));
-
     const ManagerId = this.teamForm.value.reportingManager?.employeeId;
     if (!ManagerId) {
       console.error("No valid ManagerId found.");
@@ -128,10 +116,8 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody)
       .subscribe({
         next: (data: any) => {
-          console.log("Update successful", data);
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-          console.log(data);
         },
         error: (reason: any) => {
           console.log(reason);
@@ -166,14 +152,12 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
     if (employee.lastName) {
       nameParts.push(employee.lastName);
     }
-
     return nameParts.join(' ');
   }
 
   firstSelectedEmployee: Iteammembers | null = null;
   getSelectedTeamMembersLabel(): string {
     const selectedCount = this.selectedEmployees.length;
-
     if (selectedCount === 0) {
       return 'Select Team Members';
     } else if (selectedCount === 1) {
@@ -190,9 +174,9 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
     });
   }
 
-  resetAndClose(modal: any): void {
-    this.teamForm.reset(); 
-    modal.dismiss();      
+  closeModal() {
+    this.teamForm.reset();
+    this.modalService.dismissAll();
   }
 
   ngOnDestroy(): void {
@@ -200,5 +184,4 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe()
     }
   }
-
 }

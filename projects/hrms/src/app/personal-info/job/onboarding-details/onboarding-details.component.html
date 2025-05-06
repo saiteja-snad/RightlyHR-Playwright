@@ -246,7 +246,7 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Trainee Start Date</label>
                     <input type="date" class="form-control custom-input" id="dateOfJoining"
-                        formControlName="dateOfJoining" placeholder="Please enter probation end date"
+                        formControlName="dateOfJoining" placeholder="Please enter trainee start date"
                         onkeydown="return false;">
                 </div>
                 }
@@ -254,14 +254,14 @@
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2" >Duration of Training</label>
                     <input type="text" class="form-control custom-input" formControlName="durationOfTrainee"
-                        placeholder="Duration of Training" (keypress)="letters($event)" appNameConversion />
+                        placeholder="Duration of Training" (keypress)="letters($event)"  />
                 </div>
 
                 @if(!isEditing ){
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Training End Date</label>
                     <input type="date" class="form-control custom-input" id="trainingEndDate"
-                        formControlName="trainingEndDate" placeholder="Please enter probation end date"
+                        formControlName="trainingEndDate" placeholder="Please enter training end Date"
                         onkeydown="return false;">
                 </div>
                 }

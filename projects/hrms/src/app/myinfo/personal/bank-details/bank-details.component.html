@@ -82,7 +82,7 @@
                                 class="text-danger">*</span></label>
 
                         <div class="custom-p-select-content">
-                            <p-select [options]="banknames" optionLabel="bankName1" [filter]="true" filterBy="bankName1"
+                            <p-select [options]="banknames" optionLabel="bankName1" [filter]="true" [resetFilterOnHide]="true" filterBy="bankName1"
                                 formControlName="bankName" placeholder="Please select bank name"
                                 class="form-select custom-select"></p-select>
                         </div>
@@ -204,7 +204,7 @@
                         <label for="bankNameupdate" class="form-label custom-label mb-2">Bank Name<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="banknames" optionLabel="bankName1" [filter]="true" filterBy="bankName1"
+                            <p-select [options]="banknames" optionLabel="bankName1" [filter]="true"  [resetFilterOnHide]="true" filterBy="bankName1"
                                 formControlName="bankNameupdate" placeholder="Please select bank name"
                                 class="form-select custom-select"></p-select>
                         </div>

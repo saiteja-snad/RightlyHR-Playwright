@@ -140,7 +140,7 @@
                         <label for="jobRole" class="form-label custom-label mb-2">Job Role
                             <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
+                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"  [resetFilterOnHide]="true"
                                 filterBy="designationName" formControlName="jobRole" placeholder="Please select job role" 
                                 class="form-select custom-select" (onChange)="onDesignationChange($event.value)">
                             </p-select>
@@ -207,7 +207,7 @@
                         <label for="team" class="form-label custom-label mb-2">Reporting Manager<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"
+                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"  [resetFilterOnHide]="true"
                                 filterBy="employee" formControlName="reportingManager"
                                 placeholder="Please select Reporting Manager"
                                 (onChange)="onReportingManagerChange($event.value)"
@@ -314,7 +314,7 @@
                         <label for="jobRole" class="form-label custom-label mb-2">Job Role<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
+                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"  [resetFilterOnHide]="true"
                                 filterBy="designationName" formControlName="jobRole"
                                 placeholder="Please select job role" class="form-select custom-select"
                                 (onChange)="onDesignationChangeforupdate($event.value)"></p-select>
@@ -383,7 +383,7 @@
                         <label for="team" class="form-label custom-label mb-2">Reporting Manager<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"
+                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"  [resetFilterOnHide]="true"
                                 filterBy="employee" formControlName="reportingManager"
                                 placeholder="Please select Reporting Manager"
                                 (onChange)="onReportingManagerChange($event.value)"

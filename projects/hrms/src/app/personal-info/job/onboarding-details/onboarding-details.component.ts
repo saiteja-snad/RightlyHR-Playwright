@@ -88,6 +88,7 @@ export class OnboardingDetailsComponent {
     this.getBranchLocations();
     this.getprobation();
     this.getWorkfromhomeManager();
+
     this.initializeTrainee();
     this.onboardingForm.get('status')?.setValue(this.empinfo.empstatus);
   }
@@ -224,14 +225,29 @@ export class OnboardingDetailsComponent {
     console.log(this.onboardingForm.value); // Check values in the onboardingForm
   
     // Patching values for traineeForm
-    this.traineeForm.patchValue({
-      empType: data.empType,
-      dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
-      durationOfTrainee: data.durationOfTrainee,
-      trainingEndDate: this.formatDateToLocal(data.trainingEndDate)
-    });
+   
     
     console.log(this.traineeForm.value); // Check values in the traineeForm
+  }
+
+  
+  //function to get traineeofferletter data using getbyemployeeid
+  getTraineeOfferLetterEmployeebyId() {
+    let Empid = parseInt(this.empinfo.employeeId)
+    console.log(Empid);
+    this.subscription = this.http.getData(`TraineeOfferLetter/getbyEmpidNames/${Empid}`).subscribe({
+      next: (data: any) => {
+        this.traineeForm.patchValue({
+          empType: data.empType,
+          dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
+          durationOfTrainee: data.durationOfTrainee,
+          trainingEndDate: this.formatDateToLocal(data.trainingEndDate)
+        });
+
+      },
+      error: Reason => console.log(Reason)
+    })
+
   }
   
 //function to get employee status dropdown

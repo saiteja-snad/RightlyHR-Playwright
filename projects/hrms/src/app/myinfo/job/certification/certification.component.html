@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center">
         <div> <span class="education-sub-header">Certification Details
             </span></div>
-        @if(rbac.allowedToAccess('My Info Certification Details.view') ){
+        @if(rbac.allowedToAccess('My Info Certification Details.create') ){
         <div class="plus-button">
             <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
                     (click)="openModal(addexperincemodal)" class="plus-text">Add

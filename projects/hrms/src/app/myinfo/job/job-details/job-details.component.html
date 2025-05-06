@@ -109,12 +109,13 @@
                                         </li>
                                     }
                                     
-                                    @if(rbac.allowedToAccess('My Info Job Details.delete')){}
+                                    @if(rbac.allowedToAccess('My Info Job Details.delete')){
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
                                     </li> 
+                                    }
                                 </ul>
                             </div>
                         </td>

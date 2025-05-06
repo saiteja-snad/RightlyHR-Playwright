@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Previous Experience Details</span></div>
-        @if(rbac.allowedToAccess('My Info Previous Experience Details.view')){
+        @if(rbac.allowedToAccess('My Info Previous Experience Details.create')){
         <div class="custom-add-btn" (click)="openModal(addexperincemodal)">
             <i class="bi bi-plus plus-icon me-1"></i>Add New
         </div>

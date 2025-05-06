@@ -593,19 +593,20 @@ export const permissionsData = [
     { fields: 'My Info Bank Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Visa Details', View: false, Update: false, Create: false, Delete: false },
 
-    //My Info Job Sub Tabs Section
-  { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Job Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info No Due Clearance Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Probation Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Previous Experience Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Certification Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Compensation Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Desk Details', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'My Info Asset Details', View: false, Update: false, Create: false, Delete: false },
+      //My Info Job Sub Tabs Section
+    { fields: 'My Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Onboarding Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Offboarding Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Job Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Separation Request Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info No Due Clearance Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Probation Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Previous Experience Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Certification Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Compensation Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Desk Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Asset Details', View: false, Update: false, Create: false, Delete: false },
+
     //My Info Documents Sub Tabs Section
     { fields: 'My Info Documents', View: false, Update: false, Create: false, Delete: false },
 
@@ -614,18 +615,49 @@ export const permissionsData = [
     { fields: 'Change RM Button', View: false, Update: false, Create: false, Delete: false },
 
     //My Info Onboard Request Sub Tabs Section
-    { fields: 'Onboard Request', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Onboard Request', View: false, Update: false, Create: false, Delete: false },
 
-   
-
-
-   //My Info Separation Request Details
-   { fields: 'Raise No Due', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Recall', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Early relieving', View: false, Update: false, Create: false, Delete: false },
+    
+    //My Info Separation Request Details
+    { fields: 'Raise No Due', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Recall', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Early relieving', View: false, Update: false, Create: false, Delete: false },
 
     //My Info No Due Clearance Details
     { fields: 'Submission Of No Due Clearance', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Re-request for no due', View: false, Update: false, Create: false, Delete: false }, 
+
+
+
+    //Employee Info Sub Tabs Section
+    // My Info Sub Tabs Section
+    { fields: 'Employee Info Personal Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Job Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Documents Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Employee Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
+
+
+
+    //Employee Info Personal Sub Tabs Section
+    { fields: 'Employee Info Basic Information', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Address Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Contact Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Emergency Contact Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Education Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Identity Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Family Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Bank Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Visa Details', View: false, Update: false, Create: false, Delete: false },
+
+    //Employee Info Documents Sub Tabs Section
+    { fields: 'Employee Info Documents', View: false, Update: false, Create: false, Delete: false },
+
+    //Employee Info Team Members Sub Tabs Section
+    { fields: 'Employee Info Team Members', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Change RM Button', View: false, Update: false, Create: false, Delete: false },
+
+    //Employee Info Onboard Request Sub Tabs Section
+    { fields: 'Employee Info Onboard Request', View: false, Update: false, Create: false, Delete: false },
 
 ];

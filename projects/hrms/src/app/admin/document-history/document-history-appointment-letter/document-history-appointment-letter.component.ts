@@ -7,6 +7,7 @@ import { IAppointmentLetterDetails } from '../../../Interfaces/documentsHistory'
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { AppointmentletterpipePipe } from '../../../Pipes/appointmentletterpipe.pipe';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-document-history-appointment-letter',
   imports: [
@@ -27,7 +28,7 @@ export class DocumentHistoryAppointmentLetterComponent
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
 
-  constructor(private http: HttpService) {}
+  constructor(private http: HttpService, public rbac: RbacService) {}
 
   ngOnInit(): void {
     this.getAppointmentLetters();

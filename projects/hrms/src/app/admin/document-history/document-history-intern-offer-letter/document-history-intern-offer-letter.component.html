@@ -17,7 +17,10 @@
                 <th>{{'DURATION OF TRAINING'|translate}}</th>
                 <th>{{'STATUS'|translate}}</th>
                 <th>{{'SUB STATUS'|translate}}</th>
+                @if(rbac.allowedToAccess('Trainee Offer Letter Download.view') || rbac.allowedToAccess('Trainee Offer Letter Release Offer.view') ||
+                rbac.allowedToAccess('Trainee Offer Letter Approve.view') || rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
                 <th class="text-center">{{'ACTION'|translate}}</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -33,23 +36,34 @@
                 <td>{{traineeofferLetter.durationOfTraining?traineeofferLetter.durationOfTraining:'-'}}</td>
                 <td>{{traineeofferLetter.status?traineeofferLetter.status:'-'}} </td>
                 <td>{{traineeofferLetter.empSubstatus?traineeofferLetter.empSubstatus:'-'}} </td>
+                @if(rbac.allowedToAccess('Trainee Offer Letter Download.view') || rbac.allowedToAccess('Trainee Offer Letter Release Offer.view') ||
+                rbac.allowedToAccess('Trainee Offer Letter Approve.view') || rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
                 <td class="text-center">
                     <div class="d-flex gap-2">
+                        @if(rbac.allowedToAccess('Trainee Offer Letter Download.view')) {
                         <button class="custom-btn btn-primary"
                             (click)="onSelectDownload(traineeofferLetter)">Download</button>
+                        }
+                        @if(rbac.allowedToAccess('Trainee Offer Letter Release Offer.view')) {
                         @if(traineeofferLetter.status=='Approved'){
                         <button class="custom-btn btn-primary" (click)="releaseTraineeOfferLetter(traineeofferLetter)">Release Offer</button>
                         }
+                        }
+                        @if(rbac.allowedToAccess('Trainee Offer Letter Approve.view')) {
                         @if (traineeofferLetter?.status !== 'Approved' && traineeofferLetter?.status !== 'Rejected' &&
                         traineeofferLetter?.status !== 'Released') {
                         <button class="custom-btn btn-primary-approve" (click)="updateTraineeOfferDetails(traineeofferLetter)">Approve</button>
                         }
+                        }
+                        @if(rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
                         @if((traineeofferLetter.status!='Approved'&&
                         traineeofferLetter.status!='Rejected'&&traineeofferLetter.status!='Released' ) ){
                         <button class="custom-btn btn-primary-reject" (click)="SelectData(traineeofferLetter);openModal(rejectpopup)">Reject</button>
                         }
+                        }
                     </div>
                 </td>
+                }
             </tr>
             }
             }

@@ -696,4 +696,22 @@ export const permissionsData = [
   { fields: 'Documents History Trainee Offer Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Documents History Trainee Appointment Letter', View: false, Update: false, Create: false, Delete: false },
 
+  //Dashboard Documents History Offer Letter Actions 
+  { fields: 'Offer Letter Download', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Offer Letter Release Offer', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Offer Letter Approve', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Offer Letter Reject', View: false, Update: false, Create: false, Delete: false },
+
+  //Dashboard Documents History Offer Letter Actions 
+  { fields: 'Appointment Letter Download', View: false, Update: false, Create: false, Delete: false },
+
+  //Dashboard Documents History Trainee Offer Letter Actions 
+  { fields: 'Trainee Offer Letter Download', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Trainee Offer Letter Release Offer', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Trainee Offer Letter Approve', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Trainee Offer Letter Reject', View: false, Update: false, Create: false, Delete: false },
+
+   //Dashboard Documents History Trainee Offer Letter Actions 
+   { fields: 'Trainee Appointment Letter Download', View: false, Update: false, Create: false, Delete: false },
+
 ];

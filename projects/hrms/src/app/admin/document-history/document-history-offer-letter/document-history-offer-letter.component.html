@@ -18,7 +18,10 @@
                 <th>{{'DESIGNATION'|translate}}</th>
                 <th>{{'STATUS'|translate}}</th>
                 <th>{{'SUB STATUS'|translate}}</th>
+                @if(rbac.allowedToAccess('Offer Letter Download.view') || rbac.allowedToAccess('Offer Letter Release Offer.view') || 
+                rbac.allowedToAccess('Offer Letter Approve.view') || rbac.allowedToAccess('Offer Letter Reject.view')){
                 <th>{{'ACTION'|translate}}</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -32,15 +35,24 @@
                 <td>{{offerLetter.jobRole?offerLetter.jobRole:'-'}}</td>
                 <td>{{offerLetter.status?offerLetter.status:'-'}} </td>
                 <td>{{offerLetter.empSubstatus?offerLetter.empSubstatus:'-'}} </td>
+                @if(rbac.allowedToAccess('Offer Letter Download.view') || rbac.allowedToAccess('Offer Letter Release Offer.view') || 
+                rbac.allowedToAccess('Offer Letter Approve.view') || rbac.allowedToAccess('Offer Letter Reject.view')){
                 <td class="text-center">
                     <div class="d-flex gap-2">
+                        @if(rbac.allowedToAccess('Offer Letter Download.view')) {
                         <button class="custom-btn btn-primary" (click)="onSelectDownload(offerLetter)">Download</button>
+                        }
+                        @if(rbac.allowedToAccess('Offer Letter Release Offer.view')) {
                         @if(offerLetter.status=='Approved'){
                         <button class="custom-btn btn-primary" (click)="releaseOfferletter(offerLetter)">Release Offer</button>
                         }
+                        }
+                        @if(rbac.allowedToAccess('Offer Letter Approve.view')) {
                         @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' && offerLetter?.status !== 'Released') {
                         <button class="custom-btn btn-primary-approve" (click)="updateOfferDetails(offerLetter)">Approve</button>
                         }
+                        }
+                        @if(rbac.allowedToAccess('Offer Letter Reject.view')) {
                         <!-- *ngIf="((loginuserdata.employeeId==offerLetter.approver|| _userAcessService.checkAccess('Offer Letter Approval.view')) && 
                            (offerLetter.status!='Approved'&& offerLetter.status!='Rejected' &&offerLetter.status!='Released' ) )" -->
                         @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' && offerLetter.status!='Released')){
@@ -48,8 +60,10 @@
                         }
                         <!-- *ngIf="((loginuserdata.employeeId==offerLetter.approver || _userAcessService.checkAccess('Offer Letter Approval.view'))
                           && (offerLetter.status!='Approved'&& offerLetter.status!='Rejected'&&offerLetter.status!='Released' ) )" -->
+                        }
                     </div>
                 </td>
+                }
             </tr>
             }
             }

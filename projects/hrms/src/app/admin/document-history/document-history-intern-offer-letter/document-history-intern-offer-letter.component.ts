@@ -20,6 +20,7 @@ import { Subscription } from 'rxjs';
 import { IOfferLetterDetails } from '../../../Interfaces/documentsHistory';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { OfferletterdashboardpipePipe } from '../../../Pipes/offerletterdashboardpipe.pipe';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-document-history-intern-offer-letter',
@@ -49,7 +50,8 @@ export class DocumentHistoryInternOfferLetterComponent {
     private fb: FormBuilder,
     private http: HttpService,
     private authService: AuthService,
-    private conformationPopup: OpenModalService
+    private conformationPopup: OpenModalService,
+    public rbac : RbacService
   ) {
     this.initializeForm();
   }

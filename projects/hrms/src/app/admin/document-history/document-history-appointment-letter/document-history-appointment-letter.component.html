@@ -11,7 +11,9 @@
             <tr>
                 <th class="text-nowrap">{{'DATE'|translate}}</th>
                 <th>{{'EMPLOYEE NAME'|translate}}</th>
+                @if(rbac.allowedToAccess('Appointment Letter Download.view')){
                 <th>{{'ACTION'|translate}}</th>
+                }
             </tr>
         </thead>
         <tbody>
@@ -21,9 +23,11 @@
             <tr>
                 <td>{{appointmentLetter.appointmentSentDate | dateformat }}</td>
                 <td>{{appointmentLetter.employeeName ?appointmentLetter.employeeName:'-'}}</td>
+                @if(rbac.allowedToAccess('Appointment Letter Download.view')){
                 <td>
                     <button class="custom-btn btn-primary" (click)="onSelectDownload(appointmentLetter)">Download</button>
                 </td>
+                }
             </tr>
             }
             }

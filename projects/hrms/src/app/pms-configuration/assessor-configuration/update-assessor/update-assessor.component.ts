@@ -55,7 +55,6 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
     public rbac: RbacService
   ) {}
   ngOnInit(): void {
-    console.log('assesor date', this.updateData);
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.editDetails(this.updateData);
     this.getReviewCycledata();
@@ -64,6 +63,7 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
     const currentdate = moment();
     this.currentDate = this.formatDate(currentdate);
   }
+
   //function to edit the details
   editDetails(Values: any) {
     this.getAllActiveEmpList();
@@ -115,9 +115,11 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
         })
       : [];
   }
+
   formatDate(date: any) {
     return date?.split('T')[0];
   }
+
   getAllasessors() {
     this.subscription = this.http
       .getData('entityAttributeValues?entity=PMS&attribute=assessorconfig')
@@ -128,6 +130,7 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
         },
       });
   }
+  
   //function to get all active employees list
   getAllActiveEmpList() {
     this.subscription = this.http

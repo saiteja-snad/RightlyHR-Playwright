@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { HolidayTabsComponent } from "../../shared/calendar-tabs/holiday-tabs/holiday-tabs.component";
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-optionalholidays',
   imports: [ReactiveFormsModule, CommonModule, HolidayTabsComponent, Select, NoDataFoundComponent],
@@ -14,7 +15,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 })
 
 export class OptionalholidaysComponent {
-  optionalholidaysform!: FormGroup;
+ 
   orgHolidayItemsArrayTrue: any = [];
   orgHolidayItemsArrayFalse: any = [];
   orgHolidayItemsArray: any[] = [];
@@ -22,7 +23,7 @@ export class OptionalholidaysComponent {
   optional: number = 0;
   currentYear: number = new Date().getFullYear();
   selectedYear: number = this.currentYear;
-  subscription: any;
+  subscription!: Subscription;
   Policies: any = [];
   jobshiftdetails: any;
   years: number[] = [];
@@ -84,5 +85,10 @@ export class OptionalholidaysComponent {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 
 }

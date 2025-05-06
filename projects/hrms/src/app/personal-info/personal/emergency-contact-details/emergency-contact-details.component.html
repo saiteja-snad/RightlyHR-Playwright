@@ -7,9 +7,10 @@
       @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !==
       'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
       employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-      <div *ngIf="!buttons">
-        <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
-      </div>}
+             <div *ngIf="!buttons">
+              <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+            </div>
+  }
       
       <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
         <button type="submit" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
@@ -56,7 +57,7 @@
                   <p>Loading...</p>
                 </ng-template>
                 <input type="text" class="form-control custom-input" formControlName="contact1Phone"
-                  placeholder="Please enter your mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                  placeholder="Please enter phone number" id="phonenumbers" aria-describedby="phonenumbers"
                   (input)="onEmergencyContact1PhoneInput()" (keypress)="formValidation.restrictAlphabets($event)"
                   autocomplete="off" required>
               </div>
@@ -133,7 +134,7 @@
                   <p>Loading...</p>
                 </ng-template>
                 <input type="text" class="form-control custom-input" formControlName="contact2Phone" (input)="onEmergencyContact2PhoneInput()" (keypress)="formValidation.restrictAlphabets($event)"
-                  placeholder="Please enter mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                  placeholder="Please enter phone number" id="phonenumbers" aria-describedby="phonenumbers"
                  
                   autocomplete="off" required>
               </div>

@@ -107,6 +107,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.emsployedata = data;
         this.dateofbirth =this.formatDateToLocal(this.emsployedata.dob)
+        this.changemaritalstatus(); 
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },
@@ -147,7 +148,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       lastName: data.lastName,
       gender: data.gender,
       dob: this.formatDateToLocal(data.dob) || null,
-      marriageDate: this.formatDateToLocal(data.marriedDate) || null,
+      marriageDate: this.formatDateToLocal(data?.marriedDate) || null,
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
       maritalStatus: this.Maritaldetails.find(((item: any) => item.maritalstatus1 === data.maritalStatus)),
     });
@@ -170,7 +171,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
-      marriageDate: formValue.marriageDate,
+      marriedDate: formValue.marriageDate,
       empStatus: 'Active',
     };
     
@@ -240,21 +241,23 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     }
   }
 // Function to open the modal for confirmation
-  changemaritalstatus(): void {
-    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 === 'Married'  || this.emsployedata?.maritalStatus === 'Married';
-  
-    if (maritalStatus) {
-      // Add the required validator to the marriageDate field
-      this.basicInfoForm.get('marriageDate')?.setValidators([Validators.required]);
-    } else {
-      // Clear the validators if marital status is not "Married"
-      this.basicInfoForm.get('marriageDate')?.clearValidators();
-      this.basicInfoForm.get('marriageDate')?.setValue(null); // Reset the marriage date field
-    }
-  
-    // Update the validation state of the marriageDate field
-    this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
+changemaritalstatus(): void {
+  const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 || this.basicInfoForm.get('maritalStatus')?.value  ||this.emsployedata.maritalStatus;;
+
+  console.log('Marital Status:', maritalStatus);
+
+  if (maritalStatus === 'Married') {
+    // Add the required validator to the marriageDate field
+    this.basicInfoForm.get('marriageDate')?.setValidators([Validators.required]);
+  } else {
+    // Clear the validators if marital status is not "Married"
+    this.basicInfoForm.get('marriageDate')?.clearValidators();
+    this.basicInfoForm.get('marriageDate')?.setValue(null); // Reset the marriage date field
   }
+
+  // Update the validation state of the marriageDate field
+  this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
+}
 
   onsalutationvalidation(): void {
     const gender = this.basicInfoForm.get('gender')?.value;

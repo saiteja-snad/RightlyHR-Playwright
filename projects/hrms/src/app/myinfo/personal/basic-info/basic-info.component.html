@@ -15,13 +15,13 @@
     </div>
 
     <!--input content-->
-    <form autocomplete="off" [formGroup]="basicInfoForm">
+    <form autocomplete="off" [formGroup]="basicInfoForm" >
       <div class="row">
         @if(this.rbac.allowedToAccess('Basic Information.view')){
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="employeeId" class="form-label custom-label mb-2">Employee ID<span
               class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" id="fusionEmpId" formControlName="fusionEmpId"
+          <input type="text" class="form-control custom-input" id="fusionEmpId" autocomplete="off" formControlName="fusionEmpId"
             placeholder="Please enter Employee ID" />
           <div *ngIf="basicInfoForm.get('fusionEmpId')?.invalid && basicInfoForm.get('fusionEmpId')?.touched"
             class="error-msg">
@@ -34,7 +34,7 @@
           <label for="salutation" class="form-label custom-label mb-2">Salutation<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="titledetails" optionLabel="titlename"  optionValue="titlename"
+            <p-select [options]="titledetails" optionLabel="titlename" autocomplete="off"  optionValue="titlename"
               placeholder="Please select salutation" formControlName="salutation"
               class="form-select custom-select"></p-select>
           </div>
@@ -49,8 +49,8 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="firstName" class="form-label custom-label mb-2">First Name<span
               class="text-danger">*</span></label>
-          <input type="text" class="form-control custom-input" id="firstName" formControlName="firstName"
-            placeholder="Please enter first name" (keypress)="formValidation.restrictInput($event)" />
+          <input type="text" class="form-control custom-input" id="firstName" autocomplete="off" formControlName="firstName"
+            placeholder="Please enter first name" (keypress)="formValidation.restrictInput($event)" autocomplete="off" />
           <div *ngIf="basicInfoForm.get('firstName')?.invalid && basicInfoForm.get('firstName')?.touched"
             class="error-msg">
             First Name is required
@@ -67,7 +67,7 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="lastName" class="form-label custom-label mb-2">Last Name<span class="text-danger">*</span></label>
           <input type="text" class="form-control custom-input" id="lastName" formControlName="lastName"
-            placeholder="Please enter last name" (keypress)="formValidation.restrictInput($event)" />
+            placeholder="Please enter last name" (keypress)="formValidation.restrictInput($event)" autocomplete="off" />
           <div *ngIf="basicInfoForm.get('lastName')?.invalid && basicInfoForm.get('lastName')?.touched"
             class="error-msg">
             Last Name is required
@@ -117,7 +117,7 @@
           <label for="maritalStatus" class="form-label custom-label mb-2">Marital Status<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="Maritaldetails" optionLabel="maritalstatus1" (onchange)="changemaritalstatus()" placeholder="Please select marital status"
+            <p-select [options]="Maritaldetails" optionLabel="maritalstatus1" (onChange)="changemaritalstatus()" placeholder="Please select marital status"
               formControlName="maritalStatus" class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('maritalStatus')?.invalid && basicInfoForm.get('maritalStatus')?.touched"

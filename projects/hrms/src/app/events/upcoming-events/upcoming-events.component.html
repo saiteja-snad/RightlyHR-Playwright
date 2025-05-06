@@ -12,9 +12,9 @@
   </div>
 
   <!--tabs content-->
-  <!-- <div class="my-4">
+   <div class="my-4">
     <app-events-tabs />
-  </div> -->
+  </div>
 
   <ng-container *ngIf="(getEventsData$ | async) === null; else maincontent">
     <ng-template #loadingSpinner>

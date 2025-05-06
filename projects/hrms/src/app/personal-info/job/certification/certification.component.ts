@@ -415,7 +415,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
         console.log('Certification deleted successfully:', data);
         this.modalService.dismissAll();
         this.selectedCertification = null;
-        this.conformationPopup.openSuccessModal('Certification deleted successfully');
+        this.conformationPopup.openSuccessModal('Certification details deleted successfully');
         this.getEmpcertdata();
       },
       error: (err: any) => {

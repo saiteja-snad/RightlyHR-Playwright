@@ -6,7 +6,7 @@
             </p>
         </div>
     </div>
-    
+
     <div class="custom-setting-right-content w-100 p-3">
         <form autocomplete="off" [formGroup]="dstForm">
             <div class="d-flex gap-3">
@@ -15,11 +15,12 @@
                     <label for="year" class="form-label custom-label mb-2">{{ "Year" | translate}}</label>
                     <div class="custom-p-select-content">
                         <p-select [options]="yearsList" optionLabel="year" [filter]="false" [showClear]="false"
-                            class="form-select custom-select" formControlName="year" placeholder="Please select year">
+                        [readonly]="isdisabled" class="form-select custom-select" formControlName="year" placeholder="Please select year">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption }}</ng-template>
                             <ng-template let-year #item>{{ year }}</ng-template>
                         </p-select>
                     </div>
+                    
                 </div>
 
                 <!-- Location -->
@@ -35,6 +36,10 @@
                                 }}</ng-template>
                             <ng-template let-location #item>{{ location.jobLocationName }}</ng-template>
                         </p-select>
+                        <div *ngIf="dstForm.get('location')?.touched && dstForm.get('location')?.hasError('required')"
+                        class="error-msg">
+                        {{'Location is required'|translate}}
+                    </div>
                     </div>
                 </div>
 
@@ -45,12 +50,16 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
                             class="form-select custom-select" filterBy="jobSubLocationName" [showClear]="false"
-                            formControlName="subLocation" placeholder="Please select sub location"
+                            formControlName="subLocation" placeholder="Please select sub location" 
                             (onChange)="getAllShifts($event.value)">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.jobSubLocationName
                                 }}</ng-template>
                             <ng-template let-location #item>{{ location.jobSubLocationName }}</ng-template>
                         </p-select>
+                        <div *ngIf="dstForm.get('subLocation')?.touched && dstForm.get('subLocation')?.hasError('required')"
+                        class="error-msg">
+                        {{'Sub Location is required'|translate}}
+                    </div>
                     </div>
                 </div>
 
@@ -66,12 +75,21 @@
                                 }}</ng-template>
                             <ng-template let-location #item>{{ location.shiftName }}</ng-template>
                         </p-select>
+                        <div *ngIf="dstForm.get('shift')?.touched && dstForm.get('shift')?.hasError('required')"
+                        class="error-msg">
+                        {{'Shift is required'|translate}}
+                    </div>
                     </div>
                 </div>
 
-                <div>
+                <!-- <div>
                     <button type="button" class="custom-btn btn-primary"
                         (click)="addMomentRow();hidePublishCloneButtons = true">
+                        + {{'Add Row' | translate}}</button>
+                </div> -->
+                <div class="pt-4 mt-1">
+                    <button type="button" class="custom-btn btn-primary px-4"
+                        (click)="addMomentRow(); hidePublishCloneButtons = true">
                         + {{'Add Row' | translate}}</button>
                 </div>
             </div>
@@ -84,32 +102,65 @@
                             <th>{{'Start Date' | translate}}</th>
                             <th>{{'End Date' | translate}}</th>
                             <th>{{'Moment Type' | translate}}</th>
-                            <th>{{'Duration' | translate}}</th>
+                            <th>{{'Duration(Hrs)' | translate}}</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody formArrayName="momentRows">
                         <tr *ngFor="let row of momentRows.controls; let i = index" [formGroupName]="i">
-                            <td><input type="date" class="form-control custom-input" formControlName="startDate"
-                                    onkeydown="return false" /></td>
-                            <td><input type="date" class="form-control custom-input" formControlName="endDate"
-                                    onkeydown="return false" /></td>
+                            <td><input type="date" class="form-control custom-input" formControlName="startDate"  [min]="getMinDateForHoliday()" [max]="getMaxDateForHoliday()"
+                                    onkeydown="return false" />
+                                <div *ngIf="row.get('startDate')?.invalid && (row.get('startDate')?.dirty || row.get('startDate')?.touched)"
+                                    class="error-msg">
+                                    <span *ngIf="row.get('startDate')?.errors?.['required']">
+                                        {{ 'Start Date is required' | translate }}
+                                    </span>
+                                </div>
+                            </td>
+                            <td><input type="date" class="form-control custom-input" formControlName="endDate"  [min]="getMinDateForHoliday()" [max]="getMaxDateForHoliday()"
+                                    onkeydown="return false" />
+                                <div *ngIf="row.get('endDate')?.invalid && (row.get('endDate')?.dirty || row.get('endDate')?.touched)"
+                                    class="error-msg">
+                                    <span *ngIf="row.get('endDate')?.errors?.['required']">
+                                        {{ 'End Date is required' | translate }}
+                                    </span>
+                                </div>
+                            </td>
                             <td class="custom-p-select-content">
                                 <p-select [options]="momentType" [showClear]="false" formControlName="momentType"
-                                    placeholder="Select type" class="form-select custom-select"
+                                    placeholder="Please select type" class="form-select custom-select"
                                     (onChange)="hidePublishCloneButtons=true">
                                 </p-select>
+                                <div *ngIf="row.get('momentType')?.invalid && (row.get('momentType')?.dirty || row.get('momentType')?.touched)"
+                                    class="error-msg">
+                                    <span *ngIf="row.get('momentType')?.errors?.['required']">
+                                        {{ 'Moment Type is required' | translate }}
+                                    </span>
+                                </div>
                             </td>
                             <td class="custom-p-select-content">
                                 <p-select [options]="durations" [showClear]="false" formControlName="duration"
-                                    placeholder="Select duration" class="form-select custom-select"
+                                    placeholder="Please select duration" class="form-select custom-select"
                                     (onChange)="hidePublishCloneButtons=true">
                                 </p-select>
+                                <div *ngIf="row.get('duration')?.invalid && (row.get('duration')?.dirty || row.get('duration')?.touched)"
+                                    class="error-msg">
+                                    <span *ngIf="row.get('duration')?.errors?.['required']">
+                                        {{ 'Duration is required' | translate }}
+                                    </span>
+                                </div>
+
                             </td>
                             <td>
-                                <a (click)="momentRows.length > 1 && removeMomentRow(i)">
+                                <!-- <a (click)="momentRows.length > 1 && removeMomentRow(i)">
                                     <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
-                                </a>
+                                </a> -->
+                                <div class="d-flex justify-content-end ">
+                                    <button type="button" class="custom-icon btn" (click)="removeMomentRow(i)"
+                                        *ngIf="momentRows.length > 1">
+                                        <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -124,8 +175,13 @@
                 @if(!hidePublishCloneButtons){
                 <button class="custom-btn publish-btn px-5" type="button" (click)="publishDST()">{{'Publish' |
                     translate}}</button>
-                <button class="custom-btn clone-
+                <!-- <button class="custom-btn clone-
                     btn px-5" type="button" (click)="navigateToCloneComponent()">{{'Clone' | translate}}</button>
+                } -->
+                <button type="button" class="custom-btn clone-btn px-5" (click)="navigateToCloneComponent()"
+                    id="submitButton">
+                    {{'Clone' | translate}}
+                </button>
                 }
                 <button class="custom-btn btn-primary px-5" type="button" [disabled]="dstForm.invalid"
                     (click)="UpdateDST(dstForm)">{{'Update'| translate}}</button>
@@ -133,16 +189,18 @@
         </form>
     </div>
 </div>
-
-<ng-template #confirmation let-modal>
-    <div class="result-popup-content text-center" ngbAutofocus>
+<!-- cancel pop up -->
+<ng-template #cancelpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Close' | translate}}</p>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to Close?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'| translate}}</button>
-            <button class="custom-btn btn-primary" (click)="closeUpdateDST()">{{'Yes'| translate}}</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
+                {{'No' | translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="closeUpdateDST();model.dismiss()">
+                {{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

@@ -50,11 +50,11 @@
             <label class="form-label custom-label mb-2">
               {{'Select Team Member(s)'| translate}} <span class="text-danger">*</span>
             </label>
-            <div class="custom-p-select-content">
-              <p-select formControlName="teamMembers"  id="teamMembers" optionLabel="name" [options]="teamMembersdata"
-                placeholder="Select Team Member(s)" class="form-select custom-select" multiple="true" filterBy="name" filter="true"
+            <div class="custom-p-multiSelect-content">
+              <p-multiSelect formControlName="teamMembers"  id="teamMembers" optionLabel="name" [options]="teamMembersdata"
+                placeholder="Select Team Member(s)" esetFilterOnHide="true" class="w-100" multiple="true" filterBy="name" filter="true"
                 (onChange)="onSelectManager($event, 'teamMembers')">
-              </p-select>
+              </p-multiSelect>
             </div>
             <div class="error-msg" *ngIf="teamForm.get('teamMembers')?.invalid && teamForm.get('teamMembers')?.touched">
               Team Members is required

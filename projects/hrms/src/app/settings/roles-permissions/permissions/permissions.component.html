@@ -186,7 +186,7 @@
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"
-                                [disabled]="!isActionEnabled(per.fields, 'Create') || !roleToFilter?.id">
+                                (change)="onCheckboxChange(per, 'Create')" [disabled]="!isActionEnabled(per.fields, 'Create') || !roleToFilter?.id">
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"

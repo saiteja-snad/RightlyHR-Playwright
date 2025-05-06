@@ -87,7 +87,7 @@
                         <div class="custom-p-select-content">
                             <p-select formControlName="teamMembers" id="teamMembers" optionLabel="name"
                                 [options]="teamMembersdata" placeholder="Select Team Member(s)"
-                                class="form-select custom-select" multiple="true"
+                                class="form-select custom-select" multiple="true" filterBy="name" filter="true"
                                 (onChange)="onSelectManager($event, 'teamMembers')">
                             </p-select>
                         </div>
@@ -102,7 +102,7 @@
                         </label>
                         <div class="custom-p-select-content">
                             <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name"
-                                [options]="managers" placeholder="Select Reporting Manager"
+                                [options]="managers" placeholder="Select Reporting Manager" filterBy="name" filter="true"
                                 class="form-select custom-select"
                                 (onChange)="onSelectManager($event, 'reportingManager')">
                             </p-select>

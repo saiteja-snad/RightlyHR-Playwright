@@ -16,11 +16,11 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule,DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })
-export class TeamNumbersComponent implements OnInit,OnDestroy {
+export class TeamNumbersComponent implements OnInit, OnDestroy {
   rmForm!: FormGroup;
   managers: any[] = [];
   subscription!: Subscription;
@@ -164,14 +164,18 @@ export class TeamNumbersComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
       next: (data: any) => {
         console.log('Next callback');
-        this.conformationPopup.openSuccessModal('Data Updated Successfully');
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
         console.log(data);
       },
       error: (reason: any) => {
         console.log('Error callback');
         console.log(reason);
-        this.conformationPopup.openErrorModal('Updated Successfully');
-        this.spinnerLoader = false;
+        if (reason) {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.spinnerLoader = false;
+        }
       }
     });
   }
@@ -209,7 +213,6 @@ export class TeamNumbersComponent implements OnInit,OnDestroy {
   selectedEmployeeIds: string[] = [];
   updateTeamRM() {
     let ManagerId = this.selectedEmployeeIds[0];
-
     // Prepare the request body
     let requestBody = this.selectedEmployees.map(employee => {
       return {
@@ -227,8 +230,8 @@ export class TeamNumbersComponent implements OnInit,OnDestroy {
   }
 
   resetAndClose(modal: any): void {
-    this.rmForm.reset(); 
-    modal.dismiss();      
+    this.rmForm.reset();
+    this.modalService.dismissAll();
   }
 
   ngOnDestroy(): void {

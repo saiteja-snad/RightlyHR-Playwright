@@ -12,7 +12,7 @@
 
 
     <div>
-        <form [formGroup]="locationfromdata">
+        <form autocomplete="off" [formGroup]="locationfromdata">
             <div class="row mb-3 ps-2 ">
                 <div class="col-md-4 ">
                     <label for="location" class="form-label custom-label mb-2">Locations</label>
@@ -83,7 +83,7 @@
         </div>
         <div class="custom-main-popup-content p-3">
 
-            <form [formGroup]="deskForm" (ngSubmit)="postdesk(deskForm)">
+            <form autocomplete="off" [formGroup]="deskForm" (ngSubmit)="postdesk(deskForm)">
                 <div class="row">
 
                     <div class="mb-3 col-md-6">

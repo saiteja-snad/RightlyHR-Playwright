@@ -18,7 +18,7 @@
         </div>
 
         <!--input content-->
-        <form [formGroup]="onboardingForm">
+        <form autocomplete="off" [formGroup]="onboardingForm">
             <div class="row">
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label for="status" class="form-label custom-label mb-2">Status</label>
@@ -225,7 +225,7 @@
                 <span class="component-sub-header">Trainee Details</span>
             </div>
         </div>
-        <form [formGroup]="traineeForm">
+        <form autocomplete="off" [formGroup]="traineeForm">
             <div class="row">
                 <div class="col-md-6 col-lg-4 mb-3">
                     <label class="form-label custom-label mb-2">Employment Type Status</label>

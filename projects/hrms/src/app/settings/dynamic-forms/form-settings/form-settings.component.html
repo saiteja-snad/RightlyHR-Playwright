@@ -76,7 +76,7 @@
     </div>
 
     <div class="custom-main-popup-content">
-      <form [formGroup]="ratingform" (ngSubmit)="onSubmit()">
+      <form autocomplete="off" [formGroup]="ratingform" (ngSubmit)="onSubmit()">
         <div class="custom-popup-height">
           <!-- Rating Scale Section -->
           <div class="d-flex gap-3 w-100 mb-4">
@@ -202,7 +202,7 @@
 
 
     <div class="custom-main-popup-content">
-      <form [formGroup]="updateFormRating">
+      <form autocomplete="off" [formGroup]="updateFormRating">
         <div class="custom-popup-height">
           <!-- Rating Scale Section -->
           <div class="d-flex gap-3 w-100 mb-4">

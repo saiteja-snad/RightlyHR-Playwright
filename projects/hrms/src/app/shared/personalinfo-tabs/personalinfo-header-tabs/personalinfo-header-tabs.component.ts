@@ -15,7 +15,7 @@ export class PersonalinfoHeaderTabsComponent implements OnInit {
     { label: 'Personal', link: '/personalinfo/personal',permission: { feature: 'Employee Info Personal Tab', action: 'view' },},
     { label: 'Job', link: '/personalinfo/job',permission: { feature: 'Employee Info Job Tab', action: 'view' },},
     { label: 'Documents', link: '/personalinfo/documents',permission: { feature: 'Employee Info Documents Tab', action: 'view' },},
-    { label: 'Team Members', link: '/personalinfo/team-members',permission: { feature: 'Employee Info Team Members Tab', action: 'view' } },
+    { label: 'Team Members', link: '/personalinfo/team',permission: { feature: 'Employee Info Team Members Tab', action: 'view' } },
    
   ];
 

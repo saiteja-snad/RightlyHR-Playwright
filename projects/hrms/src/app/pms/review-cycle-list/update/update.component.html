@@ -31,7 +31,7 @@
                 <div class="col-md-6 mb-3">
                     <label for="" class="form-label custom-label">{{'Review Cycle Type' |translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="ReviewCycleTypes" optionLabel="value" optionValue="value"
+                        <p-select [options]="ReviewCycleTypes" optionLabel="value" optionValue="value" resetFilterOnHide="true"
                             placeholder="Please select review cycle type" formControlName="reviewCycleType"
                             class="form-select custom-select">
                         </p-select>
@@ -46,7 +46,7 @@
                             class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="departmentDetails" formControlName="departmentId"
-                            optionLabel="departmentName" optionValue="sno" placeholder="Please select department(s)"
+                            optionLabel="departmentName" optionValue="sno" placeholder="Please select department(s)" resetFilterOnHide="true"
                             (onChange)="onDepartmentNameChange($event);" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('departmentId')?.touched && reviewCycleForm.get('departmentId')?.hasError('required')"
@@ -58,7 +58,7 @@
                     <label for="subDepartmentId" class="form-label custom-label">{{'Team' |translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="subDepartmentsDropdownValues"
-                            formControlName="subDepartmentId" optionValue="subdepartmentId" optionLabel="subdepartmentName"
+                            formControlName="subDepartmentId" optionValue="subdepartmentId" optionLabel="subdepartmentName" resetFilterOnHide="true"
                             placeholder="Please select team(s)" />
                     </div>
                     <div *ngIf="reviewCycleForm.get('subDepartmentId')?.touched && reviewCycleForm.get('subDepartmentId')?.hasError('required')"
@@ -71,10 +71,10 @@
                     <label for="locationId" class="form-label custom-label">{{'Location'|translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="jobLocationDropDownData" optionValue="id"
-                            optionLabel="jobLocationName" formControlName="locationId" placeholder="Please select location(s)"
+                            optionLabel="jobLocationName" formControlName="locationId" placeholder="Please select location(s)" resetFilterOnHide="true"
                             (onChange)="OnClickLocation($event)" />
                     </div>
-                    <div *ngIf="reviewCycleForm.get('locationId')?.touched && reviewCycleForm.get('locationId')?.hasError('required')">
+                    <div class="error-msg" *ngIf="reviewCycleForm.get('locationId')?.touched && reviewCycleForm.get('locationId')?.hasError('required')">
                         Location is required
                     </div>
                 </div>
@@ -83,10 +83,10 @@
                     <label for="subLocationId" class="form-label custom-label">{{'Sub Location'|translate}}<span class="text-danger">*</span></label>
                     <div class="custom-p-multiSelect-content">
                         <p-multiselect class="form-select custom-select" [options]="subLocationsDropdown"
-                            formControlName="subLocationId" optionLabel="jobSubLocationName" optionValue="id"
+                            formControlName="subLocationId" optionLabel="jobSubLocationName" optionValue="id" resetFilterOnHide="true"
                             placeholder="Please select sub location(s)" />
                     </div>
-                    <div *ngIf="reviewCycleForm.get('subLocationId')?.touched && reviewCycleForm.get('subLocationId')?.hasError('required')">
+                    <div class="error-msg" *ngIf="reviewCycleForm.get('subLocationId')?.touched && reviewCycleForm.get('subLocationId')?.hasError('required')">
                         Sub Location is required</div>
                 </div>
 

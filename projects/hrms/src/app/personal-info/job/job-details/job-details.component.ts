@@ -173,6 +173,32 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+  jobEmailsent() {
+    let loggedInUser = this.authService.getToken();
+    let EmailData = {
+
+      firstName: this.employedata.firstName,
+      lastName: this.employedata.lastName,
+      middleName:this.employedata.middleName,
+      senderEmail: loggedInUser.workEmail,
+      senderName: loggedInUser.firstName + ' '+loggedInUser.middleName+' '+ loggedInUser.lastName,
+      employeeId: this.empinfo.employeeId,
+    }
+
+    if(loggedInUser.middleName){
+
+      EmailData.senderName =`${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName ??''}`
+     
+    }else{
+      EmailData.senderName =`${loggedInUser.firstName} ${loggedInUser.lastName ??''}`
+     
+    }
+    this.subscription = this.http.postdata(`CustomEmail/jobtab`, EmailData).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      }
+    })
+  }
   toggleEarlyRelievingFields(isEnabled: boolean): void {
     if (isEnabled) {
       this.separationRequestForm.get('earlyRelievingDate')?.enable();
@@ -500,6 +526,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       };
       this.subscription = this.http.postdata('JobDetails', playload).subscribe({
         next: (data: any) => {
+          this.jobEmailsent();
           this.jobDetailsForm.reset();
           this.http.setBasicDetails();
           this.modalService.dismissAll();
@@ -783,6 +810,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     // Make the POST request to delete the job details
     this.subscription = this.http.postdata("JobDetails/UPDATER", sdata).subscribe({
       next: (data: any) => {
+         this.jobEmailsent()
         this.modalService.dismissAll(); // Close the modal
         this.conformationPopup.openSuccessModal('Job Details updated successfully');
         this.getJobDetails();

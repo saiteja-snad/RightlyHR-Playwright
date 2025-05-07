@@ -9,10 +9,11 @@ import { PaginatorModule } from 'primeng/paginator';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { Router } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-complete-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, TranslateModule],
   templateUrl: './complete-reviews.component.html',
   styleUrl: './complete-reviews.component.scss'
 })

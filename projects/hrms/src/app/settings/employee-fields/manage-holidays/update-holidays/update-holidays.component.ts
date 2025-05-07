@@ -42,10 +42,8 @@ export class UpdateHolidaysComponent {
       location: ['', Validators.required],
       subLocation: ['', Validators.required],
       shift: ['', Validators.required],
-      holidays: this.fb.array([]), // start empty
-    //  holidays: this.fb.array([])
+      holidays: this.fb.array([])
     });
-
     //default year show selected
     this.holidayForm.patchValue({
       year: this.yearDetails.find((x: any) => x.value === this.updateHolidaysData.applicableyear)
@@ -103,11 +101,13 @@ export class UpdateHolidaysComponent {
     });
     this.holidays.push(holidayGroup);
     this.hidePublishCloneButtons = true;
+    const index = this.holidays.length - 1;
   }
+  
 
  // this function used for duplicate holiday name not allowed
  isDuplicateHoliday(index: number): boolean {
-  const holidayArray = this.holidayForm.get('holidays') as FormArray; // ✅ Access the FormArray directly
+  const holidayArray = this.holidayForm.get('holidays') as FormArray; 
   const currentholiday = holidayArray.at(index).value;
   return holidayArray.controls.some((ctrl, i) => {
     if (i === index) return false;
@@ -117,11 +117,28 @@ export class UpdateHolidaysComponent {
     );
   });
 }
-checkDuplicate(index: number): void {
-  this.isDuplicateholidayName[index] = this.isDuplicateHoliday(index);
+
+checkDuplicate(): void {
+  const holidayArray = this.holidayForm.get('holidays') as FormArray;
+  const names = holidayArray.controls.map(ctrl =>
+    ctrl.value.holidayName?.trim().toLowerCase()
+  );
+
+  const seen = new Map<string, number>(); // Map to track first occurrence
+  this.isDuplicateholidayName = names.map((name, idx) => {
+    if (!name) return false;
+    if (seen.has(name)) {
+      return true; // duplicate — not first occurrence
+    } else {
+      seen.set(name, idx);
+      return false; // first occurrence — valid
+    }
+  });
 }
 
-
+get holidaysArray(): FormArray {
+  return this.holidayForm.get('holidays') as FormArray;
+}
   //delete icon click this method works
   removeHolidayRow(index: number): void {
     if (this.holidays.length > 1) {
@@ -169,23 +186,34 @@ checkDuplicate(index: number): void {
 
   //this method used for update button click 
   submit() {
+
     const formValue = this.holidayForm.value;
     const payload = {
       locationId: formValue.location?.id ?? this.updateHolidaysData.locationId,
+      locationName: formValue.location?.locationName ??this.updateHolidaysData.locationName,
       subLocationId: formValue.subLocation.id ?? this.updateHolidaysData.subLocationId,
       applicableyear: formValue.year?.value ?? this.updateHolidaysData.applicableyear,
+      subLocationName: formValue.location?.subLocationName ??this.updateHolidaysData.subLocationName,
       addedby: parseInt(this.empinfo.employeeId) ?? this.updateHolidaysData.addedby,
+      shiftName: this.updateHolidaysData.shiftName,
       addedDate: new Date().toISOString() ?? this.updateHolidaysData.addedDate,
+      authorizedby: parseInt(this.empinfo.employeeId) ??this.updateHolidaysData.employeeId,
       status: this.updateHolidaysData.status,
       authorizedDate: new Date().toISOString() ?? this.updateHolidaysData.authorizedDate,
       authorizedstatus: 'string',
       shiftID: formValue.shift.id ?? this.updateHolidaysData.shiftID,
+      jobSubLocationName: this.updateHolidaysData.jobSubLocationName,
+      addedbyName: this.updateHolidaysData.addedbyName,
+      authorizedbyName: this.updateHolidaysData.authorizedbyName,
+      lastModifedby: parseInt(this.empinfo.employeeId)??this.updateHolidaysData.employeeId,
+      lastModifeddate: new Date(),
+      jobLocationName: this.updateHolidaysData.jobLocationName,
       id: this.updateHolidaysData.id,
       orgHolidaysItems: formValue.holidays.map((item: any) => ({
         holidayName: item.holidayName,
         holidayDate: item.holidayDate,
         isOptional: item.isOptional,
-        status: 'Published',
+        status: 'Submitted',
         holidayColor: 'string',
         headerID: this.updateHolidaysData?.orgHolidaysItems?.[0]?.headerID,
       }))
@@ -218,40 +246,26 @@ checkDuplicate(index: number): void {
 
   //this method used for publish button click 
   publish() {
-    const formValue = this.holidayForm.value;
-    const payload = {
-      locationId: formValue.location?.id ?? this.updateHolidaysData.locationId,
-      subLocationId: formValue.subLocation.id ?? this.updateHolidaysData.subLocationId,
-      applicableyear: formValue.year?.value ?? this.updateHolidaysData.applicableyear,
-      addedby: parseInt(this.empinfo.employeeId) ?? this.updateHolidaysData.addedby,
-      addedDate: new Date().toISOString() ?? this.updateHolidaysData.addedDate,
-      status: 'Published',
-      authorizedDate: new Date().toISOString() ?? this.updateHolidaysData.authorizedDate,
-      authorizedstatus: 'string',
-      shiftID: formValue.shift.id ?? this.updateHolidaysData.shiftID,
-      id: this.updateHolidaysData.id,
-      orgHolidaysItems: formValue.holidays.map((item: any) => ({
-        holidayName: item.holidayName,
-        holidayDate: item.holidayDate,
-        isOptional: item.isOptional,
-        status: 'Published',
-        holidayColor: 'string',
-        headerID: this.updateHolidaysData?.orgHolidaysItems?.[0]?.headerID,
-      }))
-    };
-    this.subscription = this.http.postdata('orgHolidays/Update', payload).subscribe({
-      next: (response: any) => {
-        this.confirmation.openSuccessModal('Holidays published successfully');
-        this.router.navigate(['/settings/employee-fields/manage-holidays/published-holidays']);
+    let publishItem = {
+      Category: 'holidays',
+      refentityId: this.updateHolidaysData?.orgHolidaysItems?.[0]?.headerID,
+    }
+    this.subscription = this.http.postdata(`CompanyRequests/Publish?Category=${publishItem.Category}&refentityId=${publishItem.refentityId}`, { params: publishItem }).subscribe({
+      next: (respnose: any) => {
+        this.confirmation.openSuccessModal('Holidays Published successfully');
+        setTimeout(() => {
+          this.nagvition();
+        }, 2000);
       },
-      error: (err) => {
-        this.confirmation.openErrorModal('Holidays published failed');
-
-      }
-    });
-    console.log(payload);
+      error: (error: any) => {
+        // Handle error if needed
+        console.error(error);
+        if (error.error) {
+          this.confirmation.openErrorModal(error.error.Message);
+        }
+      },
+    })
   }
-
   ////this method used for location list show in location dropdown 
   getjobLocationList() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({

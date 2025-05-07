@@ -19,14 +19,13 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeeiddetails" [filter]="true" filterBy="firstName"
-                            optionLabel="fullName" optionValue="employeeId" placeholder="Please select employee"
-                            formControlName="fusionEmpId" class="custom-select w-100" [dataKey]="'employeeId'"
-                            (onChange)="Onclick($event)">
-                        </p-select>
+                        <p-select [options]="employeeiddetails" [filter]="true" filterBy="firstName" optionLabel="fullName"
+                            optionValue="employeeId" placeholder="Please select employee" formControlName="fusionEmpId"
+                            class="custom-select w-100" [dataKey]="'employeeId'" (onChange)="Onclick($event)"
+                            resetFilterOnHide="true"></p-select>
                     </div>
-                    <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched"
-                        class="error-msg">Employee is required
+                    <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched" class="error-msg">
+                        Employee is required
                     </div>
                 </div>
 
@@ -70,9 +69,8 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Department<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="departmentDetails" optionLabel="departmentName"
-                            placeholder="Please select department" formControlName="department"
-                            class="form-select custom-select"></p-select>
+                        <p-select [options]="departmentDetails" optionLabel="departmentName" placeholder="Please select department"
+                            formControlName="department" class="form-select custom-select" resetFilterOnHide="true"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
                         <div class="error-msg">Department is required</div>
@@ -82,9 +80,8 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Branch Location/Code<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="issueLocationdata" optionLabel="branchLocation1"
-                            placeholder="Please select branch location" formControlName="branchCode"
-                            class="form-select custom-select"></p-select>
+                        <p-select [options]="issueLocationdata" optionLabel="branchLocation1" placeholder="Please select branch location"
+                         formControlName="branchCode" class="form-select custom-select" resetFilterOnHide="true"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('branchCode')?.invalid && employeeForm.get('branchCode')?.touched">
                         <div class="error-msg">Branch Location/Code is required</div>
@@ -99,7 +96,7 @@
                     <label class="form-label custom-label mb-2">Asset Type<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="AssertTypeGet" optionLabel="assetType1" placeholder="Please select asset type"
-                            formControlName="asserttype" class="form-select custom-select"></p-select>
+                            formControlName="asserttype" class="form-select custom-select" resetFilterOnHide="true"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('asserttype')?.invalid && employeeForm.get('asserttype')?.touched">
                         <div class="error-msg">Asset Type is required</div>
@@ -125,25 +122,25 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Document Type<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="documentType" optionLabel="name" placeholder="Please select document type"
                             formControlName="documentType" class="form-select custom-select"
                             (onChange)="onclickDocumentType(employeeForm.get('documentType')?.value)">
                         </p-select>
                     </div>
-                    <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched">
+                    <div *ngIf="employeeForm.get('documentType')?.invalid && employeeForm.get('documentType')?.touched">
                         <div class="error-msg">Document Type is required</div>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Signature Authority Name <span
+                    <label class="form-label custom-label mb-2">Signature Authority Name<span
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select sub location"
+                        <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select signature authority"
                             (onChange)="onclickDesignation($event)" class="form-select custom-select"
-                            formControlName="signatureAuthority">
+                            formControlName="signatureAuthority" resetFilterOnHide="true">
                         </p-select>
                         <div *ngIf="employeeForm.get('signatureAuthority')?.invalid && employeeForm.get('signatureAuthority')?.touched">
                             <div class="error-msg">Signature Authority is required</div>
@@ -157,7 +154,7 @@
                 </div>
 
                 <div class="d-flex flex-wrap gap-3 pt-4">
-                    <button type="button" class="custom-btn btn-primary" (click)="onTraineeAppointmentLetterSubmit()">
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid" (click)="onTraineeAppointmentLetterSubmit()">
                         Generate Document</button>
                 </div>
             </form>
@@ -254,8 +251,7 @@
                                     <p>We eagerly anticipate your contribution and growth as a Trainee at RightlyHR.</p>
                                     <p>Sincerely,</p>
                                     <p><b>FOR RightlyHR</b></p>
-                                    <div class="mb-3 letter-signature" >
-                                        {{traineeAppointmentletterData.authorityName}}</div>
+                                    <div class="letter-signature">{{traineeAppointmentletterData.authorityName}}</div>
                                     <div class="row">
                                         <div class="col-md-7">
                                             <p>{{traineeAppointmentletterData.authorityName}}</p>
@@ -263,9 +259,8 @@
                                         </div>
                                         <div class="col-md-5">
                                             <p><b>Agreed & Accepted By</b><br>
-                                                <span
-                                                    *ngIf="!traineeAppointmentletterData.firstName && !traineeAppointmentletterData.middleName && !traineeAppointmentletterData.lastName;else fullnames"><b>
-                                                        Trainee Name:</b></span>
+                                                <span *ngIf="!traineeAppointmentletterData.firstName && !traineeAppointmentletterData.middleName 
+                                                && !traineeAppointmentletterData.lastName;else fullnames"><b>Trainee Name:</b></span>
                                                 <ng-template #fullnames>
                                                     <span>{{traineeAppointmentletterData.firstName}} {{traineeAppointmentletterData.middleName}}
                                                         {{traineeAppointmentletterData.lastName}}
@@ -380,11 +375,7 @@
                                             actual or planned business or activities of the Company or related to its actual
                                             research, design, development or suggested by or resulting from any
                                             tasks assigned to you for or on behalf of the Company, or misuse of the Company's
-                                            facilities, materials or personnel. The following shall be the property
-                                            of the Employer exclusively.1..1 Any Intellectual Property conceived,
-                                            discovered or made by you; and
-                                            1..2 Any patent, copyright, trademark, application or record relating to
-                                            any Intellectual Property.
+                                            facilities, materials or personnel.
                                         </li>
                                     </ol>
                                 </div>
@@ -407,6 +398,11 @@
                                 </ng-template>
                                 <ul class="list-style-none">
                                     <li class="mb-3">
+                                        The following shall be the property
+                                            of the Employer exclusively.1..1 Any Intellectual Property conceived,
+                                            discovered or made by you; and
+                                            1..2 Any patent, copyright, trademark, application or record relating to
+                                            any Intellectual Property.
                                         As far as the Company is not already by law, the owner of the
                                         intellectual property rights arising in respect of any and all works
                                         created, you hereby assign to the Company and/or its affiliates all
@@ -478,14 +474,6 @@
                                         1..3 Any client or prospective clients of the Company to which you were
                                         seeking to provide services or products, including participating in the Company's sales
                                         efforts, during the one (1)-year period immediately prior to the Separation Date; unless:<br>
-                                        • Such services or products being provided to the clients or prospective
-                                        clients by you or any third party with whom
-                                        you were then employed are wholly unrelated to Employer's then-current lines
-                                        of services or products on the Separation Date; and/or<br>
-                                        1..4 During the Term and for one (1) year from the Separation Date, you
-                                        shall not directly or indirectly, in any
-                                        capacity or function, on your own behalf or on behalf of any other person or
-                                        organization.
                                     </li>
                                 </ol>
                             </div>
@@ -505,7 +493,16 @@
                                 <ng-template #doc>
                                     <div class="hard-copy-letter"></div>
                                 </ng-template>
-                                <li> 1..5 Interfere or attempt to interfere in any way with the Company’s
+                                <p>
+                                    • Such services or products being provided to the clients or prospective
+                                    clients by you or any third party with whom
+                                    you were then employed are wholly unrelated to Employer's then-current lines
+                                    of services or products on the Separation Date; and/or<br>
+                                    1..4 During the Term and for one (1) year from the Separation Date, you
+                                    shall not directly or indirectly, in any
+                                    capacity or function, on your own behalf or on behalf of any other person or
+                                    organization.<br>
+                                    1..5 Interfere or attempt to interfere in any way with the Company’s
                                     relationships with any of its clients, service
                                     providers, employees, suppliers, experts. Key advisors or consultants,
                                     including without limitation, inducing or
@@ -516,76 +513,77 @@
                                     partners.<br> • During the Term and for one (1) year from the Separation Date, you shall
                                     not directly or indirectly, in any
                                     capacity or function engage or participate in or be employed by in a
-                                    business similar and same
-                                    <p class="letter-sub-header">DATA PROTECTION:</p>
-                                    <ol>
-                                        <li class="mb-3">
-                                            Your consent to the Company holding and processing, both electronically and
-                                            manually, the data it collects in relation to you, during your trainee
-                                            period, for the purpose of the Company’s administration and management of its trainees,
-                                            employees,
-                                            its business and for compliance with applicable procedures, laws and regulations.
-                                        </li>
-                                        <li class="mb-3">You also consent to the transfer, storage and processing of
-                                            such data by the Company outside India, where the Company may have offices.</li>
-                                    </ol> as the Company
-                                </li>
-                    
-                                <p class="letter-sub-header">MISCELLANEOUS:</p>
+                                    business similar and same</p>
+                                <p class="letter-sub-header">DATA PROTECTION:</p>
+                                <ol>
+                                    <li class="mb-3">
+                                        Your consent to the Company holding and processing, both electronically and
+                                        manually, the data it collects in relation to you, during your trainee
+                                        period, for the purpose of the Company’s administration and management of its trainees,
+                                        employees,
+                                        its business and for compliance with applicable procedures, laws and regulations.
+                                    </li>
+                                    <li class="mb-3">You also consent to the transfer, storage and processing of
+                                        such data by the Company outside India, where the Company may have offices.</li>
+                                </ol> as the Company
+                               
+                                <p class="letter-sub-header pt-3">MISCELLANEOUS:</p>
                                 <ol>
                                     <li class="mb-3">
                                         <b>Waiver:</b>
                                         A waiver by the Company of a breach of any provision of this Agreement by
-                                        you shall
-                                        not operate or be construed as a waiver of any subsequent breach by you. No
-                                        waiver shall
-                                        be valid unless in writing and signed by an authorized officer of the
-                                        Company.
+                                        you shall not operate or be construed as a waiver of any subsequent breach by you. No
+                                        waiver shall be valid unless in writing and signed by an authorized officer of the Company.
                                     </li>
                                     <li class="mb-3"><b>Training:</b>
                                         If the Company intends to send you abroad for training, you will have to
-                                        sign a bond
-                                        for the period and amount which will be decided by the Company as per its
-                                        policy
-                                        depending on the period of training, travel and other expenses/ loss
-                                        incurred.
+                                        sign a bond for the period and amount which will be decided by the Company as per its
+                                        policy depending on the period of training, travel and other expenses/ loss incurred.
                                     </li>
                                     <li class="mb-3"><b>Indemnity:</b>
                                         You shall keep the Company indemnified for any damages, which the Company or
-                                        its
-                                        client may suffer due to any act/acts by you including breach of any terms
-                                        of this
-                                        Agreement.
+                                        its client may suffer due to any act/acts by you including breach of any terms
+                                        of this Agreement.
                                     </li>
                                     <li class="mb-3"><b>Governing law & Jurisdiction:</b>
                                         This Agreement shall be governed by and construed in accordance with Indian
-                                        law. In
-                                        relation to any legal action or proceedings arising out of or in connection
-                                        with
-                                        this Agreement, both the parties irrevocably submit to the exclusive
-                                        jurisdiction of
-                                        the courts in [New Delhi].
+                                        law. In relation to any legal action or proceedings arising out of or in connection
+                                        with this Agreement, both the parties irrevocably submit to the exclusive
+                                        jurisdiction of the courts in [New Delhi].
                                     </li>
                                     <li class="mb-3"><b>Notices:</b>
                                         All notices, requests, demands or other communication required or permitted
-                                        to be
-                                        given under this Agreement and the provisions contained herein shall be in
-                                        writing
-                                        in English language and are effective upon delivery to the applicable Party
-                                        (whether
-                                        by mail, fax, personal delivery or otherwise) at the address, and marked to
-                                        the
-                                        attention of the person, indicated below:
+                                        to be given under this Agreement and the provisions contained herein shall be in
+                                        writing in English language and are effective upon delivery to the applicable Party
+                                        (whether by mail, fax, personal delivery or otherwise) at the address, and marked to
+                                        the attention of the person, indicated below:
                                     </li>
                                 </ol>
-                                <p>
+                            </div>
+                        </div>
+                        <div class="letter-footer">
+                            <app-letter-footer />
+                        </div>
+                    </div>
+
+                    <!--page-5-->
+                    <div class="letter-page-content my-4" id="pdfContent5">
+                        <div class="letter-page-sub-content">
+                            <div>
+                                <div *ngIf="this.traineeAppointmentletterData.documentType; else doc" class="soft-copy-letter">
+                                    <app-lettersheader></app-lettersheader>
+                                </div>
+                                <ng-template #doc>
+                                    <div class="hard-copy-letter"></div>
+                                </ng-template>
+                                <div class="py-4">
                                     If to the Company, at:<br />
                                     RightlyHR<br />
                                     Plot No.32, Opp. SBI<br />
                                     Nizampet Village, Kukatpally<br />
                                     Hyderabad, Telangana-500072-India.
-                                </p>
-                                <p>
+                                </div>
+                                <div class="mb-3">
                                     If to you, at:<br />
                                     <span>
                                         <span *ngIf="!traineeAppointmentletterData.addressLine1; else addresspage6">
@@ -595,10 +593,9 @@
                                             <b>
                                                 <span>{{ traineeAppointmentletterData.addressLine1 }}</span>,<br />
                                                 <span>{{ traineeAppointmentletterData.addressLine2 }}</span>,<br />
-                                                <span>{{ traineeAppointmentletterData.city }}, {{ traineeAppointmentletterData.state
-                                                    }},</span><br />
-                                                <span>{{ traineeAppointmentletterData.country }} <span> </span> - {{
-                                                    traineeAppointmentletterData.zipCode }}.</span>
+                                                <span>{{ traineeAppointmentletterData.city }}, {{ traineeAppointmentletterData.state }},</span><br />
+                                                <span>{{ traineeAppointmentletterData.country }} <span> </span> - 
+                                                {{ traineeAppointmentletterData.zipCode }}.</span>
                                             </b>
                                         </ng-template>
                                     </span>
@@ -617,24 +614,7 @@
                                             _________</span>
                                         <ng-template #mobileno><b>{{ traineeAppointmentletterData.contactnumber }}</b></ng-template>
                                     </span>
-                                </p>
-                            </div>
-                        </div>
-                        <div class="letter-footer">
-                            <app-letter-footer />
-                        </div>
-                    </div>
-
-                    <!--page-5-->
-                    <div class="letter-page-content" id="pdfContent5">
-                        <div class="letter-page-sub-content">
-                            <div>
-                                <div *ngIf="this.traineeAppointmentletterData.documentType; else doc" class="soft-copy-letter">
-                                    <app-lettersheader></app-lettersheader>
                                 </div>
-                                <ng-template #doc>
-                                    <div class="hard-copy-letter"></div>
-                                </ng-template>
                                 <p class="letter-sub-header">OTHER PROVISIONS:</p>
                                 <ol>
                                     <li class="mb-3">
@@ -671,20 +651,15 @@
                                 </ol>
                                 <p>
                                     We take this opportunity to welcome you to RightlyHR team and trust you will
-                                    find this a
-                                    stimulating environment that will offer you a challenging and rewarding career.
-                                    We look
-                                    forward to your contribution to building a Company of which we can all be proud.
+                                    find this a stimulating environment that will offer you a challenging and rewarding career.
+                                    We look forward to your contribution to building a Company of which we can all be proud.
                                 </p>
-                    
                                 <p>
                                     Your signature below conforms that all information’s, written or oral, provided
-                                    to us by you
-                                    is accurate and complete. Please sign and return a duplicate copy of this letter
-                                    signifying
-                                    your acceptance.
+                                    to us by you is accurate and complete. Please sign and return a duplicate copy of this letter
+                                    signifying your acceptance.
                                 </p>
-                                <div class="row d-flex justify-content-evenly mt-2">
+                                <div>
                                     <div class="mt-3">
                                         <p>Signature: ___________</p>
                                     </div>
@@ -693,6 +668,23 @@
                                     </div>
                                     <p>Date: _______________</p>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="letter-footer">
+                            <app-letter-footer />
+                        </div>
+                    </div>
+
+                    <!--page-6-->
+                    <div class="letter-page-content my-4" id="pdfContent6">
+                        <div class="letter-page-sub-content">
+                            <div>
+                                <div *ngIf="this.traineeAppointmentletterData.documentType; else doc" class="soft-copy-letter">
+                                    <app-lettersheader></app-lettersheader>
+                                </div>
+                                <ng-template #doc>
+                                    <div class="hard-copy-letter"></div>
+                                </ng-template>
                                 <div class="text-center letter-header mb-3">Exhibit B</div>
                                 <div class="text-center letter-sub-header mb-3">Prevention of Sexual Harassment Policy</div>
                                 <p>
@@ -700,54 +692,38 @@
                                     all locations of RightlyHR. All employees become subject to this policy on their
                                     first day of employment with RightlyHR and will be subject to discipline for
                                     violations of this policy,
-                                    up to and including termination.
-                                    <br><br>
-                                    <span class="letter-sub-header">Sexual Harassment at RightlyHR is Prohibited</span>
-                                    <br><br>
+                                    up to and including termination.</p>
+                                <p class="letter-sub-header">Sexual Harassment at RightlyHR is Prohibited</p>
+                                <p>
                                     Any harassment by one employee of RightlyHR directed at another, both on and off
                                     RightlyHR
                                     premises, during and outside of work hours is expressly prohibited. Sexual
                                     harassment is
                                     any unwelcome conduct of a sexual nature that a person finds offensive and
                                     results in a hostile or intimidating
-                                    work environment.
-                                    <br><br>
+                                    work environment.</p>
+                                <p>
                                     The Equal Employment Opportunity Commission (EEOC) describes
                                     sexual harassment as “unwelcome sexual advances, requests for
                                     sexual favours, and other verbal or physical harassment of a
                                     sexual nature.” Furthermore, harassment does not have to be of a
-                                    sexual nature and can include offensive remarks about a person’s sex.<br>
-                                    <br>Examples of sexual harassment may include but are not
-                                    limited to:<br><br><span>
-                                        <ul>
-                                            <li>
-                                                A supervisor requesting sexual acts, explicitly or implicitly, as a
-                                                condition of a person’s employment</li>
-                                            <li>Ongoing remarks about a person’s sex made by a colleague</li>
-                                            <li>
-                                                Harassment that has the effect of interfering with an employee’s
-                                                ability to
-                                                work or conduct that creates a hostile work environment
-                                            </li>
-                                            <li>
-                                                Direct physical contact of a sexual or unwanted nature
-                                            </li>
-                                            <li>
-                                                Preferential treatment of an employee who submits to sexual conduct
-                                            </li>
-                                            <li>
-                                                Use of sexual publications, websites, or discussions or exposure to
-                                                pornography
-                                            </li>
-                                            <li>
-                                                Retaliation for sexual harassment complaints
-                                            </li>
-                                        </ul>
-                                    </span>
-                                </p>
-                                <p class="paragraph mb-3">
-                                    <span class="letter-sub-header">Sexual Harassment Investigation Procedure</span>
-                                    <br><br>
+                                    sexual nature and can include offensive remarks about a person’s sex.</p>
+                                <p>Examples of sexual harassment may include but are not limited to:</p>
+                                <ul>
+                                    <li>A supervisor requesting sexual acts, explicitly or implicitly, as a
+                                        condition of a person’s employment</li>
+                                    <li>Ongoing remarks about a person’s sex made by a colleague</li>
+                                    <li>Harassment that has the effect of interfering with an employee’s
+                                        ability to work or conduct that creates a hostile work environment
+                                    </li>
+                                    <li>Direct physical contact of a sexual or unwanted nature</li>
+                                    <li>Preferential treatment of an employee who submits to sexual conduct</li>
+                                    <li>Use of sexual publications, websites, or discussions or exposure to pornography</li>
+                                    <li>Retaliation for sexual harassment complaints</li>
+                                </ul>
+                    
+                                <p class="letter-sub-header">Sexual Harassment Investigation Procedure</p>
+                                <p>
                                     Any employee who has been the subject of sexual harassment may tell the harasser
                                     to stop
                                     immediately. If the harasser
@@ -757,7 +733,8 @@
                                     Complaints Committee) must be made aware of any inappropriate workplace
                                     behaviour so
                                     that action can be taken immediately.
-                                    <br><br>
+                                </p>
+                                <p>
                                     Sexual harassment complaints should be submitted to ICC (email id:
                                     hr&#64;rightlyhr.com the occurrence of the incident. A committee member may help
                                     an employee complete a
@@ -769,10 +746,10 @@
                                     anonymous for the entire duration of a sexual harassment investigation. ICC
                                     needs to
                                     submit report to the Management.
-                                    <br><br>
-                                    <span class="letter-sub-header">Complaint</span><br><br>
-                                    A sexual harassment complaint must provide at least the following information:
                                 </p>
+                                <p class="letter-sub-header">Complaint</p>
+                                <p>A sexual harassment complaint must provide at least the following information:</p>
+                    
                                 <ul>
                                     <li>The complaining employee’s name and position</li>
                                     <li>The name and position of the harasser</li>
@@ -791,9 +768,9 @@
                             <app-letter-footer />
                         </div>
                     </div>
-
-                    <!--page-6-->
-                    <div class="letter-page-content" id="pdfContent6">
+                    
+                    <!--page-7-->
+                    <div class="letter-page-content my-4" id="pdfContent7">
                         <div class="letter-page-sub-content">
                             <div>
                                 <div *ngIf="this.traineeAppointmentletterData.documentType; else doc" class="soft-copy-letter">
@@ -802,9 +779,8 @@
                                 <ng-template #doc>
                                     <div class="hard-copy-letter"></div>
                                 </ng-template>
+                                <p class="letter-sub-header">Investigation</p>
                                 <p>
-                                    <span class="letter-sub-header">Investigation</span>
-                                    <br><br>
                                     Upon receipt of a complaint, ICC will begin an investigation of the incident
                                     within one business day. ICC will speak with the harasser and any witnesses. A member of
                                     the ICC will also review any other
@@ -819,9 +795,8 @@
                                     circumstances requiring more time, determined solely by the HR Director, the
                                     investigation shall be completed within 60 days of ICC receipt of the complaint.
                                 </p>
-                                <br>
+                                <p class="letter-sub-header">Confidentiality</p>
                                 <p>
-                                    <span class="letter-sub-header">Confidentiality</span><br><br>
                                     During the investigation, HR and ICC will maintain confidentiality to the extent
                                     possible. Interviews with the harasser and witnesses may require HR to reveal the
                                     complainant’s name but HR and ICC will take steps
@@ -830,9 +805,8 @@
                                     to a sexual harassment complaint and investigation shall be maintained in secure
                                     and confidential files retained by HR.
                                 </p>
-                                <br>
-                                <p class="paragraph">
-                                    <span class="letter-sub-header">Discipline</span><br><br> If an employee is
+                                <p class="letter-sub-header">Discipline</p>
+                                <p> If an employee is
                                     found to have sexually harassed another employee in violation of this policy,
                                     the mandatory minimum discipline is a written
                                     reprimand. This minimum discipline will only apply to first time offenders and
@@ -840,15 +814,14 @@
                                     minor and isolated in nature. Discipline for repeat violations or for ongoing
                                     offenses shall be immediate
                                     termination of employment. Employees in violation of this policy may also be
-                                    subject to civil damages and criminal penalties.
-                                    <br><br>
+                                    subject to civil damages and criminal penalties.</p>
+                                <p>
                                     By signing below, I acknowledge that I have read, understand, and will comply
-                                    with the
-                                    RightlyHR POSH policy. I understand that sexual harassment in the workplace will
+                                    with the RightlyHR POSH policy. I understand that sexual harassment in the workplace will
                                     not be tolerated and that I have a responsibility
                                     to report any such behaviour. Additionally, I understand that I do not engage in
                                     any such inappropriate behaviour.
-                                </p><br>
+                                </p>
                                 <div class="row d-flex justify-content-evenly mt-2">
                                     <div class="mt-5">
                                         <p>Signature: ___________</p>
@@ -865,8 +838,8 @@
                         </div>
                     </div>
 
-                    <!--page-7-->
-                    <div class="letter-page-content" id="pdfContent7">
+                    <!--page-8-->
+                    <div class="letter-page-content my-4" id="pdfContent8">
                         <div class="letter-page-sub-content">
                             <div>
                                 <div *ngIf="this.traineeAppointmentletterData.documentType; else doc" class="soft-copy-letter">
@@ -881,8 +854,10 @@
                                 <p class="mb-2">
                                     The use of drugs and alcohol in IT offices can have serious consequences,
                                     including decreased productivity, increased accidents, and legal liabilities for the company. To
-                                    ensure a safe and healthy work environment, it is important for employers to establish clear policies and
-                                    procedures regarding drug and alcohol use. This template provides a framework for developing such policies specifically for
+                                    ensure a safe and healthy work environment, it is important for employers to establish clear policies
+                                    and
+                                    procedures regarding drug and alcohol use. This template provides a framework for developing such
+                                    policies specifically for
                                     IT offices.
                                 </p>
                     
@@ -933,8 +908,8 @@
                     
                                 <p>
                                     I <span><span *ngIf="!traineeAppointmentletterData.firstName; else empnames">________________</span>
-                                        <ng-template #empnames><b class="p-text-bold">{{ traineeAppointmentletterData.firstName }} 
-                                            {{traineeAppointmentletterData.middleName}} {{ traineeAppointmentletterData.lastName }} </b>
+                                        <ng-template #empnames><b class="p-text-bold">{{ traineeAppointmentletterData.firstName }}
+                                                {{traineeAppointmentletterData.middleName}} {{ traineeAppointmentletterData.lastName }} </b>
                                         </ng-template></span>
                                     acknowledge that as a Trainee of RightlyHR working in the IT offices, it is my
                                     responsibility to maintain a safe and healthy work environment for myself and my colleagues.
@@ -955,7 +930,23 @@
                                     agree to
                                     comply with any such testing that may be required of me.
                                 </p>
+                            </div>
+                        </div>
+                        <div class="letter-footer">
+                            <app-letter-footer />
+                        </div>
+                    </div>
                     
+                    <!--page-9-->
+                    <div class="letter-page-content my-4" id="pdfContent9">
+                        <div class="letter-page-sub-content">
+                            <div>
+                                <div *ngIf="this.traineeAppointmentletterData.documentType; else doc" class="soft-copy-letter">
+                                    <app-lettersheader></app-lettersheader>
+                                </div>
+                                <ng-template #doc>
+                                    <div class="hard-copy-letter"></div>
+                                </ng-template>
                                 <p>
                                     I acknowledge that violating this policy may result in disciplinary action, up
                                     to and
@@ -1002,8 +993,8 @@
                         </div>
                     </div>
         
-                    <!--page-8-->
-                    <div class="letter-page-content" id="pdfContent8">
+                    <!--page-10-->
+                    <div class="letter-page-content my-4" id="pdfContent10">
                         <div class="letter-page-sub-content">
                             <div class="pt-2">
                                 <div *ngIf="this.traineeAppointmentletterData.documentType; else doc" class="soft-copy-letter">
@@ -1164,8 +1155,8 @@
                         </div>
                     </div>
 
-                    <!--page 9-->
-                    <div class="letter-page-content" id="pdfContent9">
+                    <!--page-11-->
+                    <div class="letter-page-content my-4" id="pdfContent11">
                         <div class="letter-page-sub-content">
                             <div>
                                 <div *ngIf="this.traineeAppointmentletterData.documentType; else doc" class="soft-copy-letter">

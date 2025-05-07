@@ -1,4 +1,3 @@
-
 export interface IemployeeDetails {
   middleName: any;
   fusionEmpId: any;

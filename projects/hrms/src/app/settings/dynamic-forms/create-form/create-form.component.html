@@ -171,7 +171,7 @@
                                         Each section's weightage must be less than or equal to the Overall Rating.
                                     </div>
                                     <div *ngIf="!section.get('weightage')?.errors?.['required'] && createForm.errors?.['weightageNotEqualTo100'] && section.get('weightage')?.touched">
-                                        Sum of all section weightage should be equal to 100
+                                        Sum of all sections weightage should be equal to 100
                                     </div>
                                 </div>
                             </div>
@@ -233,7 +233,7 @@
                                                         </div>
                                                         <div *ngIf="!question.get('questionWeightage')?.errors?.['required'] && createForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100'] 
                                                         && question.get('questionWeightage')?.touched">
-                                                            Total question weightage in this section must be 100.
+                                                            Total questions weightage in this section must be 100.
                                                         </div>
                                                     </div>
                                                 </div>

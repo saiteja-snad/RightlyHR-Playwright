@@ -39,7 +39,7 @@ export class DocumentsComponent {
   constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empdata = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getMainFolders()
     this.initializejobForm();
 

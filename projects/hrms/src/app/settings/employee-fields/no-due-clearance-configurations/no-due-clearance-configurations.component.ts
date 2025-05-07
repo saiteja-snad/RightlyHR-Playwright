@@ -179,55 +179,72 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     console.log(this.noDueForm);
 
   }
-
+//add watch method clear field radio button changes
   watchTypeChange() {
     const deptControl = this.noDueForm.get('department');
     const empRoleControl = this.noDueForm.get('selectedEmpRole');
     const managerControl = this.noDueForm.get('managerType');
     const roleControl = this.noDueForm.get('role');
     const employeeControl = this.noDueForm.get('employee');
-
+  
     this.noDueForm.get('selectedType')?.valueChanges.subscribe(value => {
       if (value === 'DEPT') {
+        // Set DEPT-related validators
         deptControl?.setValidators(Validators.required);
         empRoleControl?.setValidators(Validators.required);
+  
+        // Clear EMPMNGR validators and values
         managerControl?.clearValidators();
         managerControl?.reset();
-      } else if (value === 'EMPMNGR') {
-        managerControl?.setValidators(Validators.required);
-        deptControl?.clearValidators();
-        deptControl?.reset();
-        empRoleControl?.clearValidators();
-        empRoleControl?.reset();
+  
+        roleControl?.clearValidators();
         roleControl?.reset();
+  
         employeeControl?.clearValidators();
         employeeControl?.reset();
-
-        this.noDueForm.get('selectedEmpRole')?.reset();
+  
+      } else if (value === 'EMPMNGR') {
+        // Set EMPMNGR-related validators
+        managerControl?.setValidators(Validators.required);
+  
+        // Clear DEPT-related validators and values
+        deptControl?.clearValidators();
+        deptControl?.reset();
+  
+        empRoleControl?.clearValidators();
+        empRoleControl?.reset();
+  
+        roleControl?.clearValidators();
+        roleControl?.reset();
+  
+        employeeControl?.clearValidators();
+        employeeControl?.reset();
       }
-
+  
+      // Ensure all controls update
       deptControl?.updateValueAndValidity();
+      empRoleControl?.updateValueAndValidity();
       managerControl?.updateValueAndValidity();
+      roleControl?.updateValueAndValidity();
+      employeeControl?.updateValueAndValidity();
     });
-
+  
     this.noDueForm.get('selectedEmpRole')?.valueChanges.subscribe(value => {
       if (value === 'EMPLOYEE') {
         employeeControl?.setValidators(Validators.required);
         roleControl?.clearValidators();
         roleControl?.reset();
-        console.log(this.noDueForm);
-
       } else if (value === 'ROLE') {
         roleControl?.setValidators(Validators.required);
         employeeControl?.clearValidators();
         employeeControl?.reset();
       }
-
+  
       roleControl?.updateValueAndValidity();
       employeeControl?.updateValueAndValidity();
     });
   }
-
+  //update watch method clear field radio button changes
   watchTypeupdateChange() {
     const deptControl = this.updateDueForm.get('Updatedepartment');
     const managerControl = this.updateDueForm.get('managerType');
@@ -384,7 +401,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       },
       error: (err) => {
         console.log(err);
-        this.modal.openErrorModal("Failed to Update No Due Clearance");
+        this.modal.openErrorModal(err.error.message);
       },
       complete: () => {
         this.updateDueForm.reset();

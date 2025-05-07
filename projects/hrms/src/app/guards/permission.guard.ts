@@ -34,8 +34,10 @@ export class PermissionGuard implements CanActivate {
         // Redirect to next accessible tab
         const fallback = this.getNextAllowedTab(parentPath);
         if (fallback) {
+          console.log(fallback);
+          
           this.router.navigateByUrl(fallback);
-          break;
+          return false;
         } else {
           this.router.navigateByUrl('/unauthorized');
         }

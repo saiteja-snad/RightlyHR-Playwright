@@ -143,7 +143,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF
                             only)<span class="text-danger">*</span></label>
-                        <input type="file" class="form-control custom-input" accept=".pdf, .png, .jpg, .jpeg" formControlName="attachment"
+                        <input type="file" class="form-control custom-input px-0" accept=".pdf, .png, .jpg, .jpeg" formControlName="attachment"
                             (change)="onBankProofSelected($event)">
                         <div class="error-msg"
                             *ngIf="bankDetailsForm.get('attachment')?.invalid && bankDetailsForm.get('attachment')?.touched">
@@ -265,7 +265,7 @@
                     <div class="col-md-12 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF
                             only)<span class="text-danger">*</span></label>
-                        <input type="file" class="form-control custom-input" accept=".pdf, .png, .jpg," formControlName="attachmentupdate"
+                        <input type="file" class="form-control custom-input px-0" accept=".pdf, .png, .jpg," formControlName="attachmentupdate"
                             (change)="onBankProofSelected($event)">
 
                         <div class="error-msg"

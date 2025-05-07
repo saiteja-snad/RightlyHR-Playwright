@@ -422,10 +422,10 @@ export class CertificationComponent implements OnInit, OnDestroy {
 
     this.subscription = this.http.postdata('Certification/Update', empcertsdata).subscribe({
       next: (data: any) => {
-        console.log('Certification deleted successfully:', data);
+        console.log('Certification details deleted successfully:', data);
         this.modalService.dismissAll();
         this.selectedCertification = null;
-        this.conformationPopup.openSuccessModal('Certification deleted successfully');
+        this.conformationPopup.openSuccessModal('Certification details deleted successfully');
         this.getEmpcertdata();
       },
       error: (err: any) => {

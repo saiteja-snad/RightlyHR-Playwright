@@ -1,0 +1,230 @@
+<div class="custom-main-component-container">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div><span class="component-sub-header">Visa Details</span></div>
+    <div class="custom-add-btn" (click)="openModal(addvisamodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+  </div>
+
+  <div class="custom-table-content">
+    <table class="w-100">
+      <thead>
+        <tr>
+         
+          <th>Visa Type</th>
+          <th>Issued Date</th>
+          <th>Expiry Date</th>
+          <th>Issued Country</th>
+          <th>Status</th>
+          <th class="text-center">Action(s)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="visaData.length > 0; else noDataTemplate">
+          <tr *ngFor="let visa of visaData; let i = index">
+          
+            <td>{{ visa.visatype }}</td>
+            <td>{{ visa.issueddate   | dateformat}}</td>
+            <td>{{ visa.expirydate  | dateformat  }}</td>
+            <td>{{ visa.issuedcountry }}</td>
+            <td>{{ visa.status }}</td>
+            <td class="text-center">
+              <div class="dropdown">
+                <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li (click)="openModalupdate(updatevisamodal, visa)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-pencil me-2"></i>Update
+                    </a>
+                  </li>
+                  <li (click)="opendeletModal(deleteconformation,visa)">
+                    <a class="dropdown-item">
+                      <i class="bi bi-trash3 me-2"></i>Delete
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+    
+        <ng-template #noDataTemplate>
+          <tr>
+            <td colspan="6"><app-no-data-found></app-no-data-found></td>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+    
+  </div>
+</div>
+
+
+<ng-template #addvisamodal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Add Visa Details</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss();visaForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content ">
+      <form [formGroup]="visaForm" (ngSubmit)="postvisa()">
+        <div class="row mb-3">
+          <div class="col-6 mb-3">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Visa Type<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="visa" optionLabel="visatype1" optionValue="visatype1" formControlName="visatype"
+                placeholder="Please select visa type" class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg" *ngIf="visaForm.get('visatype')?.touched && visaForm.get('visatype')?.hasError('required')">
+              Visa Type is required
+            </div>
+          </div>
+          <div class="col-6 mb-3">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country Name<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="Countrydetails" optionLabel="countryName" [filter]="true"  [resetFilterOnHide]="true" filterBy="countryName" optionValue="countryName"
+                formControlName="countryname" placeholder="Please select country "
+                class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg" *ngIf="visaForm.get('countryname')?.touched && visaForm.get('countryname')?.hasError('required')">
+              Country name  is required
+            </div>
+          </div>
+          <div class="col-6 mb-3">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Issued Date<span
+                class="text-danger">*</span></label>
+            <input type="date" formControlName="issueddate" [min]="dateofbirth" [max]="currentDate"
+              onkeypress="return false" class="form-control custom-input">
+              <div class="error-msg" *ngIf="visaForm.get('issueddate')?.touched && visaForm.get('issueddate')?.hasError('required')">
+                Issued Date  is required
+              </div>
+          </div>
+          <div class="col-6 mb-3">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Expiry Date<span
+                class="text-danger">*</span></label>
+            <input type="date" formControlName="expirydate" [min]="getMinEndDate()" onkeypress="return false" class="form-control custom-input">
+            <div class="error-msg" *ngIf="visaForm.get('expirydate')?.touched && visaForm.get('expirydate')?.hasError('required')">
+              Expiry Date  is required
+            </div>
+          </div>
+          <div class="col-12">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Note</label>
+            <textarea class="form-control custom-input" id="comments" placeholder="Please enter note"
+            formControlName="notes" maxlength="250"></textarea>
+            <div class="textarea-count-text">{{ visaForm.get('notes')?.value?.length || 0 }}/250</div>
+          </div>
+        </div>
+
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary"
+            (click)="visaForm.reset();modal.dismiss()">Close</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="visaForm.invalid || spinnerLoader ">
+            @if (spinnerLoader) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading' | translate}}...</span>
+            } @else {
+            <span>{{'Add'| translate}}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #updatevisamodal let-modal>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div>
+        <p class="popup-heading mb-0">Update Visa Details</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss();visaupdateForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
+    </div>
+    <div class="custom-main-popup-content ">
+      <form [formGroup]="visaupdateForm" (ngSubmit)="updatevisa()">
+        <div class="row mb-3">
+          <div class="col-6 mb-3">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Visa Type<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="visa" optionLabel="visatype1" optionValue="visatype1" formControlName="visatype"
+                placeholder="Please select visa type" class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg" *ngIf="visaupdateForm.get('visatype')?.touched && visaupdateForm.get('visatype')?.hasError('required')">
+              Visa Type is required
+            </div>
+          </div>
+          <div class="col-6 mb-3">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Country Name<span
+                class="text-danger">*</span></label>
+            <div class="custom-p-select-content">
+              <p-select [options]="Countrydetails" [filter]="true" filterBy="countryName"  [resetFilterOnHide]="true" optionLabel="countryName" optionValue="countryName"
+                formControlName="countryname" placeholder="Please select country "
+                class="form-select custom-select"></p-select>
+            </div>
+            <div class="error-msg" *ngIf="visaupdateForm.get('countryname')?.touched && visaupdateForm.get('countryname')?.hasError('required')">
+              Country name  is required.
+            </div>
+          </div>
+          <div class="col-6 mb-3">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Issued Date<span
+                class="text-danger">*</span></label>
+            <input type="date" formControlName="issueddate" [min]="dateofbirth" [max]="currentDate"
+              onkeypress="return false" class="form-control custom-input">
+              <div class="error-msg" *ngIf="visaupdateForm.get('issueddate')?.touched && visaupdateForm.get('issueddate')?.hasError('required')">
+                Issued Date  is required.
+              </div>
+          </div>
+          <div class="col-6 mb-3">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Expiry Date<span
+                class="text-danger">*</span></label>
+            <input type="date" formControlName="expirydate" [min]="getupdateMinEndDate()" onkeypress="return false" class="form-control custom-input">
+            <div class="error-msg" *ngIf="visaupdateForm.get('expirydate')?.touched && visaupdateForm.get('expirydate')?.hasError('required')">
+              Expiry Date  is required.
+            </div>
+          </div>
+          <div class="col-12">
+            <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Note</label>
+            <textarea class="form-control custom-input" id="comments" placeholder="Please enter note"
+            formControlName="notes" maxlength="250"></textarea>
+            <div class="textarea-count-text">{{ visaupdateForm.get('notes')?.value?.length || 0 }}/250</div>
+          </div>
+        </div>
+
+        <div class="custom-modal-footer">
+          <button type="reset" class="custom-btn btn-secondary"
+            (click)="visaupdateForm.reset();modal.dismiss()">Close</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="visaupdateForm.invalid || spinnerLoader ">
+            @if (spinnerLoader) {
+            <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+            <span>{{'Loading' | translate}}...</span>
+            } @else {
+            <span>{{'Update'| translate}}</span>
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteconformation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text">Are you sure you want to delete the Visa Details?</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="visaDelete()">Yes</button>
+      </div>
+    </div>
+  </ng-template>

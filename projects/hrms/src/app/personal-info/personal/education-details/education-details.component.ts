@@ -478,24 +478,18 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
     };
 
     // Send the delete request
-    this.subscription = this.http
-      .postdata('Education/UPDATER', payload)
-      .subscribe({
-        next: (data: any) => {
-          console.log('Education record deleted successfully:', data);
-          this.modalService.dismissAll();
-          this.getEducationEmpid();
-          this.conformationPopup.openSuccessModal(
-            'Education detalis deleted successfully'
-          );
-        },
-        error: (err: any) => {
-          console.error('Error deleting education record:', err);
-          this.conformationPopup.openErrorModal(
-            'Education detalis deleted failed'
-          );
-        },
-      });
+    this.subscription = this.http.postdata('Education/UPDATER', payload).subscribe({
+      next: (data: any) => {
+        console.log('Education record deleted successfully:', data);
+        this.modalService.dismissAll()
+        this.getEducationEmpid();
+        this.conformationPopup.openSuccessModal('Education details deleted successfully');
+      },
+      error: (err: any) => {
+        console.error('Error deleting education record:', err);
+        this.conformationPopup.openErrorModal('Education details deleted failed');
+      }
+    });
   }
 
   ngOnDestroy(): void {

@@ -94,23 +94,22 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http
-      .getData(`Employeedata/${employeeId}`)
-      .subscribe({
-        next: (data: any) => {
-          this.employedata = data;
-          this.patchForm(data);
-          this.loading = false;
-          this.selectedworkcoutrycode.set(data.workphonecountryflag);
-
-          this.selectedpersonalnumbercode.set(data.mobilephonecountryflag);
-        },
-        error: (reason) => {
-          console.log(reason);
-          this.loading = false;
-          console.error('Error fetching employee data:', reason);
-        },
-      });
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.employedata = data;
+        this.patchForm(data);
+        this.loading = false;
+        this.selectedworkcoutrycode.set(data.workphonecountryflag);
+    
+        this.selectedpersonalnumbercode.set(data.contactnumbercountryflag);
+       
+      },
+      error: (reason) =>{
+        console.log(reason);
+        this.loading = false;
+        console.error('Error fetching employee data:', reason)
+      } 
+    });
   }
 
   patchForm(data: any): void {
@@ -143,16 +142,11 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       workEmail: formValue.workMail,
       contactnumber: contactnumber,
       workPhone: worknumber,
-      mobilePhoneCountryCode:
-        this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode,
-      workPhoneCountryCode:
-        this.selectedDialCode || this.employedata.workPhoneCountryCode,
-      mobilephonecountryflag:
-        this.selectedCountryCodephoneflag ||
-        this.employedata.mobilephonecountryflag,
-      workPhoneCountryFlag:
-        this.selectedCountryCodegflag || this.employedata.workPhoneCountryFlag,
-    };
+      mobilePhoneCountryCode: this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode,
+      workPhoneCountryCode: this.selectedDialCode || this.employedata.workPhoneCountryCode,
+      contactnumbercountryflag:this.selectedCountryCodephoneflag  || this.employedata.contactnumbercountryflag,
+      workPhoneCountryFlag:this.selectedCountryCodegflag ||  this.employedata.workPhoneCountryFlag
+     };
 
     this.subscription = this.http
       .postdata(`Employeedata/UPDATER`, updatePayload)

@@ -20,7 +20,8 @@ export class PersonalPersonalTabsComponent implements OnInit {
     { label: 'Education Details', link: '/personalinfo/personal/education-details' ,permission: { feature: 'Employee Info Education Details', action: 'view' }},
     { label: 'Identity Details', link: '/personalinfo/personal/identity-details' ,permission: { feature: 'Employee Info Identity Details', action: 'view' }},
     { label: 'Family Details', link: '/personalinfo/personal/family-details',permission: { feature: 'Employee Info Family Details', action: 'view' } },
-    { label: 'Bank Details', link: '/personalinfo/personal/bank-details',permission: { feature: 'Employee Info Bank Details', action: 'view' } }
+    { label: 'Bank Details', link: '/personalinfo/personal/bank-details',permission: { feature: 'Employee Info Bank Details', action: 'view' } },
+    { label: 'Visa Details', link: '/personalinfo/personal/visa-details',permission: { feature: 'Employee Info Visa Details', action: 'view' } }
   ];
 
 

@@ -130,7 +130,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   }
 
   openModalupdate(content: any, familyDetail: any): void {
-    console.log(familyDetail)
+  
     this.selectedFamilyMembername = familyDetail.relationShipName
     this.selectedFamilyMember = familyDetail.id;
     const selectedRelationship = this.familyRelations.find(
@@ -153,7 +153,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
       this.spinnerLoader=true
       const EmpId = parseInt(this.empinfo.employeeId);
       const selectedRelationship = this.familyDetailsupdateForm.get('relationShipIdupdate')?.value;
-      console.log('Selected Relationship:', selectedRelationship);
+   
       const payload = {
         id: this.selectedFamilyMember,
         employeeId: EmpId,
@@ -201,7 +201,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
           this.conformationPopup.openSuccessModal('Family details deleted successfully')
         },
         error: (err: any) => {
-          console.log(err);
+       
           this.conformationPopup.openErrorModal('Family details deleted failed')
         },
       });

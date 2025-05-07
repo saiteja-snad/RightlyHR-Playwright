@@ -12,10 +12,11 @@ import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validator
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { EventsTabsComponent } from "../../shared/events-tabs/events-tabs.component";
 
 @Component({
   selector: 'app-upcoming-events',
-  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NoDataFoundComponent],
+  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NoDataFoundComponent, EventsTabsComponent],
   templateUrl: './upcoming-events.component.html',
   styleUrl: './upcoming-events.component.scss'
 })

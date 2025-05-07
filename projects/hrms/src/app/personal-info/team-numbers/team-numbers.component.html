@@ -74,7 +74,7 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select optionLabel="name" [options]="managers" placeholder="Select Reporting Manager"
-                            class="form-select custom-select" id="mReportingto" formControlName="mReportingto"
+                            class="form-select custom-select" id="mReportingto" formControlName="mReportingto" filterBy="name" filter="true" resetFilterOnHide="true"
                             (onChange)="onSelectManager($event)">
                         </p-select>
                     </div>

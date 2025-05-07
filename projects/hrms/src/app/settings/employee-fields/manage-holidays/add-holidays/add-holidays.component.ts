@@ -41,7 +41,7 @@ export class AddHolidaysComponent {
       location: [null, Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
-      holidays: this.fb.array([]), // start empty
+      holidays: this.fb.array([], this.duplicateHolidayNameValidator()), // start empty
     });
     this.yearDetails = this.generateYears(2000, currentYear);
     // Add one default row after form is ready
@@ -115,6 +115,19 @@ export class AddHolidaysComponent {
     const control = this.addHolidayRow();
     this.holidays.push(control);
   }
+
+// Inside your component class
+duplicateHolidayNameValidator(): ValidatorFn {
+  return (formArray: AbstractControl): { [key: string]: any } | null => {
+    const holidayNames = (formArray as FormArray).controls
+      .map(control => control.get('holidayName')?.value?.trim().toLowerCase())
+      .filter(name => !!name);
+
+    const duplicates = holidayNames.filter((name, index, self) => self.indexOf(name) !== index);
+
+    return duplicates.length ? { duplicateHolidayNames: true } : null;
+  };
+}
 
   // Delete icon button click method
   removeHolidayRow(index: number) {

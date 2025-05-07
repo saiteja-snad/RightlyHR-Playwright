@@ -18,17 +18,7 @@ import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-team-numbers',
-  imports: [
-    CommonModule,
-    Select,
-    FormsModule,
-    PaginatorModule,
-    TranslateModule,
-    DropdownModule,
-    SearchfilterPipe,
-    ReactiveFormsModule,
-    NoDataFoundComponent,
-  ],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss',
 })
@@ -76,7 +66,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     console.log(this.empinfo);
     this.getAllTeammembersList();
     this.getEmployee();
@@ -193,64 +183,51 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
     let jobid = this.selectedData.id;
     let ManagerEmployeeId = this.selectedData.employeeId;
-    this.subscription = this.http
-      .postdata(
-        `Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`,
-        this.selectedData
-      )
-      .subscribe({
-        next: (data: any) => {
-          console.log('Next callback');
-          this.conformationPopup.openSuccessModal('Updated Successfully');
-          console.log(data);
-        },
-        error: (reason: any) => {
-          console.log('Error callback');
-          console.log(reason);
-          this.conformationPopup.openErrorModal('Updated Successfully');
+    this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
+      next: (data: any) => {
+        console.log('Next callback');
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+        console.log(data);
+      },
+      error: (reason: any) => {
+        console.log('Error callback');
+        console.log(reason);
+        if (reason) {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
           this.spinnerLoader = false;
-        },
-      });
+        }
+      }
+    });
   }
 
   getAllTeammembersList() {
-    let EmployeeId = this.empinfo.employeeId;
-    this.subscription = this.http
-      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-      .subscribe(
-        (responseData: any) => {
-          console.log(responseData);
-          this.TeamMemberArray = responseData as Iteammembers[];
-          this.TeamMemberArray.forEach((member) => (member.selected = false));
-        },
-        (error) => {
-          console.error(error);
-        }
-      );
+    let EmployeeId = (this.empinfo.employeeId)
+    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
+      (responseData: any) => {
+        console.log(responseData);
+        this.TeamMemberArray = responseData as Iteammembers[];
+        this.TeamMemberArray.forEach(member => member.selected = false);
+      },
+      error => {
+        console.error(error);
+      }
+    );
   }
 
   getEmployee() {
-    this.subscription = this.http
-      .getData('JobDetails/getAllReportingManagers')
-      .subscribe({
-        next: (data: any) => {
-          this.managers = data
-            .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-            .map(
-              (emp: {
-                firstName: any;
-                middleName?: string;
-                lastName: any;
-              }) => ({
-                ...emp,
-                name: `${emp.firstName} ${
-                  emp.middleName ? emp.middleName + ' ' : ''
-                }${emp.lastName}`,
-              })
-            );
-        },
-        error: (err) => console.log(err),
-      });
+    this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
+      next: (data: any) => {
+        this.managers = data
+          .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
+          .map((emp: { fusionEmpId:string; firstName: string; middleName?: string; lastName: string }) => ({
+            ...emp,
+            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+          }));
+      },
+      error: (err) => console.log(err),
+    });
   }
 
   updateTeamRM() {
@@ -271,8 +248,8 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   }
 
   resetAndClose(modal: any): void {
-    this.rmForm.reset(); // clear the form
-    modal.dismiss(); // close the popup
+    this.rmForm.reset();
+    this.modalService.dismissAll(); 
   }
 
   ngOnDestroy(): void {

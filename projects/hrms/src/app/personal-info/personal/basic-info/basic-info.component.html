@@ -116,7 +116,7 @@
           <label for="maritalStatus" class="form-label custom-label mb-2">Marital Status<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="Maritaldetails" optionLabel="maritalstatus1"  (onchange)="changemaritalstatus()"  placeholder="Please select marital status"
+            <p-select [options]="Maritaldetails" optionLabel="maritalstatus1"  (onChange)="changemaritalstatus()"  placeholder="Please select marital status"
               formControlName="maritalStatus" class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('maritalStatus')?.invalid && basicInfoForm.get('maritalStatus')?.touched"

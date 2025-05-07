@@ -50,7 +50,7 @@ export class MyTicketsComponent {
   priorityDetails = [
     { value: 'Urgent', label: 'Urgent' },
     { value: 'High', label: 'High' },
-    { value: 'Normal', label: 'Normal' },
+    { value: 'Medium', label: 'Medium' },
     { value: 'Low', label: 'Low' }
 
   ];

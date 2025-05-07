@@ -26,7 +26,7 @@ export class DocumentsComponent {
   selectedMainFolder = {} as IFolders
   isMainfolderTouched: boolean = false;
   folders = [] as IFolders[];
-  selectedFile !: IFolders;
+  selectedFile !: any;
   selectedFolder = [] as IFolders[];
   mainDir = {} as ICreateSubDir;
   Files = [] as IFolders[];
@@ -92,8 +92,12 @@ export class DocumentsComponent {
     });
   
     folder.expanded = !folder.expanded;
- 
     this.selectedMainFolder = folder;
+    if (!folder.subfolders || folder.subfolders.length === 0) {
+      this.Files=[]// or however you're using getVisibleFiles
+      this.selectedFile=null
+    }
+   
   }
   onSubFolderSelected(subFolder: any): void {
     this.selectedFile = subFolder;

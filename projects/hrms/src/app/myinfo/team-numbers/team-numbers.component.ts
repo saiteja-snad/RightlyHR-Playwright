@@ -161,8 +161,6 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   updateRM() {
     this.spinnerLoader = true;
-    console.log(this.selectedEmployeeDetails);
-    
     let jobid = this.selectedEmployeeDetails.id;
     let ManagerEmployeeId = this.selectedData.employeeId;
     this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
@@ -179,6 +177,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
           this.spinnerLoader = false;
+          this.rmForm.reset();
         }
       }
     });

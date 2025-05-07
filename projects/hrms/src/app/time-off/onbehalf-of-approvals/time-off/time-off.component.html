@@ -39,10 +39,14 @@
                         </div>
                     </td>
                     <td>
-                        <a type="button">
-                            <img src="images\info-fill.png" alt="info icon" (click)="comments(item.entity.leaveApproverComments,commentspopup)"
-                             class="info-icon">
-                        </a>
+                        <!-- <div *ngIf="item.entity?.leaveApproverComments[0]?.comments;else timeoffcomments">
+                            <div (click)="comments(item.entity.leaveApproverComments,commentspopup)"> -->
+                                <a type="button" (click)="comments(item.entity.leaveApproverComments,commentspopup)">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon" >
+                                </a>
+                            <!-- </div>
+                        </div>
+                        <ng-template #timeoffcomments>-</ng-template> -->
                     </td>
                     <td class="text-center">
                         <div class="dropdown">
@@ -82,7 +86,7 @@
     <div class="custom-main-popup-container">
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Comments</p>
+                <p class="popup-heading mb-0">Approver History Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
@@ -164,8 +168,8 @@
             <p class="confirmation-text">Is it a planned leave?</p>
         </div>
 
-        <form autocomplete="off" name="leaveapprovee" class="w-100" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid"
-            class="custom-main-popup-content">
+        <form autocomplete="off" name="leaveapprovee" class="w-100" #leaveapprovee="ngForm"
+            (ngSubmit)="leaveapprovee.valid" class="custom-main-popup-content">
             <div class="mb-3 d-flex justify-content-center">
                 <div class="form-check">
                     <input class="form-check-input" type="radio" [value]="true" id="Planned" name="isPlannedLeave"
@@ -185,10 +189,10 @@
                 <label for="exampleFormControlTextarea1" class="form-label labell">Comments
                     <span class="error-msg">*</span></label>
                 <textarea class="form-control" id="Reasons" placeholder="Please provide comments" name="Reasons"
-                    #Reasons="ngModel" maxlength="250"
-                    [(ngModel)]="selectedLeaveData.comments" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)"
-                    rows="3" required></textarea>
-                <div class="textarea-count-text">{{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
+                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                    (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
+                <div class="textarea-count-text">
+                    {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                 <div class="error-msg"
                     *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
                     Comments are required
@@ -198,7 +202,7 @@
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(selectedLeaveData)"
-                [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable|| spinnerLoader">
+                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable|| spinnerLoader">
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <div class="spinner-border button-spinner text-light" role="status"></div>
@@ -220,13 +224,14 @@
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
         </div>
-        <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid" 
-        class="custom-main-popup-content">
+        <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid"
+            class="custom-main-popup-content">
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject Reason<span
                         class="text-danger">*</span></label>
-                <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments" name="Reasons"
-                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" maxlength="250" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)"
+                <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
+                    name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                    maxlength="250" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)"
                     (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
                 <div class="form-label custom-label text-end my-1">
                     {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
@@ -238,7 +243,7 @@
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleReject(selectedLeaveData)"
-                [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable || spinnerLoader">
+                    [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments||issubmitdiable || spinnerLoader">
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <div class="spinner-border button-spinner text-light" role="status"></div>

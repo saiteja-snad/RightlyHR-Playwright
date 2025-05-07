@@ -8,12 +8,13 @@ import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid, Iorgcategoryleaves, } from '../../Interfaces/timoff-model';
 import { environment } from '../../../environments/environment';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
 import { IJobdetails } from '../../Interfaces/job-model';
 import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { OnBeHalfOfApprovalTabsComponent } from "../../shared/time-off-module-tabs/on-be-half-of-approval-tabs/on-be-half-of-approval-tabs.component";
+import { noWhitespaceValidator } from '../../shared/nowhitespace/nowhitespace.component';
 
 @Component({
   selector: 'app-on-be-half-of',
@@ -117,10 +118,10 @@ export class OnBeHalfOfComponent {
   blockedData: any;
 
   constructor(
-    private conformationPopup: OpenModalService, 
+    private conformationPopup: OpenModalService,
     private modalService: NgbModal,
-    private fb: FormBuilder, 
-    private authService: AuthService, 
+    private fb: FormBuilder,
+    private authService: AuthService,
     private router: Router,
     private http: HttpService,
   ) {
@@ -146,28 +147,73 @@ export class OnBeHalfOfComponent {
       leaveType: [null, Validators.required],
       startdate: [null, Validators.required],
       enddate: [null, Validators.required],
-      halfdayavailing : ['', Validators.required],
-      availing: [{value : '',disabled: true}], 
-      fulldayavailing: [{value : '',disabled: true}],
-      reason: ['', [Validators.required]]
+      halfdayavailing: ['', Validators.required],
+      availing: [{ value: '', disabled: true }],
+      fulldayavailing: [{ value: '', disabled: true }],
+      reason: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
   }
-
+  // initializeForm() {
+  //   this.leaveForm = this.fb.group({
+  //     leaveType: [null, Validators.required],
+  //     startdate: [null, Validators.required],
+  //     enddate: [null, Validators.required],
+  //     halfdayavailing: ['', Validators.required],
+  //     availing: [{ value: '', disabled: true }, Validators.required],
+  //     fulldayavailing: [{ value: '', disabled: true }, Validators.required],
+  //     reason: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+  //   }, {
+  //     validators: this.startDateBeforeEndDateValidator()
+  //   });
+  
+  //   this.leaveForm.get('startdate')?.valueChanges.subscribe(() => {
+  //     this.updateHalfDayOptions();
+  //     this.leaveForm.updateValueAndValidity(); // triggers validation again
+  //   });
+  
+  //   this.leaveForm.get('enddate')?.valueChanges.subscribe(() => {
+  //     this.updateHalfDayOptions();
+  //     this.leaveForm.updateValueAndValidity(); // triggers validation again
+  //   });
+  // }
+  // startDateBeforeEndDateValidator(): ValidatorFn {
+  //   return (group: AbstractControl): ValidationErrors | null => {
+  //     const start = group.get('startdate')?.value;
+  //     const end = group.get('enddate')?.value;
+  
+  //     if (start && end && new Date(start) > new Date(end)) {
+  //       return { dateOrderInvalid: true };
+  //     }
+  //     return null;
+  //   };
+  // }
+  
   updateHalfDayOptions() {
     const start = this.leaveForm.get('startdate')?.value;
     const end = this.leaveForm.get('enddate')?.value;
     if (start && end) {
       this.leaveForm.get('halfDay')?.enable();
+      this.leaveForm.get('halfdayavailing')?.enable();
       this.leaveForm.get('availing')?.enable();
+      this.leaveForm.get('fulldayavailing')?.enable();
     } else {
       this.leaveForm.get('halfDay')?.disable();
+      this.leaveForm.get('halfdayavailing')?.disable();
       this.leaveForm.get('availing')?.disable();
+      this.leaveForm.get('fulldayavailing')?.disable();
     }
   }
 
-  Onclick(fusionemployeeId: any) {
+  Onclick(fusionemployeeId: any): void {
+    if (!fusionemployeeId || !fusionemployeeId.value) {
+      // Employee deselected (cleared)
+      this.resetOnBehalfOfData();
+      return;
+    }
+
+    // When employee is selected
     this.empiIdAftersubmission = fusionemployeeId;
     this.showcontent = true;
     this.showbutton = true;
@@ -180,12 +226,24 @@ export class OnBeHalfOfComponent {
     this.leaveapplication.dateOfJoining = this.formatDatewithDate(this.leaveapplication?.dateOfJoining);
     this.getCategoryDetails(fusionemployeeId.value);
     this.cadidateEmployeeId = fusionemployeeId.value;
-    this.getOrgHolidaysByEmpId(fusionemployeeId.value)
-    this.getholidaybyempid(fusionemployeeId.value)
+    this.getOrgHolidaysByEmpId(fusionemployeeId.value);
+    this.getholidaybyempid(fusionemployeeId.value);
     this.getcustompolicybyempid(fusionemployeeId.value);
     this.getLeavesData(fusionemployeeId.value);
-    localStorage.setItem('onbehalfof',fusionemployeeId.value)
+    localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
+  }
+
+  resetOnBehalfOfData(): void {
+    this.empiIdAftersubmission = null;
+    this.fusionEmployeeId = null;
+    this.leaveapplication = {};
+    this.showcontent = false;
+    this.showbutton = false;
+    this.disablebuttonforemployeeid = false;
+    this.categoryDetails = [];
+    this.cadidateEmployeeId = 0;
+    localStorage.removeItem('onbehalfof');
   }
 
   onleaveSelect(categoryId: number) {
@@ -251,9 +309,9 @@ export class OnBeHalfOfComponent {
           .map((employee: any) => ({
             ...employee,
             fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-            }${employee.firstName ? employee.firstName : '' } ${employee.middleName ? employee.middleName + ' ' : ''
-            }${employee.lastName ? employee.lastName : ''}`,
-        }));
+              }${employee.firstName ? employee.firstName : ''} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName ? employee.lastName : ''}`,
+          }));
       },
       error: (reason: any) => {
         console.log(reason);
@@ -327,7 +385,7 @@ export class OnBeHalfOfComponent {
     })
   }
 
- 
+
   getOrgHolidaysByEmpId(employeeId: number): any {
     let empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.subscription = this.http.getData(`orgHolidays/getOrgHoliday/${employeeId}`).subscribe({
@@ -340,8 +398,6 @@ export class OnBeHalfOfComponent {
       }
     })
   }
-
-
 
   getEmployementTypeByempId(empid: number) {
     this.subscription = this.http.getData(`Employementtype/${empid}`).subscribe({
@@ -458,13 +514,10 @@ export class OnBeHalfOfComponent {
         // The employee is still on probation
         // Calculate the number of probation days
         let dateOfJoining = moment(this.leaveapplication.dateOfJoining);
-
         let probationDays = currentDate.diff(dateOfJoining, 'days');
-
         // Divide by 30 and round down to the nearest 0.5 or whole number
         let months = 1;
         months += Math.floor(probationDays / 30);
-
         let probationCategoryDetails: ICategoryDetails[] = categoryDetails.filter(e => e.category.isProbationAllowed)
         probationCategoryDetails.forEach(e => {
           e.probationLeaves = months * e.category.probationDays
@@ -526,7 +579,7 @@ export class OnBeHalfOfComponent {
           // Divide by 30 and round down to the nearest 0.5 or whole number
           let months = 1;
           months += Math.floor(probationDaysDiff / 30);
-     
+
           let totalAppliedLeaves = this.lpdata
             .filter(element => element.status !== 'rejected')  // Exclude rejected leaves
             .reduce((acc, element) => {
@@ -602,21 +655,13 @@ export class OnBeHalfOfComponent {
           },
           error: (err: any) => {
             this.conformationPopup.openErrorModal(err.error.message)
-            setTimeout(() => {
-              this.modalService.dismissAll();
-            }, 2000);
           },
           complete: () => {
             this.leaveForm.reset();
           }
         });
       } else {
-        // Display modal message and set status
-        console.warn('Maximum leave limit reached for this category.');
         this.conformationPopup.openErrorModal('Maximum leave limit reached for this category')
-        setTimeout(() => {
-          this.modalService.dismissAll();
-        }, 2000);
       }
     }
   }
@@ -790,22 +835,22 @@ export class OnBeHalfOfComponent {
     if (daytype === 'half') {
       this.disableSubmitButton = false;
       this.leaveFormData.isDaytype = true;
-      this.leaveForm.patchValue({ 
+      this.leaveForm.patchValue({
         halfdayavailing: '1',   // Half day selected
         fulldayavailing: null   // Clear full day selection
       });
       this.enableButton = true;
-      
-      if(this.leaveForm.get('availing')?.value === 'firsthalf'){
+
+      if (this.leaveForm.get('availing')?.value === 'firsthalf') {
         this.selectedValue = '1'
-        this.leaveForm.patchValue({ 
+        this.leaveForm.patchValue({
           halfdayavailing: '1',   // Half day selected
           fulldayavailing: null   // Clear full day selection
         });
       }
-      if(this.leaveForm.get('availing')?.value === 'secondhalf'){
+      if (this.leaveForm.get('availing')?.value === 'secondhalf') {
         this.selectedValue = '3'
-        this.leaveForm.patchValue({ 
+        this.leaveForm.patchValue({
           halfdayavailing: '1',   // Half day selected
           fulldayavailing: null   // Clear full day selection
         });
@@ -815,12 +860,12 @@ export class OnBeHalfOfComponent {
       this.disableSubmitButton = false;
       this.leaveFormData.isDaytype = false;
       this.enableButton = false;
-      if(this.enableHalfDayOptions === false){
+      if (this.enableHalfDayOptions === false) {
         this.leaveForm.get('halfdayavailing')?.disable();
         this.leaveForm.get('availing')?.disable();
       }
       this.toggleFullDayOptions(false);
-      if(this.dateDifference > 1){
+      if (this.dateDifference > 1) {
         this.leaveForm.get('halfdayavailing')?.disable();
         this.leaveForm.get('availing')?.disable();
         this.leaveForm.patchValue({ fulldayavailing: '2' });
@@ -866,17 +911,27 @@ export class OnBeHalfOfComponent {
   }
 
   onstartdate(action: string) {
+    this.disableSubmitButton = false;
+    this.leaveForm.patchValue({ halfdayavailing: null });
+    this.leaveForm.patchValue({ availing: null });
+    this.leaveForm.patchValue({ fulldayavailing: null });
+    if (this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null) {
+      this.disableSubmitButton = true;
+    }
+    this.isoptionalnotallowedatWorkingdate = false;
+    this.isstimeoffValid = true;
+    this.startdatevalid = true;
+    this.isNonOptionalHolidaySelected = false;
+    this.isHolidaySelected = false;
+    this.isWeekOffSelectedEndate = false;
+    this.isWeekOffSelected = false;
+    this.isHolidaySelectedEndate = false;
     this.updateStartDateValidity1();
     this.vldateofjoin1();
     this.onEndDateChange();
     this.checkWeekends(action);
-    this.dateCheckWithHolidayOrWeekend(action)
-    if (!this.startDate) {
-      this.endDate = null;
-      this.isWeekOffSelectedEndate = false;
-      this.isHolidaySelectedEndate = false;
-      this.issEndDategreater = true;
-    }
+    this.dateCheckWithHolidayOrWeekend(action);
+    this.issEndDategreater = true;
   }
 
   updateStartDateValidity1(): void {
@@ -1026,11 +1081,82 @@ export class OnBeHalfOfComponent {
   }
 
   onEndDate(action: string) {
+    this.disableSubmitButton = false;
+    this.leaveForm.patchValue({ halfdayavailing: null });
+    this.leaveForm.patchValue({ availing: null });
+    this.leaveForm.patchValue({ fulldayavailing: null });
+    if (this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null) {
+      this.disableSubmitButton = true;
+    }
+    this.issEndDategreater = false;
+    this.isoptionalnotallowedatWorkingdate = false;
+    this.isstimeoffValid = true;
+    this.startdatevalid = true;
+    this.isNonOptionalHolidaySelected = false;
+    this.isHolidaySelected = false;
+    this.isWeekOffSelectedEndate = false;
+    this.isWeekOffSelected = false;
+    this.isHolidaySelectedEndate = false;
     this.onEndDateChange();
     this.updateEndDateValidity();
     this.updateStartDateValidity1();
     this.checkWeekendsEndate(action);
-    this.dateCheckWithHolidayOrWeekend(action);
+    this.dateCheckWithHolidayOrWeekendForEndDateChange(action);
+  }
+
+  dateCheckWithHolidayOrWeekendForEndDateChange(action: string) {
+    let selectedDate: any;
+    let selectedendDate: any;
+    this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+    this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+    if (action == 'add') {
+      if (this.startDate) {
+        selectedDate = moment(this.startDate);
+      }
+      if (this.endDate) {
+        selectedendDate = moment(this.endDate);
+      }
+    }
+    if (this.orgholidays?.orgHolidaysItems && !this.selectedleave?.category?.isOptionalHoliday) {
+      this.orgholidays.orgHolidaysItems.forEach((element: any) => {
+        const currentDate = moment(element.holidayDate);
+        element.holidayDate = currentDate.format('YYYY-MM-DD');
+      });
+      const isDatePresent = this.orgholidays.orgHolidaysItems?.some(
+        (holiday: any) => holiday.holidayDate === selectedDate.format('YYYY-MM-DD')
+      );
+      const isDateenddatePresent = this.orgholidays.orgHolidaysItems?.some(
+        (holiday: any) => holiday.holidayDate === selectedendDate.format('YYYY-MM-DD')
+      );
+      let dateRange = [];
+      for (let m = moment(selectedDate); m.diff(selectedendDate, 'days') <= 0; m.add(1, 'days')) {
+        dateRange.push(m.format('YYYY-MM-DD'));
+      }
+      let isWorkingDayBetweenDates = dateRange?.some(date => {
+        return this.orgholidays.orgHolidaysItems?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
+      });
+    }
+    if (this.orgholidays?.orgHolidaysItems && this.selectedleave?.category?.isOptionalHoliday) {
+      let filteredData = this.orgholidays.orgHolidaysItems.forEach((element: any) => {
+        const currentDate = moment(element.holidayDate);
+        if (element.isOptional != true) {
+          element.holidayDate = currentDate.format('YYYY-MM-DD');
+        }
+      });
+      const isDatePresent = filteredData?.some(
+        (holiday: any) => holiday.holidayDate === selectedDate.format('YYYY-MM-DD')
+      );
+      const isDateenddatePresent = filteredData?.some(
+        (holiday: any) => holiday.holidayDate === selectedendDate.format('YYYY-MM-DD')
+      );
+      let dateRange = [];
+      for (let m = moment(selectedDate); m.diff(selectedendDate, 'days') <= 0; m.add(1, 'days')) {
+        dateRange.push(m.format('YYYY-MM-DD'));
+      }
+      let isWorkingDayBetweenDates = dateRange?.some(date => {
+        return filteredData?.some((holiday: { holidayDate: moment.MomentInput; }) => moment(holiday.holidayDate).isSame(date, 'day'));
+      });
+    }
   }
 
   updateEndDateValidity(): void {
@@ -1042,7 +1168,7 @@ export class OnBeHalfOfComponent {
       this.issEndDategreater = true;
     }
   }
-  
+
   checkWeekendsEndate(action: string) {
     let selectedDate: any;
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
@@ -1116,6 +1242,6 @@ export class OnBeHalfOfComponent {
       this.issEndDategreater = true;
     }
   }
-  
-  
+
+
 }

@@ -16,9 +16,8 @@
                     <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            [showClear]="true" placeholder="Please select employee" formControlName="fusionEmpId"
-                            class="custom-select w-100" (onChange)="Onclick($event.value)">
-                        </p-select>
+                            placeholder="Please select employee" formControlName="fusionEmpId" class="custom-select w-100"
+                            (onChange)="Onclick($event.value)" resetFilterOnHide="true"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
                         <div class="error-msg">Employee is required</div>
@@ -30,8 +29,8 @@
                     <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="addressOptions" optionLabel="label" placeholder="Please select address"
-                            formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)"
-                            class="form-select custom-select">
+                            formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)" class="custom-select w-100"
+                            resetFilterOnHide="true">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('SelectDropDown')?.invalid && employeeForm.get('SelectDropDown')?.touched">
@@ -47,7 +46,7 @@
                     <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
-                            formControlName="Documenttype" class="form-select custom-select">
+                            formControlName="Documenttype" class="custom-select w-100">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
@@ -60,9 +59,9 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature
                         Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
-                            class="form-select custom-select" formControlName="authorityid"
-                            (onChange)="onclickDesignation($event.value)" />
+                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                            placeholder="Please select signature authority name" class="custom-select w-100"
+                            formControlName="authorityid" resetFilterOnHide="true" (onChange)="onclickDesignation($event.value)" />
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                         <div class="error-msg">Signature Authority Name is required</div>
@@ -110,22 +109,18 @@
                                     This letter is to confirm that
                                     <span *ngIf="!employeeForm.value.firstName; else name">_______________________</span>
                                     <ng-template #name>
-                                        <b>{{ employeeForm.value.firstName }} {{ employeeForm.value.middleName }} 
-                                            {{ employeeForm.value.lastName }}</b>
+                                        <b>{{ employeeForm.value.firstName }} {{ employeeForm.value.middleName }}
+                                             {{ employeeForm.value.lastName }}</b>
                                     </ng-template>
                                     has been working in our Establishment "RightlyHR" as
-                                    <span *ngIf="employeeForm.get('jobRole')?.value === 'Fetching...'; else role">
-                                        Fetching...
-                                    </span>
+                                    <span *ngIf="employeeForm.get('jobRole')?.value === 'Fetching...'; else role">Fetching...</span>
                                     <ng-template #role>
                                         <b>{{ employeeForm.get('jobRole')?.value || '' }}</b>
                                     </ng-template> since
-                                    <span
-                                        *ngIf="!employeeForm.value.dateOfJoining; else joining">_______________________</span>
+                                    <span *ngIf="!employeeForm.value.dateOfJoining; else joining">_______________________</span>
                                     <ng-template #joining><b>{{ employeeForm.value.dateOfJoining | dateformat }}</b></ng-template>.
                                     Currently, residential address is
                                     <span *ngIf="!addressFlag; else address">_______________________</span>
-
                                     <ng-template #address>
                                         <b *ngIf="employeeForm">
                                             {{ employeeForm.get('addressLine1')?.value || '' }},
@@ -136,7 +131,6 @@
                                             {{ employeeForm.get('zipCode')?.value }}.
                                         </b>
                                     </ng-template>
-
                                 </span>
                             </p>
                         </div>
@@ -155,24 +149,19 @@
     
                             <!-- Show Name & Designation only when authorityName is set -->
                             <div *ngIf="addressLetterData.authorityName?.trim()">
-                                <p class="m-0 paragraph boldsize1">Authority Name</p>
-                                <p class="m-0 paragraph boldsize1">Designation</p>
+                                <p>Authority Name</p>
+                                <p>Designation</p>
                             </div>
     
                             <!-- Signature in custom font (Only show when valid name exists) -->
-                            <div *ngIf="addressLetterData.authorityName?.trim()"
-                                style="font-family: Segoe script; font-size: large;">
+                            <div *ngIf="addressLetterData.authorityName?.trim()" class="letter-signature mb-3">
                                 {{ addressLetterData.authorityName }}
                             </div>
     
                             <!-- Stamp & Designation (Only show when valid name exists) -->
-                            <div class="stamp-img" *ngIf="addressLetterData.authorityName?.trim()">
-                                <p class="stamp-text">
-                                    <span>{{ addressLetterData.authorityName }}</span>
-                                </p>
-                                <p class="stamp-text1">
-                                    <span>{{ authorityDesignation }}</span>
-                                </p>
+                            <div *ngIf="addressLetterData.authorityName?.trim()">
+                                <p>{{ addressLetterData.authorityName }}</p>
+                                <p>{{ authorityDesignation }}</p>
                             </div>
                         </div>
                     </div>

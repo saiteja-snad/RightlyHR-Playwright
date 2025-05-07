@@ -104,7 +104,7 @@
             <div class="row mb-3">
                <div class="col-12">
                   <label class="form-label custom-label mb-2">Upload File<span class="text-danger">*</span></label>
-                  <input type="file" placeholder="Choose file" class="form-control custom-input"
+                  <input type="file" placeholder="Choose file" class="form-control custom-input px-0"
                      (change)="filechange($event)" formControlName="filename" accept=".pdf, .jpg, .png">
                   <div class="error-msg"
                      *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">

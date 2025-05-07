@@ -22,7 +22,7 @@
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
                 filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="onClickValidation($event)"
-                formControlName="fusionEmpId" class="custom-select w-100">
+                formControlName="fusionEmpId" class="custom-select w-100" resetFilterOnHide="true">
               </p-select>
             </div>
             <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched"
@@ -43,7 +43,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Salutation<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="titleDetails" optionValue="titlename" optionLabel="titlename"
+              <p-select [options]="titleDetails" optionValue="titlename" optionLabel="titlename" resetFilterOnHide="true"
                 placeholder="Salutation" formControlName="title" class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="employeeForm.get('title')?.invalid && employeeForm.get('title')?.touched">
@@ -91,7 +91,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Gender<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="genderDetails" optionValue="genderName" optionLabel="genderName"
+              <p-select [options]="genderDetails" optionValue="genderName" optionLabel="genderName" resetFilterOnHide="true"
                 placeholder="Gender" formControlName="gender" class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="employeeForm.get('gender')?.invalid && employeeForm.get('gender')?.touched">
@@ -103,7 +103,8 @@
             <label class="form-label custom-label mb-2">Select Address<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="addressdata" optionValue="value" optionLabel="name" placeholder="Please select address"
-                formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)" class="form-select custom-select">
+                formControlName="SelectDropDown" (onChange)="onclickSelectAddress($event)" class="form-select custom-select"
+                resetFilterOnHide="true">
                 <option di [ngValue]="undefined">Select Address</option>
                 <option value="c">Current Address</option>
                 <option value="p">Permanent Address</option>
@@ -197,8 +198,8 @@
             <label class="form-label custom-label mb-2">ESIC<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="esic" optionValue="value" optionLabel="name" placeholder="Please select ESIC"
-                formControlName="esic" class="form-select custom-select" (ngModelChange)="ctcCalculation()">
-              </p-select>
+                formControlName="esic" class="form-select custom-select" (ngModelChange)="ctcCalculation()"
+                resetFilterOnHide="true"></p-select>
             </div>
             <div *ngIf="employeeForm.get('esic')?.invalid && employeeForm.get('esic')?.touched">
               <div class="error-msg">ESIC is required</div>
@@ -209,7 +210,8 @@
             <label class="form-label custom-label mb-2">PF<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="pfdata" optionValue="value" optionLabel="name" placeholder="Please select PF"
-                formControlName="pf" class="form-select custom-select" (ngModelChange)="ctcCalculation()"></p-select>
+                formControlName="pf" class="form-select custom-select" (ngModelChange)="ctcCalculation()" 
+                resetFilterOnHide="true"></p-select>
               <div *ngIf="employeeForm.get('pf')?.invalid && employeeForm.get('pf')?.touched">
                 <div class="error-msg">PF is required</div>
               </div>
@@ -227,10 +229,9 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Variable Pay<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="variabledata" optionLabel="name" optionValue="value"
-                placeholder="Please select variable pay" formControlName="isVariablePay"
-                (onChange)="onVariablePayChange($event)" class="form-select custom-select">
-              </p-select>
+              <p-select [options]="variabledata" optionLabel="name" optionValue="value" placeholder="Please select variable pay" 
+              formControlName="isVariablePay" (onChange)="onVariablePayChange($event)" class="form-select custom-select" 
+              resetFilterOnHide="true"></p-select>
             </div>
             <div *ngIf="employeeForm.get('isVariablePay')?.invalid && employeeForm.get('isVariablePay')?.touched">
               <div class="error-msg">Variable Pay is required</div>
@@ -251,8 +252,7 @@
             <div class="custom-p-select-content">
               <p-select [options]="LocationDropDownData" optionValue="id" optionLabel="jobLocationName" [filter]="true"
                 filterBy="name" [showClear]="true" placeholder="Please select work location" formControlName="locationId"
-                class="custom-select w-100">
-              </p-select>
+                class="custom-select w-100" resetFilterOnHide="true"></p-select>
             </div>
             <div *ngIf="employeeForm.get('locationId')?.invalid && employeeForm.get('locationId')?.touched">
               <div class="error-msg">Work Location is required</div>
@@ -263,9 +263,8 @@
             <label class="form-label custom-label mb-2">Sub Location<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName" [filter]="true"
-                filterBy="name" [showClear]="true" placeholder="Please select sub location"
-                formControlName="JobSubLocationName" class="custom-select w-100">
-              </p-select>
+                filterBy="name" [showClear]="true" placeholder="Please select sub location" resetFilterOnHide="true"
+                formControlName="JobSubLocationName" class="custom-select w-100"></p-select>
             </div>
             <div *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
               <div class="error-msg">Sub Location is required</div>
@@ -319,8 +318,8 @@
             <label class="form-label custom-label mb-2">Document Type<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="documentType" optionValue="value" optionLabel="name" (onChange)="pathValuesFuction()"
-                placeholder="Please select document type" formControlName="Copys" class="form-select custom-select">
-              </p-select>
+                placeholder="Please select document type" formControlName="Copys" class="form-select custom-select" 
+                resetFilterOnHide="true"></p-select>
             </div>
             <div *ngIf="employeeForm.get('Copys')?.invalid && employeeForm.get('Copys')?.touched" class="error-msg">
               Document Type is required
@@ -342,7 +341,7 @@
             <div class="custom-p-select-content">
               <p-select [options]="authorityDetails" optionValue="employeeId" (click)="onclickDesignation()"
                 optionLabel="fullName" placeholder="Please select signature authority" formControlName="authorityid"
-                class="form-select custom-select"></p-select>
+                class="form-select custom-select" resetFilterOnHide="true" [filter]="true" filterBy="fullName"></p-select>
               <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                 <div class="error-msg">Signature Authority is required</div>
               </div>
@@ -359,8 +358,8 @@
               }@else { {{buttonValue}} }
             </button>
             <button type="button" class="custom-btn btn-primary"
-              [disabled]="employeeForm.invalid || loading || disableFieldsForApproval" (click)="emailSendingforApprover()">
-              @if(loading){
+              [disabled]="employeeForm.invalid || ApprovalLoader || disableFieldsForApproval" (click)="emailSendingforApprover()">
+              @if(ApprovalLoader){
               <div class="button-loader-content">
                 <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
                 <span>{{'Loading...'}}</span>
@@ -577,10 +576,10 @@
                     <p class="m-0"> Authorized Signatory, </p>
                     <p class="m-0">{{prospectiveEmpData.authorityName}} </p>
                     <p class="m-0">{{authorityDesignation}} </p>
-                    <p class=" mb-5">I accept this offer of employment. </p>
+                    <p class="mb-5">I accept this offer of employment. </p>
                     <div class="d-flex justify-content-between">
                       <div>
-                        <p class="">______________________________</p>
+                        <p>______________________________</p>
                       </div>
                       <div>
                         <p class="me-5 pe-5">Date (DD/MM/YYYY)</p>

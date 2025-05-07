@@ -14,10 +14,10 @@
             <form autocomplete="off" [formGroup]="probationConfirmationForm" (ngSubmit)="postProbationLetterFormSubmit()">
                 <!-- Employee Name -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="probationemp" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                             placeholder="Please select employee" formControlName="employeeId"
+                        <p-select [options]="probationemp" optionLabel="fullName" [filter]="true" showClear="true" filterBy="fullName"
+                             placeholder="Please select employee" formControlName="employeeId" resetFilterOnHide="true"
                             (onChange)="onClickEmployee($event)" class="custom-select w-100">
                         </p-select>
                     </div>
@@ -45,7 +45,7 @@
         
                 <!-- Effective Date -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Effective Date <span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Effective Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="effectiveDate"
                         placeholder="Please enter Date" (change)="pathValuesFuction();DateValidation()" />
                     <div class="error-msg">
@@ -59,11 +59,11 @@
         
                 <!-- Document Type -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Document Type<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="documentType" optionValue="value" optionLabel="name"
                             (onChange)="pathValuesFuction()" placeholder="Please select document type"
-                            formControlName="Documenttype" class="form-select custom-select">
+                            formControlName="Documenttype" class="custom-select w-100" resetFilterOnHide="true">
                         </p-select>
                     </div>
                     <div *ngIf="probationConfirmationForm.get('Documenttype')?.invalid && probationConfirmationForm.get('Documenttype')?.touched"
@@ -78,12 +78,12 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                              placeholder="Please select signature authority name" formControlName="authorityid"
-                            (onChange)="pathValuesFuction()" class="custom-select w-100">
+                            (onChange)="pathValuesFuction()" class="custom-select w-100" resetFilterOnHide="true">
                         </p-select>
                     </div>
                     <div
                         *ngIf="probationConfirmationForm.get('authorityid')?.invalid && probationConfirmationForm.get('authorityid')?.touched">
-                        <div class="error-msg">Authority is required</div>
+                        <div class="error-msg">Signature authority is required</div>
                     </div>
                 </div>
 
@@ -180,7 +180,7 @@
         
                                 <p class="mb-2">Sincerely,</p>
                                 <p class="letter-sub-header"><b>for RightlyHR</b></p>
-                                <div class="letter-signature">{{probationLetterData.authorityName}}</div>
+                                <div class="letter-signature pt-4">{{probationLetterData.authorityName}}</div>
                                 <div>
                                     <p><b>{{probationLetterData.authorityName}}</b></p>
                                     <p><b>{{probationLetterData.authorityDesignation}}</b></p>

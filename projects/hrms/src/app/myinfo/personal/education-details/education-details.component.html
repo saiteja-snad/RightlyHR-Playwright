@@ -157,7 +157,7 @@
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
             <input type="file" formControlName="attachment" accept="image/*, application/pdf"
-              (change)="onChangeEducation($event)" class="form-control custom-input" />
+              (change)="onChangeEducation($event)" class="form-control custom-input px-0" />
             <div class="error-msg"
               *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">
               File is required
@@ -290,7 +290,7 @@
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
             <input type="file" formControlName="attachmentupdate" accept="image/*, application/pdf"
-              (change)="onChangeEducation($event)" class="form-control custom-input" />
+              (change)="onChangeEducation($event)" class="form-control custom-input px-0" />
             <div class="error-msg"
               *ngIf="educationupdateForm.get('attachmentupdate')?.invalid && educationupdateForm.get('attachmentupdate')?.touched">
               File is required
@@ -308,7 +308,7 @@
         <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary"
             (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="educationupdateForm.invalid || spinnerLoader ">
+          <button type="submit" class="custom-btn btn-primary" [disabled]="educationupdateForm.invalid && !displalyeducationattachment && educationupdateForm.get('attachmentupdate')?.invalid || spinnerLoader ">
             @if (spinnerLoader) {
               <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
               <span>{{'Loading' | translate}}...</span>

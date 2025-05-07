@@ -50,13 +50,14 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
     });
   }
   initializeBankDetailsupdateForm(): void {
+    const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
     this.bankDetailsUpdateForm = this.fb.group({
       bankNameupdate: ['',[ Validators.required,]],
       accountNameupdate: ['', [Validators.required,Validators.maxLength(50)]],
       accountNoupdate: ['', [Validators.required,this.invalidBankNumberValidator(), Validators.pattern('^[0-9]{12,20}$')]],
       ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'),this.invalidIfscCodeValidator()]],
       isPrimaryupdate: [false],
-      attachmentupdate: [null]
+      attachmentupdate: [null,attachmentValidators]
     });
   }
 

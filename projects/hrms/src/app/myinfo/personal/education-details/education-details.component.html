@@ -308,7 +308,7 @@
         <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary"
             (click)="educationupdateForm.reset();modal.dismiss()">Close</button>
-          <button type="submit" class="custom-btn btn-primary" [disabled]="educationupdateForm.invalid || spinnerLoader ">
+          <button type="submit" class="custom-btn btn-primary" [disabled]="educationupdateForm.invalid && !displalyeducationattachment && educationupdateForm.get('attachmentupdate')?.invalid || spinnerLoader ">
             @if (spinnerLoader) {
               <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
               <span>{{'Loading' | translate}}...</span>

@@ -444,7 +444,7 @@
                     <button type="reset" class="custom-btn btn-secondary px-4"
                         (click)="modal.dismiss();resetFrom()">Close</button>
                     <button type="submit" class="custom-btn btn-primary px-4"
-                        [disabled]="employeeExperienceupdateForm.invalid || spinnerLoader">
+                        [disabled]="employeeExperienceupdateForm.invalid && !displaypreviousexperincedocument && employeeExperienceupdateForm.get('attachmentupdate')?.invalid || spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}...</span>

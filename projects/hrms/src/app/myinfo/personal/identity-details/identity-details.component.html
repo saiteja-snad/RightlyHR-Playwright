@@ -215,7 +215,7 @@
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="identityupdateForm.invalid || spinnerLoader">
+                        [disabled]="identityupdateForm.invalid && !displayidentiydocument && identityupdateForm.get('identityupdateAttachment')?.invalid|| spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}...</span>

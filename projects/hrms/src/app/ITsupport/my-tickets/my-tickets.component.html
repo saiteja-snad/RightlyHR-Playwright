@@ -6,7 +6,7 @@
 
         <div *ngIf="rbac.allowedToAccess('My Tickets Tab.view')">
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)"><i
-                    class="bi bi-plus me-2"></i>Add Ticket</button>
+                    class="bi bi-plus me-2"></i>Add New Ticket</button>
         </div>
 
     </div>
@@ -30,20 +30,20 @@
                     <td>
                         <ul class="mb-0">
                             <li [ngClass]="{
-                                    'text-danger fw-bold': ticket.priority === 'High',
-                                    'text-warning fw-bold': ticket.priority === 'Normal',
-                                    'text-success fw-bold': ticket.priority === 'Low',
-                                    'text-red fw-bold': ticket.priority === 'Urgent'
+                                    'high': ticket.priority === 'High',
+                                    'medium': ticket.priority === 'Medium',
+                                    'low': ticket.priority === 'Low',
+                                    'urgent': ticket.priority === 'Urgent'
                                 }">
-                                {{ticket.priority || '-'}}
+                                <b>{{ticket.priority || '-'}}</b>
                             </li>
                         </ul>
                     </td>
                     <td>{{ticket.subject ?? '-'}}</td>
-                    <td>{{ticket.createdAt | date}} </td>
-                    <td>{{ticket.assigneeName ?? '-'}}</td>
+                    <td>{{ticket.createdAt | dateformat}} </td>
+                    <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
                     <td>{{ticket.ticketStatus ?? '-'}}</td>
-                    <td>{{ticket.updatedAt | date}}</td>
+                    <td>{{ticket.updatedAt | dateformat}}</td>
                 </tr>
                 }
                 @else{
@@ -52,6 +52,7 @@
                 </tr>
                 }
             </tbody>
+            
         </table>
     </div>
 </div>
@@ -63,10 +64,10 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Add Tickets </p>
+                <p class="popup-heading mb-0">Add New Ticket</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -103,11 +104,13 @@
                                 <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
                                     }}</ng-template>
                             </p-select>
+                            
                             }
+                            <div *ngIf="itSupportForm.get('colleaguename')?.invalid && itSupportForm.get('colleaguename')?.touched">
+                                <div class="error-msg">{{'Employee is required' | translate}}</div>
+                            </div>
                         </div>
-                        <div *ngIf="itSupportForm.get('name')?.invalid && itSupportForm.get('name')?.touched">
-                            <div class="error-msg">{{'Employee is required' | translate}}</div>
-                        </div>
+                        
                     
                     </div>
                 </div>
@@ -156,10 +159,12 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="departmentDetails" [filter]="true" filterBy="departmentName" 
-                            optionLabel="departmentName" placeholder="Please select department"
-                            formControlName="department" class="custom-select w-100" (onChange)="onDepartmentChange($event.value)">
-                        </p-select>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="departmentDetails" [filter]="true" filterBy="departmentName" optionLabel="departmentName"
+                                    placeholder="Please select department" formControlName="department" class="custom-select w-100"
+                                    (onChange)="onDepartmentChange($event.value)">
+                                </p-select>
+                            </div>
                         
                     <div *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
                         <div class="error-msg">{{'Department is required' | translate}}</div>
@@ -171,10 +176,12 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="teamDropdownValues" [filter]="true" filterBy="subdepartmentName" 
-                            optionLabel="subdepartmentName"  placeholder="Please select team"
-                            formControlName="team" class="custom-select w-100" (onChange)="onSubDepartmentNameChange($event.value)">
-                        </p-select>
+                            <div class="custom-p-select-content">
+                                <p-select [options]="teamDropdownValues" [filter]="true" filterBy="subdepartmentName"
+                                    optionLabel="subdepartmentName" placeholder="Please select team" formControlName="team"
+                                    class="custom-select w-100" (onChange)="onSubDepartmentNameChange($event.value)">
+                                </p-select>
+                            </div>
                     <div *ngIf="itSupportForm.get('team')?.invalid && itSupportForm.get('team')?.touched">
                         <div class="error-msg">{{'Team is required' | translate}}</div>
                     </div>
@@ -201,11 +208,12 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Priority' | translate}}<span
                             class="text-danger">*</span></label>
-                            <p-select [options]="priorityDetails"
-                            optionLabel="label" optionValue="value" placeholder="Please select priority"
-                            formControlName="priority" class="custom-select w-100">
+                            <div class="custom-p-select-content">
+                                <p-select [options]="priorityDetails" optionLabel="label" optionValue="value" placeholder="Please select priority"
+                                    formControlName="priority" class="custom-select w-100">
                             
-                        </p-select>
+                                </p-select>
+                            </div>
                     <div *ngIf="itSupportForm.get('priority')?.invalid && itSupportForm.get('priority')?.touched">
                         <div class="error-msg">{{'Priority is required' | translate}}</div>
                     </div>
@@ -219,11 +227,11 @@
                             <input type="text" class="form-control custom-input" formControlName="subject"
                             placeholder="Please enter subject" [maxlength]="50" />
                             <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50</div>
-                      
+                            <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
+                                <div class="error-msg">{{'Subject is required' | translate}}</div>
+                            </div>
                     </div>
-                    <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
-                        <div class="error-msg">{{'Subject is required' | translate}}</div>
-                    </div>
+                    
 
                     </div>
                 </div>
@@ -239,10 +247,10 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="button" class="custom-btn btn-secondary" (click)="cleardata()">{{'Close'}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">{{'Close'}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">
-                            {{'Request'}}
+                            {{'Submit'}}
                         </span>
                         <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
                         </div>
@@ -252,4 +260,22 @@
         </div>
     </div>
 </ng-template>
+
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text"> Are you sure you want to close?</p>
+      </div>
+  
+      <div class="custom-modal-footer">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </ng-template>
 

@@ -110,7 +110,7 @@ export class SeparationForYourRoleRequestComponent {
       // Add any other keys your form uses here
     };
     // Reset condition flags
-    this.regular = true;
+    this.regular = false;
     this.early = false;
     this.extend = false;
     // Close the modal
@@ -194,7 +194,7 @@ export class SeparationForYourRoleRequestComponent {
 
   //function to get the requried data
   handleRequest(request: ISeparationRequest) {
-    this.regular = true;
+    this.regular = false;
     this.requesthandler = request;
     this.selectedSpRequestData = request.entity;
     this.selectedSpRequestData.noticperiodType = null;
@@ -283,7 +283,7 @@ export class SeparationForYourRoleRequestComponent {
         next: (respone: any) => {
           this.isLoading = false;
           this.modalService.dismissAll();
-          this.regular = true;
+          this.regular = false;
           this.http.tirggerPendingApprovalCountSignal.update((status) => ({
             ...status,
             separation: true,

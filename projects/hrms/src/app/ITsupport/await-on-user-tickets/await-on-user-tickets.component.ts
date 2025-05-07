@@ -13,10 +13,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
 import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
 import { RbacService } from '../../services/rbac.service';
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-await-on-user-tickets',
-  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe],
+  imports: [CommonModule, Select, RouterModule, NoDataFoundComponent, FormsModule, TranslateModule, ReactiveFormsModule, ItsupportPipe, DateformatPipe],
   templateUrl: './await-on-user-tickets.component.html',
   styleUrl: './await-on-user-tickets.component.scss'
 })
@@ -111,6 +112,14 @@ export class AwaitOnUserTicketsComponent {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
+  openConfirmationModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+
+  cleardata(){
+    this.modalService.dismissAll();
+  }
+
   getuserticketsbyempid() {
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Tickets/getTicketsByReportingId/${EmpId}`).subscribe({
@@ -130,20 +139,19 @@ export class AwaitOnUserTicketsComponent {
 
   onUpdate() {
     this.isLoading = true;
-    this.itTicketDetails.id = this.teamTicketDetails.id;
-    this.itTicketDetails.empId = this.teamTicketDetails.empId;
-    this.itTicketDetails.subdeptId = this.teamTicketDetails.subdeptId;
-    this.itTicketDetails.deskNo = this.teamTicketDetails.deskNo;
-    this.itTicketDetails.type = this.teamTicketDetails.type;
+    this.itTicketDetails.id = this.selectedTickets.id;
+    this.itTicketDetails.empId = this.selectedTickets.empId;
+    this.itTicketDetails.subdeptId = this.selectedTickets.subdeptId;
+    this.itTicketDetails.deskNo = this.selectedTickets.deskNo;
+    this.itTicketDetails.type = this.selectedTickets.type;
     this.itTicketDetails.ticketStatus = this.itSupportForm.value.ticketStatus.label;
-    this.itTicketDetails.priority = this.teamTicketDetails.priority;
-    this.itTicketDetails.subject = this.teamTicketDetails.subject;
-    this.itTicketDetails.description = this.teamTicketDetails.description;
-    this.itTicketDetails.stepsToReplicate = this.teamTicketDetails.stepsToReplicate;
+    this.itTicketDetails.priority = this.selectedTickets.priority;
+    this.itTicketDetails.subject = this.selectedTickets.subject;
+    this.itTicketDetails.description = this.selectedTickets.description;
+    this.itTicketDetails.stepsToReplicate = this.selectedTickets.stepsToReplicate;
     this.itTicketDetails.comments = this.itSupportForm.value.comments;
-    this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.assigneeId.toString();
     this.itTicketDetails.attachmentUrl = null;
-    this.itTicketDetails.createdAt = this.teamTicketDetails.createdAt;
+    this.itTicketDetails.createdAt = this.selectedTickets.createdAt;
     this.itTicketDetails.updatedAt = new Date().toISOString();;
     this.itTicketDetails.isdeleted = false;
     if(this.itSupportForm.value.assignedto !== null && this.itSupportForm.value.assignedto !== "" && this.itSupportForm.value.assignedto !== undefined){
@@ -157,7 +165,7 @@ export class AwaitOnUserTicketsComponent {
     this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Ticket updated successfully');
-        localStorage.setItem('ticketDetails', JSON.stringify(data));
+        localStorage.removeItem('ticketDetails');
         setTimeout(() => {
           this.itSupportForm.reset();
           this.modalService.dismissAll();

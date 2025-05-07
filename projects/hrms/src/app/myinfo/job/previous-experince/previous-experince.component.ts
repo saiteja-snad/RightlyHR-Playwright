@@ -159,8 +159,8 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     }
     return null; // Return null if no start date is selected
   }
-  onChangeExperience(event: any): void {
 
+  onChangeExperience(event: any): void {
     this.displaypreviousexperincedocument = null
     const file = event.target.files[0];
     if (file) {
@@ -168,9 +168,9 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       if (fileSizeInMB > 25) {
         this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
         this.previousexperincedocument = null;
-        this.employeeExperienceForm.get('attachment')?.reset();
+        this.employeeExperienceForm.get('attachment')?.setValue(null);
         this.employeeExperienceForm.get('attachment')?.markAsUntouched();
-        this.employeeExperienceupdateForm.get('attachmentupdate')?.reset();
+        this.employeeExperienceupdateForm.get('attachmentupdate')?.setValue(null);;
         this.employeeExperienceupdateForm.get('attachmentupdate')?.markAsUntouched();
 
         return;
@@ -428,7 +428,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
 
   saveUpdatedExperienceDetails(): void {
-
+   
     const currentDate = new Date().toISOString().split('T')[0];
     if (this.employeeExperienceupdateForm.valid) {
       const formData = this.employeeExperienceupdateForm.value;
@@ -473,7 +473,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           if (data) {
             payload.attachment = data.path; // Update the payload with the uploaded file path
-            this.saveExperienceData(payload);
+            this.saveupdateExperienceData(payload);
           }
         },
         error: () => {

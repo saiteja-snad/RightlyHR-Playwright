@@ -29,7 +29,7 @@
                 <tr>
                     <td>{{item?.employeeFusionEmpId ?? '-'}}</td>
                     <td>{{item?.employeeName ?? '-'}}</td>
-                    <td>{{item?.requestedDate ?? '-'}}</td>
+                    <td>{{item?.requestedDate | dateformat}}</td>
                     <td>{{item?.departmentName ?? '-'}}</td>
                     <td>{{item?.status ?? '-'}}</td>
                     <td class="text-center">

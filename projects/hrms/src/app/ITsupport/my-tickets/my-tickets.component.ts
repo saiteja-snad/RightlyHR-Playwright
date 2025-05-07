@@ -12,11 +12,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { IDepartment } from '../../Interfaces/letters-model';
 import { RbacService } from '../../services/rbac.service';
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 
 
 @Component({
   selector: 'app-my-tickets',
-  imports: [CommonModule, Select, RouterModule,ReactiveFormsModule,NoDataFoundComponent, TranslateModule],
+  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DateformatPipe],
   templateUrl: './my-tickets.component.html',
   styleUrl: './my-tickets.component.scss'
 })
@@ -81,7 +82,7 @@ export class MyTicketsComponent {
     this.itSupportForm = this.fb.group({
       employee: ['', Validators.required],
       name: [null, Validators.required],
-      colleaguename: [''],
+      colleaguename: ['', Validators.required],
       email: [null, Validators.required],
       phoneNumber: [null, Validators.required], 
       deskdetails: ['', [Validators.required]],
@@ -186,6 +187,7 @@ export class MyTicketsComponent {
        
         let empid = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}').employeeId;
         this.empdata = this.allEmployeesself.find(employee => employee.employeeId == empid);
+        this.itSupportForm.get('colleaguename')?.clearValidators();
         console.log(this.empdata);
         if (this.empdata) {
             this.ticketEmpData.employeeId = this.empdata.employeeId;
@@ -194,7 +196,7 @@ export class MyTicketsComponent {
             this.ticketEmpData.email = this.empdata.workEmail;
             this.ticketEmpData.mobile_number = this.empdata.contactnumber;
             this.ticketEmpData.deskId = this.empdata.deskId;
-
+            this.itSupportForm.get('colleaguename')?.reset();
             if (this.allEmployeesself.length > 0) {
               this.itSupportForm.patchValue({
                 name: this.ticketEmpData.name,
@@ -217,6 +219,7 @@ export class MyTicketsComponent {
         this.ticketEmpData.email = '';
         this.ticketEmpData.mobile_number = '';
         this.ticketEmpData.deskId='';
+        
         this.isColleagueSelected = false; 
     }
  }
@@ -289,6 +292,11 @@ export class MyTicketsComponent {
     this.selectedSubDepartmentId = selectedSubDepartment.subdepartmentId;
     console.log(this.selectedSubDepartmentId);
   }
+
+  openConfirmationModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+
   onSubmit() {
     this.isLoading = true;
     console.log(this.itSupportForm.value);
@@ -339,6 +347,7 @@ export class MyTicketsComponent {
   }
 
   cleardata(){
+    this.itSupportForm.reset();
     this.modalService.dismissAll();
   }
 

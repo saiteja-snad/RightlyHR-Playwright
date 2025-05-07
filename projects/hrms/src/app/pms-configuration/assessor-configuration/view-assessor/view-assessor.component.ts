@@ -43,7 +43,6 @@ export class ViewAssessorComponent implements OnInit,OnDestroy {
     public rbac: RbacService
   ) {}
   ngOnInit(): void {
-    console.log('assesor date',this.updateData);
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.editDetails(this.updateData);
     this.getReviewCycledata();
@@ -95,7 +94,6 @@ export class ViewAssessorComponent implements OnInit,OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.reviewCycleData = data;
-          console.log(data);
         },
       });
   }
@@ -116,7 +114,6 @@ export class ViewAssessorComponent implements OnInit,OnDestroy {
               
             };
           });
-          console.log(this.activeEmplist);
         },
         error: (err: any) => {},
       });

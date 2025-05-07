@@ -237,7 +237,7 @@ export class ReportsService {
   gterPermissionReports(request: IPermissionReportRequest) {
     let params = new HttpParams();
 
-    if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.FusionEmpId) params = params.set('empFusionEmpId', request.FusionEmpId);
     if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
     if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
     if (request.StartDate && request.EndDate) {
@@ -251,7 +251,7 @@ export class ReportsService {
   getRegularizationReports(request: IPermissionReportRequest) {
     let params = new HttpParams();
 
-    if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.FusionEmpId) params = params.set('empFusionEmpId', request.FusionEmpId);
     if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
     if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
     if (request.StartDate && request.EndDate) {

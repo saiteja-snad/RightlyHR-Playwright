@@ -175,12 +175,13 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   jobEmailsent() {
     let loggedInUser = this.authService.getToken();
     let EmailData = {
+
       firstName: this.employedata.firstName,
       lastName: this.employedata.lastName,
       middleName:this.employedata.middleName,
       senderEmail: loggedInUser.workEmail,
       senderName: loggedInUser.firstName + ' '+loggedInUser.middleName+' '+ loggedInUser.lastName,
-      employeeId: this.empdata.employeeId,
+      employeeId: this.empinfo.employeeId,
     }
 
     if(loggedInUser.middleName){

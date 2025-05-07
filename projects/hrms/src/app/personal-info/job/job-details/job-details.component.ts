@@ -187,10 +187,10 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     if(loggedInUser.middleName){
 
       EmailData.senderName =`${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName ??''}`
-      //EmailData.approvedByName= `${loggedinuser.firstName} ${loggedinuser.middleName} ${loggedinuser.lastName}`
+     
     }else{
       EmailData.senderName =`${loggedInUser.firstName} ${loggedInUser.lastName ??''}`
-      //EmailData.approvedByName= `${loggedinuser.firstName} ${loggedinuser.lastName}`
+     
     }
     this.subscription = this.http.postdata(`CustomEmail/jobtab`, EmailData).subscribe({
       next: (data: any) => {

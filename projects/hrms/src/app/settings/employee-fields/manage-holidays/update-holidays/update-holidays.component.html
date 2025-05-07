@@ -89,8 +89,8 @@
             <div class="w-100">
               <label class="form-label custom-label">{{'Holiday Name' | translate}}
                 <span class="text-danger">*</span></label>
-              <input type="text" formControlName="holidayName" class="form-control custom-input w-100"
-                placeholder="Please enter holiday name" />
+              <input type="text" formControlName="holidayName" maxlength="50" class="form-control custom-input w-100"
+                placeholder="Please enter holiday name" (input)="checkDuplicate(i)" />
               <div
                 *ngIf="holiday.get('holidayName')?.invalid && (holiday.get('holidayName')?.dirty || holiday.get('holidayName')?.touched)"
                 class="error-msg">
@@ -98,6 +98,7 @@
                   | translate}}</span>
                 <span *ngIf="holiday.get('holidayName')?.errors?.['pattern']">Enter valid data</span>
               </div>
+              <div *ngIf="isDuplicateholidayName[i]" class="error-msg">{{ 'Duplicate holiday names are not allowed' | translate }}</div>
             </div>
 
             <div class="w-100">
@@ -115,12 +116,12 @@
 
             <div class="w-100">
               <!-- Delete icon -->
-              <div class="d-flex justify-content-end">
+              <div class="d-flex justify-content-end" [ngStyle]="{'padding-top': holidays.length <= 1 ? '38px' : '0'}">
                 <button type="button" class="custom-icon btn" (click)="removeHolidayRow(i)" *ngIf="holidays.length > 1">
                   <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon">
                 </button>
               </div>
-              <div class="form-check mt-4">
+              <div class="form-check">
                 <input type="checkbox" formControlName="isOptional" class="form-check-input" />
                 <label class="form-check-label">{{'Optional' | translate}}</label>
               </div>
@@ -133,7 +134,7 @@
 
       <div class="d-flex justify-content-end gap-3 pt-4">
         <button type="button" class="custom-btn btn-secondary px-5" (click)="openmodel(cancelpopup)" id="submitButton">
-          {{'Cancel' | translate}}
+          {{'Close' | translate}}
         </button>
         @if(!hidePublishCloneButtons){
         <button type="button" class="custom-btn publish-btn px-5" (click)="publish()" id="submitButton">
@@ -155,7 +156,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to close?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">

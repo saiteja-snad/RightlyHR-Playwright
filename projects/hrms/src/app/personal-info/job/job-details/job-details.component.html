@@ -1,9 +1,15 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Job Details</span></div>
-        <div class="custom-add-btn" (click)="openModal(addEducationmodal)">
-            <i class="bi bi-plus plus-icon me-1"></i>Add New
-        </div>
+        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
+        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
+        'trainee inactive' )){
+            <div class="custom-add-btn" (click)="openModal(addEducationmodal)">
+                <i class="bi bi-plus plus-icon me-1"></i>Add New
+            </div>
+        }
+      
     </div>
     <div class="custom-table-content">
         <table class="w-100">
@@ -20,7 +26,7 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
-                    <th class="text-center">Actions</th>
+                    <th class="text-center">Action(s)</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,7 +76,10 @@
                             <span *ngIf="item.jobTypeName;else jobtype"> {{item.jobTypeName}}</span>
                             <ng-template #jobtype><div>-</div></ng-template>
                         </td>
-                        <td class="text-center">
+                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
+                        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
+                        'trainee inactive' )){<td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -90,6 +99,7 @@
                                 </ul>
                             </div>
                         </td>
+                    }
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
@@ -130,7 +140,7 @@
                         <label for="jobRole" class="form-label custom-label mb-2">Job Role
                             <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
+                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"  [resetFilterOnHide]="true"
                                 filterBy="designationName" formControlName="jobRole" placeholder="Please select job role" 
                                 class="form-select custom-select" (onChange)="onDesignationChange($event.value)">
                             </p-select>
@@ -197,7 +207,7 @@
                         <label for="team" class="form-label custom-label mb-2">Reporting Manager<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"
+                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"  [resetFilterOnHide]="true"
                                 filterBy="employee" formControlName="reportingManager"
                                 placeholder="Please select Reporting Manager"
                                 (onChange)="onReportingManagerChange($event.value)"
@@ -304,7 +314,7 @@
                         <label for="jobRole" class="form-label custom-label mb-2">Job Role<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
+                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"  [resetFilterOnHide]="true"
                                 filterBy="designationName" formControlName="jobRole"
                                 placeholder="Please select job role" class="form-select custom-select"
                                 (onChange)="onDesignationChangeforupdate($event.value)"></p-select>
@@ -373,7 +383,7 @@
                         <label for="team" class="form-label custom-label mb-2">Reporting Manager<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"
+                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"  [resetFilterOnHide]="true"
                                 filterBy="employee" formControlName="reportingManager"
                                 placeholder="Please select Reporting Manager"
                                 (onChange)="onReportingManagerChange($event.value)"

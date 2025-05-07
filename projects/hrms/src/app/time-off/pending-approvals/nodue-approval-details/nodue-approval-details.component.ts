@@ -13,10 +13,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-nodue-approval-details',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule,
-     PaginatorModule, NoDataFoundComponent, NodueDetailsPipe],
+    PaginatorModule, NoDataFoundComponent, NodueDetailsPipe, DateformatPipe],
   templateUrl: './nodue-approval-details.component.html',
   styleUrl: './nodue-approval-details.component.scss',
 })

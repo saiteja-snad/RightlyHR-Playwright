@@ -6,7 +6,10 @@
       </div>
       @if(!buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
       && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
-      <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+     
+      <div>
+        <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
+       </div>
       }
       @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
       && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
@@ -24,7 +27,7 @@
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" id="currentAddressLine1" formControlName="addressLine1"
+            <input type="text" class="form-control custom-input" id="currentAddressLine1"  autocomplete="off" formControlName="addressLine1"
               placeholder="Please enter address line 1"
               (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" >
             <div class="error-msg"
@@ -36,7 +39,7 @@
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
-            <input type="text" class="form-control custom-input" id="currentAddressLine2" formControlName="addressLine2"
+            <input type="text" class="form-control custom-input" id="currentAddressLine2"   autocomplete="off" formControlName="addressLine2"
               placeholder="Please enter address line 2"
               (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" >
               <div class="error-msg" *ngIf="addressForm.get('currentAddress.addressLine2')?.errors?.['maxlength']">Address
@@ -44,7 +47,7 @@
           </div>
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentCity" class="form-label custom-label mb-2">City<span class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" id="currentCity" formControlName="city"
+            <input type="text" class="form-control custom-input"  autocomplete="off" id="currentCity" formControlName="city"
               placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="addressForm.get('currentAddress.city')?.errors?.['required'] && addressForm.get('currentAddress.city')?.touched">
@@ -57,7 +60,7 @@
             <label for="currentState" class="form-label custom-label mb-2">State<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="currentState" formControlName="state"
-              placeholder="Please enter state" (keypress)="formValidation.restrictInputallowspoint($event)">
+              placeholder="Please enter state"   autocomplete="off" (keypress)="formValidation.restrictInputallowspoint($event)">
             <div class="error-msg"
               *ngIf="addressForm.get('currentAddress.state')?.errors?.['required'] && addressForm.get('currentAddress.state')?.touched">
               State is required
@@ -69,7 +72,7 @@
             <label for="currentCountry" class="form-label custom-label mb-2">Country<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="currentCountry" formControlName="country"
-              placeholder="Please enter country" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter country"  autocomplete="off"  (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="addressForm.get('currentAddress.country')?.errors?.['required'] && addressForm.get('currentAddress.country')?.touched">
               Country is required
@@ -80,7 +83,7 @@
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="currentZipCode" class="form-label custom-label mb-2">Zip Code/Postal Code<span
                 class="text-danger">*</span></label>
-            <input type="text" class="form-control custom-input" id="currentZipCode" formControlName="zipCode"
+            <input type="text" class="form-control custom-input" id="currentZipCode"  autocomplete="off" formControlName="zipCode"
               [maxlength]="6" (keypress)="formValidation.restrictAlphabets($event)"
               placeholder="Please enter zip code/postal code">
             <div class="error-msg"
@@ -106,7 +109,7 @@
         </div>
 
         <!-- Permanent Address Fields -->
-        <ng-container formGroupName="permanentAddress">
+        <ng-container formGroupName="permanentAddress"  autocomplete="off">
             <div class="row">
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
@@ -123,7 +126,7 @@
           <div class="col-md-6 col-lg-4 mb-3">
             <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2</label>
             <input type="text" class="form-control custom-input" id="permanentAddressLine2"
-              formControlName="addressLine2" placeholder="Please enter address line 2"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
+              formControlName="addressLine2" placeholder="Please enter address line 2"   autocomplete="off"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
               <div class="error-msg" *ngIf="addressForm.get('permanentAddress.addressLine2')?.errors?.['maxlength']">
                 Address Line 2 cannot exceed 250 characters</div>
           </div>
@@ -131,7 +134,7 @@
             <label for="permanentCity" class="form-label custom-label mb-2">City<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="permanentCity" formControlName="city"
-              placeholder="Please enter city" (keypress)="formValidation.restrictInput($event)">
+              placeholder="Please enter city"  autocomplete="off" (keypress)="formValidation.restrictInput($event)">
             <div class="error-msg"
               *ngIf="addressForm.get('permanentAddress.city')?.errors?.['required'] && addressForm.get('permanentAddress.city')?.touched">
               City is required
@@ -143,7 +146,7 @@
             <label for="permanentState" class="form-label custom-label mb-2">State<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="permanentState" formControlName="state"
-              placeholder="Please enter state"  (keypress)="formValidation.restrictInput($event)" >
+              placeholder="Please enter state"  autocomplete="off"  (keypress)="formValidation.restrictInput($event)" >
             <div class="error-msg"
               *ngIf="addressForm.get('permanentAddress.state')?.errors?.['required'] && addressForm.get('permanentAddress.state')?.touched">
               State is required

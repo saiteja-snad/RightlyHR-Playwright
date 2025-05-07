@@ -15,7 +15,7 @@
           <th>From Date</th>
           <th>To Date</th>
           <th>Document</th>
-          <th class="text-center">Action(S)</th>
+          <th class="text-center">Action(s)</th>
         </tr>
       </thead>
       <tbody>
@@ -80,7 +80,7 @@
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="degreeDetails" [filter]="true"  filterBy="degreeName" optionLabel="degreeName"
+              <p-select [options]="degreeDetails" [filter]="true"  resetFilterOnHide="true"  filterBy="degreeName" optionLabel="degreeName"
                 formControlName="education" placeholder="Please select education"
                 class="form-select custom-select"></p-select>
             </div>
@@ -205,7 +205,7 @@
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="degreeDetails" [filter]="true" filterBy="degreeName" optionLabel="degreeName"
+              <p-select [options]="degreeDetails" [filter]="true" resetFilterOnHide="true" filterBy="degreeName" optionLabel="degreeName"
                 formControlName="educationupdate" placeholder="Please select education"
                 class="form-select custom-select"></p-select>
             </div>

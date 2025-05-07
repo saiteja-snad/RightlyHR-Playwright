@@ -11,9 +11,12 @@
         <form autocomplete="off" [formGroup]="customEventForm" (ngSubmit)="postevents(customEventForm)">
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="eventDate" class="form-label custom-label mb-2">Event Date<span class="text-danger">*</span></label>
-                    <input type="datetime-local" class="form-control custom-input" id="eventDate"  onkeypress="return false;" [min]="getToday()" formControlName="eventDate">
-                    <div *ngIf="customEventForm.get('required')?.touched" class="error-msg">Event date is required.</div>
+                    <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
+                            class="text-danger">*</span></label>
+                    <input type="datetime-local" class="form-control custom-input" id="eventDate"
+                        onkeypress="return false;" [min]="getToday()" formControlName="eventDate">
+                    <div *ngIf="customEventForm.get('eventDate')?.errors?.['required'] &&  customEventForm.get('eventDate')?.touched" class="error-msg">Event date is required.
+                    </div>
                     <div *ngIf="customEventForm.get('eventDate')?.touched && customEventForm.get('eventDate')?.hasError('pastDate')"
                         class="error-msg">Event date cannot be in the past.
                     </div>
@@ -24,26 +27,30 @@
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" id="title"
                         placeholder="Please enter event title" formControlName="eventTitle">
-                    <div *ngIf="customEventForm.get('title')?.touched && customEventForm.get('title')?.invalid"
+                    <div *ngIf="customEventForm.get('eventTitle')?.errors?.['required'] && customEventForm.get('eventTitle')?.touched"
                         class="error-msg">
-                        <div *ngIf="customEventForm.get('title')?.errors?.['required']">Title is required.</div>
+                        Event Title is required
                     </div>
                 </div>
 
                 <div class="col-md-12">
-                    <label for="description" class="form-label custom-label mb-2">Event Description<span class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" formControlName="eventMessage" placeholder="Please enter description" id="description"></textarea>
-                    <div *ngIf="customEventForm.get('eventMessage')?.errors?.['required']  && customEventForm.get('title')?.touched" class="error-msg">
+                    <label for="description" class="form-label custom-label mb-2">Event Description<span
+                            class="text-danger">*</span></label>
+                    <textarea class="form-control custom-input" formControlName="eventMessage"
+                        placeholder="Please enter description" id="description"></textarea>
+                    <div *ngIf=" customEventForm.get('eventMessage')?.touched && customEventForm.get('eventMessage')?.invalid "
+                        class="error-msg">
                         Event Description is requied
                     </div>
-                    <div class="textarea-count-text">{{ customEventForm.get("eventMessage")?.value?.length || 0 }}/250</div>
+                    <div class="textarea-count-text">{{ customEventForm.get("eventMessage")?.value?.length || 0 }}/250
+                    </div>
                 </div>
-                
+
                 <div class="col-md-12 mb-3">
                     <label for="file" class="form-label custom-label mb-2">Attachment</label>
                     <input type="file" class="form-control custom-input px-0" (change)="onFileSelected($event)" id="file">
                     <div class="d-flex justify-content-between align-items-center mt-3">
-                        <p class="note-text"><span class="note">Note:</span> Only Image are allowed. 
+                        <p class="note-text"><span class="note">Note:</span> Only Image are allowed.
                             The file size should be less than 25MB.</p>
                     </div>
                 </div>
@@ -51,13 +58,14 @@
 
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="close()">Close</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="customEventForm.invalid || spinnerLoader">
-                  @if(spinnerLoader) {
+                <button type="submit" class="custom-btn btn-primary"
+                    [disabled]="customEventForm.invalid || spinnerLoader">
+                    @if(spinnerLoader) {
                     <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     <span>{{'Loading' | translate}}...</span>
-                  } @else {
+                    } @else {
                     <span>{{'Add'| translate}}</span>
-                  }
+                    }
                 </button>
             </div>
         </form>

@@ -17,11 +17,11 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule, Select, FormsModule, PaginatorModule,TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })
-export class TeamNumbersComponent implements OnInit,OnDestroy {
+export class TeamNumbersComponent implements OnInit, OnDestroy {
   rmForm!: FormGroup;
   managers: any[] = [];
   subscription!: Subscription;
@@ -61,7 +61,7 @@ export class TeamNumbersComponent implements OnInit,OnDestroy {
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     console.log(this.empinfo);
     this.getAllTeammembersList();
     this.getEmployee();
@@ -169,22 +169,25 @@ export class TeamNumbersComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
       next: (data: any) => {
         console.log('Next callback');
-        this.conformationPopup.openSuccessModal('Updated Successfully');
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
         console.log(data);
       },
       error: (reason: any) => {
         console.log('Error callback');
         console.log(reason);
-        this.conformationPopup.openErrorModal('Updated Successfully');
-        this.spinnerLoader = false;
-        ;
+        if (reason) {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.spinnerLoader = false;
+        }
       }
     });
   }
 
   getAllTeammembersList() {
     let EmployeeId = (this.empinfo.employeeId)
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
+    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
       (responseData: any) => {
         console.log(responseData);
         this.TeamMemberArray = responseData as Iteammembers[];
@@ -201,9 +204,9 @@ export class TeamNumbersComponent implements OnInit,OnDestroy {
       next: (data: any) => {
         this.managers = data
           .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: { firstName: any; middleName?: string; lastName: any }) => ({
+          .map((emp: { fusionEmpId:string; firstName: string; middleName?: string; lastName: string }) => ({
             ...emp,
-            name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
           }));
       },
       error: (err) => console.log(err),
@@ -228,8 +231,8 @@ export class TeamNumbersComponent implements OnInit,OnDestroy {
   }
 
   resetAndClose(modal: any): void {
-    this.rmForm.reset();   // clear the form
-    modal.dismiss();       // close the popup
+    this.rmForm.reset();
+    this.modalService.dismissAll(); 
   }
 
   ngOnDestroy(): void {

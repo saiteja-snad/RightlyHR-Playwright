@@ -95,7 +95,7 @@ export class OnboardingDetailsComponent {
           this.onboardingForm.patchValue({
             status: this.empdata.empstatus,
             trainingDuration: this.empdata.trainingDuration || '', 
-            trainingEndDate: this.empdata.trainingEndDate || '', 
+            trainingEndDate:trainingEndDate || '', 
             dateOfJoining:dateOfJoining || '', 
             branchLocation: this.empdata.branchCode || '', 
             probationEndDate: this.empdata.probationEndDate || '', 
@@ -106,7 +106,7 @@ export class OnboardingDetailsComponent {
             pf: this.empdata.pf ? 'Yes' : 'No', // Map boolean to string
             esic: this.empdata.esic ? 'Yes' : 'No', 
             pt: this.empdata.pt ? 'Yes' : 'No', // Map boolean to string
-            totalExperience: this.empdata.totalYearsOfExperience || '', // Default to empty if undefined
+            totalExperience: this.empdata?.totalYearsOfExperience || '', // Default to empty if undefined
             remoteLogin: this.empdata.allowWFH ? 'Yes' : 'No', // Map boolean to string
             workLocation: this.empdata.workLocation || '', // Default to empty if undefined
             wfhmanger: data.wfhManagerId,

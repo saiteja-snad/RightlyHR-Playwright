@@ -38,6 +38,7 @@ export class OnboardingDetailsComponent {
   isEditing = false;
   empyployeedata={} as any;
   employeestatus:any
+  offerletttersentdate:any
   noticePeriodStatus = [
     { name: 'Yes', value: true },
     { name: 'No', value: false },
@@ -87,6 +88,7 @@ export class OnboardingDetailsComponent {
     this.getBranchLocations();
     this.getprobation();
     this.getWorkfromhomeManager();
+
     this.initializeTrainee();
     this.onboardingForm.get('status')?.setValue(this.empinfo.empstatus);
   }
@@ -137,7 +139,34 @@ export class OnboardingDetailsComponent {
   filterWorkLocationOptions(allowWFH: boolean) {
     this.filteredWorkLocations = this.worklocation.filter(loc => loc.allowWFH === allowWFH);
   }
+    //function to get offer letter data using getbyemployeeid
+    getOfferLetterEmployeebyId(): void {
+      const EmpId = parseInt(this.empinfo.employeeId);
+      console.log(EmpId);
+  
+      this.subscription = this.http.getData(`OfferLetter/getbyEmpidNames/${EmpId}`).subscribe({
+        next: (data: any) => {
+          console.log(data);
+   
+         this.offerletttersentdate= this.formatDate(data.offerSentDate) || ''
+  
+          // Patch the form with offer letter details
+       
+        },
+        error: (err: any) => {
+          console.log(err);
+        }
+      });
+    }
 
+    formatDate(dateString: string): string {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+  
 
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
@@ -196,14 +225,29 @@ export class OnboardingDetailsComponent {
     console.log(this.onboardingForm.value); // Check values in the onboardingForm
   
     // Patching values for traineeForm
-    this.traineeForm.patchValue({
-      empType: data.empType,
-      dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
-      durationOfTrainee: data.durationOfTrainee,
-      trainingEndDate: this.formatDateToLocal(data.trainingEndDate)
-    });
+   
     
     console.log(this.traineeForm.value); // Check values in the traineeForm
+  }
+
+  
+  //function to get traineeofferletter data using getbyemployeeid
+  getTraineeOfferLetterEmployeebyId() {
+    let Empid = parseInt(this.empinfo.employeeId)
+    console.log(Empid);
+    this.subscription = this.http.getData(`TraineeOfferLetter/getbyEmpidNames/${Empid}`).subscribe({
+      next: (data: any) => {
+        this.traineeForm.patchValue({
+          empType: data.empType,
+          dateOfJoining: this.formatDateToLocal(data.dateOfJoining),
+          durationOfTrainee: data.durationOfTrainee,
+          trainingEndDate: this.formatDateToLocal(data.trainingEndDate)
+        });
+
+      },
+      error: Reason => console.log(Reason)
+    })
+
   }
   
 //function to get employee status dropdown
@@ -344,7 +388,7 @@ export class OnboardingDetailsComponent {
       pf: this.onboardingForm.get('pf')?.value?.value ?? this.empdata.pf,
       esic: this.onboardingForm.get('esic')?.value?.value ?? this.empdata.esic,
       pt: this.onboardingForm.get('pt')?.value?.value ?? this.empdata.pt,
-      totalYearsOfExperience: this.onboardingForm.get('totalExperience')?.value ?? this.empdata.totalYearsOfExperience,
+      totalYearsOfExperience: parseInt(this.onboardingForm.get('totalExperience')?.value )?? parseInt(this.empdata.totalYearsOfExperience),
       allowWFH: this.onboardingForm.get('remoteLogin')?.value ?? this.empdata.allowWFH,
       workLocation: this.onboardingForm.get('workLocation')?.value ?? this.empdata.workLocation,
       wfhManagerId: this.onboardingForm.get('wfhmanger')?.value ?? this.empdata.wfhManagerId,
@@ -385,6 +429,7 @@ export class OnboardingDetailsComponent {
       
       this.onboardingForm.enable();
       this.getEmployeeId()
+      this.onboardingForm.get('totalExperience')?.disable()
     } else {
       this.getEmployeeId()
       this.onboardingForm.disable();

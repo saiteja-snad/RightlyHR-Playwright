@@ -42,7 +42,7 @@ export class AddHolidaysComponent {
       location: [null, Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
-      holidays: this.fb.array([]), // start empty
+      holidays: this.fb.array([]),// start empty
     });
     this.yearDetails = this.generateYears(currentYear-1, currentYear+1);
     // Add one default row after form is ready
@@ -130,8 +130,32 @@ export class AddHolidaysComponent {
     );
   });
 }
-checkDuplicate(index: number): void {
-  this.isDuplicateholidayName[index] = this.isDuplicateHoliday(index);
+// checkDuplicate(): void {
+//   const holidayArray = this.holidayForm.get('holidays') as FormArray;
+//   const names = holidayArray.controls.map(ctrl =>
+//     ctrl.value.holidayName?.trim().toLowerCase()
+//   );
+
+//   this.isDuplicateholidayName = names.map((name, idx) =>
+//     names.filter((n, i) => n === name && i !== idx).length > 0
+//   );
+// }
+checkDuplicate(): void {
+  const holidayArray = this.holidayForm.get('holidays') as FormArray;
+  const names = holidayArray.controls.map(ctrl =>
+    ctrl.value.holidayName?.trim().toLowerCase()
+  );
+
+  const seen = new Map<string, number>(); // Map to track first occurrence
+  this.isDuplicateholidayName = names.map((name, idx) => {
+    if (!name) return false;
+    if (seen.has(name)) {
+      return true; // duplicate — not first occurrence
+    } else {
+      seen.set(name, idx);
+      return false; // first occurrence — valid
+    }
+  });
 }
 
 

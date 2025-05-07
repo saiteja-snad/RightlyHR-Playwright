@@ -42,10 +42,8 @@ export class UpdateHolidaysComponent {
       location: ['', Validators.required],
       subLocation: ['', Validators.required],
       shift: ['', Validators.required],
-      holidays: this.fb.array([]), // start empty
-    //  holidays: this.fb.array([])
+      holidays: this.fb.array([])
     });
-
     //default year show selected
     this.holidayForm.patchValue({
       year: this.yearDetails.find((x: any) => x.value === this.updateHolidaysData.applicableyear)
@@ -103,11 +101,13 @@ export class UpdateHolidaysComponent {
     });
     this.holidays.push(holidayGroup);
     this.hidePublishCloneButtons = true;
+    const index = this.holidays.length - 1;
   }
+  
 
  // this function used for duplicate holiday name not allowed
  isDuplicateHoliday(index: number): boolean {
-  const holidayArray = this.holidayForm.get('holidays') as FormArray; // ✅ Access the FormArray directly
+  const holidayArray = this.holidayForm.get('holidays') as FormArray; 
   const currentholiday = holidayArray.at(index).value;
   return holidayArray.controls.some((ctrl, i) => {
     if (i === index) return false;
@@ -117,11 +117,28 @@ export class UpdateHolidaysComponent {
     );
   });
 }
-checkDuplicate(index: number): void {
-  this.isDuplicateholidayName[index] = this.isDuplicateHoliday(index);
+
+checkDuplicate(): void {
+  const holidayArray = this.holidayForm.get('holidays') as FormArray;
+  const names = holidayArray.controls.map(ctrl =>
+    ctrl.value.holidayName?.trim().toLowerCase()
+  );
+
+  const seen = new Map<string, number>(); // Map to track first occurrence
+  this.isDuplicateholidayName = names.map((name, idx) => {
+    if (!name) return false;
+    if (seen.has(name)) {
+      return true; // duplicate — not first occurrence
+    } else {
+      seen.set(name, idx);
+      return false; // first occurrence — valid
+    }
+  });
 }
 
-
+get holidaysArray(): FormArray {
+  return this.holidayForm.get('holidays') as FormArray;
+}
   //delete icon click this method works
   removeHolidayRow(index: number): void {
     if (this.holidays.length > 1) {

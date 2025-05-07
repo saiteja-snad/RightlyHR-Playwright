@@ -192,6 +192,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         console.log('Next callback');
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+        this.getAllTeammembersList();
         console.log(data);
       },
       error: (reason: any) => {
@@ -200,6 +201,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         if (reason) {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.getAllTeammembersList();
           this.spinnerLoader = false;
           this.rmForm.reset();
         }
@@ -290,12 +292,14 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.getAllTeammembersLists();
         },
         error: (reason: any) => {
           console.log(reason);
           if (reason) {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+            this.getAllTeammembersLists();
             this.spinnerLoader = false;
             this.teamForm.reset();  // Reset the form
           }

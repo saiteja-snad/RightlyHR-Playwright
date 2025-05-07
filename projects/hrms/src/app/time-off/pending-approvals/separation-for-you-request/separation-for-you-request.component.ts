@@ -114,7 +114,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       // Add any other keys your form uses here
     };
     // Reset condition flags
-    this.regular = true;
+    this.regular = false;
     this.early = false;
     this.extend = false;
     // Close the modal
@@ -196,7 +196,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
 
   //function to get the requried data
   handleRequest(request: ISeparationRequest) {
-    this.regular = true;
+    this.regular = false;
     this.requesthandler = request;
     this.selectedSpRequestData = request.entity;
     this.selectedSpRequestData.noticperiodType = null;
@@ -283,8 +283,11 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.isLoading = false;
-        this.modalService.dismissAll();
         this.regular = true;
+        this.early = false;
+        this.extend = false;
+
+        this.modalService.dismissAll();
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           separation: true,
@@ -541,7 +544,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   earlyRelievingValidationCheck() {
     if (this.selectedSpRequestData.spMangerEarlyreliveingDate !=
       this.selectedSpRequestData.spearlyReliveingDate) {
-      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
+      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
       this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
       this.selectedRadio = 'early';
       this.selectedSpRequestData.requestSelectedType = 'Early';

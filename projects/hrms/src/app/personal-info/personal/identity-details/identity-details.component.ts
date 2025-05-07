@@ -59,6 +59,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   }
 
   initializeupdateForm(): void {
+    const attachmentValidators = this.displayidentiydocument ? [] : [Validators.required];
     this.identityupdateForm = this.fb.group({
       identityupdateType: [{ value: null, disabled: true }, Validators.required],
       identityupdateNumber: ['', [Validators.required,
@@ -66,7 +67,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       Validators.minLength(this.IdentityMinNumber)
         , Validators.maxLength(this.IdentityMaxNumber)
       ]],
-      identityupdateAttachment: [null]
+      identityupdateAttachment: [null,attachmentValidators]
     });
   }
   openModal(content: any) {

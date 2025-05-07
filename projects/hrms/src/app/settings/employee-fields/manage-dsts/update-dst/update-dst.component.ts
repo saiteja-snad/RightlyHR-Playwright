@@ -23,6 +23,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { ManageDST } from '../dsts.modal';
 import { TranslateModule } from '@ngx-translate/core';
+import moment from 'moment';
 
 @Component({
   selector: 'app-update-dst',
@@ -42,8 +43,8 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
   durations: number[] = [1, 1.5, 2, 2.5, 3];
   pendingDST: ManageDST | null = null;
   hidePublishCloneButtons: boolean = false;
-
-  @ViewChild('confirmation') confirmation!: TemplateRef<any>;
+  isdisabled = true;
+  @ViewChild('cancelpopup') cancelpopup!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -74,7 +75,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
 
   inititializeForm() {
     this.dstForm = this.fb.group({
-      year: [ '', Validators.required],
+      year: [ { value: '', disabled: true }, Validators.required],
       location: ['' , Validators.required],
       subLocation: [ '' , Validators.required],
       shift: [ null , Validators.required],
@@ -104,10 +105,30 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       this.momentRows.push(this.createMomentRow());
     }
   }
+  //min date selected
+  getMinDateForHoliday(): string {
+    const selectedYear = this.dstForm.get('year')?.value;
+    if (selectedYear) {
+      return `${selectedYear}-01-01`;
+    }
+    return moment().format('YYYY-MM-DD'); // fallback
+  }
+  //max date selected
+  getMaxDateForHoliday(): string {
+    const selectedYear = this.dstForm.get('year')?.value;
+    if (selectedYear) {
+      return `${selectedYear}-12-31`;
+    }
+    return moment().format('YYYY-MM-DD'); // fallback
+  }
 
-  removeMomentRow(index: number) {
+
+ //this method used for delete icon click
+ removeMomentRow(index: number): void {
+  if (this.momentRows.length > 1) {
     this.momentRows.removeAt(index);
   }
+}
 
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
@@ -118,6 +139,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     this.subLocationDetails = location.jobSubLocations ?? [];
     this.dstForm.get('subLocation')?.enable();
     this.dstForm.get('subLocation')?.reset();
+    this.dstForm.get('shift')?.disable();
   }
 
   getAllShifts(subLocation: ISubLocation): void {
@@ -131,6 +153,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+          this.dstForm.get('shift')?.enable();
           this.shiftDetails = res.flatMap(
             (header: any) => header.orgShiftsItems ?? []
           );
@@ -198,7 +221,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     const resetAndDisable = (controls: string[]) => {
       controls.forEach(control => {
         form.get(control)?.reset();
-        form.get(control)?.disable();
+       // form.get(control)?.disable();
       });
     };
 
@@ -224,7 +247,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
   }
 
   openConfirmation(){
-    this.modalService.open(this.confirmation, {centered: true, backdrop: 'static'})
+    this.modalService.open(this.cancelpopup, {centered: true, backdrop: 'static'})
   }
   closeUpdateDST(){
     this.modalService.dismissAll();
@@ -273,7 +296,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
             }
 
             this.sharedModalService.openSuccessModal(
-              'Manage DST updated successfully'
+              'DST updated successfully'
             );
             this.navigate();
           },
@@ -302,7 +325,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (respnose: any) => {
           this.sharedModalService.openSuccessModal(
-            'Manage DST Published Successfully'
+            'DST Published Successfully'
           );
           this.navigate();
         },

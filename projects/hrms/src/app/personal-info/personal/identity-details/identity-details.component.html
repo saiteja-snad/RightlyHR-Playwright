@@ -117,7 +117,7 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
-                        <input type="file" class="form-control custom-input" formControlName="identityAttachment"
+                        <input type="file" class="form-control custom-input px-0" formControlName="identityAttachment"
                             (change)="onIdentityAttachmentSelected($event)"  accept="image/*, .jpg, .pdf"
                             />
                         <div class="error-msg"
@@ -203,7 +203,7 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
-                        <input type="file" class="form-control custom-input" formControlName="identityupdateAttachment"
+                        <input type="file" class="form-control custom-input px-0" formControlName="identityupdateAttachment"
                             (change)="onIdentityAttachmentSelected($event)"  accept="image/*, .jpg, .pdf"
                             />
                         <div class="error-msg"
@@ -220,7 +220,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid">Update</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="identityupdateForm.invalid && !displayidentiydocument && identityupdateForm.get('identityupdateAttachment')?.invalid">Update</button>
                 </div>
             </form>
         </div>

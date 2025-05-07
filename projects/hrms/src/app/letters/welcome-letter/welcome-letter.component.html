@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
-            <p class="component-header cursor mb-0" (click)="navigateDashboard()"><i
-                    class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
+            <p class="component-header cursor mb-0" (click)="navigateDashboard()">
+                <i class="bi bi-arrow-90deg-left me-2"></i>Dashboard</p>
         </div>
     </div>
 
@@ -21,7 +21,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="false" placeholder="Please select employee" formControlName="fusionEmpId"
-                            class="custom-select w-100" (onChange)="onClickEmployee($event)">
+                            class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true">
                         </p-select>
                     </div>
                     <div class="error-msg" *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
@@ -45,7 +45,7 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
-                            class="form-select custom-select" formControlName="authorityid" (onChange)="onclickDesignation($event)">
+                            class="custom-select w-100" formControlName="authorityid" (onChange)="onclickDesignation($event)">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched" class="error-msg">
@@ -53,9 +53,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="jobErrorMessage" class="error-msg">
-                    {{ jobErrorMessage }}
-                </div>
+                <div *ngIf="jobErrorMessage" class="error-msg">{{ jobErrorMessage }}</div>
 
                 <div class="d-flex flex-wrap gap-3 pt-4">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || spinnerLoader">
@@ -79,10 +77,6 @@
                     <!--page-1-->
                     <div class="letter-page-content" id="pdfContent">
                         <div class="letter-page-sub-content">
-                            <!-- <div class="mb-3 pt-5">
-                                <img src="./public\images\Logo 3 (1).png" alt="Company Logo" class="header-image">
-                            </div> -->
-
                             <div class="header-content">
                                 <div class="logo-img-content">
                                     <app-lettersheader></app-lettersheader>
@@ -90,51 +84,41 @@
                                 <div class="address-content mt-5 pt-4">
                                     <ul class="list-style-none ps-0">
                                         <li>RightlyHR</li>
-                                        <li>Vijaya Krishna Towers, Floor#16, <br>Madhava Reddy Colony, Gachibowli, HYD - 500032
-                                        </li>
+                                        <li>Vijaya Krishna Towers, Floor#16, <br>Madhava Reddy Colony, Gachibowli, 
+                                            HYD - 500032</li>
                                         <li>+91 (703) 636-0933</li>
                                         <li>admin&#64;rightlyhr.com</li>
                                         <li>www.rightlyhr.com</li>
                                     </ul>
                                 </div>
                             </div>
-                            <div class="header-container pt-3">
-                                <p class="welcome-text">Welcome Letter</p>
+                            <div class="py-4 text-center">
+                                <p class="letter-header">Welcome Letter</p>
                             </div>
                             <div>
-                                <p>Dear
-                                    <span class="ms-1">{{employeeFullname}},</span>
-                                </p>
-                                <p><b>Welcome to RightlyHR.!</b></p>
-                                <p>We are excited to have you onboard and look forward to the
-                                    remarkable contributions you will make as part of our team. As the new
-                                    <span *ngIf="selectedEmployeeJobDetails?.jobRole"><b>{{selectedEmployeeJobDetails.jobRole}}</b></span>,
-                                    you’ll be joining a group of dedicated and talented professionals committed
-                                    to delivering excellence in everything we do.
-                                </p>
-                                <p>At RightlyHR, we pride ourselves on fostering a
-                                    positive, collaborative work environment where everyone can grow and succeed
-                                    together. With your expertise, we are confident that you will play a pivotal role in
-                                    shaping the future of our ERP Services.</p>
+                                <p><b>Dear<span class="ms-1">{{employeeFullname}},</span></b></p>
+                                <p class="mb-4"><b>Welcome to RightlyHR.!</b></p>
+                                <p>We are excited to have you onboard and look forward to the remarkable contributions you will make as part of our team. 
+                                    As the new <span *ngIf="selectedEmployeeJobDetails?.jobRole"><b>{{selectedEmployeeJobDetails.jobRole}}</b></span>,
+                                    you’ll be joining a group of dedicated and talented professionals committed to delivering excellence in everything we do.</p>
+                                <p>At RightlyHR, we pride ourselves on fostering a positive, collaborative work environment where everyone can grow and succeed
+                                    together. With your expertise, we are confident that you will play a pivotal role in shaping the future of our ERP Services.</p>
                                 <p *ngIf="employeeForm.get('note')?.value">{{employeeForm.get('note')?.value}}</p>
-                                <p>We understand that starting a new position can sometimes
-                                    feel overwhelming, but please know that we are here to support you every step of the way.
-                                    If you have any questions or need guidance, feel free to reach out to me or your
-                                    colleagues.</p>
-                                <p>Once again, welcome to the team! We are thrilled to have you
-                                    with us and can’t wait to see what we will achieve together.</p>
-                                <p>Best wishes,</p>
-                                <ul class="px-0 content-text">
-                                    <li *ngIf="authorityFullName && authorityFullName"
-                                     style="font-family: Segoe script; font-size: large;">
+                                <p>We understand that starting a new position can sometimes feel overwhelming, but please know that we are here to support 
+                                    you every step of the way. If you have any questions or need guidance, feel free to reach out to me or your colleagues.</p>
+                                <p>Once again, welcome to the team! We are thrilled to have you with us and can’t wait to see what we will achieve together.</p>
+                                <p class="pt-4">Best wishes,</p>
+                                <ul class="list-style-none ps-0 pt-3">
+                                    <li *ngIf="authorityFullName && authorityFullName" class="letter-signature mb-2">
                                         {{ authorityFullName }}
                                     </li>
-                                    <li
-                                        *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
+                                    <li *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation" class="mb-2">
+                                        {{ authorityFullName }}
+                                    </li>
+                                    <li *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
                                         {{ selectedAuthority.designation }}
                                     </li>
-                                    <li
-                                        *ngIf="authorityFullName && selectedEmployee.workEmail && selectedEmployee.workEmail">
+                                    <li *ngIf="authorityFullName && selectedEmployee.workEmail && selectedEmployee.workEmail">
                                         {{ selectedEmployee.workEmail }}
                                     </li>
                                 </ul>

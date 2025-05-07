@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
       <p class="component-header cursor mb-0">
-        <i class="bi bi-arrow-90deg-left cursor me-2" (click)="navigateDashboard()"></i>Apprisal Letter
+        <i class="bi bi-arrow-90deg-left cursor me-2" (click)="navigateDashboard()"></i>Appraisal Letter
       </p>
     </div>
   </div>
@@ -16,8 +16,8 @@
               class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="employeeiddetails" optionLabel="fullName" [(ngModel)]="fusionEmpId" [filter]="true"
-              filterBy="fullName" [showClear]="true" placeholder="Please select employee" formControlName="fusionEmpId"
-              class="custom-select w-100" (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)">
+              filterBy="fullName" placeholder="Please select employee" formControlName="fusionEmpId"
+              class="custom-select w-100" (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)" resetFilterOnHide="true">
             </p-select>
           </div>
           <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
@@ -30,25 +30,25 @@
           <label class="form-label custom-label mb-2">{{'Promotion Designation'| translate }}</label>
           <div class="custom-p-select-content">
             <p-select [options]="AllDesignationwithGradeId" optionLabel="designationName" [filter]="true"
-              filterBy="designationName" [showClear]="true" placeholder="Please select promotion designation"
+              filterBy="designationName" placeholder="Please select promotion designation"
               formControlName="JobRole" (optionsFound)="updateOptionsFound(true)" (isListitem)="isItemIntheList($event)"
               (selectedOption)="onOptionSelected($event, 'JobRole')" class="custom-select w-100">
             </p-select>
           </div>
-          <div *ngIf="employeeForm.get('JobRole')?.invalid && employeeForm.get('JobRole')?.touched">
+          <!-- <div *ngIf="employeeForm.get('JobRole')?.invalid && employeeForm.get('JobRole')?.touched">
             <div class="error-msg">{{'Promotion Designation is required'| translate }}</div>
-          </div>
+          </div> -->
         </div>
     
         <!-- Issued Date -->
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Issued Date'| translate }}<span class="text-danger">*</span></label>
           <input type="date" placeholder="Please enter Date" formControlName="dateofAppraisal"
-            [(ngModel)]="appraisalData.dateofAppraisal" class="form-control input-field" id="appraisalDate" required
+            [(ngModel)]="appraisalData.dateofAppraisal" class="form-control custom-input" id="appraisalDate" required
             (change)="DateValidation()" onkeydown="return false" />
           <div *ngIf="employeeForm.get('dateofAppraisal')?.touched">
             <div *ngIf="employeeForm.get('dateofAppraisal')?.hasError('required')" class="error-msg">
-              {{'Date is required'| translate }}
+              {{'Issued date is required'| translate }}
             </div>
             <div *ngIf="!isdateofAppraisal" class="error-msg">{{'Date should be after the probation end date'| translate }}</div>
           </div>
@@ -59,20 +59,19 @@
           <label class="form-label custom-label mb-2">{{'Next Compensation Review Date'| translate }}
             <span class="text-danger">*</span></label>
           <input type="date" formControlName="reviewdate" [(ngModel)]="appraisalData.reviewdate"
-            class="form-control input-field" id="reviewdate" required (change)="DateValidation2()">
+            class="form-control custom-input" id="reviewdate" required (change)="DateValidation2()">
           <div *ngIf="employeeForm.get('reviewdate')?.invalid && employeeForm.get('reviewdate')?.touched">
-            <div class="error-msg">{{'Compensation Review Date is required '| translate }}</div>
+            <div class="error-msg">{{'Compensation review date is required '| translate }}</div>
           </div>
           <div *ngIf="!isNextApprisal" class="error-msg">{{'Date should be after the probation end date'| translate }}</div>
         </div>
     
         <div class="mb-3">
-          <label>{{'Document Type'| translate }}<span class="error-msg">*</span></label>
+          <label class="form-label custom-label mb-2">{{'Document Type'| translate }}<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="employeementType" optionLabel="name" optionValue="value"
-              placeholder="Please select document type" [showClear]="true" [(ngModel)]="appraisalData.Documenttype"
-              formControlName="Documenttype" inputId="documenttype" class="form-select custom-select">
-            </p-select>
+              placeholder="Please select document type" [(ngModel)]="appraisalData.Documenttype" formControlName="Documenttype"
+              inputId="documenttype" class="custom-select w-100" resetFilterOnHide="true"></p-select>
           </div>
           <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
             <div class="error-msg"> {{'Document Type is required'| translate }}</div>
@@ -80,8 +79,8 @@
         </div>
     
         <div class="mb-3">
-          <label class="form-label"> {{'Enter Performance Variable Bonus'| translate }}</label>
-          <input type="number" class="form-control input-field" placeholder="Enter Bonus" formControlName="bonus"
+          <label class="form-label custom-label mb-2"> {{'Enter Performance Variable Bonus'| translate }}</label>
+          <input type="number" class="form-control custom-input" placeholder="Enter Bonus" formControlName="bonus"
             (input)="sanitizeInput($event)" />
           <div *ngIf="employeeForm.get('bonus')?.invalid && employeeForm.get('bonus')?.touched">
             <div class="error-msg">{{'Performance Variable Bonus is required'| translate }}</div>
@@ -93,20 +92,19 @@
           <label class="form-label custom-label mb-2">
             {{ 'Variable Pay' | translate }}<span class="error-msg">*</span>
           </label>
-          <p-select [options]="variablePayOptions" optionLabel="name" optionValue="value" formControlName="isVariablePay"
-            placeholder="Please select Variable Pay" (onChange)="onVariablePayChange()" [showClear]="true"
-            [autoDisplayFirst]="false" [styleClass]="'input-field w-100'" id="variablePay"></p-select>
-    
+          <div class="custom-p-select-content">
+            <p-select [options]="variablePayOptions" optionLabel="name" optionValue="value" formControlName="isVariablePay"
+              placeholder="Please select Variable Pay" (onChange)="onVariablePayChange()" [autoDisplayFirst]="false"
+              class="custom-select w-100" id="variablePay" resetFilterOnHide="true"></p-select>
+          </div>
           <div *ngIf="employeeForm.get('isVariablePay')?.invalid && employeeForm.get('isVariablePay')?.touched">
             <div class="error-msg">{{ 'Variable Pay is required' | translate }}</div>
           </div>
         </div>
     
-    
         <div class="mb-3">
-          <label class="form-label custom-label mb-2">{{'Variable Amount'| translate }}<span
-              class="error-msg">*</span></label>
-          <input type="text" formControlName="variablePayAmount" class="form-control input-field" id="variableamount"
+          <label class="form-label custom-label mb-2">{{'Variable Amount'| translate }}<span class="error-msg">*</span></label>
+          <input type="text" formControlName="variablePayAmount" class="form-control custom-input" id="variableamount"
             placeholder="Variable Amount" [(ngModel)]="appraisalData.variablePayAmount" maxlength="10"
             [disabled]="!appraisalData.isVariablePay" (keypress)="numbers($event)" autocomplete="off" required>
           <div *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
@@ -115,12 +113,12 @@
         </div>
     
         <div class="mb-3">
-          <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Signature Authority Name' |
-            translate }}<span class="error-msg">*</span></label>
+          <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
+            {{'Signature Authority Name' | translate }}<span class="error-msg">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId"
-              placeholder="Please select signature authority name" class="form-select custom-select" formControlName="authorityid"
-              [(ngModel)]="appraisalData.authorityid" (onChange)="onclickDesignation()" />
+            <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId" [filter]="true" filterBy="fullName"
+              placeholder="Please select signature authority name" class="custom-select w-100" formControlName="authorityid"
+              [(ngModel)]="appraisalData.authorityid" (onChange)="onclickDesignation()" resetFilterOnHide="true"/>
           </div>
           <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
             <div class="error-msg"> {{'Signature Authority Name is required'| translate }}</div>
@@ -181,12 +179,7 @@
                 <span *ngIf="!appraisalData.jobRole"> {{'Designation'| translate }}</span>
                 <span>{{appraisalData.jobRole}}</span>
               </p>
-              <!-- <p class="">
-                                     <strong>{{appraisalData.addressLine1}}<br>{{appraisalData.addressLine2}}
-                                         <br>{{appraisalData.city}}<br>{{appraisalData.state}}</strong>
-                                 </p> -->
-              <p class="letter-sub-header">Dear {{appraisalData.firstName}}
-                {{appraisalData.middleName}} {{appraisalData.lastName}},</p>
+              <p class="letter-sub-header">Dear {{appraisalData.firstName}} {{appraisalData.middleName}} {{appraisalData.lastName}},</p>
 
               <p>We are pleased to present you with this appraisal letter on behalf of
                 RightlyHR. We want to extend our gratitude for your dedication and substantial
@@ -204,18 +197,15 @@
                   Your annual remuneration has been revised to <b> 
                   <span *ngIf="!incrementSalary">Rs.{{employeeCompensationDetails.compensationamount}}</span></b>
               </p>
+
               <p>We are confident that you will put in your best efforts in
                 discharging your duties and responsibilities even more efficiently and in the best of interest of the
                 organization and measure up to the confidence and faith reposed in you by the Management repeatedly.
               </p>
+
               <p>All other terms & conditions of your Appointment Letter will remain unchanged.</p>
+
               <p>Your new compensation structure is as follows:</p>
-              <!-- <p class="">Keeping in view the above, Management has also decided to give you
-                                     an increment of Rs. {{incrementSalary}}/- w.e.f. . This will be in addition to your
-                                     existing CTC, thereby increasing your CTC from Rs <span *ngIf="previusSalary?.compensationamount"></span>
-                                     {{previusSalary?.compensationamount}}/- to current CTC of Rs {{appraisalData.salary}} /-
-                                 </p> -->
-              <!--table content-->
 
               <!--Components Table-->
               <div class="salary-details-table mb-3">
@@ -256,16 +246,6 @@
                         <ng-template #otherper>{{appraisalData.otherAllowancesPerAnnum}}</ng-template>
                       </td>
                     </tr>
-                    <!-- <tr>
-                                                           <td class="text-center p-0">Educational Allowances</td>
-                                                           <td class="text-center p-0"><span *ngIf="!appraisalData.educationAllowances;else educ"> </span>
-                                                               <ng-template #educ>{{appraisalData.educationAllowances}}</ng-template>
-                                                           </td>
-                                                           <td class="text-center p-0"><span *ngIf="!appraisalData.educationallowancesPerAnnum;else educper">
-                                                               </span>
-                                                               <ng-template #educper>{{appraisalData.educationallowancesPerAnnum}}</ng-template>
-                                                           </td>
-                                                       </tr> -->
                     <tr>
                       <td class="p-0 bold text-center"><b>Total Gross Salary</b></td>
                       <td class="text-center p-0 bold"><span *ngIf="!appraisalData.totalGrossSalary;else totalgross">
@@ -277,15 +257,6 @@
                         <ng-template #totalgrossper>{{appraisalData.totalGrossPerAnnum}}</ng-template>
                       </td>
                     </tr>
-                    <!-- <tr>
-                                                           <td class="text-center p-0">Conveyance</td>
-                                                           <td class="text-center p-0"><span *ngIf="!appraisalData.Conveyance;else conv"> </span>
-                                                               <ng-template #conv>{{appraisalData.Conveyance}}</ng-template>
-                                                           </td>
-                                                           <td class="text-center p-0"><span *ngIf="!appraisalData.conveyancePerAnnum;else convper"></span>
-                                                               <ng-template #convper>{{appraisalData.conveyancePerAnnum}}</ng-template>
-                                                           </td>
-                                                       </tr> -->
                     <tr>
                       <td class="p-0 text-center">PF Contribution by Employee</td>
                       <td class="text-center p-0"><span *ngIf="!appraisalData.pfContribution;else pf">
@@ -354,7 +325,7 @@
                 <table class="w-100">
                   <thead>
                     <tr>
-                      <th style="text-align: center;" colspan="3">CTC Calculation</th>
+                      <th class="text-center" colspan="3">CTC Calculation</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -439,7 +410,7 @@
               <p class="letter-sub-header pt-4 pb-4"><b>for RightlyHR</b></p>
               <div class="mt-4 mb-4 pt-4"></div>
               <div class="pb-4">
-                <span style="font-family: Segoe script; font-size: large;">{{appraisalData.authorityName}}</span><br>
+                <span class="letter-signature">{{appraisalData.authorityName}}</span><br>
                 <span><b>Authorized Signatory,</b></span><br>
                 <span><b><span *ngIf="!appraisalData.authorityName">Name</span>{{appraisalData.authorityName}}</b></span><br>
                 <span><b><span *ngIf="!authorityDesignation">Designation</span>{{authorityDesignation}}</b></span>

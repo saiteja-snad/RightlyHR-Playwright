@@ -5,7 +5,7 @@
         *ngIf="rbac.allowedToAccess('Asset Catagory.create')">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter asset Category"
-                    aria-label="role" aria-describedby="role" formControlName="assetcaassetCategory">
+                    aria-label="role" aria-describedby="role" formControlName="assetcaassetCategory"   (keypress)="formValidation.restrictInput($event)" >
                 <span class="input-group-text" id="role">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="assetCategorydata.invalid">{{'Add'| translate}}</button>
                 </span>
@@ -14,6 +14,9 @@
                 class="error-msg">
                 <!-- Required validation message -->
                 <div *ngIf="assetCategorydata.get('assetcaassetCategory')?.hasError('required')">Please enter asset Category</div>
+            </div>
+            <div class="error-msg" *ngIf="assetCategorydata.controls['assetcaassetCategory'].errors?.['maxlength']">
+                Asset Category should not exceed 30 characters
             </div>
         </form>
     </div>
@@ -75,7 +78,7 @@
                     <label for="assetCategory" class="form-label custom-label mb-2">Asset Category
                         <span class="text-danger">*</span></label>
                     <input type="text" id="assetCategory" formControlName="assetcaassetCategorydata"
-                        class="form-control custom-input" placeholder="Enter asset category" />
+                        class="form-control custom-input" placeholder="Enter asset category" (keypress)="formValidation.restrictInput($event)" />
                     <div class="error-msg" *ngIf="assetCategorydataForm.get('assetcaassetCategorydata')?.errors?.['required']">
                         Asset Category is required
                     </div>

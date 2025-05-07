@@ -69,7 +69,7 @@
                 <div class="col-md-12 mb-3">
                     <label for="attachment" class="form-label custom-label mb-2">Attachment(Image and PDF only)<span
                             class="text-danger">*</span></label>
-                    <input type="file" class="form-control custom-input" id="attachment" (change)="fileAttachment($event);fileChange($event)">
+                    <input type="file" class="form-control custom-input px-0" id="attachment" (change)="fileAttachment($event);fileChange($event)">
                     <div class="file-name my-1">
                         <span>File Name: {{getFileName(this.educationData.attachment)}}</span>
                     </div>

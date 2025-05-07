@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
@@ -9,9 +9,10 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Subscription } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-on-be-half-of-reject',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule,TranslateModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './on-be-half-of-reject.component.html',
   styleUrl: './on-be-half-of-reject.component.scss'
 })
@@ -30,6 +31,8 @@ export class OnBeHalfOfRejectComponent {
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  approverComments = [] as any[];
+
   onRowsChange() {
     this.first = 0;
   }
@@ -38,7 +41,7 @@ export class OnBeHalfOfRejectComponent {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private authService: AuthService) { }
+  constructor(private http: HttpService, private authService: AuthService,private modalService: NgbModal, ) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -60,5 +63,10 @@ export class OnBeHalfOfRejectComponent {
       },
       error: (reason: any) => console.log(reason)
     });
+  }
+
+  comments(value: any, commentspopup: any) {
+    this.modalService.open(commentspopup, {centered: true, backdrop: 'static', size: 'lg'});
+    this.approverComments = value;
   }
 }

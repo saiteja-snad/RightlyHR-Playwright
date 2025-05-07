@@ -226,7 +226,7 @@
                 <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject Reason<span
                         class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments" name="Reasons"
-                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" maxlength="250"
+                    #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" maxlength="250" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)"
                     (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
                 <div class="form-label custom-label text-end my-1">
                     {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>

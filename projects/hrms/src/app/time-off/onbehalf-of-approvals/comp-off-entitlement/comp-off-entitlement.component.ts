@@ -15,6 +15,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { environment } from '../../../../environments/environment';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 @Component({
   selector: 'app-comp-off-entitlement',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, 
@@ -82,13 +83,13 @@ export class CompOffEntitlementComponent {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 

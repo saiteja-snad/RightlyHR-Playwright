@@ -13,10 +13,11 @@ import { PersonalPersonalTabsComponent } from '../../shared/personalinfo-tabs/pe
 import { PersonalJobTabsComponent } from '../../shared/personalinfo-tabs/personal-job-tabs/personal-job-tabs.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
+import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-personalinfo-layout',
   imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, PersonalPersonalTabsComponent, PersonalJobTabsComponent,
-    FormsModule, ReactiveFormsModule, TranslateModule],
+    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss'
 })
@@ -124,9 +125,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
       next: (data: any) => {
         this.managers = data.filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: { firstName: any; middleName?: string; lastName: any }) => ({
+          .map((emp: {fusionEmpId:string; firstName: any; middleName?: string; lastName: any }) => ({
             ...emp,
-            name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
           }));
       },
       error: (err: any) => console.log(err),
@@ -135,11 +136,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   getAllTeammembersList() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.teamMembersdata = data.map((member: any) => ({
           ...member,
-          name: `${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`
+          name: `${member.fusionEmpId} - ${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`
         }));
       },
       error: (err: any) => console.log(err),
@@ -185,7 +186,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' , size: 'lg' });
   }
 
   isActive(route: string): boolean {

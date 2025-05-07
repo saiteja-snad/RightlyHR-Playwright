@@ -35,11 +35,12 @@ export class PublishedHolidaysComponent {
   }
 
   viewPublishedholiday(holiday: any) {
-    localStorage.setItem('viewholidays', JSON.stringify(holiday));
+    localStorage.setItem('updateholidays', JSON.stringify(holiday));
     this.router.navigate(['/settings/employee-fields/viewholidays']);
   }
 
   navigateToCloneComponent(holiday: any) {
+    localStorage.setItem('updateholidays', JSON.stringify(holiday));
     this.router.navigate(['/settings/employee-fields/cloneholidays']);
   }
 

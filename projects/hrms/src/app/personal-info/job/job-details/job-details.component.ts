@@ -501,6 +501,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       this.subscription = this.http.postdata('JobDetails', playload).subscribe({
         next: (data: any) => {
           this.jobDetailsForm.reset();
+          this.http.setBasicDetails();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Job Details added successfully');
           this.getJobDetails(); // Refresh job details

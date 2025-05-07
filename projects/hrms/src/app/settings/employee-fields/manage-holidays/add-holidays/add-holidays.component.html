@@ -93,6 +93,9 @@
                   |translate}}</span>
                 <span *ngIf="holiday.get('holidayName')?.errors?.['pattern']">Enter valid data</span>
               </div>
+              <div *ngIf="holidayForm.get('holidays')?.errors?.['duplicateHolidayNames']" class="error-msg text-danger">
+                {{ 'Duplicate holiday names are not allowed' | translate }}
+              </div>
             </div>
       
             <div class="w-100">

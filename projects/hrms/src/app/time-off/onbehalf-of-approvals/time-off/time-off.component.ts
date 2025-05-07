@@ -252,7 +252,7 @@ export class TimeOffComponent {
       status: "Processed",
       approvedBy: this.empinfo.employeeId.toString()
     }
-    this.spinnerLoader = true;
+    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
     this.subscription = this.http.putData(`PendingApproval/process/${data.approvalHeader.id}`, requestBody).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
@@ -264,12 +264,10 @@ export class TimeOffComponent {
         }, 2000);
       },
       error: (reason: any) => {
-        this.spinnerLoader = false;
         this.sharedModalService.openSuccessModal('Request Processed Failed');
       },
       complete: () => { 
         this.http.triggerActionSignal();
-        this.spinnerLoader = false;
       },
     })
   }

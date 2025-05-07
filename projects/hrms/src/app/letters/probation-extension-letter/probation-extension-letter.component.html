@@ -13,10 +13,10 @@
             <form autocomplete="off" [formGroup]="probationExtensionForm" (ngSubmit)="postProbationExtensionLetterFormSubmit()">
                 <!-- Employee Name -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Search Employee<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeedetails" optionLabel="fullName" [filter]="true" filterBy="fullName" (onChange)="onClickEmployee($event)"
-                             placeholder="Please select employee" formControlName="employeeId" class="custom-select w-100">
+                             placeholder="Please select employee" formControlName="employeeId" class="custom-select w-100" resetFilterOnHide="true">
                         </p-select>
                     </div>
                     <div *ngIf="probationExtensionForm.get('employeeId')?.invalid && probationExtensionForm.get('employeeId')?.touched">
@@ -36,10 +36,10 @@
             
                 <!-- Document Type -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Document Type<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="documentType" optionValue="value" optionLabel="name" placeholder="Please select document type" 
-                          formControlName="Documenttype" class="form-select custom-select" (onChange)="pathValuesFuction()">
+                          formControlName="Documenttype" class="custom-select w-100" (onChange)="pathValuesFuction()">
                         </p-select>
                     </div>
                     <div *ngIf="probationExtensionForm.get('Documenttype')?.invalid && probationExtensionForm.get('Documenttype')?.touched"
@@ -52,11 +52,12 @@
                     <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                          placeholder="Please select signature authority name" formControlName="authorityid" class="custom-select w-100" (onChange)="pathValuesFuction()">
+                          placeholder="Please select signature authority name" formControlName="authorityid" class="custom-select w-100"
+                           (onChange)="pathValuesFuction()" resetFilterOnHide="true">
                         </p-select>
                     </div>
                     <div *ngIf="probationExtensionForm.get('authorityid')?.invalid && probationExtensionForm.get('authorityid')?.touched">
-                        <div class="error-msg">Authority is required</div>
+                        <div class="error-msg">Signature authority is required</div>
                     </div>
                 </div>
 
@@ -157,10 +158,10 @@
                                 <p> We look forward to witnessing your continued progress and contributions to our team during 
                                     this extended probationary period.</p>
 
-                                <p>Sincerely,</p>
+                                <p class="pt-4">Sincerely,</p>
                                 <p>for RightlyHR</p>
 
-                                <div class="letter-signature">{{probationExtensionLetterData.authorityName}}</div>
+                                <div class="letter-signature  pt-4">{{probationExtensionLetterData.authorityName}}</div>
                                 <div>
                                     <p class="letter-sub-header">{{probationExtensionLetterData.authorityName}}</p>
                                     <p class="letter-sub-header">{{probationExtensionLetterData.authorityDesignation}}</p>

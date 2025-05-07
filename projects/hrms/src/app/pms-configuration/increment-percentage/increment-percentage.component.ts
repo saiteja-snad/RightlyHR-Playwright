@@ -83,6 +83,10 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
     modalRef.componentInstance.updateData = data;
   }
 
+  openHoldMsg(){
+    this.conformationPopup.openErrorModal('Review Cycle kept on hold');
+  }
+
   onSearchTextChange(): void {
     this.page = 1;        
     this.first = 0; 
@@ -123,7 +127,6 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.dataload = false;
-        console.log('errors', err);
       },
       complete: () => {
         this.dataload = false;

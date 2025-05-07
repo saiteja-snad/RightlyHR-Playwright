@@ -51,7 +51,7 @@
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="departmentId" [options]="departmentDetails" optionLabel="departmentName"
-                        placeholder="Search department" class="w-100">
+                        placeholder="Search department" class="w-100" (onChange)="onDepartmentNameChange($event)">
                         <ng-template let-dept pTemplate="item">{{ dept.departmentName }}</ng-template>
                     </p-multiSelect>
                 </div>
@@ -64,7 +64,7 @@
                 </label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="subDepartmentId" [options]="subDepartmentsDropdownValues"
-                        optionLabel="subDepartmentName" placeholder="Search sub department" class="w-100">
+                        optionLabel="subDepartmentName" placeholder="Search sub department" class="w-100" (onChange)="onSubDepartmentNameChange($event)">
                         <ng-template let-dept pTemplate="item">{{ dept.subDepartmentName }}</ng-template>
                     </p-multiSelect>
                 </div>
@@ -76,7 +76,7 @@
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="locationId" [options]="jobLocationDropDownData"
-                        optionLabel="locationName" placeholder="Search location" class="w-100">
+                        optionLabel="locationName" placeholder="Search location" class="w-100" (onChange)="onLocationChange($event)">
                         <ng-template let-dept pTemplate="item">{{ dept.locationName }}</ng-template>
                     </p-multiSelect>
                 </div>
@@ -88,7 +88,7 @@
                     <span class="text-danger">*</span></label>
                 <div class="custom-p-multiSelect-content">
                     <p-multiSelect formControlName="subLocationId" [options]="subLocationsDropdown"
-                        optionLabel="subLocationName" placeholder="Search sub location" class="w-100">
+                        optionLabel="subLocationName" placeholder="Search sub location" class="w-100" (onChange)="onSubLocationChange($event)">
                         <ng-template let-dept pTemplate="item">{{ dept.subLocationName }}</ng-template>
                     </p-multiSelect>
                 </div>
@@ -144,7 +144,7 @@
                         <th>{{'Review Template Name' | translate}}</th>
                         <th>{{'Status' | translate}}</th>
                         <th>{{'Final Rating' | translate}}</th>
-                        <th class="text-center">{{'Action' | translate}}</th>
+                        <th class="text-center">{{'Action(S)' | translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -155,7 +155,7 @@
                                     (change)="onCheckboxChange($event, employee.id)"
                                     [disabled]="employee.status === 'Review on Hold'" id="flexCheckDefault">
                             </td>
-                            <td>{{employee.reviewEmployeeId }}</td>
+                            <td>{{employee.reviewEmployeeFusionId }}</td>
                             <td>{{employee.reviewEmployeeIdName}}</td>
                             <td>{{employee.reviewCycleHeaderIdName }}</td>
                             <td>{{employee.departmentName}}</td>
@@ -412,6 +412,10 @@
                         class="error-msg">
                         Effective From Date is required
                     </div>
+                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('invalidEffectiveDate')"
+                        class="error-msg">
+                        Date must be after joining date and effective date.
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -478,13 +482,17 @@
                         class="error-msg">
                         Effective From Date is required
                     </div>
+                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('invalidEffectiveDate')"
+                        class="error-msg">
+                        Date must be after joining date and effective date.
+                    </div>
                 </div>
 
                 <div class="mb-3">
                     <label for="" class="form-label custom-label">{{'Signature Authority Name' | translate}}
                         <span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetailsForPromotion" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                        <p-select [options]="authorityDetailsForPromotion"optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="false" formControlName="signaturename" placeholder="Please select signature authority name"
                             class="form-select custom-select">
                             <ng-template #selectedItem let-selectedOption> {{ selectedOption.firstName }} {{ selectedOption.middleName }}
@@ -631,6 +639,10 @@
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">Effective From Date is required
                     </div>
+                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('invalidEffectiveDate')"
+                        class="error-msg">
+                        Date must be after joining date and effective date.
+                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -645,14 +657,6 @@
                                 <ng-template let-item #item>{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</ng-template>
                             </p-select>
                         </div>
-                    <!-- <select type="date" class="form-control custom-input" formControlName="signaturename"
-                        id="signaturename" name="signaturename" placeholder="Select Signature Authority Name"
-                        onkeypress="return false">
-                        <option [ngValue]="null" disabled selected>Please Select Signature Authority Name</option>
-                        <option *ngFor="let item of authorityDetailsForAppraisal" [value]="item.employeeId">
-                            {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}
-                        </option>
-                    </select> -->
                     <div *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')"
                         class="error-msg">Signature Authority Name is required
                     </div>
@@ -688,6 +692,10 @@
                         id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">{{'Effective From Date is required' | translate}}
+                    </div>
+                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('invalidEffectiveDate')"
+                        class="error-msg">
+                        Date must be after joining date and effective date.
                     </div>
                 </div>
 

@@ -11,17 +11,17 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Review Cycle Name</th>
-                    <th>Employee Name</th>
-                    <th>Employee ID</th>
-                    <th>Department</th>
-                    <th>Team</th>
-                    <th>Location</th>
-                    <th>Sub Location</th>
-                    <th>Due Date</th>
-                    <th>Review Template</th>
-                    <th>Status</th>
-                    <th class="text-center">Action</th>
+                    <th>{{'Review Cycle Name' | translate}}</th>
+                    <th>{{'Employee Name' | translate}}</th>
+                    <th>{{'Employee ID' | translate}}</th>
+                    <th>{{'Department' | translate}}</th>
+                    <th>{{'Team' | translate}}</th>
+                    <th>{{'Location' | translate}}</th>
+                    <th>{{'Sub Location' | translate}}</th>
+                    <th>{{'Due Date' | translate}}</th>
+                    <th>{{'Review Template' | translate}}</th>
+                    <th>{{'Status' | translate}}</th>
+                    <th class="text-center">{{'Action(S)' | translate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -62,20 +62,20 @@
                                     <li class="dropdown-item"
                                         (click)="selfAssessment(item.reviewCycleItemId, 0, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
                                         <a class="dropdown-custom-btn">{{item.assessorType}}
-                                            Assessment View</a>
+                                        {{'Assessment View' | translate}}</a>
                                     </li>
                                     <li class="dropdown-item"
                                     *ngIf=" item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated'"
                                     (click)="downloadPromotionletter(item)">
                                     <a class="dropdown-custom-btn">
-                                        Promotion Letter Download
+                                        {{'Promotion Letter Download' | translate}}
                                     </a>
                                 </li>
                                 <li class="dropdown-item"
                                     *ngIf=" item.rcItemStatus === 'Appraisal Letter Sent' ||  item.rcItemStatus=== 'Appraisal Letter Generated'"
                                     (click)="downloadletter(item)">
                                     <a class="dropdown-custom-btn">
-                                        Appraisal Letter Download
+                                        {{'Appraisal Letter Download' | translate}}
                                     </a>
                                 </li>
                                 </ul>

@@ -82,7 +82,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            <form  [formGroup]="employeeExperienceForm" autocomplete="off" (ngSubmit)="postExperienceDetails()">
+            <form [formGroup]="employeeExperienceForm" autocomplete="off" (ngSubmit)="postExperienceDetails()">
                 <div class="card-body pt-0">
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -108,7 +108,7 @@
                                     Name is required</div>
                                 <div class="error-msg"
                                     *ngIf="employeeExperienceForm.get('companyName')?.errors?.['pattern']">
-                                    Company  Name is canot be spaces
+                                    Company Name is canot be spaces
                                 </div>
                                 <div class="error-msg"
                                     *ngIf="employeeExperienceForm.get('companyName')?.errors?.['maxlength']">Company
@@ -202,8 +202,8 @@
                                 Contact Number must be 10 digits</div>
                             <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['maxlength']">
                                 Contact Number must be 10 digits</div>
-                                <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['pattern']">
-                                    Contact Number cannot be all zeroes </div>
+                            <div *ngIf="employeeExperienceForm.get('previousContactNumber')?.errors?.['pattern']">
+                                Contact Number cannot be all zeroes </div>
                         </div>
                     </div>
 
@@ -274,8 +274,9 @@
             </div>
         </div>
         <div class="custom-main-popup-content ">
-            <form autocomplete="off" [formGroup]="employeeExperienceupdateForm" (ngSubmit)="saveUpdatedExperienceDetails()">
-                <div class="card-body pt-0">
+            <form autocomplete="off" [formGroup]="employeeExperienceupdateForm"
+                (ngSubmit)="saveUpdatedExperienceDetails()">
+          
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-check">
@@ -391,10 +392,12 @@
                         </div>
 
                         <div class="col-md-6 mb-3">
-                            <label for="previousContactNumber" class="form-label custom-label mb-2">Contact Number </label>
+                            <label for="previousContactNumber" class="form-label custom-label mb-2">Contact Number
+                            </label>
                             <input type="text" class="form-control custom-input"
                                 formControlName="previousContactNumberupdate" [maxlength]="10" [minlength]="10"
-                                (keypress)="restrictInputaccteponlynumber($event)" placeholder="Please enter contact number" />
+                                (keypress)="restrictInputaccteponlynumber($event)"
+                                placeholder="Please enter contact number" />
                             <div *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.invalid && employeeExperienceupdateForm.get('previousContactNumber')?.touched"
                                 class="error-msg">
                                 <div
@@ -406,7 +409,7 @@
                                 <div
                                     *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['maxlength']">
                                     Contact Number must be 10 digits</div>
-                                    <div
+                                <div
                                     *ngIf="employeeExperienceupdateForm.get('previousContactNumberupdate')?.errors?.['pattern']">
                                     Contact Number cannot be all zeroes</div>
 
@@ -416,7 +419,8 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email </label>
+                            <label for="previousContactEmail" class="form-label custom-label mb-2">Contact Email
+                            </label>
                             <input type="text" class="form-control custom-input"
                                 formControlName="previousContactEmailupdate" placeholder="Please enter contact email" />
                             <div *ngIf="employeeExperienceupdateForm.get('previousContactEmailupdate')?.invalid && employeeExperienceupdateForm.get('previousContactEmailupdate')?.touched"
@@ -452,7 +456,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+            
 
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary"

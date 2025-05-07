@@ -180,7 +180,6 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
           this.spinnerLoader = false;
-          this.teamForm.reset();
         }
       }
     });

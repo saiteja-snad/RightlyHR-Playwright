@@ -14,7 +14,7 @@
                 <!-- Form Name -->
                 <div class="col-md-4 mb-3">
                     <label class="form-label custom-label mb-2">Form Name<span class="text-danger">*</span></label>
-                    <input formControlName="formHeader" class="form-control custom-input" placeholder="Enter Form Name">
+                    <input formControlName="formHeader" class="form-control custom-input" (keypress)="formsValidations.restrictInitialSpace($event)" placeholder="Enter Form Name">
                     <div class="error-msg">
                         <div *ngIf="createForm.get('formHeader')?.errors?.['required'] && createForm.get('formHeader')?.touched">
                             Form Name is required.
@@ -22,12 +22,13 @@
                         <div *ngIf="createForm.get('formHeader')?.hasError('maxlength') && createForm.get('formHeader')?.touched">
                             Form Name must not exceed 255 characters
                         </div>
-                        <div *ngIf="createForm.get('formHeader')?.hasError('invalidStart') && !createForm.get('formHeader')?.hasError('required')">
-                            Form Name must start with a letter or number.
-                        </div>
                         <div *ngIf="createForm.get('formHeader')?.hasError('whitespace') && !createForm.get('formHeader')?.hasError('required')">
                             Form Name cannot be empty or contain only spaces.
-                        </div>
+                        </div>   
+                        <div *ngIf="createForm.get('formHeader')?.hasError('onlySpecialChars')">
+                            Form Name cannot contain only special characters.
+                          </div>
+                          
                     </div>
                 </div>
 
@@ -69,8 +70,9 @@
                     </div>
                 </div>
 
+                
                 <!-- Overall Rating -->
-                <div class="col-md-4 mb-3" *ngIf="createForm.get('moduleId')?.value?.id !== 24">
+                <div class="col-md-4 mb-3" *ngIf="createForm.get('moduleId')?.value && createForm.get('moduleId')?.value?.id !== 24">
                     <label class="form-label custom-label mb-2">Overall Rating<span class="text-danger">*</span></label>
                     <input type="number" formControlName="overAllRating" class="form-control custom-input" placeholder="Enter Overall rating"
                         min="1" pattern="[0-9]*" (input)="restrictToNumbers($event)">
@@ -85,7 +87,7 @@
                 </div>
 
                 <!-- CutOff Rating -->
-                <div class="col-md-4 mb-3" *ngIf="createForm.get('moduleId')?.value?.id !== 24">
+                <div class="col-md-4 mb-3" *ngIf="createForm.get('moduleId')?.value && createForm.get('moduleId')?.value?.id !== 24">
                     <label class="form-label custom-label mb-2">Cut Off Rating <span class="text-danger">*</span></label>
                     <input type="number" formControlName="cutOffRating" class="form-control custom-input" placeholder="Enter CutOff rating"
                         min="1" (input)="restrictToNumbers($event)">
@@ -101,6 +103,7 @@
                         Cut Off Rating cannot be greater than Overall Rating.
                     </div>
                 </div>
+                
             </div>
         
             <!-- Sections with Accordion -->
@@ -120,7 +123,7 @@
                             <!-- Section Name -->
                             <div class="col-md-3 mt-1">
                                 <label class="form-label custom-label mb-2">Section Name<span class="text-danger">*</span></label>
-                                <input formControlName="sectionName" class="form-control custom-input" placeholder="Enter Section Name">
+                                <input formControlName="sectionName" class="form-control custom-input"  (keypress)="formsValidations.restrictInitialSpace($event)" placeholder="Enter Section Name">
                                 <div class="error-msg"
                                     *ngIf="section.get('sectionName')?.errors?.['required'] && section.get('sectionName')?.touched">
                                     Section Name is required.
@@ -128,6 +131,9 @@
                                 <div class="error-msg"
                                     *ngIf="section.get('sectionName')?.hasError('maxlength') && section.get('sectionName')?.touched">
                                     Section Name must not exceed 255 characters
+                                </div>
+                                <div class="error-msg" *ngIf="section.get('sectionName')?.hasError('onlySpecialChars') ">
+                                    Section Name cannot contain only special characters.
                                 </div>
                             </div>
 
@@ -165,7 +171,7 @@
                                         Each section's weightage must be less than or equal to the Overall Rating.
                                     </div>
                                     <div *ngIf="!section.get('weightage')?.errors?.['required'] && createForm.errors?.['weightageNotEqualTo100'] && section.get('weightage')?.touched">
-                                        Sum of all section weightage should be equal to 100
+                                        Sum of all sections weightage should be equal to 100
                                     </div>
                                 </div>
                             </div>
@@ -227,13 +233,13 @@
                                                         </div>
                                                         <div *ngIf="!question.get('questionWeightage')?.errors?.['required'] && createForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100'] 
                                                         && question.get('questionWeightage')?.touched">
-                                                            Total question weightage in this section must be 100.
+                                                            Total questions weightage in this section must be 100.
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <!-- Target -->
-                                                <div class="col-md-3" *ngIf="this.createForm.get('moduleId')?.value.id === 24">
+                                                <!-- <div class="col-md-3" *ngIf="this.createForm.get('moduleId')?.value.id === 24">
                                                     <label class="content-heading mb-2">Target<span class="text-danger">*</span></label>
                                                     <div class="d-flex">
                                                         <input type="text" formControlName="target" class="form-control custom-input" placeholder="Enter Target"
@@ -242,10 +248,10 @@
                                                     <div class="error-msg" *ngIf="question.get('target')?.errors?.['required'] && question.get('target')?.touched">
                                                         Target is required.
                                                     </div>
-                                                </div>
+                                                </div> -->
 
                                                 <!-- Unit of Measurement -->
-                                                <div class="col-md-3" *ngIf="this.createForm.get('moduleId')?.value.id === 24">
+                                                <!-- <div class="col-md-3" *ngIf="this.createForm.get('moduleId')?.value.id === 24">
                                                     <label class="content-heading mb-2">Unit of Measurement<span class="text-danger">*</span></label>
                                                     <input type="text" formControlName="unitofmeasurement" class="form-control custom-input"
                                                         placeholder="Enter Unit of Measurement" min="1" (input)="validateInput(question.get('unitofmeasurement'))">
@@ -253,14 +259,14 @@
                                                         *ngIf="question.get('unitofmeasurement')?.errors?.['required'] && question.get('unitofmeasurement')?.touched">
                                                         Unit of Measurement is required
                                                     </div>
-                                                </div>
+                                                </div> -->
                                             </div>
 
                                             <!-- Question -->
                                             <div class="mt-3">
                                                 <div class="d-flex">
                                                     <input formControlName="question" class="form-control custom-input" placeholder="Enter your Question"
-                                                        (input)="validateInput(question.get('question'))">
+                                                        (input)="validateInput(question.get('question'))" [maxlength]="1000">
                                                     <span class="text-danger">*</span>
                                                 </div>
                                                 <div class="error-msg"
@@ -419,7 +425,7 @@
                                     <div class="mt-3">
                                         <div class="d-flex">
                                             <input formControlName="question" class="form-control custom-input"
-                                                placeholder="Enter your Question"
+                                                placeholder="Enter your Question" [maxlength]="1000"
                                                 (input)="validateInput(question.get('question'))">
                                             <span class="text-danger">*</span>
                                         </div>
@@ -448,18 +454,19 @@
                                                         name="booleanOptionGroup{{ sectionIndex }}{{ questionIndex }}" disabled>
                                                 </ng-container>
                                                 <div class="d-flex w-100">
-                                                    <input formControlName="option" class="form-control w-25"
+                                                    <input formControlName="option" (keypress)="formsValidations.restrictInitialSpace($event)" class="form-control custom-input w-25"
                                                         placeholder="Enter option" />
                                                     <span class="text-danger">*</span>
                                                 </div>
         
                                                 <button type="button" class="btn float-end"
-                                                    (click)="removeOption(sectionIndex, questionIndex, optionIndex)">❌</button>
+                                                    (click)="getOptions(sectionIndex, questionIndex) && getOptions(sectionIndex, questionIndex).controls.length > 1 ? removeOption(sectionIndex, questionIndex, optionIndex) : null">❌</button>
                                             </div>
                                             <div class="error-msg"
                                                 *ngIf="option.get('option')?.errors?.['required'] && option.get('option')?.touched">
                                                 Option Value is required.
                                             </div>
+
                                         </div>
                                         <button type="button" class="custom-btn btn-primary  me-2"
                                             (click)="addOption(sectionIndex, questionIndex)">Add Option</button>
@@ -572,7 +579,8 @@
 <ng-template #navigateToTable let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <p class="confirmation-text">Are you sure you want to go back?</p>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to go back?'}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

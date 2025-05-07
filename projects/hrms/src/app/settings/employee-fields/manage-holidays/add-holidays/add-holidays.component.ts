@@ -130,22 +130,11 @@ export class AddHolidaysComponent {
     );
   });
 }
-// checkDuplicate(): void {
-//   const holidayArray = this.holidayForm.get('holidays') as FormArray;
-//   const names = holidayArray.controls.map(ctrl =>
-//     ctrl.value.holidayName?.trim().toLowerCase()
-//   );
-
-//   this.isDuplicateholidayName = names.map((name, idx) =>
-//     names.filter((n, i) => n === name && i !== idx).length > 0
-//   );
-// }
 checkDuplicate(): void {
   const holidayArray = this.holidayForm.get('holidays') as FormArray;
   const names = holidayArray.controls.map(ctrl =>
     ctrl.value.holidayName?.trim().toLowerCase()
   );
-
   const seen = new Map<string, number>(); // Map to track first occurrence
   this.isDuplicateholidayName = names.map((name, idx) => {
     if (!name) return false;

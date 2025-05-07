@@ -60,6 +60,21 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
     }
   }
 
+  allowOnlyWholeNumbers(event: KeyboardEvent): void {
+    const allowedKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+    const inputChar = event.key;
+  
+    if (!allowedKeys.includes(inputChar)) {
+      event.preventDefault(); // Block anything not a digit
+    }
+  }
+
+  blockPaste(event: ClipboardEvent | DragEvent): void {
+    event.preventDefault();
+  }
+  
+  
+
   
   enableEditForPermissionRegulization(index: number, valueId: number, currentValue: any, entity:string) {
     this.editingIndex = index;
@@ -107,32 +122,32 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
 
   validateregularizationvalueValue(id: number, value: any): string | null {
     if (value === null || value === undefined || value === '') {
-      return 'Value cannot be null or empty.';
+      return 'Value cannot be null or empty';
     }
     const currentCriteria = this.regularizationValues;
     const criteria = currentCriteria.find((c) => c.id === id);
     if (!criteria) {
-      return 'Criteria not found.';
+      return 'Criteria not found';
     }
     switch (criteria.attribute) {
       case 'maxRegularizePerDay':
         if (isNaN(value) || value <= 0 || value > 99) {
-          return 'Max Regularize Per Day should be greater than 0 and less than or equals to 99.';
+          return 'Max Regularize Per Day should be greater than 0 and less than or equals to 99';
         }
         const monthCriteria = currentCriteria.find(
           (c) => c.attribute === 'maxRegularizePerMonth'
         );
         if (monthCriteria && !isNaN(parseFloat(monthCriteria.value))) {
           const monthValue = parseFloat(monthCriteria.value);
-          if (value > monthValue) {
-            return 'Max Regularize Per Day should be lower than Max Regularize Per Month.';
+          if (value >= monthValue) {
+            return 'Max Regularize Per Day should be lower than Max Regularize Per Month';
           }
         }
         break;
 
       case 'maxRegularizePerMonth':
         if (isNaN(value) || value <= 0 || value > 999) {
-          return 'Max Regularize Per Month should be greater than 0 and less than or equals to 999.';
+          return 'Max Regularize Per Month should be greater than 0 and less than or equals to 999';
         }
 
 
@@ -142,8 +157,8 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
         
         if (maxRegularizePerDay && !isNaN(parseFloat(maxRegularizePerDay.value))) {
           const dayValue = parseFloat(maxRegularizePerDay.value);
-          if (value < dayValue) {
-            return 'Max Regularize Per Month should be greater than or equal to Max Regularize Per Day.';
+          if (value <= dayValue) {
+            return 'Max Regularize Per Month should be greater than Max Regularize Per Day';
           }
         }
         
@@ -151,7 +166,7 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
 
       case 'maxRegularizeHoursPerDay':
         if (isNaN(value) || value <= 0 || value > 24) {
-          return 'Max Regularize Hours Per Day should be greater than 0 and less than or equals to 24 Hours.';
+          return 'Max Regularize Hours Per Day should be greater than 0 and less than or equals to 24 Hours';
         }
 
         const monthHrsCriteria = currentCriteria.find(
@@ -159,8 +174,8 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
         );
         if (monthHrsCriteria && !isNaN(parseFloat(monthHrsCriteria.value))) {
           const monthValue = parseFloat(monthHrsCriteria.value);
-          if (value > monthValue) {
-            return 'Max Regularize Hours Per Day should be lower than Max Regularize Hours Per Month.';
+          if (value >= monthValue) {
+            return 'Max Regularize Hours Per Day should be lower than Max Regularize Hours Per Month';
           }
         }
         break;
@@ -173,8 +188,8 @@ export class AttendanceRegularizationEligibilityCriteriaComponent implements OnI
         
         if (maxRegularizeHoursPerDay && !isNaN(parseFloat(maxRegularizeHoursPerDay.value))) {
           const dayValue = parseFloat(maxRegularizeHoursPerDay.value);
-          if (value < dayValue) {
-            return 'Max Regularize Hours Per Month should be greater than or equal to Max Regularize Hours Per Day.';
+          if (value <= dayValue) {
+            return 'Max Regularize Hours Per Month should be greater than Max Regularize Hours Per Day';
            
           }
         }

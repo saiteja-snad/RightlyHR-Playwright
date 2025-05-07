@@ -12,6 +12,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-update-form',
   imports: [
@@ -66,6 +67,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
     config: NgbModalConfig,
     private router: Router,
     private sharedModalService: OpenModalService,
+     public formsValidations:FormValidationsService
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -75,7 +77,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.updateDetails.employeeId = this.empinfo.employeeId;
     this.updateForm = this.fb.group({
-      formHeader: ['', [Validators.required, Validators.maxLength(255)]],
+      formHeader: ['', [Validators.required, Validators.maxLength(255),this.formNameValidator()]],
       moduleId: ['', Validators.required],
       cutOffRating: [null,],
       overAllRating: [null,],
@@ -159,6 +161,23 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
         return Object.keys(errors).length ? errors : null;
       }
       return null; // Return null for other module IDs
+    };
+  }
+
+  formNameValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value?.trim();
+  
+      if (!value) {
+        return { whitespace: true }; // Empty or only spaces
+      }
+  
+      // Check if value contains at least one letter or number
+      if (!/[a-zA-Z0-9]/.test(value)) {
+        return { onlySpecialChars: true }; // Only special characters
+      }
+  
+      return null;
     };
   }
 
@@ -284,11 +303,11 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
     questions.controls.forEach((question: any) => {
       const sectionType = section.get('sectionType')?.value;
       question.get('type')?.setValidators(sectionType === 'normal' ? [Validators.required] : []);
-      question.get('unitofmeasurement')?.setValidators(sectionType === 'rating' ? [Validators.required] : []);
-      question.get('target')?.setValidators(sectionType === 'rating' ? [Validators.required] : []);
+      // question.get('unitofmeasurement')?.setValidators(sectionType === 'rating' ? [Validators.required] : []);
+      // question.get('target')?.setValidators(sectionType === 'rating' ? [Validators.required] : []);
       question.get('type')?.updateValueAndValidity();
-      question.get('unitofmeasurement')?.updateValueAndValidity();
-      question.get('target')?.updateValueAndValidity();
+      // question.get('unitofmeasurement')?.updateValueAndValidity();
+      // question.get('target')?.updateValueAndValidity();
     });
   }
 
@@ -334,7 +353,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
   addUpdateSection() {
     const sectionGroup = this.fb.group({
       id: [null],
-      sectionName: ['', Validators.required],
+      sectionName: ['', [Validators.required, Validators.maxLength(255),this.formNameValidator()]],
       sectionType: ['', Validators.required],
       ratingScaleType: [null, Validators.required],
       order: [0],
@@ -368,8 +387,8 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
       order: [0],
       required: [false, Validators.required],
       questionWeightage: [null, [Validators.required, Validators.min(1)]],
-      unitofmeasurement: [null, isRatingSection ? [Validators.required] : []],// Add optionWeightage here 
-      target: [null, isRatingSection ? [Validators.required] : []], // Add optionWeightage here 
+      // unitofmeasurement: [null, isRatingSection ? [Validators.required] : []],// Add optionWeightage here 
+      // target: [null, isRatingSection ? [Validators.required] : []], // Add optionWeightage here 
     });
     // Listen to changes in 'type' and update validation accordingly
     questionGroup.get('type')?.valueChanges.subscribe((questionType: any) => {
@@ -538,7 +557,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
 
   createSection(): FormGroup {
     return this.fb.group({
-      sectionName: ['', [Validators.required, Validators.maxLength(255)]],
+      sectionName: ['', [Validators.required, Validators.maxLength(255),this.formNameValidator()]],
       sectionType: ['', [Validators.required]],
       order: [0],
       ratingScaleType: [null],
@@ -607,8 +626,8 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
           order: [question.order],
           required: [question.required],
           questionWeightage: [question.questionWeightage, [Validators.required, Validators.min(1)]],
-          target: [question.targetfield, isRatingSection ? [Validators.required, Validators.min(1)] : []],
-          unitofmeasurement: [question.unitofmeasurement, isRatingSection ? [Validators.required] : []],
+          // target: [question.targetfield, isRatingSection ? [Validators.required, Validators.min(1)] : []],
+          // unitofmeasurement: [question.unitofmeasurement, isRatingSection ? [Validators.required] : []],
           createdBy: question.createdBy || this.updateDetails.createdBy,
           options: optionsArray,
         });
@@ -630,7 +649,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
       const sectionGroup = this.fb.group({
         id: [section.id],
         order: [section.order],
-        sectionName: [section.sectionName, Validators.required],
+        sectionName: [section.sectionName, [Validators.required, Validators.maxLength(255),this.formNameValidator()]],
         sectionType: section.sectionType,
         ratingScaleType: [ratingScaleType],
         weightage: [Number(this.weightageArray.at(this.weightageArray.length - 1)), [Validators.required, Validators.min(1)]],
@@ -785,8 +804,8 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
             question: question.question,
             order: question.order,
             questionWeightage: question.questionWeightage,
-            targetfield: question.target,
-            unitofmeasurement: question.unitofmeasurement,
+            // targetfield: question.target,
+            // unitofmeasurement: question.unitofmeasurement,
             status: 'Active',
             createdBy: this.updateDetails.employeeId,
             updatedBy: this.updateDetails.employeeId,

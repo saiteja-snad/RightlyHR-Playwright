@@ -18,11 +18,11 @@
           <th>{{'Status' | translate}}</th>
           <th *ngIf="rbac.allowedToAccess('Active Forms.update') || rbac.allowedToAccess('Active Forms.view') 
           || rbac.allowedToAccess('Active Forms.delete')" class="text-center">
-            {{'Action(S)' | translate}}</th>
+            {{'Action' | translate}}<span class="text-lowercase">(s)</span></th>
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngIf="allFormsDetails.length > 0; else noDataTemplate">
+        <ng-container *ngIf="((allFormsDetails | searchForm: searchValue) ?? []).length > 0; else noDataTemplate">
           <ng-container *ngFor="let form of allFormsDetails | searchForm  : searchValue" class="hover">
             <tr>
               <td>{{ form.moduleName }}</td>

@@ -13,10 +13,11 @@ import { PersonalPersonalTabsComponent } from '../../shared/personalinfo-tabs/pe
 import { PersonalJobTabsComponent } from '../../shared/personalinfo-tabs/personal-job-tabs/personal-job-tabs.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
+import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-personalinfo-layout',
   imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, PersonalPersonalTabsComponent, PersonalJobTabsComponent,
-     FormsModule, ReactiveFormsModule, TranslateModule],
+    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss'
 })
@@ -44,7 +45,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   jobPostData: any;
   headerName!: string;
   isLoading: boolean = false;
-
+  spinnerLoader = false;
+  
   constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
@@ -62,6 +64,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.getTraineeofferdetails();
     this.assignHeading();
   }
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -71,6 +74,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
   }
+
   emailForRequestDoc() {
     this.isLoading = true;
     let loggedInUser = this.authService.getToken();
@@ -109,7 +113,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       this.selectedEmployeeIds = this.selectedEmployees.map(emp => emp.employeeId);
     }
     if (field === 'reportingManager') {
-      this.teamForm.patchValue({reportingManager: event.value});
+      this.teamForm.patchValue({ reportingManager: event.value });
     }
   }
 
@@ -121,9 +125,9 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
       next: (data: any) => {
         this.managers = data.filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: { firstName: any; middleName?: string; lastName: any }) => ({
+          .map((emp: {fusionEmpId:string; firstName: any; middleName?: string; lastName: any }) => ({
             ...emp,
-            name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
           }));
       },
       error: (err: any) => console.log(err),
@@ -132,11 +136,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   getAllTeammembersList() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
       next: (data: any) => {
         this.teamMembersdata = data.map((member: any) => ({
           ...member,
-          name: `${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`
+          name: `${member.fusionEmpId} - ${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`
         }));
       },
       error: (err: any) => console.log(err),
@@ -145,6 +149,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   updateTeamRM() {
+    this.spinnerLoader = true;
     if (!Array.isArray(this.selectedEmployees) || this.selectedEmployees.length === 0) {
       console.error("selectedEmployees is not a valid array", this.selectedEmployees);
       return;
@@ -167,16 +172,21 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Updated Successfully');
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
       },
       error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Updated Successfully');
+        if (reason) {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.spinnerLoader = false;
+        }
       }
     });
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' , size: 'lg' });
   }
 
   isActive(route: string): boolean {
@@ -260,7 +270,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
   submitArchive() {
     (this.empdata.empstatus = 'Archived'),
-    (this.empdata.substatus = 'Employee Created'),
+      (this.empdata.substatus = 'Employee Created'),
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
         next: (data: any) => {
           this.getEmployeeId();
@@ -335,7 +345,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empdata).subscribe({
       next: (data: any) => {
-        if(data){
+        if (data) {
           this.getEmployeeId();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Offer Revoked Successfully');
@@ -345,12 +355,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
           this.updateOnboardingStatus();
           if (this.jobPostData.id) {
             this.updateJobapplicantdata();
-          } 
+          }
           setTimeout(() => {
             this.router.navigate(['/admin']);
           }, 3000);
         }
-        
+
       },
       error: (err: any) => {
         console.log(err);
@@ -567,12 +577,17 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
           this.headerName = "Employees"
       }
     }
-    
+
   }
 
   navigation() {
     localStorage.setItem("offBoardingemplist", JSON.stringify(this.emppersonalinfo));
     this.router.navigate(['/personalinfo/job/employee-off-boarding']);
+  }
+
+  resetAndClose(modal: any): void {
+    this.teamForm.reset();
+    this.modalService.dismissAll();
   }
 
   ngOnDestroy(): void {

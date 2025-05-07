@@ -63,20 +63,20 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.employeeExperienceForm = this.fb.group({
       isPresent: [false],
-      companyName: ['', [Validators.required, Validators.maxLength(100),noWhitespaceValidator]],
+      companyName: ['', [Validators.required, Validators.maxLength(100), noWhitespaceValidator]],
       employmentType: [null, Validators.required],
       fromDate: ['', [Validators.required]],
       toDate: ['', [Validators.required]],
       jobTitle: ['', [Validators.required, Validators.maxLength(50)]],
 
-      previousContactName: ['', [Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50),noWhitespaceValidator]],
+      previousContactName: ['', [Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50), noWhitespaceValidator]],
       previousContactNumber: [
         '',
-        [ Validators.minLength(10), Validators.maxLength(10),  Validators.pattern(/^(?!0{10})\d{10}$/)],
+        [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(/^(?!0{10})\d{10}$/)],
       ],
       previousContactEmail: [
         '',
-        [ Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
+        [Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
       attachment: ['', Validators.required],
     });
@@ -100,20 +100,20 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   initializeupdateForm(): void {
     this.employeeExperienceupdateForm = this.fb.group({
       isPresentupdate: [false],
-      companyNameupdate: ['', [Validators.required, Validators.maxLength(100),noWhitespaceValidator]],
+      companyNameupdate: ['', [Validators.required, Validators.maxLength(100), noWhitespaceValidator]],
       employmentTypeudate: [null, Validators.required],
       fromDateupdate: ['', [Validators.required]],
       toDateupdate: ['', [Validators.required]],
       jobTitleupdate: ['', [Validators.required, Validators.maxLength(50)]],
 
-      previousContactNameupdate: ['',[ Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50),noWhitespaceValidator]],
+      previousContactNameupdate: ['', [Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50), noWhitespaceValidator]],
       previousContactNumberupdate: [
         '',
-        [ Validators.minLength(10), Validators.maxLength(10),  Validators.pattern(/^(?!0{10})\d{10}$/)],
+        [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(/^(?!0{10})\d{10}$/)],
       ],
       previousContactEmailupdate: [
         '',
-        [ Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
+        [Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
       attachmentupdate: [null],
     });
@@ -158,7 +158,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.dateofbirth =this.formatDateToLocal(data.dob)
+        this.dateofbirth = this.formatDateToLocal(data.dob)
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
@@ -271,9 +271,9 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       fromDate: this.employeeExperienceForm.get('fromDate')?.value,
       toDate: this.employeeExperienceForm.get('isPresent')?.value ? null : this.employeeExperienceForm.get('toDate')?.value,
       jobTitle: this.employeeExperienceForm.get('jobTitle')?.value,
-      previousContactName: this.employeeExperienceForm.get('previousContactName')?.value,
-      previousContactNumber: this.employeeExperienceForm.get('previousContactNumber')?.value,
-      previousContactEmail: this.employeeExperienceForm.get('previousContactEmail')?.value,
+      previousContactName: this.employeeExperienceForm.get('previousContactName')?.value || null,
+      previousContactNumber: this.employeeExperienceForm.get('previousContactNumber')?.value || null,
+      previousContactEmail: this.employeeExperienceForm.get('previousContactEmail')?.value || null,
       isPresent: this.employeeExperienceForm.get('isPresent')?.value,
       isDeleted: false,
       attachment: attachmentPath || '',
@@ -427,7 +427,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       }
 
       toDateControl?.updateValueAndValidity()
-      
+
 
       this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     });
@@ -448,14 +448,14 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         employmentType: formData.employmentTypeudate?.jobType1 || formData.employmentTypeudate,
         fromDate: formData.fromDateupdate,
         toDate: formData.isPresentupdate ? null : formData.toDateupdate,
-        previousContactName: formData.previousContactNameupdate,
-        previousContactNumber: formData.previousContactNumberupdate,
-        previousContactEmail: formData.previousContactEmailupdate,
+        previousContactName: formData.previousContactNameupdate || null,
+        previousContactNumber: formData.previousContactNumberupdate || null,
+        previousContactEmail: formData.previousContactEmailupdate || null,
         isPresent: formData.isPresentupdate,
         createdAt: currentDate,
         updatedAt: currentDate,
         isDeleted: false,
-        attachment:this.previousexperincedocument
+        attachment: this.previousexperincedocument
 
       };
 
@@ -478,14 +478,14 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.previousexperincedocument)
       .subscribe({
         next: (data: any) => {
-          this.spinnerLoader=false
+          this.spinnerLoader = false
           if (data) {
             payload.attachment = data.path; // Update the payload with the uploaded file path
-            this.saveExperienceData(payload);
+            this.saveupdateExperienceData(payload);
           }
         },
         error: () => {
-          this.spinnerLoader=false
+          this.spinnerLoader = false
           console.error('File upload failed');
           this.conformationPopup.openErrorModal('Failed to upload experience document. Please try again.');
         }
@@ -495,6 +495,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   saveupdateExperienceData(payload: any): void {
     this.subscription = this.http.postdata('ExperienceDetail/Update', payload).subscribe({
       next: (data: any) => {
+        this.spinnerLoader=false
         console.log('Experience details updated successfully:', data);
         this.employeeExperienceupdateForm.reset();
         this.modalService.dismissAll();
@@ -502,6 +503,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         this.getexperiencedetailsbyemployeid(); // Refresh the experience details list
       },
       error: (reason: any) => {
+        this.spinnerLoader=false
         console.error('Error updating experience details:', reason);
         this.conformationPopup.openErrorModal(reason.error.message || 'Failed to update experience details. Please check all fields.');
       }

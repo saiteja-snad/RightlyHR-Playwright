@@ -23,7 +23,7 @@
           @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
           'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
           employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-          <th class="text-center">Action(S)</th>
+          <th class="text-center">Action(s)</th>
           }
         </tr>
       </thead>
@@ -98,7 +98,7 @@
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="degreeDetails" [filter]="true" filterBy="degreeName" optionLabel="degreeName"
+              <p-select [options]="degreeDetails" [filter]="true"  [resetFilterOnHide]="true" filterBy="degreeName" optionLabel="degreeName"
                 formControlName="education" placeholder="Please select education"
                 class="form-select custom-select"></p-select>
             </div>
@@ -220,7 +220,7 @@
             <label for="education" class="form-label custom-label mb-2">Education<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="degreeDetails" [filter]="true" filterBy="degreeName" optionLabel="degreeName"
+              <p-select [options]="degreeDetails" [filter]="true"   [resetFilterOnHide]="true" filterBy="degreeName" optionLabel="degreeName"
                 formControlName="educationupdate" placeholder="Please select education"
                 class="form-select custom-select"></p-select>
             </div>

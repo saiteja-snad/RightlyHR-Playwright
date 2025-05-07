@@ -3,10 +3,12 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/c
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -23,6 +25,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { ManageDST } from '../dsts.modal';
 import { TranslateModule } from '@ngx-translate/core';
+import moment from 'moment';
 
 @Component({
   selector: 'app-clone-dst',
@@ -42,6 +45,10 @@ export class CloneDstComponent implements OnInit, OnDestroy {
   durations: number[] = [1, 1.5, 2, 2.5, 3];
   clonedDST: ManageDST | null = null;
   hidePublishCloneButtons: boolean = false;
+  minHolidayDate: string = '';
+  maxHolidayDate: string = '';
+  updateHolidaysData: any;
+  blockedDates: any = [];
   @ViewChild('confirmation') confirmation!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
@@ -52,47 +59,113 @@ export class CloneDstComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.yearsList = this.getYears();
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.inititializeForm();
+     this.yearsList = this.getYears();
+  this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+  this.updateHolidaysData = JSON.parse(localStorage.getItem('cloneDST') ?? '{}');
+  this.inititializeForm();
 
-    const localStorageData = localStorage.getItem('cloneDST');
-    if (localStorageData) {
-      this.clonedDST = JSON.parse(localStorageData);
-    }
+  const localStorageData = localStorage.getItem('cloneDST');
+  if (localStorageData) {
+    this.clonedDST = JSON.parse(localStorageData);
+  }
 
-    if (this.clonedDST) {
-      this.dstForm.patchValue({
-        year: this.clonedDST.applicableYear,
+  if (this.clonedDST) {
+    this.dstForm.patchValue({
+      year: this.clonedDST.applicableYear,
+    });
+  }
+
+  this.getAllLocations();
+  const selectedYear = this.updateHolidaysData.applicableYear || new Date().getFullYear();
+  this.setDateLimits(selectedYear);
+
+    // year changes method is triggering
+    this.dstForm.get('year')?.valueChanges.subscribe((yearVal: any) => {
+      const year = +yearVal;
+      if (year) {
+        this.setDateLimits(year);
+    this.momentRows.controls.forEach((group: AbstractControl) => {
+      ['startDate', 'endDate'].forEach(field => {
+        const currentVal = group.get(field)?.value;
+        if (currentVal) {
+          const oldDate = new Date(currentVal);
+          const newDate = new Date( year, oldDate.getMonth(), oldDate.getDate());
+          const formattedDate = this.formatDate(newDate);
+
+          if (formattedDate >= this.minHolidayDate && formattedDate <= this.maxHolidayDate) {
+            group.get(field)?.setValue(formattedDate, { emitEvent: false });
+          } else {
+            group.get(field)?.setValue('', { emitEvent: false }); // Clear if out of range
+          }
+        }
+      
       });
-    }
-
-    this.getAllLocations();
-  }
-
-  inititializeForm() {
-    this.dstForm = this.fb.group({
-      year: ['', Validators.required],
-      location: ['', Validators.required],
-      subLocation: ['', Validators.required],
-      shift: [null, Validators.required],
-      momentRows: this.fb.array([]),
     });
+      
 
-    if (!this.clonedDST?.dayLight?.length) {
-      this.addMomentRow(); // add initial row if nothing to populate
-    }
   }
+}); 
+    
 
-  createMomentRow(): FormGroup {
-    return this.fb.group({
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      momentType: [null, Validators.required],
-      duration: [null, Validators.required],
+  }
+// this method used for year change selected yr month show in manage holiday date
+formatDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
+  return `${year}-${month}-${day}`;
+}
+
+setDateLimits(year: number): void {
+  this.minHolidayDate = `${year}-01-01`;
+  this.maxHolidayDate = `${year}-12-31`;
+
+  this.momentRows.controls.forEach(control => {
+    ['startDate', 'endDate'].forEach(field => {
+      const dateControl = control.get(field);
+      if (dateControl) {
+        dateControl.setValidators([
+          Validators.required,
+          this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)
+        ]);
+        dateControl.updateValueAndValidity();
+      }
     });
-  }
+  });
+}
 
+yearRangeValidator(min: string, max: string): ValidatorFn {
+  return (control: AbstractControl) => {
+    const value = control.value;
+    if (!value) return null;
+    return value >= min && value <= max ? null : { outOfRange: true };
+  };
+}
+
+inititializeForm() {
+  this.dstForm = this.fb.group({
+    year: ['', Validators.required],
+    location: ['', Validators.required],
+    subLocation: [{ value: '', disabled: true }, Validators.required],
+    shift: [{ value: null, disabled: true }, Validators.required],
+    momentRows: this.fb.array([]),
+  });
+
+  if (!this.clonedDST?.dayLight?.length) {
+    this.addMomentRow(); // Add first row if form is fresh
+  }
+}
+
+createMomentRow(): FormGroup {
+  return this.fb.group({
+    startDate: ['', [Validators.required, this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)]],
+    endDate: ['', [Validators.required, this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)]],
+    momentType: [null, Validators.required],
+    duration: [null, Validators.required],
+  });
+}
+
+  
   get momentRows(): FormArray {
     return this.dstForm.get('momentRows') as FormArray;
   }
@@ -103,15 +176,52 @@ export class CloneDstComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeMomentRow(index: number) {
-    this.momentRows.removeAt(index);
+  //this method used for delete icon click
+  removeMomentRow(index: number): void {
+    if (this.momentRows.length > 1) {
+      this.momentRows.removeAt(index);
+    }
   }
+
 
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
     return Array.from({ length: 12 }, (_, i) => currentYear - 1 + i);
   }
-
+  isBlocked(date: any) {
+    for (let range of this.blockedDates) {
+      if (date >= range.startDate && date <= range.endDate) {
+        return true;
+      }
+    }
+    return false;
+  }
+  onStartDateChange(event: any, row: any) {
+    this.minHolidayDate = event;
+    if (this.isBlocked(event)) {
+     
+      row.startDate = '';
+      this.sharedModalService.openErrorModal('The selected start date is within a range that has already been selected. Please choose a different date.');
+    } else {
+      if (row.endDate) {
+        this.blockedDates.push({ startDate: row.startDate, endDate: row.endDate });
+      } else {
+        this.blockedDates.push({ startDate: row.startDate, endDate: row.startDate });
+      }
+    }
+  }
+  onEndDateChange(event: any, row: any) {
+    if (this.isBlocked(event)) {
+      row.endDate = '';
+      this.sharedModalService.openErrorModal('The selected end date is within a range that has already been selected. Please choose a different date.');
+    } else {
+      if (row.startDate) {
+        this.blockedDates.push({ startDate: row.startDate, endDate: row.endDate });
+      } else {
+        this.blockedDates.push({ startDate: row.endDate, endDate: row.endDate });
+      }
+    }
+  }
   onLocationChange(location: ILocation): void {
     this.subLocationDetails = location.jobSubLocations ?? [];
     this.dstForm.get('subLocation')?.enable();
@@ -123,19 +233,16 @@ export class CloneDstComponent implements OnInit, OnDestroy {
       locationId: subLocation.jobLocationId,
       subLocationId: subLocation.id,
     };
-
+   
     this.http
       .getDataWithQueryParams('orgShifts/getshiftlocation', params)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
           this.shiftDetails = res.flatMap(
-            (header: any) => header.orgShiftsItems ?? []
+            (header: any) => header.orgShiftsItems || []
           );
-          const matchedShift = this.shiftDetails.find(
-            (s) => s.id === this.clonedDST?.shiftId
-          );
-          this.dstForm.patchValue({ shift: matchedShift ?? null });
+          this.dstForm.get('shift')?.enable();
         },
         error: (err) => {
           console.error('Error fetching shifts:', err);
@@ -162,14 +269,14 @@ export class CloneDstComponent implements OnInit, OnDestroy {
             (sub) => sub.id === this.clonedDST?.sublocationId
           );
 
-          this.dstForm.patchValue({
-            location: selectedLocation ?? null,
-            subLocation: selectedSubLocation ?? null,
-          });
+          // this.dstForm.patchValue({
+          //   location: selectedLocation ?? null,
+          //   subLocation: selectedSubLocation ?? null,
+          // });
 
-          if (selectedSubLocation) {
-            this.getAllShifts(selectedSubLocation);
-          }
+          // if (selectedSubLocation) {
+          //   this.getAllShifts(selectedSubLocation);
+          // }
 
           // Patch moment rows
           if (this.clonedDST?.dayLight?.length) {
@@ -234,13 +341,13 @@ export class CloneDstComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.sharedModalService.openSuccessModal(
-            'Manage DST added Successfully'
+            'DST added Successfully'
           );
           this.navigate();
         },
         error: (err) => {
           this.sharedModalService.openErrorModal(
-            'Shift already exists with the year , location and sub location'
+            'DST already exists with the year , location and sub location'
           );
         },
         complete: () => {},
@@ -286,7 +393,7 @@ export class CloneDstComponent implements OnInit, OnDestroy {
             }
 
             this.sharedModalService.openSuccessModal(
-              'Manage DST updated successfully'
+              'DST added successfully'
             );
             this.navigate();
           },

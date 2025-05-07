@@ -420,11 +420,11 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
         console.log('Education record deleted successfully:', data);
         this.modalService.dismissAll()
         this.getEducationEmpid();
-        this.conformationPopup.openSuccessModal('Education detalis deleted successfully');
+        this.conformationPopup.openSuccessModal('Education details deleted successfully');
       },
       error: (err: any) => {
         console.error('Error deleting education record:', err);
-        this.conformationPopup.openErrorModal('Education detalis deleted failed');
+        this.conformationPopup.openErrorModal('Education details deleted failed');
       }
     });
   }

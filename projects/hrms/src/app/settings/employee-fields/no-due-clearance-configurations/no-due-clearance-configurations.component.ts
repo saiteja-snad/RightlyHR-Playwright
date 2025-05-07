@@ -12,10 +12,11 @@ import { SelectModule } from 'primeng/select';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-no-due-clearance-configurations',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, SelectModule, MultiSelectModule],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, SelectModule, MultiSelectModule,TranslateModule],
   templateUrl: './no-due-clearance-configurations.component.html',
   styleUrl: './no-due-clearance-configurations.component.scss'
 })
@@ -93,7 +94,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
       Updatedepartment: [''],
       UpdateselectedEmpRole: [''],
       Updateemployee: [],
-      role: [''],
+      role: ['',],
       managerType: ['']
     });
   }
@@ -256,16 +257,16 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     this.updateDueForm.get('UpdateselectedEmpRole')?.valueChanges.subscribe(value => {
       if (value === 'EMPLOYEE') {
         employeeControl?.setValidators(Validators.required);
-        employeeControl?.clearValidators();
-        roleControl?.reset();
+        employeeControl?.updateValueAndValidity();
+        roleControl?.clearValidators();
       } else if (value === 'ROLE') {
         roleControl?.setValidators(Validators.required);
-        roleControl?.clearValidators();
-        employeeControl?.reset();
+        employeeControl?.clearValidators();
+        roleControl?.updateValueAndValidity();
       }
 
-      roleControl?.updateValueAndValidity();
-      employeeControl?.updateValueAndValidity();
+     roleControl?.updateValueAndValidity();
+     employeeControl?.updateValueAndValidity();
     });
   }
 
@@ -425,7 +426,7 @@ export class NoDueClearanceConfigurationsComponent implements OnInit, OnDestroy 
     this.subscription = this.http.deleteData(`NoDueCleranceConfiguration/DeleteNoDueConfig/${this.selectedDeleteRole.id}`).subscribe({
       next: (response) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('NoDueClerance deleted successfully');
+        this.conformationPopup.openSuccessModal('No Due Clerance Deleted Successfully');
 
       },
       error: (error: any) => {

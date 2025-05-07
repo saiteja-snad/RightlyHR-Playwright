@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -13,13 +13,14 @@ import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from 
 import { OpenModalService } from '../../services/open-modal.service';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule, Select, FormsModule, PaginatorModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })
-export class TeamNumbersComponent implements OnInit {
+export class TeamNumbersComponent implements OnInit, OnDestroy {
   rmForm!: FormGroup;
   managers: any[] = [];
   subscription!: Subscription;
@@ -45,6 +46,7 @@ export class TeamNumbersComponent implements OnInit {
   employees: any[] = [];
   employeeIds: number[] = [];
   selectedManager: any = null; // Store selected manager object
+  spinnerLoader = false;
 
   constructor(
     private http: HttpService,
@@ -74,7 +76,9 @@ export class TeamNumbersComponent implements OnInit {
     this.rows = event.rows;
   }
 
-  openModal(content: any) {
+  selectedEmployeeDetails = {} as any;
+  openModal(content: any,details: any) {
+    this.selectedEmployeeDetails = details;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -87,13 +91,11 @@ export class TeamNumbersComponent implements OnInit {
     this.selectedData = JSON.parse(JSON.stringify(details));
     this.selectedData.jobId = details.jobId;
     this.selectedData.reportingToEmployeeId = details.reportingToEmployeeId;
-    console.log("Selected Data after assignment:", this.selectedData); // Verify assigned data
   }
 
 
   onSelectManager(event: any) {
     this.selectedManager = event.value; // Capture selected object
-    console.log("Selected Manager:", this.selectedManager);
 
     if (!this.selectedManager) {
       console.error("Error: No manager selected.");
@@ -103,8 +105,6 @@ export class TeamNumbersComponent implements OnInit {
 
     this.selectedData.employeeId = this.selectedManager.employeeId ?? "";
     this.selectedData.id = this.selectedManager.jobId ?? ""; // Ensure jobId is correctly assigned
-
-    console.log("Updated selectedData:", this.selectedData);
   }
 
   searchEmployeeSinglerecord(employee: any, searchTerms: string[]): boolean {
@@ -155,36 +155,42 @@ export class TeamNumbersComponent implements OnInit {
       .filter(emp => emp && emp.fusionEmpId)
       .map(emp => ({
         ...emp,
-        name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+        name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
       }));
   }
 
   updateRM() {
-    let jobid = this.selectedData.id;
+    this.spinnerLoader = true;
+    console.log(this.selectedEmployeeDetails);
+    
+    let jobid = this.selectedEmployeeDetails.id;
     let ManagerEmployeeId = this.selectedData.employeeId;
     this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
       next: (data: any) => {
         console.log('Next callback');
-        this.conformationPopup.openSuccessModal('Data Updated Successfully');
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
         console.log(data);
       },
       error: (reason: any) => {
         console.log('Error callback');
         console.log(reason);
-        this.conformationPopup.openErrorModal('Updated Successfully');
-        ;
+        if (reason) {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.spinnerLoader = false;
+        }
       }
     });
   }
 
   getAllTeammembersList() {
     let EmployeeId = (this.empinfo.employeeId)
-    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
+    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
       (responseData: any) => {
         console.log(responseData);
         this.TeamMemberArray = responseData as Iteammembers[];
         this.TeamMemberArray.forEach(member => member.selected = false);
-
       },
       error => {
         console.error(error);
@@ -197,12 +203,10 @@ export class TeamNumbersComponent implements OnInit {
       next: (data: any) => {
         this.managers = data
           .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: { firstName: any; middleName?: string; lastName: any }) => ({
+          .map((emp: { fusionEmpId : string;firstName: string; middleName?: string; lastName: string }) => ({
             ...emp,
-            name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
           }));
-
-        //console.log('Managers:', this.managers);
       },
       error: (err) => console.log(err),
     });
@@ -213,7 +217,6 @@ export class TeamNumbersComponent implements OnInit {
   selectedEmployeeIds: string[] = [];
   updateTeamRM() {
     let ManagerId = this.selectedEmployeeIds[0];
-
     // Prepare the request body
     let requestBody = this.selectedEmployees.map(employee => {
       return {
@@ -231,10 +234,15 @@ export class TeamNumbersComponent implements OnInit {
   }
 
   resetAndClose(modal: any): void {
-    this.rmForm.reset();   // clear the form
-    modal.dismiss();       // close the popup
+    this.rmForm.reset();
+    this.modalService.dismissAll();
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
 }
 
 

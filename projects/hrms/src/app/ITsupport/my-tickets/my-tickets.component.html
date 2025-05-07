@@ -30,20 +30,20 @@
                     <td>
                         <ul class="mb-0">
                             <li [ngClass]="{
-                                    'text-danger': ticket.priority === 'High',
-                                    'text-warning': ticket.priority === 'Normal',
-                                    'text-success': ticket.priority === 'Low',
-                                    'text-red': ticket.priority === 'Urgent'
+                                    'high': ticket.priority === 'High',
+                                    'medium': ticket.priority === 'Medium',
+                                    'low': ticket.priority === 'Low',
+                                    'urgent': ticket.priority === 'Urgent'
                                 }">
                                 <b>{{ticket.priority || '-'}}</b>
                             </li>
                         </ul>
                     </td>
                     <td>{{ticket.subject ?? '-'}}</td>
-                    <td>{{ticket.createdAt | date}} </td>
-                    <td>{{ticket.assigneeName ?? '-'}}</td>
+                    <td>{{ticket.createdAt | dateformat}} </td>
+                    <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
                     <td>{{ticket.ticketStatus ?? '-'}}</td>
-                    <td>{{ticket.updatedAt | date}}</td>
+                    <td>{{ticket.updatedAt | dateformat}}</td>
                 </tr>
                 }
                 @else{
@@ -52,6 +52,7 @@
                 </tr>
                 }
             </tbody>
+            
         </table>
     </div>
 </div>
@@ -66,7 +67,7 @@
                 <p class="popup-heading mb-0">Add New Ticket</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -103,11 +104,13 @@
                                 <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
                                     }}</ng-template>
                             </p-select>
+                            
                             }
+                            <div *ngIf="itSupportForm.get('colleaguename')?.invalid && itSupportForm.get('colleaguename')?.touched">
+                                <div class="error-msg">{{'Employee is required' | translate}}</div>
+                            </div>
                         </div>
-                        <div *ngIf="itSupportForm.get('name')?.invalid && itSupportForm.get('name')?.touched">
-                            <div class="error-msg">{{'Employee is required' | translate}}</div>
-                        </div>
+                        
                     
                     </div>
                 </div>
@@ -224,11 +227,11 @@
                             <input type="text" class="form-control custom-input" formControlName="subject"
                             placeholder="Please enter subject" [maxlength]="50" />
                             <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50</div>
-                      
+                            <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
+                                <div class="error-msg">{{'Subject is required' | translate}}</div>
+                            </div>
                     </div>
-                    <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
-                        <div class="error-msg">{{'Subject is required' | translate}}</div>
-                    </div>
+                    
 
                     </div>
                 </div>
@@ -244,7 +247,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="button" class="custom-btn btn-secondary" (click)="cleardata()">{{'Close'}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">{{'Close'}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">
                             {{'Submit'}}
@@ -257,4 +260,22 @@
         </div>
     </div>
 </ng-template>
+
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text"> Are you sure you want to close?</p>
+      </div>
+  
+      <div class="custom-modal-footer">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </ng-template>
 

@@ -24,25 +24,30 @@ export class SettingsMainHeaderTabsComponent implements OnInit {
   constructor(public rbac: RbacService, private router: Router) {}
 
   ngOnInit(): void {
+    this.filterTabsByRbac();
+  }
+
+  filterTabsByRbac(){
     // Filter tabs based on permissions
     this.navTabs = this.allNavTabs.filter(tab => {
       if (!tab.permission) return true;
       return this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`);
     });
 
-    // const currentUrl = this.router.url;
-    // const baseUrl = '/settings';
+    // Check if current URL is allowed
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings';
 
-    // // If at base URL, navigate to the first accessible tab
-    // if (currentUrl === baseUrl && this.navTabs.length > 0) {
-    //   this.router.navigateByUrl(this.navTabs[0].link);
-    //   return;
-    // }
+    // If at base URL, navigate to the first accessible tab
+    if (currentUrl === baseUrl && this.navTabs.length > 0) {
+      this.router.navigateByUrl(this.navTabs[0].link);
+      return;
+    }
 
-    // // If current route is not one of the accessible links, redirect
-    // const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
-    // if (!isAllowed && this.navTabs.length > 0) {
-    //   this.router.navigateByUrl(this.navTabs[0].link);
-    // }
+    // If current route is not one of the accessible links, redirect
+    const isAllowed = this.navTabs.some(tab => currentUrl.startsWith(tab.link));
+    if (!isAllowed && this.navTabs.length > 0) {
+      this.router.navigateByUrl(this.navTabs[0].link);
+    }
   }
 }

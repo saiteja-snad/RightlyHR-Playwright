@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">No Due Clearance</span></div>
     <div class="custom-add-btn cursor" (click)="openModal(addnodue)"
-      *ngIf="rbac.allowedToAccess('No Due Clearance.create')">
+      *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.create')">
       <i class="bi bi-plus plus-icon me-1"></i>Add New
     </div>
   </div>
@@ -14,11 +14,10 @@
           <th>Department/Employee Manager</th>
           <th>Employee Name</th>
           <th>Role Name</th>
-          <th class="text-center" *ngIf="rbac.allowedToAccess('No Due Clearance.update') || rbac.allowedToAccess('No Due Clearance.delete')">Action</th>
+          <th class="text-center" *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.update') || rbac.allowedToAccess('NoDue Clearance Tab.delete')">Action</th>
         </tr>
       </thead>
       <tbody>
-        @if (!rbac.allowedToAccess('No Due Clearance.View')) {}
         @if (noDueList.length > 0) {
         @for (item of noDueList; track item.id) {
         <tr>
@@ -36,18 +35,18 @@
           <td>{{ item.employeeNames || '-' }}</td>
           <td>{{ item.roleName || '-' }}</td>
           <td class="text-center"
-            *ngIf="rbac.allowedToAccess('No Due Clearance.update') || rbac.allowedToAccess('No Due Clearance.delete')">
+            *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.update') || rbac.allowedToAccess('NoDue Clearance Tab.delete')">
             <div class="dropdown">
               <span type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
               </span>
               <ul class="dropdown-menu custom-dropdown-menu">
-                <li (click)="openupdateDialog(item)" *ngIf="rbac.allowedToAccess('No Due Clearance.update')">
+                <li (click)="openupdateDialog(item)" *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.update')">
                   <a class="dropdown-item">
                     <i class="bi bi-pencil me-2"></i>Update
                   </a>
                 </li>
-                <li (click)="opendelete(item)" *ngIf="rbac.allowedToAccess('No Due Clearance.delete')">
+                <li (click)="opendelete(item)" *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.delete')">
                   <a class="dropdown-item">
                     <i class="bi bi-trash3 me-2"></i>Delete
                   </a>

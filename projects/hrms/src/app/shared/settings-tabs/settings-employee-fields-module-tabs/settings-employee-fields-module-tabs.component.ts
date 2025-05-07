@@ -16,39 +16,7 @@ export class SettingsEmployeeFieldsModuleTabsComponent implements OnInit {
   public navTabs: any[] = [];
   public defaultRoute: string = '';
 
-  constructor(
-    private rbac: RbacService,
-    private router: Router
-  ) {}
-
-  ngOnInit(): void {
-    this.navTabs = this.allTabs.filter(tab =>
-      tab.permission &&
-      tab.permission.feature &&
-      tab.permission.action &&
-      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
-    );
-
-    // if (this.navTabs.length > 0) {
-    //   this.defaultRoute = this.navTabs[0].link;
-    // }
-
-    // const currentUrl = this.router.url;
-    // const baseUrl = '/settings/employee-fields';
-
-    // // If at base URL, redirect to the first allowed route
-    // if (currentUrl === baseUrl && this.defaultRoute) {
-    //   this.router.navigateByUrl(this.defaultRoute);
-    //   return;
-    // }
-
-    // // If the current route is not allowed, redirect to first accessible
-    // const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
-    // if (!isAllowed && this.defaultRoute) {
-    //   this.router.navigateByUrl(this.defaultRoute);
-    // }
-  }
-
+  
   allTabs: any[] = [
     { label: 'Personal', link: '/settings/employee-fields/personal', permission: { feature: 'Personal Tab', action: 'view' } },
     { label: 'Job', link: '/settings/employee-fields/job', permission: { feature: 'Job Tab', action: 'view' } },
@@ -61,4 +29,45 @@ export class SettingsEmployeeFieldsModuleTabsComponent implements OnInit {
     { label: 'Manage DST', link: '/settings/employee-fields/manage-dsts', permission: { feature: 'Manage DST Tab', action: 'view' } },
     { label: 'No Due Clearance', link: '/settings/employee-fields/no-due-clearnce', permission: { feature: 'NoDue Clearance Tab', action: 'view' } }
   ];
+
+  constructor(
+    private rbac: RbacService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.filterTabsByRbac();
+  }
+
+  filterTabsByRbac() : void{
+    // Filter tabs based on RBAC permissions
+    this.navTabs = this.allTabs.filter(tab =>
+      tab.permission &&
+      tab.permission.feature &&
+      tab.permission.action &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+    );
+
+    // Set default route to the first allowed tab
+    if (this.navTabs.length > 0) {
+      this.defaultRoute = this.navTabs[0].link;
+    }
+
+    // Check current URL and redirect if necessary
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields';
+
+    // If at base URL, redirect to the first allowed route
+    if (currentUrl === baseUrl && this.defaultRoute) {
+      this.router.navigateByUrl(this.defaultRoute);
+      return;
+    }
+
+    // If the current route is not allowed, redirect to first accessible
+    const isAllowed = this.navTabs.some(tab => currentUrl.startsWith(tab.link));
+    if (!isAllowed && this.defaultRoute) {
+      this.router.navigateByUrl(this.defaultRoute);
+    }
+  }
+
 }

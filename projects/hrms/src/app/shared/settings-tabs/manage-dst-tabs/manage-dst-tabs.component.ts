@@ -18,46 +18,40 @@ export class ManageDstTabsComponent implements OnInit, OnDestroy {
   public navLinks: any[] = [];
 
   allLinks = [
-    {
-      label: 'Pending for submission',
-      route: '/settings/employee-fields/manage-dsts/pending-for-submission',
-      permission: { feature: 'DST Pending Tab', action: 'view' }
-    },
-    {
-      label: 'Published',
-      route: '/settings/employee-fields/manage-dsts/published-dsts',
-      permission: { feature: 'DST Published Tab', action: 'view' }
-    }
+    { label: 'Pending for submission', route: '/settings/employee-fields/manage-dsts/pending-for-submission', permission: { feature: 'DST Pending Tab', action: 'view' } },
+    { label: 'Published', route: '/settings/employee-fields/manage-dsts/published-dsts', permission: { feature: 'DST Published Tab', action: 'view' } }
   ];
 
   constructor(
     private http: HttpService,
     public rbac: RbacService,
     private router: Router
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    this.getAllDayLight();
+    this.filterbyRbac();
+  }
+
+  filterbyRbac(): void{
     this.navLinks = this.allLinks.filter(link =>
       link.permission &&
       link.permission.feature &&
       link.permission.action &&
       this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
     );
-  }
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields/manage-dsts';
 
-  ngOnInit(): void {
-    this.getAllDayLight();
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
 
-    // const currentUrl = this.router.url;
-    // const baseUrl = '/settings/employee-fields/manage-dsts';
-
-    // if (currentUrl === baseUrl && this.navLinks.length > 0) {
-    //   this.router.navigateByUrl(this.navLinks[0].route);
-    //   return;
-    // }
-
-    // const isAllowed = this.navLinks.some(link => link.route === currentUrl);
-    // if (!isAllowed && this.navLinks.length > 0) {
-    //   this.router.navigateByUrl(this.navLinks[0].route);
-    // }
+    const isAllowed = this.navLinks.some(link => link.route === currentUrl);
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
   }
 
   getAllDayLight(): void {

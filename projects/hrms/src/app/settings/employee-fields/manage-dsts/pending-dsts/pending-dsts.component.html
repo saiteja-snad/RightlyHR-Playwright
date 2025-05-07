@@ -1,12 +1,12 @@
-<div class="custom-main-component-container">
+<div class="custom-main-component-container" *ngIf="rbac.allowedToAccess('DST Pending Tab.view')">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div><span class="component-sub-header" *ngIf="rbac.allowedToAccess('DST Pending Tab.view')">Manage DST</span></div>
+        <div><span class="component-sub-header">Manage DST</span></div>
         <div class="custom-add-btn" (click)="addDST()" *ngIf="rbac.allowedToAccess('DST Pending Tab.create')">
             <i class="bi bi-plus plus-icon me-1"></i>Add New
         </div>
     </div>
 
-    <div class="custom-table-content" *ngIf="rbac.allowedToAccess('DST Pending Tab.view')">
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
                 <tr>

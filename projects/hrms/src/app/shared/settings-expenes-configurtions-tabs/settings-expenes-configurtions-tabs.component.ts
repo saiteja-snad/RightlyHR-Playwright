@@ -14,31 +14,27 @@ export class SettingsExpenesConfigurtionsTabsComponent implements OnInit {
   public navTabs: any[] = [];
 
   allTabs = [
-    {
-      label: 'Expenes Configuartion',
-      route: '/settings/employee-fields/expenes/configuartion',
-      permission: { feature: 'Expenes Configuartion', action: 'view' }
-    },
-    {
-      label: 'Expense Allowed Days',
-      route: '/settings/employee-fields/expenes/allowed-days',
-      permission: { feature: 'Expense Allowed Days', action: 'view' }
-    }
+    { label: 'Expenes Configuartion', route: '/settings/employee-fields/expenes/configuartion', permission: { feature: 'Expenes Configuartion', action: 'view' } },
+    { label: 'Expense Allowed Days', route: '/settings/employee-fields/expenes/allowed-days', permission: { feature: 'Expense Allowed Days', action: 'view' } }
   ];
 
   constructor(
     public rbac: RbacService,
     public router: Router
-  ) {
+  ) {}
+
+  ngOnInit(): void {
+    this.filterTabsByRbac();
+  }
+
+  filterTabsByRbac() : void{  
     this.navTabs = this.allTabs.filter(tab =>
       tab.permission &&
       tab.permission.feature &&
       tab.permission.action &&
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
-  }
 
-  ngOnInit(): void {
     const currentUrl = this.router.url;
     const baseUrl = '/settings/employee-fields/expenes';
 

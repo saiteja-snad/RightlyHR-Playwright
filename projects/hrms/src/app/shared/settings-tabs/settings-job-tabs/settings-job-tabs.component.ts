@@ -33,7 +33,7 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Sub Location', route: '/settings/employee-fields/job/sub-location', permission: { feature: 'Sub Location', action: 'view' } },
     { label: 'Pre Onboarding Documents', route: '/settings/employee-fields/job/pre-on-boarding-documents', permission: { feature: 'Pre Onboard Documents', action: 'view' } },
     { label: 'Serving period', route: '/settings/employee-fields/job/serving-period', permission: { feature: 'Serving Period', action: 'view' } },
-    { label: 'Probation Details', route: '/settings/employee-fields/job/probation-details', permission: { feature: 'Probation Details', action: 'view' } },
+    { label: 'Probation Details', route: '/settings/employee-fields/job/probation-details', permission: { feature: 'Job Tab Probation Details', action: 'view' } },
     { label: 'Interview Round', route: '/settings/employee-fields/job/interview-round', permission: { feature: 'Interview Round', action: 'view' }},
   ];
 
@@ -43,27 +43,31 @@ export class SettingsJobTabsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Step 1: Filter based on access
-    this.navLinks = this.allNavLinks.filter(link =>
+   this.filterbyRbac();
+  }
+
+  filterbyRbac() : void{
+     // Step 1: Filter based on access
+     this.navLinks = this.allNavLinks.filter(link =>
       link.permission &&
       link.permission.feature &&
       link.permission.action &&
       this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
     );
 
-    // const currentUrl = this.router.url;
-    // const baseUrl = '/settings/employee-fields/job';
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields/job';
 
-    // // Step 2: Redirect to first allowed tab if on base URL
-    // if (currentUrl === baseUrl && this.navLinks.length > 0) {
-    //   this.router.navigateByUrl(this.navLinks[0].route);
-    //   return;
-    // }
+    // Step 2: Redirect to first allowed tab if on base URL
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
 
-    // // Step 3: Redirect if current path is inaccessible
-    // const isAllowed = this.navLinks.some(link => link.route === currentUrl);
-    // if (!isAllowed && this.navLinks.length > 0) {
-    //   this.router.navigateByUrl(this.navLinks[0].route);
-    // }
+    // Step 3: Redirect if current path is inaccessible
+    const isAllowed = this.navLinks.some(link => currentUrl.startsWith(link.route));
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
   }
 }

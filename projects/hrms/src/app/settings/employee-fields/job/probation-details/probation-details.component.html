@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="mb-3">
     <button type="button" (click)="openDialog()" class="custom-btn btn-primary"
-      *ngIf="rbac.allowedToAccess('Probation Details.create')">{{'Add' | translate}}</button>
+      *ngIf="rbac.allowedToAccess('Job Tab Probation Details.create')">{{'Add' | translate}}</button>
   </div>
 
   <div class="custom-main-component-container">
@@ -11,8 +11,8 @@
           <tr>
             <th>Type</th>
             <th>Duration</th>
-            <th class="text-center" *ngIf="rbac.allowedToAccess('Probation Details.update') || 
-              rbac.allowedToAccess('Probation Details.delete')">Action(S)</th>
+            <th class="text-center" *ngIf="rbac.allowedToAccess('Job Tab Probation Details.update') || 
+              rbac.allowedToAccess('Job Tab Probation Details.delete')">Action(S)</th>
           </tr>
         </thead>
         <tbody>
@@ -21,18 +21,18 @@
               <td>{{pro.value}}</td>
               <td>{{pro.noOfDays}}</td>
               <td class="text-center"
-                *ngIf="rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')">
+                *ngIf="rbac.allowedToAccess('Job Tab Probation Details.update') || rbac.allowedToAccess('Job Tab Probation Details.delete')">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
                   </span>
                   <ul class="dropdown-menu custom-dropdown-menu">
-                    <li (click)="openupdateDialog(pro)" *ngIf="rbac.allowedToAccess('Probation Details.update')">
+                    <li (click)="openupdateDialog(pro)" *ngIf="rbac.allowedToAccess('Job Tab Probation Details.update')">
                       <a class="dropdown-item">
                         <i class="bi bi-pencil me-2"></i>Update
                       </a>
                     </li>
-                    <li (click)="opendelete(pro)" *ngIf="rbac.allowedToAccess('Probation Details.delete')">
+                    <li (click)="opendelete(pro)" *ngIf="rbac.allowedToAccess('Job Tab Probation Details.delete')">
                       <a class="dropdown-item">
                         <i class="bi bi-trash3 me-2"></i>Delete
                       </a>

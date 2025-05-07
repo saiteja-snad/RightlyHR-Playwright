@@ -3,10 +3,12 @@ import { SettingsPersonalTabsComponent } from '../../shared/settings-tabs/settin
 import { SettingsJobTabsComponent } from '../../shared/settings-tabs/settings-job-tabs/settings-job-tabs.component';
 import { SettingsEmployeeFieldsModuleTabsComponent } from '../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component';
 import { SettingsManageShitsTabsComponent } from '../../shared/settings-tabs/settings-manage-shits-tabs/settings-manage-shits-tabs.component';
+import { SettingsMainHeaderTabsComponent } from '../../shared/settings-tabs/settings-main-header-tabs/settings-main-header-tabs.component';
 
 
 export default [
     { path: '', redirectTo: '/settings/employee-fields/personal', pathMatch: 'full' },
+    // { path: '', component : SettingsEmployeeFieldsModuleTabsComponent },
     {
         path: 'personal', children: [
             { path: '', redirectTo: 'salutation', pathMatch: 'full' },

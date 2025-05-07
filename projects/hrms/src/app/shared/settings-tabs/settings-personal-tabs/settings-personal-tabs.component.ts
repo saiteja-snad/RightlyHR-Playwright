@@ -27,22 +27,26 @@ export class SettingsPersonalTabsComponent implements OnInit {
   constructor(public rbac: RbacService, private router: Router) { }
 
   ngOnInit(): void {
-    // filter the links which the user has access to
-    this.navLinks = this.allNavLinks.filter(link =>
+   this.filterTabsByRbac();
+  }
+
+  filterTabsByRbac() {
+     // filter the links which the user has access to
+     this.navLinks = this.allNavLinks.filter(link =>
       link.permission && link.permission.feature && link.permission.action &&
       this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
     );
-    // const currentUrl = this.router.url.split('?')[0];
-    // const baseUrl = '/settings/employee-fields/personal';
-    // // redirect to the first link if the user is on the base URL
-    // if (currentUrl === baseUrl && this.navLinks.length > 0) {
-    //   this.router.navigateByUrl(this.navLinks[0].route);
-    //   return;
-    // }
-    // // if dont have access to the current URL, redirect to the first link
-    // const isAllowed = this.navLinks.some(link => currentUrl.startsWith(link.route));
-    // if (!isAllowed && this.navLinks.length > 0) {
-    //   this.router.navigateByUrl(this.navLinks[0].route);
-    // }
+    const currentUrl = this.router.url.split('?')[0];
+    const baseUrl = '/settings/employee-fields/personal';
+    // redirect to the first link if the user is on the base URL
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
+    // if dont have access to the current URL, redirect to the first link
+    const isAllowed = this.navLinks.some(link => currentUrl.startsWith(link.route));
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
   }
 }

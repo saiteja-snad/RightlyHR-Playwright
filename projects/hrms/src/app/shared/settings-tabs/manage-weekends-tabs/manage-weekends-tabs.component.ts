@@ -33,31 +33,44 @@ export class ManageWeekendsTabsComponent implements OnInit, OnDestroy {
     public rbac: RbacService,
     public router: Router
   ) {
-    // Filter based on RBAC permissions
-    this.navLinks = this.allLinks.filter(link =>
-      link.permission &&
-      link.permission.feature &&
-      link.permission.action &&
-      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
-    );
+
   }
 
   ngOnInit(): void {
     this.getAllWeekend();
+    this.filterbyRbac();
+  }
 
-    // const currentUrl = this.router.url;
-    // const baseUrl = '/settings/employee-fields/manage-weekends';
+  filterbyRbac(): void {
+    // Filter based on RBAC permissions
+    this.navLinks = this.allLinks.filter(
+      (link) =>
+        link.permission &&
+        link.permission.feature &&
+        link.permission.action &&
+        this.rbac.allowedToAccess(
+          `${link.permission.feature}.${link.permission.action}`
+        )
+    );
 
-    // // Redirect to first allowed tab if at base or unauthorized route
-    // if (currentUrl === baseUrl && this.navLinks.length > 0) {
-    //   this.router.navigateByUrl(this.navLinks[0].route);
-    //   return;
-    // }
+    // Check if the current URL matches the base URL
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields/manage-weekends';
 
-    // const isAllowed = this.navLinks.some(link => link.route === currentUrl);
-    // if (!isAllowed && this.navLinks.length > 0) {
-    //   this.router.navigateByUrl(this.navLinks[0].route);
-    // }
+    // Redirect to first allowed tab if at base or unauthorized route
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
+
+    // Check if the current URL is allowed
+    const isAllowed = this.navLinks.some((link) =>
+      currentUrl.startsWith(link.route)
+    );
+    // If not allowed, redirect to the first allowed tab
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
   }
 
   getAllWeekend() {

@@ -23,47 +23,48 @@ export class SettingsManageHolidaysTabsComponent implements OnInit, OnDestroy {
 
   // All possible tabs with permissions
   allLinks = [
-    {
-      label: 'Pending For Submission',
-      route: '/settings/employee-fields/manage-holidays/pending-for-submit',
-      permission: { feature: 'Holidays Pending Tab', action: 'view' }
-    },
-    {
-      label: 'Published',
-      route: '/settings/employee-fields/manage-holidays/published-holidays',
-      permission: { feature: 'Holidays Published Tab', action: 'view' }
-    }
+    { label: 'Pending For Submission', route: '/settings/employee-fields/manage-holidays/pending-for-submit', permission: { feature: 'Holidays Pending Tab', action: 'view' } },
+    { label: 'Published', route: '/settings/employee-fields/manage-holidays/published-holidays', permission: { feature: 'Holidays Published Tab', action: 'view' } }
   ];
 
   constructor(
     public router: Router,
     private http: HttpService,
     public rbac: RbacService
-  ) {
-    // Filter links based on permission
-    this.navLinks = this.allLinks.filter(link =>
-      link.permission &&
-      link.permission.feature &&
-      link.permission.action &&
-      this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
-    );
-  }
+  ) {}
 
   ngOnInit() {
     this.getAllHolidays();
+    this.filterbyRbac();
+  }
 
-    // const currentUrl = this.router.url;
-    // const baseUrl = '/settings/employee-fields/manage-holidays';
+  filterbyRbac() : void{
+    // Filter links based on permission
+    this.navLinks = this.allLinks.filter(
+      (link) =>
+        link.permission &&
+        link.permission.feature &&
+        link.permission.action &&
+        this.rbac.allowedToAccess(
+          `${link.permission.feature}.${link.permission.action}`
+        )
+    );
+    // Redirect to first allowed tab if at base or unauthorized route
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields/manage-holidays';
 
-    // if (currentUrl === baseUrl && this.navLinks.length > 0) {
-    //   this.router.navigateByUrl(this.navLinks[0].route);
-    //   return;
-    // }
-
-    // const isAllowed = this.navLinks.some(link => link.route === currentUrl);
-    // if (!isAllowed && this.navLinks.length > 0) {
-    //   this.router.navigateByUrl(this.navLinks[0].route);
-    // }
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
+    // Check if current URL is allowed
+    const isAllowed = this.navLinks.some((link) =>
+      currentUrl.startsWith(link.route)
+    );
+    // If not allowed, redirect to first allowed tab
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
   }
 
   getAllHolidays() {

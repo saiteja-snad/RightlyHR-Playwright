@@ -114,13 +114,13 @@
                         <label class="form-label custom-label mb-2" for="phonenumber">Primary Contact<span
                                 class="text-danger">*</span></label>
                         <input id="phonenumber" type="text" maxlength="10" minlength="10"
-                            pattern="^[0-9]*([.,][0-9]*)?$" formControlName="phonenumber"
+                           formControlName="phonenumber"   (keypress)="formValidation.restrictAlphabets($event)"
                             class="form-control custom-input" placeholder="Enter Primary Contact Number" />
 
                         <div class="error-msg"
-                            *ngIf="assetForm.controls['phonenumber'].invalid && (assetForm.controls['phonenumber'].touched || assetForm.controls['phonenumber'].dirty)">
+                            *ngIf="assetForm.controls['phonenumber'].invalid && (assetForm.controls['phonenumber'].touched)">
                             <!-- Required error -->
-                            <div *ngIf="assetForm.controls['phonenumber'].errors?.['required']">
+                            <div *ngIf="assetForm.controls['phonenumber'].errors?.['required'] && assetForm.controls['phonenumber'].touched">
                                 Primary Contact is required
                             </div>
                             <div *ngIf="assetForm.controls['phonenumber'].errors?.['maxlength']">
@@ -131,7 +131,7 @@
                             </div>
                             <!-- Pattern error for Mobile number length -->
                             <div *ngIf="assetForm.controls['phonenumber'].errors?.['pattern']">
-                                Primary Contact must allow 10 digits only
+                                Primary Contact cannot be zeroes
                             </div>
                         </div>
                     </div>
@@ -181,7 +181,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2" for="phonenumber">Secondary Contact</label>
                         <input id="phonenumber" type="text" maxlength="10" formControlName="secondaryphonenumber"
-                            class="form-control custom-input" placeholder="Enter secondary contact number" />
+                            class="form-control custom-input" placeholder="Enter secondary contact number" (keypress)="formValidation.restrictAlphabets($event)" />
                         <div class="error-msg"
                             *ngIf="assetForm.controls['secondaryphonenumber'].invalid && (assetForm.controls['secondaryphonenumber'].touched || assetForm.controls['secondaryphonenumber'].dirty)">
                             <!-- Required error -->
@@ -196,7 +196,7 @@
                             <!-- Pattern error for Contact number length -->
                             <div class="error-msg"
                                 *ngIf="assetForm.controls['secondaryphonenumber'].errors?.['pattern']">
-                                Secondary Contact must allow 10 digits only
+                                Secondary Contact cannot be zeroes
                             </div>
                         </div>
 
@@ -300,6 +300,9 @@
                             </div>
                             <div *ngIf="assetverderupdataform.controls['phonenumber'].errors?.['whitespace']">
                                 Primary Contact should not whitespace spaces.
+                            </div>
+                            <div *ngIf="assetverderupdataform.controls['phonenumber'].errors?.['pattern']">
+                                Primary Contact cannot be zeroes
                             </div>
                         </div>
                     </div>

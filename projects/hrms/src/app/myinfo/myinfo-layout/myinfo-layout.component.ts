@@ -13,6 +13,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { MyinfoDetailsComponent } from "../../shared/myinfo-details/myinfo-details.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../services/rbac.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 @Component({
   selector: 'app-myinfo-layout',

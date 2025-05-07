@@ -80,13 +80,15 @@ export class NoDueClearanceComponent {
     this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
       next: (data: any) => {
         this.nodue_Clearance_Details.next(data);
-        const nodueapprovecount = data.filter((ele: any) => ele.status?.toLowerCase() == 'approved')
-        this.nodueapprovalcount = nodueapprovecount.length
-        if (nodueapprovecount.length > 0) {
+        //const nodueapprovecount = data.filter((ele: any) => ele.status?.toLowerCase() === 'approved')
+        this.nodueapprovalcount = data.length
+        if (data.length > 0) {
           const lineOrders = data.map((item: any) => item.lineOrder);
           const highestLineOrder = Math.max(...lineOrders);
           if (highestLineOrder == this.nodueapprovalcount) {
             this.lineOrder = true
+            console.log(this.lineOrder);
+            
           }
         }
       }
@@ -100,7 +102,8 @@ export class NoDueClearanceComponent {
     this.subscription = this.http.postdata(`NoDueClearanceForm/re-request/${Value.id}`, noduereq).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.conformationPopup.openSuccessModal('Requested No Due Successfully')
+        this.conformationPopup.openSuccessModal('Requested No Due Successfully');
+        this.getNodueClearance();
       },
       error: (reason: any) => {
         console.log(reason);

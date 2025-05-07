@@ -17,7 +17,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             [showClear]="false" placeholder="Please select employee" formControlName="fusionEmpId"
-                            class="custom-select w-100" (onChange)="onClickEmployee($event)">
+                            class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
@@ -40,7 +40,7 @@
                     <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeementType" optionLabel="name" placeholder="Please select document type"
-                            formControlName="Documenttype" class="form-select custom-select">
+                            formControlName="Documenttype" class="custom-select w-100">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
@@ -54,8 +54,8 @@
                         Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
-                            class="form-select custom-select" formControlName="authorityid"
-                            (onChange)="onclickDesignation($event)" />
+                            class="custom-select w-100" formControlName="authorityid" resetFilterOnHide="true"
+                            (onChange)="onclickDesignation($event)" [filter]="true" filterBy="fullName"/>
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
                         <div class="error-msg">Signature Authority Name is required</div>
@@ -124,7 +124,7 @@
                                 enable {{herOrHimdata}} to apply for a bank Loan.
                             </p>
                             <p class="mb-5">If you have any further questions, you can call us at 8886651309.</p>
-                            <p class="pt-5">Sincerely,<br><span class="letter-sub-header">for RightlyHR</span></p>
+                            <p class="py-4">Sincerely,<br><span class="letter-sub-header">for RightlyHR</span></p>
                             <!-- Show "Authority Signature" only when no authority is selected -->
                             <div *ngIf="!authorityFullName" class="mb-3">Authority Signature</div>
                             <!-- Show Name & Designation only when authorityName is set -->
@@ -133,7 +133,7 @@
                                 <p class="letter-sub-header">Designation</p>
                             </div>
                             <!-- Signature in custom font (Only show when valid name exists) -->
-                            <div *ngIf="authorityFullName" style="font-family: Segoe script; font-size: large;">
+                            <div *ngIf="authorityFullName" class="letter-signature mb-3">
                                 {{authorityFullName }}
                             </div>
                             <!-- Stamp & Designation (Only show when valid name exists) -->

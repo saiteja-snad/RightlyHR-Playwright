@@ -33,23 +33,23 @@
                     <td>
                         <ul class="mb-0">
                             <li [ngClass]="{
-                                    'text-danger fw-bold': ticket.priority === 'High',
-                                    'text-warning fw-bold': ticket.priority === 'Normal',
-                                    'text-success fw-bold': ticket.priority === 'Low',
-                                    'text-red fw-bold': ticket.priority === 'Urgent'
+                                    'high': ticket.priority === 'High',
+                                    'medium': ticket.priority === 'Medium',
+                                    'low': ticket.priority === 'Low',
+                                    'urgent': ticket.priority === 'Urgent'
                                 }">
-                                {{ticket.priority || '-'}}
+                                <b>{{ticket.priority || '-'}}</b>
                             </li>
                         </ul>
                     </td>
                     <td>{{ticket.subject || '-'}}</td>
                     <td>{{ticket.employeeName || '-'}}</td>
-                    <td>{{ticket.createdAt | date}} </td>
+                    <td>{{ticket.createdAt | dateformat}} </td>
                     <td>{{ticket.departmentName || '-'}}</td>
                     <td>{{ticket.subdepartmentName || '-'}}</td>
-                    <td>{{ticket.assigneeName || '-'}}</td>
+                    <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
                     <td>{{ticket.ticketStatus || '-'}}</td>
-                    <td>{{ticket.updatedAt | date}}</td>
+                    <td>{{ticket.updatedAt | dateformat}}</td>
                     <td class="text-center">
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
@@ -84,7 +84,7 @@
                 <p class="popup-heading mb-0">Open Ticket</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -228,24 +228,30 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Action'| translate}}<span class="text-danger">*</span></label>
-                        <p-select [options]="status"
-                                optionLabel="label" optionValue="" placeholder="Please select status"
-                                formControlName="ticketStatus" class="custom-select w-100">
-                            </p-select>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="status"
+                            optionLabel="label" optionValue="" placeholder="Please select status"
+                            formControlName="ticketStatus" class="custom-select w-100">
+                        </p-select>
+                        </div>
+                        
                         <div *ngIf="itSupportForm.get('ticketStatus')?.invalid && itSupportForm.get('ticketStatus')?.touched">
                             <div class="error-msg">{{'Status is required' | translate}}</div>
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Ticket Assigned To'| translate}}</label>
-                        <p-select [options]="allEmployees" [filter]="true" filterBy="firstName"
-                                optionLabel="fullName" (onChange)="assigneeDetails($event.value)" placeholder="Please select employee"
-                                formControlName="assignedto" class="custom-select w-100" [dataKey]="'fusionEmpId'">
-                                <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
-                                    }}</ng-template>
-                                <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
-                                    }}</ng-template>
-                            </p-select>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="allEmployees" [filter]="true" filterBy="firstName"
+                            optionLabel="fullName" (onChange)="assigneeDetails($event.value)" placeholder="Please select employee"
+                            formControlName="assignedto" class="custom-select w-100" [dataKey]="'fusionEmpId'">
+                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                }}</ng-template>
+                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
+                                }}</ng-template>
+                        </p-select>
+                        </div>
+                        
                         <!-- <div *ngIf="itSupportForm.get('assignedto')?.invalid && itSupportForm.get('assignedto')?.touched">
                             <div class="error-msg">{{'Assigned To is required' | translate}}</div>
                         </div> -->
@@ -273,7 +279,7 @@
                     
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">{{'Close'}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">
                             {{'Update' | translate}}
@@ -286,3 +292,21 @@
         </div>
     </div>
 </ng-template>
+
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text"> Are you sure you want to close?</p>
+      </div>
+  
+      <div class="custom-modal-footer">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </ng-template>

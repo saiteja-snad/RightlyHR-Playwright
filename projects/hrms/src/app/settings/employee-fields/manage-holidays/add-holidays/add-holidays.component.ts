@@ -29,6 +29,7 @@ export class AddHolidaysComponent {
   years: number[] = [];
   groupedLocationData: any[] = [];
   shiftDropdown: any[] = []; // To store the dynamically fetched shifts
+  isDuplicateholidayName: boolean[] = [];
   constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
 
   //ngoninit method start
@@ -41,9 +42,9 @@ export class AddHolidaysComponent {
       location: [null, Validators.required],
       subLocation: [{ value: '', disabled: true }, Validators.required],
       shift: [{ value: '', disabled: true }, Validators.required],
-      holidays: this.fb.array([], this.duplicateHolidayNameValidator()), // start empty
+      holidays: this.fb.array([]), // start empty
     });
-    this.yearDetails = this.generateYears(2000, currentYear);
+    this.yearDetails = this.generateYears(currentYear-1, currentYear+1);
     // Add one default row after form is ready
     this.addMomentRow();
     // year onchange method 
@@ -104,7 +105,7 @@ export class AddHolidaysComponent {
   //formarray validation handel
   addHolidayRow() {
     return this.fb.group({
-      holidayName: ['', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z ]*$/)]],
+      holidayName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
       holidayDate: ['', [Validators.required, this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)]],
       isOptional: [false]
     });
@@ -116,18 +117,23 @@ export class AddHolidaysComponent {
     this.holidays.push(control);
   }
 
-// Inside your component class
-duplicateHolidayNameValidator(): ValidatorFn {
-  return (formArray: AbstractControl): { [key: string]: any } | null => {
-    const holidayNames = (formArray as FormArray).controls
-      .map(control => control.get('holidayName')?.value?.trim().toLowerCase())
-      .filter(name => !!name);
+// this function used for duplicate holiday name not allowed
 
-    const duplicates = holidayNames.filter((name, index, self) => self.indexOf(name) !== index);
-
-    return duplicates.length ? { duplicateHolidayNames: true } : null;
-  };
+ isDuplicateHoliday(index: number): boolean {
+  const holidayArray = this.holidayForm.get('holidays') as FormArray; 
+  const currentholiday = holidayArray.at(index).value;
+  return holidayArray.controls.some((ctrl, i) => {
+    if (i === index) return false;
+    const shift = ctrl.value;
+    return (
+      shift.holidayName?.trim().toLowerCase() === currentholiday.holidayName?.trim().toLowerCase()
+    );
+  });
 }
+checkDuplicate(index: number): void {
+  this.isDuplicateholidayName[index] = this.isDuplicateHoliday(index);
+}
+
 
   // Delete icon button click method
   removeHolidayRow(index: number) {

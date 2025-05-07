@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import moment from 'moment';
@@ -27,7 +27,7 @@ export class UpdateHolidaysComponent {
   yearDetails: any[] = [];
   isdisabled = true;
   shiftDropdown: any[] = [];
-
+  isDuplicateholidayName: boolean[] = [];
   constructor(private fb: FormBuilder, public router: Router, private http: HttpService, private confirmation: OpenModalService, private modalService: NgbModal) { }
 
   //ngoninit method start
@@ -35,14 +35,15 @@ export class UpdateHolidaysComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.updateHolidaysData = JSON.parse(localStorage.getItem('updateholidays') ?? '{}');
     const currentYear = new Date().getFullYear();
-    this.yearDetails = this.generateYears(2000, currentYear);
+    this.yearDetails = this.generateYears(2000, currentYear+1);
     this.getjobLocationList();
     this.holidayForm = this.fb.group({
       year: [{ value: '', disabled: true }, Validators.required],
       location: ['', Validators.required],
       subLocation: ['', Validators.required],
       shift: ['', Validators.required],
-      holidays: this.fb.array([])
+      holidays: this.fb.array([]), // start empty
+    //  holidays: this.fb.array([])
     });
 
     //default year show selected
@@ -55,7 +56,7 @@ export class UpdateHolidaysComponent {
     this.updateHolidaysData.orgHolidaysItems.forEach((row: any) => {
       this.holidays.push(
         this.fb.group({
-          holidayName: [row.holidayName || '', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z ]*$/)]],
+          holidayName: [row.holidayName || '',[Validators.required, Validators.pattern(/^[^\s].*$/)],],
           holidayDate: moment(row.holidayDate).format('YYYY-MM-DD'),
           isOptional: row.isOptional
         })
@@ -96,13 +97,30 @@ export class UpdateHolidaysComponent {
   // this method used for add holiday button click  
   addHolidayRow() {
     const holidayGroup = this.fb.group({
-      holidayName: ['', [Validators.required, Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z ]*$/)]],
+      holidayName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
       holidayDate: ['', Validators.required],
       isOptional: [false]
     });
     this.holidays.push(holidayGroup);
     this.hidePublishCloneButtons = true;
   }
+
+ // this function used for duplicate holiday name not allowed
+ isDuplicateHoliday(index: number): boolean {
+  const holidayArray = this.holidayForm.get('holidays') as FormArray; // ✅ Access the FormArray directly
+  const currentholiday = holidayArray.at(index).value;
+  return holidayArray.controls.some((ctrl, i) => {
+    if (i === index) return false;
+    const shift = ctrl.value;
+    return (
+      shift.holidayName?.trim().toLowerCase() === currentholiday.holidayName?.trim().toLowerCase()
+    );
+  });
+}
+checkDuplicate(index: number): void {
+  this.isDuplicateholidayName[index] = this.isDuplicateHoliday(index);
+}
+
 
   //delete icon click this method works
   removeHolidayRow(index: number): void {

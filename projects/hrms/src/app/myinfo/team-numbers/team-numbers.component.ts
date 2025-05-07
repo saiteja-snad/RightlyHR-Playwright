@@ -101,6 +101,10 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
+  openModals(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' , size: 'lg' });
+  }
+
   selectedEmployeeDetails = {} as any;
   openModal(content: any,details: any) {
     this.selectedEmployeeDetails = details;
@@ -261,6 +265,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   resetAndClose(modal: any): void {
     this.rmForm.reset();
+    this.teamForm.reset();
     this.modalService.dismissAll();
   }
 

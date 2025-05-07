@@ -14,10 +14,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { TeamMembersTabsComponent } from "../../shared/personalinfo-tabs/team-members-tabs/team-members-tabs.component";
 
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent, TeamMembersTabsComponent],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })

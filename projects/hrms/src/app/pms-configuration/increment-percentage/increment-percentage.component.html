@@ -45,11 +45,15 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                   </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li><a class="dropdown-item" (click)="editDetails(item)">Update</a></li>
-                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Created'"
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Created'" (click)="editDetails(item)">Update</a></li>
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Created'"
                                             (click)="openDelete(confirmation, item.id)">Delete</a></li>
-                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Initiated'"
-                                            (click)="viewDetails(item)">View</a></li>
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Initiated'" (click)="viewDetails(item)">View</a></li>
+                                    @if(item?.reviewCycleStatus ==='Review on Hold'){
+                                    <li>
+                                        <a class="dropdown-item" (click)="openHoldMsg()">Update</a>
+                                    </li>
+                                    }
                                 </ul>
                             </div>
                         </td>

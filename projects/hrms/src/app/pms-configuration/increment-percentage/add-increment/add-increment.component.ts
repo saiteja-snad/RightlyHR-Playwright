@@ -198,7 +198,6 @@ export class AddIncrementComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.isLoading = false;
-          console.log(err);
           if (err.status === 404) {
             this.conformationPopup.openErrorModal(
               'The requested resource was not found. Please check the URL or contact the administrator for assistance.'

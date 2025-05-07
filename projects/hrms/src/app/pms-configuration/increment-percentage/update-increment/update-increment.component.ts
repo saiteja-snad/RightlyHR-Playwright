@@ -211,7 +211,6 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
       this.http.postdata(`IncrementalPercentage/update`, payload).subscribe({
         next: (response: any) => { },
         error: (err: any) => {
-          console.log(err);
         },
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         complete: () => {
@@ -256,13 +255,11 @@ export class UpdateIncrementComponent implements OnInit, OnDestroy {
 
       this.http.postdata(`IncrementalPercentage/update`, payload).subscribe({
         next: (response: any) => {
-          //console.log(response
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Incremental Percentage Updated Successfully');
         },
         error: (err: any) => {
           this.isLoading = false;
-          console.log(err);
           if (err.status === 404) {
             this.conformationPopup.openErrorModal(
               'The requested resource was not found. Please check the URL or contact the administrator for assistance.'

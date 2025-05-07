@@ -47,9 +47,19 @@
             </div>
          </div>
 
-         <div class="mb-3" *ngIf="selectedFile?.name">
-            <span class="component-sub-header">{{selectedFile.name | lastValue}}</span>
-         </div>
+         <div class="mb-3">
+            <span class="component-sub-header">
+              <ng-container *ngIf="!selectedMainFolder">
+                Please select folder
+              </ng-container>
+              <ng-container *ngIf="selectedMainFolder && !selectedFile">
+                Please select subfolder
+              </ng-container>
+              <ng-container *ngIf="selectedFile">
+                {{ selectedFile.name | lastValue }}
+              </ng-container>
+            </span>
+          </div>
 
          <div class="custom-table-content">
             <table class="w-100">
@@ -110,7 +120,7 @@
             <div class="row mb-3">
                <div class="col-12">
                   <label class="form-label custom-label mb-2">Upload File<span class="text-danger">*</span></label>
-                  <input type="file" placeholder="Choose file" class="form-control custom-input"
+                  <input type="file" placeholder="Choose file" class="form-control custom-input px-0"
                      (change)="filechange($event)" formControlName="filename" accept=".pdf, .jpg, .png">
                   <div class="error-msg"
                      *ngIf="uploadfrom.get('filename')?.invalid && uploadfrom.get('filename')?.touched">

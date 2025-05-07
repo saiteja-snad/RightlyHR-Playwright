@@ -77,6 +77,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   }
 
   initializeBankDetailsupdateForm(): void {
+    const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
     this.bankDetailsUpdateForm = this.fb.group({
       bankNameupdate: ['', Validators.required],
       accountNameupdate: ['', [Validators.required]],
@@ -89,7 +90,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.pattern('^[^s].*$')],
       ],
       isPrimaryupdate: [false],
-      attachmentupdate: [null],
+      attachmentupdate: [null,attachmentValidators]
     });
   }
 

@@ -98,6 +98,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
 
   initializeupdateForm(): void {
+    const attachmentValidators = this.displaypreviousexperincedocument ? [] : [Validators.required];
     this.employeeExperienceupdateForm = this.fb.group({
       isPresentupdate: [false],
       companyNameupdate: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(50)]],
@@ -115,7 +116,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         '',
         [ Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
-      attachmentupdate: [null],
+      attachmentupdate: [null,attachmentValidators],
     });
 
     // Disable "toDate" field if "isPresent" is checked

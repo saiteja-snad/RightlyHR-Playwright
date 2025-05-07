@@ -110,7 +110,7 @@
             <div class="mb-3">
                 <label for="comments" class="form-label custom-label mb-2">{{'Approve Reason' | translate}}<span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
-                    formControlName="comments" (keypress)="formValidation.restrictInputallowspicalcharters($event)" maxlength="250"></textarea>
+                    formControlName="comments" maxlength="250"></textarea>
                 <!-- Character counter -->
                 <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
@@ -130,7 +130,7 @@
                     <span>{{'Approve'| translate}}</span>
                     }
                 </button>
-                <!-- <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'| translate}}</button> -->
+               
             </div>
         </form>
     </div>
@@ -147,7 +147,7 @@
                 <label for="comments" class="form-label custom-label mb-2">{{"Reject Reason" | translate}}
                     <span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection" 
-                 formControlName="comments" (keypress)="formValidation.restrictInputallowspicalcharters($event)" maxlength="250"></textarea>
+                 formControlName="comments" maxlength="250"></textarea>
                 <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                     <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Rejected Reason is required</div>

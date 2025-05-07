@@ -92,19 +92,19 @@ export class AllAssetsListComponent {
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
     this.getFilteredData();
-    this.getassetsCategory()
-    this.getjobLocationList()
-    this.getvendor()
-    this.initialform()
-    this.getdatabyentriy()
-    this.getdatabyentriyinactive()
-    this.getdatabyentriyrealse()
+    this.getassetsCategory();
+    this.getjobLocationList();
+    this.getvendor();
+    this.initialform();
+    this.getdatabyentriy();
+    this.getdatabyentriyinactive();
+    this.getdatabyentriyrealse();
     this.initialassiginform();
     this.initialreassiginform();
     this.initialinactiveform();
     this.initialReleaseform();
     this.intialfromundermatince();
-    this.intialtransferfrom()
+    this.intialtransferfrom();
   }
 
   initialform() {
@@ -223,14 +223,13 @@ export class AllAssetsListComponent {
       this.rows = event.rows;
       this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
+
   getFilteredData() {
     this.subscription = this.http.assetslocationId$.subscribe({
       next: (Value: any) => {
         console.log(Value);
         this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
-
-
         this.getassetsdata(this.first, this.rows, Value, this.selectedSubLocationId, this.Status);
       }
     })
@@ -1253,6 +1252,7 @@ export class AllAssetsListComponent {
             console.log("Assignment Response:", res);
             // Call the updateAssets function if the assignment is successful
             this.updateundermaitence(undermainteenceForm, removeAsset);
+            this.getassetsdata(this.first, this.rows,null, null, this.Status);
           },
           error: (error) => {
 
@@ -1293,6 +1293,7 @@ export class AllAssetsListComponent {
           console.log("Update Response:", res);
           this.undermainteenceForm.reset()
           this.modalService.dismissAll();
+          this.getcount(null,  null,this.Status);
           this.conformationPopup.openSuccessModal('Asset marked as Maintenance Successfully ');
 
         },
@@ -1435,6 +1436,38 @@ export class AllAssetsListComponent {
       });
   }
 
+  getcount(locationId: string | null, subLocationId: string | null, status: string) {
+    const params = new URLSearchParams();
+    if (locationId) params.append('locationid', locationId);
+    if (subLocationId) params.append('sublocationid', subLocationId);
+    params.append('status', status);
+
+    this.http.getData(`AssetMaster/v1/statuscount?${params.toString()}`).subscribe({
+      next: (data: any) => {
+        const totalCount = data.totalCount || 0;
+        this.http.setAssetCount(totalCount);
+
+        const statusCounts = Array.isArray(data.statusCounts) ? data.statusCounts : [];
+        const availableData = statusCounts.find((item: any) => item.status === "Available");
+        const allocateData = statusCounts.find((item: any) => item.status === "Allocated");
+        const inactivedata = statusCounts.find((item: any) => item.status === "Inactive");
+        const undermaintence = statusCounts.find((item: any) => item.status === "Under Maintenance");
+
+        const availableCount = availableData?.count || 0;
+        const allocateCount = allocateData?.count || 0;
+        const inactiveCount = inactivedata?.count || 0;
+        const undermaintenceCount = undermaintence?.count || 0;
+
+        this.http.setavilableAssetCount(availableCount);
+        this.http.setallocatedAssetCount(allocateCount);
+        this.http.setundermatinaceAssetCount(undermaintenceCount);
+        this.http.setinactiveSubjectAssetCount(inactiveCount);
+      },
+      error: (error) => {
+        console.error('Error fetching count:', error);
+      }
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

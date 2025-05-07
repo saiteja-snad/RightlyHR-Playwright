@@ -67,6 +67,7 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   }
  
   initializeupdateForm(): void {
+    const attachmentValidators = this.displalyeducationattachment ? [] : [Validators.required];
     this.educationupdateForm = this.fb.group({
       educationupdate: ['', Validators.required],
       universityupdate: ['', [Validators.required, Validators.pattern("^[a-zA-Z][a-zA-Z\\s\\-'.]{0,29}$"), , Validators.maxLength(50)]],
@@ -74,7 +75,7 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       gpaupdate: ['', [Validators.required, Validators.min(1), Validators.max(10)],],
       degreeStartDateupdate: ['', Validators.required],
       degreeEndDateupdate: ['', Validators.required],
-      attachmentupdate: ['',],
+      attachmentupdate: ['',attachmentValidators],
     });
  
   }

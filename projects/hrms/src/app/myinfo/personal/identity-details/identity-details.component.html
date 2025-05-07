@@ -122,7 +122,7 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
-                        <input type="file" class="form-control custom-input" formControlName="identityAttachment"
+                        <input type="file" class="form-control custom-input px-0" formControlName="identityAttachment"
                             (change)="onIdentityAttachmentSelected($event)" accept="image/*, application/pdf" />
                         <div class="error-msg"
                             *ngIf="identityForm.get('identityAttachment')?.invalid && identityForm.get('identityAttachment')?.touched">
@@ -208,7 +208,7 @@
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
-                        <input type="file" class="form-control custom-input" formControlName="identityupdateAttachment"
+                        <input type="file" class="form-control custom-input px-0" formControlName="identityupdateAttachment"
                             (change)="onIdentityAttachmentSelected($event)" accept="image/*, application/pdf" />
                         <div class="error-msg"
                             *ngIf="identityupdateForm.get('identityupdateAttachment')?.invalid && identityupdateForm.get('identityupdateAttachment')?.touched">
@@ -225,7 +225,7 @@
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="identityupdateForm.invalid || spinnerLoader">
+                        [disabled]="identityupdateForm.invalid && !displayidentiydocument && identityupdateForm.get('identityupdateAttachment')?.invalid|| spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}...</span>

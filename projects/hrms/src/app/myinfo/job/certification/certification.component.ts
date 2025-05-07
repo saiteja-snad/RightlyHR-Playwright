@@ -74,13 +74,14 @@ export class CertificationComponent implements OnInit, OnDestroy {
 
 
   initializeupdateForm(): void {
+    const attachmentValidators = this.displaycertification ? [] : [Validators.required];
     this.updateCertificationForm = this.fb.group({
       certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(100)]],
       certificationId: ['', [Validators.required,Validators.pattern(/^(?=.*[A-Za-z0-9])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]+$/), Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
       expiryDate: [null, Validators.required],
       isExpired: [false],
-      attachment: ['',],
+      attachment: ['',attachmentValidators],
     });
 
     // Disable "expiryDate" field if "isExpired" is checked
@@ -152,8 +153,8 @@ export class CertificationComponent implements OnInit, OnDestroy {
         this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
         this.certificationForm.get('attachment')?.reset();
         this.certificationForm.get('attachment')?.markAsUntouched();
-        this.updateCertificationForm.get('attachmentupdate')?.reset();
-        this.updateCertificationForm.get('attachmentupdate')?.markAsUntouched();
+        this.updateCertificationForm.get('attachment')?.reset();
+        this.updateCertificationForm.get('attachment')?.markAsUntouched();
        
         return;
       }

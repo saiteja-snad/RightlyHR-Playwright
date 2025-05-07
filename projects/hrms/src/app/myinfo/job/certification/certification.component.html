@@ -174,12 +174,11 @@
                         <label for="attachment" class="form-label custom-label mb-2">
                             Attachment <span class="text-danger">*</span>
                         </label>
-                        <input class="form-control custom-input mb-3" type="file" id="attachment"
+                        <input class="form-control custom-input px-0" type="file" id="attachment"
                             formControlName="attachment" (change)="onFileChange($event)" accept=".pdf,image/*,.png" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('attachment')?.invalid && certificationForm.get('attachment')?.touched">
                             File is required
-
                         </div>
                         <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed.</div>
                         <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB.</div>
@@ -301,7 +300,7 @@
                         <label for="attachment" class="form-label custom-label mb-2">
                             Attachment <span class="text-danger">*</span>
                         </label>
-                        <input class="form-control custom-input mb-3" type="file" id="attachment"
+                        <input class="form-control custom-input px-0" type="file" id="attachment"
                             formControlName="attachment" (change)="onFileChange($event)" accept=".pdf,image/*,.png" />
                         <div class="error-msg"
                             *ngIf="updateCertificationForm.get('attachment')?.invalid && updateCertificationForm.get('attachment')?.touched">
@@ -322,7 +321,7 @@
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="onReset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="updateCertificationForm.invalid || spinnerLoader">
+                        [disabled]="updateCertificationForm.invalid && !displaycertification && updateCertificationForm.get('attachment')?.invalid || spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}...</span>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateFn, Router, RouterStateSnapshot } from '@angular/router';
-import { Observable, of, map, catchError } from 'rxjs';
+import { Observable, of, map, catchError, combineLatest, switchMap } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { RbacService } from '../services/rbac.service';
 
@@ -24,25 +24,24 @@ export class PermissionGuard implements CanActivate {
     if (!permission) return of(true);
 
     return this.rbac.allowedToAccessNew(permission).pipe(
-      map(isAllowed => {
-        if (isAllowed) return true;
-
-        // Detect the current section from the route (e.g., 'myinfo/personal')
+      switchMap(isAllowed => {
+        if (isAllowed) return of(true);
+    
         const url = state.url;
         const parentPath = this.getParentPath(url);
-
-        // Redirect to next accessible tab
-        const fallback = this.getNextAllowedTab(parentPath);
-        if (fallback) {
-          console.log(fallback);
-          
-          this.router.navigateByUrl(fallback);
-          return false;
-        } else {
-          this.router.navigateByUrl('/unauthorized');
-        }
-
-        return false;
+    
+        return this.getNextAllowedTab(parentPath).pipe(
+          map(fallback => {
+            if (fallback && fallback !== url) {
+              console.log(`Redirecting to ${fallback}`);
+              
+              this.router.navigateByUrl(fallback);
+            } else {
+              this.router.navigateByUrl('/unauthorized');
+            }
+            return false;
+          })
+        );
       }),
       catchError(() => {
         this.router.navigateByUrl('/unauthorized');
@@ -57,17 +56,20 @@ export class PermissionGuard implements CanActivate {
     return parts.slice(0, 3).join('/');
   }
 
-  private getNextAllowedTab(parentPath: string): string | null {
-    let sectionTabs: { path: string; permission: string; }[] = [];
-
+  private getNextAllowedTab(parentPath: string): Observable<string | null> {
+    let sectionTabs: { path: string; permission: string }[] = [];
+  
     if (parentPath === '/myinfo/personal') sectionTabs = PERSONAL_TABS;
-
-    for (const tab of sectionTabs) {
-      if (this.rbac.allowedToAccessNew(tab.permission)) {
-        return `${parentPath}/${tab.path}`;
-      }
-    }
-
-    return null;
+  
+    const checks = sectionTabs.map(tab =>
+      this.rbac.allowedToAccessNew(tab.permission).pipe(
+        map(isAllowed => (isAllowed ? `${parentPath}/${tab.path}` : null))
+      )
+    );
+  
+    return combineLatest(checks).pipe(
+      map(results => results.find(path => path !== null) || null)
+    );
   }
+  
 }

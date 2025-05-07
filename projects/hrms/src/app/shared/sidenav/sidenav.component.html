@@ -11,7 +11,7 @@
             </li>
             }
             @if(this.rbac.allowedToAccess('My Info.view')){
-            <li class="nav-item" [routerLink]="['/myinfo']" routerLinkActive="active-nav-link">
+            <li class="nav-item" (click)="navigateToAccessedRoute('/myinfo')" routerLinkActive="active-nav-link">
                 <i class="bi bi-person-vcard custom-icon"></i>My Info
             </li>
             }

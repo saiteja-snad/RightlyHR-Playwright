@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../services/rbac.service';
@@ -16,7 +16,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class SidenavComponent {
   @ViewChild('logoutpopup') logoutpopup: any;
   spinnerLoader = false;
-  constructor(private authService: AuthService, private modalservie: NgbModal, public rbac: RbacService,) {
+  constructor(private authService: AuthService, private modalservie: NgbModal, public rbac: RbacService,private router:Router) {
   }
 
   onLogout() {
@@ -32,5 +32,10 @@ export class SidenavComponent {
   openlogoutModal() {
     this.modalservie.open(this.logoutpopup, { centered: true });
   }
+
+  navigateToAccessedRoute(route: string) {
+    this.router.navigate([route]);
+  }
+    
 
 }

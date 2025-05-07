@@ -4,7 +4,7 @@ import { TeamNumbersComponent } from './team-numbers/team-numbers.component';
 import { DocumentsComponent } from './documents/documents.component';
 
 export default [
-    { path: '', redirectTo: '/personalinfo/personal/basic-info', pathMatch: 'full' },
+    // { path: '', redirectTo: '/personalinfo/personal/basic-info', pathMatch: 'full' },
     {
         path: 'personal', children: [
             { path: '', redirectTo: 'basic-info', pathMatch: 'full' },

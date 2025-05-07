@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Route, Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
 
@@ -12,6 +12,7 @@ import { RbacService } from '../../../services/rbac.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class MyinfoHeaderTabsComponent implements OnInit {
+
   navTabs: any[] = [
     { label: 'Personal', link: '/myinfo/personal',permission: { feature: 'My Info Personal Tab', action: 'view' }, },
     { label: 'Job', link: '/myinfo/job',permission: { feature: 'My Info Job Tab', action: 'view' }, },
@@ -28,7 +29,7 @@ export class MyinfoHeaderTabsComponent implements OnInit {
     },
   ];
 
-  constructor(private rbac: RbacService) {}
+  constructor(private rbac: RbacService,private router:Router) {}
 
   ngOnInit(): void {
     this.navTabs = this.navTabs.filter(
@@ -41,4 +42,9 @@ export class MyinfoHeaderTabsComponent implements OnInit {
         )
     );
   }
+
+  navigateToAccessedRoute(route: string) {
+    this.router.navigate([route]);
+  }
+    
 }

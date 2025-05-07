@@ -98,10 +98,6 @@ export class OnbehalfOfApprovalsComponent {
     if ($event.value) {
        this.employeedata = this.employeeiddetails.find((e:any)=>e.employeeId == $event.value);
        localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
-      // this.gettimeoffcount($event.value);
-      // this.getCompoff($event.value);
-      // this.getWfhoff($event.value);
-      // this.getPermissionsoff($event.value);
       this.http.triggerActionSignal();
     }
     else {

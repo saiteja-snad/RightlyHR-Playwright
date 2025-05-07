@@ -5,7 +5,9 @@
     </div>
   
     <div class="d-flex gap-3 align-items-center">
-      <label class="employee-label" for="teamManager">Select Employee</label>
+      <div class="pt-2">
+      <label class="form-label custom-label" for="teamManager">Select Employee</label>
+      </div>
       <div class="custom-p-select-content">
         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
           filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="Onclick($event)"

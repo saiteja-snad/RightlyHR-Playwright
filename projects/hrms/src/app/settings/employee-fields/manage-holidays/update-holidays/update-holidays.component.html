@@ -89,8 +89,8 @@
             <div class="w-100">
               <label class="form-label custom-label">{{'Holiday Name' | translate}}
                 <span class="text-danger">*</span></label>
-              <input type="text" formControlName="holidayName" class="form-control custom-input w-100"
-                placeholder="Please enter holiday name" />
+              <input type="text" formControlName="holidayName" maxlength="50" class="form-control custom-input w-100"
+                placeholder="Please enter holiday name" (input)="checkDuplicate(i)" />
               <div
                 *ngIf="holiday.get('holidayName')?.invalid && (holiday.get('holidayName')?.dirty || holiday.get('holidayName')?.touched)"
                 class="error-msg">
@@ -98,6 +98,7 @@
                   | translate}}</span>
                 <span *ngIf="holiday.get('holidayName')?.errors?.['pattern']">Enter valid data</span>
               </div>
+              <div *ngIf="isDuplicateholidayName[i]" class="error-msg">{{ 'Duplicate holiday names are not allowed' | translate }}</div>
             </div>
 
             <div class="w-100">
@@ -155,7 +156,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to close?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">

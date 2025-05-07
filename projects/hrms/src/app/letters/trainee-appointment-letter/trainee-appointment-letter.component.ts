@@ -358,7 +358,7 @@ getOfferdetails(Value: any) {
     const imgWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = pdf.internal.pageSize.getHeight();
     const pdfContents = ['pdfContent1', 'pdfContent2', 'pdfContent3', 'pdfContent4', 'pdfContent5', 'pdfContent6', 'pdfContent7',
-      'pdfContent8', 'pdfContent9']; // Add more content IDs if needed
+      'pdfContent8', 'pdfContent9', 'pdfContent10', 'pdfContent11']; // Add more content IDs if needed
     // Create a single canvas to combine all content elements
     const combinedCanvas = document.createElement('canvas');
     combinedCanvas.width = imgWidth;

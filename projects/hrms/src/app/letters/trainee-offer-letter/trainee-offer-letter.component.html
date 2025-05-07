@@ -21,7 +21,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
                             filterBy="fullName" [showClear]="true" placeholder="Select employee" placeholder="Please select employee"
-                            (onChange)="onClickValidation($event)" formControlName="fusionEmpId"
+                            (onChange)="onClickValidation($event)" formControlName="fusionEmpId" resetFilterOnHide="true"
                             class="custom-select w-100">
                         </p-select>
                     </div>
@@ -283,7 +283,7 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select [options]="internshipPeriod" optionValue="value" optionLabel="name" placeholder="Please select training period"
-                            formControlName="internshipperiod" class="form-select custom-select"
+                            formControlName="internshipperiod" class="form-select custom-select" resetFilterOnHide="true"
                             (onChange)="calculateEndDate(traineeEmpData.internshipperiod)">
                         </p-select>
                     </div>
@@ -297,9 +297,8 @@
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="getAllEmployeeInfo" optionValue="employeeId" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            [showClear]="true" placeholder="Please select reporting manager"
-                            formControlName="reportingmanagerId" class="custom-select w-100"
-                            (ngModelChange)="selectReportingname($event)">
+                            [showClear]="true" placeholder="Please select reporting manager" formControlName="reportingmanagerId" class="custom-select w-100"
+                            (ngModelChange)="selectReportingname($event)" resetFilterOnHide="true">
                         </p-select>
                     </div>
                     <div
@@ -324,7 +323,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Note'|translate}}</label>
                     <textarea class="form-control custom-input" formControlName="note" (ngModelChange)="pathValuesFuction()"  placeholder="Please enter note" maxlength="250"></textarea>
-                    <div class="textarea-count-textt">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
+                    <div class="textarea-count-text">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
                     <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                         <div class="error-msg">Note is required</div>
                     </div>
@@ -360,8 +359,8 @@
                         }@else { {{buttonValue}} }
                     </button>
                     <button type="button" class="custom-btn btn-primary"
-                        [disabled]="employeeForm.invalid || loading || disableFieldsForApproval" (click)="emailSendingforApprover()">
-                        @if(loading){
+                        [disabled]="employeeForm.invalid || Approvalloader || disableFieldsForApproval" (click)="emailSendingforApprover()">
+                        @if(Approvalloader){
                         <div class="button-loader-content">
                             <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
                             <span>{{'Loading...'}}</span>

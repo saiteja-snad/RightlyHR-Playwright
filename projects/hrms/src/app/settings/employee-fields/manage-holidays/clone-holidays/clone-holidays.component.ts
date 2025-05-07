@@ -35,7 +35,7 @@ export class CloneHolidaysComponent {
   // ng oninit method start
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.updateHolidaysData = JSON.parse(localStorage.getItem('updateholidays') ?? '{}');
+    this.updateHolidaysData = JSON.parse(localStorage.getItem('updateholidays') || '{}');
     this.getjobLocationList();
     const currentYear = new Date().getFullYear();
     this.yearDetails = this.generateYears(2000, currentYear);
@@ -170,6 +170,9 @@ export class CloneHolidaysComponent {
       next: (response: any) => {
         localStorage.setItem('personaldata', JSON.stringify(response))
         this.confirmation.openSuccessModal('Holidays added successfully');
+        setTimeout(() => {
+          this.closeWeekend();
+         }, 2000)
         this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
       },
       error: (error) => {
@@ -180,10 +183,16 @@ export class CloneHolidaysComponent {
     });
   }
   // post method execution end
+  closeWeekend() {
+    this.modalService.dismissAll();
+    //this.navigate();
+    localStorage.removeItem('updateholidays');
+  }
 
   // this method  used for cancel button no button click navigate page
   cancel() {
-    this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
+  this.nagvition();
+    //this.router.navigate(['/settings/employee-fields/manage-holidays/published-holidays']);
   }
   
   // this method  used for cancel  button click open dailog
@@ -275,6 +284,8 @@ export class CloneHolidaysComponent {
   }
 
   ngOnDestroy() {
-
+ if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

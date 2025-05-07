@@ -60,7 +60,7 @@
                   <p>Loading...</p>
                 </ng-template>
                 <input type="text" class="form-control custom-input" formControlName="contact1Phone"
-                  placeholder="Please enter mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                  placeholder="Please enter phone number" id="phonenumbers" aria-describedby="phonenumbers"
                   (input)="onEmergencyContact1PhoneInput()" (keypress)="formValidation.restrictAlphabets($event)"
                   autocomplete="off" required>
               </div>
@@ -69,7 +69,7 @@
                 <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('required')">Phone number is
                   required</div>
                 <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('pattern')">Please enter a valid
-                  mobile number</div>
+                  phone number</div>
                 <div *ngIf="emergencyContactForm.get('contact1Phone')?.hasError('invalidPhoneNumber')">
                   The phone number is not valid for the selected country
                 </div>
@@ -140,7 +140,7 @@
                   <p>Loading...</p>
                 </ng-template>
                 <input type="text" class="form-control custom-input" formControlName="contact2Phone" (input)="onEmergencyContact2PhoneInput()"
-                (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter mobile number" id="phonenumbers" aria-describedby="phonenumbers"
+                (keypress)="formValidation.restrictAlphabets($event)" placeholder="Please enter phone number" id="phonenumbers" aria-describedby="phonenumbers"
                  
                   autocomplete="off" required>
               </div>
@@ -149,7 +149,7 @@
                 <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('required')">Phone number is
                   required</div>
                 <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('pattern')">Please enter a valid
-                  mobile number</div>
+                  phone number</div>
                 <div *ngIf="emergencyContactForm.get('contact2Phone')?.hasError('invalidPhoneNumber')">
                   The phone number is not valid for the selected country
                 </div>

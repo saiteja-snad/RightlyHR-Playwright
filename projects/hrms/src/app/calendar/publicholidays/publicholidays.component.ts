@@ -6,6 +6,7 @@ import { HttpService } from '../../services/http.service';
 import { HolidayTabsComponent } from "../../shared/calendar-tabs/holiday-tabs/holiday-tabs.component";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { Select } from 'primeng/select';
+import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-publicholidays',
   imports: [RouterModule, ReactiveFormsModule, CommonModule, HolidayTabsComponent, NoDataFoundComponent,Select],
@@ -22,7 +23,7 @@ export class PublicholidaysComponent {
   optional: number = 0;
   currentYear: number = new Date().getFullYear();
   selectedYear: number = this.currentYear;
-  subscription: any;
+    subscription!: Subscription;
   Policies: any = [];
   jobshiftdetails: any;
   years: number[] = [];
@@ -83,4 +84,11 @@ export class PublicholidaysComponent {
       error: (reason: any) => console.log(reason)
     });
   }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
+  }
+
 }

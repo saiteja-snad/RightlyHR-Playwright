@@ -2,10 +2,12 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/c
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import {
+  AbstractControl,
   FormArray,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -38,11 +40,10 @@ export class AddDstComponent implements OnInit, OnDestroy {
   momentType: string[] = ['Forward', 'Backward'];
   durations: number[] = [1, 1.5, 2, 2.5, 3];
   blockedDates: any = [];
-  minDate!: string | null;
-  maxDate!: string | null;
+  minDate!: string;
+  maxDate!: string;
   currentYear: number = new Date().getFullYear();
   selectedYear = this.currentYear;
-
   @ViewChild('confirmation') confirmation!: TemplateRef<any>;
   constructor(
     private fb: FormBuilder,
@@ -54,23 +55,85 @@ export class AddDstComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.yearsList = this.getYears();
-    this.minDate = `${this.selectedYear}-01-01`;
-    this.maxDate = `${this.selectedYear}-12-31`;
+    // this.minDate = `${this.selectedYear}-01-01`;
+    // this.maxDate = `${this.selectedYear}-12-31`;
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.inititializeForm();
     this.getAllLocations();
     this.handleFormValueChanges();
+     // year onchange method 
+     this.dstForm.get('year')?.valueChanges.subscribe((selectedYear: any) => {
+      if (selectedYear) {
+        this.setDateLimitsForYear(selectedYear);
+      }
+    });
+    // Set initial date limits
+    this.setDateLimitsForYear(this.currentYear);
   }
+
+  //this method used for selected year show when user change yr in dropdown
+  setDateLimitsForYear(year: number): void {
+    this.minDate = `${year}-01-01`;
+    this.maxDate = `${year}-12-31`;
+
+    this.momentRows.controls.forEach(control => {
+      const startDateControl  = control.get('startDate');
+      const endDateControl  = control.get('endDate');
+      //start date
+      if (startDateControl && startDateControl.value) {
+        const oldDate = startDateControl.value;
+        const newdates = oldDate.split('-');
+        if (newdates.length === 3) {
+          const newDate = `${year}-${newdates[1]}-${newdates[2]}`;
+          startDateControl.setValue(newDate); // Update the value
+        }
+      }
+      if (startDateControl) {
+        startDateControl.setValidators([
+          Validators.required,
+          this.yearRangeValidator(this.minDate, this.maxDate)
+        ]);
+        startDateControl.updateValueAndValidity();
+      }
+      //end data
+      if (endDateControl && endDateControl.value) {
+        const oldDate = endDateControl.value;
+        const newdates = oldDate.split('-');
+        if (newdates.length === 3) {
+          const newDate = `${year}-${newdates[1]}-${newdates[2]}`;
+          endDateControl.setValue(newDate); // Update the value
+        }
+      }
+      if (endDateControl) {
+        endDateControl.setValidators([
+          Validators.required,
+          this.yearRangeValidator(this.minDate, this.maxDate)
+        ]);
+        endDateControl.updateValueAndValidity();
+      }
+    });
+  }
+
+  yearRangeValidator(min: string, max: string): ValidatorFn {
+    return (control: AbstractControl) => {
+      const value = control.value;
+      if (!value) return null;
+      return value >= min && value <= max ? null : { outOfRange: true };
+    };
+  }
+
+  
 
   navigate() {
     this.router.navigate(['/settings/employee-fields/manage-dsts']);
   }
   inititializeForm() {
+    const currentYear = new Date().getFullYear();
     this.dstForm = this.fb.group({
-      year: ['', Validators.required],
+      year: [currentYear,Validators.required],
       location: [null, Validators.required],
-      subLocation: [null, Validators.required],
-      shift: [null, Validators.required],
+      subLocation: [{value: '', disabled: true}, Validators.required],
+      shift: [{ value: '', disabled: true }, Validators.required],
       momentRows: this.fb.array([this.createMomentRow()]), // initialize with one row
     });
   }
@@ -87,8 +150,8 @@ export class AddDstComponent implements OnInit, OnDestroy {
 
   createMomentRow(): FormGroup {
     return this.fb.group({
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
+      startDate: ['', [Validators.required, this.yearRangeValidator(this.minDate, this.maxDate)]],
+      endDate: ['', [Validators.required, this.yearRangeValidator(this.minDate, this.maxDate)]],
       momentType: [null, Validators.required],
       duration: [null, Validators.required],
     });
@@ -105,9 +168,13 @@ export class AddDstComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeMomentRow(index: number) {
+
+ //this method used for delete icon click
+ removeMomentRow(index: number): void {
+  if (this.momentRows.length > 1) {
     this.momentRows.removeAt(index);
   }
+}
 
   private getYears(): number[] {
     const currentYear = new Date().getFullYear();
@@ -256,13 +323,13 @@ export class AddDstComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.sharedModalService.openSuccessModal(
-            'Manage DST added Successfully'
+            'DST added Successfully'
           );
           this.navigate();
         },
         error: (err) => {
           this.sharedModalService.openErrorModal(
-            'Shift already exists with the year , location and sub location'
+            'DST already exists with the year , location and sub location'
           );
         },
         complete: () => {},

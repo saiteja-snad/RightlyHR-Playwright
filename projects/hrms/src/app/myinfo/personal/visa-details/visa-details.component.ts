@@ -223,11 +223,11 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
     this.selecteVisaId=visaDetails.id
 
     this.visaupdateForm.patchValue({
-      visatype: visaDetails.visatype,         // assuming value is "B1", "H1B", etc.
-      countryname: visaDetails.issuedcountry, // make sure the value matches the `optionValue`
+      visatype: visaDetails.visatype,         
+      countryname: visaDetails.issuedcountry, 
       issueddate: this.formatDateToLocal(visaDetails.issueddate),
       expirydate: this.formatDateToLocal(visaDetails.expirydate),
-      notes: visaDetails.notes || ''          // default to empty if notes are null/undefined
+      notes: visaDetails.notes || ''          
     });
    
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });

@@ -15,6 +15,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { environment } from '../../../../environments/environment';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 @Component({
   selector: 'app-permissions',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, 
@@ -82,13 +83,13 @@ export class PermissionsComponent {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
     });
   }
 
@@ -162,7 +163,7 @@ export class PermissionsComponent {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
     };
-    this.spinnerLoader = true;
+    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
     this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
@@ -170,14 +171,12 @@ export class PermissionsComponent {
         this.http.triggerActionSignal();
       },
       error: (reason: any) => {
-        this.spinnerLoader = false;
         this.modalService.dismissAll();
         this.sharedModalService.openErrorModal(
           reason.error.Message
         );
       },
       complete: () => {
-        this.spinnerLoader = false;
         this.getAllPendingApprovals();
       },
     });

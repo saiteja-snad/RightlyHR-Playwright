@@ -54,13 +54,14 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   }
 
   initializeBankDetailsupdateForm(): void {
+    const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
     this.bankDetailsUpdateForm = this.fb.group({
       bankNameupdate: ['', Validators.required],
       accountNameupdate: ['', [Validators.required,]],
       accountNoupdate: ['', [Validators.required,Validators.pattern('^[0-9]{12,20}$'),]],
       ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
       isPrimaryupdate: [false],
-      attachmentupdate: [null]
+      attachmentupdate: [null,attachmentValidators]
     });
   }
 

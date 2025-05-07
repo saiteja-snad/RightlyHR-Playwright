@@ -55,6 +55,7 @@ export class OnBeHalfOfApprovalComponent {
   getDataByLPID() {
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
+        console.log(response)
         if (Array.isArray(response)) {
           this.approvedLeaves = response.filter(item => item.status === 'Approved');
           let pendingCount = this.approvedLeaves.length;

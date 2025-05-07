@@ -26,7 +26,7 @@ export class DocumentsComponent {
   selectedMainFolder = {} as IFolders
   isMainfolderTouched: boolean = false;
   folders = [] as IFolders[];
-  selectedFile !: IFolders;
+  selectedFile !: any;
   selectedFolder = [] as IFolders[];
   mainDir = {} as ICreateSubDir;
   Files = [] as IFolders[];
@@ -39,7 +39,7 @@ export class DocumentsComponent {
   constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService) { }
 
   ngOnInit(): void {
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.empdata = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.getMainFolders()
     this.initializejobForm();
 
@@ -83,6 +83,7 @@ export class DocumentsComponent {
   }
 
   
+  
   toggleFolder(folder: any): void {
     // Collapse all other folders
     this.folders.forEach((f) => {
@@ -92,8 +93,12 @@ export class DocumentsComponent {
     });
   
     folder.expanded = !folder.expanded;
- 
     this.selectedMainFolder = folder;
+    if (!folder.subfolders || folder.subfolders.length === 0) {
+      this.Files=[]// or however you're using getVisibleFiles
+      this.selectedFile=null
+    }
+   
   }
   onSubFolderSelected(subFolder: any): void {
     this.selectedFile = subFolder;
@@ -109,9 +114,9 @@ export class DocumentsComponent {
   }
 
   getAllFiles() {
-    if (!this.selectedFile.isEmpDir) {
+    if (!this.selectedFile?.isEmpDir) {
       this.subscription = this.http
-        .getDataWithQuery('FileSystem/Files',  `${this.selectedFile.name}/${this.empdata.employeeId}`)
+        .getDataWithQuery('FileSystem/Files',  `${this.selectedFile?.name}/${this.empdata.employeeId}`)
         .subscribe({
           next: (data: any) => {
             console.log(data);
@@ -125,7 +130,7 @@ export class DocumentsComponent {
       this.subscription = this.http
         .getDataWithQuery(
           'FileSystem/Files',
-          `${this.selectedFile.name}/${this.empdata.employeeId}`
+          `${this.selectedFile?.name}/${this.empdata.employeeId}`
         )
         .subscribe({
           next: (data: any) => {
@@ -188,9 +193,9 @@ export class DocumentsComponent {
 
 
   fileUploaded() {
-    if (this.selectedFile.name) {
+    if (this.selectedFile?.name) {
         this.spinnerLoader=true;
-      let filePath = `${this.selectedFile.name}/${this.empdata.employeeId}`;
+      let filePath = `${this.selectedFile?.name}/${this.empdata.employeeId}`;
 
       this.subscription = this.http
         .uploadFileWithQuery(

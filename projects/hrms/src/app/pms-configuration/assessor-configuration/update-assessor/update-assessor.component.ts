@@ -55,7 +55,6 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
     public rbac: RbacService
   ) {}
   ngOnInit(): void {
-    console.log('assesor date', this.updateData);
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.editDetails(this.updateData);
     this.getReviewCycledata();
@@ -64,6 +63,7 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
     const currentdate = moment();
     this.currentDate = this.formatDate(currentdate);
   }
+
   //function to edit the details
   editDetails(Values: any) {
     this.getAllActiveEmpList();
@@ -115,19 +115,21 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
         })
       : [];
   }
+
   formatDate(date: any) {
     return date?.split('T')[0];
   }
+
   getAllasessors() {
     this.subscription = this.http
       .getData('entityAttributeValues?entity=PMS&attribute=assessorconfig')
       .subscribe({
         next: (data: any) => {
           this.reviewCycleData = data;
-          console.log(data);
         },
       });
   }
+  
   //function to get all active employees list
   getAllActiveEmpList() {
     this.subscription = this.http
@@ -195,11 +197,10 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
   }
   //function to delete
   openDeletepopup(content: any, id: any) {
-    console.log(id);
     this.deleteId = id;
-    console.log(this.deleteId);
     this.modalService.open(content, { centered: true });
   }
+  
   clearindexdata(index: any) {
     if (this.assesorDetails && this.assesorDetails[index]) {
       // Clear the data for the specific index

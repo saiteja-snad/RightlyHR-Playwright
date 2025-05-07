@@ -146,8 +146,22 @@ export class CloneHolidaysComponent {
     );
   });
 }
-checkDuplicate(index: number): void {
-  this.isDuplicateholidayName[index] = this.isDuplicateHoliday(index);
+checkDuplicate(): void {
+  const holidayArray = this.holidayForm.get('holidays') as FormArray;
+  const names = holidayArray.controls.map(ctrl =>
+    ctrl.value.holidayName?.trim().toLowerCase()
+  );
+
+  const seen = new Map<string, number>(); // Map to track first occurrence
+  this.isDuplicateholidayName = names.map((name, idx) => {
+    if (!name) return false;
+    if (seen.has(name)) {
+      return true; // duplicate — not first occurrence
+    } else {
+      seen.set(name, idx);
+      return false; // first occurrence — valid
+    }
+  });
 }
 
   //this method used for delete icon click

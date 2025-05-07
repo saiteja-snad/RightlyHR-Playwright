@@ -21,7 +21,10 @@
     
                             <ng-container *ngIf="editingIndex === i">
                                 <input class="form-control custom-input" type="text" placeholder="Please enter value" [(ngModel)]="temporaryValue"
-                                    (keypress)="validateDecimal($event, permi.attribute)"
+                                    (keypress)="allowOnlyWholeNumbers($event)" [maxlength]="3" (paste)="blockPaste($event)"
+                                    (copy)="blockPaste($event)"
+                                    (cut)="blockPaste($event)"
+                                    (drop)="blockPaste($event)"
                                     (keydown.tab)="editingIndex === i" />
                             </ng-container>
                         </td>

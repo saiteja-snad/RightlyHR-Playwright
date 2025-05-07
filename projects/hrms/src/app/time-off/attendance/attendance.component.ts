@@ -39,7 +39,6 @@ import { TohoursPipe } from "../../Pipes/tohours.pipe";
     Select,
     DataLoaderContentComponent,
     TohoursPipe,
-    
 ],
   templateUrl: './attendance.component.html',
   styleUrl: './attendance.component.scss',

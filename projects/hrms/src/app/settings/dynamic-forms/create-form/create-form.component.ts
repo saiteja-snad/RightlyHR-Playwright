@@ -12,6 +12,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-create-form',
   imports: [
@@ -64,6 +65,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
     config: NgbModalConfig,
     private route: Router,
     private sharedModalService: OpenModalService,
+    public formsValidations:FormValidationsService
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -85,6 +87,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
             Validators.required,
             Validators.maxLength(255),
             this.noWhitespaceValidator(),
+            this.formNameValidator(),
           ],
         ],
         moduleId: ['', Validators.required],
@@ -302,7 +305,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
 
   createSection(): FormGroup {
     return this.fb.group({
-      sectionName: ['', [Validators.required, Validators.maxLength(255)]],
+      sectionName: ['', [Validators.required, Validators.maxLength(255),this.formNameValidator()]],
       type: ['', Validators.required],
       order: [0],
       ratingScaleType: [null],
@@ -311,6 +314,24 @@ export class CreateFormComponent implements OnInit, OnDestroy {
     });
   }
 
+  formNameValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value?.trim();
+  
+      if (!value) {
+        return { whitespace: true }; // Empty or only spaces
+      }
+  
+      // Check if value contains at least one letter or number
+      if (!/[a-zA-Z0-9]/.test(value)) {
+        return { onlySpecialChars: true }; // Only special characters
+      }
+  
+      return null;
+    };
+  }
+  
+  
   createQuestion(sectionType: string): FormGroup {
     // Update to get the current section type from the parent form
     const typeValidators =
@@ -322,8 +343,8 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       order: [0],
       isRequired: [false],
       questionWeightage: [null, [Validators.required, Validators.min(1)]],
-      unitofmeasurement: ['', isRatingSection ? [Validators.required] : []],
-      target: [null, isRatingSection ? [Validators.required] : []],
+      // unitofmeasurement: ['', isRatingSection ? [Validators.required] : []],
+      // target: [null, isRatingSection ? [Validators.required] : []],
       options: this.fb.array([]),
     });
   }
@@ -336,11 +357,11 @@ export class CreateFormComponent implements OnInit, OnDestroy {
     questions.controls.forEach((question: any) => {
       const sectionType = section.get('type')?.value;
       question.get('type')?.setValidators(sectionType === 'normal' ? [Validators.required] : []);
-      question.get('unitofmeasurement')?.setValidators(sectionType === 'rating' ? [Validators.required] : []);
-      question.get('target')?.setValidators(sectionType === 'rating' ? [Validators.required] : []);
+      // question.get('unitofmeasurement')?.setValidators(sectionType === 'rating' ? [Validators.required] : []);
+      // question.get('target')?.setValidators(sectionType === 'rating' ? [Validators.required] : []);
       question.get('type')?.updateValueAndValidity();
-      question.get('unitofmeasurement')?.updateValueAndValidity();
-      question.get('target')?.updateValueAndValidity();
+      // question.get('unitofmeasurement')?.updateValueAndValidity();
+      // question.get('target')?.updateValueAndValidity();
     });
   }
 
@@ -555,8 +576,8 @@ export class CreateFormComponent implements OnInit, OnDestroy {
           order: number;
           status: string;
           questionWeightage: number;
-          targetfield: string;
-          unitofmeasurement: string;
+          // targetfield: string;
+          // unitofmeasurement: string;
           createdBy: number;
           updatedBy: number;
           options: {
@@ -575,8 +596,8 @@ export class CreateFormComponent implements OnInit, OnDestroy {
           order: question.order,
           status: this.isDraftType ? 'draft' : 'active',
           questionWeightage: question.questionWeightage,
-          targetfield: question.target ? question.target.toString() : null,
-          unitofmeasurement: question.unitofmeasurement ? question.unitofmeasurement : '',
+          // targetfield: question.target ? question.target.toString() : null,
+          // unitofmeasurement: question.unitofmeasurement ? question.unitofmeasurement : '',
           createdBy: this.dynamicForm.employeeId,
           updatedBy: this.dynamicForm.employeeId,
           options: [],

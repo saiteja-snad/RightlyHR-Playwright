@@ -13,14 +13,19 @@
                     <!-- Form Name -->
                     <div class="col-md-4">
                         <label class="form-label" for="formHeader">Form Name<span class="text-danger">*</span></label>
-                        <input formControlName="formHeader" class="form-control" placeholder="Enter Form Name" />
-                        <small class="text-danger"
+                        <input formControlName="formHeader" class="form-control" (keypress)="formsValidations.restrictInitialSpace($event)" placeholder="Enter Form Name" />
+                        <div class="error-msg">
+                            <div 
                             *ngIf="updateForm.get('formHeader')?.errors?.['required'] && updateForm.get('formHeader')?.touched">
-                            Form Name is required.</small>
-                        <small class="text-danger"
+                            Form Name is required.</div>
+                        <div 
                             *ngIf="updateForm.get('formHeader')?.hasError('maxlength') && updateForm.get('formHeader')?.touched">
                             Form Name must not exceed 255 characters
-                        </small>
+                        </div>
+                        <div *ngIf="updateForm.get('formHeader')?.hasError('onlySpecialChars')">
+                            Form Name cannot contain only special characters.
+                          </div>
+                        </div>
                     </div>
                     <!-- Module Name -->
                     <div class="col-md-4 custom-p-select-content">
@@ -116,18 +121,22 @@
                                 <!-- Section Name -->
                                 <div class="col-md-3">
                                     <label class="form-label">Section Name <span class="text-danger">*</span></label>
-                                    <input formControlName="sectionName" class="form-control rounded-2"
+                                    <input formControlName="sectionName" class="form-control rounded-2" (keypress)="formsValidations.restrictInitialSpace($event)"
                                         placeholder="Enter Section Name">
-                                    <div class="text-danger">
-                                        <small
+                                    <div class="error-msg">
+                                        <div
                                             *ngIf="section.get('sectionName')?.errors?.['required'] && section.get('sectionName')?.touched">
                                             Section Name is required.
-                                        </small>
-                                        <small
+                                        </div>
+                                        <div
                                             *ngIf="section.get('sectionName')?.hasError('maxlength') && section.get('sectionName')?.touched">
                                             Section Name must not exceed 255 characters
-                                        </small>
+                                        </div>
+                                        <div  *ngIf="section.get('sectionName')?.hasError('onlySpecialChars')">
+                                            Section Name cannot contain only special characters.
+                                        </div>
                                     </div>
+                                    
                                 </div>
                                 <!-- Section Type -->
                                 <div class="col-md-3 custom-p-select-content">
@@ -250,7 +259,7 @@
                                                     </small>
                                                 </div>
                                                 <!-- Target -->
-                                                <div class="col-md-3">
+                                                <!-- <div class="col-md-3">
                                                     <label class="form-label">Target<span
                                                             class="text-danger">*</span></label>
                                                     <div class="d-flex">
@@ -263,23 +272,23 @@
                                                         *ngIf="question.get('target')?.errors?.['required'] && question.get('target')?.touched">
                                                         Target is required.
                                                     </small>
-                                                </div>
+                                                </div> -->
                                                 <!-- Unit of Measurement -->
-                                                <div class="col-md-3">
+                                                <!-- <div class="col-md-3">
                                                     <label class="form-label">Unit of Measurement <span
                                                             class="text-danger">*</span></label>
                                                     <div class="d-flex">
                                                         <input type="text" formControlName="unitofmeasurement"
                                                             class="form-control hide-input rounded-2"
                                                             placeholder="Enter Unit of Measurement" min="1"
-                                                            (input)="validateInput(question.get('unitofmeasurement'))">
+                                                            (input)="validateInput(question.get('unitofmeasurement'))"> -->
                                                         <!-- <span class="text-danger">*</span> -->
-                                                    </div>
+                                                    <!-- </div>
                                                     <small class="text-danger"
                                                         *ngIf="question.get('unitofmeasurement')?.errors?.['required'] && question.get('unitofmeasurement')?.touched">
                                                         Unit of Measurement is required
                                                     </small>
-                                                </div>
+                                                </div> -->
                                             </div>
                                             <!-- Question -->
                                             <div class="mt-3">
@@ -486,7 +495,7 @@
                                                     </ng-container>
                                                     <div class="d-flex w-100">
                                                         <input formControlName="option" class="form-control w-25"
-                                                            placeholder="Enter option" />
+                                                            placeholder="Enter option" (keypress)="formsValidations.restrictInitialSpace($event)" />
                                                         <span class="text-danger">*</span>
                                                         <button type="button" class="btn float-end"
                                                             (click)="removeUpdateOption(sectionIndex, questionIndex, optionIndex)">❌</button>
@@ -613,7 +622,8 @@
 <ng-template #navigateToTable let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <p class="confirmation-text">Are you sure you want to go back?</p>
+            <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to go back?'}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

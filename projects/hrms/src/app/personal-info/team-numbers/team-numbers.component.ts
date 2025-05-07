@@ -257,6 +257,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   resetAndClose(modal: any): void {
     this.rmForm.reset();
+    this.teamForm.reset();
     this.modalService.dismissAll(); 
   }
 
@@ -318,6 +319,7 @@ onSelectManagers(event: any, field: string) {
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
           this.getAllTeammembersLists();
           this.spinnerLoader = false;
+          this.teamForm.reset();
         }
       }
     });

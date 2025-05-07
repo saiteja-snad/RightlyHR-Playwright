@@ -49,6 +49,20 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
   totalRecords = 0;
   searchText = '';
   assessorDetailsget: any[] = [];
+  updateassesorConfiguration = {} as any;
+  Status: any;
+  isLoading = false;
+  myForm!: NgForm;
+  removeRowdata: any;
+  reviewCycledetailyById = {};
+  reviewCycleDropDownData = [] as IReviewCycle[];
+  reviewCycleData = [] as IDesignationNames[];
+  assesorDetails = [] as any;
+  currentDate: any;
+  activeEmplist = [] as any;
+  headerId: any;
+  deletedRows: any[] = [];
+  @ViewChild('updateAssessor') updateAssessor: any;
 
   constructor(private http: HttpService, private modalService: NgbModal, 
     private conformationPopup: OpenModalService, public rbac: RbacService, private authService: AuthService, ) {
@@ -66,6 +80,9 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllAssesorConfigurationdata(this.page, this.pageSize);
+    this.getAllasessors(),
+    this.getReviewCycledata(),
+    this.getAllActiveEmpList()
   }
 
   openAdd() {
@@ -85,6 +102,10 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
   viewDetails(data: any) {
     const modalRef = this.modalService.open(ViewAssessorComponent, {centered: true, backdrop: 'static', size: 'xl',});
     modalRef.componentInstance.updateData = data;
+  }
+
+  openHoldMsg(){
+    this.conformationPopup.openErrorModal('Review Cycle kept on hold');
   }
 
   onSearchTextChange(): void {
@@ -169,277 +190,238 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
     });
   }
 
-
-  // 
-  updateassesorConfiguration = {} as any;
-  Status: any;
-  isLoading = false;
-  myForm!: NgForm;
-  removeRowdata: any;
-  reviewCycledetailyById = {};
-  reviewCycleDropDownData = [] as IReviewCycle[];
-  reviewCycleData = [] as IDesignationNames[];
-  assesorDetails = [] as any;
-  currentDate: any;
-  activeEmplist = [] as any;
-  headerId: any;
-  deletedRows: any[] = [];
-  @ViewChild('updateAssessor') updateAssessor: any;
-
+  // Update Assessor Configuration After Initiating the Review Cycle
   editDetails(Values: any) {
-    this.getAllasessors();
-    this.getAllasessors();
-    this.getReviewCycledata();
-    this.modalService.open(this.updateAssessor, {size: 'xl', centered: true, backdrop: 'static'})
-      this.getAllActiveEmpList();
-      this.headerId = Values.assessor.id;
-      // Ensure Values.departmentNames is defined before using map
-      const departmentNames = Values.departmentNames
-        ? Values.departmentNames
-            .map((dept: any) => dept.departmentName)
-            .join(', ')
-        : '';
-      const locationNames = Values.locationNames
-        ? Values.locationNames.map((loc: any) => loc.locationName).join(', ')
-        : '';
-      const teamNames = Values.subDepartmentNames
-        ? Values.subDepartmentNames
-            .map((loc: any) => loc.subDepartmentName)
-            .join(', ')
-        : '';
-      const sublocationNames = Values.subLocationNames
-        ? Values.subLocationNames
-            .map((loc: any) => loc.subLocationName)
-            .join(', ')
-        : '';
-  
-      // Populate the form with the selected values
-      this.updateassesorConfiguration = {
-        id: Values.id,
-        reviewCycleId: Values.reviewCycleId,
-        department: departmentNames,
-        location: locationNames,
-        team: teamNames,
-        sublocation: sublocationNames,
-      };
-  
-      // Map assessorItems to ratingscaledetailsarray
-      this.assesorDetails = Values.assessorItems
-        ? Values.assessorItems.map((item: any) => {
-            return {
-              ...item,
-              id: item.id,
-              assessors: item.assessor,
-              assessorempId: parseInt(item.assessorEmployeeIds),
-              assessorEmpName: item.assessorEmpName,
-              deadlineindays: item.dueDate.split('T')[0], // Extract date part,
-              comments: item.isCommentsVisible,
-              rating: item.isRatingVisible,
-              view: item.isView,
-            };
-          })
-        : [];
-    }
-  
-    formatDate(date: any) {
-      return date?.split('T')[0];
-    }
-  
-    getAllasessors() {
-      this.subscription = this.http
-        .getData('entityAttributeValues?entity=PMS&attribute=assessorconfig')
-        .subscribe({
-          next: (data: any) => {
-            this.reviewCycleData = data;
-          },
-        });
-    }
-    
-    //function to get all active employees list
-    getAllActiveEmpList() {
-      this.subscription = this.http
-        .getData(`Employeedata/ActiveEmployees`)
-        .subscribe({
-          next: (res: any) => {
-            this.activeEmplist = res.map((employee: any) => {
-              return {
-                ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
-                fullName: `${
-                  employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${
-                  employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
-              };
-            });
-          },
-          error: (err: any) => {},
-        });
-    }
-    // Check row state and trigger UI updates
-    checkRowState(index: number) {
-      const detail = this.assesorDetails[index];
-      if (this.isRowFilled(detail)) {
-      }
-    }
-    initialAddRowCall() {
-      this.assesorDetails = [];
-      this.addRow();
-    }
-    // Helper function to check if a row is filled
-    isRowFilled(detail: any): boolean {
-      // Check if mandatory fields are filled
-      return !!(detail.assessors && detail.deadlineindays);
-    }
-    // Function to get all review cycle data
-    getReviewCycledata() {
-      this.subscription = this.http.getData(`reviewCycleHeader`).subscribe({
+    this.headerId = Values.assessor.id;
+
+    this.updateassesorConfiguration = {
+      id: Values.id,
+      reviewCycleId: Values.reviewCycleId,
+      department: Values.departmentNames?.map((d: any) => d.departmentName).join(', ') || '',
+      location: Values.locationNames?.map((l: any) => l.locationName).join(', ') || '',
+      team: Values.subDepartmentNames?.map((s: any) => s.subDepartmentName).join(', ') || '',
+      sublocation: Values.subLocationNames?.map((s: any) => s.subLocationName).join(', ') || '',
+    };
+
+    this.assesorDetails = Values.assessorItems?.map((item: any) => ({
+      ...item,
+      assessors: item.assessor,
+      assessorempId: parseInt(item.assessorEmployeeIds),
+      assessorEmpName: item.assessorEmpName,
+      deadlineindays: item.dueDate?.split('T')[0],
+      comments: item.isCommentsVisible,
+      rating: item.isRatingVisible,
+      view: item.isView,
+    })) || [];
+
+    this.modalService.open(this.updateAssessor, { size: 'xl', centered: true, backdrop: 'static' });
+  }
+
+  formatDate(date: any) {
+    return date?.split('T')[0];
+  }
+
+  getAllasessors() {
+    this.subscription = this.http
+      .getData('entityAttributeValues?entity=PMS&attribute=assessorconfig')
+      .subscribe({
         next: (data: any) => {
-          this.reviewCycleDropDownData = data.items as IReviewCycle[];
-        },
-        error: (err: any) => {
-          console.error('Error fetching review cycle data:', err);
+          this.reviewCycleData = data;
         },
       });
+  }
+
+  //function to get all active employees list
+  getAllActiveEmpList() {
+    this.subscription = this.http
+      .getData(`Employeedata/ActiveEmployees`)
+      .subscribe({
+        next: (res: any) => {
+          this.activeEmplist = res.map((employee: any) => {
+            return {
+              ...employee, // Spread the existing properties (like fusionEmpId, firstName, etc.)
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+            };
+          });
+        },
+        error: (err: any) => { },
+      });
+  }
+
+  // Check row state and trigger UI updates
+  checkRowState(index: number) {
+    const detail = this.assesorDetails[index];
+    if (this.isRowFilled(detail)) {
     }
-    openModal(content: any) {
-      this.modalService.open(content, { centered: true });
-    }
-    close() {
-      this.modalService.dismissAll();
-    }
-    closeModal() {
-      this.modalService.dismissAll();
-      this.updateassesorConfiguration = {}; // Reset the form
-    }
-    //function to open the model popup
-    openconfirmationModel(content: any) {
-      this.modalService.open(content, { centered: true });
-    }
-    //function to open the model popup
-    openconfirmationModelforcancle(content: any, form: any) {
-      this.myForm = form;
-      this.modalService.open(content, { centered: true });
-    }
-    //function to delete
-    openDeletepopup(content: any, id: any) {
-      this.deleteId = id;
-      this.modalService.open(content, { centered: true });
-    }
-    clearindexdata(index: any) {
-      if (this.assesorDetails && this.assesorDetails[index]) {
-        // Clear the data for the specific index
-        this.assesorDetails[index] = {
-          assessors: null,
-          deadlineindays: null,
-          assessorempId: null,
-          comments: false,
-          rating: false,
-          view: false,
-        };
-      }
-    }
-    // Add Row to FormArray
-    addRow() {
-      const newRow = {
+  }
+
+  initialAddRowCall() {
+    this.assesorDetails = [];
+    this.addRow();
+  }
+
+  // Helper function to check if a row is filled
+  isRowFilled(detail: any): boolean {
+    // Check if mandatory fields are filled
+    return !!(detail.assessors && detail.deadlineindays);
+  }
+
+  // Function to get all review cycle data
+  getReviewCycledata() {
+    this.subscription = this.http.getData(`reviewCycleHeader`).subscribe({
+      next: (data: any) => {
+        this.reviewCycleDropDownData = data.items as IReviewCycle[];
+      },
+      error: (err: any) => {
+        console.error('Error fetching review cycle data:', err);
+      },
+    });
+  }
+
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true });
+  }
+
+  close() {
+    this.modalService.dismissAll();
+  }
+
+  //function to open the model popup
+  openconfirmationModel(content: any) {
+    this.modalService.open(content, { centered: true });
+  }
+
+  //function to open the model popup
+  openconfirmationModelforcancle(content: any, form: any) {
+    this.myForm = form;
+    this.modalService.open(content, { centered: true });
+  }
+
+  //function to delete
+  openDeletepopup(content: any, id: any) {
+    this.deleteId = id;
+    this.modalService.open(content, { centered: true });
+  }
+
+  clearindexdata(index: any) {
+    if (this.assesorDetails && this.assesorDetails[index]) {
+      // Clear the data for the specific index
+      this.assesorDetails[index] = {
         assessors: null,
         deadlineindays: null,
-        view: null,
-        rating: null,
-        comments: null,
         assessorempId: null,
+        comments: false,
+        rating: false,
+        view: false,
       };
-      this.assesorDetails.push(newRow);
     }
-    // Delete Row from FormArray
-    deleteupdateRow(index: number) {
-      if (this.assesorDetails[index]) {
-        const deletedRow = { ...this.assesorDetails[index], isDeleted: true };
-        this.deletedRows.push(deletedRow);
-        this.assesorDetails.splice(index, 1);
-      }
-      this.conformationPopup.openSuccessModal('Row Deleted Successfully');
+  }
+
+  // Add Row to FormArray
+  addRow() {
+    const newRow = {
+      assessors: null,
+      deadlineindays: null,
+      view: null,
+      rating: null,
+      comments: null,
+      assessorempId: null,
+    };
+    this.assesorDetails.push(newRow);
+  }
+
+  // Delete Row from FormArray
+  deleteupdateRow(index: number) {
+    if (this.assesorDetails[index]) {
+      const deletedRow = { ...this.assesorDetails[index], isDeleted: true };
+      this.deletedRows.push(deletedRow);
+      this.assesorDetails.splice(index, 1);
+    }
+    this.conformationPopup.openSuccessModal('Row Deleted Successfully');
+  }
+
+  // Handle form submission
+  Updateassessor() {
+    this.isLoading = true;
+    const loggedinuser = this.authService.getToken();
+    const currentDate = moment().startOf('day');
+
+    // Check for past deadline dates
+    const invalidDeadline = this.assesorDetails.some((item: any) => {
+      const deadline = moment(item.deadlineindays).startOf('day');
+      return deadline.isBefore(currentDate);
+    });
+
+    if (invalidDeadline) {
+      this.isLoading = false;
+      this.conformationPopup.openErrorModal("Deadline date cannot be in the past");
+      return;
     }
 
-    // Handle form submission
-    Updateassessor() {
-      this.isLoading = true;
-      const loggedinuser = this.authService.getToken();
-      const currentDate = moment().startOf('day');
-    
-      // Check for past deadline dates
-      const invalidDeadline = this.assesorDetails.some((item: any) => {
-        const deadline = moment(item.deadlineindays).startOf('day');
-        return deadline.isBefore(currentDate);
-      });
-    
-      if (invalidDeadline) {
-        this.isLoading = false;
-        this.conformationPopup.openErrorModal("Deadline date cannot be in the past");
-        return;
-      }
-    
-      if (this.updateassesorConfiguration) {
-        const payload = {
-          reviewCycleId: this.updateassesorConfiguration.reviewCycleId,
-          isDeleted: false,
-          createdBy: loggedinuser.employeeId,
-          createdAt: currentDate.toISOString(),
-          reviewAssessorItems: [
-            ...this.assesorDetails.map((item: any) => ({
-              id: item.id,
-              assessor: item.assessors,
-              dueDate: item.deadlineindays,
-              isRatingVisible: item.rating,
-              isCommentsVisible: item.comments,
-              isView: item.view,
-              isDeleted: false,
-              createdAt: currentDate.toISOString(),
-              aessorEmployeeIds: item.assessorempId?.toString(),
-            })),
-            ...this.deletedRows.map((item: any) => ({
-              id: item.id,
-              assessor: item.assessors,
-              dueDate: item.deadlineindays,
-              isRatingVisible: item.rating,
-              isCommentsVisible: item.comments,
-              isView: item.view,
-              isDeleted: true,
-              createdAt: currentDate.toISOString(),
-              aessorEmployeeIds: item.assessorempId?.toString(),
-            })),
-          ],
-        };
-    
-        this.http
-          .putData(`Assessor/UpdateReviewAssessorHeaderConfig/${this.headerId}`, payload)
-          .subscribe({
-            next: (response: any) => {
-              this.isLoading = false;
-              this.modalService.dismissAll();
-              this.conformationPopup.openSuccessModal(
-                'Assessor Configurations Updated Successfully'
-              );
-            },
-            error: (err: any) => {
-              this.isLoading = false;
-              if (err.status === 400) {
-                this.conformationPopup.openErrorModal('An Assessor cannot be added more than once');
-              } else if (err.status === 409) {
-                this.conformationPopup.openErrorModal("Assessors cannot have the same Deadline Date");
-              } else {
-                this.conformationPopup.openErrorModal(err.error.Message);
-              }
-            },
-            complete: () => {
-              this.isLoading = false;
-              this.http.tirggerCountSignal.update((status) => ({
-                ...status,
-                global: true,
-              }));
-            },
-          });
-      }
+    if (this.updateassesorConfiguration) {
+      const payload = {
+        reviewCycleId: this.updateassesorConfiguration.reviewCycleId,
+        isDeleted: false,
+        createdBy: loggedinuser.employeeId,
+        createdAt: currentDate.toISOString(),
+        reviewAssessorItems: [
+          ...this.assesorDetails.map((item: any) => ({
+            id: item.id,
+            assessor: item.assessors,
+            dueDate: item.deadlineindays,
+            isRatingVisible: item.rating,
+            isCommentsVisible: item.comments,
+            isView: item.view,
+            isDeleted: false,
+            createdAt: currentDate.toISOString(),
+            aessorEmployeeIds: item.assessorempId?.toString(),
+          })),
+          ...this.deletedRows.map((item: any) => ({
+            id: item.id,
+            assessor: item.assessors,
+            dueDate: item.deadlineindays,
+            isRatingVisible: item.rating,
+            isCommentsVisible: item.comments,
+            isView: item.view,
+            isDeleted: true,
+            createdAt: currentDate.toISOString(),
+            aessorEmployeeIds: item.assessorempId?.toString(),
+          })),
+        ],
+      };
+
+      this.http
+        .putData(`Assessor/UpdateReviewAssessorHeaderConfig/${this.headerId}`, payload)
+        .subscribe({
+          next: (response: any) => {
+            this.isLoading = false;
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal(
+              'Assessor Configurations Updated Successfully'
+            );
+          },
+          error: (err: any) => {
+            this.isLoading = false;
+            if (err.status === 400) {
+              this.conformationPopup.openErrorModal('An Assessor cannot be added more than once');
+            } else if (err.status === 409) {
+              this.conformationPopup.openErrorModal("Assessors cannot have the same Deadline Date");
+            } else {
+              this.conformationPopup.openErrorModal(err.error.Message);
+            }
+          },
+          complete: () => {
+            this.isLoading = false;
+            this.http.tirggerCountSignal.update((status) => ({
+              ...status,
+              global: true,
+            }));
+          },
+        });
     }
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {

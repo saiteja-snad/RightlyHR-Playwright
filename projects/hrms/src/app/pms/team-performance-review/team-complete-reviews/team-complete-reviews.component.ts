@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { OpenModalService } from '../../../services/open-modal.service';
 
 @Component({
   selector: 'app-team-complete-reviews',
@@ -44,17 +45,11 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
   ];
 
   first = 0;
-
-
-  @ViewChild('createReviewCycle') createReviewCycle: any;
-  @ViewChild('confirmation') confirmation: any;
-  @ViewChild('success') success: any;
-  @ViewChild('error') error: any;
   
   constructor(
-    private readonly modalService: NgbModal,
     private router: Router,
-    private http: HttpService) { }
+    private http: HttpService,
+    private modal: OpenModalService) { }
 
   ngOnInit(): void {
     const fusionuser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -170,13 +165,6 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
     return sublocations?.map(subLoc => subLoc.subLocationName).join(', ') || '-';
   }
 
-  openCreate() {
-    this.modalService.open(this.createReviewCycle, {
-      size: 'lg',
-      centered: true,
-    });
-  }
-
   downloadPromotionletter(iteamid: any) {
     this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
       next: (data: Blob) => {
@@ -190,11 +178,11 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         this.Status = 'Promotion Letter Downloaded Successfully';
-        this.modalService.open(this.success, { centered: true });
+        this.modal.openSuccessModal(this.Status);
       },
       error: (err) => {
-        console.error('Error downloading letter:', err);
         this.Status = 'Failed to download letter';
+        this.modal.openErrorModal(this.Status);
       },
     });
   }
@@ -213,11 +201,11 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         this.Status = 'Appraisal Letter Downloaded Successfully';
-        this.modalService.open(this.success, { centered: true });
+        this.modal.openSuccessModal(this.Status)
       },
       error: (err) => {
-        console.error('Error downloading letter:', err);
         this.Status = 'Failed to download letter';
+        this.modal.openErrorModal(this.Status);
       },
     });
   }
@@ -237,10 +225,6 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
     this.page = 1;
     this.first = 0;
     this.fetchReviewCycles();
-  }
-
-  closeModal() {
-    this.modalService.dismissAll();
   }
 
   ngOnDestroy(): void {

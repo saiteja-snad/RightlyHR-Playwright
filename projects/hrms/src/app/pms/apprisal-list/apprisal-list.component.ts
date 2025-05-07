@@ -61,7 +61,9 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   selectedemployeereviewtemplate: any;
   employeesList: any;
   employeeStatuses: string[] = [];
-
+  allSubDepartments: any[] = [];
+  allSubLocations: any[] = [];
+  
   page = 1;
   pageSize = 10;
   rows = 10;
@@ -75,7 +77,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   spinnerLoader= false;
 
   promotedOptions = [
-    // { label: 'All', value: '' },
     { label: 'Yes', value: true },
     { label: 'No', value: false }
   ];
@@ -147,7 +148,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   onReviewCycleChange(selectedValue: any): void {
-      
     const selectedId = selectedValue.value;
     if (!selectedId) {
       console.error('No value selected.');
@@ -161,8 +161,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
     this.enableDropDowns();
     this.selectedReviewCycle = selectedCycle;
-    console.log(this.selectedReviewCycle)
-    this.reviewCycleID = selectedCycle.id
+    this.reviewCycleID = selectedCycle.id;
   
     this.updateStatuses(selectedCycle.status);
     this.resetDropdownData();
@@ -201,6 +200,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.subLocationsDropdown = sublocations ?? [];
     this.departmentDetails = departments ?? [];
     this.subDepartmentsDropdownValues = subdepartments ?? [];
+    this.allSubDepartments = subdepartments ?? [];
+    this.allSubLocations= sublocations ?? [];
   }
   
   patchFormValues(selectedId: any, departments: any[], subdepartments: any[], locations: any[], sublocations: any[]) {
@@ -236,11 +237,19 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.dependentdropdowns.get('locationId')?.enable();
     this.dependentdropdowns.get('subLocationId')?.enable();    
   }
-  
+
   onDepartmentNameChange(event: any) {
     if (Array.isArray(event?.value)) {
-      const joinedIds = event.value.map((item: any) => item.departmentId).join(",");
-      this.departmentIds = joinedIds;
+      const selectedDepartments = event.value;
+      const selectedDeptIds = selectedDepartments.map((item: any) => item.departmentId);
+      this.departmentIds = selectedDeptIds.join(",");
+  
+      this.subDepartmentsDropdownValues = this.allSubDepartments.filter((subDept: { departmentId: any }) =>
+        selectedDeptIds.includes(subDept.departmentId)
+      );
+
+      this.dependentdropdowns.get('subDepartmentId')?.setValue( this.subDepartmentsDropdownValues); 
+  
       const promoted = this.dependentdropdowns.get('promoted')?.value;
       const params = {
         reviewcycleid: this.reviewCycleID,
@@ -251,17 +260,16 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         promotion: (promoted && promoted.value !== undefined && promoted.value !== null) ? promoted.value : ''
       };
   
-      if (joinedIds) {
+      if (this.departmentIds) {
         this.getEmployeesOfTheReviewCycle(params);
-      } 
-      // else {
-      //   this.subDepartmentsDropdownValues = [];
-      // }
-    } 
-    // else {
-    //   console.error('Expected an array but got:', event);
-    //   this.subDepartmentsDropdownValues = [];
-    // }
+      } else {
+        this.subDepartmentsDropdownValues = [];
+        this.dependentdropdowns.get('subDepartmentId')?.setValue([]); 
+      }
+    } else {
+      this.subDepartmentsDropdownValues = [];
+      this.dependentdropdowns.get('subDepartmentId')?.setValue([]); 
+    }
   }  
   
   onSubDepartmentNameChange(event: any) {
@@ -280,45 +288,44 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       if (joinedIds) {
         this.getEmployeesOfTheReviewCycle(params);
       } 
-      // else {
-      //   this.subDepartmentsDropdownValues = [];
-      // }
-    } 
-    // else {
-    //   console.error('Expected an array but got:', event);
-    //   this.subDepartmentsDropdownValues = [];
-    // }
+    }
   }
 
   onLocationChange(event: any) {
-    if (Array.isArray(event?.value)) {
-      const joinedIds = event.value.map((item: any) => item.locationId).join(",");
-      this.loctionIds = joinedIds;
-      const promoted = this.dependentdropdowns.get('promoted')?.value;
-      const params = {
-        reviewcycleid: this.reviewCycleID,
-        location: this.loctionIds,
-        sublocation: this.subLoctionIds,
-        department: this.departmentIds,
-        subdepartment: this.subDepartmentIds,
-        promotion: (promoted && promoted.value !== undefined && promoted.value !== null) ? promoted.value : ''
-      };
-      if (joinedIds) {
-        this.getEmployeesOfTheReviewCycle(params);
-      } 
-      // else {
-      //   this.subLocationsDropdown = [];
-      // }
-    } 
-    // else {
-    //   console.error('Expected an array but got:', event);
-    //   this.subLocationsDropdown = [];
-    // }
-  }
+    if (!Array.isArray(event?.value)) {
+      this.subLocationsDropdown = [];
+      this.dependentdropdowns.get('subLocationId')?.setValue([]); 
+      return;
+    }
+  
+    const selectedLocations = event.value;
+    const selectedLocIds = selectedLocations.map((item: any) => item.locationId);
+    this.loctionIds = selectedLocIds.join(',');
+  
+    this.subLocationsDropdown = this.allSubLocations?.filter((subLoc: { locationId: any }) => selectedLocIds.includes(subLoc.locationId)) ?? [];
+  
+    this.dependentdropdowns.get('subLocationId')?.setValue(this.subLocationsDropdown);    
+  
+    const promoted = this.dependentdropdowns.get('promoted')?.value;
+    const params = {
+      reviewcycleid: this.reviewCycleID,
+      location: this.loctionIds,
+      sublocation: this.subLoctionIds,
+      department: this.departmentIds,
+      subdepartment: this.subDepartmentIds,
+      promotion: (promoted?.value !== undefined && promoted?.value !== null) ? promoted.value : ''
+    };
+  
+    if (this.loctionIds) {
+      this.getEmployeesOfTheReviewCycle(params);
+    } else {
+      this.subLocationsDropdown = [];
+    }
+  }  
 
   onSubLocationChange(event: any) {
     const joinedIds = event.value.map((item: any) => item.subLocationId).join(",");
-    this.subLoctionIds = joinedIds
+    this.subLoctionIds = joinedIds;
     const promoted = this.dependentdropdowns.get('promoted')?.value;
     const params = {
       reviewcycleid: this.reviewCycleID,
@@ -331,9 +338,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     if (joinedIds) {
       this.getEmployeesOfTheReviewCycle(params);
     }
-    // else {
-    //   this.subLocationsDropdown = []
-    // }
   }
 
   onPromotedChange(event: any): void {
@@ -436,6 +440,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.dataload = false;
+        this.getEmployeesOfTheReviewCycleforReport();
       }
     });
   }
@@ -724,7 +729,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     const offertype = 'Appraisal Letter'
     this.http.getData(`SignaturesList?LetterType=${offertype}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
-        // this.authorityDetailsForAppraisal = data
         this.authorityDetailsForAppraisal = data.map((user: any) => ({
           ...user,
           fullName: `${user.firstName} ${user.middleName ? user.middleName + ' ' : ''}${user.lastName}`
@@ -795,7 +799,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       control?.setValidators([Validators.required, this.effectiveDateValidator()]);
       control?.updateValueAndValidity({ emitEvent: false });
     });
-    
   }
 
   effectiveDateValidator(): ValidatorFn {
@@ -1140,6 +1143,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   reportdata(): void {
     const payload = this.reportOfAllEmployees.map(employee => ({
       'Review Cycle Name': employee.reviewCycleHeaderIdName,
+      'Employee Id': employee.reviewFusionEmployeeId,
       'Employee Name': employee.reviewEmployeeIdName,
       'Department': employee.departmentName,
       'Team': employee.subDepartmentName,
@@ -1163,6 +1167,10 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       'Team Manager Over All Rating': employee.tmoverallrating || '-',
       'Reporting Manager Over All Rating': employee.rmoverallrating || '-',
       'HR Over All Rating': employee.hroverallrating || '-',
+      'Final Revised Salary' : employee.salaryCorrectionRevisedAmount ? employee.salaryCorrectionRevisedAmount 
+                           : employee.revisedSalaryMannual ? employee.revisedSalaryMannual 
+                           : employee.revisedSalaryAuto ? employee.revisedSalaryAuto 
+                           : '-',
       'Final Rating': employee.overallRating || '-',
     }));
 
@@ -1267,7 +1275,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   SentLettersById(id:any): void {
-    console.log(this.selectedIds);
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
@@ -1302,7 +1309,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   SentpromationLetterById(id:any): void {
-    console.log(this.selectedIds);
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();

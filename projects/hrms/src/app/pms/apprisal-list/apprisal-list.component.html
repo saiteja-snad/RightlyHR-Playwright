@@ -144,7 +144,7 @@
                         <th>{{'Review Template Name' | translate}}</th>
                         <th>{{'Status' | translate}}</th>
                         <th>{{'Final Rating' | translate}}</th>
-                        <th class="text-center">{{'Action' | translate}}</th>
+                        <th class="text-center">{{'Action(S)' | translate}}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -155,7 +155,7 @@
                                     (change)="onCheckboxChange($event, employee.id)"
                                     [disabled]="employee.status === 'Review on Hold'" id="flexCheckDefault">
                             </td>
-                            <td>{{employee.reviewEmployeeId }}</td>
+                            <td>{{employee.reviewEmployeeFusionId }}</td>
                             <td>{{employee.reviewEmployeeIdName}}</td>
                             <td>{{employee.reviewCycleHeaderIdName }}</td>
                             <td>{{employee.departmentName}}</td>
@@ -663,14 +663,6 @@
                                 <ng-template let-item #item>{{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</ng-template>
                             </p-select>
                         </div>
-                    <!-- <select type="date" class="form-control custom-input" formControlName="signaturename"
-                        id="signaturename" name="signaturename" placeholder="Select Signature Authority Name"
-                        onkeypress="return false">
-                        <option [ngValue]="null" disabled selected>Please Select Signature Authority Name</option>
-                        <option *ngFor="let item of authorityDetailsForAppraisal" [value]="item.employeeId">
-                            {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}
-                        </option>
-                    </select> -->
                     <div *ngIf="Effectivedatefrom.get('signaturename')?.touched && Effectivedatefrom.get('signaturename')?.hasError('required')"
                         class="error-msg">Signature Authority Name is required
                     </div>

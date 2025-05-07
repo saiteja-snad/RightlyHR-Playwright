@@ -40,36 +40,44 @@
                     </thead>
                     <tbody>
                         @if(assessorDetailsget.length>0){
-                        @for (item of assessorDetailsget; track $index) {
-                        <tr>
-                            <td>{{ item.reviewCycleName ? item.reviewCycleName : '-' }}</td>
-                            <td>{{ getNamesAsString(item?.departmentNames, 'departmentName') }}</td>
-                            <td>{{ getNamesAsString(item?.subDepartmentNames, 'subDepartmentName') }}</td>
-                            <td>{{ getNamesAsString(item?.locationNames, 'locationName') }}</td>
-                            <td>{{ getNamesAsString(item?.subLocationNames, 'subLocationName') }}</td>
-                            <td class="text-center">
-                                <div class="dropdown">
-                                    <span type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                      </span>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li *ngIf="item?.reviewCycleHeaderStatus==='Created'">
-                                            <a class="dropdown-item" (click)="updateDetails(item)">Update</a></li>
-                                        <li *ngIf="item?.reviewCycleHeaderStatus==='Created'">
-                                            <a class="dropdown-item" (click)="openDelete(confirmation, item)">Delete</a></li>
-                                        <li *ngIf="item?.reviewCycleHeaderStatus==='Initiated'">
-                                            <a class="dropdown-item" (click)="editDetails(item)">Update</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                        }
+                            @for (item of assessorDetailsget; track $index) {
+                            <tr>
+                                <td>{{ item.reviewCycleName ? item.reviewCycleName : '-' }}</td>
+                                <td>{{ getNamesAsString(item?.departmentNames, 'departmentName') }}</td>
+                                <td>{{ getNamesAsString(item?.subDepartmentNames, 'subDepartmentName') }}</td>
+                                <td>{{ getNamesAsString(item?.locationNames, 'locationName') }}</td>
+                                <td>{{ getNamesAsString(item?.subLocationNames, 'subLocationName') }}</td>
+                                <td class="text-center">
+                                    <div class="dropdown">
+                                        <span type="button" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </span>
+                                        <ul class="dropdown-menu custom-dropdown-menu">
+                                            <li *ngIf="item?.reviewCycleHeaderStatus==='Created'">
+                                                <a class="dropdown-item" (click)="updateDetails(item)">Update</a></li>
+                                            <li *ngIf="item?.reviewCycleHeaderStatus==='Created'">
+                                                <a class="dropdown-item" (click)="openDelete(confirmation, item)">Delete</a></li>
+                                            <li *ngIf="item?.reviewCycleHeaderStatus==='Initiated'">
+                                                <a class="dropdown-item" (click)="editDetails(item)">Update</a>
+                                            </li>
+
+                                            @if(item?.reviewCycleHeaderStatus==='Review on Hold'){
+                                                <li>
+                                                    <a class="dropdown-item" (click)="openHoldMsg()">Update</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                            }
                         }
                         @else {
-                        <tr>
-                            <app-no-data-found></app-no-data-found>
-                        </tr>
+                            <tr>
+                                <td colspan="6">
+                                    <app-no-data-found />
+                                </td>
+                            </tr>
                         }
                     </tbody>
                 </table>
@@ -116,7 +124,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Add Prospective Employee'| translate}}</p>
+                <p class="popup-heading mb-0">{{'Update Assessor Configuration'| translate}}</p>
             </div>
             <div>
                 <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -192,7 +200,7 @@
                     </div>
                 </div>
 
-                <div class="custom-table-content mb-3">
+                <div class="custom-table-content custom-popup-table mb-3">
                     <table class="w-100">
                         <thead>
                             <th>Assessor</th>
@@ -207,11 +215,11 @@
                                 <td>
                                     <select class="form-select" name="assessors" id="assesor-{{i}}" name="assesor-{{i}}"
                                         [(ngModel)]="detail.assessors" aria-label="Default select example" required
-                                        [disabled]="detail.isExisting" [disabled]="true">
+                                        [disabled]="true">
                                         <option [ngValue]="null" disabled selected>Select an Assessor</option>
                                         <option *ngFor="let cycle of reviewCycleData" [value]="cycle.value">{{
                                             cycle.value }}</option>
-                                    </select>
+                                    </select>                                     
                                 </td>
                                 <td>
                                     <input type="date" class="form-control mb-2" [(ngModel)]="detail.deadlineindays"
@@ -282,7 +290,7 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="closeModal()">{{'Yes'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close()">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

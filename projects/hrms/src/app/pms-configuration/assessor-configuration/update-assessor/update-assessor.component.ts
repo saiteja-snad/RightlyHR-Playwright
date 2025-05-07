@@ -126,7 +126,6 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: any) => {
           this.reviewCycleData = data;
-          console.log(data);
         },
       });
   }
@@ -198,11 +197,10 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
   }
   //function to delete
   openDeletepopup(content: any, id: any) {
-    console.log(id);
     this.deleteId = id;
-    console.log(this.deleteId);
     this.modalService.open(content, { centered: true });
   }
+  
   clearindexdata(index: any) {
     if (this.assesorDetails && this.assesorDetails[index]) {
       // Clear the data for the specific index

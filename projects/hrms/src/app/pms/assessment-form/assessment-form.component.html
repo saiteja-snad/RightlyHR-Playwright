@@ -228,7 +228,7 @@
 
       <!-- Checkbox for same as Reporting Manager Rating and Comments -->
       <div class="form-check mb-4"
-        *ngIf="(currentStage>2 && currentStage<lastStage ||((currentStage>=lastStage||currentStage<=0) && assessmentFormData.isSameAsPreviousAssessor))">
+        *ngIf="(currentStage>2 && currentStage<lastStage ||((currentStage>=lastStage||currentStage<=0) && assessmentFormData?.isSameAsPreviousAssessor))">
         <input class="form-check-input" type="checkbox" id="sameasprevious" name="sameasprevious"
           (click)="checkTmAndRm($event)" [(ngModel)]="assessmentFormData.isSameAsPreviousAssessor"
           [disabled]="!currentStage" />

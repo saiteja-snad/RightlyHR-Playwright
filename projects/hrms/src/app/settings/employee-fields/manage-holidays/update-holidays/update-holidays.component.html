@@ -90,7 +90,7 @@
               <label class="form-label custom-label">{{'Holiday Name' | translate}}
                 <span class="text-danger">*</span></label>
               <input type="text" formControlName="holidayName" class="form-control custom-input w-100"
-                placeholder="Please enter holiday name" />
+                placeholder="Please enter holiday name" (input)="checkDuplicate(i)" />
               <div
                 *ngIf="holiday.get('holidayName')?.invalid && (holiday.get('holidayName')?.dirty || holiday.get('holidayName')?.touched)"
                 class="error-msg">
@@ -98,6 +98,7 @@
                   | translate}}</span>
                 <span *ngIf="holiday.get('holidayName')?.errors?.['pattern']">Enter valid data</span>
               </div>
+              <div *ngIf="isDuplicateholidayName[i]" class="error-msg">{{ 'Duplicate holiday names are not allowed' | translate }}</div>
             </div>
 
             <div class="w-100">

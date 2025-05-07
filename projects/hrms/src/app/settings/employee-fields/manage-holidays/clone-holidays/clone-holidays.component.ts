@@ -29,7 +29,7 @@ export class CloneHolidaysComponent {
   maxHolidayDate: string = '';
   shiftDropdown: any[] = [];
   hidePublishCloneButtons: boolean = false;
-
+  isDuplicateholidayName: boolean[] = [];
   constructor(private fb: FormBuilder, public router: Router, private confirmation: OpenModalService, private http: HttpService, private modalService: NgbModal) { }
 
   // ng oninit method start
@@ -38,7 +38,7 @@ export class CloneHolidaysComponent {
     this.updateHolidaysData = JSON.parse(localStorage.getItem('updateholidays') || '{}');
     this.getjobLocationList();
     const currentYear = new Date().getFullYear();
-    this.yearDetails = this.generateYears(2000, currentYear);
+    this.yearDetails = this.generateYears(currentYear-1,currentYear+1);
     this.holidayForm = this.fb.group({
       year: ['', Validators.required],
       location: ['', Validators.required],
@@ -82,7 +82,7 @@ export class CloneHolidaysComponent {
     this.updateHolidaysData.orgHolidaysItems.forEach((row: any) => {
       this.holidays.push(
         this.fb.group({
-          holidayName: [row.holidayName || '', [Validators.required, Validators.pattern(/^[a-zA-Z][a-zA-Z ]*$/)]],
+          holidayName: [row.holidayName || '', [Validators.required, Validators.pattern(/^[^\s].*$/)],],
           holidayDate: [moment(row.holidayDate).format('YYYY-MM-DD'),[Validators.required,this.yearRangeValidator(this.minHolidayDate,this.maxHolidayDate)]],
           isOptional: row.isOptional
         })
@@ -127,12 +127,28 @@ export class CloneHolidaysComponent {
   // this method used for add holiday button click
   addHolidayRow() {
     const holidayGroup = this.fb.group({
-      holidayName: ['',[Validators.required,Validators.required,Validators.pattern(/^[a-zA-Z][a-zA-Z ]*$/)]],
+      holidayName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/)]],
       holidayDate: [ '',[Validators.required, this.yearRangeValidator(this.minHolidayDate, this.maxHolidayDate)]],
       isOptional: [false]
     });
     this.holidays.push(holidayGroup);
   }
+
+ // this function used for duplicate holiday name not allowed
+ isDuplicateHoliday(index: number): boolean {
+  const holidayArray = this.holidayForm.get('holidays') as FormArray;
+  const currentholiday = holidayArray.at(index).value;
+  return holidayArray.controls.some((ctrl, i) => {
+    if (i === index) return false;
+    const shift = ctrl.value;
+    return (
+      shift.holidayName?.trim().toLowerCase() === currentholiday.holidayName?.trim().toLowerCase()
+    );
+  });
+}
+checkDuplicate(index: number): void {
+  this.isDuplicateholidayName[index] = this.isDuplicateHoliday(index);
+}
 
   //this method used for delete icon click
   removeHolidayRow(index: number): void {

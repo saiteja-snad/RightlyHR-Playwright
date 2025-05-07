@@ -781,7 +781,7 @@ export class InactiveFormsComponent implements OnInit, OnDestroy {
   }
 
   openSuccessModal(isFormSubmitted: boolean) {
-    this.successMessage = 'Form actived successfully';
+    this.successMessage = 'Form activated successfully';
     this.sharedModalService.openSuccessModal(this.successMessage);
   }
 

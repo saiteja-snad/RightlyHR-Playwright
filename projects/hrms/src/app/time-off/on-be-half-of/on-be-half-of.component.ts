@@ -246,6 +246,7 @@ export class OnBeHalfOfComponent {
     this.categoryDetails = [];
     this.cadidateEmployeeId = 0;
     localStorage.removeItem('onbehalfof');
+    window.location.reload();
   }
 
   onleaveSelect(categoryId: number) {

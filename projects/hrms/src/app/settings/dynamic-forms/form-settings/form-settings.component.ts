@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import {  Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
@@ -49,7 +49,6 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private modalService: NgbModal,
     config: NgbModalConfig,
-    private cdr: ChangeDetectorRef,
     private sharedModalService: OpenModalService,
     public rbac: RbacService
   ) {
@@ -61,14 +60,13 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     this.ratingform = this.fb.group(
       {
         minimumRatingScale: [
-          1,
+          null,
           [Validators.required, Validators.min(1), Validators.max(10)],
         ],
         maximumRatingScale: [
-          1,
+          null,
           [Validators.required, Validators.min(1), Validators.max(10)],
-        ], // Rating To
-        finalRating: ['', Validators.required], // Round off options
+        ],
         ratingType: [
           '',
           [
@@ -81,7 +79,6 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
       },
       { validators: this.validateRange() }
     );
-    this.cdr.detectChanges();
     this.getAllRatingDetails();
   }
   noWhitespaceValidator(): ValidatorFn {
@@ -362,6 +359,7 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
         .subscribe({
           next: () => {
             this.modalService.dismissAll();
+            this.ratingform.reset();
             this.openSuccessModal('submit');
             
           },
@@ -494,7 +492,7 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
       {
         minimumRatingScale: [null, [Validators.required, Validators.min(1)]], // Rating From
         maximumRatingScale: [null, [Validators.required, Validators.min(1)]], // Rating To
-        finalRating: ['', Validators.required], // Round off options
+        // finalRating: ['', Validators.required], // Round off options
         ratingType: ['', Validators.required], // Rating Type
         scales: this.fb.array([]), // Array for scales and descriptions
       },

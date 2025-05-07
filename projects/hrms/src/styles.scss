@@ -1625,3 +1625,20 @@ input[type=number]::-webkit-outer-spin-button {
     width: inherit !important;
     max-height: 60vh;
 }
+
+// IT Support Status Colors
+.urgent {
+    color: #E53935;
+}
+
+.high {
+    color: #FB8C00;
+}
+
+.medium {
+    color: #2C83E6;
+}
+
+.low {
+    color: #43A047;
+}

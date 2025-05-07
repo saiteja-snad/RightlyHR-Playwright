@@ -2,7 +2,7 @@
     <!--Input search-->
     <div class="input-group custom-search mt-3 mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="search Here" aria-label="Username"
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search Here" aria-label="Username"
             aria-describedby="basic-addon1">
     </div>
 
@@ -20,6 +20,7 @@
                     <th>Assignee</th>
                     <th>Status</th>
                     <th>Updated Date</th>
+                    <th>Action(s)</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,24 +30,37 @@
                     <td>
                         <ul class="mb-0">
                             <li [ngClass]="{
-                                    'text-danger fw-bold': ticket.priority === 'High',
-                                    'text-warning fw-bold': ticket.priority === 'Normal',
-                                    'text-success fw-bold': ticket.priority === 'Low',
-                                    'text-red fw-bold': ticket.priority === 'Urgent'
+                                    'high': ticket.priority === 'High',
+                                    'medium': ticket.priority === 'Medium',
+                                    'low': ticket.priority === 'Low',
+                                    'urgent': ticket.priority === 'Urgent'
                                 }">
-                                {{ticket.priority || '-'}}
+                                <b>{{ticket.priority || '-'}}</b>
                             </li>
                         </ul>
                     </td>
                     <td>{{ticket.subject || '-'}}</td>
                     <td>{{ticket.employeeName || '-'}}</td>
-                    <td>{{ticket.createdAt | date}} </td>
+                    <td>{{ticket.createdAt | dateformat}} </td>
                     <td>{{ticket.departmentName || '-'}}</td>
                     <td>{{ticket.subdepartmentName || '-'}}</td>
-                    <td>{{ticket.assigneeName || '-'}}</td>
+                    <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
                     <td>{{ticket.ticketStatus || '-'}}</td>
-                    <td>{{ticket.updatedAt | date}}</td>
-
+                    <td>{{ticket.updatedAt | dateformat}}</td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                <li (click)="openModal(rejecttickets,ticket)">
+                                    <a class="dropdown-item">
+                                        <i class="bi bi-pencil me-2"></i>Update
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
                 </tr>
             
             <tr *ngIf="filteredTickets.length === 0">
@@ -58,3 +72,236 @@
     </div>
 
 </div>
+<ng-template #rejecttickets let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-4">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Rejected Ticket</p>
+            </div>
+            <div>
+                <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form autocomplete="off" [formGroup]="itSupportForm" (ngSubmit)="onUpdate()">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Ticket Raised For' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="ticketRaisedFor" name="employee"
+                                optionLabel="label" optionValue="label" placeholder="Please select"
+                                formControlName="employee" class="custom-select w-100">
+                            </p-select>
+                        </div>
+                        <div *ngIf="itSupportForm.get('employee')?.invalid && itSupportForm.get('employee')?.touched">
+                            <div class="error-msg">{{'Ticket Raised For is required' | translate}}</div>
+                        </div>
+                    
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Name' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <input type="text" class="form-control custom-input" formControlName="name"
+                            placeholder="Please enter employeename" onkeydown="return false;" />
+                        </div>
+                        <div *ngIf="itSupportForm.get('name')?.invalid && itSupportForm.get('name')?.touched">
+                            <div class="error-msg">{{'Employee is required' | translate}}</div>
+                        </div>
+                    
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Email' | translate}}<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <input type="text" class="form-control custom-input" formControlName="email"
+                            placeholder="Please enter email" onkeydown="return false;" />
+                          
+                        </div>
+                        <div *ngIf="itSupportForm.get('email')?.invalid && itSupportForm.get('email')?.touched">
+                            <div class="error-msg">{{'Email is required' | translate}}</div>
+                        </div>
+                    
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Phone Number' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <input type="number" class="form-control custom-input" formControlName="phoneNumber"
+                        placeholder="Please enter phonenumber" onkeydown="return false;" />
+                      
+                    </div>
+                    <div *ngIf="itSupportForm.get('phoneNumber')?.invalid && itSupportForm.get('phoneNumber')?.touched">
+                        <div class="error-msg">{{'Phone Number is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Desk Details' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                        <input type="text" class="form-control custom-input" formControlName="deskdetails"
+                        placeholder="Please enter Deskdetails" onkeydown="return false;" />
+                      
+                    </div>
+                    <div *ngIf="itSupportForm.get('deskdetails')?.invalid && itSupportForm.get('deskdetails')?.touched">
+                        <div class="error-msg">{{'Desk Details is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Department Impacted' | translate}}<span
+                            class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" formControlName="department"
+                        placeholder="Please enter department" onkeydown="return false;" />
+                        
+                    <div *ngIf="itSupportForm.get('department')?.invalid && itSupportForm.get('department')?.touched">
+                        <div class="error-msg">{{'Department is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Team Impacted' | translate}}<span
+                            class="text-danger">*</span></label>
+                        <input type="text" class="form-control custom-input" formControlName="team"
+                        placeholder="Please enter department" onkeydown="return false;" />
+                    <div *ngIf="itSupportForm.get('team')?.invalid && itSupportForm.get('team')?.touched">
+                        <div class="error-msg">{{'Team is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Type' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+
+                        <input type="text" class="form-control custom-input" formControlName="type"
+                        placeholder="Please enter department" onkeydown="return false;" />
+                      
+                    </div>
+                    <div *ngIf="itSupportForm.get('type')?.invalid && itSupportForm.get('type')?.touched">
+                        <div class="error-msg">{{'Type is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Priority' | translate}}<span
+                            class="text-danger">*</span></label>
+
+                        <input type="text" class="form-control custom-input" formControlName="priority"
+                        placeholder="Please enter department" onkeydown="return false;" />
+                        
+                    <div *ngIf="itSupportForm.get('priority')?.invalid && itSupportForm.get('priority')?.touched">
+                        <div class="error-msg">{{'Priority is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span
+                            class="text-danger">*</span></label>
+                    <div class="custom-p-select-content">
+                            <input type="text" class="form-control custom-input" formControlName="subject"
+                            placeholder="Please enter subject" />
+                    </div>
+                    <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
+                        <div class="error-msg">{{'Subject is required' | translate}}</div>
+                    </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Action'| translate}}<span class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="status"
+                            optionLabel="label" optionValue="" placeholder="Please select status"
+                            formControlName="ticketStatus" class="custom-select w-100">
+                        </p-select>
+                        </div>
+                        
+                        <div *ngIf="itSupportForm.get('ticketStatus')?.invalid && itSupportForm.get('ticketStatus')?.touched">
+                            <div class="error-msg">{{'Status is required' | translate}}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Ticket Assigned To'| translate}}</label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="allEmployees" [filter]="true" filterBy="firstName"
+                            optionLabel="fullName" (onChange)="assigneeDetails($event.value)" placeholder="Please select employee"
+                            formControlName="assignedto" class="custom-select w-100" [dataKey]="'fusionEmpId'">
+                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName
+                                }}</ng-template>
+                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName
+                                }}</ng-template>
+                        </p-select>
+                        </div>
+                        
+                        <!-- <div *ngIf="itSupportForm.get('assignedto')?.invalid && itSupportForm.get('assignedto')?.touched">
+                            <div class="error-msg">{{'Assigned To is required' | translate}}</div>
+                        </div> -->
+                    </div>
+                    
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Description'| translate}}<span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" formControlName="description" placeholder="Please enter description"></textarea>
+                        <div *ngIf="itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
+                            <div class="error-msg">{{'Description is required' | translate}}</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Comments'| translate}}</label>
+                        <textarea class="form-control custom-input" formControlName="comments" placeholder="Please enter comments"></textarea>
+                        <!-- <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
+                            <div class="error-msg">{{'Comments is required' | translate}}</div>
+                        </div> -->
+                    </div>
+                    
+                </div>
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmationModal(confirmationpopup)">{{'Close'}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="itSupportForm.invalid || isLoading">
+                        <span *ngIf="!isLoading">
+                            {{'Update' | translate}}
+                        </span>
+                        <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status">
+                        </div>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text"> Are you sure you want to close?</p>
+      </div>
+  
+      <div class="custom-modal-footer">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </ng-template>

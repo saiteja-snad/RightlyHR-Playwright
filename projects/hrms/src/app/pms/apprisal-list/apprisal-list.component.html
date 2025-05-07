@@ -486,12 +486,6 @@
                         class="error-msg">
                         Date must be after joining date and effective date.
                     </div>
-                
-                    <!-- Optional: Handle missing cycle -->
-                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('reviewCycleNotFound')"
-                        class="error-msg">
-                        Review cycle not found.
-                    </div>
                 </div>
 
                 <div class="mb-3">

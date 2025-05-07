@@ -63,7 +63,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   employeeStatuses: string[] = [];
   allSubDepartments: any[] = [];
   allSubLocations: any[] = [];
-  
+
   page = 1;
   pageSize = 10;
   rows = 10;
@@ -955,7 +955,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.modal.openSuccessModal('Promotion Letter Generated Successfully');
         },
-        error: (err) => {
+        error: (err) => { 
+          this.modalService.dismissAll();
           if (err.status === 500) {
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }

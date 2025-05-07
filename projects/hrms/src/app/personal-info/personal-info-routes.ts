@@ -43,7 +43,14 @@ export default [
         ]   
     },
     {
-        path:'team-members', component: TeamNumbersComponent
+        path: 'team',
+        children: [
+            { path: '', redirectTo: 'team-members', pathMatch: 'full' },
+            { path: 'team-members', loadComponent: () => import('./team-numbers/team-numbers.component').then((m) => m.TeamNumbersComponent) },
+            {
+                path: 'team-manger-members', loadComponent: () => import('./team-numbers/team-manger-members/team-manger-members.component').then((m) => m.TeamMangerMembersComponent),
+            }
+        ]
     },
     {
         path:'documents', component: DocumentsComponent

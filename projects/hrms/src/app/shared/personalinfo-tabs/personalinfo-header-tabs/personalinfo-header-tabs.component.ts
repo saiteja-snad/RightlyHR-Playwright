@@ -14,7 +14,7 @@ export class PersonalinfoHeaderTabsComponent {
     { label: 'Personal', link: '/personalinfo/personal'},
     { label: 'Job', link: '/personalinfo/job'},
     { label: 'Documents', link: '/personalinfo/documents'},
-    { label: 'Team Members', link: '/personalinfo/team-members',permission: { feature: 'Team Members', action: 'view' } },
+    { label: 'Team Members', link: '/personalinfo/team',permission: { feature: 'Team Members', action: 'view' } },
    
   ];
 }

@@ -14,29 +14,30 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-team-numbers',
   imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
   templateUrl: './team-numbers.component.html',
-  styleUrl: './team-numbers.component.scss'
+  styleUrl: './team-numbers.component.scss',
 })
 export class TeamNumbersComponent implements OnInit, OnDestroy {
   rmForm!: FormGroup;
   managers: any[] = [];
   subscription!: Subscription;
   TeamMemberArray: Iteammembers[] = [];
-  totalRecords = 100
+  totalRecords = 100;
   first: any = 0;
   rows: any = 10;
-  pouptext1: any
+  pouptext1: any;
   selectedEmployees: Iteammembers[] = [];
   selectedEmployeeIds: string[] = [];
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 25, value: 25 },
   ];
   empinfo = {} as Ipersonal;
   searchValue: any;
@@ -54,7 +55,11 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   constructor(
     private http: HttpService,
     private router: Router,
-    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private conformationPopup: OpenModalService,
+    public rbac: RbacService
+  ) {}
 
   onRowsChange() {
     this.first = 0;
@@ -70,7 +75,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   formsubmit() {
     this.rmForm = this.fb.group({
-      mReportingto: [null, Validators.required]
+      mReportingto: [null, Validators.required],
     });
   }
 
@@ -84,10 +89,10 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   }
 
   onclick(details: any) {
-    console.log("Original Details:", details); // Check if details contain data
+    console.log('Original Details:', details); // Check if details contain data
 
     if (!details || Object.keys(details).length === 0) {
-      console.error("Error: No details received.");
+      console.error('Error: No details received.');
       return;
     }
 
@@ -101,21 +106,23 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   onSelectManager(event: any) {
     this.selectedManager = event.value; // Capture selected object
     if (!this.selectedManager) {
-      console.error("Error: No manager selected.");
-      alert("Please select a reporting manager.");
+      console.error('Error: No manager selected.');
+      alert('Please select a reporting manager.');
       return;
     }
 
-    this.selectedData.employeeId = this.selectedManager.employeeId ?? "";
-    this.selectedData.id = this.selectedManager.jobId ?? ""; // Ensure jobId is correctly assigned
+    this.selectedData.employeeId = this.selectedManager.employeeId ?? '';
+    this.selectedData.id = this.selectedManager.jobId ?? ''; // Ensure jobId is correctly assigned
   }
 
   searchEmployeeSinglerecord(employee: any, searchTerms: string[]): boolean {
-    return searchTerms.every((term) =>
-      employee.fusionEmpId.toLowerCase().includes(term) ||
-      employee.firstName.toLowerCase().includes(term) ||
-      (employee.middleName && employee.middleName.toLowerCase().includes(term)) ||
-      employee.lastName.toLowerCase().includes(term)
+    return searchTerms.every(
+      (term) =>
+        employee.fusionEmpId.toLowerCase().includes(term) ||
+        employee.firstName.toLowerCase().includes(term) ||
+        (employee.middleName &&
+          employee.middleName.toLowerCase().includes(term)) ||
+        employee.lastName.toLowerCase().includes(term)
     );
   }
 
@@ -141,13 +148,21 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
       this.disablebuttonforemployeeid = true;
       this.isDropdownOpen = false; // Close the dropdown after selection
       // Update searchText with selected employee's details
-      let employeeName = this.selectedReportingManager.firstName ? this.selectedReportingManager.firstName : '';
-      employeeName += this.selectedReportingManager.middleName ? ' ' + this.selectedReportingManager.middleName : '';
-      employeeName += this.selectedReportingManager.lastName ? ' ' + this.selectedReportingManager.lastName : '';
-      this.searchText = `${this.selectedReportingManager.fusionEmpId}-${employeeName.trim()}`;
+      let employeeName = this.selectedReportingManager.firstName
+        ? this.selectedReportingManager.firstName
+        : '';
+      employeeName += this.selectedReportingManager.middleName
+        ? ' ' + this.selectedReportingManager.middleName
+        : '';
+      employeeName += this.selectedReportingManager.lastName
+        ? ' ' + this.selectedReportingManager.lastName
+        : '';
+      this.searchText = `${
+        this.selectedReportingManager.fusionEmpId
+      }-${employeeName.trim()}`;
       // Store employeeId in selectedData
       this.selectedData.employeeId = this.selectedReportingManager.employeeId;
-      console.log(this.selectedReportingManager.employeeId)
+      console.log(this.selectedReportingManager.employeeId);
     } else {
       this.disablebuttonforemployeeid = false;
     }
@@ -155,10 +170,12 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   filterEmployees(): any[] {
     return this.employees
-      .filter(emp => emp && emp.fusionEmpId)
-      .map(emp => ({
+      .filter((emp) => emp && emp.fusionEmpId)
+      .map((emp) => ({
         ...emp,
-        name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+        name: `${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${
+          emp.lastName
+        }`,
       }));
   }
 
@@ -215,7 +232,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   updateTeamRM() {
     let ManagerId = this.selectedEmployeeIds[0];
-    let requestBody = this.selectedEmployees.map(employee => {
+    let requestBody = this.selectedEmployees.map((employee) => {
       return {
         jobRole: employee.jobRole,
         firstName: employee.firstName,
@@ -225,7 +242,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         fusionEmpId: employee.fusionEmpId,
         employeeId: employee.employeeId,
         contactnumber: employee.contactnumber,
-        id: employee.id
+        id: employee.id,
       };
     });
   }
@@ -237,10 +254,9 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.subscription) {
-      this.subscription.unsubscribe()
+      this.subscription.unsubscribe();
     }
   }
-
 }
 
 

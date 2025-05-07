@@ -54,13 +54,12 @@
          <div class="custom-table-content">
             <table class="w-100">
                <thead>
-                  <th>FILE NAME</th>
-                  <th>CREATED DATE</th>
-                  <th>SIZE</th>
+                  <th>File  name</th>
+                  <th>Created Date</th>
+                  <th>Size</th>
                   @if(rbac.allowedToAccess('My Info Documents.update')) {
-                  <th class="text-center">ACTION</th>
+                  <th class="text-center">Action</th>
                   }
-
                </thead>
                <tbody>
                   <ng-container *ngIf="getVisibleFiles().length > 0; else noDataTemplate">

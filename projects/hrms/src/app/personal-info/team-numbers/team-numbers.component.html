@@ -14,7 +14,9 @@
                     <th>Work Email</th>
                     <th>Phone Number</th>
                     <th>Designation</th>
+                    @if(rbac.allowedToAccess('Employee Info Team Members.update')) {
                     <th class="text-center">Action</th>
+                    }
                 </tr>
             </thead>
             <tbody
@@ -26,6 +28,7 @@
                         <td>{{details.workEmail}}</td>
                         <td>{{details.contactnumber}}</td>
                         <td>{{details.jobRole}}</td>
+                        @if(rbac.allowedToAccess('Employee Info Team Members.update')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
@@ -38,6 +41,7 @@
                                 </ul>
                             </div>
                         </td>
+                     }
                     </tr>
                 </ng-container>
             </tbody>

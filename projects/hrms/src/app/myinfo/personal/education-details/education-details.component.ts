@@ -18,7 +18,6 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
- 
 export class EducationDetailsComponent implements OnInit, OnDestroy {
   educationForm!: FormGroup;
   educationupdateForm!: FormGroup;
@@ -65,7 +64,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       degreeEndDate: ['', [Validators.required]],
       attachment: [null, Validators.required],
     });
- 
   }
  
   initializeupdateForm(): void {
@@ -242,7 +240,6 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
         this.dateofbirth = this.formatDateToLocal(data.dob)
         localStorage.setItem('educationinfodata', JSON.stringify(data));
         this.educationData.next(data);
- 
       },
     });
   }

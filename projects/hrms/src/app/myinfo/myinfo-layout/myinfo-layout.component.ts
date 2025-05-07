@@ -15,6 +15,7 @@ import { MyinfoDetailsComponent } from "../../shared/myinfo-details/myinfo-detai
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { MultiSelectModule } from 'primeng/multiselect';
+
 @Component({
   selector: 'app-myinfo-layout',
   imports: [CommonModule, RouterOutlet, Select, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule, MyinfoDetailsComponent, TranslateModule, MultiSelectModule],

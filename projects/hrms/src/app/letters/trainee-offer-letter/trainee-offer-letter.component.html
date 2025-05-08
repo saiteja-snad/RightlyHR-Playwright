@@ -474,7 +474,7 @@
                                 </div>
                                 <div class="pt-3">
                                     <p class="letter-signature">{{traineeEmpData.authorityName}}</p>
-                                    <p class="letter-sub-header"> Authorized Signatory, </p>
+                                    <p class="letter-sub-header" *ngIf="!traineeEmpData.authorityName?.trim()"> Authorized Signatory, </p>
                                     <p class="letter-sub-header" *ngIf="traineeEmpData.authorityName?.trim()">
                                         {{traineeEmpData.authorityName}}</p>
                                     <p class="letter-sub-header">{{authorityDesignation}} </p>

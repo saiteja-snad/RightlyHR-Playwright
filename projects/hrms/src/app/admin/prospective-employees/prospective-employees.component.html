@@ -67,7 +67,7 @@
                 </tr>
                 }
                 }
-                @else{
+                @if ((((Prospective | async) ?? []) | prospective : searchValue).length === 0){
                 <tr>
                   <td>
                     <app-no-data-found />

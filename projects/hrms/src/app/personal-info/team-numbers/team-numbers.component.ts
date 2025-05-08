@@ -194,6 +194,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
         this.getAllTeammembersList();
+        this.getAllTeammembersLists();
         console.log(data);
       },
       error: (reason: any) => {
@@ -203,6 +204,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
           this.getAllTeammembersList();
+          this.getAllTeammembersLists();
           this.spinnerLoader = false;
           this.rmForm.reset();
         }
@@ -311,18 +313,21 @@ onSelectManagers(event: any, field: string) {
       next: (data: any) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+        this.getAllTeammembersList();
         this.getAllTeammembersLists();
       },
       error: (reason: any) => {
         if (reason) {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-          this.getAllTeammembersLists();
           this.spinnerLoader = false;
           this.teamForm.reset();
+          this.getAllTeammembersList();
+          this.getAllTeammembersLists();
         }
       }
     });
+
   }
   ngOnDestroy(): void {
     if (this.subscription) {

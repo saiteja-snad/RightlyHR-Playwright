@@ -47,4 +47,17 @@ export interface IReviewCycleEmployee {
     fusionEmpId: string;
     workEmail: string;
   }
+
+  export interface EmployeeQueryParams {
+    reviewcycleid: any;
+    page: number;
+    pageSize: number;
+    promotion?: any;
+    searchQuery?: string;
+    location?: any;
+    sublocation?: any;
+    department?: any;
+    subdepartment?: any;
+  }
+  
   

@@ -110,6 +110,21 @@
             </div>
           </div>
     
+          <!-- Final Rating Section -->
+          <div class="d-flex align-items-center mb-4">
+            <label for="final Rating" class="component-sub-header text-nowrap me-4">Final Rating:
+              <span class="text-danger">*</span></label>
+            <div class="d-flex gap-3">
+              <label><input type="radio" formControlName="finalRating" [value]=0> Round Off</label>
+              <label><input type="radio" formControlName="finalRating" [value]=1> Upto 1 decimal</label>
+              <label><input type="radio" formControlName="finalRating" [value]=2> Upto 2 decimal</label>
+            </div>
+            <div class="error-msg"
+              *ngIf="ratingform.controls['finalRating'].invalid && ratingform.controls['finalRating'].touched">
+              Please select an option.
+            </div>
+          </div>
+    
           <!-- Rating Type Section -->
           <div class="d-flex mb-4">
             <label for="ratingType" class="component-sub-header text-nowrap me-4 pt-3">Rating Type
@@ -218,6 +233,21 @@
                 *ngIf="updateFormRating.get('maximumRatingScale')?.errors?.['required'] && updateFormRating.get('maximumRatingScale')?.touched">
                 Rating Scale is required.
               </div>
+            </div>
+          </div>
+
+          <!-- Final Rating Section -->
+          <div class="d-flex align-items-center mb-4">
+            <label for="final Rating" class="component-sub-header text-nowrap me-4">Final Rating:<span
+                class="text-danger">*</span></label>
+            <div class="d-flex gap-3">
+              <label><input type="radio" formControlName="finalRating" [value]=0> Round Off</label>
+              <label><input type="radio" formControlName="finalRating" [value]=1> Upto 1 decimal</label>
+              <label><input type="radio" formControlName="finalRating" [value]=2> Upto 2 decimal</label>
+            </div>
+            <div class="error-msg"
+              *ngIf="updateFormRating.controls['finalRating'].invalid && updateFormRating.controls['finalRating'].touched">
+              Please select an option.
             </div>
           </div>
 

@@ -7,6 +7,7 @@
   </div>
 
   <div class="custom-table-content">
+    @if (!isDataLoader) {
     <table class="w-100">
       <thead>
         <tr>
@@ -25,77 +26,82 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngIf="((recall_For_You_Details | async) ?? [] | pendingapprovalsseparation: searchValue) as filteredData">
-        <tr *ngFor="let item of filteredData">
-          @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
-          ||item.approvalHeader?.status?.toLowerCase() =='approved'){
-          <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
-          <td>{{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
-          <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
-          <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
-          <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
-          <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}</td>
-          <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}</td>
-          <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}</td>
-          <td>
-            @if(item.entity?.spRecallReason){
-            <div>
-              <a type="button" [ngbPopover]="reason">
-                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-              </a>
-              <ng-template #reason>
-                <p class="mb-0">{{item.entity?.spRecallReason}}</p>
-              </ng-template>
-            </div>
+        <ng-container
+          *ngIf="((recall_For_You_Details | async) ?? [] | pendingapprovalsseparation: searchValue) as filteredData">
+          <tr *ngFor="let item of filteredData">
+            @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
+            ||item.approvalHeader?.status?.toLowerCase() =='approved'){
+            <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
+            <td>{{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
+            <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
+            <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
+            <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
+            <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|date):'-'}}</td>
+            <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|date):'-'}}</td>
+            <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|date):'-'}}</td>
+            <td>
+              @if(item.entity?.spRecallReason){
+              <div>
+                <a type="button" [ngbPopover]="reason">
+                  <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                </a>
+                <ng-template #reason>
+                  <p class="mb-0">{{item.entity?.spRecallReason}}</p>
+                </ng-template>
+              </div>
+              }
+              @else {-}
+            </td>
+            <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
+            <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
+              <div>
+                <a type="button"
+                  (click)="approverCommentsfunction(item.entity?.spApproverComments);openModal(approverComments)">
+                  <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                </a>
+              </div>
+              }
+              @else{-}
+            </td>
+            <td class="text-center">
+              <div class="dropdown">
+                <a type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  @if(item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage){
+                  <li (click)="openModal(approval);handleRequest(item)" *ngIf="rbac.allowedToAccess('Recall Tab.update')">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a>
+                  </li>
+                  }
+                  @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage) ||
+                  (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
+                  <li (click)="openModal(rejectmodal);handleRequest(item)"
+                    *ngIf="rbac.allowedToAccess('Recall Tab.delete')">
+                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a>
+                  </li>
+                  }
+                  @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
+                  <li (click)="openModal(processmodal);handleRequest(item)"
+                    *ngIf="rbac.allowedToAccess('Recall Tab.update')">
+                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
+                  </li>
+                  }
+                </ul>
+              </div>
+            </td>
             }
-            @else {-}
-          </td>
-          <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
-          <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
-            <div>
-              <a type="button"
-                (click)="approverCommentsfunction(item.entity?.spApproverComments);openModal(approverComments)">
-                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-              </a>
-            </div>
-            }
-            @else{-}
-          </td>
-          <td class="text-center">
-            <div class="dropdown">
-              <a type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-three-dots-vertical"></i>
-              </a>
-              <ul class="dropdown-menu custom-dropdown-menu">
-                @if(item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage){
-                <li (click)="openModal(approval);handleRequest(item)" *ngIf="rbac.allowedToAccess('Recall Tab.update')">
-                  <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Approve</a>
-                </li>
-                }
-                @if((item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage) ||
-                (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
-                <li (click)="openModal(rejectmodal);handleRequest(item)"
-                  *ngIf="rbac.allowedToAccess('Recall Tab.delete')">
-                  <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>Reject</a>
-                </li>
-                }
-                @if(item?.approvalHeader?.currentapprovalStage == item?.approvalHeader?.finalapprovalStage){
-                <li (click)="openModal(processmodal);handleRequest(item)"
-                  *ngIf="rbac.allowedToAccess('Recall Tab.update')">
-                  <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>Process</a>
-                </li>
-                }
-              </ul>
-            </div>
-          </td>
-          }
-        </tr>
-        <tr *ngIf="filteredData.length === 0">
-          <td colspan="9"><app-no-data-found></app-no-data-found></td>
-      </tr>
-      </ng-container>
+          </tr>
+          <tr *ngIf="filteredData.length === 0">
+            <td colspan="9"><app-no-data-found></app-no-data-found></td>
+          </tr>
+        </ng-container>
       </tbody>
     </table>
+    }
+    @else {
+    <app-data-loader-content></app-data-loader-content>
+    }
   </div>
 </div>
 
@@ -132,7 +138,7 @@
                 <span *ngIf="comment?.approverRole;else approverrole">{{comment.approverRole}}</span>
                 <ng-template #approverrole>NA</ng-template>
               </td>
-              <td><span *ngIf="comment.addedDate;else addeddate">{{comment.addedDate | dateformat}}</span>
+              <td><span *ngIf="comment.addedDate;else addeddate">{{comment.addedDate | date}}</span>
                 <ng-template #addeddate>NA</ng-template>
               </td>
               <td><span *ngIf="comment.addedName;else addedname">{{comment.addedName}}
@@ -142,7 +148,7 @@
               <td>
                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
                   <a type="button" [ngbPopover]="reason">
-                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                    <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
                   </a>
                   <ng-template #reason>
                     <p class="mb-0">{{comment?.comments}} </p>
@@ -152,17 +158,17 @@
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.splastworkingDate;else lastworkingdate">
-                  {{comment.metadata.splastworkingDate |dateformat}}</span>
+                  {{comment.metadata.splastworkingDate |date}}</span>
                 <ng-template #lastworkingdate>NA</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.spearlyReliveingDate;else earlydate">
-                  {{comment.metadata.spearlyReliveingDate |dateformat}}</span>
+                  {{comment.metadata.spearlyReliveingDate |date}}</span>
                 <ng-template #earlydate>NA</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.spExtendedDate;else extenddate">
-                  {{comment.metadata.spExtendedDate |dateformat}}</span>
+                  {{comment.metadata.spExtendedDate |date}}</span>
                 <ng-template #extenddate>NA</ng-template>
               </td>
               <td>

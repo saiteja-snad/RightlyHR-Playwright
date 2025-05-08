@@ -19,7 +19,7 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
-                    <th class="text-center">Action(s)</th>
+                    <th class="text-center">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -90,7 +90,7 @@
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
+                                    <i class="bi bi-three-dots-vertical" *ngIf="first && showSaperationDots "></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                               

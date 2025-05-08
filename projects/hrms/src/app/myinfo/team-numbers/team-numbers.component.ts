@@ -298,16 +298,16 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-          this.getAllTeammembersLists();
+          this.getAllTeammembersList();
         },
         error: (reason: any) => {
           console.log(reason);
           if (reason) {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-            this.getAllTeammembersLists();
             this.spinnerLoader = false;
             this.teamForm.reset();  // Reset the form
+            this.getAllTeammembersList();
           }
         },
       });

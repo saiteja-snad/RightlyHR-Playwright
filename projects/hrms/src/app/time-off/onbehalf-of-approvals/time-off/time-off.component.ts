@@ -216,6 +216,7 @@ export class TimeOffComponent {
       complete: () => {
         this.http.triggerActionSignal();
         this.spinnerLoader = false;
+        this.getAllPendingApprovals();
        },
     })
   }
@@ -243,6 +244,7 @@ export class TimeOffComponent {
       complete: () => { 
         this.http.triggerActionSignal();
         this.spinnerLoader = false;
+        this.getAllPendingApprovals();
       },
     })
   }
@@ -260,7 +262,6 @@ export class TimeOffComponent {
         setTimeout(() => {
           this.modalService.dismissAll();
           this.getAllPendingApprovals();
-
         }, 2000);
       },
       error: (reason: any) => {
@@ -268,6 +269,7 @@ export class TimeOffComponent {
       },
       complete: () => { 
         this.http.triggerActionSignal();
+        this.getAllPendingApprovals();
       },
     })
   }

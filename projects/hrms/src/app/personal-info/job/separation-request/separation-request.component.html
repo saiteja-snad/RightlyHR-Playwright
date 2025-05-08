@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="component-sub-header">Separation Details</div>
-    @if(isLastWorkingDate(this.empdata.lastworkingday) && nodueclearancedetails.length <= 0 && getSeparationDetails.value.length> 0){
+    @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length >= 0)){
       <div class="custom-add-btn" (click)="openModal(raiseNodue)">
         <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
       </div>
@@ -246,10 +246,10 @@
           </div>
         </div>
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopup)">{{'No'|translate}}</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopup)">{{'Close'|translate}}</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid||isLoading">
             @if(!isLoading){
-            {{'Yes'|translate}}
+            {{'Submit'|translate}}
             }
             @else {
             <div class="button-loader-content">
@@ -302,7 +302,7 @@
           </div>
         </div>
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopup)">{{'Close'|
+          <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopup)">{{'Close'|
             translate}}</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid||isLoading">
             @if(!isLoading){

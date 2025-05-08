@@ -148,7 +148,6 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
             this.http.setBasicDetails();
             this.conformationPopup.openSuccessModal('Contact Details updated successfully');
           this.contactForm.disable();
-        
           this.buttons = false; // Disable the button after successful update
           this.getEmployeeId();
         
@@ -157,12 +156,10 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal(data.message);
             this.patchForm(data); // Bind the data in case of conflict
           }
-          
-          
         },
         error: (reason: any) => {
           console.log(reason);
-          this.conformationPopup.openErrorModal('Contact Details update failed');
+          this.conformationPopup.openErrorModal(reason.error.message || 'Contact Details update failed');
         },
       });
   }

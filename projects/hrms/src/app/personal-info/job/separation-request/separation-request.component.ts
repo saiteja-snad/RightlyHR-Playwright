@@ -276,13 +276,13 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to select data of perticular record to  recall the request
   recallRequest(data: any, content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop : 'static' });
     this.selectRecallrequest = JSON.parse(JSON.stringify(data));
   }
 
   //function to select the data of early relieving request
   earlyReleivingdata(data: any, content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop : 'static' });
     this.postEarlyRelievingRequest = data;
     console.log(this.postEarlyRelievingRequest.appliedDate);
   }

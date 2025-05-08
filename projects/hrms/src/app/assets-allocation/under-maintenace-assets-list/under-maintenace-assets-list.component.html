@@ -64,13 +64,13 @@
 
                                         <li>
                                             <a class="dropdown-item"
-                                            (click)="openModal(avilableasstes); storeassetid = asset.id; selectedAsset = asset">
-                                            Mark as Available
-                                          </a>
+                                                (click)="openModal(avilableasstes); storeassetid = asset.id; selectedAsset = asset">
+                                                Mark as Available
+                                            </a>
                                         </li>
                                         <li>
 
-                                            <a class="dropdown-item"  (click)="navigateToAsset(asset.id)">
+                                            <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
                                                 View Asset Details
                                             </a>
                                         </li>
@@ -98,9 +98,9 @@
         </div>
         <div class="pagination-content pt-2 w-100">
             <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                
+
                 <div class="d-flex align-items-center gap-3 p-2" *ngIf="totalRecords > 0">
-                    
+
                     <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
                         (ngModelChange)="onRowsChange()">
                         <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
@@ -121,8 +121,8 @@
 <ng-template #addassetes let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
 
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
                 <p class="popup-heading mb-0">Update an Asset</p>
             </div>
             <div>
@@ -131,7 +131,7 @@
             </div>
         </div>
 
-        <div class="custom-main-popup-content p-3">
+        <div class="custom-main-popup-content">
 
             <form autocomplete="off" [formGroup]="assetForm" (ngSubmit)="updateanasset(assetForm,storeassetid)">
 
@@ -379,7 +379,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3">
+                <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
                                    ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
@@ -397,14 +397,15 @@
 
 <ng-template #avilableasstes let-model>
     <div class="result-popup-content" ngbAutofocus>
-      <div>
-        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-        <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
-      </div>
-      <div class="d-flex justify-content-center gap-3 mt-4">
-        <button type="button" class="custom-btn btn-secondary" (click)="conformationpoppup();model.dismiss()">No</button>
-        <button type="submit" class="custom-btn btn-primary"
-          (click)="avaliableassets(storeassetid);model.dismiss()">Yes</button>
-      </div>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="conformationpoppup();model.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="avaliableassets(storeassetid);model.dismiss()">Yes</button>
+        </div>
     </div>
-  </ng-template>
+</ng-template>

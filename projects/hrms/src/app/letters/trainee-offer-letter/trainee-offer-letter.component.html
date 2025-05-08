@@ -386,8 +386,7 @@
                                     <li *ngIf="!traineeEmpData.firstName && !traineeEmpData.middleName && !traineeEmpData.lastName;else fullname">
                                         {{'Name'|translate}}:</li>
                                     <ng-template #fullname>
-                                        <li>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}},
-                                        </li>
+                                        <li><b>{{traineeEmpData.firstName}} {{traineeEmpData.middleName}} {{traineeEmpData.lastName}},</b></li>
                                     </ng-template>
                                     <li *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
                                     <ng-template #address>

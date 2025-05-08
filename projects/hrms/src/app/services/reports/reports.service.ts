@@ -225,7 +225,7 @@ export class ReportsService {
     if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
     if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
     if (request.Department) params = params.set('Department', request.Department);
-    if (request.TeamManagerName) params = params.set('TeamManagerName', request.TeamManagerName);
+    if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     if (request.Shift) params = params.set('Shift', request.Shift);
     if (request.Location) params = params.set('Location', request.Location);
     if (request.Year) params = params.set('Year', request.Year);
@@ -233,8 +233,6 @@ export class ReportsService {
   
     return this.http.get('Reports/YearSummaryReports', { params });
   }
-
-
 
   postToReportLog(reportName: string, reportType: string, employeeId: number) {
     const payLoad = {

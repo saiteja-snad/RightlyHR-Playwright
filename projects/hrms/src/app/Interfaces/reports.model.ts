@@ -24,6 +24,7 @@ export interface IWfhReportRequest {
   StartDate?: string;
   EndDate?: string;
   Worked_Month?: number;
+  TeamManagerSnadId?: string;
 }
 
 export interface IAbsentReportRequest {
@@ -39,6 +40,7 @@ export interface IAbsentReportRequest {
   EndDate?: string;
   Worked_Month?: number;
   Team_Manager?:string
+  TeamManagerSnadId?: string;
 }
 
 export interface IInactiveReportRequest {
@@ -50,6 +52,7 @@ export interface IInactiveReportRequest {
   location?: string;
   Month?: number;
   Year?: number;
+  TeamManagerSnadId?: string;
 }
 
 export interface IYearlyReportRequest {
@@ -200,6 +203,7 @@ export interface IAttendanceDetails{
   EndDate?: string;
   Worked_Month?: number;
   teamManagerId?:number;
+  TeamManagerSnadId?: string;
 }
 //leave summmery
 export interface ILeavesummery{
@@ -214,6 +218,7 @@ export interface ILeavesummery{
   Location?: string;
   Shift?: string;
   Year?: number;
+  TeamManagerSnadId?: string;
 }
 //comp-off
 export interface ICompoffDetails{
@@ -234,4 +239,5 @@ export interface ICompoffDetails{
   StartDate?: string;
   EndDate?: string;
   Worked_Month?: number;
+  TeamManagerSnadId?: string;
 }

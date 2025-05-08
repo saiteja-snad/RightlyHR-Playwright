@@ -19,6 +19,7 @@ import { environment } from '../../../../environments/environment';
 import { RbacService } from '../../../services/rbac.service';
 import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 import { SignalsService } from '../../../services/signals.service';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 @Component({
   selector: 'app-separation-for-you-request',
   imports: [
@@ -31,7 +32,8 @@ import { SignalsService } from '../../../services/signals.service';
     DropdownModule,
     NoDataFoundComponent,
     DateformatPipe,
-    PendingapprovalsseparationPipe
+    PendingapprovalsseparationPipe,
+    DataLoaderContentComponent
 ],
   templateUrl: './separation-for-you-request.component.html',
   styleUrl: './separation-for-you-request.component.scss',
@@ -44,6 +46,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
+  isDataLoader = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -123,6 +126,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
 
   //function to get the separation request based on the for you
   getseparationforyourequests() {
+    this.isDataLoader = true
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     let moduleId = environment.SeparationrequestmoduleId
@@ -132,6 +136,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (data: any) => {
+          
           this.separation_For_You_Details.next(
             data.data.filter(
               (item: any) =>
@@ -140,6 +145,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
                 item.approvalHeader.status != 'Withdrawn'
             )
           );
+          this.isDataLoader = false;
         },
         error: (reason) => console.log(reason),
       });

@@ -7,6 +7,7 @@
     </div>
 
     <div class="custom-table-content">
+        @if (!isDataLoader) {
         <table class="w-100">
             <thead>
                 <tr>
@@ -21,13 +22,14 @@
                     <th>{{'Reason' | translate}}</th>
                     <th>{{'Request Type' | translate}}</th>
                     <th>{{'Approver History' | translate}}</th>
-                    <th>{{'Action(s)' | translate}}</th>
+                    <th>{{'Action(s)'}}</th>
                 </tr>
             </thead>
             <tbody>
                 <ng-container
                     *ngIf="((separation_For_You_Details | async) ?? [] | pendingapprovalsseparation: searchValue) as filteredData">
                     <tr *ngFor="let item of filteredData">
+    
                         @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
                         ||item.approvalHeader?.status?.toLowerCase() =='approved'){
                         <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
@@ -101,6 +103,8 @@
                             </div>
                         </td>
                         }
+    
+    
                     </tr>
                     <tr *ngIf="filteredData.length === 0">
                         <td colspan="9"><app-no-data-found></app-no-data-found></td>
@@ -108,6 +112,10 @@
                 </ng-container>
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content></app-data-loader-content>
+        }
     </div>
 </div>
 

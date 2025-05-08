@@ -7,6 +7,7 @@
     </div>
 
     <div class="custom-table-content">
+        @if (!isDataLoader) {
         <table class="w-100">
             <thead>
                 <tr>
@@ -22,107 +23,113 @@
                     <th>{{'Early Relieving Reason' | translate}}</th>
                     <th>{{'Request Type' | translate}}</th>
                     <th>{{'Approver History' | translate}}</th>
-                    <th>{{'Action(s)' | translate}}</th>
+                    <th>{{'Action(s)'}}</th>
                 </tr>
             </thead>
             <tbody>
-                <ng-container *ngIf="((separation_For_You_Details | async) ?? [] | pendingapprovalsseparation: searchValue) as filteredData">
-                <tr *ngFor="let item of filteredData">
-                    @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval' ||
-                    item.approvalHeader?.status?.toLowerCase() =='approved'){
-                    <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
-                    <td>{{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
-                    <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
-                    <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
-                    <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
-                    <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}</td>
-                    <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}</td>
-                    <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}</td>
-                    <td>
-                        @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
-                        <div>
-                            <a type="button" [ngbPopover]="reason">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                            </a>
-                            <ng-template #reason>
-                                <p class="mb-0">{{item.entity?.spRequestDescription}}</p>
-                            </ng-template>
-                        </div>
+                <ng-container
+                    *ngIf="((separation_For_You_Details | async) ?? [] | pendingapprovalsseparation: searchValue) as filteredData">
+                    <tr *ngFor="let item of filteredData">
+                        @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval' ||
+                        item.approvalHeader?.status?.toLowerCase() =='approved'){
+                        <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
+                        <td>{{item.entity?.spRequestFusionEmployeeId?item.entity?.spRequestFusionEmployeeId:'-'}}</td>
+                        <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
+                        <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
+                        <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
+                        <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}</td>
+                        <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}
+                        </td>
+                        <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}</td>
+                        <td>
+                            @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
+                            <div>
+                                <a type="button" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{item.entity?.spRequestDescription}}</p>
+                                </ng-template>
+                            </div>
+                            }
+                            @else {
+                            <div>-</div>
+                            }
+                        </td>
+                        <td>
+                            @if(item.entity?.spEarlyRelievingReason){
+                            <div>
+                                <a type="button" [ngbPopover]="reason">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
+                                </ng-template>
+                            </div>
+                            }
+                            @else {
+                            <div>-</div>
+                            }
+                        </td>
+                        <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
+                        <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
+                            <div>
+                                <a type="button"
+                                    (click)="approverCommentsfunction(item.entity?.spApproverComments);openModalXLarge(approverComments)">
+                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                </a>
+                            </div>
+                            }
+                            @else{
+                            <div>-</div>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(item.approvalHeader?.currentapprovalStage !=
+                                    item.approvalHeader?.finalapprovalStage){
+                                    <li (click)="openModal(approval);handleRequest(item)"
+                                        *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
+                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
+                                            {{'Approve'| translate}}</a>
+                                    </li>
+                                    }
+                                    @if(item?.approvalHeader?.currentapprovalStage ==
+                                    item?.approvalHeader?.finalapprovalStage){
+                                    <li (click)="openModal(processmodal);handleRequest(item)"
+                                        *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
+                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
+                                            {{'Process' | translate}}</a>
+                                    </li>
+                                    }
+                                    @if((item.approvalHeader?.currentapprovalStage !=
+                                    item.approvalHeader?.finalapprovalStage) ||
+                                    (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
+                                    <li (click)="openModal(rejectmodal);handleRequest(item)"
+                                        *ngIf="rbac.allowedToAccess('Separation Requests Tab.delete')">
+                                        <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>
+                                            {{'Reject' | translate}}</a>
+                                    </li>
+                                    }
+                                </ul>
+                            </div>
+                        </td>
                         }
-                        @else {
-                        <div>-</div>
-                        }
-                    </td>
-                    <td>
-                        @if(item.entity?.spEarlyRelievingReason){
-                        <div>
-                            <a type="button" [ngbPopover]="reason">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                            </a>
-                            <ng-template #reason>
-                                <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
-                            </ng-template>
-                        </div>
-                        }
-                        @else {
-                        <div>-</div>
-                        }
-                    </td>
-                    <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
-                    <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
-                        <div>
-                            <a type="button"
-                                (click)="approverCommentsfunction(item.entity?.spApproverComments);openModalXLarge(approverComments)">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                            </a>
-                        </div>
-                        }
-                        @else{
-                        <div>-</div>
-                        }
-                    </td>
-                    <td class="text-center">
-                        <div class="dropdown">
-                            <a type="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </a>
-                            <ul class="dropdown-menu custom-dropdown-menu">
-                                @if(item.approvalHeader?.currentapprovalStage !=
-                                item.approvalHeader?.finalapprovalStage){
-                                <li (click)="openModal(approval);handleRequest(item)"
-                                    *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
-                                    {{'Approve'| translate}}</a>
-                                </li>
-                                }
-                                @if(item?.approvalHeader?.currentapprovalStage ==
-                                item?.approvalHeader?.finalapprovalStage){
-                                <li (click)="openModal(processmodal);handleRequest(item)"
-                                    *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
-                                    {{'Process' | translate}}</a>
-                                </li>
-                                }
-                                @if((item.approvalHeader?.currentapprovalStage !=
-                                item.approvalHeader?.finalapprovalStage) ||
-                                (item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage)){
-                                <li (click)="openModal(rejectmodal);handleRequest(item)"
-                                    *ngIf="rbac.allowedToAccess('Separation Requests Tab.delete')">
-                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>
-                                    {{'Reject' | translate}}</a>
-                                </li>
-                                }
-                            </ul>
-                        </div>
-                    </td>
-                    }
-                </tr>
-                <tr *ngIf="filteredData.length === 0">
-                    <td colspan="9"><app-no-data-found></app-no-data-found></td>
-                </tr>
-            </ng-container>
+                    </tr>
+                    <tr *ngIf="filteredData.length === 0">
+                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                    </tr>
+                </ng-container>
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content></app-data-loader-content>
+        }
     </div>
 </div>
 

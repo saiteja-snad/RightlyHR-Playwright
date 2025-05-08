@@ -212,9 +212,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     }
 
     if (formValue.manager) {
-      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-        .filter(Boolean)
-        .join(' ');
+      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
 
     // Single API call

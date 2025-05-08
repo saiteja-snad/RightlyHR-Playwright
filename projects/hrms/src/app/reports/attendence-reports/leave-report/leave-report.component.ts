@@ -233,9 +233,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   
     // Apply manager name if provided
     if (formValue.manager) {
-      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-        .filter(Boolean)
-        .join(' ');
+      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
   
     // Only include employee filter if not "All Employees"
@@ -260,7 +258,6 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
 
   exportToExcelYearly(): void {
     // Define header mappings

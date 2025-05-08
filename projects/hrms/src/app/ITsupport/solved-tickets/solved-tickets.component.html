@@ -266,10 +266,10 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Comments'| translate}}</label>
-                        <textarea class="form-control custom-input" formControlName="comments" placeholder="Please enter comments"></textarea>
-                        <!-- <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
+                        <textarea class="form-control custom-input" formControlName="comments" pattern="^\S.*" placeholder="Please enter comments"></textarea>
+                        <div *ngIf="itSupportForm.get('comments')?.errors?.['pattern']">
                             <div class="error-msg">{{'Comments is required' | translate}}</div>
-                        </div> -->
+                        </div>
                     </div>
                     
                 </div>

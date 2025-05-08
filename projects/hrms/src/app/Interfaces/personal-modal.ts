@@ -199,7 +199,8 @@ export interface Iidentity {
     identityType: string,
     identityNumber: string,
     attachment: string,
-    isDeleted: boolean
+    isDeleted: boolean,
+    referenceId:any
 }
 export interface Iidentitydrop {
     sno: number,

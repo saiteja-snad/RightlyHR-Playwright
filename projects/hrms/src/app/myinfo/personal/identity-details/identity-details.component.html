@@ -24,13 +24,13 @@
                                 <i class="bi bi-download clip-icon px-2"></i>Download</span>
                             <ng-template #noData>-</ng-template>
                         </td>
-                        <td class="text-center">
-                            <div class="dropdown">
+                        <td class="text-center" >
+                            <div class="dropdown"  *ngIf="!identityDetails.referenceId">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li (click)="openModalupdate(updateidentityModal, identityDetails)">
+                                    <li  (click)="openModalupdate(updateidentityModal, identityDetails)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
                                     </li>
                                     <li (click)="opendeletModal(deleteconformation,identityDetails)">

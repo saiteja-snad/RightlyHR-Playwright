@@ -57,6 +57,7 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
   isLoading = false;
   requestraise: any;
   profileForm!: FormGroup;
+
   isDataLoaded = false;
   constructor(
     private authService: AuthService,

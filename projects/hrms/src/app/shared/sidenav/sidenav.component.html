@@ -26,12 +26,12 @@
             </li>
             }
             @if(this.rbac.allowedToAccess('Expenses.view')){
-            <li class="nav-item" [routerLink]="['/claimsandexpenses']" routerLinkActive="active-nav-link">
+            <li class="nav-item" (click)="goToAccessibleRoute('/claimsandexpenses')" [class.active-nav-link]="isActiveRoute('/claimsandexpenses')">
                 <i class="bi bi-currency-dollar custom-icon"></i>Expenses
             </li>
             }
             @if(this.rbac.allowedToAccess('Reports.view')){
-            <li class="nav-item" [routerLink]="['/reports']" routerLinkActive="active-nav-link">
+            <li class="nav-item" (click)="goToAccessibleRoute('/reports')"  [class.active-nav-link]="isActiveRoute('/reports')">
                 <i class="bi bi-file-earmark-bar-graph-fill custom-icon"></i>Reports
             </li>
             }
@@ -55,12 +55,12 @@
             </li>
             }
             @if(this.rbac.allowedToAccess('Desk Allocation.view')){
-            <li class="nav-item" [routerLink]="['/desk']" routerLinkActive="active-nav-link">
+            <li class="nav-item"  (click)="goToAccessibleRoute('/desk')"  [class.active-nav-link]="isActiveRoute('/desk')">
                 <i class="bi bi-pc-display custom-icon"></i>Desk<br>Allocation
             </li>
             }
             @if(this.rbac.allowedToAccess('Asset Allocation.view')){
-            <li class="nav-item" [routerLink]="['/assets-management']" routerLinkActive="active-nav-link">
+            <li class="nav-item" (click)="goToAccessibleRoute('/assets-management')" [class.active-nav-link]="isActiveRoute('/assets-management')">
                 <i class="bi bi-display custom-icon"></i>Asset<br>Allocation
             </li>
             }

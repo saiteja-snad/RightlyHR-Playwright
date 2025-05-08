@@ -3,7 +3,7 @@ import { AssetsManagmentComponent } from "./assets-managment/assets-managment.co
 
 
 export default [
-    { path: '', redirectTo: '', pathMatch: 'full' },
+    // { path: '', redirectTo: '', pathMatch: 'full' },
 
     {
         path: '', component: AssetsManagmentComponent,
@@ -19,7 +19,7 @@ export default [
     { path: 'view-assets-details', 
 
         children:[
-            { path: '', redirectTo: 'asset-data', pathMatch: 'full' },
+            // { path: '', redirectTo: 'asset-data', pathMatch: 'full' },
             {path:'asset-data',loadComponent: () => import('./view-assets-details/view-assets-details.component').then((m) => m.ViewAssetsDetailsComponent)},
             {path:'asset-history',loadComponent: () => import('./asset-history/asset-history.component').then((m) => m.AssetHistoryComponent)}
         ]

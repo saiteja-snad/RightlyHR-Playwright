@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 @Component({
   selector: 'app-reports-main-tabs',
   imports: [RouterModule,CommonModule,TabsModule],
@@ -21,7 +22,9 @@ export class ReportsMainTabsComponent implements OnInit{
   ];
 
   constructor(
-    private rbac: RbacService
+    private rbac: RbacService,
+    private router: Router,
+    private accessNav: AccessNavigationService
   ){ }
 
   ngOnInit(): void {
@@ -35,6 +38,19 @@ export class ReportsMainTabsComponent implements OnInit{
     console.log(this.navTabs)
   }
 
+
+  navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
+  }
+
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
+  }
   
 
 }

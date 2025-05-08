@@ -94,3 +94,50 @@ export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS = [
     {  route: '/settings/employee-fields/personal/relationship', permission:  'Relationship.view' } ,
     {  route: '/settings/employee-fields/personal/bank-name', permission:  'Bank Names.view' } ,
 ]
+
+
+export const STANDARD_REPORTS_TABS = [
+    {  route: '/reports/standard-reports/employee-data',permission: 'Employee Master Data.view'} ,
+    {  route: '/reports/standard-reports/job-data',permission: 'Job Location Wise Data.view'} ,
+    {  route: '/reports/standard-reports/branch-data',permission: 'Branch Location Wise Data.view'} ,
+    {  route: '/reports/standard-reports/family-data',permission: 'Family Members Data.view'} ,
+]
+
+
+export const ATTENDANCE_REPORTS_TABS = [
+    {  route: '/reports/attendence-reports/leave-report', permission: 'Leave Report.view' } ,
+    {  route: '/reports/attendence-reports/leave-summary-report',permission: 'Leave Summary Report.view' }  ,
+    { route: '/reports/attendence-reports/compoff-report',permission: 'Comp Off Report.view' }  ,
+    {  route: '/reports/attendence-reports/wfh-report',permission: 'WFH Report.view' } ,
+    { route: '/reports/attendence-reports/absent-report',permission: 'Absent Report.view' } ,
+    {  route: '/reports/attendence-reports/inactive-employee-report',permission: 'Inactive Empolyee Report.view' } ,
+    {  route: '/reports/attendence-reports/yearly-summary-report',permission: 'Yearly Summary Report.view' } ,
+    {  route: '/reports/attendence-reports/permission-report',permission: 'Permission Report.view' } ,
+    {  route: '/reports/attendence-reports/regularization-report',permission: 'Regularization Report.view' } 
+];
+
+export const ASSEST_ALLOCATION_TABS = [
+    { route: '/assets-management/all-assets', permission:  'Asset Allocation - All.view'} ,
+    { route: '/assets-management/available-assets',permission:  'Asset Allocation - Available.view'} ,
+    { route: '/assets-management/allocated-assets', permission:  'Asset Allocation - Allocated.view'} ,
+    { route: '/assets-management/under-maintenance-assets',permission:  'Asset Allocation - Under Maintenance.view'} ,
+    { route: '/assets-management/inactive-assets',permission:  'Asset Allocation - Inactive.view'} ,
+];
+
+
+export const DESK_ALLOCATION_TABS = [
+    {  route: '/desk/management/all-desks', permission:  'Desk Allocation - All.view' } ,
+    {  route: '/desk/management/available-desks', permission:  'Desk Allocation - Available.view' } ,
+    {  route: '/desk/management/allocated-desk', permission:  'Desk Allocation - Allocated.view' } ,
+    {  route: '/desk/management/under-maintenance-desk', permission:  'Desk Allocation - Under Maintenance.view' } ,
+    {  route: '/desk/management/inactive-desk', permission:  'Desk Allocation - Inactive.view' } ,
+    {  route: '/desk/management/waiting-for-approval-desks', permission:  'Desk Allocation - Waiting For Approval.view' } 
+]
+
+export const EXPENSE_TABS  = [
+    { route: '/claimsandexpenses/expenses/draft', permission:'Draft Tab.view'} ,
+    { route: '/claimsandexpenses/expenses/approved', permission:'Approved Tab.view'},
+    { route: '/claimsandexpenses/expenses/pending', permission:'Pending Tab.view'},
+    { route: '/claimsandexpenses/expenses/processed', permission:'Processed Tab.view'},
+    { route: '/claimsandexpenses/expenses/rejected', permission:'Rejected Tab.view'}
+]

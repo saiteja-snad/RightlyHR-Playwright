@@ -129,7 +129,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     const loggedInUser = this.authService.getToken();
     this.subscription = this.http
 
-      .getData('Employeedata/ActiveEmployees')
+      .getData('Employeedata/InactiveEmployees')
       .subscribe({
         next: (data: any) => {
           const employeedata = data.map((employee: any) => {

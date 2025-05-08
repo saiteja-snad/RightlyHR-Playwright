@@ -160,6 +160,7 @@ export class SeparationForYourRoleRequestComponent {
   }
 
   rejectpopup() {
+    this.selectedSpRequestData.rejectedReason = null;
     this.modalService.dismissAll();
   }
 

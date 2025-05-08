@@ -12,14 +12,14 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>{{'RAISED DATE'|translate}}</th>
-          <th>{{'NOTICE PERIOD(In Days)'|translate}}</th>
-          <th>{{'LAST WORKING DAY'|translate}}</th>
-          <th>{{'REASON'|translate}}</th>
-          <th>{{'APPROVER STATUS'|translate}}</th>
-          <th>{{'REQUEST TYPE'|translate}}</th>
-          <th>{{'STATUS'|translate}}</th>
-          <th>{{'Action(s)'|translate}}</th>
+          <th>{{'Raised Date'|translate}}</th>
+          <th>{{'Notice Period(In Days)'|translate}}</th>
+          <th>{{'Last Working Day'|translate}}</th>
+          <th>{{'Reason'|translate}}</th>
+          <th>{{'Approver Status'|translate}}</th>
+          <th>{{'Request Type'|translate}}</th>
+          <th>{{'Status'|translate}}</th>
+          <th>Action<span class="text-lowercase">(s)</span></th>
         </tr>
       </thead>
       <tbody>
@@ -27,7 +27,7 @@
         @if(((getSeparationDetails | async) ?? []).length > 0) {
         @for (item of (getSeparationDetails|async); track item.id) {
         <tr>
-          <td>{{ item.appliedDate?(item.appliedDate | dateformat):'NA' }}
+          <td>{{ item.appliedDate?(item.appliedDate | date):'NA' }}
           </td>
           <td>
             @if(item.recallStatus == 'Recalled'){ NA}
@@ -36,7 +36,7 @@
           </td>
 
           <td>
-            {{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}
+            {{ item.lastWorkingDate ? (item.lastWorkingDate | date) : 'NA' }}
           </td>
           <td>
             @if(item.description){
@@ -161,7 +161,7 @@
               <th class="text-nowrap">Last Working Date</th>
               <th class="text-nowrap">Early Relieving Date</th>
               <th class="text-nowrap">Extended Date</th>
-              <th class="text-nowrap">AcceptEarlyRelieving</th>
+              <th class="text-nowrap">Accept EarlyRelieving</th>
               <th class="text-nowrap">Status</th>
             </tr>
           </thead>
@@ -176,7 +176,7 @@
               </td>
               <td>
                 <span *ngIf="comment.addedDate; else addeddate">
-                  {{ comment.addedDate | dateformat }}</span>
+                  {{ comment.addedDate | date }}</span>
                 <ng-template #addeddate>NA</ng-template>
               </td>
 
@@ -200,7 +200,7 @@
                     comment?.metadata?.splastworkingDate;
                     else lastworkingdate
                   ">
-                  {{ comment.metadata.splastworkingDate | dateformat }}</span>
+                  {{ comment.metadata.splastworkingDate | date }}</span>
                 <ng-template #lastworkingdate>NA</ng-template>
               </td>
               <td>
@@ -209,13 +209,13 @@
                     else earlydate
                   ">
                   {{
-                  comment.metadata.spearlyReliveingDate | dateformat
+                  comment.metadata.spearlyReliveingDate | date
                   }}</span>
                 <ng-template #earlydate>NA</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.spExtendedDate; else extenddate">
-                  {{ comment.metadata.spExtendedDate | dateformat }}</span>
+                  {{ comment.metadata.spExtendedDate | date }}</span>
                 <ng-template #extenddate>NA</ng-template>
               </td>
               <td>

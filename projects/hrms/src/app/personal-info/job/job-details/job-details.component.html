@@ -88,14 +88,14 @@
                                     <li (click)="openModalupdate(updatejobmodal, item)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
                                     </li>
-                                    @if (first && showSaperationDots ) {
-                                    <li (click)="openModalforSeparationupdate(seprationModal, item)">
-                                        <a class="dropdown-item"> <img src="icons/sepration.png" alt=""  class="speration-icon"/> Separation Request</a>
-                                    </li>
-                                    }
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a>
                                     </li>
+                                    @if (first && showSaperationDots ) {
+                                        <li (click)="openModalforSeparationupdate(seprationModal, item)">
+                                            <a class="dropdown-item"> <img src="icons/sepration.png" alt=""  class="speration-icon"/> Separation Request</a>
+                                        </li>
+                                        }
                                 </ul>
                             </div>
                         </td>

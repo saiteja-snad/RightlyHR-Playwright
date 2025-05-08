@@ -1,11 +1,11 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="component-sub-header">Separation Details</div>
-    <!-- @if(isLastWorkingDate(this.empdata.lastworkingday) && nodueclearancedetails.length <= 0 && getSeparationDetails.value.length> 0){ -->
+    @if(isLastWorkingDate(this.empdata.lastworkingday) && nodueclearancedetails.length <= 0 && getSeparationDetails.value.length> 0){
       <div class="custom-add-btn" (click)="openModal(raiseNodue)">
         <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
       </div>
-      <!-- } -->
+      }
   </div>
 
   <div class="custom-table-content">
@@ -19,7 +19,7 @@
           <th>{{'Approver Status'|translate}}</th>
           <th>{{'Request Type'|translate}}</th>
           <th>{{'Status'|translate}}</th>
-          <th>{{'Action(s)'| translate}}</th>
+          <th>Action<span class="text-lowercase">(s)</span></th>
         </tr>
       </thead>
       <tbody>
@@ -27,7 +27,7 @@
           @if(((getSeparationDetails | async) ?? []).length > 0) {
             @for (item of (getSeparationDetails|async); track item.id) {
             <tr>
-              <td>{{ item.appliedDate?(item.appliedDate | dateformat):'-' }}
+              <td>{{ item.appliedDate?(item.appliedDate | date):'-' }}
               </td>
               <td>
                 @if(item.recallStatus == 'Recalled'){
@@ -38,7 +38,7 @@
                 }
               </td>
               <td>
-                {{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}
+                {{ item.lastWorkingDate ? (item.lastWorkingDate | date) : 'NA' }}
               </td>
               <td>
                 @if(item.description){
@@ -171,7 +171,7 @@
               </td>
               <td>
                 <span *ngIf="comment.addedDate; else addeddate">
-                  {{ comment.addedDate | dateformat }}</span>
+                  {{ comment.addedDate | date }}</span>
                 <ng-template #addeddate>NA</ng-template>
               </td>
 
@@ -189,17 +189,17 @@
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.splastworkingDate;else lastworkingdate">
-                  {{ comment.metadata.splastworkingDate | dateformat }}</span>
+                  {{ comment.metadata.splastworkingDate | date }}</span>
                 <ng-template #lastworkingdate>NA</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.spearlyReliveingDate; else earlydate">
-                  {{ comment.metadata.spearlyReliveingDate | dateformat }}</span>
+                  {{ comment.metadata.spearlyReliveingDate | date }}</span>
                 <ng-template #earlydate>NA</ng-template>
               </td>
               <td>
                 <span *ngIf="comment?.metadata?.spExtendedDate; else extenddate">
-                  {{ comment.metadata.spExtendedDate | dateformat }}</span>
+                  {{ comment.metadata.spExtendedDate | date }}</span>
                 <ng-template #extenddate>NA</ng-template>
               </td>
               <td>

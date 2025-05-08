@@ -37,17 +37,17 @@
                         <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
                         <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
                         <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
-                        <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|dateformat):'-'}}
+                        <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|date):'-'}}
                         </td>
-                        <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|dateformat):'-'}}
+                        <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|date):'-'}}
                         </td>
-                        <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|dateformat):'-'}}
+                        <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|date):'-'}}
                         </td>
                         <td>
                             @if(item.entity?.spRecallReason){
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity?.spRecallReason}}</p>
@@ -61,7 +61,7 @@
                             <div>
                                 <a type="button"
                                     (click)="approverCommentsfunction(item.entity?.spApproverComments);openModalXLarge(approverComments)">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
                                 </a>
                             </div>
                             }
@@ -156,7 +156,7 @@
                     </div>
                     <div class="form-check form-check-inline text-nowrap">
                         <input type="radio" name="flexRadioDefault" id="flexRadioEarly"
-                            [checked]="selectedRadio === 'early'" (click)="toggleEarly()">
+                            [checked]="selectedRadio === 'early'" (click)="earlyrelieving()">
                         <label class="form-check-label ms-2" for="flexRadioEarly">
                             {{'Early Relieving'|translate}}</label>
                     </div>
@@ -249,7 +249,7 @@
                     <label for="Effective Date" class="form-label custom-label mb-2">{{"Last Working Date" |
                         translate}}<span class="error-msg">*</span></label>
                     <div class="form-control custom-input">{{ selectedSpRequestData?.spRequestLastWorkingDate |
-                        dateformat }}</div>
+                        date }}</div>
                     <div class="error-msg" *ngIf="!islastworking">Last working day should be after the date of joining
                     </div>
                     <div class="error-msg" *ngIf="!lastworkingValidation">Last working day should be after the current
@@ -492,7 +492,7 @@
                     <label for="Effective Date ">{{'Last Working Date' | translate}}
                         <span class="error-msg"></span></label>
                     <div class="form-control custom-input">{{ selectedSpRequestData.spRequestLastWorkingDate |
-                        dateformat }}</div>
+                        date }}</div>
                     <div class="error-msg" *ngIf="!islastworking">Last working day should be after the date of joining</div>
                     <div class="error-msg" *ngIf="!lastworkingValidation">Last working day should be after the current date</div>
                 </div>
@@ -568,7 +568,7 @@
                                 <ng-template #approverrole>{{'NA' | translate}}</ng-template>
                             </td>
                             <td><span *ngIf="comment.addedDate;else addeddate">
-                                    {{comment.addedDate |dateformat}}</span>
+                                    {{comment.addedDate |date}}</span>
                                 <ng-template #addeddate>{{'NA' | translate}}</ng-template>
                             </td>
                             <td><span *ngIf="comment.addedName;else addedname">
@@ -578,7 +578,7 @@
                             <td>
                                 <div *ngIf="comment?.comments;else popupcomments">
                                     <a type="button" [ngbPopover]="reason">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                        <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
                                     </a>
                                     <ng-template #reason>
                                         <p class="mb-0">{{comment?.comments}} </p>
@@ -588,17 +588,17 @@
                             </td>
                             <td>
                                 <span *ngIf="comment?.metadata?.splastworkingDate;else lastworkingdate">
-                                    {{comment.metadata.splastworkingDate |dateformat}}</span>
+                                    {{comment.metadata.splastworkingDate |date}}</span>
                                 <ng-template #lastworkingdate>{{'NA' | translate}}</ng-template>
                             </td>
                             <td>
                                 <span *ngIf="comment?.metadata?.spearlyReliveingDate;else earlydate">
-                                    {{comment.metadata.spearlyReliveingDate |dateformat}}</span>
+                                    {{comment.metadata.spearlyReliveingDate |date}}</span>
                                 <ng-template #earlydate>{{'NA' | translate}}</ng-template>
                             </td>
                             <td>
                                 <span *ngIf="comment?.metadata?.spExtendedDate;else extenddate">
-                                    {{comment.metadata.spExtendedDate |dateformat}}</span>
+                                    {{comment.metadata.spExtendedDate |date}}</span>
                                 <ng-template #extenddate>{{'NA' | translate}}</ng-template>
                             </td>
                             <td>

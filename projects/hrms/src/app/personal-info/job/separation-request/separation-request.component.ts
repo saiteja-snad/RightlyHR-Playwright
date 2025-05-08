@@ -146,19 +146,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
 
   //funtion to check the valudation
-  isLastWorkingDate(lastWorkingDate: string): boolean {
-    if (lastWorkingDate) {
-      const endDate = moment(lastWorkingDate);
-      const buttonEnabledDate = moment(lastWorkingDate).subtract(this.nodueDuration, 'days');
-      const currentDate = moment();
-      // Check if current date is between buttonEnabledDate and endDate
-      const isWithinWindow = currentDate.isBetween(buttonEnabledDate, endDate, undefined, '[]');
-      // Check if current date is after endDate
-      const isPastLastWorkingDate = currentDate.isAfter(endDate);
-      return isWithinWindow || isPastLastWorkingDate;
-    }
-    return false;
-  }
+
   
   //function to get employee by id
   getEmployeeId() {
@@ -171,6 +159,20 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         this.conformationPopup.openErrorModal('Insertion of data faild');
       },
     });
+  }
+
+  isLastWorkingDate(lastWorkingDate: string): boolean {
+    if (lastWorkingDate) {
+      const endDate = moment(lastWorkingDate);
+      const buttonEnabledDate = moment(lastWorkingDate).subtract(this.nodueDuration, 'days');
+      const currentDate = moment();
+      // Check if current date is between buttonEnabledDate and endDate
+      const isWithinWindow = currentDate.isBetween(buttonEnabledDate, endDate, undefined, '[]');
+      // Check if current date is after endDate
+      const isPastLastWorkingDate = currentDate.isAfter(endDate);
+      return isWithinWindow || isPastLastWorkingDate;
+    }
+    return false;
   }
 
   //function to get the separation details of the employee

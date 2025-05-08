@@ -489,12 +489,37 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       this.clearDiscontinueData();
     }
      else {
-      // Toggle off Early Relieving
-      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
-      this.early = false;
-      this.buttondisable = false;
-      this.clearEarlyData();
+      if(!this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck){
+        this.early=true;
+      }
+      else {
+        // Toggle off Early Relieving
+        this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
+        this.early = false;
+        this.selectedRadio=''
+        this.buttondisable = false;
+        this.clearEarlyData();
+      }
+     
     }
+  }
+  earlyrelieving(){
+    if (this.selectedSpRequestData.spIsEarlyRelieveing == true) {
+      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
+      this.selectedSpRequestData.isAcceptEarlyRequest = 'Yes';
+    } else {
+      this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
+    }
+    this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
+    this.selectedSpRequestData.requestSelectedType = 'Early';
+    this.regular = false;
+    this.extend = false;
+    this.early = true;
+    this.buttondisable = true;
+    this.isCheckBoxEnabledEarly = true;
+    // Clear data related to Extend and Discontinue
+    this.clearExtendData();
+    this.clearDiscontinueData();
   }
 
   isCheckBoxEnabledRegular = false
@@ -548,9 +573,10 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   earlyRelievingValidationCheck() {
+
     if (this.selectedSpRequestData.spMangerEarlyreliveingDate !=
       this.selectedSpRequestData.spearlyReliveingDate) {
-      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
+      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
       this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
       this.selectedRadio = 'early';
       this.selectedSpRequestData.requestSelectedType = 'Early';

@@ -78,20 +78,7 @@ export class DeskManagementComponent {
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
 
-    const currentUrl = this.router.url;
-    const baseUrl = '/desk/management';
 
-    // If at the base URL, navigate to the first accessible tab
-    if (currentUrl === baseUrl && this.navTabs.length > 0) {
-      this.router.navigateByUrl(this.navTabs[0].route);
-      return;
-    }
-
-    // If the current route is not accessible, redirect to the first accessible tab
-    const isAllowed = this.navTabs.some(tab => tab.route === currentUrl);
-    if (!isAllowed && this.navTabs.length > 0) {
-      this.router.navigateByUrl(this.navTabs[0].route);
-    }
   }
 
   intiallocationandsublocation() {

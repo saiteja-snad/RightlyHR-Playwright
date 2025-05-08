@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { RbacService } from './rbac.service';
 import {
+  ASSEST_ALLOCATION_TABS,
+  ATTENDANCE_REPORTS_TABS,
+  DESK_ALLOCATION_TABS,
+  EXPENSE_TABS,
   COMP_OFF_SUB_TABS,
   MY_INFO_JOB_ROUTES,
   MY_INFO_PERSONAL_ROUTES,
@@ -14,6 +18,7 @@ import {
   SETTINGS_EMPLOYEE_FIELDS_TABS,
   SETTINGS_ROLES_TABS,
   SETTINGS_TIMEOFF_TABS,
+  STANDARD_REPORTS_TABS,
   TIME_OFF_SUB_TABS,
   WFH_ONDUTY_SUB_TABS,
 } from '../permission-route.constants';
@@ -46,65 +51,119 @@ export class AccessNavigationService {
         }
 
         if (this.rbac.allowedToAccess('My Info Documents Tab.view')) {
-            route = '/myinfo/documents';
+          return (route = '/myinfo/documents');
         }
 
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-            route = '/myinfo/team-members';
+          return (route = '/myinfo/team-members');
         }
 
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
-            route = '/myinfo/onboarding-request';
+          return (route = '/myinfo/onboarding-request');
         }
         break;
 
-        case '/settings' :
-          if (this.rbac.allowedToAccess('Employee Fields Module.view')) {
-            for (const item of SETTINGS_EMPLOYEE_FIELDS_TABS) {
-              if (this.rbac.allowedToAccess('Personal Tab.view')) {
-                for (const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS) {
-                  if (this.rbac.allowedToAccess(item.permission)) {
-                    return item.route;
-                  }
-                }
-              }
-
-              if (this.rbac.allowedToAccess('Personal Tab.view')) {
-                for (const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS) {
-                  if (this.rbac.allowedToAccess(item.permission)) {
-                    return item.route;
-                  }
+      case '/settings':
+        if (this.rbac.allowedToAccess('Employee Fields Module.view')) {
+          for (const item of SETTINGS_EMPLOYEE_FIELDS_TABS) {
+            if (this.rbac.allowedToAccess('Personal Tab.view')) {
+              for (const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS) {
+                if (this.rbac.allowedToAccess(item.permission)) {
+                  return item.route;
                 }
               }
             }
-          }
 
-          if (this.rbac.allowedToAccess('Settings Timeoff Module.view')) {
-            for (const item of SETTINGS_TIMEOFF_TABS) {
-              if (this.rbac.allowedToAccess(item.permission)) {
-                return item.route;
+            if (this.rbac.allowedToAccess('Personal Tab.view')) {
+              for (const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS) {
+                if (this.rbac.allowedToAccess(item.permission)) {
+                  return item.route;
+                }
               }
             }
           }
+        }
 
-          if (this.rbac.allowedToAccess('Assets Management Configuration Module.view')) {
-            for (const item of SETTINGS_ASSEST_CONFIGURATION_TABS) {
-              if (this.rbac.allowedToAccess(item.permission)) {
-                return item.route;
-              }
+        if (this.rbac.allowedToAccess('Settings Timeoff Module.view')) {
+          for (const item of SETTINGS_TIMEOFF_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
             }
           }
+        }
 
-          if (this.rbac.allowedToAccess('Dynamic Forms Module.view')) {
-            for (const item of SETTINGS_DYNAMIC_FORMS_TABS) {
-              if (this.rbac.allowedToAccess(item.permission)) {
-                return item.route;
-              }
+        if (
+          this.rbac.allowedToAccess(
+            'Assets Management Configuration Module.view'
+          )
+        ) {
+          for (const item of SETTINGS_ASSEST_CONFIGURATION_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
             }
           }
+        }
 
+        if (this.rbac.allowedToAccess('Dynamic Forms Module.view')) {
+          for (const item of SETTINGS_DYNAMIC_FORMS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+      case 'events':
+        break;
+
+      case '/reports':
+        if (this.rbac.allowedToAccess('Standard Reports.view')) {
+          for (const item of STANDARD_REPORTS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+        if (this.rbac.allowedToAccess('Custom Reports.view')) {
+          return (route = '/reports/custom-reports');
+        }
+
+        if (this.rbac.allowedToAccess('Attendance reports.view')) {
+          for (const item of ATTENDANCE_REPORTS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+        if (this.rbac.allowedToAccess('Monthly Attendance Reports.view')) {
+          return (route = '/reports/monthly-attandance-reports');
+        }
+        break;
+
+      case '/assets-management':
+        for (const item of ASSEST_ALLOCATION_TABS) {
+          if (this.rbac.allowedToAccess(item.permission)) {
+            return item.route;
+          }
+        }
+
+        break;
+
+      case '/desk':
+          for (const item of DESK_ALLOCATION_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+  
           break;
-    case 'events':
+      case '/claimsandexpenses':
+        for (const item of EXPENSE_TABS) {
+          if (this.rbac.allowedToAccess(item.permission)) {
+            return item.route;
+          }
+        }
 
 
       break;
@@ -193,18 +252,18 @@ export class AccessNavigationService {
         break;
       case '/myinfo/documents':
         if (this.rbac.allowedToAccess('My Info Documents Tab.view')) {
-          route = '/myinfo/documents';
+          return (route = '/myinfo/documents');
         }
         break;
       case '/myinfo/team-members':
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-          route = '/myinfo/team-members';
+          return (route = '/myinfo/team-members');
         }
         break;
 
       case '/myinfo/onboarding-request':
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
-          route = '/myinfo/onboarding-request';
+          return (route = '/myinfo/onboarding-request');
         }
         break;
 
@@ -243,6 +302,37 @@ export class AccessNavigationService {
           }
         }
 
+        break;
+      case '/reports/standard-reports':
+        if (this.rbac.allowedToAccess('Standard Reports.view')) {
+          for (const item of STANDARD_REPORTS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/reports/custom-reports':
+        if (this.rbac.allowedToAccess('Custom Reports.view')) {
+          return (route = '/reports/custom-reports');
+        }
+        break;
+
+      case '/reports/attendence-reports':
+        if (this.rbac.allowedToAccess('Attendance reports.view')) {
+          for (const item of ATTENDANCE_REPORTS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+
+      case '/reports/monthly-attandance-reports':
+        if (this.rbac.allowedToAccess('Monthly Attendance Reports.view')) {
+          return (route = '/reports/monthly-attandance-reports');
+        }
         break;
     }
     return route;

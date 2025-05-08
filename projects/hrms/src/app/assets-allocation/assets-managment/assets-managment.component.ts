@@ -592,7 +592,15 @@ export class AssetsManagmentComponent {
       }
     });
   }
-
+  //close dailog open
+  openConfirmationModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+  cleardata(){
+    this.assetForm.reset();
+      this.modalService.dismissAll();
+    }
+  
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

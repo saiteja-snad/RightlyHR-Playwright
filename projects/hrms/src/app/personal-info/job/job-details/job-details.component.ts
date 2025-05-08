@@ -566,6 +566,8 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   }
   openModalupdate(content: any, data: any): void {
     this.getReportingTo()
+    this.getDepartment()
+    this.onDepartmentChange(data.departmentId)
     console.log(data.departmentId)
     const locationId = data?.locationId; // Get the location ID from the selected job details
     const subLocationId = data?.subLocationId; // Get the sub-location ID from the selected job details

@@ -15,10 +15,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TeamMembersTabsComponent } from "../../../shared/personalinfo-tabs/team-members-tabs/team-members-tabs.component";
+import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 
 @Component({
   selector: 'app-team-manger-member',
-  imports: [NoDataFoundComponent, CommonModule, FormsModule, TranslateModule, Select, MultiSelectModule, SearchfilterPipe, ReactiveFormsModule, TeamMembersTabsComponent, TeamMemberTabsComponent],
+  imports: [NoDataFoundComponent, CommonModule, FormsModule, TranslateModule, Select, MultiSelectModule, SearchfilterPipe, ReactiveFormsModule, TeamMembersTabsComponent, TeamMemberTabsComponent, DateformatPipe],
   templateUrl: './team-manger-member.component.html',
   styleUrl: './team-manger-member.component.scss'
 })
@@ -29,13 +30,17 @@ export class TeamMangerMemberComponent {
   teammangerid: any
   teamMembersdata: any[] = [];
   spinnerLoader = false
+  getTeamMemberArray: Iteammembers[] = [];
   departmentDetails = [] as IDepartment[];
   teamDropdownValues: any[] = [];
   teamMemberArray: Iteammembers[] = [];
   requestForm!: FormGroup
+  foremployeeForm!: FormGroup
   teamManagerDropdownValues: any[] = [];
   subdeparmentSingleobj: any;
-  joiningDate:any
+  joiningDate: any
+  jobdetailes: any = []
+  selectedemployeid: any
   constructor(
     private http: HttpService,
     private router: Router,
@@ -46,8 +51,9 @@ export class TeamMangerMemberComponent {
     console.log(this.empinfo);
     this.initializeForm()
     this.getEmployeeId()
-    this.getAllTeammembersList();
-    this.getAllTeammembersLists();
+    this.initializeFormforeachemploye()
+    this.getAllTeammembersList()
+
     this.getDepartment()
   }
 
@@ -62,6 +68,16 @@ export class TeamMangerMemberComponent {
     });
   }
 
+  initializeFormforeachemploye() {
+    this.foremployeeForm = this.fb.group({
+      effectiveDate: [null, Validators.required],
+      teamEmpselectedOptions: [{ value: null, disabled: true }, Validators.required],
+      department: [null, Validators.required],
+      teamSelectedOptions: [null, Validators.required],
+      teamManagerName: [{ value: null, disabled: true }, Validators.required],
+
+    });
+  }
   openModals(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
@@ -69,7 +85,7 @@ export class TeamMangerMemberComponent {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
- 
+
         this.joiningDate = this.formatDateToLocal(data.dateOfJoining)
       },
       error: (reason: any) => console.error('Error fetching employee data:', reason),
@@ -84,39 +100,42 @@ export class TeamMangerMemberComponent {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-  getAllTeammembersList() {
+
+  //function to get the all the team members
+  getAllTeammembersList(): void {
     const statuses = ['active', 'trainee active'];
- 
+    const loggedInUserId = this.empinfo.employeeId;
 
-  
-    this.subscription = this.http.getData(`Employeedata/GetallemployeeswithJobdetails?statuses=${statuses}`).subscribe({
-      next: (responseData: any) => {
-        console.log(responseData);
-        this.teamMemberArray = responseData as Iteammembers[];
-        this.teamMemberArray.forEach(member => member.selected = false);
-      },
-      error: (error) => {
-        console.error(error);
-      }
-    });
+    this.subscription = this.http.getData(`Employeedata/GetallemployeeswithJobdetails?statuses=${statuses}`)
+      .subscribe({
+        next: (responseData: any) => {
+          console.log('Response Data:', responseData);
+
+          // Filter out the logged-in user and map the data to include fullName and selectedAllGroup
+          this.teamMemberArray = responseData
+            .filter((employee: any) => employee.employeeId !== loggedInUserId)
+            .map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+              selectedAllGroup: 'Group 1',
+            }));
+
+          // Clone the filtered data for other uses
+          this.getTeamMemberArray = [...this.teamMemberArray];
+
+          console.log('Filtered Team Member Array:', this.teamMemberArray);
+        },
+        error: (error: any) => {
+          console.error('Error fetching team members:', error);
+        }
+      });
   }
 
-  getAllTeammembersLists() {
-    let employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${employeeId}`).subscribe({
-      next: (data: any) => {
-
-        this.teamMembersdata = data.map((member: any) => ({
-          ...member,
-          name: `${member.fusionEmpId} - ${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`
-          
-        }));
-      },
-      error: (err: any) => console.log(err),
-    }
-    );
+  viwejobhistoy(content: any, Value: any) {
+    this.modalService.open(content, { size: 'lg', centered: true, scrollable: true });
+    console.log(Value);
+    this.jobdetailes = Value;
   }
-
   getDepartment() {
     this.subscription = this.http.getData("Department").subscribe({
       next: (data: any) => {
@@ -127,6 +146,16 @@ export class TeamMangerMemberComponent {
 
       },
     })
+  }
+  assigintm(content: any, details: any) {
+    console.log(details)
+    this.selectedemployeid = details.employeeId
+
+    this.foremployeeForm.patchValue({
+      teamEmpselectedOptions: `${details.fusionEmpId} - ${details.firstName ?? ''} ${details.middleName ?? ''} ${details.lastName ?? ''}`
+    })
+
+    this.modalService.open(content, { size: 'lg', centered: true, scrollable: true });
   }
 
   onDepartmentChange(selectedDepartment: any): void {
@@ -171,28 +200,81 @@ export class TeamMangerMemberComponent {
     });
   }
 
+  onSubDepartmentNameChangeforsingleemploye(selectedSubDepartment: any): void {
+    const selectedSubDepartmentId = selectedSubDepartment.subdepartmentId;
+    this.subscription = this.http.getData(`Subdepartments/${selectedSubDepartmentId}`).subscribe({
+      next: (data: any) => {
+        this.subdeparmentSingleobj = data;
+        // Update the team manager dropdown values
+        this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
+          id: manager.reportingmanagerId,
+          name: manager.middleName ? `${manager.firstName} ${manager.middleName} ${manager.lastName}`
+            : `${manager.firstName} ${manager.lastName}` || '',
+        }));
+        this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
+        // Reset the team manager selection
+        this.foremployeeForm.patchValue({ teamManagerName: this.teamManagerDropdownValues[0].name ?? '' });
+
+      },
+      error: (err: any) => {
+        this.teamManagerDropdownValues = []; // Reset on error
+        this.foremployeeForm.patchValue({ teamManagerName: null }); // Reset the team manager selection
+
+      },
+    });
+  }
+
   updateTM() {
     const selectedEmployees = this.requestForm.get('teamEmpselectedOptions')?.value;
     const teammanagers: number[] = Array.isArray(selectedEmployees)
       ? selectedEmployees
       : [];
-      console.log(teammanagers)
+    console.log(teammanagers)
     const effectiveDate = this.requestForm.get('effectiveDate')?.value;
-    const url = `JobDetails/TeamManagerUpdate?teamManagerEmployeeId=${this.teammangerid}&effectiveDate=${effectiveDate}` ;
+    const url = `JobDetails/TeamManagerUpdate?teamManagerEmployeeId=${this.teammangerid}&effectiveDate=${effectiveDate}`;
 
     this.subscription = this.http.postdata(url, teammanagers).subscribe({
       next: (data: any) => {
         console.log('Success:', data);
-        
-        this.getAllTeammembersList();
+        this.modalService.dismissAll()
+        this.http.setBasicDetails();
+        this.conformationPopup.openSuccessModal('Team manager updated successfully ')
+        this.getAllTeammembersList()
         this.requestForm.reset()
       },
       error: (err: any) => {
         console.error('Error:', err);
-
+        this.conformationPopup.openErrorModal('Team manager updated failed ')
       }
     });
   }
+
+
+  forsingletmchange() {
+    const selectedEmployees = this.selectedemployeid;
+    const teammanagers: number[] = Array.isArray(selectedEmployees)
+      ? selectedEmployees
+      : [selectedEmployees];
+    console.log(teammanagers)
+    const effectiveDate = this.foremployeeForm.get('effectiveDate')?.value;
+    const url = `JobDetails/TeamManagerUpdate?teamManagerEmployeeId=${this.teammangerid}&effectiveDate=${effectiveDate}`;
+
+    this.subscription = this.http.postdata(url, teammanagers).subscribe({
+      next: (data: any) => {
+        console.log('Success:', data);
+        this.modalService.dismissAll()
+        this.http.setBasicDetails();
+        this.conformationPopup.openSuccessModal('Team manager updated successfully ')
+        this.getAllTeammembersList
+        this.foremployeeForm.reset()
+      },
+      error: (err: any) => {
+        console.error('Error:', err);
+        this.conformationPopup.openErrorModal('Team manager updated failed ')
+      }
+    });
+  }
+
 
 
   ngOnDestroy(): void {

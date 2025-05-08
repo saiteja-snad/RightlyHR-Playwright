@@ -204,7 +204,11 @@ export class DeskManagementComponent {
       this.shiftDropdown = []; // Reset if no sub-location is selected
     }
   }
-
+  
+  resetfrom(){
+   this.isToggled=false
+   this.deskForm.reset()
+  }
 
   isToggled = false
   onToggleChange(event: Event) {

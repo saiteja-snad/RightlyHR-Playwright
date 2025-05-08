@@ -121,8 +121,8 @@
 
 <ng-template #addassetes let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
+    <div class="custom-poup-header-content popup-header-border">
+      <div >
         <p class="popup-heading mb-0">Update an Asset</p>
       </div>
       <div>
@@ -131,7 +131,7 @@
       </div>
     </div>
 
-    <div class="custom-main-popup-content p-3">
+    <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="assetForm" (ngSubmit)="updateanasset(assetForm,storeassetid)">
         <div class="row ">
           <!-- Location Field -->
@@ -359,7 +359,7 @@
           </div>
         </div>
 
-        <div class="d-flex justify-content-end gap-3">
+        <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">Close</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid
            || (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
@@ -378,7 +378,7 @@
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
       <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
     </div>
-    <div class="d-flex justify-content-center gap-3 mt-4">
+    <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(underMaintenance)">
         No
       </button>
@@ -398,7 +398,7 @@
     <div class="text-center">
       <h5 class="confirmation-text mb-2"> Are you sure you want to Inactive this Asset ?</h5>
     </div>
-    <div class="custom-main-popup-content  p-4">
+    <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="inactiveForm" (ngSubmit)="postinactive(inactiveForm, storeassetid)">
         <div class="row">
           <div class="col-md-12 mb-2">
@@ -443,7 +443,7 @@
           </div>
         </div>
 
-        <div class="d-flex justify-content-end gap-3">
+        <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary "
             (click)="openModal(inativeconfromation);model.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="inactiveForm.invalid">Submit</button>
@@ -459,7 +459,7 @@
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
       <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
     </div>
-    <div class="d-flex justify-content-center gap-3 mt-4">
+    <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(deleteasstes)">
         No
       </button>
@@ -472,8 +472,8 @@
 
 <ng-template #releaseassets let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
+    <div class="custom-poup-header-content popup-header-border">
+      <div >
         <p class="popup-heading mb-0">Release an Asset</p>
       </div>
       <div>
@@ -482,7 +482,7 @@
       </div>
     </div>
 
-    <div class="custom-main-popup-content p-3">
+    <div class="custom-main-popup-content ">
       <form autocomplete="off" [formGroup]="releaseform" (ngSubmit)="updaterealse(releaseform,storeassetid)">
         <div class="row">
           <div class="col-md-12 mb-3">
@@ -524,7 +524,7 @@
             </div>
           </div>
         </div>
-        <div class="d-flex justify-content-end gap-3">
+        <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
             (click)="openModal(relaseconformation);modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="releaseform.invalid">Submit</button>
@@ -540,7 +540,7 @@
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
       <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
     </div>
-    <div class="d-flex justify-content-center gap-3 mt-4">
+    <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(releaseassets)">
         No
       </button>
@@ -552,71 +552,6 @@
 </ng-template>
 <!-- allocateAnasset -->
 
-<ng-template #allocateAnasset let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
-        <p class="popup-heading mb-0">Allocate an Asset</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss();assiginForm.reset();openModal(assiginconformation)"><img src="icons/close.png"
-            alt="Close Icon" class="close-icon"></a>
-      </div>
-    </div>
-
-    <div class="custom-main-popup-content p-3">
-      <form autocomplete="off" [formGroup]="assiginForm" (ngSubmit)="postAssignAssets(assiginForm,storeassetid)">
-        <div class="row">
-          <div class="col-md-12 mb-3">
-            <label for="assetId" class="form-label custom-label mb-2">Asset ID<span class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="assetsid" optionLabel="assetID" optionValue="id" formControlName="assetID"
-                placeholder="Please select asset id" class="form-select custom-select"></p-select>
-            </div>
-            <div *ngIf="assiginForm.get('assetID')?.invalid && assiginForm.get('assetID')?.touched">
-              <div class="error-msg">Asset ID is required</div>
-            </div>
-          </div>
-          <div class="col-md-12 mb-3">
-            <label for="asseTID" class="form-label custom-label mb-2">Select Employee ID<span
-                class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
-                (onChange)="onEmployeeSelect($event)" formControlName="mReportingto"
-                placeholder="Please select employee" class="form-select custom-select"></p-select>
-            </div>
-            <div *ngIf="assiginForm.get('mReportingto')?.invalid && assiginForm.get('mReportingto')?.touched">
-              <div class="error-msg"> Employee ID is required</div>
-            </div>
-          </div>
-          <div class="d-flex justify-content-end gap-3">
-            <button type="button" class="custom-btn btn-secondary mt-3"
-              (click)="modal.dismiss();openModal(assiginconformation)">Cancel</button>
-            <button type="submit" class="custom-btn btn-primary mt-3" [disabled]="assiginForm.invalid">Submit</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</ng-template>
-
-<ng-template #assiginconformation let-model>
-  <div class="result-popup-content" ngbAutofocus>
-    <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
-    </div>
-
-    <div class="d-flex justify-content-center gap-3 mt-4">
-      <button type="button" class="custom-btn btn-secondary" (click)="openModal(allocateAnasset);model.dismiss()">
-        No
-      </button>
-      <button type="submit" class="custom-btn btn-primary" (click)="resetassiginform();model.dismiss()">
-        Yes
-      </button>
-    </div>
-  </div>
-</ng-template>
 
 <ng-template #reallocateanasset let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
@@ -682,118 +617,7 @@
   </div>
 </ng-template>
 
-<ng-template #tranferaerasset let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
-        <p class="popup-heading mb-0">Transfer An Asset</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss();openModal(tranferconformation)"><img src="icons/close.png" alt="Close Icon"
-            class="close-icon"></a>
-      </div>
-    </div>
-    <div class="custom-main-popup-content p-3">
 
-      <form autocomplete="off" [formGroup]="locationfromdata"
-        (ngSubmit)="updatetranferlocation(locationfromdata,storeassetid)">
-        <div class="row ">
-          <div class="col-md-6 mb-3">
-            <label for="perlocation" class="form-label custom-label mb-2">Location<span
-                class="text-danger">*</span></label>
-            <input type="text" formControlName="perisionlocation" class="form-control custom-input"
-              placeholder="Enter Location" />
-
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="persubLocation" class="form-label custom-label mb-2">Sub Location<span
-                class="text-danger">*</span></label>
-            <input type="text" formControlName="pervessublocation" class="form-control custom-input"
-              placeholder="Enter Sub Location" />
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <label for="location" class="form-label custom-label mb-2">Transfer Location<span
-                class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="locationId"
-                placeholder="Please select location" class="form-select custom-select"
-                (onChange)="getSubLocationByid($event.value)">
-              </p-select>
-            </div>
-            <div *ngIf="locationfromdata.get('locationId')?.invalid && locationfromdata.get('locationId')?.touched"
-              class="error-msg">
-              Location is required.
-            </div>
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="subLocation" class="form-label custom-label mb-2">Transfer Sub Location<span
-                class="error-msg">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
-                formControlName="subLocationId" placeholder="Please select sub location"
-                class="form-select custom-select"></p-select>
-            </div>
-            <div
-              *ngIf="locationfromdata.get('subLocationId')?.invalid && locationfromdata.get('subLocationId')?.touched"
-              class="error-msg">
-              Sub location is required.
-            </div>
-          </div>
-
-          <div class="col-12">
-            <label for="comments" class="form-label custom-label mb-2">
-              Transfer Reason
-            </label>
-            <div class="textarea-container">
-              <textarea formControlName="comments" class="form-control custom-input" placeholder="Please enter reason"
-                maxlength="250" rows="3"></textarea>
-
-              <div>
-                <div class="error-msg"
-                  *ngIf="locationfromdata.get('comments')?.invalid && locationfromdata.get('comments')?.touched">
-                  <div *ngIf="locationfromdata.get('comments')?.errors?.['required']">
-                    Transfer Reason is required.
-                  </div>
-                  <div *ngIf="locationfromdata.get('comments')?.errors?.['maxlength']">
-                    Transfer Reason must not exceed 250 characters.
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-2 text-end">
-                {{ locationfromdata.get("comments")?.value?.length || 0 }}/250
-              </div>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-end gap-3">
-            <button type="button" class="custom-btn btn-secondary"
-              (click)="modal.dismiss();openModal(tranferconformation)">Cancel</button>
-            <button type="submit" class="custom-btn btn-primary" [disabled]="locationfromdata.invalid">Submit</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</ng-template>
-
-<ng-template #tranferconformation let-model>
-  <div class="result-popup-content" ngbAutofocus>
-    <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
-    </div>
-    <div class="d-flex justify-content-center gap-3 mt-4">
-      <button type="button" class="custom-btn btn-secondary" (click)="openModal(tranferaerasset)">
-        No
-      </button>
-      <button type="submit" class="custom-btn btn-primary" (click)="resetassiginform();model.dismiss()">
-        Yes
-      </button>
-    </div>
-  </div>
-</ng-template>
 
 <ng-template #underMaintenance let-model>
   <div class="custom-main-popup-container" ngbAutofocus>

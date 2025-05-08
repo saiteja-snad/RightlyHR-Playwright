@@ -671,7 +671,11 @@ export class AvailableAssetsListComponent {
       this.warrantydateMismatch = false;
     }
   }
-
+  
+  resetfrom(){
+    this.isToggledamc=false
+    this.isToggledWarranty=false
+  }
   checkAmcDateMismatch(): void {
     const expiryDate = this.assetForm.get('warrantyexpirydate')?.value;
     const amcStartDate = this.assetForm.get('amcstartdate')?.value;

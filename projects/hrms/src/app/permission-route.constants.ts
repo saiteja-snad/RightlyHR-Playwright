@@ -94,3 +94,55 @@ export const SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS = [
     {  route: '/settings/employee-fields/personal/relationship', permission:  'Relationship.view' } ,
     {  route: '/settings/employee-fields/personal/bank-name', permission:  'Bank Names.view' } ,
 ]
+
+export const TIME_OFF_SUB_TABS = [
+
+  {route: '/time-off/leaves/waiting-for-approval',permission:'Waiting For Approval (Time Off).view'},
+  {route: '/time-off/leaves/approved',permission: 'Approved (Time Off).view'},
+  {route: '/time-off/leaves/processed',permission: 'Processed (Time Off).view'},
+  {route: '/time-off/leaves/rejected',permission: 'Rejected (Time Off).view',},
+
+]
+
+export const REMOTE_LOGIN_SUB_TABS =[
+  {route: '/time-off/remote/waiting-for-approval',permission:'Remote Login.view'},
+  {route: '/time-off/remote/approved',permission: 'Remote Login.view'},
+  {route: '/time-off/remote/processed',permission: 'Remote Login.view'},
+  {route: '/time-off/remote/rejected',permission: 'Remote Login.view',},
+]
+
+export const COMP_OFF_SUB_TABS = [
+  {route: '/time-off/comp-off/waiting-for-approval',permission:'Waiting For Approval (Comp Off).view'},
+  {route: '/time-off/comp-off/approved',permission: 'Approved (Comp Off).view'},
+  {route: '/time-off/comp-off/processed',permission: 'Processed (Comp Off).view'},
+  {route: '/time-off/comp-off/rejected',permission: 'Rejected (Comp Off).view',},
+]
+
+export const WFH_ONDUTY_SUB_TABS =[
+  {route: '/time-off/wfh/waiting-for-approval',permission:'Waiting For Approval (WFH On Duty).view'},
+  {route: '/time-off/wfh/approved',permission: 'Approved (WFH On Duty).view'},
+  {route: '/time-off/wfh/processed',permission: 'Processed (WFH On Duty).view'},
+  {route: '/time-off/wfh/rejected',permission: 'Rejected (WFH On Duty).view',},
+]
+
+export const PERMISSIONS_SUB_TABS =[
+  {route: '/time-off/premissions/waiting-for-approval',permission:'Waiting For Approval (Permissions).view'},
+  {route: '/time-off/permissions/approved',permission: 'Approved (Permissions).view'}, 
+  {route: '/time-off/permissions/processed',permission: 'Processed (Permissions).view'},
+  {route: '/time-off/permissions/rejected',permission: 'Rejected (Permissions).view',},
+]
+
+export const REGULARIZATION_SUB_TABS =[
+  {route: '/time-off/regularization/waiting-for-approval',permission:'Waiting For Approval (Regularization).view'},
+  {route: '/time-off/regularization/approved',permission: 'Approved (Regularization).view'}, 
+  {route: '/time-off/regularization/processed',permission: 'Processed (Regularization).view'},
+  {route: '/time-off/regularization/rejected',permission: 'Rejected (Regularization).view',},
+]
+
+export const ON_BEHALF_OF_TABS =[
+  {route: '/time-off/on-behalf-of/waiting-for-approval',permission:'Waiting For Approval (On Behalf Of).view'},
+  {route: '/time-off/on-behalf-of/approved',permission: 'Approved (On Behalf Of).view'}, 
+  {route: '/time-off/on-behalf-of/processed',permission: 'Processed (On Behalf Of).view'},
+  {route: '/time-off/on-behalf-of/rejected',permission: 'Rejected (On Behalf Of).view',},
+]
+

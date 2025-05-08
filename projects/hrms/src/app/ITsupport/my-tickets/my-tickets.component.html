@@ -225,9 +225,9 @@
                     <div class="custom-p-select-content">
                         
                             <input type="text" class="form-control custom-input" formControlName="subject"
-                            placeholder="Please enter subject" [maxlength]="50" />
+                            placeholder="Please enter subject" pattern="^\S.*" [maxlength]="50" />
                             <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50</div>
-                            <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
+                            <div *ngIf="itSupportForm.get('subject')?.errors?.['pattern'] && itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
                                 <div class="error-msg">{{'Subject is required' | translate}}</div>
                             </div>
                     </div>
@@ -239,10 +239,10 @@
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Description'| translate}}<span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" formControlName="description" [maxlength]="250" placeholder="Please enter description"></textarea>
+                        <textarea class="form-control custom-input" formControlName="description" pattern="^\S.*" [maxlength]="250" placeholder="Please enter description"></textarea>
                         <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250</div>
                     </div>
-                    <div *ngIf="itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
+                    <div *ngIf="itSupportForm.get('description')?.errors?.['pattern'] && itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
                         <div class="error-msg">{{'Description is required' | translate}}</div>
                     </div>
                 </div>

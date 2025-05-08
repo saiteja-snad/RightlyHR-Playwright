@@ -25,7 +25,7 @@
             <label for="employeeName" class="form-label custom-info-label">Name of the Employee</label>
             <div>:</div>
             <input type="text" class="form-control text-truncate custom-info-input" id="employeeName"
-              [value]="assessmentFormData?.employeeName" disabled>
+              [value]="assessmentFormData?.employeeName" disabled [title]="assessmentFormData?.employeeName">
           </div>
           <div class="form-group">
             <label for="designation" class="form-label custom-info-label">Designation</label>
@@ -174,7 +174,7 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="6">Overall Ratings</td>
+              <td colspan="4">Overall Ratings</td>
               <!-- Dynamically render the overall rating fields and comments for each role -->
               <ng-container *ngFor="let response of assessmentFormData?.formResponses; let i=index">
                 <td *ngIf="response.name === 'Employee' && response.isRatingVisible">
@@ -228,7 +228,7 @@
 
       <!-- Checkbox for same as Reporting Manager Rating and Comments -->
       <div class="form-check mb-4"
-        *ngIf="(currentStage>2 && currentStage<lastStage ||((currentStage>=lastStage||currentStage<=0) && assessmentFormData.isSameAsPreviousAssessor))">
+        *ngIf="(currentStage>2 && currentStage<lastStage ||((currentStage>=lastStage||currentStage<=0) && assessmentFormData?.isSameAsPreviousAssessor))">
         <input class="form-check-input" type="checkbox" id="sameasprevious" name="sameasprevious"
           (click)="checkTmAndRm($event)" [(ngModel)]="assessmentFormData.isSameAsPreviousAssessor"
           [disabled]="!currentStage" />
@@ -467,7 +467,7 @@
             <label for="" class="form-label custom-label">Revised Designation<span class="text-danger"
                 *ngIf="assessmentFormData.eligibleforpromotion">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="getDesignationWithGradeIdDetails" optionLabel="designationName" name="revisedDesignation"
+              <p-select [options]="getDesignationWithGradeIdDetails" optionLabel="designationName" optionValue="designationName" name="revisedDesignation"
                 [(ngModel)]="assessmentFormData.revisedDesignation"
                 [disabled]="currentStage !== lastStage || !assessmentFormData.eligibleforpromotion"
                 placeholder="Please select revised designation" (onChange)="designationChange($event)" [showClear]="true"

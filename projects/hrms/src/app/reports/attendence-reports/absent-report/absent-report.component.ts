@@ -248,9 +248,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
 
     // Manager full name
     if (formValue.manager) {
-      request.Team_Manager = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-        .filter(Boolean)
-        .join(' ');
+      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
     this.reportsService.getAbsentReports(request).subscribe({
       next: (response: any) => {

@@ -12,6 +12,7 @@ import { IJob } from '../../../Interfaces/letters-model';
 import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-create-form',
   imports: [
@@ -64,6 +65,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
     config: NgbModalConfig,
     private route: Router,
     private sharedModalService: OpenModalService,
+    public formsValidations: FormValidationsService
   ) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -85,6 +87,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
             Validators.required,
             Validators.maxLength(255),
             this.noWhitespaceValidator(),
+            this.formNameValidator(),
           ],
         ],
         moduleId: ['', Validators.required],
@@ -180,7 +183,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
   // Reorder questions within a section
   onDropQuestion(event: CdkDragDrop<string[]>, sectionIndex: number) {
     const questions = this.getQuestions(sectionIndex);
-    moveItemInArray(questions.controls,event.previousIndex,event.currentIndex);
+    moveItemInArray(questions.controls, event.previousIndex, event.currentIndex);
     questions.controls.forEach((question, index) => {
       question.get('order')?.setValue(index);
     });
@@ -302,7 +305,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
 
   createSection(): FormGroup {
     return this.fb.group({
-      sectionName: ['', [Validators.required, Validators.maxLength(255)]],
+      sectionName: ['', [Validators.required, Validators.maxLength(255), this.formNameValidator()]],
       type: ['', Validators.required],
       order: [0],
       ratingScaleType: [null],
@@ -310,6 +313,21 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       questions: this.fb.array([this.createQuestion('')]), // Pass an empty string initially
     });
   }
+
+  formNameValidator() {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value?.trim();
+      if (!value) {
+        return { whitespace: true }; // Empty or only spaces
+      }
+      // Check if value contains at least one letter or number
+      if (!/[a-zA-Z0-9]/.test(value)) {
+        return { onlySpecialChars: true }; // Only special characters
+      }
+      return null;
+    };
+  }
+
 
   createQuestion(sectionType: string): FormGroup {
     // Update to get the current section type from the parent form
@@ -322,8 +340,6 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       order: [0],
       isRequired: [false],
       questionWeightage: [null, [Validators.required, Validators.min(1)]],
-      unitofmeasurement: ['', isRatingSection ? [Validators.required] : []],
-      target: [null, isRatingSection ? [Validators.required] : []],
       options: this.fb.array([]),
     });
   }
@@ -336,26 +352,19 @@ export class CreateFormComponent implements OnInit, OnDestroy {
     questions.controls.forEach((question: any) => {
       const sectionType = section.get('type')?.value;
       question.get('type')?.setValidators(sectionType === 'normal' ? [Validators.required] : []);
-      question.get('unitofmeasurement')?.setValidators(sectionType === 'rating' ? [Validators.required] : []);
-      question.get('target')?.setValidators(sectionType === 'rating' ? [Validators.required] : []);
       question.get('type')?.updateValueAndValidity();
-      question.get('unitofmeasurement')?.updateValueAndValidity();
-      question.get('target')?.updateValueAndValidity();
     });
   }
 
   validateInput(control: AbstractControl | null) {
     if (!control) return; // Ensure control exists
     let value = control.value || ''; // Ensure value is a string
-
     // Remove leading spaces
     value = value.replace(/^\s+/, '');
-
     // Prevent starting with special characters
     if (/^[^a-zA-Z0-9]/.test(value)) {
       value = value.replace(/^[^a-zA-Z0-9]+/, '');
     }
-
     control.setValue(value, { emitEvent: false });
   }
 
@@ -493,7 +502,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
     const sectionWeightage = Number(this.sections.at(sectionIndex).get('weightage')?.value) || 0;
     const totalQuestionWeightage = this.calculateTotalQuestionWeightage(sectionIndex);
     // Only show error when all question weightages have been entered
-    const allQuestionsHaveWeightage = this.getQuestions(sectionIndex).controls.every((question) => 
+    const allQuestionsHaveWeightage = this.getQuestions(sectionIndex).controls.every((question) =>
       question.get('questionWeightage')?.value);
     return (
       allQuestionsHaveWeightage && totalQuestionWeightage > sectionWeightage
@@ -555,8 +564,6 @@ export class CreateFormComponent implements OnInit, OnDestroy {
           order: number;
           status: string;
           questionWeightage: number;
-          targetfield: string;
-          unitofmeasurement: string;
           createdBy: number;
           updatedBy: number;
           options: {
@@ -575,8 +582,6 @@ export class CreateFormComponent implements OnInit, OnDestroy {
           order: question.order,
           status: this.isDraftType ? 'draft' : 'active',
           questionWeightage: question.questionWeightage,
-          targetfield: question.target ? question.target.toString() : null,
-          unitofmeasurement: question.unitofmeasurement ? question.unitofmeasurement : '',
           createdBy: this.dynamicForm.employeeId,
           updatedBy: this.dynamicForm.employeeId,
           options: [],
@@ -632,31 +637,24 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       this.dynamicForm.overAllRating = this.createForm.value.overAllRating;
       this.dynamicForm.cutOffRating = this.createForm.value.cutOffRating;
       this.dynamicForm.createdBy = this.dynamicForm.employeeId;
-      // this.dynamicForm.updatedBy = this.dynamicForm.employeeId;
       this.dynamicForm.status = 'draft';
       this.dynamicForm.sectionDetails = this.convertOptionsArray(
         this.createForm.value.sections
       );
-      this.http
-        .postData(`Form/SubmitFormDetails`, this.dynamicForm, {
-          responseType: 'text',
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            this.openSuccessModal(false, true);
-
-            setTimeout(() => {
-              this.route.navigate(['/settings/dynamic-forms/draft-forms']);
-            }, 2000);
-
-            this.isDraftType = false;
-            // this.intializeForm()
-          },
-          error: (error) => {
-            console.log(error);
-          },
-        });
+      this.http.postData(`Form/SubmitFormDetails`, this.dynamicForm, {
+        responseType: 'text',
+      }).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.openSuccessModal(false, true);
+          setTimeout(() => {
+            this.route.navigate(['/settings/dynamic-forms/draft-forms']);
+          }, 2000);
+          this.isDraftType = false;
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
     }
   }
 
@@ -669,7 +667,6 @@ export class CreateFormComponent implements OnInit, OnDestroy {
     this.dynamicForm.overAllRating = this.createForm.value.overAllRating;
     this.dynamicForm.cutOffRating = this.createForm.value.cutOffRating;
     this.dynamicForm.createdBy = this.dynamicForm.employeeId;
-    // this.dynamicForm.updatedBy = this.dynamicForm.employeeId;
     this.dynamicForm.status = 'active';
     this.dynamicForm.sectionDetails = this.convertOptionsArray(
       this.createForm.value.sections
@@ -681,13 +678,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.openSuccessModal(true, false);
-          // this.createForm.reset();
           this.isSubmitted = false;
-          // setTimeout(() => {
-          //   this.route.navigate(['/form']);
-          // }, 2000);
-
-          //this.intializeForm()
         },
         error: (error) => {
           console.log(error);

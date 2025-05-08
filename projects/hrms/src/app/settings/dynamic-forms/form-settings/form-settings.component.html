@@ -13,7 +13,7 @@
           <th class="text-center">{{'Min-Rating Scale' | translate}}</th>
           <th class="text-center">{{'Max-Rating Scale' | translate}}</th>
           <th class="text-center" *ngIf="rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')">
-            {{'Action(S)' | translate}}</th>
+            {{'Action' | translate}}<span class="text-lowercase">(s)</span></th>
         </tr>
       </thead>
       <tbody>
@@ -79,8 +79,8 @@
       <form autocomplete="off" [formGroup]="ratingform" (ngSubmit)="onSubmit()">
         <div class="custom-popup-height">
           <!-- Rating Scale Section -->
-          <div class="d-flex gap-3 w-100 mb-4">
-            <div class="pt-4 me-4">
+          <div class="d-flex gap-4 w-100 mb-4">
+            <div class="pt-4">
               <label for="Rating Scale" class="component-sub-header text-nowrap">Rating Scale:</label>
             </div>
             <div class="w-100">
@@ -111,12 +111,14 @@
           </div>
     
           <!-- Final Rating Section -->
-          <div class="d-flex gap-3 align-items-center mb-4">
+          <div class="d-flex align-items-center mb-4">
             <label for="final Rating" class="component-sub-header text-nowrap me-4">Final Rating:
               <span class="text-danger">*</span></label>
-            <label><input type="radio" formControlName="finalRating" [value]=0> Round Off</label>
-            <label><input type="radio" formControlName="finalRating" [value]=1> Upto 1 decimal</label>
-            <label><input type="radio" formControlName="finalRating" [value]=2> Upto 2 decimal</label>
+            <div class="d-flex gap-3">
+              <label><input type="radio" formControlName="finalRating" [value]=0> Round Off</label>
+              <label><input type="radio" formControlName="finalRating" [value]=1> Upto 1 decimal</label>
+              <label><input type="radio" formControlName="finalRating" [value]=2> Upto 2 decimal</label>
+            </div>
             <div class="error-msg"
               *ngIf="ratingform.controls['finalRating'].invalid && ratingform.controls['finalRating'].touched">
               Please select an option.
@@ -125,9 +127,9 @@
     
           <!-- Rating Type Section -->
           <div class="d-flex mb-4">
-            <label for="ratingType" class="component-sub-header text-nowrap me-5 pt-3">Rating Type
+            <label for="ratingType" class="component-sub-header text-nowrap me-4 pt-3">Rating Type
               <span class="text-danger">*</span></label>
-            <div class="w-75">
+            <div class="w-100">
               <input type="text" formControlName="ratingType" class="form-control custom-input w-100" placeholder="Enter Rating Type"
                 maxlength="50" (input)="validateInput(ratingform.get('ratingType'))" />
               <div class="textarea-count-text">{{ ratingform.get('ratingType')?.value?.length || 0 }}/50</div>
@@ -180,7 +182,7 @@
         </div>
     
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="onClose();">{{'Close'|translate}}</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="onClose();">{{'Close'|translate}}</button>
           <button type="submit" [disabled]="ratingform.invalid" class="custom-btn btn-primary">{{'Add'|translate}}</button>
         </div>
       </form>
@@ -200,16 +202,15 @@
       </div>
     </div>
 
-
     <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="updateFormRating">
         <div class="custom-popup-height">
           <!-- Rating Scale Section -->
-          <div class="d-flex gap-3 w-100 mb-4">
+          <div class="d-flex w-100 mb-4">
             <div class="pt-4 me-4">
               <label for="Rating Scale" class="component-sub-header text-nowrap">Rating Scale:</label>
             </div>
-            <div class="w-100">
+            <div class="w-100 me-4">
               <label for="minimumRatingScale" class="content-heading">From<span class="text-danger">*</span></label>
               <input type="number" formControlName="minimumRatingScale" class="form-control custom-input w-100"
                 placeholder="Enter Rating" min="1" max="10"
@@ -225,7 +226,7 @@
             </div>
             <div class="w-100">
               <label for="maximumRatingScale" class="content-heading">To<span class="text-danger">*</span></label>
-              <input type="number" formControlName="maximumRatingScale" class="form-control" placeholder="Enter Rating"
+              <input type="number" formControlName="maximumRatingScale" class="form-control custom-input" placeholder="Enter Rating"
                 min="1" max="10" (input)="restrictToMaxValue($event, updateFormRating, 'maximumRatingScale', 10, 2)"
                 (input)="restrictDecimal($event)" />
               <div class="error-msg"
@@ -236,11 +237,14 @@
           </div>
 
           <!-- Final Rating Section -->
-          <div class="d-flex gap-3 align-items-center mb-4">
-            <label for="final Rating" class="component-sub-header text-nowrap me-4">Final Rating:<span class="text-danger">*</span></label>
-            <label><input type="radio" formControlName="finalRating" [value]=0> Round Off</label>
-            <label><input type="radio" formControlName="finalRating" [value]=1> Upto 1 decimal</label>
-            <label><input type="radio" formControlName="finalRating" [value]=2> Upto 2 decimal</label>
+          <div class="d-flex align-items-center mb-4">
+            <label for="final Rating" class="component-sub-header text-nowrap me-4">Final Rating:<span
+                class="text-danger">*</span></label>
+            <div class="d-flex gap-3">
+              <label><input type="radio" formControlName="finalRating" [value]=0> Round Off</label>
+              <label><input type="radio" formControlName="finalRating" [value]=1> Upto 1 decimal</label>
+              <label><input type="radio" formControlName="finalRating" [value]=2> Upto 2 decimal</label>
+            </div>
             <div class="error-msg"
               *ngIf="updateFormRating.controls['finalRating'].invalid && updateFormRating.controls['finalRating'].touched">
               Please select an option.
@@ -249,12 +253,12 @@
 
           <!-- Rating Type Section -->
           <div class="d-flex mb-4">
-            <label for="ratingType" class="component-sub-header text-nowrap me-5 pt-3">Rating Type<span
+            <label for="ratingType" class="component-sub-header text-nowrap me-4 pt-3">Rating Type<span
                 class="text-danger">*</span></label>
-            <div class="w-75">
+            <div class="w-100">
               <input type="text" formControlName="ratingType" class="form-control custom-input w-100"
                 placeholder="Enter Rating Type" maxlength="50" (input)="validateInput(updateFormRating.get('ratingType'))" />
-              <div class="textarea-count-text">{{ updateFormRating.get('ratingType')?.value?.length || 0 }} /50</div>
+              <div class="textarea-count-text">{{ updateFormRating.get('ratingType')?.value?.length || 0 }}/50</div>
               <div class="error-msg">
                 <div *ngIf="updateFormRating.get('ratingType')?.errors?.['required'] && updateFormRating.get('ratingType')?.touched">
                   Rating Type is required.
@@ -281,7 +285,7 @@
           
                 <!-- Description Input -->
                 <div class="w-75">
-                  <input type="text" formControlName="description" class="form-control" placeholder="Enter Description"
+                  <input type="text" formControlName="description" class="form-control custom-input" placeholder="Enter Description"
                     maxlength="50" (input)="validateInput(scale.get('description'))" />
                   <div class="textarea-count-text">{{ scale.get('description')?.value.length?
                     scale.get('description')?.value.length:0}}/50</div>
@@ -308,9 +312,9 @@
 
         <!-- Submit Button -->
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="onClose();">Close</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="onClose();">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="updateFormRating.invalid"
-            (click)="onUpdate(ratingType);modal.dismiss()">Update Form</button>
+            (click)="onUpdate(ratingType);modal.dismiss()">Update</button>
         </div>
       </form>
     </div>

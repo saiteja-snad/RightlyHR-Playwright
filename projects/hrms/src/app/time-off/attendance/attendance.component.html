@@ -12,24 +12,24 @@
             <label class="form-label custom-label pt-2" for="">Select</label>
 
             <div>
-                <p-dropdown [options]="yearOptions" optionValue="value" [(ngModel)]="selectedYear" placeholder="Year"
+                <p-select [options]="yearOptions" optionValue="value" [(ngModel)]="selectedYear" placeholder="Year"
                     optionLabel="name"  (onChange)="getAttendnaceData(getSelectedEmployee())" class="custom-select">
-                </p-dropdown>
+                </p-select>
             </div>
 
             <div>
-                <p-dropdown [options]="monthOptions" optionValue="value" [(ngModel)]="selectedMonth" placeholder="Month"
+                <p-select [options]="monthOptions" optionValue="value" [(ngModel)]="selectedMonth" placeholder="Month"
                 (onChange)="getAttendnaceData(getSelectedEmployee())" optionLabel="name" class="custom-select">
-                </p-dropdown>
+                </p-select>
             </div>
             <!-- select all employees drop down for HR code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
             <label class="form-label custom-label pt-2" for="">Select Employee</label>
             <div>
-                <p-dropdown [options]="getAllEmployeeInfo"  [filter]="true" filterBy="fullName"
+                <p-select [options]="getAllEmployeeInfo"  [filter]="true" filterBy="fullName"
                     [showClear]="false" [(ngModel)]="selectedEmployee" placeholder="Select Employee"
                     (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null" optionLabel="fullName" class="custom-select">
-                </p-dropdown>
+                </p-select>
             </div>
             }
             <!-- select all employees drop down for HR code end -->
@@ -37,10 +37,10 @@
             @if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')){
             <label class="form-label custom-label pt-2" for="">Select Employee</label>
             <div>
-                <p-dropdown [options]="get_Employeelist_forTM"  [filter]="true"
+                <p-select [options]="get_Employeelist_forTM"  [filter]="true"
                     filterBy="fullName" [showClear]="false" [(ngModel)]="selectedEmployeeOfHr" placeholder="Select Employee"
                     (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null" optionLabel="fullName" class="custom-select">
-                </p-dropdown>
+                </p-select>
             </div>
             }
             <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata);this.selectedEmployee=null;this.selectedEmployeeOfHr=null">
@@ -95,11 +95,12 @@
                                             }
 
                                             @if(rbac.allowedToAccess('Request Regularization.view')){
-                                                @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && 
-                                                (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs) && currentMonth == selectedMonth ){ 
-                                                    <a class="ms-2" (click)="openModal(raiseregularization); onclickRegularization(item.date)"><u>Regularization</u> </a>
-                                                } 
-                                            }
+                                             @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && 
+                                            (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs) && currentMonth == selectedMonth && 
+                                            this.rbac.allowedToAccess('Attendance Regularization Button.view') && item.employeeId==empdata.employeeId){ 
+                                                <a class="ms-2" (click)="openModal(raiseregularization); onclickRegularization(item.date)"><u>Regularization</u> </a>
+                                            } 
+                                         }
                                             
                                        </td>
                                         <td>

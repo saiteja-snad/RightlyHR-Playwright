@@ -6,7 +6,7 @@ import { MyinfoJobTabsComponent } from "../../shared/myinfo-tabs/myinfo-job-tabs
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -15,7 +15,7 @@ import { MyinfoDetailsComponent } from "../../shared/myinfo-details/myinfo-detai
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { MultiSelectModule } from 'primeng/multiselect';
-
+import { SignalsService } from '../../services/signals.service';
 @Component({
   selector: 'app-myinfo-layout',
   imports: [CommonModule, RouterOutlet, Select, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule, MyinfoDetailsComponent, TranslateModule, MultiSelectModule],
@@ -40,9 +40,11 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
   pouptext1: any
   selectedEmployees: any[] = []; // Ensure it's an array
   spinnerLoader = false;
+  destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private http: HttpService, private router: Router, private modalService: NgbModal,
-    private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService) { }
+
+    private fb: FormBuilder, private conformationPopup: OpenModalService, private signalService: SignalsService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.formsubmit();
@@ -69,7 +71,7 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.managers = data
           .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: {fusionEmpId:string; firstName: any; middleName?: string; lastName: any }) => ({
+          .map((emp: { fusionEmpId: string; firstName: any; middleName?: string; lastName: any }) => ({
             ...emp,
             name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
           }));
@@ -93,8 +95,6 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   updateTeamRM() {
-    console.log("Raw Selected Employees:", this.selectedEmployees);
-    console.log("Updated selectedEmployeeIds:", this.selectedEmployeeIds);
     this.spinnerLoader = true;
     if (!Array.isArray(this.selectedEmployees) || this.selectedEmployees.length === 0) {
       console.error("selectedEmployees is not a valid array", this.selectedEmployees);
@@ -116,7 +116,8 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
       console.error("No valid ManagerId found.");
       return;
     }
-    this.subscription = this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody)
+    this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody)
+    .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
@@ -128,13 +129,14 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
             this.spinnerLoader = false;
+            this.teamForm.reset();  // Reset the form
           }
-        }
+        },
       });
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' , size: 'lg'});
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   isActive(route: string): boolean {
@@ -178,6 +180,12 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   closeModal() {
+    this.teamForm.reset();  // Reset the form
+    this.teamForm.markAsPristine();  // Make sure the form appears as untouched
+    this.teamForm.markAsUntouched();  // Ensure validation styles are cleared
+    this.modalService.dismissAll();  // Dismiss the modal
+  }
+  resetAndClose(modal: any): void {
     this.teamForm.reset();
     this.modalService.dismissAll();
   }

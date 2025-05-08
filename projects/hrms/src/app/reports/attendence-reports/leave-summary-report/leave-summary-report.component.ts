@@ -220,10 +220,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
     // Manager full name
     if (formValue.manager) {
-      const fullName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-        .filter(Boolean)
-        .join(' ');
-      request.TeamManagerName = fullName;
+      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
 
     // Leave category

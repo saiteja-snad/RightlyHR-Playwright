@@ -112,15 +112,15 @@
                                     <li *ngIf="authorityFullName && authorityFullName" class="letter-signature mb-2">
                                         {{ authorityFullName }}
                                     </li>
-                                    <li *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation" class="mb-2">
+                                    <li *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
                                         {{ authorityFullName }}
                                     </li>
                                     <li *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
                                         {{ selectedAuthority.designation }}
                                     </li>
-                                    <li *ngIf="authorityFullName && selectedEmployee.workEmail && selectedEmployee.workEmail">
+                                    <!-- <li *ngIf="authorityFullName && selectedEmployee.workEmail && selectedEmployee.workEmail">
                                         {{ selectedEmployee.workEmail }}
-                                    </li>
+                                    </li> -->
                                 </ul>
                             </div>
                         </div>

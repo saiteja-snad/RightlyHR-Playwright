@@ -13,17 +13,19 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>Review Cycle Name</th>
-                    <th>Employee Name</th>
-                    <th>Employee ID</th>
-                    <th>Department</th>
-                    <th>Team</th>
-                    <th>Location</th>
-                    <th>Sub Location</th>
-                    <th>Due Date</th>
-                    <th>Review Template</th>
-                    <th>Status</th>
-                    <th class="text-center">Action</th>
+                    <th>{{'Review Cycle Name' | translate}}</th>
+                    <th>{{'Employee Name' | translate}}</th>
+                    <th>{{'Employee ID' | translate}}</th>
+                    <th>{{'Department' | translate}}</th>
+                    <th>{{'Team' | translate}}</th>
+                    <th>{{'Location' | translate}}</th>
+                    <th>{{'Sub Location' | translate}}</th>
+                    <th>{{'Due Date' | translate}}</th>
+                    <th>{{'Review Template' | translate}}</th>
+                    <th>{{'Status' | translate}}</th>
+                    @if(rbac.allowedToAccess('My Performance Assessment.view')){
+                    <th class="text-center">{{'Action(S)' | translate}}</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -40,6 +42,7 @@
                     <td class="text-nowrap">{{ item.assessordueDate | date: 'dd MMM yyyy' }}</td>
                     <td>{{ item.formName }}</td>
                     <td>{{ item.rcItemStatus }}</td>
+                    @if(rbac.allowedToAccess('My Performance Assessment.view')){
                     <td class="text-center">
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
@@ -49,11 +52,12 @@
                                 <li class="dropdown-item"
                                     (click)="selfAssessment(item.reviewCycleItemId, item.currentStage, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
                                     <a class="dropdown-custom-btn">{{item.assessorType}}
-                                        Assessment</a>
+                                        {{'Assessment' | translate}}</a>
                                 </li>
                             </ul>
                         </div>
                     </td>
+                    }
                 </tr>
                 }
                 }@else {
@@ -77,8 +81,7 @@
                     </option>
                 </select>
                 <span class="pagination-label text-nowrap">
-                    Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{
-                    collectionSize }}
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{ collectionSize }}
                 </span>
             </div>
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"

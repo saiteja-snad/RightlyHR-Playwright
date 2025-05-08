@@ -189,7 +189,7 @@
           <label class="form-label custom-label mb-2">Manager <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="managerOptions" resetFilterOnHide="true" optionLabel="label" formControlName="managerType"
-              placeholder="Please select manager type" value="selectedOption.value" class="form-select custom-select">
+              placeholder="Please select employee manager" value="selectedOption.value" class="form-select custom-select">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
               <ng-template let-option #item>{{ option.label }}</ng-template>
             </p-select>
@@ -320,7 +320,7 @@
           <label class="form-label custom-label mb-2">Manager <span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="managerOptions" resetFilterOnHide="true"optionLabel="label" field="value" formControlName="managerType"
-              placeholder="Please select manager type" class="form-select custom-select">
+              placeholder="Please select employee manager" class="form-select custom-select">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
               <ng-template let-option #item>{{ option.label }}</ng-template>
             </p-select>

@@ -8,19 +8,18 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { Router } from '@angular/router';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { PaginatorModule } from 'primeng/paginator';
+import { OpenModalService } from '../../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-team-pending-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent, PaginatorModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent, PaginatorModule, TranslateModule],
   templateUrl: './team-pending-reviews.component.html',
   styleUrl: './team-pending-reviews.component.scss'
 })
 export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
   Status: any;
-  @ViewChild('createReviewCycle') createReviewCycle: any;
-  @ViewChild('confirmation') confirmation: any;
-  @ViewChild('success') success: any;
-  @ViewChild('error') error: any;
   employeeId!: any;
   reviewCycles: any[] = [];
   searchQuery = '';
@@ -49,9 +48,11 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
 
 
   constructor(
-    private readonly modalService: NgbModal,
+    private modal: OpenModalService,
     private router: Router,
-    private http: HttpService) { }
+    private http: HttpService,
+    public rbac: RbacService,
+  ) { }
 
   ngOnInit(): void {
     const fusionuser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -160,15 +161,7 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
     return sublocations?.map(subLoc => subLoc.subLocationName).join(', ') || '-';
   }
 
-  openCreate() {
-    this.modalService.open(this.createReviewCycle, {
-      size: 'lg',
-      centered: true,
-    });
-  }
-
   downloadPromotionletter(iteamid: any) {
-
     this.subscription = this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
 
       next: (data: Blob) => {
@@ -182,10 +175,11 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         this.Status = 'Promotion Letter Downloaded Successfully';
-        this.modalService.open(this.success, { centered: true });
+        this.modal.openSuccessModal(this.Status)
       },
       error: (err) => {
         this.Status = 'Failed to download letter';
+        this.modal.openErrorModal(this.Status);
       },
     });
   }
@@ -205,10 +199,10 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
         this.Status = 'Appraisal Letter Downloaded Successfully';
-        this.modalService.open(this.success, { centered: true });
-      },
+        this.modal.openSuccessModal(this.Status)      },
       error: (err) => {
         this.Status = 'Failed to download letter';
+        this.modal.openErrorModal(this.Status);
       },
     });
   }
@@ -228,11 +222,6 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
     this.page = 1;
     this.first = 0;
     this.fetchReviewCycles();
-  }
-
-
-  closeModal() {
-    this.modalService.dismissAll();
   }
 
   ngOnDestroy(): void {

@@ -11,7 +11,7 @@
             <div class="custom-p-select-content">
                 <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
                     filterBy="fullName" [showClear]="true" placeholder="Please select employee"
-                    (onChange)="Onclick($event)" class="custom-select w-100">
+                    (onChange)="Onclick($event)" class="custom-select w-100" resetFilterOnHide="true">
                 </p-select>
             </div>
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)">
@@ -198,6 +198,9 @@
                             *ngIf="leaveForm.get('availingType')?.invalid && leaveForm.get('availingType')?.touched">
                             Please select Availing option
                         </div>
+                        <div class="error-msg" *ngIf="disableSubmitButton">
+                            Please select Availing option
+                        </div>
                     </div>
 
                     <div class="col-md-12 mb-3">
@@ -230,15 +233,15 @@
                     <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|
+                    <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();cleardata()">{{'Close'|
                         translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
-                    [disabled]="
+                        [disabled]="
                     leaveForm.invalid ||
                     leaveForm.errors?.['dateOrderInvalid'] ||
                     !isstimeoffValid || !startdatevalid || isHolidaySelected ||  !isDayTypeselected || 
-                    isWeekOffSelected || isWeekOffSelectedEndate || isoptionalnotallowedatWorkingdate || 
-                    (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves) || isLoading">
+                    isWeekOffSelected || isWeekOffSelectedEndate || isoptionalnotallowedatWorkingdate || isHolidaySelectedEndate || isHolidaySelected || isNonOptionalHolidaySelected ||
+                    (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > remainingLeaves) || disableSubmitButton || isLoading">
                         <span *ngIf="!isLoading">Apply</span>
                         <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
                     </button>

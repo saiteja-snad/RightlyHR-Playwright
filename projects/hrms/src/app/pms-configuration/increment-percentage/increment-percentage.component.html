@@ -1,9 +1,11 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="component-header">Increment Percentage</div>
+        @if(rbac.allowedToAccess('Increment Create.view')){
         <div>
             <button class="custom-btn btn-primary px-5" (click)="openAdd()">Create</button>
         </div>
+        }
     </div>
 
     <div class="w-100">
@@ -24,7 +26,10 @@
                         <th>Location</th>
                         <th>Sub Location</th>
                         <th>Rating Scale</th>
+                        @if (rbac.allowedToAccess('Increment Update(Status - Created).view') || rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
+                            rbac.allowedToAccess('Increment View(Status - Initialted).view') || rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
                         <th>Action(s)</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -39,20 +44,35 @@
                         <td>{{item?.sublocationName? (getNamesAsString(item?.sublocationName, 'subLocationName')):'-' }}
                         </td>
                         <td>{{item?.rating?item?.rating:'-'}}</td>
+                        @if (rbac.allowedToAccess('Increment Update(Status - Created).view') || rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
+                            rbac.allowedToAccess('Increment View(Status - Initialted).view') || rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                   </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li><a class="dropdown-item" (click)="editDetails(item)">Update</a></li>
-                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Created'"
+                                    @if (rbac.allowedToAccess('Increment Update(Status - Created).view')) {
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Created'" (click)="editDetails(item)">Update</a></li>
+                                    }
+                                    @if(rbac.allowedToAccess('Increment Delete(Status - Created).view')){
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Created'"
                                             (click)="openDelete(confirmation, item.id)">Delete</a></li>
-                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus==='Initiated'"
-                                            (click)="viewDetails(item)">View</a></li>
+                                    }
+                                    @if(rbac.allowedToAccess('Increment View(Status - Initialted).view')){
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Initiated'" (click)="viewDetails(item)">View</a></li>
+                                    }
+                                    @if(rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')){
+                                    @if(item?.reviewCycleStatus ==='Review on Hold'){
+                                    <li>
+                                        <a class="dropdown-item" (click)="openHoldMsg()">Update</a>
+                                    </li>
+                                    }
+                                    }
                                 </ul>
                             </div>
                         </td>
+                        }
                     </tr>
                     }
                     }
@@ -79,8 +99,8 @@
                             </option>
                         </select>
                         <span class="pagination-label text-nowrap">
-                            Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{ collectionSize }}
-                        </span>
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{ collectionSize }}
+                        </span>                          
                     </div>
                     <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
                         (onPageChange)="onPageChange($event)"></p-paginator>

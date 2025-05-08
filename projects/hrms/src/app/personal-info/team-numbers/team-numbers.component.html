@@ -1,4 +1,14 @@
 <div class="custom-main-component-container">
+    <div class="d-flex justify-content-between mb-3">
+        <div >
+            <app-team-members-tabs />
+            
+        </div>
+        <div>
+            <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change RM</button>
+        </div>
+    </div>
+
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -35,7 +45,7 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu py-0">
-                                    <li (click)="openModal(changermmodal)">
+                                    <li (click)="openModal(changermmodal,details)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change RM</a>
                                     </li>
                                 </ul>
@@ -74,21 +84,89 @@
                     </label>
                     <div class="custom-p-select-content">
                         <p-select optionLabel="name" [options]="managers" placeholder="Select Reporting Manager"
-                            class="form-select custom-select" id="mReportingto" formControlName="mReportingto" filterBy="name" filter="true" resetFilterOnHide="true"
-                            (onChange)="onSelectManager($event)">
+                            class="form-select custom-select" id="mReportingto" formControlName="mReportingto"
+                            filterBy="name" filter="true" resetFilterOnHide="true" (onChange)="onSelectManager($event)">
                         </p-select>
                     </div>
                     <div *ngIf="rmForm.get('mReportingto')?.invalid && (rmForm.get('mReportingto')?.touched || rmForm.get('mReportingto')?.dirty)"
                         class="error-msg">Please select Reporting Manager</div>
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="resetAndClose(modal)">{{'Close'|translate}}</button>
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="resetAndClose(modal)">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="rmForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
-                            <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                                <span>{{'Loading...'}}</span>
-                            </div>
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
+                        }@else {
+                        <span>{{'Submit'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #changermmodals let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0"> {{'Change RM'|translate}}</p>
+            </div>
+            <div>
+                <a (click)="resetAndClose(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form autocomplete="off" [formGroup]="teamForm" (ngSubmit)="updateTeamRMs()">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Select Team Member(s)'|translate}}<span
+                                class="error-msg">*</span></label>
+                        <div class="custom-p-multiSelect-content">
+                            <p-multiSelect formControlName="teamMembers" id="teamMembers" optionLabel="name"
+                                [options]="teamMembersdata" placeholder="Select Team Member(s)" resetFilterOnHide="true"
+                                class="w-100" multiple="true" filterBy="name" filter="true"
+                                (onChange)="onSelectManagers($event, 'teamMembers')">
+                            </p-multiSelect>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="teamForm.get('teamMembers')?.invalid && teamForm.get('teamMembers')?.touched">
+                            Team Members is required
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Select Reporting Manager'|translate}}<span
+                                class="error-msg">*</span>
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name"
+                                [options]="managers" placeholder="Select Reporting Manager" filterBy="name"
+                                filter="true" class="form-select custom-select" resetFilterOnHide="true"
+                                (onChange)="onSelectManagers($event, 'reportingManager')">
+                            </p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="teamForm.get('reportingManager')?.invalid && teamForm.get('reportingManager')?.touched">
+                            Reporting Manager is required
+                        </div>
+                    </div>
+                </div>
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4"
+                        (click)="modal.dismiss();teamForm.reset()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="teamForm.invalid || spinnerLoader">
+                        @if(spinnerLoader){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
                         }@else {
                         <span>{{'Submit'| translate}}</span>
                         }

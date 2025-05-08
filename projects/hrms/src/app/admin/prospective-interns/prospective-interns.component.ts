@@ -12,9 +12,10 @@ import { ActiveEmployeePipe } from '../../Pipes/active-employee.pipe';
 import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { IServe } from '../../Interfaces/letters-model';
+import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 @Component({
   selector: 'app-prospective-interns',
-  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent],
+  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './prospective-interns.component.html',
   styleUrl: './prospective-interns.component.scss'
 })

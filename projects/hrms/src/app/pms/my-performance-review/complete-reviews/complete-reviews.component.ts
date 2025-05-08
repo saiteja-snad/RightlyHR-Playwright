@@ -9,10 +9,12 @@ import { PaginatorModule } from 'primeng/paginator';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { Router } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-complete-reviews',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbPaginationModule, NoDataFoundComponent, PaginatorModule, DataLoaderContentComponent, TranslateModule],
   templateUrl: './complete-reviews.component.html',
   styleUrl: './complete-reviews.component.scss'
 })
@@ -50,6 +52,7 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
     private readonly http: HttpService,
     private router: Router,
     private sharedModalService: OpenModalService,
+    public rbac:  RbacService
   ) { }
 
   ngOnInit(): void {

@@ -83,7 +83,7 @@
                     </div>
                     <div
                         *ngIf="probationConfirmationForm.get('authorityid')?.invalid && probationConfirmationForm.get('authorityid')?.touched">
-                        <div class="error-msg">Signature authority is required</div>
+                        <div class="error-msg">Signature authority name is required</div>
                     </div>
                 </div>
 
@@ -108,10 +108,8 @@
                         [disabled]="!enableBtn || releaseLoader">
                         <ng-container *ngIf="releaseLoader; else releaseText">
                             <div class="button-loader-content">
-                                <div class="button-loader-content">
-                                    <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                                    <span>{{'Loading...'}}</span>
-                                </div>
+                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span>{{'Loading...'}}</span>
                             </div>
                         </ng-container>
                         <ng-template #releaseText>
@@ -138,10 +136,11 @@
                                 <div class="d-flex justify-content-between mb-3">
                                     <ul class="list-style-none ps-0">
                                         <li>To</li>
-                                        <li *ngIf="!probationLetterData.firstName && !probationLetterData.middleName && !probationLetterData.lastName;else fullname">
+                                        <li
+                                            *ngIf="!probationLetterData.firstName && !probationLetterData.middleName && !probationLetterData.lastName;else fullname">
                                             Name:</li>
                                         <ng-template #fullname>
-                                            <li>{{probationLetterData.firstName}} {{probationLetterData.middleName}} 
+                                            <li>{{probationLetterData.firstName}} {{probationLetterData.middleName}}
                                                 {{probationLetterData.lastName}},</li>
                                         </ng-template>
                                         <li>{{probationLetterData.fusionEmpId}}</li>
@@ -153,36 +152,43 @@
                                         <p><span class="letter-sub-header">Issued Date:</span> {{probationLetterData.issuedDate | dateformat }}</p>
                                     </div>
                                 </div>
-        
+                            
                                 <p class="letter-sub-header mb-3">Dear {{probationLetterData.firstName}}
                                     {{probationLetterData.middleName}} {{probationLetterData.lastName}},</p>
-        
+                            
                                 <p class="mb-4">We are pleased to inform you that, following a comprehensive
                                     assessment of your performance during the probationary period, you have successfully
                                     completed your probationary period with RightlyHR. </p>
-        
+                            
                                 <p class="mb-4">
                                     Effective from {{probationLetterData.effectiveDate|dateformat}}, your position as
                                     <b>{{probationLetterData.jobRole}}</b> within our organization is officially confirmed,
                                     and your terms and conditions of employment will remain unchanged.
                                 </p>
-        
+                            
                                 <p class="mb-4">
                                     We believe that your continued presence at RightlyHR will
                                     further contribute to our success, and we look forward to seeing your continued
                                     growth and contributions to the organization.
                                 </p>
-        
+                            
                                 <p class="mb-4">
                                     Congratulations on this milestone in your career, and we look forward to a
                                     successful and rewarding journey together.
                                 </p>
-        
-                                <p class="mb-2">Sincerely,</p>
+                            
+                                <p class="mb-2 pt-4">Sincerely,</p>
                                 <p class="letter-sub-header"><b>for RightlyHR</b></p>
+                                <!-- Show "Authority Signature" only when no authority is selected -->
+                                <div *ngIf="!probationLetterData.authorityName" class="letter-sub-header pt-4">Authority Signature</div>
+                                <!-- Show Name & Designation only when authorityName is set -->
+                                <div *ngIf="!probationLetterData.authorityName">
+                                    <p class="letter-sub-header m-0">Authority Name</p>
+                                    <p class="letter-sub-header m-0">Designation</p>
+                                </div>
                                 <div class="letter-signature pt-4">{{probationLetterData.authorityName}}</div>
                                 <div>
-                                    <p><b>{{probationLetterData.authorityName}}</b></p>
+                                    <p class="mb-0"><b>{{probationLetterData.authorityName}}</b></p>
                                     <p><b>{{probationLetterData.authorityDesignation}}</b></p>
                                 </div>
                             </div>

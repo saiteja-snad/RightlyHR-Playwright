@@ -38,7 +38,8 @@ export class OnBeHalfOfComponent {
   filteredLeaves = [] as ILeaves[]
   lpdata = [] as Ilpid[];
   selectedFields = {} as any;
-  selectedValue!: string;
+  // selectedValue!: string;
+  selectedValue: string | null = null;
   iseditEndDateValid: boolean = true;
   isHalfDay = true;
   istimeoffValid: boolean = true;
@@ -252,41 +253,58 @@ export class OnBeHalfOfComponent {
   onleaveSelect(categoryId: number) {
     this.leaveFormData.categoryId = categoryId;
     this.isSubmitted = false;
-    this.selectedleave = this.categoryDetails.find(c => c.category.id == categoryId) as ICategoryDetails
+    this.selectedleave = this.categoryDetails.find(c => c.category.id == categoryId) as ICategoryDetails;
     this.enableHalfDayOptions = this.selectedleave?.category?.allowedHalfDay ?? false;
+  
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.excludeHolidays) {
       this.getholidaybyempid(this.empdata.employeeId);
     }
+  
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.excludeWeekends) {
       this.getweekendbyempid(this.empdata.employeeId);
     }
+  
     const maxDays = this.selectedleave?.allowedDays;
     const leavesTaken = this.selectedleave?.utilizedDays;
-    const booked = this.selectedleave?.booked; // If no booked days, default to 0
-    // Calculate remaining leaves by subtracting utilized and booked days from allowed days
-    this.remainingLeaves = maxDays - (leavesTaken ? leavesTaken : 0) - booked;
-    // Handle probation leave balance if applicable
-    if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.isProbationAllowed) {
-      const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken !== undefined ? leavesTaken : 0) - booked;
-      // Update remaining leaves for probation
-      if (probationLeavesTaken >= 0) {
-        this.remainingLeaves = probationLeavesTaken;
-      } else {
-        this.remainingProbationLeaves = 0;
-      }
+    const booked = this.selectedleave?.booked ?? 0;
+    this.remainingLeaves = maxDays - (leavesTaken ?? 0) - booked;
+  
+    if (this.selectedleave?.category?.isProbationAllowed) {
+      const probationLeavesTaken = this.selectedleave.probationLeaves - (leavesTaken ?? 0) - booked;
+      this.remainingLeaves = probationLeavesTaken >= 0 ? probationLeavesTaken : 0;
+      this.remainingProbationLeaves = this.remainingLeaves;
     } else {
       this.remainingProbationLeaves = 0;
     }
-    // Call calculateDateDifference function here
+  
     if (this.startDate && this.endDate) {
       this.calculateDateDifference(this.startDate, this.endDate);
     }
+  
     setTimeout(() => {
-      if (this.startDate?.control) { // Ensure control exists
-      }
+      if (this.startDate?.control) { }
     });
+  
+    // 🔁 Reset availing type selections
+    this.leaveForm.patchValue({
+      halfdayavailing: null,
+      fulldayavailing: null,
+      availing: null
+    });
+  
+    this.enableButton = false;
+    this.isDayTypeselected = false;
+    this.selectedValue = null;
+  
+    this.leaveForm.get('halfdayavailing')?.clearValidators();
+    this.leaveForm.get('fulldayavailing')?.clearValidators();
+    this.leaveForm.get('availing')?.clearValidators();
+  
+    this.leaveForm.get('halfdayavailing')?.updateValueAndValidity();
+    this.leaveForm.get('fulldayavailing')?.updateValueAndValidity();
+    this.leaveForm.get('availing')?.updateValueAndValidity();
   }
-
+  
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -910,6 +928,7 @@ export class OnBeHalfOfComponent {
 
   cleardata() {
     this.leaveForm.reset();
+    this.disableSubmitButton = false;
     this.modalService.dismissAll();
   }
 

@@ -970,7 +970,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .letter-sub-header {
-    font-size: 15px;
+    font-size: var(--fontsize16) !important;
     font-weight: 600;
 }
 

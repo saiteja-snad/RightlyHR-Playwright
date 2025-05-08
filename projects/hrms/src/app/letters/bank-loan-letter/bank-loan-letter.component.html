@@ -128,7 +128,7 @@
                             <!-- Show "Authority Signature" only when no authority is selected -->
                             <div *ngIf="!authorityFullName" class="mb-3">Authority Signature</div>
                             <!-- Show Name & Designation only when authorityName is set -->
-                            <div *ngIf="authorityFullName">
+                            <div *ngIf="!authorityFullName">
                                 <p class="letter-sub-header">Authority Name</p>
                                 <p class="letter-sub-header">Designation</p>
                             </div>

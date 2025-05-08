@@ -328,15 +328,15 @@ onSelectManagers(event: any, field: string) {
       next: (data: any) => {
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-        this.getAllTeammembersLists();
+        this.getAllTeammembersList();
       },
       error: (reason: any) => {
         if (reason) {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-          this.getAllTeammembersLists();
           this.spinnerLoader = false;
           this.teamForm.reset();
+          this.getAllTeammembersList();
         }
       }
     });

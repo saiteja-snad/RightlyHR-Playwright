@@ -97,6 +97,8 @@ export class DocumentsComponent {
   }
 
   toggleFolder(folder: any): void {
+    this.Files=[]// or however you're using getVisibleFiles
+    this.selectedFile=null
     // Collapse all other folders
     this.folders.forEach((f) => {
       if (f !== folder) {

@@ -12,17 +12,11 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { IProbationEmployees } from '../../../Interfaces/letters-model';
 import { IJob } from '../../../Interfaces/job-model';
+import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
-
 @Component({
   selector: 'app-family-details',
-  imports: [
-    CommonModule,
-    Select,
-    ReactiveFormsModule,
-    DateformatPipe,
-    NoDataFoundComponent,
-  ],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
   templateUrl: './family-details.component.html',
   styleUrl: './family-details.component.scss',
 })

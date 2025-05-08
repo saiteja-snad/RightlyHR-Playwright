@@ -28,7 +28,6 @@
                         <div *ngIf="createForm.get('formHeader')?.hasError('onlySpecialChars')">
                             Form Name cannot contain only special characters.
                           </div>
-                          
                     </div>
                 </div>
 
@@ -184,9 +183,9 @@
                     </div>
 
                     <div ngbAccordionCollapse>
-                        <div>
+                        <div class="p-3">
                             <!-- Rating Scale -->
-                            <div class="col-md-3 p-2" *ngIf="section.get('type')?.value === 'rating'">
+                            <div class="col-md-4 mb-3" *ngIf="section.get('type')?.value === 'rating'">
                                 <!-- <label class="form-label">Question Type <span class="text-danger">*</span></label> -->
                                 <div class="custom-p-select-content">
                                     <p-select [options]="filteredRatingScaleTypes" optionLabel="ratingType"
@@ -206,108 +205,104 @@
                                 *ngIf="section.get('type')?.value === 'rating'">
                                 <div *ngFor="let question of getQuestions(sectionIndex).controls; let questionIndex = index"
                                     [formGroupName]="questionIndex" cdkDrag>
-                                    <div class="card-body col-md-12 question-input">
-                                        <div class="mb-3 p-3 border rounded">
-                                            <div class="d-flex gap-3 ">
-                                                <!-- Drag Icon -->
-                                                <div class="question-drag"
-                                                    *ngIf="getQuestions(sectionIndex).controls.length > 1">
-                                                    <button class="drag-btn" cdkDragHandle>
-                                                        <i class="bi bi-grip-vertical"></i>
-                                                    </button>
-                                                </div>
-
-                                                <!-- Question Weightage -->
-                                                <div class="col-md-3">
-                                                    <label class="content-heading mb-2">Question Weightage<span class="text-danger">*</span></label>
-                                                    <div class="d-flex">
-                                                        <input type="number" formControlName="questionWeightage" class="form-control custom-input"
-                                                            placeholder="Enter Question Weightage" min="1" (input)="restrictToNumbers($event)">
-                                                    </div>
-                                                    <div class="error-msg">
-                                                        <div *ngIf="question.get('questionWeightage')?.errors?.['required'] && question.get('questionWeightage')?.touched">
-                                                            Question Weightage is required.
-                                                        </div>
-                                                        <div *ngIf="question.get('questionWeightage')?.errors?.['min'] && question.get('questionWeightage')?.touched">
-                                                            Question Weightage must be at least 1.
-                                                        </div>
-                                                        <div *ngIf="!question.get('questionWeightage')?.errors?.['required'] && createForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100'] 
-                                                        && question.get('questionWeightage')?.touched">
-                                                            Total questions weightage in this section must be 100.
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <!-- Target -->
-                                                <!-- <div class="col-md-3" *ngIf="this.createForm.get('moduleId')?.value.id === 24">
-                                                    <label class="content-heading mb-2">Target<span class="text-danger">*</span></label>
-                                                    <div class="d-flex">
-                                                        <input type="text" formControlName="target" class="form-control custom-input" placeholder="Enter Target"
-                                                            (input)="validateInput(question.get('target'))">
-                                                    </div>
-                                                    <div class="error-msg" *ngIf="question.get('target')?.errors?.['required'] && question.get('target')?.touched">
-                                                        Target is required.
-                                                    </div>
-                                                </div> -->
-
-                                                <!-- Unit of Measurement -->
-                                                <!-- <div class="col-md-3" *ngIf="this.createForm.get('moduleId')?.value.id === 24">
-                                                    <label class="content-heading mb-2">Unit of Measurement<span class="text-danger">*</span></label>
-                                                    <input type="text" formControlName="unitofmeasurement" class="form-control custom-input"
-                                                        placeholder="Enter Unit of Measurement" min="1" (input)="validateInput(question.get('unitofmeasurement'))">
-                                                    <div class="error-msg"
-                                                        *ngIf="question.get('unitofmeasurement')?.errors?.['required'] && question.get('unitofmeasurement')?.touched">
-                                                        Unit of Measurement is required
-                                                    </div>
-                                                </div> -->
+                                    <div class="mb-3 p-3 border rounded">
+                                        <div class="d-flex gap-3 ">
+                                            <!-- Drag Icon -->
+                                            <div class="question-drag" *ngIf="getQuestions(sectionIndex).controls.length > 1">
+                                                <button class="drag-btn" cdkDragHandle>
+                                                    <i class="bi bi-grip-vertical"></i>
+                                                </button>
                                             </div>
-
-                                            <!-- Question -->
-                                            <div class="mt-3">
+                                
+                                            <!-- Question Weightage -->
+                                            <div class="col-md-3">
+                                                <label class="form-label custom-label mb-2">Question Weightage<span class="text-danger">*</span></label>
+                                                <div>
+                                                    <input type="number" formControlName="questionWeightage" class="form-control custom-input"
+                                                        placeholder="Enter Question Weightage" min="1" (input)="restrictToNumbers($event)">
+                                                </div>
+                                                <div class="error-msg">
+                                                    <div
+                                                        *ngIf="question.get('questionWeightage')?.errors?.['required'] && question.get('questionWeightage')?.touched">
+                                                        Question Weightage is required.
+                                                    </div>
+                                                    <div
+                                                        *ngIf="question.get('questionWeightage')?.errors?.['min'] && question.get('questionWeightage')?.touched">
+                                                        Question Weightage must be at least 1.
+                                                    </div>
+                                                    <div *ngIf="!question.get('questionWeightage')?.errors?.['required'] && createForm.errors?.['section' + sectionIndex + 'QuestionWeightageNotEqualTo100'] 
+                                                                                        && question.get('questionWeightage')?.touched">
+                                                        Total questions weightage in this section must be 100.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                
+                                            <!-- Target -->
+                                            <!-- <div class="col-md-3" *ngIf="this.createForm.get('moduleId')?.value.id === 24">
+                                                <label class="content-heading mb-2">Target<span class="text-danger">*</span></label>
                                                 <div class="d-flex">
-                                                    <input formControlName="question" class="form-control custom-input" placeholder="Enter your Question"
-                                                        (input)="validateInput(question.get('question'))" [maxlength]="1000">
-                                                    <span class="text-danger">*</span>
+                                                    <input type="text" formControlName="target" class="form-control custom-input" placeholder="Enter Target"
+                                                        (input)="validateInput(question.get('target'))">
                                                 </div>
+                                                <div class="error-msg" *ngIf="question.get('target')?.errors?.['required'] && question.get('target')?.touched">
+                                                    Target is required.
+                                                </div>
+                                            </div> -->
+                                
+                                            <!-- Unit of Measurement -->
+                                            <!-- <div class="col-md-3" *ngIf="this.createForm.get('moduleId')?.value.id === 24">
+                                                <label class="content-heading mb-2">Unit of Measurement<span class="text-danger">*</span></label>
+                                                <input type="text" formControlName="unitofmeasurement" class="form-control custom-input"
+                                                    placeholder="Enter Unit of Measurement" min="1" (input)="validateInput(question.get('unitofmeasurement'))">
                                                 <div class="error-msg"
-                                                    *ngIf="question.get('question')?.errors?.['required'] && question.get('question')?.touched">
-                                                    Question is required.
+                                                    *ngIf="question.get('unitofmeasurement')?.errors?.['required'] && question.get('unitofmeasurement')?.touched">
+                                                    Unit of Measurement is required
                                                 </div>
-                                                <div class="error-msg"
-                                                    *ngIf="question.get('question')?.hasError('maxlength') && question.get('question')?.touched">
-                                                    Question must not exceed 1000 characters
-                                                </div>
+                                            </div> -->
+                                        </div>
+                                
+                                        <!-- Question -->
+                                        <div class="pt-3">
+                                            <div class="d-flex">
+                                                <input formControlName="question" class="form-control custom-input" placeholder="Enter your Question"
+                                                    (input)="validateInput(question.get('question'))" [maxlength]="1000">
+                                                <span class="text-danger">*</span>
                                             </div>
-
-                                            <!-- Rating Scale Options -->
+                                            <div class="error-msg"
+                                                *ngIf="question.get('question')?.errors?.['required'] && question.get('question')?.touched">
+                                                Question is required.
+                                            </div>
+                                            <div class="error-msg"
+                                                *ngIf="question.get('question')?.hasError('maxlength') && question.get('question')?.touched">
+                                                Question must not exceed 1000 characters
+                                            </div>
+                                        </div>
+                                
+                                        <!-- Rating Scale Options -->
+                                        <div>
+                                            <ng-container *ngFor="let scale of getRatingScaleOptions(section.get('ratingScaleType')?.value)">
+                                                <div class="d-flex align-items-center gap-2 m-2">
+                                                    <input type="radio" class="form-check-input" disabled />
+                                                    <span class="mt-1">{{scale.description}}</span>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                
+                                        <!-- Question Required -->
+                                        <div class="d-flex justify-content-end gap-2 w-100 pt-3">
+                                            <div class="form-check form-switch  ms-3">
+                                                <input class="form-check-input rounded-2" type="checkbox"
+                                                    id="requiredSwitch{{sectionIndex}}{{questionIndex}}" formControlName="isRequired"
+                                                    [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)" triggers="mouseenter:mouseleave"
+                                                    placement="start">
+                                                <label class="form-check-label" for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
+                                                    Required
+                                                </label>
+                                            </div>
+                                            
+                                            <!-- Remove Question -->
                                             <div>
-                                                <ng-container
-                                                    *ngFor="let scale of getRatingScaleOptions(section.get('ratingScaleType')?.value)">
-                                                    <div class="d-flex align-items-center gap-2 m-2">
-                                                        <input type="radio" class="form-check-input" disabled />
-                                                        <span class="mt-1">{{scale.description}}</span>
-                                                    </div>
-                                                </ng-container>
-                                            </div>
-
-                                            <!-- Question Required -->
-                                            <div class="d-flex justify-content-end">
-                                                <div
-                                                    class="col-md-1 d-flex align-items-center justify-content-center required-switch">
-                                                    <div class="form-check form-switch  ms-3">
-                                                        <input class="form-check-input rounded-2" type="checkbox"
-                                                            id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
-                                                            formControlName="isRequired" [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)"
-                                                            triggers="mouseenter:mouseleave" placement="start">
-                                                        <label class="form-check-label" for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
-                                                            Required
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <!-- Remove Question -->
-                                                <div class="col-md-1 d-flex align-items-center justify-content-center">
-                                                    <i class="bi bi-trash text-danger cursor" (click)="removeQuestion(sectionIndex, questionIndex)"></i>
-                                                </div>
+                                                <i class="bi bi-trash text-danger cursor" (click)="removeQuestion(sectionIndex, questionIndex)"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -315,8 +310,7 @@
                             </div>
         
                             <!-- Questions with Section type normal -->
-                            <div class="card-body col-md-12 question-input" formArrayName="questions" cdkDropList
-                                (cdkDropListDropped)="onDropQuestion($event, sectionIndex)"
+                            <div formArrayName="questions" cdkDropList (cdkDropListDropped)="onDropQuestion($event, sectionIndex)"
                                 *ngIf="section.get('type')?.value === 'normal'">
                                 <div *ngFor="let question of getQuestions(sectionIndex).controls; let questionIndex = index"
                                     [formGroupName]="questionIndex" class="mb-3 p-3 border rounded" cdkDrag>
@@ -328,42 +322,36 @@
                                                 <i class="bi bi-grip-vertical"></i>
                                             </button>
                                         </div>
-        
+                            
                                         <!-- Question Type -->
                                         <div class="col-md-3" *ngIf="section.get('type')?.value === 'normal'">
                                             <div class="d-flex">
                                                 <div class="dropdown w-100">
                                                     <button class="btn dropdown-toggle question-type rounded-2" type="button"
                                                         id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                                        <ng-container *ngIf="question.get('type')?.value === 'text'"
-                                                            class="m-2">
+                                                        <ng-container *ngIf="question.get('type')?.value === 'text'" class="m-2">
                                                             <i class="bi bi-type"></i>
                                                         </ng-container>
-                                                        <ng-container *ngIf="question.get('type')?.value === 'checkbox'"
-                                                            class="m-2">
+                                                        <ng-container *ngIf="question.get('type')?.value === 'checkbox'" class="m-2">
                                                             <i class="bi bi-check-square-fill"></i>
                                                         </ng-container>
-                                                        <ng-container *ngIf="question.get('type')?.value === 'boolean'"
-                                                            class="m-2">
+                                                        <ng-container *ngIf="question.get('type')?.value === 'boolean'" class="m-2">
                                                             <i class="bi bi-record-circle"></i>
                                                         </ng-container>
-                                                        <ng-container *ngIf="question.get('type')?.value === 'rating'"
-                                                            class="m-2">
+                                                        <ng-container *ngIf="question.get('type')?.value === 'rating'" class="m-2">
                                                             <i class="bi bi-star-fill"></i>
                                                         </ng-container>
-                                                        <ng-container *ngIf="question.get('type')?.value === 'text area'"
-                                                            class="m-2">
+                                                        <ng-container *ngIf="question.get('type')?.value === 'text area'" class="m-2">
                                                             <i class="bi bi-textarea-t"></i>
                                                         </ng-container>
                                                         {{ getQuestionTypeLabel(question.get('type')?.value) ||
-                                                         "Choose Question Type" }}
+                                                        "Choose Question Type" }}
                                                     </button>
-        
-                                                    <ul class="dropdown-menu question-type-dropdown"
-                                                        aria-labelledby="dropdownMenuButton">
+                            
+                                                    <ul class="dropdown-menu question-type-dropdown" aria-labelledby="dropdownMenuButton">
                                                         <li class="disabled">
-                                                            <a class="dropdown-item text-muted rounded-2" style="pointer-events: none;" 
-                                                            tabindex="-1">Choose Question Type</a>
+                                                            <a class="dropdown-item text-muted rounded-2" style="pointer-events: none;"
+                                                                tabindex="-1">Choose Question Type</a>
                                                         </li>
                                                         <li *ngFor="let type of questionTypes"
                                                             (click)="selectType(type, sectionIndex, questionIndex)">
@@ -395,14 +383,12 @@
                                                 Question Type is required.
                                             </div>
                                         </div>
-        
+                            
                                         <!-- Question Weightage -->
                                         <div class="col-md-3">
                                             <div class="d-flex">
-                                                <input type="number" formControlName="questionWeightage"
-                                                    class="form-control custom-input"
-                                                    placeholder="Enter Question Weightage" min="1"
-                                                    (input)="restrictToNumbers($event)">
+                                                <input type="number" formControlName="questionWeightage" class="form-control custom-input"
+                                                    placeholder="Enter Question Weightage" min="1" (input)="restrictToNumbers($event)">
                                                 <span class="text-danger">*</span>
                                             </div>
                                             <div class="error-msg"
@@ -419,14 +405,13 @@
                                                     must be 100.</span>
                                             </div>
                                         </div>
-        
+                            
                                     </div>
                                     <!-- Question -->
-                                    <div class="mt-3">
+                                    <div class="my-3">
                                         <div class="d-flex">
-                                            <input formControlName="question" class="form-control custom-input"
-                                                placeholder="Enter your Question" [maxlength]="1000"
-                                                (input)="validateInput(question.get('question'))">
+                                            <input formControlName="question" class="form-control custom-input" placeholder="Enter your Question"
+                                                [maxlength]="1000" (input)="validateInput(question.get('question'))">
                                             <span class="text-danger">*</span>
                                         </div>
                                         <div class="error-msg"
@@ -438,13 +423,13 @@
                                             Question must not exceed 1000 characters
                                         </div>
                                     </div>
-        
+                            
                                     <!-- Option Section for Checkbox, Multiple-Choice, or Boolean -->
-                                    <div *ngIf="question.get('type')?.value === 'checkbox' || question.get('type')?.value === 'multiple-choice' || question.get('type')?.value === 'boolean'"
-                                        formArrayName="options" class="mt-1 col-md-12">
+                                    <div *ngIf="question.get('type')?.value === 'checkbox' || question.get('type')?.value === 'multiple-choice' || 
+                                                                question.get('type')?.value === 'boolean'" formArrayName="options" class="pt-2">
                                         <div *ngFor="let option of getOptions(sectionIndex, questionIndex)?.controls; let optionIndex = index"
-                                            class="p-2 mb-1" [formGroupName]="optionIndex">
-                                            <div class="d-flex gap-2 align-items-center ">
+                                         [formGroupName]="optionIndex">
+                                            <div class="d-flex gap-2 align-items-center">
                                                 <ng-container
                                                     *ngIf="question.get('type')?.value === 'checkbox' || question.get('type')?.value === 'multiple-choice'">
                                                     <input type="checkbox" class="form-check-input" disabled>
@@ -454,33 +439,30 @@
                                                         name="booleanOptionGroup{{ sectionIndex }}{{ questionIndex }}" disabled>
                                                 </ng-container>
                                                 <div class="d-flex w-100">
-                                                    <input formControlName="option" (keypress)="formsValidations.restrictInitialSpace($event)" class="form-control custom-input w-25"
-                                                        placeholder="Enter option" />
+                                                    <input formControlName="option" (keypress)="formsValidations.restrictInitialSpace($event)"
+                                                        class="form-control custom-input w-25" placeholder="Enter option" />
                                                     <span class="text-danger">*</span>
                                                 </div>
-        
-                                                <button type="button" class="btn float-end"
-                                                    (click)="getOptions(sectionIndex, questionIndex) && getOptions(sectionIndex, questionIndex).controls.length > 1 ? removeOption(sectionIndex, questionIndex, optionIndex) : null">❌</button>
+                                                <button type="button" class="btn float-end" (click)="getOptions(sectionIndex, questionIndex) && 
+                                                getOptions(sectionIndex, questionIndex).controls.length > 1 ? removeOption(sectionIndex, questionIndex, optionIndex)
+                                                 : null">❌</button>
                                             </div>
                                             <div class="error-msg"
                                                 *ngIf="option.get('option')?.errors?.['required'] && option.get('option')?.touched">
                                                 Option Value is required.
                                             </div>
-
                                         </div>
-                                        <button type="button" class="custom-btn btn-primary  me-2"
+                                        <button type="button" class="custom-btn btn-primary"
                                             (click)="addOption(sectionIndex, questionIndex)">Add Option</button>
                                     </div>
                                     <!-- Question Type => Text | Textarea -->
-                                    <div *ngIf="question.get('type')?.value === 'text' || question.get('type')?.value === 'text area'"
-                                        class="mt-2">
-                                        <textarea *ngIf="question.get('type')?.value === 'text area'"
-                                            class="form-control custom-input" placeholder="Your answer here"
-                                            disabled></textarea>
-                                        <input type="text" *ngIf="question.get('type')?.value === 'text'"
-                                            class="form-control custom-input" placeholder="Your answer here" disabled>
+                                    <div *ngIf="question.get('type')?.value === 'text' || question.get('type')?.value === 'text area'" class="mt-2">
+                                        <textarea *ngIf="question.get('type')?.value === 'text area'" class="form-control custom-input"
+                                            placeholder="Your answer here" disabled></textarea>
+                                        <input type="text" *ngIf="question.get('type')?.value === 'text'" class="form-control custom-input"
+                                            placeholder="Your answer here" disabled>
                                     </div>
-        
+                            
                                     <!-- Stars for Rating Type -->
                                     <div *ngIf="question.get('type')?.value === 'rating'" class="mt-2">
                                         <div class="rating">
@@ -489,25 +471,21 @@
                                             </ng-container>
                                         </div>
                                     </div>
-        
-                                    <div class="d-flex justify-content-end">
+                            
+                                    <div class="d-flex gap-3 justify-content-end pt-2">
                                         <!-- Question Required -->
-                                        <div class="col-md-1 d-flex align-items-center justify-content-center required-switch">
-                                            <div class="form-check form-switch  ms-3">
-                                                <input class="form-check-input rounded-2" type="checkbox"
-                                                    id="requiredSwitch{{sectionIndex}}{{questionIndex}}"
-                                                    formControlName="isRequired"
-                                                    [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)"
-                                                    triggers="mouseenter:mouseleave" placement="start">
-                                                <label class="form-check-label"
-                                                    for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
-                                                    Required
-                                                </label>
-                                            </div>
-        
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input rounded-2" type="checkbox"
+                                                id="requiredSwitch{{sectionIndex}}{{questionIndex}}" formControlName="isRequired"
+                                                [ngbPopover]="getPopoverMessage(sectionIndex, questionIndex)" triggers="mouseenter:mouseleave"
+                                                placement="start">
+                                            <label class="form-check-label" for="requiredSwitch{{sectionIndex}}{{questionIndex}}">
+                                                Required
+                                            </label>
                                         </div>
+                            
                                         <!-- Remove Question -->
-                                        <div class="col-md-1 d-flex align-items-center justify-content-center">
+                                        <div>
                                             <i class="bi bi-trash text-danger" style="cursor: pointer;"
                                                 (click)="removeQuestion(sectionIndex, questionIndex)"></i>
                                         </div>
@@ -515,12 +493,12 @@
                                 </div>
                             </div>
 
-                            <div class="d-flex flex-column m-2">
+                            <div>
                                 <div class="error-msg" *ngIf="getQuestions(sectionIndex).controls.length < 1">
                                     The section must contain at least one question.
                                 </div>
                                 <!-- Add Question Button -->
-                                <button type="button" class="custom-btn btn-primary me-2 col-md-2" (click)="addQuestion(sectionIndex)" 
+                                <button type="button" class="custom-btn btn-primary me-2" (click)="addQuestion(sectionIndex)" 
                                 [disabled]="!section.valid">Add Question</button>
                             </div>
                         </div>

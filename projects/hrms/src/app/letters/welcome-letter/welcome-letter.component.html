@@ -45,7 +45,7 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
-                            class="custom-select w-100" formControlName="authorityid" (onChange)="onclickDesignation($event)">
+                            class="custom-select w-100" formControlName="authorityid" (onChange)="onclickDesignation($event)" [filter]="true" filterBy="fullName">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched" class="error-msg">
@@ -112,15 +112,15 @@
                                     <li *ngIf="authorityFullName && authorityFullName" class="letter-signature mb-2">
                                         {{ authorityFullName }}
                                     </li>
-                                    <li *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation" class="mb-2">
+                                    <li *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
                                         {{ authorityFullName }}
                                     </li>
                                     <li *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
                                         {{ selectedAuthority.designation }}
                                     </li>
-                                    <li *ngIf="authorityFullName && selectedEmployee.workEmail && selectedEmployee.workEmail">
+                                    <!-- <li *ngIf="authorityFullName && selectedEmployee.workEmail && selectedEmployee.workEmail">
                                         {{ selectedEmployee.workEmail }}
-                                    </li>
+                                    </li> -->
                                 </ul>
                             </div>
                         </div>

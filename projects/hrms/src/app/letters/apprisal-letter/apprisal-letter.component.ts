@@ -1,9 +1,9 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import moment from 'moment';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
@@ -136,8 +136,8 @@ export class ApprisalLetterComponent {
     this.getAuthorityDetails();
     this.getDesignationwithGradeid();
     this.employeeForm.get('variablePayAmount')?.disable();
-    this.employeeForm.get('variablePayAmount')?.setValue(0);
-    this.appraisalData.variablePayAmount = '0';
+    // this.employeeForm.get('variablePayAmount')?.setValue(0);
+    // this.appraisalData.variablePayAmount = '0';
   }
 
   //function for issed by
@@ -163,8 +163,8 @@ export class ApprisalLetterComponent {
       this.appraisalData.variablePayAmount = this.employeeForm.get('variablePayAmount')?.value;
     } else {
       this.employeeForm.get('variablePayAmount')?.disable();
-      this.employeeForm.get('variablePayAmount')?.setValue(0);
-      this.appraisalData.variablePayAmount = '0';
+      // this.employeeForm.get('variablePayAmount')?.setValue(0);
+      // this.appraisalData.variablePayAmount = '0';
     }
   }
 
@@ -254,6 +254,7 @@ export class ApprisalLetterComponent {
       this.authorityDesignation = '';
     }
   }
+
   //get offer letter Authority list
   getAuthorityDetails() {
     let offertype = 'Appraisal Letter';
@@ -318,27 +319,21 @@ export class ApprisalLetterComponent {
           this.appraisalData.employeeId = res.employeeId;
           this.appraisalData.bonus = res.bonusAmountData;
           this.previusSalary = data[0];
-
-          this.incrementSalary =
-            res?.compensationamount - this.previusSalary.compensationamount;
+          this.incrementSalary = res?.compensationamount - this.previusSalary.compensationamount;
           this.employeeCompensationDetails = res;
           this.appraisalData.salary = res?.compensationamount;
           this.appraisalData.compeffectivedate = res.compeffectivedate;
           //CTC calculation stated
           Employee.grossby = 12;
-          Employee.grossSalary = Math.round(
-            res?.compensationamount / Employee.grossby
-          );
+          Employee.grossSalary = Math.round(res?.compensationamount / Employee.grossby);
           this.grossSalary = Employee.grossSalary;
           if (this.appraisalData.pf == true || this.appraisalData.pf == false) {
             switch (this.appraisalData.pf) {
               case true:
-
                 if (this.appraisalData.esic == false) {
                   Employee.pfContribution = Math.round(
                     Employee.grossSalary * (6.719 / 100)
                   );
-
                   if (Employee.pfContribution >= 1800) {
                     Employee.pfContribution = 1800;
                   }
@@ -346,12 +341,10 @@ export class ApprisalLetterComponent {
                   Employee.pfContribution = Math.round(
                     Employee.grossSalary * (6.717 / 100)
                   );
-
                   if (Employee.pfContribution >= 1800) {
                     Employee.pfContribution = 1800;
                   }
                 }
-
                 else if (Employee.grossSalary <= 23195) {
                   Employee.pfContribution = Math.round(
                     Employee.grossSalary * (6.519 / 100)
@@ -373,7 +366,6 @@ export class ApprisalLetterComponent {
           } else {
             0;
           }
-
           if (this.appraisalData.esic == true) {
             let condition1 = Employee.grossSalary >= 23195;
             if (!condition1) {
@@ -529,29 +521,25 @@ export class ApprisalLetterComponent {
           
       });
   }
-  getEmployeeId() {
-    this.subscription = this.http
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          this.employeeiDetails = data;
-          this.employeeiddetails = data.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${
-                employee.employeeId ? employee.employeeId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-            };
-          });
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
 
+  getEmployeeId() {
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+      next: (data: any) => {
+        this.employeeiDetails = data;
+        this.employeeiddetails = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''
+              }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+          };
+        });
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
+  }
 
   async postAppraisalLetterFormSubmit(f: FormGroup) {
     this.spinnerLoader= true;
@@ -664,23 +652,20 @@ export class ApprisalLetterComponent {
 
   //Update Employee details along with Appraisal details
   sendEmployeeDetails() {
-    this.subscription = this.http
-      .postdata('Employeedata/UPDATER', this.appraisalData)
-      .subscribe({
-        next: (data: any) => {
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.postdata('Employeedata/UPDATER', this.appraisalData).subscribe({
+      next: (data: any) => {
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   //to get appraisal letter template
   async getAppraisalTemplate() {
-    this.appraisalTemplate = await this.httpclient
-      .get('assets/Performance_Appraisal_Letter.docx', {
-        responseType: 'arraybuffer',
-      })
+    this.appraisalTemplate = await this.httpclient.get('assets/Performance_Appraisal_Letter.docx', {
+      responseType: 'arraybuffer',
+    })
       .toPromise();
   }
 
@@ -691,55 +676,53 @@ export class ApprisalLetterComponent {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory',
       filePath,
       this.AppraisalFile
-    )
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.result.documentUrl = data.path;
-            // this.dataSuccessMsg('Appraisal Letter Generated Successfully');
-            this.conformationPopup.openSuccessModal('Appraisal Letter Generated Successfully');
+    ).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.result.documentUrl = data.path;
+          // this.dataSuccessMsg('Appraisal Letter Generated Successfully');
+          this.conformationPopup.openSuccessModal('Appraisal Letter Generated Successfully');
+          // this.router.navigate(['/admin/active']);
+        }
+        let emaildetails = {
+          personEmail: this.appraisalData.workEmail,
+          senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
+          senderEmail: loggedInUser.workEmail,
+          firstName: this.appraisalData.firstName,
+          lastName: this.appraisalData.lastName,
+          middleName: this.appraisalData.middleName,
+          personRole: this.appraisalData.jobRole,
+          documentUrl: this.result.documentUrl,
+          compeffectivedate: this.employeeCompensationData.compeffectivedate,
+          employeeId: this.appraisalData.employeeId,
+          compensationamount: this.appraisalData.salary,
+        };
+        if (loggedInUser.middleName) {
+          emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
+        } else {
+          emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
+        }
 
-            // this.router.navigate(['/admin/active']);
-          }
-          let emaildetails = {
-            personEmail: this.appraisalData.workEmail,
-            senderName: `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`,
-            senderEmail: loggedInUser.workEmail,
-            firstName: this.appraisalData.firstName,
-            lastName: this.appraisalData.lastName,
-            middleName: this.appraisalData.middleName,
-            personRole: this.appraisalData.jobRole,
-            documentUrl: this.result.documentUrl,
-            compeffectivedate: this.employeeCompensationData.compeffectivedate,
-            employeeId: this.appraisalData.employeeId,
-            compensationamount: this.appraisalData.salary,
-          };
-          if (loggedInUser.middleName) {
-            emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`;
-          } else {
-            emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
-          }
-
-          this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
-            next: (data: any) => {
-              this.conformationPopup.openSuccessModal('Email Sent Successfully');
-              setTimeout(()=>{
-                this.navigateDashboard();
-              }, 2000)
-            },
-            error: (err: any) => {
-              this.spinnerLoader= false;
-              console.log(err);
-            },
-            complete: () => { 
-              this.spinnerLoader= false;
-            },
-          });
-        },
-        error: (reason: any) => {
-          this.spinnerLoader= false;
-        },
-      });
+        this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
+          next: (data: any) => {
+            this.conformationPopup.openSuccessModal('Email Sent Successfully');
+            setTimeout(() => {
+              this.navigateDashboard();
+            }, 2000)
+          },
+          error: (err: any) => {
+            this.spinnerLoader = false;
+            console.log(err);
+          },
+          complete: () => {
+            this.spinnerLoader = false;
+          },
+        });
+      },
+      error: (reason: any) => {
+        this.spinnerLoader = false;
+      },
+    });
   }
 
   //to fromat Date
@@ -757,11 +740,7 @@ export class ApprisalLetterComponent {
 
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
-    if (
-      (charCode < 65 || charCode > 90) &&
-      (charCode < 97 || charCode > 122) &&
-      charCode !== 32
-    ) {
+    if ((charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) && charCode !== 32) {
       return false;
     }
     return true;
@@ -817,9 +796,7 @@ export class ApprisalLetterComponent {
   isItemIntheList(event: Event) {
     const target = event.target as HTMLInputElement;
     const isitem = target.checked ?? false; // or target.value === 'true'
-  
     this.islistedItem = isitem;
-  
     if (!isitem) {
       this.gradeIdValue = {};
       this.getGradename = '';
@@ -832,7 +809,6 @@ export class ApprisalLetterComponent {
   }
   
   //function to get the grade name for the designation
-
   getGradeNameById() {
     let GradeId = this.gradeIdValue.gradeId;
     this.subscription = this.http.getData(`GradeTable/getbyid/${GradeId}`)
@@ -845,9 +821,8 @@ export class ApprisalLetterComponent {
   }
 
   buttondisable: boolean = false;
-  
   onOptionSelected(event: any, dropdownCategory: string) {
-      let option = '';
+    let option = '';
     if (typeof event === 'string') {
       option = event;
     } else if (event?.designationName) {
@@ -855,12 +830,10 @@ export class ApprisalLetterComponent {
     } else {
       option = event?.target?.value ?? '';
     }
-  
     this.appraisalData.designation = option;
     this.buttondisable = !!option;
     this.islistedItem = true;
     this.optionsFound = true;
-  
     if (dropdownCategory === 'JobRole') {
       this.selectedValueJobRoledrop = option;
       this.gradeIdValue = this.getDesignationWithGradeIdDetails.find(
@@ -877,7 +850,7 @@ export class ApprisalLetterComponent {
       if (selectedObject) {
         this.selectedValueReportstoEmployeeIddropUpdate =
           selectedObject.employeeId;
-      } 
+      }
     }
   }
   
@@ -894,9 +867,9 @@ export class ApprisalLetterComponent {
       fusionEmpId: [null, Validators.required],
       dateofAppraisal: ['', Validators.required],
       reviewdate: ['', Validators.required],
-      JobRole:['', Validators.required],
+      JobRole:[''],
       Documenttype: [null, Validators.required],
-      bonus: [0],
+      bonus: [''],
       authorityid: [null, Validators.required],
       isVariablePay: [null, Validators.required],
       variablePayAmount: ['', Validators.required],

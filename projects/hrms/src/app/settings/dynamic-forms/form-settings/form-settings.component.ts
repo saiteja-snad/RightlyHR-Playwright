@@ -1,4 +1,4 @@
-import {  Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, ValidatorFn, AbstractControl, ValidationErrors, FormArray, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, debounceTime, takeUntil } from 'rxjs';
@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
-
 @Component({
   selector: 'app-form-settings',
   imports: [
@@ -21,12 +20,12 @@ import { RbacService } from '../../../services/rbac.service';
     ReactiveFormsModule,
     FormsModule,
     DataLoaderContentComponent
-],
+  ],
   templateUrl: './form-settings.component.html',
   styleUrl: './form-settings.component.scss',
 })
+
 export class FormSettingsComponent implements OnInit, OnDestroy {
-  
   fromsettings = {} as IFromsettings;
   destroy$: Subject<boolean> = new Subject<boolean>();
   ratingform!: FormGroup;
@@ -44,6 +43,7 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
   @ViewChild('confirmPopUp') confirmPopUp!: TemplateRef<any>;
   @ViewChild('confirmPopUp1') confirmPopUp1!: TemplateRef<any>;
   @ViewChild('addRatingScale') addRatingScale!: TemplateRef<any>;
+
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
@@ -67,6 +67,7 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
           null,
           [Validators.required, Validators.min(1), Validators.max(10)],
         ],
+        finalRating: ['', Validators.required],
         ratingType: [
           '',
           [
@@ -81,46 +82,40 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     );
     this.getAllRatingDetails();
   }
+
   noWhitespaceValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = (control.value || '').trim(); // Trim leading/trailing spaces
       const startsWithInvalidChar = /^[^a-zA-Z0-9]/.test(value); // Checks for non-alphanumeric character at the start
       const isEmptyAfterTrim = value === ''; // Check if only spaces were entered
       const isValid = !startsWithInvalidChar && !isEmptyAfterTrim;
-
       return isValid ? null : { invalidStart: true };
     };
   }
+
   get scales(): FormArray {
     return this.ratingform.get('scales') as FormArray;
   }
+
   restrictDecimal(event: Event): void {
     const input = event.target as HTMLInputElement;
     const value = input.value;
-
     // Allow only integer values by removing decimal points
     input.value = value.replace(/\D/g, ''); // Replace non-digit characters
   }
+  
   disableKeyboard(event: KeyboardEvent): void {
     // Allow only arrow keys for increment/decrement
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
       return; // Allow arrow keys to function
     }
-
     // Prevent any other key press (including typing numbers)
     event.preventDefault();
   }
 
-  restrictToMaxValue(
-    event: Event,
-    formGroup: FormGroup,
-    controlName: string,
-    maxValue: number,
-    maxLength: number
-  ): void {
+  restrictToMaxValue(event: Event, formGroup: FormGroup, controlName: string, maxValue: number, maxLength: number): void {
     const input = event.target as HTMLInputElement;
     let value = input.value;
-
     if (value === '') {
       formGroup.get(controlName)?.setValue(null);
       // Set the form control value to null
@@ -130,34 +125,25 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     if (Number(value) > maxValue) {
       value = maxValue.toString();
     }
-
     // Ensure the length does not exceed maxLength
     if (value.length > maxLength) {
       value = value.slice(0, maxLength);
     }
-
     // Update the input and the form control value
     input.value = value;
     formGroup.get(controlName)?.setValue(Number(value));
-    formGroup
-      .get('minimumRatingScale')
-      ?.valueChanges.pipe(debounceTime(300))
-      .subscribe(() => {
-        this.generateScales();
-      });
-    formGroup
-      .get('maximumRatingScale')
-      ?.valueChanges.pipe(debounceTime(300))
-      .subscribe(() => {
-        this.generateScales();
-      });
+    formGroup.get('minimumRatingScale')?.valueChanges.pipe(debounceTime(300)).subscribe(() => {
+      this.generateScales();
+    });
+    formGroup.get('maximumRatingScale')?.valueChanges.pipe(debounceTime(300)).subscribe(() => {
+      this.generateScales();
+    });
   }
 
   validateRange(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const min = control.get('minimumRatingScale')?.value;
       const max = control.get('maximumRatingScale')?.value;
-
       if (min !== null && max !== null && min > max) {
         return { invalidRange: true }; // Return error if "From" > "To"
       }
@@ -165,27 +151,21 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     };
   }
 
-
   generateScales(): void {
     const from = this.ratingform.get('minimumRatingScale')?.value;
     const to = this.ratingform.get('maximumRatingScale')?.value;
-
     // Check that from and to are not null and are within the range
     if (from != null && to != null && from <= to && from >= 1 && to <= 10) {
       // Ensure that the range does not exceed 10
-
       // Get existing descriptions if any
       const existingDescriptions = this.scales.controls.map(
         (scaleGroup) => scaleGroup.get('description')?.value
       );
-
       // Reset the scales form array
       this.scales.clear();
-
       // Add scale and description form groups based on the range
       for (let i = from; i <= to; i++) {
         const description = existingDescriptions[i - from] || ''; // Preserve existing description if available
-
         this.scales.push(
           this.fb.group({
             scale: [i, Validators.required], // Pre-fill scale value
@@ -215,6 +195,7 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     this.ratingform.reset();
     this.scales.clear();
   }
+
   updateAndClose() {
     this.ratingform.reset();
     this.modalService.dismissAll();
@@ -225,15 +206,13 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     modal.dismiss(); // Close the modal
     this.toggleForm(); // Toggle back to the table view
   }
+
   removeScale(index: number): void {
     // Remove the selected scale from the array
-
     this.scales.removeAt(index);
-
     // Get the current values of 'minimumRatingScale' and 'maximumRatingScale'
     const from = this.ratingform.get('minimumRatingScale')?.value;
     const to = this.ratingform.get('maximumRatingScale')?.value;
-
     // Check if there are any scales left
     if (this.scales.length > 0) {
       // If the 'maximumRatingScale' is greater than 1, decrement it
@@ -254,14 +233,12 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
   removeUpdateScale(index: number): void {
     // Remove the scale at the specified index
     const scales = this.scalesUpdateform.value;
-
     // Check if there is more than one scale
     if (scales.length > 1) {
       this.scalesUpdateform.removeAt(index);
       const to = this.updateFormRating.get('maximumRatingScale')?.value;
       // Get the updated scales array after removal
       const scales = this.updateFormRating.get('scales')?.value;
-
       // Check if there are scales left
       if (scales.length > 0) {
         // Update the scales array by adjusting their values (if necessary)
@@ -271,12 +248,10 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
             description: scale.description,
           })
         );
-
         // Patch the updated scales back to the form
         this.updateFormRating.patchValue({
           scales: updatedScales,
         });
-
         // Optionally adjust maximumRatingScale based on the new scales
         this.updateFormRating.patchValue({
           maximumRatingScale: to - 1,
@@ -299,34 +274,27 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
   closeModal() {
     this.modalService.dismissAll(); // This will close all open modals
   }
+
   onClose() {
     this.openModal(this.confirmPopUp1, { centered: true });
-    // this.openSuccessModal('');
   }
 
-
-  
   onUpdate(ratingType: string) {
     if (this.updateFormRating.valid) {
-      this.http
-        .putData(
-          `Form/byRatingType?ratingType=${ratingType}`,
-          this.updateFormRating.value
-        )
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            this.openSuccessModal('update');
-            this.updateFormRating.reset();
-            this.scalesUpdateform.clear();
-            
-          },
-          error: (error: any) => {
-            console.log(error);
-          },complete:()  =>{
-            this.getAllRatingDetails();
-          },
-        });
+      this.http.putData(`Form/byRatingType?ratingType=${ratingType}`,
+        this.updateFormRating.value
+      ).pipe(takeUntil(this.destroy$)).subscribe({
+        next: () => {
+          this.openSuccessModal('update');
+          this.updateFormRating.reset();
+          this.scalesUpdateform.clear();
+        },
+        error: (error: any) => {
+          console.log(error);
+        }, complete: () => {
+          this.getAllRatingDetails();
+        },
+      });
     }
   }
 
@@ -334,98 +302,77 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     this.openModal(this.confirmPopUp, { centered: true });
     this.ratingType = ratingType;
   }
+
   onDelete() {
-    this.http
-      .deleteData(`Form?ratingType=${this.ratingType}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
+    this.http.deleteData(`Form?ratingType=${this.ratingType}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.openSuccessModal('delete');
+      },
+      error: (error: any) => {
+        console.log(error);
+      }, complete: () => {
+        this.getAllRatingDetails();
+      },
+    });
+  }
+
+  onSubmit(): void {
+    if (this.ratingform.valid) {
+      this.http.postData(`Form/rating`, this.ratingform.value, {
+        responseType: 'text',
+      }).pipe(takeUntil(this.destroy$)).subscribe({
         next: () => {
-          this.openSuccessModal('delete');     
+          this.modalService.dismissAll();
+          this.ratingform.reset();
+          this.openSuccessModal('submit');
         },
         error: (error: any) => {
           console.log(error);
-        },complete: ()  =>{
-          this.getAllRatingDetails();
-        },
-      });
-  }
-  onSubmit(): void {
-    if (this.ratingform.valid) {
-      this.http
-        .postData(`Form/rating`, this.ratingform.value, {
-          responseType: 'text',
-        })
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: () => {
-            this.modalService.dismissAll();
-            this.ratingform.reset();
-            this.openSuccessModal('submit');
-            
-          },
-          error: (error: any) => {
-            console.log(error);
-            if (error.status === 409) {
-              this.sharedModalService.openErrorModal(error.error)
-            }
-          },complete: () =>{
-            this.getAllRatingDetails();
+          if (error.status === 409) {
+            this.sharedModalService.openErrorModal(error.error)
           }
-        });
+        }, complete: () => {
+          this.getAllRatingDetails();
+        }
+      });
     }
   }
+
   // Function to handle changes in min/max rating scale
   listenForRatingScaleChanges() {
-    this.updateFormRating
-      .get('minimumRatingScale')
-      ?.valueChanges.subscribe(() => {
-        this.updateScales();
-      });
+    this.updateFormRating.get('minimumRatingScale')?.valueChanges.subscribe(() => {
+      this.updateScales();
+    });
 
-    this.updateFormRating
-      .get('maximumRatingScale')
-      ?.valueChanges.subscribe(() => {
-        this.updateScales();
-      });
+    this.updateFormRating.get('maximumRatingScale')?.valueChanges.subscribe(() => {
+      this.updateScales();
+    });
   }
 
-  ratingScaleValidator: ValidatorFn = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
+  ratingScaleValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
     const min = this.ratingform.get('minimumRatingScale')?.value;
     const max = this.ratingform.get('maximumRatingScale')?.value;
-
     if (min != null && max != null && min > max) {
       return { invalidRange: true }; // Custom error
     }
     return null; // No error
   };
+
   // Function to update the scales array based on min and max
   updateScales() {
     const minScale = this.updateFormRating.get('minimumRatingScale')?.value;
     const maxScale = this.updateFormRating.get('maximumRatingScale')?.value;
-
     const scalesArray = this.updateFormRating.get('scales') as FormArray;
-
-    if (
-      minScale !== null &&
-      maxScale !== null &&
-      minScale <= maxScale &&
-      minScale >= 1 &&
-      maxScale <= 10
-    ) {
+    if (minScale !== null && maxScale !== null && minScale <= maxScale && minScale >= 1 && maxScale <= 10) {
       const existingScales = scalesArray.controls.map(
         (control) => control.value
       ); // Get current scales
-
       scalesArray.clear(); // Clear the current scales array
-
       // Create a map of existing descriptions based on the scale value
       const existingDescriptions = existingScales.reduce((acc, scaleItem) => {
         acc[scaleItem.scale] = scaleItem.description;
         return acc;
       }, {});
-
       // Populate the scales array based on min and max values
       for (let i = minScale; i <= maxScale; i++) {
         const description = existingDescriptions[i] || ''; // Retain existing description or set as empty
@@ -439,7 +386,6 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
           })
         );
       }
-
       // Force change detection if needed
       // this.cd.detectChanges();
     } else {
@@ -447,7 +393,6 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // }
   openModal(content: any, options: any = { size: 'sm', centered: true }) {
     this.modalService.open(content, options);
   }
@@ -466,25 +411,21 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
       default:
         this.successMessage = '';
     }
-
     this.sharedModalService.openSuccessModal(this.successMessage);
   }
 
   validateInput(control: AbstractControl | null) {
     if (!control) return; // Ensure control exists
     let value = control.value || ''; // Ensure value is a string
-  
     // Remove leading spaces
     value = value.replace(/^\s+/, '');
-  
     // Prevent starting with special characters
     if (/^[^a-zA-Z0-9]/.test(value)) {
       value = value.replace(/^[^a-zA-Z0-9]+/, '');
     }
-  
     control.setValue(value, { emitEvent: false });
   }
-  
+
   assignValues(ratingType: string) {
     this.ratingType = ratingType;
     // Find the form data that matches the ratingType
@@ -502,7 +443,6 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     const formToEdit = this.formSettingDetails.find(
       (form) => form.ratingType === ratingType
     );
-
     // Check if the form with the given ratingType exists
     if (formToEdit) {
       // Patch the form with the filtered data
@@ -512,11 +452,9 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
         finalRating: formToEdit.finalRating,
         ratingType: formToEdit.ratingType,
       });
-
       // Clear the existing scales array
       const scalesArray = this.updateFormRating.get('scales') as FormArray;
       scalesArray.clear();
-
       // Populate the scales array with the data
       formToEdit.scales.forEach((scaleItem: any) => {
         scalesArray.push(
@@ -530,9 +468,9 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
     } else {
       console.error('Form with the given rating type not found');
     }
-
     // Optionally, trigger the modal or other Action(S) here if needed
   }
+
   get scalesUpdateform(): FormArray {
     return this.updateFormRating.get('scales') as FormArray;
   }
@@ -543,12 +481,13 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.loader = false;
         this.formSettingDetails = data as IFromsettings[];
-      },error: (err) =>{
-        this.loader =  false;
+      }, error: (err) => {
+        this.loader = false;
         this.formSettingDetails = []
       }
     });
   }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

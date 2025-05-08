@@ -194,7 +194,7 @@ export const permissionsData = [
     { fields: 'Sub Location', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Pre Onboard Documents', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Serving Period', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Job Tab Probation Details', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
 
     //Manage Shifts tab 
@@ -737,4 +737,49 @@ export const permissionsData = [
   { fields: 'Dashboard Generate Documents Trainee Appointment Letter', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Dashboard Generate Documents Welcome Letter', View: false, Update: false, Create: false, Delete: false },
 
+   //PMS Module
+   { fields: 'Review Cycle List', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Review Cycle Employee List', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'My Performance Review', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'My Team Performance Review', View: false, Update: false, Create: false, Delete: false },
+
+   //Review Cycle List Actions
+   { fields: 'Create Review Cycle', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Hold', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Resume', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Update', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'View', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Initiate', View: false, Update: false, Create: false, Delete: false },
+
+   //Review Cycle Employee List Actions
+   { fields: 'Assign Review Template', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Add Employee', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Download Appraisal Report', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Generate Appraisal Letters', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Send Appraisal Letters', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Generate Promotion Letters', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Send Promotion Letters', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Employee List Hold', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Assign Review Template(Review on Hold)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Update Review Template', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Employee List Resume', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Promotion Letter Download', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Appraisal Letter Download', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Generate Appraisal Letter(Status - Completed)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Send Appraisal Letter(Appraisal Letter Generated)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Re-Generate Appraisal Letter', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Re-Send Appraisal Letter', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Re-Generate Appraisal Letter(Promotion Letter Generated)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Re-Send Appraisal Letter(Promotion Letter Sent)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Generate Promotion Letter(Status - Completed)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Re-Generate Promotion Letter', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Send Promotion Letter', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Re-Send Promotion Letter', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Re-Generate Promotion Letter(Appraisal Letter Generated)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Re-Send Promotion Letter(Appraisal Letter Sent)', View: false, Update: false, Create: false, Delete: false },
+
+   //PMS Configuration Module
+   { fields: 'Increment Percentage', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Assessor Configuration', View: false, Update: false, Create: false, Delete: false },
+   
 ];

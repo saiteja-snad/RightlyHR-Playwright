@@ -13,6 +13,7 @@ import { IReviewCycleEmployee } from './review-cycle-emp.model';
 import { PaginatorModule } from 'primeng/paginator';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-apprisal-list',
@@ -111,6 +112,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private modalService: NgbModal,
     private modal: OpenModalService,
+    public rbac : RbacService,
   ) { }
 
   intitalizeForm() {

@@ -76,14 +76,14 @@ import { RemoteRejectedComponent } from './remote-login/remote-rejected/remote-r
 import { GlobalPermissionsComponent } from './global-permissions/global-permissions.component';
 
 export default [
-  { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
+  // { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
   { path: 'leaves', component: LeavesComponent,
     children: [
       { path: 'waiting-for-approval', component: LeavesWaitingForApprovalComponent },
       { path: 'approved', component: LeavesApprovalComponent },
       { path: 'processed', component: LeavesProcessedComponent },
       { path: 'rejected', component: LeavesRejectedComponent },
-      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+      // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
   { path: 'wfh', component: WorkFromHomeComponent,
@@ -101,7 +101,7 @@ export default [
       { path: 'approved', component: RemoteApprovedComponent },
       { path: 'processed', component: RemoteProcessedComponent },
       { path: 'rejected', component: RemoteRejectedComponent },
-      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+      // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
   { path: 'comp-off', component: CompOffComponent,
@@ -110,7 +110,7 @@ export default [
       { path: 'approved', component: CompOffApprovalComponent },
       { path: 'processed', component: CompOffProcessComponent },
       { path: 'rejected', component: CompOffRejectComponent },
-      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+      // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
 

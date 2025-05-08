@@ -83,8 +83,8 @@
                             </option>
                         </select>
                         <span class="pagination-label text-nowrap">
-                            Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of {{ collectionSize }}
-                        </span>
+                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{ collectionSize }}
+                        </span>                          
                     </div>
                     <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
                         (onPageChange)="onPageChange($event)"></p-paginator>

@@ -300,8 +300,7 @@
                         <option *ngFor="let option of options" [value]="option.value">{{ option.label }}</option>
                     </select>
                     <span class="pagination-label text-nowrap">
-                        Showing {{ first + 1 }} - {{ first + rows > collectionSize ? collectionSize : first + rows }} of
-                        {{ collectionSize }}
+                        Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{ collectionSize }}
                     </span>
                 </div>
                 <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -398,7 +397,7 @@
                 <p class="popup-heading mb-0">{{'Generate Appraisal Letter' | translate}}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="openConfirmation()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 
@@ -437,7 +436,7 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmation()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
                 </div>
             </form>
@@ -663,7 +662,7 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="closeModal()">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openConfirmation()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="Effectivedatefrom.invalid">{{'Generate' | translate}}</button>
                 </div>
             </div>

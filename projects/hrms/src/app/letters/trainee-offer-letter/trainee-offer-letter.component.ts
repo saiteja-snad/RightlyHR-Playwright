@@ -91,7 +91,7 @@ export class TraineeOfferLetterComponent {
   addresFlag = false;
   address = {} as IAddress;
   countryvalues = {} as any;
-  countryCode = 'Country Code'
+  countryCode = 'Country code'
   selectedCountryCode: any;
   selectedCountryConfig = {
     hideCode: true,

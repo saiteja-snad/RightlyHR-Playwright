@@ -6,7 +6,7 @@
         </div>
         <div class="d-flex gap-2">
             <button class="custom-btn btn-primary"
-                *ngIf="isActive('personalinfo/job/employmentType') && empdata?.empstatus !=='Inactive' "
+                *ngIf="isActive('personalinfo/job/employmentType') && empdata?.empstatus !=='Inactive' && empdata?.employeeId !==  loginEmployee.employeeId"
                 (click)="navigation()">Inactive</button>
             <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')"
                 (click)="openModal(changermmodal)">{{'Change RM'|translate}}</button>

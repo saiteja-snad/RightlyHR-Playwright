@@ -46,7 +46,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   headerName!: string;
   isLoading: boolean = false;
   spinnerLoader = false;
-  
+  loginEmployee = {} as any;
   constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
@@ -55,6 +55,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       reportingManager: [null, Validators.required]
     });
     this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+    this.loginEmployee = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.initializeForm();
     this.initialzerevoke();
     this.getEmployeeId();

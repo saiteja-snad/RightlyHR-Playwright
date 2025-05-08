@@ -92,42 +92,42 @@ export class ReportsService {
       params = params.set('FusionEmpId', request.FusionEmpId);
     }
   
-    if (request.EmployeeName) {
-      params = params.set('EmployeeName', request.EmployeeName);
-    }
+    // if (request.EmployeeName) {
+    //   params = params.set('EmployeeName', request.EmployeeName);
+    // }
   
-    if (request.Department) {
-      params = params.set('Department', request.Department);
-    }
+    // if (request.Department) {
+    //   params = params.set('Department', request.Department);
+    // }
   
     if (request.TeamManagerSnadId) {
       params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     }
   
-    if (request.Shift) {
-      params = params.set('Shift', request.Shift);
-    }
+    // if (request.Shift) {
+    //   params = params.set('Shift', request.Shift);
+    // }
   
-    if (request.Location) {
-      params = params.set('Location', request.Location);
-    }
+    // if (request.Location) {
+    //   params = params.set('Location', request.Location);
+    // }
   
-    if (request.SubLocation) {
-      params = params.set('SubLocation', request.SubLocation);
-    }
+    // if (request.SubLocation) {
+    //   params = params.set('SubLocation', request.SubLocation);
+    // }
   
-    if (request.Worked_Date) {
-      params = params.set('Worked_Date', request.Worked_Date);
-    }
+    // if (request.Worked_Date) {
+    //   params = params.set('Worked_Date', request.Worked_Date);
+    // }
   
     if (request.StartDate && request.EndDate) {
       params = params.set('StartDate', request.StartDate);
-  params = params.set('EndDate', request.EndDate);
+      params = params.set('EndDate', request.EndDate);
     }
   
-    if (request.Worked_Month !== undefined) {
-      params = params.set('Worked_Month', request.Worked_Month.toString());
-    }
+    // if (request.Worked_Month !== undefined) {
+    //   params = params.set('Worked_Month', request.Worked_Month.toString());
+    // }
   
     return this.http.get('Reports/WfhReports', { params });
   }
@@ -140,25 +140,25 @@ export class ReportsService {
       params = params.set('FusionEmpId', request.FusionEmpId);
     }
   
-    if (request.EmployeeName) {
-      params = params.set('EmployeeName', request.EmployeeName);
-    }
+    // if (request.EmployeeName) {
+    //   params = params.set('EmployeeName', request.EmployeeName);
+    // }
   
-    if (request.Department) {
-      params = params.set('Department', request.Department);
-    }
+    // if (request.Department) {
+    //   params = params.set('Department', request.Department);
+    // }
   
     if (request.TeamManagerSnadId) {
       params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     }
   
-    if (request.shift) {
-      params = params.set('Shift', request.shift);
-    }
+    // if (request.shift) {
+    //   params = params.set('Shift', request.shift);
+    // }
 
-    if(request.location) {
-      params = params.set('Location', request.location);	
-    }
+    // if(request.location) {
+    //   params = params.set('Location', request.location);	
+    // }
     
     if(request.Month) {
       params = params.set('Month', request.Month);
@@ -179,29 +179,29 @@ export class ReportsService {
       params = params.set('FusionEmpId', request.FusionEmpId.toString());
     }
   
-    if (request.EmployeeName) {
-      params = params.set('EmployeeName', request.EmployeeName);
-    }
+    // if (request.EmployeeName) {
+    //   params = params.set('EmployeeName', request.EmployeeName);
+    // }
   
-    if (request.Department) {
-      params = params.set('Department', request.Department);
-    }
+    // if (request.Department) {
+    //   params = params.set('Department', request.Department);
+    // }
   
     if (request.TeamManagerSnadId) {
       params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     }
   
-    if (request.Shift) {
-      params = params.set('Shift', request.Shift);
-    }
+    // if (request.Shift) {
+    //   params = params.set('Shift', request.Shift);
+    // }
   
-    if (request.Location) {
-      params = params.set('Location', request.Location);
-    }
+    // if (request.Location) {
+    //   params = params.set('Location', request.Location);
+    // }
   
-    if (request.SubLocation) {
-      params = params.set('SubLocation', request.SubLocation);
-    }
+    // if (request.SubLocation) {
+    //   params = params.set('SubLocation', request.SubLocation);
+    // }
   
     if (request.Worked_Date) {
       params = params.set('Worked_Date', request.Worked_Date);
@@ -223,11 +223,7 @@ export class ReportsService {
     let params = new HttpParams();
     
     if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
-    if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
-    if (request.Department) params = params.set('Department', request.Department);
     if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
-    if (request.Shift) params = params.set('Shift', request.Shift);
-    if (request.Location) params = params.set('Location', request.Location);
     if (request.Year) params = params.set('Year', request.Year);
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
   
@@ -258,14 +254,8 @@ export class ReportsService {
     let params = new HttpParams();
     
     if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
-    // if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
-    // if (request.Department) params = params.set('Department', request.Department);
     if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
-    // if (request.Shift) params = params.set('Shift', request.Shift);
-    // if (request.Location) params = params.set('Location', request.Location);
-    // if (request.SubLocation) params = params.set('SubLocation', request.SubLocation);
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
-    // if (request.Worked_Date)params = params.set('Worked_Date', request.Worked_Date); 
     if (request.StartDate && request.EndDate) {params = params.set('StartDate', request.StartDate);
     params = params.set('EndDate', request.EndDate);
     }
@@ -273,8 +263,7 @@ export class ReportsService {
     if (request.Worked_Month !== undefined) {
       params = params.set('Worked_Month', request.Worked_Month.toString());
     }
-    
-  
+
     return this.http.get('Reports/Leave_Reports', { params });
   }
 
@@ -282,19 +271,12 @@ export class ReportsService {
     let params = new HttpParams();
     
     if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
-    if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
-    if (request.Department) params = params.set('Department', request.Department);
     if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
-    if (request.Shift) params = params.set('Shift', request.Shift);
-    if (request.Location) params = params.set('Location', request.Location);
-    if (request.Year) params = params.set('Year', request.Year);
     if (request.LeaveName) params = params.set('LeaveType', request.LeaveName);
-  
     return this.http.get('Reports/LeaveSummaryReports', { params });
   }
   
   //comp off
- 
   getcompOffReports(request: ICompoffDetails) {
     let params = new HttpParams();
   
@@ -302,42 +284,15 @@ export class ReportsService {
       params = params.set('FusionEmpId', request.FusionEmpId);
     }
   
-    if (request.EmployeeName) {
-      params = params.set('EmployeeName', request.EmployeeName);
-    }
-    if (request.Department) {
-      params = params.set('Department', request.Department);
-    }
-  
     if (request.TeamManagerSnadId) {
       params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     }
   
-    if (request.Shift) {
-      params = params.set('Shift', request.Shift);
-    }
-  
-    if (request.Location) {
-      params = params.set('Location', request.Location);
-    }
-  
-    if (request.SubLocation) {
-      params = params.set('SubLocation', request.SubLocation);
-    }
-  
-    if (request.Worked_Date) {
-      params = params.set('Worked_Date', request.Worked_Date);
-    }
-  
     if (request.StartDate && request.EndDate) {
       params = params.set('StartDate', request.StartDate);
-  params = params.set('EndDate', request.EndDate);
+      params = params.set('EndDate', request.EndDate);
     }
-  
-    if (request.Worked_Month !== undefined) {
-      params = params.set('Worked_Month', request.Worked_Month.toString());
-    }
-  
+
     return this.http.get('Reports/CompOffReports', { params });
   }
 

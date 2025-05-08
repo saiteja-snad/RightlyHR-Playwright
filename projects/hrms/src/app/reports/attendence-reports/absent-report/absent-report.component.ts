@@ -141,8 +141,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
       this.absentReportForm.get('month')?.reset();
     })
   }
-
-
+  
   get isAbsentGenerateDisabled(): boolean {
     const form = this.absentReportForm;
     return !(
@@ -169,13 +168,10 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
                 }${employee.lastName}`,
             };
           });
-          const filteredEmployees = employeedata.filter((element: any) => {
-            return element.employeeId != loggedInUser.employeeId;
-          });
-
+          
           this.employeeiddetails = [
             { fullName: 'All Employees', employeeId: 'all' },
-            ...filteredEmployees
+            ...employeedata
           ];
         },
         error: (reason: any) => { },
@@ -248,6 +244,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
     if (formValue.manager) {
       request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
+
     this.reportsService.getAbsentReports(request).subscribe({
       next: (response: any) => {
         this.filteredAbsentRecord = response ?? [];

@@ -21,7 +21,7 @@
             </li>
             }
             @if(this.rbac.allowedToAccess('Time-Off.view')){
-            <li class="nav-item" [routerLink]="['/time-off']" routerLinkActive="active-nav-link">
+            <li class="nav-item" (click)="goToAccessibleRoute('/time-off')" routerLinkActive="active-nav-link">
                 <i class="bi bi-clock-history custom-icon"></i>Time-off
             </li>
             }

@@ -142,6 +142,8 @@ export const permissionsData = [
     // { fields: 'Attendance Regularization Button', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Remote Login Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Global Permissions Tab', View: false, Update: false, Create: false, Delete: false },
+
+    
     // Settings sidebar    
     { fields: 'Roles', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Fields Module', View: false, Update: false, Create: false, Delete: false },

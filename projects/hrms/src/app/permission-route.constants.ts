@@ -141,3 +141,12 @@ export const EXPENSE_TABS  = [
     { route: '/claimsandexpenses/expenses/processed', permission:'Processed Tab.view'},
     { route: '/claimsandexpenses/expenses/rejected', permission:'Rejected Tab.view'}
 ]
+
+
+export const IT_SUPPORT_TEAM_TICKETS_TABS = [
+    {  route: '/it-support/team-tickets/all-tickets', permission:'All Tickets Tab.view' } ,
+    {  route: '/it-support/team-tickets/open-tickets', permission:'Open Tickets Tab.view' } ,
+    {  route: '/it-support/team-tickets/await-on-user-tickets',  permission: 'Await On User Tickets Tab.view' } ,
+    {  route: '/it-support/team-tickets/solved-tickets',  permission: 'Solved Tickets Tab.view' } ,
+    {  route: '/it-support/team-tickets/rejected-tickets',  permission: 'Rejected Tickets Tab.view' } 
+]

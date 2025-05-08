@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../services/rbac.service';
+import { AccessNavigationService } from '../../services/access-navigation.service';
 
 @Component({
   selector: 'app-itsuporrt-header-tabs',
@@ -18,7 +19,8 @@ export class ItsuporrtHeaderTabsComponent implements OnInit {
     { label: 'Team Tickets', link: '/it-support/team-tickets', permission: { feature: 'Team Tickets Tab', action: 'view' } },
   ];
 
-  constructor(private rbac: RbacService, private router: Router) {}
+  constructor(private rbac: RbacService, private router: Router, 
+      private accessNav: AccessNavigationService) {}
 
   ngOnInit(): void {
     // Filter tabs based on RBAC permission
@@ -27,19 +29,19 @@ export class ItsuporrtHeaderTabsComponent implements OnInit {
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
 
-    const currentUrl = this.router.url;
-    const baseUrl = '/it-support';
+  }
 
-    // Redirect to first allowed tab if on base route
-    if (currentUrl === baseUrl && this.navTabs.length > 0) {
-      this.router.navigateByUrl(this.navTabs[0].link);
-      return;
-    }
 
-    // Redirect to first allowed tab if current route isn't permitted
-    const isAllowed = this.navTabs.some(tab => tab.link === currentUrl);
-    if (!isAllowed && this.navTabs.length > 0) {
-      this.router.navigateByUrl(this.navTabs[0].link);
+  navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
     }
+  }
+
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
   }
 }

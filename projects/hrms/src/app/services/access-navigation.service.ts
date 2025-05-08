@@ -5,6 +5,7 @@ import {
   ATTENDANCE_REPORTS_TABS,
   DESK_ALLOCATION_TABS,
   EXPENSE_TABS,
+  IT_SUPPORT_TEAM_TICKETS_TABS,
   MY_INFO_JOB_ROUTES,
   MY_INFO_PERSONAL_ROUTES,
   SETTINGS_ASSEST_CONFIGURATION_TABS,
@@ -157,8 +158,25 @@ export class AccessNavigationService {
             return item.route;
           }
         }
-
         break;
+      
+      
+      case '/it-support':
+
+        if (this.rbac.allowedToAccess('My Tickets Tab.view')) {
+            return route = '/it-support/mytickets';
+        }
+
+        if (this.rbac.allowedToAccess('Team Tickets Tab.view')) {
+          for (const item of IT_SUPPORT_TEAM_TICKETS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+          
+      break;
     }
 
     return route;
@@ -188,18 +206,18 @@ export class AccessNavigationService {
         break;
       case '/myinfo/documents':
         if (this.rbac.allowedToAccess('My Info Documents Tab.view')) {
-          return (route = '/myinfo/documents');
+          return route = '/myinfo/documents';
         }
         break;
       case '/myinfo/team-members':
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-          return (route = '/myinfo/team-members');
+          return route = '/myinfo/team-members';
         }
         break;
 
       case '/myinfo/onboarding-request':
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
-          return (route = '/myinfo/onboarding-request');
+          return route = '/myinfo/onboarding-request';
         }
         break;
 
@@ -268,6 +286,23 @@ export class AccessNavigationService {
       case '/reports/monthly-attandance-reports':
         if (this.rbac.allowedToAccess('Monthly Attendance Reports.view')) {
           return (route = '/reports/monthly-attandance-reports');
+        }
+        break;
+
+ 
+      case '/it-support/mytickets':
+        if (this.rbac.allowedToAccess('My Tickets Tab.view')) {
+          return (route = '/it-support/mytickets');
+        }
+        break;
+
+      case '/it-support/team-tickets':
+        if (this.rbac.allowedToAccess('Team Tickets Tab.view')) {
+          for (const item of IT_SUPPORT_TEAM_TICKETS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
     }

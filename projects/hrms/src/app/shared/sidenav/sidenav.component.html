@@ -65,7 +65,7 @@
             </li>
             }
             @if(this.rbac.allowedToAccess('IT Support.view')){
-            <li class="nav-item" [routerLink]="['/it-support']" routerLinkActive="active-nav-link">
+            <li class="nav-item" (click)="goToAccessibleRoute('/it-support')" [class.active-nav-link]="isActiveRoute('/it-support')">
                 <i class="bi bi-headset  custom-icon"></i>IT Support
             </li>
             }

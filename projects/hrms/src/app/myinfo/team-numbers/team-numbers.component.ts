@@ -101,6 +101,10 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
+  openModals(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' , size: 'lg' });
+  }
+
   selectedEmployeeDetails = {} as any;
   openModal(content: any,details: any) {
     this.selectedEmployeeDetails = details;
@@ -193,6 +197,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         console.log('Next callback');
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+        this.getAllTeammembersList();
         console.log(data);
       },
       error: (reason: any) => {
@@ -201,6 +206,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         if (reason) {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.getAllTeammembersList();
           this.spinnerLoader = false;
           this.rmForm.reset();
         }
@@ -259,6 +265,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   resetAndClose(modal: any): void {
     this.rmForm.reset();
+    this.teamForm.reset();
     this.modalService.dismissAll();
   }
 
@@ -291,12 +298,14 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         next: (data: any) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.getAllTeammembersLists();
         },
         error: (reason: any) => {
           console.log(reason);
           if (reason) {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+            this.getAllTeammembersLists();
             this.spinnerLoader = false;
             this.teamForm.reset();  // Reset the form
           }

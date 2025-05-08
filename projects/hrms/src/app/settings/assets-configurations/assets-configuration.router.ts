@@ -4,7 +4,7 @@ import { AssetCatagoryComponent } from "./asset-catagory/asset-catagory.componen
 import { SubCatagoryComponent } from "./sub-catagory/sub-catagory.component";
 
 export default [
-    { path: '', redirectTo: '/settings/assets-configuration/vendor-detiles', pathMatch: 'full' },
+    // { path: '', redirectTo: '/settings/assets-configuration/vendor-detiles', pathMatch: 'full' },
     { path: 'vendor-detiles', component: AssetVendorComponent },
     { path: 'asset-catagory', component: AssetCatagoryComponent },
     { path: 'asset-subcatagory', component: SubCatagoryComponent },

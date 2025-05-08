@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { RbacService } from '../../../services/rbac.service';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 @Component({
   selector: 'app-settings-personal-tabs',
   imports: [RouterModule, CommonModule],
@@ -24,7 +25,7 @@ export class SettingsPersonalTabsComponent implements OnInit {
     { label: 'Bank Names', route: '/settings/employee-fields/personal/bank-name', permission: { feature: 'Bank Names', action: 'view' } },
   ];
 
-  constructor(public rbac: RbacService, private router: Router) { }
+  constructor(public rbac: RbacService, private router: Router,private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
    this.filterTabsByRbac();
@@ -36,17 +37,19 @@ export class SettingsPersonalTabsComponent implements OnInit {
       link.permission && link.permission.feature && link.permission.action &&
       this.rbac.allowedToAccess(`${link.permission.feature}.${link.permission.action}`)
     );
-    const currentUrl = this.router.url.split('?')[0];
-    const baseUrl = '/settings/employee-fields/personal';
-    // redirect to the first link if the user is on the base URL
-    if (currentUrl === baseUrl && this.navLinks.length > 0) {
-      this.router.navigateByUrl(this.navLinks[0].route);
-      return;
+  }
+
+
+  navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
     }
-    // if dont have access to the current URL, redirect to the first link
-    const isAllowed = this.navLinks.some(link => currentUrl.startsWith(link.route));
-    if (!isAllowed && this.navLinks.length > 0) {
-      this.router.navigateByUrl(this.navLinks[0].route);
-    }
+  }
+
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
   }
 }

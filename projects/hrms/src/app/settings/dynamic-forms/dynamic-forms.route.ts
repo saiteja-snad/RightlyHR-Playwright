@@ -9,7 +9,7 @@ import { CreateFormComponent } from "./create-form/create-form.component";
 
 
 export default [
-    { path: '', redirectTo: '/settings/dynamic-forms/active-forms', pathMatch: 'full' },
+    // { path: '', redirectTo: '/settings/dynamic-forms/active-forms', pathMatch: 'full' },
     { path: 'active-forms', component: ActiveFormsComponent },
     { path: 'inactive-forms', component: InactiveFormsComponent },
     { path: 'draft-forms', component: DraftFormsComponent },

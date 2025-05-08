@@ -3,6 +3,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Route, Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 
 @Component({
   selector: 'app-myinfo-header-tabs',
@@ -12,11 +13,22 @@ import { RbacService } from '../../../services/rbac.service';
   encapsulation: ViewEncapsulation.None,
 })
 export class MyinfoHeaderTabsComponent implements OnInit {
-
   navTabs: any[] = [
-    { label: 'Personal', link: '/myinfo/personal',permission: { feature: 'My Info Personal Tab', action: 'view' }, },
-    { label: 'Job', link: '/myinfo/job',permission: { feature: 'My Info Job Tab', action: 'view' }, },
-    { label: 'Documents', link: '/myinfo/documents',permission: { feature: 'My Info Documents Tab', action: 'view' }, },
+    {
+      label: 'Personal',
+      link: '/myinfo/personal',
+      permission: { feature: 'My Info Personal Tab', action: 'view' },
+    },
+    {
+      label: 'Job',
+      link: '/myinfo/job',
+      permission: { feature: 'My Info Job Tab', action: 'view' },
+    },
+    {
+      label: 'Documents',
+      link: '/myinfo/documents',
+      permission: { feature: 'My Info Documents Tab', action: 'view' },
+    },
     {
       label: 'Team Members',
       link: '/myinfo/team-members',
@@ -29,7 +41,11 @@ export class MyinfoHeaderTabsComponent implements OnInit {
     },
   ];
 
-  constructor(private rbac: RbacService,private router:Router) {}
+  constructor(
+    private rbac: RbacService,
+    private router: Router,
+    private accessNav: AccessNavigationService
+  ) {}
 
   ngOnInit(): void {
     this.navTabs = this.navTabs.filter(
@@ -44,7 +60,16 @@ export class MyinfoHeaderTabsComponent implements OnInit {
   }
 
   navigateToAccessedRoute(route: string) {
-    this.router.navigate([route]);
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
-    
+
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
+  }
+  
 }

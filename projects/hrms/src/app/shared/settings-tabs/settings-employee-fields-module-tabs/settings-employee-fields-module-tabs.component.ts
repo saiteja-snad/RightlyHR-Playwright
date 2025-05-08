@@ -3,6 +3,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 
 @Component({
   selector: 'app-settings-employee-fields-module-tabs',
@@ -32,7 +33,8 @@ export class SettingsEmployeeFieldsModuleTabsComponent implements OnInit {
 
   constructor(
     private rbac: RbacService,
-    private router: Router
+    private router: Router,
+    private accessNav: AccessNavigationService
   ) {}
 
   ngOnInit(): void {
@@ -48,26 +50,20 @@ export class SettingsEmployeeFieldsModuleTabsComponent implements OnInit {
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
 
-    // Set default route to the first allowed tab
-    if (this.navTabs.length > 0) {
-      this.defaultRoute = this.navTabs[0].link;
-    }
-
-    // Check current URL and redirect if necessary
-    const currentUrl = this.router.url;
-    const baseUrl = '/settings/employee-fields';
-
-    // If at base URL, redirect to the first allowed route
-    if (currentUrl === baseUrl && this.defaultRoute) {
-      this.router.navigateByUrl(this.defaultRoute);
-      return;
-    }
-
-    // If the current route is not allowed, redirect to first accessible
-    const isAllowed = this.navTabs.some(tab => currentUrl.startsWith(tab.link));
-    if (!isAllowed && this.defaultRoute) {
-      this.router.navigateByUrl(this.defaultRoute);
-    }
   }
+
+
+  // navigateToAccessedRoute(route: string) {
+  //   const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+  //   if (actualRoute) {
+  //     this.router.navigate([actualRoute]);
+  //   } else {
+  //     this.router.navigate(['/unauthorized']);
+  //   }
+  // }
+
+  // isActiveRoute(link: string): boolean {
+  //   return this.router.url.includes(link);
+  // }
 
 }

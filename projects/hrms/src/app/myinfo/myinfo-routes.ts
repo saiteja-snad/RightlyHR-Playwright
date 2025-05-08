@@ -6,25 +6,21 @@ import { DocumentsComponent } from './documents/documents.component';
 import { PermissionGuard } from '../guards/permission.guard';
 
 export default [
-    // { path: '', redirectTo: '/myinfo/personal/basic-info', pathMatch: 'full' },
     {
         path: 'personal', children: [
-            // { path: '', redirectTo: 'basic-info', pathMatch: 'full' },
-            { path: 'basic-info', component: BasicInfoComponent, canActivate:[PermissionGuard], data: {permission: 'My Info Basic Information.view',route : 'myinfo/personal/basic-info'}}, // Add your guards here
-            { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then(m => m.AddressInfoComponent),canActivate:[PermissionGuard], data: {permission: 'My Info Address Details.view',route : '/myinfo/personal/address-info'} },
-            { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then(m => m.FamilyDetailsComponent), data: {permission: 'My Info Family Details.view',route : '/myinfo/personal/family-details'} },
-            { path: 'identity-details', loadComponent: () => import('./personal/identity-details/identity-details.component').then(m => m.IdentityDetailsComponent), data: {permission: 'My Info Identity Details.view',route : '/myinfo/personal/identity-details'} },
-            { path: 'education-details', loadComponent: () => import('./personal/education-details/education-details.component').then(m => m.EducationDetailsComponent), data: {permission: 'My Info Education Details.view',route : '/myinfo/personal/education-details'} },
-            { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then(m => m.BankDetailsComponent), data: {permission: 'My Info Bank Details.view',route : '/myinfo/personal/bank-details'} },
-            { path: 'visa-details', loadComponent: () => import('./personal/visa-details/visa-details.component').then(m => m.VisaDetailsComponent), data: {permission: 'My Info Visa Details.view',route : '/myinfo/personal/visa-details'} },
-            { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent), data: {permission: 'My Info Contact Details.view',route : '/myinfo/personal/contact-details'} },
-            { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent), data: {permission: 'My Info Emergency Contact Details.view',route : '/myinfo/personal/emergency-contact-details'} }
+            { path: 'basic-info', component: BasicInfoComponent, }, 
+            { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then(m => m.AddressInfoComponent),},
+            { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then(m => m.FamilyDetailsComponent),  },
+            { path: 'identity-details', loadComponent: () => import('./personal/identity-details/identity-details.component').then(m => m.IdentityDetailsComponent),  },
+            { path: 'education-details', loadComponent: () => import('./personal/education-details/education-details.component').then(m => m.EducationDetailsComponent), },
+            { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then(m => m.BankDetailsComponent),  },
+            { path: 'visa-details', loadComponent: () => import('./personal/visa-details/visa-details.component').then(m => m.VisaDetailsComponent),  },
+            { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent),  },
+            { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent), }
         ]
     },
-
     {
         path: 'job', children: [
-            { path: '', redirectTo: 'pre-onboarding-details', pathMatch: 'full' },
             { path: 'pre-onboarding-details', loadComponent: () => import('./job/pre-onboaring-details/pre-onboaring-details.component').then((m) => m.PreOnboaringDetailsComponent) },
             { path: 'onboarding-details', loadComponent: () => import('./job/onboarding-details/onboarding-details.component').then((m) => m.OnboardingDetailsComponent) },
             { path: 'employmentType', loadComponent: () => import('./job/offboarding-details/offboarding-details.component').then((m) => m.OffboardingDetailsComponent) },

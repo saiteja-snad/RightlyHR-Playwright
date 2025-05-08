@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 
 @Component({
   selector: 'app-settings-main-header-tabs',
@@ -21,7 +22,7 @@ export class SettingsMainHeaderTabsComponent implements OnInit {
     { label: 'Dynamic Forms', link: '/settings/dynamic-forms', permission: { feature: 'Dynamic Forms Module', action: 'view' } }
   ];
 
-  constructor(public rbac: RbacService, private router: Router) {}
+  constructor(public rbac: RbacService, private router: Router,private accessNav: AccessNavigationService) {}
 
   ngOnInit(): void {
     this.filterTabsByRbac();
@@ -33,21 +34,19 @@ export class SettingsMainHeaderTabsComponent implements OnInit {
       if (!tab.permission) return true;
       return this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`);
     });
+  }
 
-    // Check if current URL is allowed
-    const currentUrl = this.router.url;
-    const baseUrl = '/settings';
 
-    // If at base URL, navigate to the first accessible tab
-    if (currentUrl === baseUrl && this.navTabs.length > 0) {
-      this.router.navigateByUrl(this.navTabs[0].link);
-      return;
+  navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
     }
+  }
 
-    // If current route is not one of the accessible links, redirect
-    const isAllowed = this.navTabs.some(tab => currentUrl.startsWith(tab.link));
-    if (!isAllowed && this.navTabs.length > 0) {
-      this.router.navigateByUrl(this.navTabs[0].link);
-    }
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
   }
 }

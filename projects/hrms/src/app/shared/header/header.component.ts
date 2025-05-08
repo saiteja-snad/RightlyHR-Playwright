@@ -14,25 +14,50 @@ import { PmsSettingsTabsComponent } from "../pms-module-tabs/pms-settings-tabs/p
 import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 import { CalendarHeaderTabsComponent } from "../calendar-tabs/calendar-header-tabs/calendar-header-tabs.component";
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
+import { AccessNavigationService } from '../../services/access-navigation.service';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent,
-    ReportsMainTabsComponent, PmsTabsComponent, PmsSettingsTabsComponent, ItsuporrtHeaderTabsComponent, CalendarHeaderTabsComponent, TimeOffTabsComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MyExpensesTabComponent,
+    MyinfoHeaderTabsComponent,
+    PersonalinfoHeaderTabsComponent,
+    SettingsMainHeaderTabsComponent,
+    ReportsMainTabsComponent,
+    PmsTabsComponent,
+    PmsSettingsTabsComponent,
+    ItsuporrtHeaderTabsComponent,
+    CalendarHeaderTabsComponent,
+    TimeOffTabsComponent,
+  ],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrl: './header.component.scss',
 })
-
 export class HeaderComponent {
   empinfo: any;
   imageUrl: any;
   subscription!: Subscription;
 
-  constructor(public readonly router: Router, private http: HttpService, private sanitizer: DomSanitizer) { }
+  constructor(
+    public readonly router: Router,
+    private http: HttpService,
+    private sanitizer: DomSanitizer,
+    private accessNav: AccessNavigationService
+  ) {}
 
   events = [
-    { name: "John Doe's (SD153462) Birthday", time: '1 hour ago', type: 'birthday' },
-    { name: "Jane's (SD164732) Anniversary", time: '3 hours ago', type: 'anniversary' },
+    {
+      name: "John Doe's (SD153462) Birthday",
+      time: '1 hour ago',
+      type: 'birthday',
+    },
+    {
+      name: "Jane's (SD164732) Anniversary",
+      time: '3 hours ago',
+      type: 'anniversary',
+    },
     { name: 'Team Meeting with HR', time: '1 day ago', type: 'meeting' },
     { name: 'Holiday', time: '1 day ago', type: 'holiday' },
   ];
@@ -44,18 +69,19 @@ export class HeaderComponent {
   }
 
   onSelectprofilePicDownload(employee: any) {
-    if(employee.profileUrl){
-
-      this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl).subscribe({
-        next: (res: any) => {
-          let blob = new Blob([res['body']], { type: 'image/png' });
-          let objectURL = URL.createObjectURL(blob);
-          this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-        },
-        error: (reason) => {
-          //console.log(reason),
-        }
-      });
+    if (employee.profileUrl) {
+      this.subscription = this.http
+        .DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl)
+        .subscribe({
+          next: (res: any) => {
+            let blob = new Blob([res['body']], { type: 'image/png' });
+            let objectURL = URL.createObjectURL(blob);
+            this.imageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
+          },
+          error: (reason) => {
+            //console.log(reason),
+          },
+        });
     }
   }
 
@@ -74,7 +100,12 @@ export class HeaderComponent {
   }
 
   navigateSettings() {
-    this.router.navigate(['/settings'])
+    const route =  this.accessNav.navigateToAccessedHeaderRoute('/settings');
+    if (route) {
+      this.router.navigate([route]);
+    }else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 
   isActive(route: string): boolean {

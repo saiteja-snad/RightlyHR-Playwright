@@ -24,29 +24,35 @@
                     <th>Employee Name</th>
                     <th>Work Email</th>
                     <th>Phone Number</th>
-                    <th>Designation</th>
+                    <th>Employee Job Details</th>
                     <th class="text-center">Action</th>
                 </tr>
             </thead>
             <tbody
-                *ngIf="(teamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'firstName','middleName', 'lastName','workEmail', 'contactnumber', 'jobRole']) as filteredMembers">
+                *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'firstName','middleName', 'lastName','workEmail', 'contactnumber', 'jobRole']) as filteredMembers">
                 <ng-container *ngIf="filteredMembers.length > 0; else noData">
                     <tr *ngFor="let details of filteredMembers">
                         <td>{{details.fusionEmpId}}</td>
                         <td>{{details.firstName}} {{details.middleName}} {{details.lastName}}</td>
                         <td>{{details.workEmail}}</td>
                         <td>{{details.contactnumber}}</td>
-                        <td>{{details.jobRole}}</td>
+                        <td class="text-center">
+                            <i *ngIf="details.jobDetails.length>0;else na" class="bi bi-info-circle-fill cursor"
+                              (click)="viwejobhistoy(jobdeatilesmodal,details.jobDetails)" ></i>
+                            <ng-template #na>
+                              N/A
+                            </ng-template>
+                          </td>
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
-                                <!-- <ul class="dropdown-menu py-0">
-                                    <li (click)="openModal(changermmodal,details)">
-                                        <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change RM</a>
+                                <ul class="dropdown-menu py-0">
+                                    <li (click)="assigintm(changetmmodalforsingle,details)">
+                                        <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change TM</a>
                                     </li>
-                                </ul> -->
+                                </ul>
                             </div>
                         </td>
                     </tr>
@@ -77,22 +83,14 @@
         <div class="custom-main-popup-content p-4">
             <form [formGroup]="requestForm" (ngSubmit)="updateTM()">
                 <div class="row">
-                    <div class="col-6 mb-3">
-                        <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date</label>
-                        <input type="date" id="effectiveDate" class="form-control custom-input"
-                        [min]="joiningDate" onkeypress="return false"   formControlName="effectiveDate" />
-                        <div *ngIf="requestForm.get('effectiveDate')?.touched && requestForm.get('effectiveDate')?.invalid"
-                            class="error-msg">
-                            Effective date is required.
-                        </div>
-                    </div>
-
+            
                     <!-- Team Employees (MultiSelect) -->
                     <div class="col-6 mb-3">
-                        <label for="teamEmpselectedOptions" class="form-label custom-label mb-2">Team Employees</label>
+                        <label for="teamEmpselectedOptions" class="form-label custom-label mb-2">Team Employees<span
+                            class="text-danger">*</span></label>
                         <div class="custom-p-multiSelect-content">
-                            <p-multiSelect [options]="teamMembersdata" class="form-select custom-select"
-                                formControlName="teamEmpselectedOptions" optionLabel="name" optionValue="id"
+                            <p-multiSelect [options]="teamMemberArray" class="form-select custom-select"
+                                formControlName="teamEmpselectedOptions" optionLabel="fullName" filterBy="fullName" filter="true" optionValue="employeeId"
                                 placeholder="Select Employees" display="chip">
                             </p-multiSelect>
                         </div>
@@ -101,10 +99,21 @@
                             Please select at least one employee.
                         </div>
                     </div>
+                         <div class="col-6 mb-3">
+                        <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span
+                            class="text-danger">*</span></label>
+                        <input type="date" id="effectiveDate" class="form-control custom-input"
+                        [min]="joiningDate" onkeypress="return false"   formControlName="effectiveDate" />
+                        <div *ngIf="requestForm.get('effectiveDate')?.touched && requestForm.get('effectiveDate')?.invalid"
+                            class="error-msg">
+                            Effective date is required.
+                        </div>
+                    </div>
 
                     <!-- Department -->
                     <div class="col-6 mb-3">
-                        <label for="department" class="form-label custom-label mb-2">Department</label>
+                        <label for="department" class="form-label custom-label mb-2">Department<span
+                            class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="departmentDetails" optionLabel="departmentName"
                                 placeholder="Please select department" (onChange)="onDepartmentChange($event.value)"
@@ -119,7 +128,8 @@
 
                     <!-- Team (Dropdown) -->
                     <div class="col-6 mb-3">
-                        <label for="teamSelectedOptions" class="form-label custom-label mb-2">Team</label>
+                        <label for="teamSelectedOptions" class="form-label custom-label mb-2">Team<span
+                            class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="teamDropdownValues" formControlName="teamSelectedOptions"
                                 optionLabel="subdepartmentName" (onChange)="onSubDepartmentNameChange($event.value)"
@@ -134,8 +144,9 @@
 
                     <!-- Team Manager Name (Disabled) -->
                     <div class="col-6 mb-3">
-                        <label for="teamManagerName" class="form-label custom-label mb-2">Team Manager</label>
-                        <input id="teamManagerName" pInputText class="form-control" formControlName="teamManagerName"
+                        <label for="teamManagerName" class="form-label custom-label mb-2">Team Manager<span
+                            class="text-danger">*</span></label>
+                        <input id="teamManagerName"  placeholder="Please enter team manager" class="form-control" formControlName="teamManagerName"
                             [disabled]="true" />
                         <div *ngIf="requestForm.get('teamManagerName')?.touched && requestForm.get('teamManagerName')?.invalid"
                             class="error-msg">
@@ -149,6 +160,154 @@
                         (click)="modal.dismiss();requestForm.reset()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="requestForm.invalid || spinnerLoader">
+                        @if(spinnerLoader){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
+                        }@else {
+                        <span>{{'Submit'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</ng-template>
+
+
+
+<ng-template #jobdeatilesmodal let-modal>
+    <div class="custom-main-popup-container">
+      <div class="d-flex justify-content-between popup-header-border p-3">
+        <div class="pt-2">
+          <p class="popup-heading mb-0">Job Details History</p>
+        </div>
+        <div>
+          <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        </div>
+      </div>
+  
+ 
+      <div class="custom-table p-3">
+        <table class="w-100">
+          <thead>
+            <tr>
+                <th class="text-nowrap">Effective Date</th>
+                <th class="text-nowrap">Designation</th>
+                <th class="text-nowrap">Location</th>
+                <th class="text-nowrap">Sub Location </th>
+                <th class="text-nowrap">Team Manager</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let comment of jobdetailes">
+              <td>{{comment.effectiveDate |dateformat}}</td>
+              <td>{{ comment.jobRole || 'N/A' }}</td>
+              <td>{{comment.lopcation || 'N/A' }}</td>
+              <td>{{ comment.subLocation || 'N/A' }}</td>
+  
+              <td> {{comment.fName}} {{comment.mName?? ''}} {{comment.lName ?? ''}}</td>
+           
+            </tr>
+          </tbody>
+        </table>
+      
+      </div>
+    </div>
+  </ng-template>
+
+
+  
+<ng-template #changetmmodalforsingle let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0"> {{'Change TM'|translate}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss();foremployeeForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="foremployeeForm" (ngSubmit)="forsingletmchange()">
+                <div class="row">
+                       <!-- Team Employees (MultiSelect) -->
+                       <div class="col-6 mb-3">
+                        <label for="teamEmpselectedOptions" class="form-label custom-label mb-2">Team Employees<span
+                            class="text-danger">*</span></label>
+                        <div class="custom-p-multiSelect-content">
+                            <input type="text"  class="form-control custom-input" formControlName="teamEmpselectedOptions" >
+                        </div>
+                        <div *ngIf="foremployeeForm.get('teamEmpselectedOptions')?.touched && foremployeeForm.get('teamEmpselectedOptions')?.invalid"
+                            class="error-msg">
+                            Please select at least one employee.
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span
+                            class="text-danger">*</span></label>
+                        <input type="date" id="effectiveDate" class="form-control custom-input"
+                        [min]="joiningDate" onkeypress="return false"   formControlName="effectiveDate" />
+                        <div *ngIf="foremployeeForm.get('effectiveDate')?.touched && foremployeeForm.get('effectiveDate')?.invalid"
+                            class="error-msg">
+                            Effective date is required.
+                        </div>
+                    </div>
+
+                    <!-- Department -->
+                    <div class="col-6 mb-3">
+                        <label for="department" class="form-label custom-label mb-2">Department<span
+                            class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="departmentDetails" optionLabel="departmentName"
+                                placeholder="Please select department" (onChange)="onDepartmentChange($event.value)"
+                                class="form-select custom-select" formControlName="department"></p-select>
+                        </div>
+
+                        <div *ngIf="foremployeeForm.get('department')?.touched && foremployeeForm.get('department')?.invalid"
+                            class="error-msg">
+                            Department is required.
+                        </div>
+                    </div>
+
+                    <!-- Team (Dropdown) -->
+                    <div class="col-6 mb-3">
+                        <label for="teamSelectedOptions" class="form-label custom-label mb-2">Team<span
+                            class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="teamDropdownValues" formControlName="teamSelectedOptions"
+                                optionLabel="subdepartmentName" (onChange)="onSubDepartmentNameChangeforsingleemploye($event.value)"
+                                class="form-select custom-select" placeholder="Please select team">
+                            </p-select>
+                        </div>
+                        <div *ngIf="foremployeeForm.get('teamSelectedOptions')?.touched && foremployeeForm.get('teamSelectedOptions')?.invalid"
+                            class="error-msg">
+                            Please select a team.
+                        </div>
+                    </div>
+
+                    <!-- Team Manager Name (Disabled) -->
+                    <div class="col-6 mb-3">
+                        <label for="teamManagerName" class="form-label custom-label mb-2">Team Manager<span
+                            class="text-danger">*</span></label>
+                        <input id="teamManagerName"  placeholder="Please enter team manager"   class="form-select custom-select" formControlName="teamManagerName"
+                            [disabled]="true" />
+                        <div *ngIf="foremployeeForm.get('teamManagerName')?.touched && foremployeeForm.get('teamManagerName')?.invalid"
+                            class="error-msg">
+                            Team manager is required.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4"
+                        (click)="modal.dismiss();foremployeeForm.reset()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="foremployeeForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
                         <div class="button-loader-content">
                             <span class="spinner-border button-spinner text-light" role="status"

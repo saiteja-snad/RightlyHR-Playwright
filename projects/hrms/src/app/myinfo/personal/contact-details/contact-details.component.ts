@@ -157,7 +157,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
         },
         error: (reason: any) => {
           console.log(reason);
-          this.conformationPopup.openErrorModal('Contact Details update failed');
+          this.conformationPopup.openErrorModal(reason.error.message || 'Contact Details update failed');
         },
       });
   }

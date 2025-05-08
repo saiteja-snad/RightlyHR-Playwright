@@ -493,7 +493,11 @@ export class AssetsManagmentComponent {
     }
 
   }
-
+  
+  resetfrom(){
+    this.isToggledamc=false
+    this.isToggledWarranty=false
+  }
 
 
   onToggleChangeWarranty(event: Event) {
@@ -599,6 +603,8 @@ export class AssetsManagmentComponent {
   cleardata(){
     this.assetForm.reset();
       this.modalService.dismissAll();
+      this.isToggledWarranty=false
+      this.isToggledamc=false
     }
   
   ngOnDestroy(): void {

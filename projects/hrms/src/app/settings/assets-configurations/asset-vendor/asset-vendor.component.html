@@ -113,7 +113,7 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2" for="phonenumber">Primary Contact<span
                                 class="text-danger">*</span></label>
-                        <input id="phonenumber" type="text" maxlength="10" minlength="10"
+                        <input id="phonenumber" type="text"
                            formControlName="phonenumber"   (keypress)="formValidation.restrictAlphabets($event)"
                             class="form-control custom-input" placeholder="Enter Primary Contact Number" />
 
@@ -124,7 +124,7 @@
                                 Primary Contact is required
                             </div>
                             <div *ngIf="assetForm.controls['phonenumber'].errors?.['maxlength']">
-                                Primary Contact is required and must be 10 digits
+                                Primary Contact is required and must be 15 digits
                             </div>
                             <div *ngIf="assetForm.controls['phonenumber'].errors?.['minlength']">
                                 Primary Contact is required and must be 10 digits
@@ -204,7 +204,7 @@
 
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();assetForm.reset()">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="assetForm.invalid">Submit</button>
                 </div>
             </form>

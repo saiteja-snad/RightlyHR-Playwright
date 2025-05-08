@@ -30,11 +30,23 @@
         </div>
 
         <!-- Date Range Picker -->
-        <div class="d-flex align-items-center gap-2" *ngIf="absentReportForm.get('frequency')?.value?.value === 'date'">
+        <!-- <div class="d-flex align-items-center gap-2" *ngIf="">
           <input type="text" class="form-control custom-input" ngxDaterangepickerBootstrap formControlName="dateRange"
             [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions"
             [isInvalidDate]="isInvalidDate" [showClearButton]="true" placeholder="Please select date" readonly />
-        </div>
+        </div> -->
+
+        @if(absentReportForm.get('frequency')?.value?.value === 'date'){
+          <div class="d-flex align-items-center gap-2">
+            <div>
+              <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
+                [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
+                placeholder="Please select date" formControlName="dateRange" [startKey]="'startDate'"
+                [endKey]="'endDate'" readonly />
+            </div>
+          </div>
+        }
+       
 
         <!-- Employee -->
         <div class="d-flex align-items-center gap-2">

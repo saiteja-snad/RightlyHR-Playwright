@@ -141,8 +141,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
       this.absentReportForm.get('month')?.reset();
     })
   }
-
-
+  
   get isAbsentGenerateDisabled(): boolean {
     const form = this.absentReportForm;
     return !(
@@ -248,6 +247,7 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
     if (formValue.manager) {
       request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
+
     this.reportsService.getAbsentReports(request).subscribe({
       next: (response: any) => {
         this.filteredAbsentRecord = response ?? [];

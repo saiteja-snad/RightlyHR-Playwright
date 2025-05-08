@@ -80,24 +80,38 @@ export class MyTicketsComponent {
     this.itSupportForm = this.fb.group({
       employee: ['', Validators.required],
       name: [null, Validators.required],
-      colleaguename: ['', Validators.required],
+      colleaguename: [null, Validators.required],
       email: [null, Validators.required],
       phoneNumber: [null, Validators.required], 
       deskdetails: ['', [Validators.required]],
       department: ['', [Validators.required]],
-      team: ['', [Validators.required]],
+      team: [{ value: '', disabled: true },Validators.required],
       type: ['', [Validators.required]],
       priority: ['', [Validators.required]],
       subject: ['', [Validators.required]],
-      description: ['', [Validators.required]],
-
-
-
+      description: ['', [Validators.required]]
     });
     this.itSupportForm.patchValue({
       employee: this.ticketFor
     });
   }
+// Call this when ticket For dropdwon data changes
+setConditionalValidators() {
+  const ticketType = this.itSupportForm.get('employee')?.value;
+
+  if (ticketType === 'Self') {
+    this.itSupportForm.get('name')?.setValidators(Validators.required);
+    this.itSupportForm.get('colleaguename')?.clearValidators();
+    this.itSupportForm.get('colleaguename')?.setValue(null);
+  } else {
+    this.itSupportForm.get('colleaguename')?.setValidators(Validators.required);
+    this.itSupportForm.get('name')?.clearValidators();
+    this.itSupportForm.get('name')?.setValue(null);
+  }
+
+  this.itSupportForm.get('name')?.updateValueAndValidity();
+  this.itSupportForm.get('colleaguename')?.updateValueAndValidity();
+}
 
 
   getEmployee() {
@@ -146,7 +160,7 @@ export class MyTicketsComponent {
     // Fetch the teams based on the selected department ID
     this.subscription = this.http.getData(`Subdepartments/Getnames/${selectedDepartmentId}`).subscribe({
       next: (data: any) => {
-        if (data) {
+        if (data) {      
           this.teamDropdownValues = data; // Update the team dropdown values
         } else {
           this.teamDropdownValues = []; // Reset if no teams are found
@@ -158,6 +172,7 @@ export class MyTicketsComponent {
         this.itSupportForm.patchValue({ team: null }); // Reset the team selection
       }
     });
+    this.itSupportForm.get('team')?.enable();
   }
 
 
@@ -173,6 +188,7 @@ export class MyTicketsComponent {
   onTicketRaisedForChange(event: any) {
     let value = event;
     this.ticketFor = value;
+    this.setConditionalValidators();
     console.log(value);
     this.itSupportForm.patchValue({
       name: null,
@@ -296,6 +312,10 @@ export class MyTicketsComponent {
   }
 
   onSubmit() {
+    if (this.itSupportForm.invalid) {
+      this.itSupportForm.markAllAsTouched();
+      return;
+    }
     this.isLoading = true;
     console.log(this.itSupportForm.value);
     this.postDetails = this.itSupportForm.value
@@ -341,11 +361,13 @@ export class MyTicketsComponent {
   }
 
   openModal(content: any) {
+    this.ticketFor = 'Self';
+    this.itSupportForm.patchValue({ employee: 'Self' });
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
   cleardata(){
-    this.itSupportForm.reset();
+  this.ngOnInit();
     this.modalService.dismissAll();
   }
 

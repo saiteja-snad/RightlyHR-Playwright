@@ -20,7 +20,7 @@
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                            filterBy="fullName" [showClear]="true" placeholder="Select employee" placeholder="Please select employee"
+                            filterBy="fullName" placeholder="Select employee" placeholder="Please select employee"
                             (onChange)="onClickValidation($event)" formControlName="fusionEmpId" resetFilterOnHide="true"
                             class="custom-select w-100">
                         </p-select>
@@ -215,7 +215,7 @@
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="LocationDropDownData" optionLabel="jobLocationName" [filter]="true" filterBy="name"
-                            [showClear]="true" placeholder="Please select work location" formControlName="locationId"
+                            [showClear]="true" placeholder="Work location" formControlName="locationId"
                             class="custom-select w-100">
                         </p-select>
                     </div>
@@ -229,7 +229,7 @@
                             class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
-                            [filter]="true" filterBy="name" [showClear]="true" placeholder="Please select sub location"
+                            [filter]="true" filterBy="name" [showClear]="true" placeholder="Sub location"
                             formControlName="JobSubLocationName" class="custom-select w-100">
                         </p-select>
                     </div>
@@ -284,7 +284,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="internshipPeriod" optionValue="value" optionLabel="name" placeholder="Please select training period"
                             formControlName="internshipperiod" class="form-select custom-select" resetFilterOnHide="true"
-                            (onChange)="calculateEndDate(traineeEmpData.internshipperiod)">
+                            (onChange)="calculateEndDate(employeeForm.get('internshipperiod')?.value)">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
@@ -297,7 +297,7 @@
                         <span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="getAllEmployeeInfo" optionValue="employeeId" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                            [showClear]="true" placeholder="Please select reporting manager" formControlName="reportingmanagerId" class="custom-select w-100"
+                            placeholder="Please select reporting manager" formControlName="reportingmanagerId" class="custom-select w-100"
                             (ngModelChange)="selectReportingname($event)" resetFilterOnHide="true">
                         </p-select>
                     </div>
@@ -322,7 +322,8 @@
         
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{'Note'|translate}}</label>
-                    <textarea class="form-control custom-input" formControlName="note" (ngModelChange)="pathValuesFuction()"  placeholder="Please enter note" maxlength="250"></textarea>
+                    <textarea class="form-control custom-input" formControlName="note" (ngModelChange)="pathValuesFuction()" 
+                    placeholder="Please enter note" maxlength="250"></textarea>
                     <div class="textarea-count-text">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
                     <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                         <div class="error-msg">Note is required</div>
@@ -333,15 +334,11 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
                         {{'Signature Authority Name'|translate}}<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName"
+                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
                             placeholder="Please select signature authority" (onChange)="onclickDesignations($event)"
-                            class="form-select custom-select" formControlName="authorityid">
-                            <ng-template let-emp pTemplate="item">
-                                {{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}
-                            </ng-template>
-                            <ng-template let-emp pTemplate="selectedItem">
-                                {{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}
-                            </ng-template>
+                            class="form-select custom-select" formControlName="authorityid" resetFilterOnHide="true">
+                            <ng-template let-emp pTemplate="item">{{ emp.firstName }} {{ emp.middleName }} {{ emp.lastName }}</ng-template>
+                            <ng-template let-emp pTemplate="selectedItem">{{ emp?.firstName }} {{ emp?.middleName }} {{ emp?.lastName }}</ng-template>
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
@@ -394,12 +391,12 @@
                                     </ng-template>
                                     <li *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
                                     <ng-template #address>
-                                        <li>{{traineeEmpData.addressLine1}},</li>
+                                        <li><b>{{traineeEmpData.addressLine1}},</b></li>
                                         @if(traineeEmpData.addressLine2){
-                                            <li>{{traineeEmpData.addressLine2}},</li>
+                                            <li><b>{{traineeEmpData.addressLine2}},</b></li>
                                         }
-                                        <li>{{traineeEmpData.city}}, {{traineeEmpData.state}},</li>
-                                        <li>{{traineeEmpData.country}} - {{traineeEmpData.pinCode}}.</li>
+                                        <li><b>{{traineeEmpData.city}}, {{traineeEmpData.state}},</b></li>
+                                        <li><b>{{traineeEmpData.country}} - {{traineeEmpData.pinCode}}.</b></li>
                                     </ng-template>
                                 </ul>
                                 <div class="letter-sub-header">Date: {{traineeEmpData.offerIssuedDate | dateformat}}</div>

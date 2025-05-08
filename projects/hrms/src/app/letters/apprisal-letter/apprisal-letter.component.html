@@ -35,9 +35,6 @@
               (selectedOption)="onOptionSelected($event, 'JobRole')" class="custom-select w-100">
             </p-select>
           </div>
-          <!-- <div *ngIf="employeeForm.get('JobRole')?.invalid && employeeForm.get('JobRole')?.touched">
-            <div class="error-msg">{{'Promotion Designation is required'| translate }}</div>
-          </div> -->
         </div>
     
         <!-- Issued Date -->
@@ -58,7 +55,7 @@
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Next Compensation Review Date'| translate }}
             <span class="text-danger">*</span></label>
-          <input type="date" formControlName="reviewdate" [(ngModel)]="appraisalData.reviewdate"
+          <input type="date" formControlName="reviewdate" [(ngModel)]="appraisalData.reviewdate" min="{{ currentDate | date: 'yyyy-MM-dd' }}"
             class="form-control custom-input" id="reviewdate" required (change)="DateValidation2()">
           <div *ngIf="employeeForm.get('reviewdate')?.invalid && employeeForm.get('reviewdate')?.touched">
             <div class="error-msg">{{'Compensation review date is required '| translate }}</div>
@@ -79,11 +76,11 @@
         </div>
     
         <div class="mb-3">
-          <label class="form-label custom-label mb-2"> {{'Enter Performance Variable Bonus'| translate }}</label>
-          <input type="number" class="form-control custom-input" placeholder="Enter Bonus" formControlName="bonus"
-            (input)="sanitizeInput($event)" />
+          <label class="form-label custom-label mb-2"> {{'Performance Variable Bonus'| translate }}</label>
+          <input type="number" class="form-control custom-input" placeholder="Please enter performance variable bonus" 
+           formControlName="bonus" (input)="sanitizeInput($event)" />
           <div *ngIf="employeeForm.get('bonus')?.invalid && employeeForm.get('bonus')?.touched">
-            <div class="error-msg">{{'Performance Variable Bonus is required'| translate }}</div>
+            <div class="error-msg">{{'Performance variable bonus is required'| translate }}</div>
           </div>
         </div>
 
@@ -94,21 +91,21 @@
           </label>
           <div class="custom-p-select-content">
             <p-select [options]="variablePayOptions" optionLabel="name" optionValue="value" formControlName="isVariablePay"
-              placeholder="Please select Variable Pay" (onChange)="onVariablePayChange()" [autoDisplayFirst]="false"
+              placeholder="Please select variable pay" (onChange)="onVariablePayChange()" [autoDisplayFirst]="false"
               class="custom-select w-100" id="variablePay" resetFilterOnHide="true"></p-select>
           </div>
           <div *ngIf="employeeForm.get('isVariablePay')?.invalid && employeeForm.get('isVariablePay')?.touched">
-            <div class="error-msg">{{ 'Variable Pay is required' | translate }}</div>
+            <div class="error-msg">{{ 'Variable pay is required' | translate }}</div>
           </div>
         </div>
     
         <div class="mb-3">
           <label class="form-label custom-label mb-2">{{'Variable Amount'| translate }}<span class="error-msg">*</span></label>
           <input type="text" formControlName="variablePayAmount" class="form-control custom-input" id="variableamount"
-            placeholder="Variable Amount" [(ngModel)]="appraisalData.variablePayAmount" maxlength="10"
+            placeholder="Please enter variable amount" [(ngModel)]="appraisalData.variablePayAmount" maxlength="10"
             [disabled]="!appraisalData.isVariablePay" (keypress)="numbers($event)" autocomplete="off" required>
           <div *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
-            <div class="error-msg">{{'Variable Amount is required '| translate }}</div>
+            <div class="error-msg">{{'Variable amount is required '| translate }}</div>
           </div>
         </div>
     
@@ -157,7 +154,7 @@
           <div class="letter-page-content" id="pdfContent1">
             <div class="letter-page-sub-content">
               <div *ngIf="appraisalData.Documenttype;else doc" class="soft-copy-letter">
-                <app-lettersheader></app-lettersheader>>
+                <app-lettersheader></app-lettersheader>
               </div>
               <ng-template #doc>
                 <div class="hard-copy-letter"></div>
@@ -170,6 +167,7 @@
               <div class="text-end mb-3 mt-2"><span class="letter-sub-header">Date:</span><span
                   class="letter-sub-header">{{appraisalData.dateofAppraisal| dateformat}}</span>
               </div>
+
               <!-- start of paragraphs -->
               <p class="letter-sub-header">
                 <span *ngIf="!appraisalData.firstName"> {{'Employee Name'| translate }}</span>
@@ -179,6 +177,7 @@
                 <span *ngIf="!appraisalData.jobRole"> {{'Designation'| translate }}</span>
                 <span>{{appraisalData.jobRole}}</span>
               </p>
+
               <p class="letter-sub-header">Dear {{appraisalData.firstName}} {{appraisalData.middleName}} {{appraisalData.lastName}},</p>
 
               <p>We are pleased to present you with this appraisal letter on behalf of
@@ -187,7 +186,7 @@
                 success.</p>
 
               <p *ngIf="employeeForm.get('JobRole')?.value?.value">We are happy with your performance and are equally pleased to
-                share that you have been promoted to <u><b><span>{{employeeForm.get('JobRole')?.value?.value}}</span></b></u> With immediate
+                share that you have been promoted to <u><b><span>{{employeeForm.get('JobRole')?.value?.value}}</span></b></u> with immediate
                 effect.
               </p>
 
@@ -208,7 +207,7 @@
               <p>Your new compensation structure is as follows:</p>
 
               <!--Components Table-->
-              <div class="salary-details-table mb-3">
+              <div class="salary-details-table mb-3 mt-4">
                 <table class="w-100">
                   <thead>
                     <tr>
@@ -219,107 +218,108 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td class="p-0 text-center">Basic Salary</td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.basicSalary;else basic"></span></td>
+                      <td class="text-center">Basic Salary</td>
+                      <td class="text-center"><span *ngIf="!appraisalData.basicSalary;else basic"></span></td>
                       <ng-template #basic>{{appraisalData.basicSalary}}</ng-template>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.basicPerannum;else basicper"></span>
+                      <td class="text-center"><span *ngIf="!appraisalData.basicPerannum;else basicper"></span>
                         <ng-template #basicper>{{appraisalData.basicPerannum}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-0 text-center">HRA</td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.hraSalary;else hra">
+                      <td class="text-center">HRA</td>
+                      <td class="text-center"><span *ngIf="!appraisalData.hraSalary;else hra">
                         </span>
                         <ng-template #hra>{{appraisalData.hraSalary}}</ng-template>
                       </td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.hraPerAnnum;else hraper"> </span>
+                      <td class="text-center"><span *ngIf="!appraisalData.hraPerAnnum;else hraper"> </span>
                         <ng-template #hraper>{{appraisalData.hraPerAnnum}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-0 text-center">Other Allowances</td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.otherAllowances;else other"> </span>
+                      <td class="text-center">Other Allowances</td>
+                      <td class="text-center"><span *ngIf="!appraisalData.otherAllowances;else other"> </span>
                         <ng-template #other>{{appraisalData.otherAllowances}}</ng-template>
                       </td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.otherAllowancesPerAnnum;else otherper">
+                      <td class="text-center"><span *ngIf="!appraisalData.otherAllowancesPerAnnum;else otherper">
                         </span>
                         <ng-template #otherper>{{appraisalData.otherAllowancesPerAnnum}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-0 bold text-center"><b>Total Gross Salary</b></td>
-                      <td class="text-center p-0 bold"><span *ngIf="!appraisalData.totalGrossSalary;else totalgross">
+                      <td class="bold text-center"><b>Total Gross Salary</b></td>
+                      <td class="text-center bold"><span *ngIf="!appraisalData.totalGrossSalary;else totalgross">
                         </span>
                         <ng-template #totalgross>{{appraisalData.totalGrossSalary}}</ng-template>
                       </td>
-                      <td class="text-center p-0 bold"><span *ngIf="!appraisalData.totalGrossPerAnnum;else totalgrossper">
+                      <td class="text-center bold"><span *ngIf="!appraisalData.totalGrossPerAnnum;else totalgrossper">
                         </span>
                         <ng-template #totalgrossper>{{appraisalData.totalGrossPerAnnum}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-0 text-center">PF Contribution by Employee</td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.pfContribution;else pf">
+                      <td class="text-center">PF Contribution by Employee</td>
+                      <td class="text-center"><span *ngIf="!appraisalData.pfContribution;else pf">
                         </span>
                         <ng-template #pf>{{appraisalData.pfContribution}}</ng-template>
                       </td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.pfPreAnuum;else pfper">
+                      <td class="text-center"><span *ngIf="!appraisalData.pfPreAnuum;else pfper">
                         </span>
                         <ng-template #pfper>{{appraisalData.pfPreAnuum}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-0 text-center">ESI Contribution by Employee</td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.employeeEsi;else esiemployees"> </span>
+                      <td class="text-center">ESI Contribution by Employee</td>
+                      <td class="text-center"><span *ngIf="!appraisalData.employeeEsi;else esiemployees"> </span>
                         <ng-template #esiemployees>{{appraisalData.employeeEsi}}</ng-template>
                       </td>
-                      <td class="text-center p-0"> <span *ngIf="!appraisalData.esiPerAnnumemployee;else esiemployee"></span>
+                      <td class="text-center"> <span *ngIf="!appraisalData.esiPerAnnumemployee;else esiemployee"></span>
                         <ng-template #esiemployee>{{appraisalData.esiPerAnnumemployee}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-0 text-center">Professional Tax (PT)</td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.professionalTax;else pftax"> </span>
+                      <td class="text-center">Professional Tax (PT)</td>
+                      <td class="text-center"><span *ngIf="!appraisalData.professionalTax;else pftax"> </span>
                         <ng-template #pftax>{{appraisalData.professionalTax}}</ng-template>
                       </td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.professionalPerAnnum;else pftaxper">
+                      <td class="text-center"><span *ngIf="!appraisalData.professionalPerAnnum;else pftaxper">
                         </span>
                         <ng-template #pftaxper>{{appraisalData.professionalPerAnnum}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="text-center p-0">Medical insurance</td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.educationAllowances;else educ"> </span>
+                      <td class="text-center">Medical insurance</td>
+                      <td class="text-center"><span *ngIf="!appraisalData.educationAllowances;else educ"> </span>
                         <ng-template #educ>{{appraisalData.educationAllowances}}</ng-template>
                       </td>
-                      <td class="text-center p-0"><span *ngIf="!appraisalData.educationallowancesPerAnnum;else educper">
+                      <td class="text-center"><span *ngIf="!appraisalData.educationallowancesPerAnnum;else educper">
                         </span>
                         <ng-template #educper>{{appraisalData.educationallowancesPerAnnum}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-0 text-center"><b>Total Deductions (PF+ESI)</b>
+                      <td class=" text-center"><b>Total Deductions (PF+ESI)</b>
                       </td>
-                      <td class="text-center p-0 bold"><span *ngIf="!appraisalData.totalDeduction;else totdec"> </span>
+                      <td class="text-center bold"><span *ngIf="!appraisalData.totalDeduction;else totdec"> </span>
                         <ng-template #totdec>{{appraisalData.totalDeduction}}</ng-template>
                       </td>
-                      <td class="text-center p-0 bold"><span *ngIf="!appraisalData.totalDeductionsPerAnnum;else totdecper">
+                      <td class="text-center bold"><span *ngIf="!appraisalData.totalDeductionsPerAnnum;else totdecper">
                         </span>
                         <ng-template #totdecper>{{appraisalData.totalDeductionsPerAnnum}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-0 text-center"><b>Net Salary</b></td>
-                      <td class="text-center p-0 bold"><span *ngIf="!appraisalData.netSalary;else net"> </span>
+                      <td class="text-center"><b>Net Salary</b></td>
+                      <td class="text-center bold"><span *ngIf="!appraisalData.netSalary;else net"> </span>
                         <ng-template #net>{{appraisalData.netSalary}}</ng-template>
                       </td>
-                      <td class="text-center p-0 bold"><span *ngIf="!appraisalData.netSalaryPerAnnum;else netper"></span>
+                      <td class="text-center bold"><span *ngIf="!appraisalData.netSalaryPerAnnum;else netper"></span>
                         <ng-template #netper>{{appraisalData.netSalaryPerAnnum}}</ng-template>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+
               <!--CTC table-->
               <div class="salary-details-table mb-3">
                 <table class="w-100">
@@ -330,46 +330,46 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td style="width:59%;" class="p-1 text-center">Employer PF Contribution</td>
-                      <td style="width:21%;" class="text-center p-1">
+                      <td style="width:59%;" class="text-center">Employer PF Contribution</td>
+                      <td style="width:21%;" class="text-center">
                         <span *ngIf="!appraisalData.pfContribution;else pfempr"></span>
                         <ng-template #pfempr>{{appraisalData.pfContribution}}</ng-template>
                       </td>
-                      <td class="text-center p-1">
+                      <td class="text-center">
                         <span *ngIf="!appraisalData.pfPreAnuum;else pfempper"></span>
                         <ng-template #pfempper>{{appraisalData.pfPreAnuum}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-1 text-center">Employer ESI Contribution</td>
-                      <td class="text-center p-1">
+                      <td class="text-center">Employer ESI Contribution</td>
+                      <td class="text-center">
                         <span *ngIf="!appraisalData.esicContribution;else esiempr"></span>
                         <ng-template #esiempr>{{appraisalData.esicContribution}}</ng-template>
                       </td>
-                      <td class="text-center p-1">
+                      <td class="text-center">
                         <span *ngIf="!appraisalData.esiPerAnnum;else esiempper"></span>
                         <ng-template #esiempper>{{appraisalData.esiPerAnnum}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-1 text-center"><b>CTC=Gross Salary +(Employer PF+ESI+Medical Insurance)</b></td>
-                      <td class="text-center p-1 bold">
+                      <td class="text-center"><b>CTC=Gross Salary +(Employer PF+ESI+Medical Insurance)</b></td>
+                      <td class="text-center bold">
                         <span *ngIf="!appraisalData.grossSalary;else gross"></span>
                         <ng-template #gross>{{appraisalData.grossSalary}}</ng-template>
                       </td>
-                      <td class="text-center p-1 bold">
+                      <td class="text-center bold">
                         <span *ngIf="!appraisalData.salary;else grossper"></span>
                         <ng-template #grossper>{{appraisalData.salary}}</ng-template>
                       </td>
                     </tr>
                     <tr>
-                      <td class="p-1 text-center"><b>Variable Bonus-based on Performance</b></td>
-                      <td colspan="2" class="p-1 text-center ">{{appraisalData.bonus}} <span *ngIf="appraisalData.bonus">Per
+                      <td class="text-center"><b>Variable Bonus-based on Performance</b></td>
+                      <td colspan="2" class="text-center ">{{appraisalData.bonus}} <span *ngIf="appraisalData.bonus">Per
                           Annum</span></td>
                     </tr>
                     <tr>
-                      <td class="p-1 text-center"><b>Variable Amount</b></td>
-                      <td colspan="2" class="p-1 text-center">
+                      <td class="text-center"><b>Variable Amount</b></td>
+                      <td colspan="2" class="text-center">
                         <span *ngIf="!appraisalData.variablePayAmount; else vamount"></span>
                         <ng-template #vamount>{{appraisalData.variablePayAmount }}</ng-template>
                       </td>
@@ -378,6 +378,7 @@
                 </table>
               </div>
             </div>
+
             <div class="letter-footer">
               <app-letter-footer />
             </div>
@@ -389,10 +390,13 @@
               <div *ngIf="appraisalData.Documenttype;else doc" class="soft-copy-letter">
                 <!-- <app-letterhead></app-letterhead> -->
               </div>
+
               <ng-template #doc>
                 <div class="hard-copy-letter"></div>
               </ng-template>
+
               <p class="letter-sub-header mt-4 pt-4"><b>Note:</b></p>
+              
               <ul>
                 <li>Medical insurance amount will be calculated based on the number
                   of dependents; the respective amount will be deducted from your monthly salary.</li>
@@ -400,21 +404,24 @@
                   {{appraisalData.bonus}}
                   annually, based on your performance.</li>
               </ul>
+
               <p>The raise in your salary would be applicable from
                 <u><b>{{appraisalData.dateofAppraisal| dateformat}}</b></u>.
               </p>
-              <p>Your next compensation review will come up in <u>{{appraisalData.reviewdate |
-                  dateformat}}</u>. We look
-                forward to even greater contribution from you in the future.</p>
+
+              <p class="mb-4 pb-4">Your next compensation review will come up in <u>{{appraisalData.reviewdate |
+                  dateformat}}</u>. We look forward to even greater contribution from you in the future.</p>
               <!-- end of second table -->
-              <p class="letter-sub-header pt-4 pb-4"><b>for RightlyHR</b></p>
-              <div class="mt-4 mb-4 pt-4"></div>
+
+              <p class="letter-sub-header pt-4"><b>for RightlyHR</b></p>
+
               <div class="pb-4">
                 <span class="letter-signature">{{appraisalData.authorityName}}</span><br>
-                <span><b>Authorized Signatory,</b></span><br>
+                <span *ngIf="!appraisalData.authorityName"><b>Authorized Signatory,</b></span><br>
                 <span><b><span *ngIf="!appraisalData.authorityName">Name</span>{{appraisalData.authorityName}}</b></span><br>
                 <span><b><span *ngIf="!authorityDesignation">Designation</span>{{authorityDesignation}}</b></span>
               </div>
+
               <div class="pt-4 pb-4">
                 <p><b>Employee Name:<span class="employee-field ms-2">{{appraisalData.firstName}}
                       {{appraisalData.middleName}} {{appraisalData.lastName}}</span></b></p>
@@ -422,6 +429,7 @@
                 <p><B>Date:<span class="employee-date ms-2"></span></B></p>
               </div>
             </div>
+
             <div class="letter-footer">
               <app-letter-footer />
             </div>

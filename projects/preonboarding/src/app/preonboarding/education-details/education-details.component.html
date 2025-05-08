@@ -119,7 +119,7 @@
                 <a (click)="close()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content text-center p-4">
+        <div class="custom-main-popup-content text-center w-100 p-4">
             <div *ngIf="!DocImageUrl; else imageView">
                 <ngx-doc-viewer [url]="DocViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
             </div>

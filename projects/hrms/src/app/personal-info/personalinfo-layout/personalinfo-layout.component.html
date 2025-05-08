@@ -15,7 +15,9 @@
             <button class="custom-btn btn-primary " *ngIf="isActive('personalinfo/personal/basic-info')"
                 (click)="emailForRequestDoc()" [disabled]="isLoading">
                 <span *ngIf="!isLoading">{{'Request for Documents'|translate}}</span>
-                <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+                <div class="button-loader-content" *ngIf="isLoading">
+                    <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                </div>
             </button>
             }
             <button class="custom-btn btn-secondary me-3"

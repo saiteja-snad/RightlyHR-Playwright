@@ -163,7 +163,7 @@ export class ApprisalLetterComponent {
       this.appraisalData.variablePayAmount = this.employeeForm.get('variablePayAmount')?.value;
     } else {
       this.employeeForm.get('variablePayAmount')?.disable();
-      // this.employeeForm.get('variablePayAmount')?.setValue(0);
+      this.employeeForm.get('variablePayAmount')?.setValue('');
       // this.appraisalData.variablePayAmount = '0';
     }
   }

@@ -284,7 +284,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="internshipPeriod" optionValue="value" optionLabel="name" placeholder="Please select training period"
                             formControlName="internshipperiod" class="form-select custom-select" resetFilterOnHide="true"
-                            (onChange)="calculateEndDate(traineeEmpData.internshipperiod)">
+                            (onChange)="calculateEndDate(employeeForm.get('internshipperiod')?.value)">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('internshipperiod')?.invalid && employeeForm.get('internshipperiod')?.touched">
@@ -391,12 +391,12 @@
                                     </ng-template>
                                     <li *ngIf="!traineeEmpData.addressLine1;else address">{{'Address'|translate}}:</li>
                                     <ng-template #address>
-                                        <li>{{traineeEmpData.addressLine1}},</li>
+                                        <li><b>{{traineeEmpData.addressLine1}},</b></li>
                                         @if(traineeEmpData.addressLine2){
-                                            <li>{{traineeEmpData.addressLine2}},</li>
+                                            <li><b>{{traineeEmpData.addressLine2}},</b></li>
                                         }
-                                        <li>{{traineeEmpData.city}}, {{traineeEmpData.state}},</li>
-                                        <li>{{traineeEmpData.country}} - {{traineeEmpData.pinCode}}.</li>
+                                        <li><b>{{traineeEmpData.city}}, {{traineeEmpData.state}},</b></li>
+                                        <li><b>{{traineeEmpData.country}} - {{traineeEmpData.pinCode}}.</b></li>
                                     </ng-template>
                                 </ul>
                                 <div class="letter-sub-header">Date: {{traineeEmpData.offerIssuedDate | dateformat}}</div>

@@ -123,13 +123,29 @@
                                     <span *ngIf="!addressFlag; else address">_______________________</span>
                                     <ng-template #address>
                                         <b *ngIf="employeeForm">
-                                            {{ employeeForm.get('addressLine1')?.value || '' }},
-                                            {{ employeeForm.get('addressLine2')?.value }},
-                                            {{ employeeForm.get('city')?.value }},
-                                            {{ employeeForm.get('state')?.value }},
-                                            {{ employeeForm.get('country')?.value }} -
-                                            {{ employeeForm.get('zipCode')?.value }}.
-                                        </b>
+                                            <ng-container *ngIf="employeeForm.get('addressLine1')?.value">
+                                            {{ employeeForm.get('addressLine1')?.value }}
+                                            </ng-container>
+                                            <ng-container *ngIf="employeeForm.get('addressLine2')?.value">
+                                            <span *ngIf="employeeForm.get('addressLine1')?.value">,</span>
+                                            {{ employeeForm.get('addressLine2')?.value }}
+                                            </ng-container>
+                                            <ng-container *ngIf="employeeForm.get('city')?.value">
+                                            <span *ngIf="employeeForm.get('addressLine1')?.value || employeeForm.get('addressLine2')?.value">,</span>
+                                            {{ employeeForm.get('city')?.value }}
+                                            </ng-container>
+                                            <ng-container *ngIf="employeeForm.get('state')?.value">
+                                            <span *ngIf="employeeForm.get('addressLine1')?.value || employeeForm.get('addressLine2')?.value || employeeForm.get('city')?.value">,</span>
+                                            {{ employeeForm.get('state')?.value }}
+                                            </ng-container>
+                                            <ng-container *ngIf="employeeForm.get('country')?.value">
+                                            <span *ngIf="employeeForm.get('addressLine1')?.value || employeeForm.get('addressLine2')?.value || employeeForm.get('city')?.value || employeeForm.get('state')?.value">,</span>
+                                            {{ employeeForm.get('country')?.value }}
+                                            </ng-container>
+                                            <ng-container *ngIf="employeeForm.get('zipCode')?.value">
+                                            - {{ employeeForm.get('zipCode')?.value }}.
+                                            </ng-container>
+                                            </b>
                                     </ng-template>
                                 </span>
                             </p>
@@ -143,12 +159,12 @@
                         </div>
                         <div>
                             <!-- Show "Authority Signature" only when no authority is selected -->
-                            <div *ngIf="!addressLetterData.authorityName?.trim()" class="authority-signature mb-3">
+                            <div *ngIf="!addressLetterData.authorityName?.trim()">
                                 Authority Signature
                             </div>
     
                             <!-- Show Name & Designation only when authorityName is set -->
-                            <div *ngIf="addressLetterData.authorityName?.trim()">
+                            <div *ngIf="!addressLetterData.authorityName?.trim()">
                                 <p>Authority Name</p>
                                 <p>Designation</p>
                             </div>

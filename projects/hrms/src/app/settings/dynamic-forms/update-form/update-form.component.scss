@@ -1,3 +1,7 @@
+.custom-setting-right-content {
+    overflow-x: hidden;
+}
+
 .accordion-button {
     width: 10%;
     border: transparent;
@@ -41,16 +45,10 @@
     transition: background-color 0.3s ease;
 }
 
-.section-scroll {
-    overflow-y: scroll;
-    max-height: 60.4vh;
-    overflow-x: hidden;
-    padding: 0px;
-}
-
 /* Handle Dragging Effects */
 .cdk-drag-preview {
     background: white;
+    border: 1px solid #dee2e6;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 3px;
 }
@@ -63,29 +61,6 @@
 /* Smooth Transition for Dragging Elements */
 .cdk-drag-animating {
     transition: transform 0.3s ease;
-}
-
-.inactive-no {
-    background-color: #979797;
-    border-radius: 14px;
-    padding: 11px 55px 13px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #fff;
-}
-
-.inactive-success {
-    background-color: #304ffd;
-    border-radius: 14px;
-    padding: 11px 51px 13px 52px;
-    font-size: 16px;
-    font-weight: 500;
-    color: #fff;
-}
-
-.bi-exclamation-circle-fill {
-    color: #fd3030;
-    font-size: 3rem;
 }
 
 /* Make Drag Handle Area Distinct */
@@ -112,19 +87,7 @@
 .drag-div:hover,
 .question-drag:hover {
     background-color: #f8f9fa;
-}
-
-.hide-input {
-    border-bottom: 1px solid#dee2e6;
-    box-shadow: none;
-    border-radius: 0;
-}
-
-.hide-input:focus {
-    border-top: 2px solid #dee2e6;
-    border-left: 2px solid #dee2e6;
-
-    border-right: 2px solid #dee2e6;
+    /* Light background on hover */
 }
 
 .options-icon {
@@ -150,6 +113,7 @@
     height: 56px;
     border-radius: 50%;
     background-color: #f44336;
+    /* Red button color */
     color: white;
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -192,22 +156,27 @@
 /* Optional: Different colors for different buttons */
 .fab-button:nth-child(1) {
     background-color: #304ffd;
+    /* Orange */
 }
 
 .fab-button:nth-child(2) {
     background-color: #4caf50;
+    /* Green */
 }
 
 .fab-button:nth-child(2):disabled {
     background-color: #a1e0a3;
+    /* Green */
 }
 
 .fab-button:nth-child(3) {
     background-color: #03a9f4;
+    /* Blue */
 }
 
 .fab-button:nth-child(3):disabled {
     background-color: #78d1fa;
+    /* Blue */
 }
 
 /* Add button icons */
@@ -245,21 +214,6 @@
     position: relative;
 }
 
-.label-box {
-    background-color: #6f3f98;
-    color: white;
-    padding: 5px 10px;
-    border-radius: 5px 5px 0 0;
-    font-weight: bold;
-    box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2);
-    font-size: 16px;
-}
-
-.section-header input {
-    border-bottom: 1px solid #dee2e6;
-    border-radius: 0;
-}
-
 .section-header select:focus {
     box-shadow: none;
 }
@@ -268,49 +222,12 @@
     box-shadow: none;
 }
 
-.add-button {
-    background-color: #304ffd;
-    color: #fff;
-    padding: 5px 20px;
-    border-radius: 10px;
-    border: none;
-}
-
-.add-button:disabled {
-    background-color: #5770ff;
-}
-
-.content-heading {
-    flex-grow: 0;
-    font-size: 16px;
-    padding-left: 12px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-align: left;
-    color: #222b45;
-}
-
-.sub {
-    padding: 5px 20px;
-    border-radius: 10px;
-    border: none;
-}
-
 .main-card {
     border: none;
 }
 
 .dropdown-menu a {
     cursor: pointer;
-}
-
-.update-form-body {
-    max-height: 80vh;
-    overflow-y: scroll;
-}
-
-.fit-scroll {
-    width: fit-content;
 }
 
 .form-check-input:disabled {
@@ -329,12 +246,6 @@
     border-radius: 3px;
 }
 
-.update-question-type {
-    width: 100%;
-    border: 1px solid #ced4da;
-    font-weight: normal;
-}
-
 .question-type-dropdown {
     width: 100%;
 }
@@ -342,55 +253,6 @@
 .question-type:disabled {
     background-color: #e9ecef;
     opacity: 1;
-}
-
-.view-form-body {
-    max-height: 80vh;
-    overflow-y: scroll;
-}
-
-.modal-content {
-    border-radius: 0.5rem;
-    border: 1px solid #dee2e6;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
-
-.modal-header {
-    border-bottom: 1px solid #dee2e6;
-    background-color: #f8f9fa;
-}
-
-.modal-body {
-    padding: 2rem;
-    background-color: #ffffff;
-    border-radius: 10px;
-}
-
-.card {
-    border: 1px solid #dee2e6;
-    border-radius: 0.5rem;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-}
-
-.card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #dee2e6;
-    padding: 1rem;
-}
-
-.card-body {
-    padding: 1rem;
-}
-
-.form-label {
-    font-weight: 500;
-    color: #495057;
-}
-
-.form-control[readonly] {
-    background-color: #e9ecef;
-    cursor: not-allowed;
-    border: 1px solid #ced4da;
 }
 
 .badge {
@@ -404,16 +266,6 @@
 .question-type-dropdown {
     max-height: 200px;
     overflow-y: auto;
-}
-
-.btn-close:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-.delete-btn {
-    outline: none;
-    box-shadow: none;
 }
 
 .text-area-input {
@@ -438,62 +290,6 @@
     margin-bottom: 0;
 }
 
-.required-switch input {
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    padding: 5px;
-}
-
-@media (max-width: 768px) {
-
-    .row .col-md-1,
-    .row .col-md-4,
-    .row .col-md-6 {
-        margin-bottom: 1rem;
-    }
-}
-
-.bi-check-circle-fill {
-    color: #304ffd;
-    font-size: 3rem;
-}
-
-.imgg {
-    width: 4.5rem;
-    height: 4.5rem;
-}
-
-.modal-btn {
+.width-max {
     width: max-content;
-    padding: 0.5rem;
-    border-radius: 14px;
-    color: #fff;
-    border: none;
-    width: 120px;
-}
-
-.yes-btn {
-    background-color: #304ffd;
-}
-
-.no-btn {
-    background-color: #979797;
-}
-
-a {
-    color: #3f434a;
-    cursor: pointer;
-    text-decoration: none;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-    border: 1px solid rgb(222, 226, 230) !important;
-    box-shadow: none !important;
-    outline: none;
-}
-
-.form-label {
-    color: #212529;
 }

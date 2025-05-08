@@ -51,7 +51,7 @@
                         </td>
                         <td>
                             <div>
-                                <ng-container *ngIf="item.entity.leaveApproverComments?.comments?.trim(); else noComments">
+                                <ng-container *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
                                     <a type="button">
                                         <img src="images/info-fill.png" alt="info icon"
                                             (click)="comments(item.entity.leaveApproverComments, commentspopup)"

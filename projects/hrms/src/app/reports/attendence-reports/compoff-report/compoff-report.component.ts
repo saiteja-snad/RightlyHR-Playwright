@@ -131,14 +131,11 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
             };
           });
 
-          const filteredEmployees = employeedata.filter((element: any) => {
-            return element.employeeId != loggedInUser.employeeId;
-          });
-
           this.employeeiddetails = [
             { fullName: 'All Employees', employeeId: 'all' },
-            ...filteredEmployees
+            ...employeedata
           ];
+          
         },
         error: (reason: any) => {
           console.log(reason);
@@ -210,9 +207,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     }
 
     if (formValue.manager) {
-      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-        .filter(Boolean)
-        .join(' ');
+      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
 
     // Single API call

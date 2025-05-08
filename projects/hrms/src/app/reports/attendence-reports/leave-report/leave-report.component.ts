@@ -126,13 +126,10 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
                 }${employee.lastName}`,
             };
           });
-          const filteredEmployees = employeedata.filter((element: any) => {
-            return element.employeeId != loggedInUser.employeeId;
-          });
-  
+          
           this.employeeiddetails = [
             { fullName: 'All Employees', employeeId: 'all' },
-            ...filteredEmployees
+            ...employeedata
           ];
         },
         error: (reason: any) => {
@@ -231,9 +228,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   
     // Apply manager name if provided
     if (formValue.manager) {
-      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-        .filter(Boolean)
-        .join(' ');
+      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
   
     // Only include employee filter if not "All Employees"
@@ -258,7 +253,6 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
 
   exportToExcelYearly(): void {
     // Define header mappings

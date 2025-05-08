@@ -137,6 +137,7 @@ export class CompOffEntitlementComponent {
       next: (response: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
+        this.getAllPendingApprovals();
       },
       error: (reason: any) => {
         this.modalService.dismissAll();
@@ -162,6 +163,7 @@ export class CompOffEntitlementComponent {
         next: (response: any) => {
           this.modalService.dismissAll();
           this.sharedModalService.openSuccessModal('Request Accepted Successfully');
+          this.getAllPendingApprovals();
           this.http.triggerActionSignal();
         },
         error: (reason: any) => {
@@ -191,6 +193,7 @@ export class CompOffEntitlementComponent {
           this.rejectForm.reset();
           this.selectedLeaveData = {} as AttendanceRequest;
           this.http.triggerActionSignal();
+          this.getAllPendingApprovals();
         },
         error: (reason: any) => {
           this.spinnerLoader = true;

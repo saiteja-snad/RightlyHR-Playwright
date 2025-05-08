@@ -39,14 +39,12 @@
                         </div>
                     </td>
                     <td>
-                        <!-- <div *ngIf="item.entity?.leaveApproverComments[0]?.comments;else timeoffcomments">
-                            <div (click)="comments(item.entity.leaveApproverComments,commentspopup)"> -->
-                                <a type="button" (click)="comments(item.entity.leaveApproverComments,commentspopup)">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon" >
-                                </a>
-                            <!-- </div>
+                        <div *ngIf="item.entity.leaveApproverComments[0]?.comments; else timeoffcomments">
+                            <a type="button" (click)="comments(item.entity.leaveApproverComments, commentspopup)">
+                                <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                            </a>
                         </div>
-                        <ng-template #timeoffcomments>-</ng-template> -->
+                        <ng-template #timeoffcomments>-</ng-template>
                     </td>
                     <td class="text-center">
                         <div class="dropdown">

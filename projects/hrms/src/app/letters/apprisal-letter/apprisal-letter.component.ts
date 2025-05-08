@@ -136,8 +136,8 @@ export class ApprisalLetterComponent {
     this.getAuthorityDetails();
     this.getDesignationwithGradeid();
     this.employeeForm.get('variablePayAmount')?.disable();
-    this.employeeForm.get('variablePayAmount')?.setValue(0);
-    this.appraisalData.variablePayAmount = '0';
+    // this.employeeForm.get('variablePayAmount')?.setValue(0);
+    // this.appraisalData.variablePayAmount = '0';
   }
 
   //function for issed by
@@ -163,8 +163,8 @@ export class ApprisalLetterComponent {
       this.appraisalData.variablePayAmount = this.employeeForm.get('variablePayAmount')?.value;
     } else {
       this.employeeForm.get('variablePayAmount')?.disable();
-      this.employeeForm.get('variablePayAmount')?.setValue(0);
-      this.appraisalData.variablePayAmount = '0';
+      this.employeeForm.get('variablePayAmount')?.setValue('');
+      // this.appraisalData.variablePayAmount = '0';
     }
   }
 
@@ -869,7 +869,7 @@ export class ApprisalLetterComponent {
       reviewdate: ['', Validators.required],
       JobRole:[''],
       Documenttype: [null, Validators.required],
-      bonus: [0],
+      bonus: [''],
       authorityid: [null, Validators.required],
       isVariablePay: [null, Validators.required],
       variablePayAmount: ['', Validators.required],

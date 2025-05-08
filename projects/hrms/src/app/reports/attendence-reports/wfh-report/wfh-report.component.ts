@@ -122,13 +122,10 @@ export class WfhReportComponent implements OnInit, OnDestroy {
                 }${employee.lastName}`,
             };
           });
-          const filteredEmployees = employeedata.filter((element: any) => {
-            return element.employeeId != loggedInUser.employeeId;
-          });
-
+          
           this.employeeiddetails = [
             { fullName: 'All Employees', employeeId: 'all' },
-            ...filteredEmployees
+            ...employeedata
           ];
         },
         error: (reason: any) => {
@@ -200,9 +197,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     }
 
     if (formValue.manager) {
-      request.TeamManagerName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-        .filter(Boolean)
-        .join(' ');
+      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
   
     // Single API call

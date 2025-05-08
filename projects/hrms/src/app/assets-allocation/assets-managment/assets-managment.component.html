@@ -67,7 +67,7 @@
           <p class="popup-heading mb-0">Register an Asset</p>
         </div>
         <div>
-          <a (click)="modal.dismiss();assetForm.reset();resetfrom()"><img src="icons/close.png" alt="Close Icon"
+          <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon"
               class="close-icon"></a>
         </div>
       </div>
@@ -319,8 +319,8 @@
 
           </div>
 
-          <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss();resetfrom();assetForm.reset()">Close</button>
+          <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary " (click)="openConfirmationModal(confirmationpopup)">Close</button>
             <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
                                  ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
                                  (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
@@ -333,3 +333,22 @@
 
     </div>
   </ng-template>
+
+  <ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text"> Are you sure you want to close?</p>
+      </div>
+  
+      <div class="custom-modal-footer">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+          Yes
+        </button>
+      </div>
+    </div>
+  </ng-template>
+

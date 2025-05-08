@@ -129,7 +129,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     const loggedInUser = this.authService.getToken();
     this.subscription = this.http
 
-      .getData('Employeedata/ActiveEmployees')
+      .getData('Employeedata/InactiveEmployees')
       .subscribe({
         next: (data: any) => {
           const employeedata = data.map((employee: any) => {
@@ -141,13 +141,9 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
             };
           });
 
-          const filteredEmployees = employeedata.filter((element: any) => {
-            return element.employeeId != loggedInUser.employeeId;
-          });
-
           this.employeeiddetails = [
             { fullName: 'All Employees', employeeId: 'all' },
-            ...filteredEmployees
+            ...employeedata
           ];
         },
         error: (reason: any) => {
@@ -211,10 +207,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
 
     // Manager full name
     if (formValue.manager) {
-      const fullName = [formValue.manager.firstName, formValue.manager.middleName, formValue.manager.lastName]
-        .filter(Boolean)
-        .join(' ');
-      request.TeamManagerName = fullName;
+      request.TeamManagerSnadId  = formValue.manager.fusionEmployeeId;
     }
 
 

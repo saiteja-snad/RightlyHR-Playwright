@@ -58,7 +58,7 @@
                     <label class="form-label custom-label mb-2">Last Working Day</label>
 
 
-                    <input type="date" formControlName="lastdate" class="form-control custom-input"[min]="joiningDate" [max]="currentDate">
+                    <input type="date" [min]="dateOfJoining" formControlName="lastdate" class="form-control custom-input" [max]="currentDate">
                     <div class="error-msg"
                         *ngIf="offBoardingForm.get('lastdate')?.touched && offBoardingForm.get('lastdate')?.invalid">
                         Last Working Day is required
@@ -70,7 +70,7 @@
 
                 <!-- Buttons -->
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="button" class="custom-btn btn-secondary">Cancel</button>
+                    <button type="button" (click)="openModal(confirmationpopup)" class="custom-btn btn-secondary">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="offBoardingForm.invalid || islastworking">Submit</button>
                 </div>
@@ -82,3 +82,16 @@
     </div>
 
 </div>
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+        <p class="confirmation-text mb-4">Are you sure you want to close?</p>
+      </div>
+  
+      <div class="custom-modal-footer">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
+      </div>
+    </div>
+  </ng-template>

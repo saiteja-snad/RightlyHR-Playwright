@@ -103,14 +103,11 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
             };
           });
 
-          const filteredEmployees = employeedata.filter((element: any) => {
-            return element.employeeId != loggedInUser.employeeId;
-          });
-
           this.employeeDetails = [
             { fullName: 'All Employees', employeeId: 'all' },
-            ...filteredEmployees
+            ...employeedata
           ];
+          
         },
         error: (reason: any) => {
           console.log(reason);

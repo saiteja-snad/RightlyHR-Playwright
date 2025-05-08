@@ -19,10 +19,11 @@ import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 import { SignalsService } from '../../../services/signals.service';
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 @Component({
   selector: 'app-recall-for-you-request',
   imports: [CommonModule, TranslateModule, RouterModule, NgbPopoverModule, ReactiveFormsModule, FormsModule,
-    PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe, PendingapprovalsseparationPipe],
+    PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe, PendingapprovalsseparationPipe,DataLoaderContentComponent],
   templateUrl: './recall-for-you-request.component.html',
   styleUrl: './recall-for-you-request.component.scss',
 })
@@ -33,6 +34,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
+  isDataLoader = false;
   recall_For_You_Details = new BehaviorSubject<ISeparation[]>([]);
   options = [
     { label: 10, value: 10 },
@@ -95,6 +97,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
 
   //function to get the leaves by employee id
   getAllPendingApprovals() {
+    this.isDataLoader = true;
     let loggedInUser = this.authService.getToken();
     let EmployeeId = loggedInUser.employeeId;
     let moduleId = environment.RecallrequestmoduleId
@@ -106,6 +109,7 @@ export class RecallForYouRequestComponent implements OnInit, OnDestroy {
             item.approvalHeader.status != 'Rejected'
           )
         );
+        this.isDataLoader = false;
       },
       error: (reason) => console.log(reason),
     });

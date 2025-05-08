@@ -64,7 +64,6 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
     config: NgbModalConfig,
     private readonly modalService: NgbModal,
     private http: HttpService,
-    private router: Router,
     private location: Location,
     private sharedModalService: OpenModalService,
   ) {
@@ -162,7 +161,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
            this.min=min;
            this.max=max;
         this.assessmentFormData.formResponses = this.assessmentFormData.formResponses.map((response: any) => {
-          this.assessmentFormData.revisedDesignation = null;
+          // this.assessmentFormData.revisedDesignation = null;
           response.formresponse = response.formresponse ?? {};
           if (response.order === this.currentStage - 1) {
             this.currentStageName = response.name;
@@ -184,9 +183,11 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
             }));
           }
        
+          console.log(response.formresponse.revisedDesignation)
           if (response.formresponse.revisedDesignation) {
             this.assessmentFormData.revisedDesignation = response.formresponse.revisedDesignation
             this.gradeId = response.formresponse.jobgradeid;
+            console.log(this.assessmentFormData.revisedDesignation )
           }
 
           this.assessmentFormData.cmincrementpercentagebasedonprorata = response.formresponse.incrementPercentageMannual;

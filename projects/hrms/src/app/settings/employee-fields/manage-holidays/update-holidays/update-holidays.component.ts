@@ -223,9 +223,16 @@ get holidaysArray(): FormArray {
         this.confirmation.openSuccessModal('Holidays updated successfully');
         this.router.navigate(['/settings/employee-fields/manage-holidays/pending-for-submit']);
       },
-      error: (err) => {
-        this.confirmation.openErrorModal('Holidays update failed');
-      }
+      // error: (err) => {
+      //   this.confirmation.openErrorModal('Holidays update failed');
+      // }
+      error: (error: any) => {
+        // Handle error if needed
+        console.error(error);
+        if (error.error) {
+          this.confirmation.openErrorModal(error.error.Message);
+        }
+      },
     });
   }
 
@@ -261,7 +268,7 @@ get holidaysArray(): FormArray {
         // Handle error if needed
         console.error(error);
         if (error.error) {
-          this.confirmation.openErrorModal(error.error.Message);
+          this.confirmation.openErrorModal(error.error.message);
         }
       },
     })

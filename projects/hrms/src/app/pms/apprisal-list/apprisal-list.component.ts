@@ -9,7 +9,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { environment } from '../../../environments/environment';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
-import { IReviewCycleEmployee } from './review-cycle-emp.model';
+import { EmployeeQueryParams, IReviewCycleEmployee } from './review-cycle-emp.model';
 import { PaginatorModule } from 'primeng/paginator';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
@@ -255,7 +255,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       const promoted = this.dependentdropdowns.get('promoted')?.value;
       const params = {
         reviewcycleid: this.reviewCycleID,
-        location: this.loctionIds,
+        location: this.loctionIds, // Removed as it is not part of the expected type
         sublocation: this.subLoctionIds,
         department: this.departmentIds,
         subdepartment: this.subDepartmentIds,
@@ -344,10 +344,14 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   onPromotedChange(event: any): void {
     this.promoted = event.value
-    const params: { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string } = {
+    const params: EmployeeQueryParams = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
       pageSize: this.pageSize,
+      location: this.loctionIds,
+      sublocation: this.subLoctionIds,
+      department: this.departmentIds,
+      subdepartment: this.subDepartmentIds,
     };
 
     if(this.promoted){
@@ -367,10 +371,14 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.first = event.first;
 
     this.promoted = this.dependentdropdowns.get('promoted')?.value
-    const params: { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string } = {
+    const params: EmployeeQueryParams = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
       pageSize: this.pageSize,
+      location: this.loctionIds,
+      sublocation: this.subLoctionIds,
+      department: this.departmentIds,
+      subdepartment: this.subDepartmentIds,
     };
 
     if (this.searchText) {
@@ -392,10 +400,14 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
     this.promoted = this.dependentdropdowns.get('promoted')?.value
 
-    const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+    const params: EmployeeQueryParams = {
       reviewcycleid: this.reviewCycleID,
       page: this.page,
-      pageSize: this.pageSize
+      pageSize: this.pageSize,
+      location: this.loctionIds,
+      sublocation: this.subLoctionIds,
+      department: this.departmentIds,
+      subdepartment: this.subDepartmentIds,
     };
 
     if (this.searchText) {
@@ -411,10 +423,14 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   onSearchTextChange(): void {
     if (this.searchText) {
-      const params:  { reviewcycleid: any; page: number; pageSize: number; searchQuery?: string }  = {
+      const params: EmployeeQueryParams = {
         reviewcycleid: this.reviewCycleID,
         page: this.page,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+        location: this.loctionIds,
+        sublocation: this.subLoctionIds,
+        department: this.departmentIds,
+        subdepartment: this.subDepartmentIds,
       };
 
       this.getEmployeesOfTheReviewCycle(params); 
@@ -515,7 +531,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   OnClickToassesinreviewTemplate(data: any) {
@@ -594,10 +610,10 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modalRef.close();
         }
         this.modalService.dismissAll();
-        this.modal.openErrorModal( err.error.message? err.error.message : 'Error updating review template');
+        this.modal.openErrorModal( err.error.reason? err.error.reason : 'Error updating review template');
       },
       complete: () =>{
-        const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+        const params:  EmployeeQueryParams  = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
@@ -660,7 +676,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       complete: () => {
         this.spinnerLoader= false;
         this.selectedIds = [];
-        const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+        const params:  EmployeeQueryParams  = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
@@ -700,10 +716,10 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modalRef.close();
         }
         this.modalService.dismissAll();
-        this.modal.openErrorModal(err.error.message? err.error.message: 'Error updating review template');
+        this.modal.openErrorModal(err.error.reason? err.error.reason: 'Error updating review template');
       },
       complete: () => {
-        const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+        const params:  EmployeeQueryParams  = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
@@ -769,7 +785,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           }
         },
         complete: () =>{
-          const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+          const params:  EmployeeQueryParams  = {
             reviewcycleid: this.selectedReviewCycle.id,
             page: this.page,
             pageSize: this.pageSize
@@ -855,7 +871,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           }
         },
         complete: () => {
-          const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+          const params:  EmployeeQueryParams  = {
             reviewcycleid: this.selectedReviewCycle.id,
             page: this.page,
             pageSize: this.pageSize
@@ -906,7 +922,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modal.openErrorModal(errorMessage);
         },
         complete: () => {
-          const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+          const params:  EmployeeQueryParams  = {
             reviewcycleid: this.selectedReviewCycle.id,
             page: this.page,
             pageSize: this.pageSize
@@ -970,7 +986,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           }
         },
         complete: () =>{
-          const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+          const params:  EmployeeQueryParams  = {
             reviewcycleid: this.selectedReviewCycle.id,
             page: this.page,
             pageSize: this.pageSize
@@ -1006,7 +1022,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         }
       },
       complete: () => {
-        const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+        const params:  EmployeeQueryParams  = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
@@ -1109,7 +1125,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       },
       complete:()=>{
         this.addEmployeeForm.reset();
-        const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+        const params:  EmployeeQueryParams  = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
@@ -1236,7 +1252,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           }
         },
         complete: () =>{
-          const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+          const params:  EmployeeQueryParams  = {
             reviewcycleid: this.selectedReviewCycle.id,
             page: this.page,
             pageSize: this.pageSize
@@ -1291,7 +1307,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         }
       },
       complete: ()=>{
-        const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+        const params:  EmployeeQueryParams  = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
@@ -1326,7 +1342,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         }
       },
       complete: ()=>{
-        const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+        const params:  EmployeeQueryParams  = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
@@ -1392,7 +1408,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.modal.openErrorModal(errorMessage);
       },
       complete: () => {
-        const params:  { reviewcycleid: any; page: number; pageSize: number; promotion?: any; searchQuery?: string }  = {
+        const params:  EmployeeQueryParams  = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize

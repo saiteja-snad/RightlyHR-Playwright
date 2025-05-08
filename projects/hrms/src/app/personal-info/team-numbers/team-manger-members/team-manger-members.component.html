@@ -79,7 +79,7 @@
                     <div class="col-6 mb-3">
                         <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date</label>
                         <input type="date" id="effectiveDate" class="form-control custom-input"
-                            formControlName="effectiveDate" />
+                        [min]="joiningDate" onkeypress="return false"   formControlName="effectiveDate" />
                         <div *ngIf="requestForm.get('effectiveDate')?.touched && requestForm.get('effectiveDate')?.invalid"
                             class="error-msg">
                             Effective date is required.
@@ -142,7 +142,6 @@
                         </div>
                     </div>
                 </div>
-
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary px-4"

@@ -45,7 +45,7 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
-                            class="custom-select w-100" formControlName="authorityid" (onChange)="onclickDesignation($event)">
+                            class="custom-select w-100" formControlName="authorityid" (onChange)="onclickDesignation($event)" [filter]="true" filterBy="fullName">
                         </p-select>
                     </div>
                     <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched" class="error-msg">

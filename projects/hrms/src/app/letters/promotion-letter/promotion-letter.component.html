@@ -17,7 +17,7 @@
                             {{'Select Employee'| translate }}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true"
-                                filterBy="fullName" placeholder="Please select employee" showClear="true"
+                                filterBy="fullName" placeholder="Please select employee"
                                 formControlName="fusionEmpId" class="custom-select w-100" resetFilterOnHide="true"
                                 (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)">
                             </p-select>
@@ -75,7 +75,8 @@
                             <p-select [options]="authorityDetails" optionLabel="fullName" optionValue="employeeId"
                                 placeholder="Please select signature authority name" class="custom-select w-100"
                                 [(ngModel)]="promotiondata.authorityid" formControlName="authorityid"
-                                (onChange)="onclickDesignation()" resetFilterOnHide="true"/>
+                                (onChange)="onclickDesignation()" resetFilterOnHide="true" [filter]="true"
+                                filterBy="fullName"/>
                         </div>
                         <div
                             *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">

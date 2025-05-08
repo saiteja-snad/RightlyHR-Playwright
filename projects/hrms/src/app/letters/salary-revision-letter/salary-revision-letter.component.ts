@@ -22,6 +22,7 @@ import { LettersheaderComponent } from '../../shared/letters-shared-content/lett
   templateUrl: './salary-revision-letter.component.html',
   styleUrl: './salary-revision-letter.component.scss'
 })
+
 export class SalaryRevisionLetterComponent {
   employeementType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
@@ -59,7 +60,6 @@ export class SalaryRevisionLetterComponent {
   // employeementType = [{ name: 'Permanent' }, { name: 'Contract' }];
   location = [{ name: 'New York' }, { name: 'Los Angeles' }];
   sublocation = [{ name: 'Branch 1' }, { name: 'Branch 2' }];
-
   spinnerLoader= false;
   jobErrorMessage!: string;
 
@@ -253,11 +253,9 @@ export class SalaryRevisionLetterComponent {
             this.jobErrorMessage = 'No Compensation details found for this employee.';
             this.employeeForm.get('jobValid')?.setValue(false);
           }else{
-           
             let res = data.reverse()[0];
             this.previusSalary = data[1];
             this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
-          
             this.employeeCompensationDetails = res;
             this.appraisalData.salary = res.compensationamount;
             this.appraisalData.compeffectivedate = res.compeffectivedate;
@@ -270,7 +268,6 @@ export class SalaryRevisionLetterComponent {
             if (this.appraisalData.pf == true || this.appraisalData.pf == false) {
               switch (this.appraisalData.pf) {
                 case true:
-              
                   if (this.appraisalData.esic == false) {
                     Employee.pfContribution = Math.round(Employee.grossSalary * (6.719 / 100));
                     if (Employee.pfContribution >= 1800) {
@@ -282,7 +279,6 @@ export class SalaryRevisionLetterComponent {
                       Employee.pfContribution = 1800;
                     }
                   }
-                 
                   else if (Employee.grossSalary <= 23195) {
                     Employee.pfContribution = Math.round(
                       Employee.grossSalary * (6.519 / 100)
@@ -338,7 +334,6 @@ export class SalaryRevisionLetterComponent {
               this.appraisalData.esic == false;
             }
   
-           
             if (Employee.grossSalary < 15000) {
               Employee.professionalTax = 0;
             } else if (
@@ -409,6 +404,7 @@ export class SalaryRevisionLetterComponent {
             Employee.esiPerAnnum = Math.round(
               Employee.esicContribution * Employee.grossby
             );
+
             //esiper anuum for employee
             Employee.esiPerAnnumemployee = Math.round(
               Employee.employeeEsi * Employee.grossby
@@ -432,21 +428,20 @@ export class SalaryRevisionLetterComponent {
   
             //salary deductions per annum
             Employee.totalDeductionsPerAnnum = Math.round(
-              Employee.pfPreAnuum +
-                Employee.esiPerAnnumemployee +
-                Employee.educationallowancesPerAnnum +
-                Employee.professionalPerAnnum
+              Employee.pfPreAnuum + Employee.esiPerAnnumemployee + 
+              Employee.educationallowancesPerAnnum + 
+              Employee.professionalPerAnnum
             );
   
             //net salary per annum
             Employee.netSalaryPerAnnum = Math.round(
               Employee.totalGrossPerAnnum - Employee.totalDeductionsPerAnnum
             );
+
             //Ctc per annum
             Employee.ctcperannum = Math.round(
-              Employee.totalGrossPerAnnum +
-                Employee.pfPreAnuum +
-                Employee.esiPerAnnum
+              Employee.totalGrossPerAnnum + Employee.pfPreAnuum + 
+              Employee.esiPerAnnum
             );
             this.jobErrorMessage = '';
             this.employeeForm.get('jobValid')?.setValue(true);
@@ -456,26 +451,22 @@ export class SalaryRevisionLetterComponent {
   }
 
   getEmployeeId() {
-    this.subscription = this.http
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          this.employeeiddetails = data.map((employee: any) => {
-            return {
-              ...employee,
-              fullName: `${
-                employee.employeeId ? employee.employeeId + ' - ' : ''
-              }${employee.firstName} ${
-                employee.middleName ? employee.middleName + ' ' : ''
-              }${employee.lastName}`,
-            };
-          });
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.getData('Employeedata/ActiveEmployees').subscribe({
+      next: (data: any) => {
+        this.employeeiddetails = data.map((employee: any) => {
+          return {
+            ...employee,
+            fullName: `${employee.employeeId ? employee.employeeId + ' - ' : ''}${employee.firstName} 
+                ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+          };
+        });
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
+
   async postAppraisalLetterFormSubmit(f: FormGroup) {
     this.spinnerLoader= true;
     if (this.employeeForm.invalid) {
@@ -530,16 +521,14 @@ export class SalaryRevisionLetterComponent {
 
   //Update Employee details along with Appraisal details
   sendEmployeeDetails() {
-    this.subscription = this.http
-      .postdata('Employeedata/UPDATER', this.appraisalData)
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
+    this.subscription = this.http.postdata('Employeedata/UPDATER', this.appraisalData).subscribe({
+      next: (data: any) => {
+        console.log(data);
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
   }
 
   //to get appraisal letter template
@@ -550,7 +539,6 @@ export class SalaryRevisionLetterComponent {
       })
       .toPromise();
   }
-
 
   //to Upload Appraisal letter
   uploadAppraisalLetter() {
@@ -584,7 +572,6 @@ export class SalaryRevisionLetterComponent {
           } else {
             emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`;
           }
-
           this.subscription = this.http.postdata(`CustomEmail/Appraisalletter`, emaildetails).subscribe({
               next: (data: any) => {
                 this.conformationPopup.openSuccessModal('Email Sent Successfully');
@@ -621,11 +608,7 @@ export class SalaryRevisionLetterComponent {
 
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
-    if (
-      (charCode < 65 || charCode > 90) &&
-      (charCode < 97 || charCode > 122) &&
-      charCode !== 32
-    ) {
+    if ((charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122) && charCode !== 32) {
       return false;
     }
     return true;

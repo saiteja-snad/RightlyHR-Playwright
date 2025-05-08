@@ -10,7 +10,7 @@
             <button class="custom-btn btn-primary" *ngIf="filteredEmployees.length > 0"
                 (click)="openModal(reviewtemplate)">{{'Assign Review Template' | translate}}</button>
             }
-            @if(rbac.allowedToAccess('Add Employee.view')){
+            @if(rbac.allowedToAccess('Employee List Add Employee.view')){
             <button class="custom-btn btn-primary" (click)="openCreate()"
                 *ngIf="createdStatuses.length > 0 && filteredEmployees.length>0">{{'Add Employee' | translate}}</button>
             }

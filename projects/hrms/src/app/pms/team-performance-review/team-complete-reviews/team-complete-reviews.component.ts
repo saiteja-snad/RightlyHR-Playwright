@@ -10,6 +10,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { Router } from '@angular/router';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-team-complete-reviews',
@@ -49,7 +50,9 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
   constructor(
     private router: Router,
     private http: HttpService,
-    private modal: OpenModalService) { }
+    private modal: OpenModalService,
+    public rbac: RbacService,
+  ) { }
 
   ngOnInit(): void {
     const fusionuser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');

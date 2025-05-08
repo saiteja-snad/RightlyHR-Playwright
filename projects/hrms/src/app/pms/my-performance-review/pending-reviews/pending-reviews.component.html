@@ -23,7 +23,9 @@
                     <th>{{'Due Date' | translate}}</th>
                     <th>{{'Review Template' | translate}}</th>
                     <th>{{'Status' | translate}}</th>
+                    @if(rbac.allowedToAccess('My Performance Assessment.view')){
                     <th class="text-center">{{'Action(S)' | translate}}</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -40,6 +42,7 @@
                     <td class="text-nowrap">{{ item.assessordueDate | date: 'dd MMM yyyy' }}</td>
                     <td>{{ item.formName }}</td>
                     <td>{{ item.rcItemStatus }}</td>
+                    @if(rbac.allowedToAccess('My Performance Assessment.view')){
                     <td class="text-center">
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
@@ -54,6 +57,7 @@
                             </ul>
                         </div>
                     </td>
+                    }
                 </tr>
                 }
                 }@else {

@@ -753,7 +753,7 @@ export const permissionsData = [
 
    //Review Cycle Employee List Actions
    { fields: 'Assign Review Template', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Add Employee', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Employee List Add Employee', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Download Appraisal Report', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Generate Appraisal Letters', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Send Appraisal Letters', View: false, Update: false, Create: false, Delete: false },
@@ -778,8 +778,45 @@ export const permissionsData = [
    { fields: 'Re-Generate Promotion Letter(Appraisal Letter Generated)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Re-Send Promotion Letter(Appraisal Letter Sent)', View: false, Update: false, Create: false, Delete: false },
 
+   //My Performance Review Tabs Section
+   { fields: 'Pending Reviews', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Completed Reviews', View: false, Update: false, Create: false, Delete: false },
+
+   //Pending Reviews Actions
+   { fields: 'My Performance Assessment', View: false, Update: false, Create: false, Delete: false },
+
+   //Completed Reviews Actions
+   { fields: 'My Performance Assessment View', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'My Performance Promotion Letter Download', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'My Performance Appraisal Letter Download', View: false, Update: false, Create: false, Delete: false },
+
+   //Team Performance Review Tabs Section
+   { fields: 'Team Pending Reviews', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Team Completed Reviews', View: false, Update: false, Create: false, Delete: false },
+
+   //Team Pending Reviews Actions
+   { fields: 'Team Assessment', View: false, Update: false, Create: false, Delete: false },
+
+   //Team Completed Reviews Actions
+   { fields: 'Team Assessment View', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Team Promotion Letter Download', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Team Appraisal Letter Download', View: false, Update: false, Create: false, Delete: false },
+
    //PMS Configuration Module
    { fields: 'Increment Percentage', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Assessor Configuration', View: false, Update: false, Create: false, Delete: false },
+
+   //Increment Percentage Actions
+   { fields: 'Increment Create', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Increment Update(Status - Created)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Increment Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Increment View(Status - Initialted)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Increment Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
    
+   //Assessor Configuration Actions
+   { fields: 'Assessor Create', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Assessor Update(Status - Created)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Assessor Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Assessor Update(Status - Initialted)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Assessor Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
 ];

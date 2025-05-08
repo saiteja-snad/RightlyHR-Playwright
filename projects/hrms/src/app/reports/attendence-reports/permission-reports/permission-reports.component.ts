@@ -103,13 +103,9 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
             };
           });
 
-          const filteredEmployees = employeedata.filter((element: any) => {
-            return element.employeeId != loggedInUser.employeeId;
-          });
-
-          this.employeeDetails = [
+           this.employeeDetails = [
             { fullName: 'All Employees', employeeId: 'all' },
-            ...filteredEmployees
+            ...employeedata
           ];
         },
         error: (reason: any) => {

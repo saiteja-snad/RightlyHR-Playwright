@@ -168,13 +168,10 @@ export class AbsentReportComponent implements OnInit, OnDestroy{
                 }${employee.lastName}`,
             };
           });
-          const filteredEmployees = employeedata.filter((element: any) => {
-            return element.employeeId != loggedInUser.employeeId;
-          });
-
+          
           this.employeeiddetails = [
             { fullName: 'All Employees', employeeId: 'all' },
-            ...filteredEmployees
+            ...employeedata
           ];
         },
         error: (reason: any) => { },

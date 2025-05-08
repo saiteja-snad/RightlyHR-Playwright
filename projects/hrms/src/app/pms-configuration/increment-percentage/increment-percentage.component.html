@@ -26,8 +26,8 @@
                         <th>Location</th>
                         <th>Sub Location</th>
                         <th>Rating Scale</th>
-                        @if (rbac.allowedToAccess('Increment Update(Status - Created)') || rbac.allowedToAccess('Increment Delete(Status - Created)') ||
-                            rbac.allowedToAccess('Increment View(Status - Initialted)') || rbac.allowedToAccess('Increment Update(Status - Review On Hold)')) {
+                        @if (rbac.allowedToAccess('Increment Update(Status - Created).view') || rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
+                            rbac.allowedToAccess('Increment View(Status - Initialted).view') || rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
                         <th>Action(s)</th>
                         }
                     </tr>
@@ -44,25 +44,25 @@
                         <td>{{item?.sublocationName? (getNamesAsString(item?.sublocationName, 'subLocationName')):'-' }}
                         </td>
                         <td>{{item?.rating?item?.rating:'-'}}</td>
-                        @if (rbac.allowedToAccess('Increment Update(Status - Created)') || rbac.allowedToAccess('Increment Delete(Status - Created)') ||
-                            rbac.allowedToAccess('Increment View(Status - Initialted)') || rbac.allowedToAccess('Increment Update(Status - Review On Hold)')) {
+                        @if (rbac.allowedToAccess('Increment Update(Status - Created).view') || rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
+                            rbac.allowedToAccess('Increment View(Status - Initialted).view') || rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                   </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if (rbac.allowedToAccess('Increment Update(Status - Created)')) {
+                                    @if (rbac.allowedToAccess('Increment Update(Status - Created).view')) {
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Created'" (click)="editDetails(item)">Update</a></li>
                                     }
-                                    @if(rbac.allowedToAccess('Increment Delete(Status - Created)')){
+                                    @if(rbac.allowedToAccess('Increment Delete(Status - Created).view')){
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Created'"
                                             (click)="openDelete(confirmation, item.id)">Delete</a></li>
                                     }
-                                    @if(rbac.allowedToAccess('Increment View(Status - Initialted)')){
+                                    @if(rbac.allowedToAccess('Increment View(Status - Initialted).view')){
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Initiated'" (click)="viewDetails(item)">View</a></li>
                                     }
-                                    @if(rbac.allowedToAccess('Increment Update(Status - Review On Hold)')){
+                                    @if(rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')){
                                     @if(item?.reviewCycleStatus ==='Review on Hold'){
                                     <li>
                                         <a class="dropdown-item" (click)="openHoldMsg()">Update</a>

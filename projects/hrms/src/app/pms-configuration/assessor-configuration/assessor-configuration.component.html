@@ -37,10 +37,10 @@
                             <th>Team</th>
                             <th>Location</th>
                             <th>Sub Location</th>
-                            @if(rbac.allowedToAccess('Assessor Update(Status - Created)') || 
-                            rbac.allowedToAccess('Assessor Delete(Status - Created)') ||
-                            rbac.allowedToAccess('Assessor Update(Status - Initialted)') ||
-                            rbac.allowedToAccess('Assessor Update(Status - Review On Hold)')) {
+                            @if(rbac.allowedToAccess('Assessor Update(Status - Created).view') || 
+                            rbac.allowedToAccess('Assessor Delete(Status - Created).view') ||
+                            rbac.allowedToAccess('Assessor Update(Status - Initialted).view') ||
+                            rbac.allowedToAccess('Assessor Update(Status - Review On Hold).view')) {
                             <th>Action(s)</th>
                             }
                         </tr>
@@ -54,30 +54,30 @@
                                 <td>{{ getNamesAsString(item?.subDepartmentNames, 'subDepartmentName') }}</td>
                                 <td>{{ getNamesAsString(item?.locationNames, 'locationName') }}</td>
                                 <td>{{ getNamesAsString(item?.subLocationNames, 'subLocationName') }}</td>
-                                @if(rbac.allowedToAccess('Assessor Update(Status - Created)') || 
-                                    rbac.allowedToAccess('Assessor Delete(Status - Created)') ||
-                                    rbac.allowedToAccess('Assessor Update(Status - Initialted)') ||
-                                    rbac.allowedToAccess('Assessor Update(Status - Review On Hold)')) {
+                                @if(rbac.allowedToAccess('Assessor Update(Status - Created).view') || 
+                                    rbac.allowedToAccess('Assessor Delete(Status - Created).view') ||
+                                    rbac.allowedToAccess('Assessor Update(Status - Initialted).view') ||
+                                    rbac.allowedToAccess('Assessor Update(Status - Review On Hold).view')) {
                                 <td class="text-center">
                                     <div class="dropdown">
                                         <span type="button" data-bs-toggle="dropdown">
                                             <i class="bi bi-three-dots-vertical"></i>
                                         </span>
                                         <ul class="dropdown-menu custom-dropdown-menu">
-                                            @if(rbac.allowedToAccess('Assessor Update(Status - Created)')){
+                                            @if(rbac.allowedToAccess('Assessor Update(Status - Created).view')){
                                             <li *ngIf="item?.reviewCycleHeaderStatus==='Created'">
                                                 <a class="dropdown-item" (click)="updateDetails(item)">Update</a></li>
                                             }
-                                            @if(rbac.allowedToAccess('Assessor Delete(Status - Created)')){
+                                            @if(rbac.allowedToAccess('Assessor Delete(Status - Created).view')){
                                             <li *ngIf="item?.reviewCycleHeaderStatus==='Created'">
                                                 <a class="dropdown-item" (click)="openDelete(confirmation, item)">Delete</a></li>
                                             }
-                                            @if(rbac.allowedToAccess('Assessor Update(Status - Initialted)')){
+                                            @if(rbac.allowedToAccess('Assessor Update(Status - Initialted).view')){
                                             <li *ngIf="item?.reviewCycleHeaderStatus==='Initiated'">
                                                 <a class="dropdown-item" (click)="editDetails(item)">Update</a>
                                             </li>
                                             }
-                                            @if(rbac.allowedToAccess('Assessor Update(Status - Review On Hold)')){
+                                            @if(rbac.allowedToAccess('Assessor Update(Status - Review On Hold).view')){
                                             @if(item?.reviewCycleHeaderStatus==='Review on Hold'){
                                                 <li>
                                                     <a class="dropdown-item" (click)="openHoldMsg()">Update</a>

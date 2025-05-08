@@ -493,7 +493,11 @@ export class AssetsManagmentComponent {
     }
 
   }
-
+  
+  resetfrom(){
+    this.isToggledamc=false
+    this.isToggledWarranty=false
+  }
 
 
   onToggleChangeWarranty(event: Event) {

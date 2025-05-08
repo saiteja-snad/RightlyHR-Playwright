@@ -123,8 +123,8 @@
 <ng-template #addassetes let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
 
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div >
                 <p class="popup-heading mb-0">Update an Asset</p>
             </div>
             <div>
@@ -133,7 +133,7 @@
             </div>
         </div>
 
-        <div class="custom-main-popup-content p-3">
+        <div class="custom-main-popup-content">
 
             <form autocomplete="off" [formGroup]="assetForm" (ngSubmit)="updateanasset(assetForm,storeassetid)">
 
@@ -383,7 +383,7 @@
 
                 </div>
 
-                <div class="d-flex justify-content-end gap-3">
+                <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary " (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
                                    ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
@@ -405,7 +405,7 @@
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
             <p class="confirmation-text mb-4">Are you sure you want to mark this Asset as Active?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
+        <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary"
                 (click)="activeassets(storeassetid);model.dismiss()">Yes</button>

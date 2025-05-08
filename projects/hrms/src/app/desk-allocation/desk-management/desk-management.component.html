@@ -16,7 +16,7 @@
             <div class="row mb-3 ps-2 ">
                 <div class="col-md-4 ">
                     <label for="location" class="form-label custom-label mb-2">Locations</label>
-                    <select id="location" formControlName="locationId" class="form-select custom-input"
+                    <select id="location" formControlName="locationId" class="form-select custom-select"
                         (change)="onLocationChange()">
                         <option [ngValue]="null">All Locations</option>
                         <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{
@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-md-4 ">
                     <label for="subLocation" class="form-label custom-label mb-2">Sub Locations</label>
-                    <select id="subLocation" formControlName="subLocationId" class="form-select custom-input"
+                    <select id="subLocation" formControlName="subLocationId" class="form-select custom-select"
                         (change)="onSubLocationChange()">
                         <option [ngValue]="null">All Sub Locations</option>
                         <option *ngFor="let subLocation of subLocationsDropdown" [value]="subLocation.id">
@@ -72,12 +72,12 @@
 <ng-template #createDeskModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
 
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="custom-poup-header-content popup-header-border">
+            <div >
                 <p class="popup-heading mb-0">Register an Desk</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();deskForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                <a (click)="modal.dismiss();deskForm.reset();resetfrom()"><img src="icons/close.png" alt="Close Icon"
                         class="close-icon"></a>
             </div>
         </div>
@@ -209,8 +209,8 @@
                 </div>
 
                 <!-- Submit Button -->
-                <div class="d-flex justify-content-end gap-3">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();resetfrom()">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]=" deskForm.invalid">Submit</button>
                 </div>
             </form>

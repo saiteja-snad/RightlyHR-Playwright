@@ -709,7 +709,7 @@ export class AllocatedAssetsListComponent {
     };
   }
 
-  isInputStarted: boolean = false;
+
 
   viewasetsdata(data: any) {
     this.loactionid = data.locationid;
@@ -753,36 +753,7 @@ export class AllocatedAssetsListComponent {
   }
 
 
-  postAssignAssets(assignForm: FormGroup, removeAsset: number) {
-    if (assignForm.valid) {
-      // Create the payload for the asset assignment
-      const payload: IAssetAllocation = {
-        assetId: removeAsset,
-        employeeId: this.assignEmployeeId,
-        allocatedDate: new Date(),
-        assetDataId: this.assiginForm.get('assetID')?.value,
-        status: 'Allocated',
-        createdBy: parseInt(this.empinfo.employeeId),
-      };
-      this.http.postdata('AssetTransaction', payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res: any) => {
-            console.log("Assignment Response:", res);
-            // Call the updateAssets function if the assignment is successful
-            this.updateAssets(assignForm, removeAsset);
-            this.assiginForm.reset();
 
-          },
-          error: (error) => {
-            console.error("Error assigning asset:", error);
-            this.conformationPopup.openErrorModal(error.error.message)
-          },
-        });
-    } else {
-      console.log("Assignment Form is invalid.");
-    }
-  }
 
 
   updatereallowed(reassiginForm: FormGroup, removeAsset: any) {
@@ -832,7 +803,7 @@ export class AllocatedAssetsListComponent {
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (res: any) => {
-            console.log("Assignment Response:", res);
+            this.modalService.dismissAll()
             // Call the updateAssets function if the assignment is successful
             this.conformationPopup.openSuccessModal('Asset Allocated Successfully')
             this.reassiginForm.reset();
@@ -995,45 +966,6 @@ export class AllocatedAssetsListComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openErrorModal("Asset Assigned Failed")
 
-          }
-        });
-    } else {
-      console.log('Update form is invalid.');
-    }
-  }
-
-  updatetranferlocation(locationfromdata: FormGroup, assetId: number) {
-    if (locationfromdata.valid) {
-      console.log('Selected Asset:', this.selectedAsset);
-      const payload = {
-        assetModel: this.selectedAsset.assetModel,
-        assetCategory: this.selectedAsset.assetCategory,
-        assetSubCategory: this.selectedAsset.assetSubCategory,
-        identificationNumber: this.selectedAsset.identificationNumber,
-        serialNumber: this.selectedAsset.serialNumber,
-        status: this.selectedAsset.status,
-        createdBy: this.selectedAsset.createdBy,
-        vendorId: this.selectedAsset.vendorId,
-        purchaseDate: this.selectedAsset.purchaseDate,
-        locationid: this.locationfromdata.get('locationId')?.value.id, // Selected location ID
-        sublocationid: this.locationfromdata.get('subLocationId')?.value, // Selected sub-location ID
-        transferReason: locationfromdata.get('comments')?.value
-      };
-
-      console.log('Payload for asset update:', payload);
-
-      this.http.putData(`AssetMaster/assettransfer?assetId=${assetId}`, payload)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe({
-          next: (res) => {
-            this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset Transferred  Successfully ');
-            this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-            this.locationfromdata.reset();
-          },
-          error: (error) => {
-            console.error("Error updating asset:", error);
-            this.conformationPopup.openErrorModal(error.error?.Message || 'Error occurred while Asset Unassigned.',)
           }
         });
     } else {

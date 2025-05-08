@@ -31,7 +31,8 @@ export class TeamMangerMembersComponent {
   departmentDetails = [] as IDepartment[];
   teamDropdownValues: any[] = [];
   teamMemberArray: Iteammembers[] = [];
-  requestForm!: FormGroup
+  requestForm!: FormGroup;
+  foremployeeForm!: FormGroup
   teamManagerDropdownValues: any[] = [];
   subdeparmentSingleobj: any;
   joiningDate:any
@@ -47,12 +48,24 @@ export class TeamMangerMembersComponent {
     this.getAllTeammembersList();
     this.getAllTeammembersLists();
     this.getDepartment()
+    this.initializeFormforeachemploye()
   }
 
   initializeForm() {
     this.requestForm = this.fb.group({
       effectiveDate: [null, Validators.required],
       teamEmpselectedOptions: [[], Validators.required],
+      department: [null, Validators.required],
+      teamSelectedOptions: [null, Validators.required],
+      teamManagerName: [{ value: null, disabled: true }, Validators.required],
+
+    });
+  }
+
+  initializeFormforeachemploye() {
+    this.foremployeeForm = this.fb.group({
+      effectiveDate: [null, Validators.required],
+      teamEmpselectedOptions: [{ value: null, disabled: true }, Validators.required],
       department: [null, Validators.required],
       teamSelectedOptions: [null, Validators.required],
       teamManagerName: [{ value: null, disabled: true }, Validators.required],

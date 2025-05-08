@@ -70,7 +70,8 @@
                     <label class="form-label custom-label mb-2">Department<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="departmentDetails" optionLabel="departmentName" placeholder="Please select department"
-                            formControlName="department" class="form-select custom-select" resetFilterOnHide="true"></p-select>
+                            formControlName="department" class="form-select custom-select" resetFilterOnHide="true"
+                            [filter]="true" filterBy="departmentName"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
                         <div class="error-msg">Department is required</div>
@@ -140,10 +141,10 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="authorityDetails" optionLabel="fullName" placeholder="Please select signature authority"
                             (onChange)="onclickDesignation($event)" class="form-select custom-select"
-                            formControlName="signatureAuthority" resetFilterOnHide="true">
+                            formControlName="signatureAuthority" resetFilterOnHide="true" [filter]="true" filterBy="firstName">
                         </p-select>
                         <div *ngIf="employeeForm.get('signatureAuthority')?.invalid && employeeForm.get('signatureAuthority')?.touched">
-                            <div class="error-msg">Signature Authority is required</div>
+                            <div class="error-msg">Signature authority name is required</div>
                         </div>
                     </div>
                 </div>
@@ -191,12 +192,29 @@
                                     {{ traineeAppointmentletterData?.firstName ?? '' }} {{traineeAppointmentletterData?.middleName ??''}}
                                         {{ traineeAppointmentletterData?.lastName??'' }}
                                 </p>
+                                  
                                 <P class="letter-sub-header mb-2">
-                                    <span *ngIf="addressFlag">{{ traineeAppointmentletterData.addressLine1 }},<br />
-                                        <span>{{ traineeAppointmentletterData.addressLine2 }},</span><br />
-                                        <span>{{ traineeAppointmentletterData.city }}, {{ traineeAppointmentletterData.state }},</span><br />
-                                        <span>{{ traineeAppointmentletterData.country }} - {{ traineeAppointmentletterData.zipCode }}.</span>
+                                    <span *ngIf="addressFlag">
+                                        <ng-container *ngIf="traineeAppointmentletterData.addressLine1">
+                                            {{ traineeAppointmentletterData.addressLine1 }}</ng-container>
+                                        <ng-container *ngIf="traineeAppointmentletterData.addressLine2"><br />
+                                        {{ traineeAppointmentletterData.addressLine2 }}</ng-container>
+                                        <ng-container *ngIf="traineeAppointmentletterData.city || traineeAppointmentletterData.state"><br />
+                                            <span *ngIf="traineeAppointmentletterData.city">{{ traineeAppointmentletterData.city }}</span>
+                                            <span *ngIf="traineeAppointmentletterData.city && traineeAppointmentletterData.state">, </span>
+                                            <span *ngIf="traineeAppointmentletterData.state">{{ traineeAppointmentletterData.state }}</span>
+                                        </ng-container>
+                                        <ng-container *ngIf="traineeAppointmentletterData.country || traineeAppointmentletterData.zipCode"><br />
+                                            <span *ngIf="traineeAppointmentletterData.country">{{ traineeAppointmentletterData.country }}</span>
+                                            <span *ngIf="traineeAppointmentletterData.country && traineeAppointmentletterData.zipCode"> - </span>
+                                            <span *ngIf="traineeAppointmentletterData.zipCode">{{ traineeAppointmentletterData.zipCode }}</span>.
+                                        </ng-container>
                                     </span>
+                                    <!-- <span *ngIf="addressFlag">{{ traineeAppointmentletterData.addressLine1 }},<br />
+                                                                        <span>{{ traineeAppointmentletterData.addressLine2 }},</span><br />
+                                                                        <span>{{ traineeAppointmentletterData.city }}, {{ traineeAppointmentletterData.state }},</span><br />
+                                                                        <span>{{ traineeAppointmentletterData.country }} - {{ traineeAppointmentletterData.zipCode }}.</span>
+                                                                    </span> -->
                                 </P>
                                 <p class="letter-sub-header mb-2">Email: {{ traineeAppointmentletterData.emailaddress }}</p>
                                 <p class="letter-sub-header mb-2">Ph: + 91 {{ traineeAppointmentletterData.contactnumber }}</p>
@@ -214,7 +232,7 @@
                                     with <span class="letter-sub-header">RightlyHR</span> associated with <span class="letter-sub-header">RightlyHR.,</span> 
                                     (Hereinafter referred to as the company or RightlyHR) at our <span *ngIf="!traineeAppointmentletterData.workLocation; else locations">
                                         ___________</span>
-                                    <ng-template #locations><b>{{ traineeAppointmentletterData.workLocation }}</b> </ng-template>Center as per the terms and conditions mentioned
+                                    <ng-template #locations><b>{{ traineeAppointmentletterData.workLocation }}</b></ng-template> center as per the terms and conditions mentioned
                                     hereunder. Your employee code for all purposes at the Company would be
                                     <span *ngIf="!traineeAppointmentletterData.fusionEmpId; else FusionEmpId">___________</span>
                                     <ng-template #FusionEmpId><b>{{ traineeAppointmentletterData.fusionEmpId }}.</b></ng-template>
@@ -731,7 +749,7 @@
                                     to the
                                     harasser, then ICC (Internal
                                     Complaints Committee) must be made aware of any inappropriate workplace
-                                    behaviour so
+                                    behavior so
                                     that action can be taken immediately.
                                 </p>
                                 <p>
@@ -819,8 +837,8 @@
                                     By signing below, I acknowledge that I have read, understand, and will comply
                                     with the RightlyHR POSH policy. I understand that sexual harassment in the workplace will
                                     not be tolerated and that I have a responsibility
-                                    to report any such behaviour. Additionally, I understand that I do not engage in
-                                    any such inappropriate behaviour.
+                                    to report any such behavior. Additionally, I understand that I do not engage in
+                                    any such inappropriate behavior.
                                 </p>
                                 <div class="row d-flex justify-content-evenly mt-2">
                                     <div class="mt-5">
@@ -1008,7 +1026,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-7">
-                                        <p>Trainee Full Name:<span>
+                                        <p>Trainee Full Name: <span>
                                                 <span *ngIf="!traineeAppointmentletterData.firstName; else fullempname3">_________</span>
                                                 <ng-template #fullempname3><b>{{ traineeAppointmentletterData.firstName }}
                                                         {{traineeAppointmentletterData.middleName}}
@@ -1175,7 +1193,7 @@
                                     regardless of their race, ethnicity, gender, sexual orientation, religion, or
                                     any other
                                     personal characteristic. Discrimination, harassment, or any form of abusive
-                                    behaviour is
+                                    behavior is
                                     strictly prohibited.
                                 </p>
                     

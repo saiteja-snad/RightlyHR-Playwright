@@ -980,7 +980,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       paytype: null,
       compensationamount: parseInt(data.amount),
       variablePayAmount: data.variablePayAmount,
-      isVariablePay: this.employeeForm.get('isVariablePay')?.value.value,
+      isVariablePay: this.employeeForm.get('isVariablePay')?.value,
       status: 'Active',
       compensationcomments: null,
     };

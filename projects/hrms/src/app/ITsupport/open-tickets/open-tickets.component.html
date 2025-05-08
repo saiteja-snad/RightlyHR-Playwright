@@ -214,10 +214,10 @@
                         <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span
                             class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
-                            <input type="text" class="form-control custom-input" formControlName="subject"
+                            <input type="text" class="form-control custom-input" pattern="^\S.*" formControlName="subject"
                             placeholder="Please enter subject" />
                     </div>
-                    <div *ngIf="itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
+                    <div *ngIf="itSupportForm.get('subject')?.errors?.['pattern'] && itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
                         <div class="error-msg">{{'Subject is required' | translate}}</div>
                     </div>
 
@@ -263,18 +263,18 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Description'| translate}}<span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" formControlName="description" placeholder="Please enter description"></textarea>
-                        <div *ngIf="itSupportForm.get('description')?.invalid && itSupportForm.get('description')?.touched">
+                        <textarea class="form-control custom-input" formControlName="description" placeholder="Please enter description" pattern="^\S.*"></textarea>
+                        <div *ngIf="itSupportForm.get('description')?.errors?.['pattern']">
                             <div class="error-msg">{{'Description is required' | translate}}</div>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">{{'Comments'| translate}}</label>
-                        <textarea class="form-control custom-input" formControlName="comments" placeholder="Please enter comments"></textarea>
-                        <!-- <div *ngIf="itSupportForm.get('comments')?.invalid && itSupportForm.get('comments')?.touched">
+                        <textarea class="form-control custom-input" formControlName="comments" placeholder="Please enter comments" pattern="^\S.*"></textarea>
+                        <div *ngIf="itSupportForm.get('comments')?.errors?.['pattern']">
                             <div class="error-msg">{{'Comments is required' | translate}}</div>
-                        </div> -->
+                        </div>
                     </div>
                     
                 </div>

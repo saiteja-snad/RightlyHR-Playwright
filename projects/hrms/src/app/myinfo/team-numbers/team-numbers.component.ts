@@ -7,16 +7,18 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../services/http.service';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { SearchfilterPipe } from "../../Pipes/searchfilter.pipe";
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { TeamMemberTabsComponent } from "../../shared/myinfo-tabs/team-member-tabs/team-member-tabs.component";
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent, MultiSelectModule, TeamMemberTabsComponent],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })
@@ -33,6 +35,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   searchText = '';
   totalRecords = 100
   first: any = 0;
+  teamMembersdata: any[] = [];
   rows: any = 10;
   selectedData: any = {}; // Initialize properly
   options = [
@@ -47,7 +50,9 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   employeeIds: number[] = [];
   selectedManager: any = null; // Store selected manager object
   spinnerLoader = false;
-
+  teamForm!: FormGroup;
+ destroy$: Subject<boolean> = new Subject<boolean>();
+ 
   constructor(
     private http: HttpService,
     private router: Router,
@@ -63,17 +68,41 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
     this.getAllTeammembersList();
     this.getEmployee();
     this.formsubmit();
+    this.formsubmits();
+    this.getAllTeammembersLists();
   }
-
+  
+  formsubmits() {
+    this.teamForm = this.fb.group({
+      teamMembers: [null, Validators.required],
+      reportingManager: [null, Validators.required]
+    });
+  }
   formsubmit() {
     this.rmForm = this.fb.group({
       mReportingto: [null, Validators.required]
     });
   }
 
+  onSelectManagers(event: any, field: string) {
+    console.log("Selected Value for", field, event.value);
+    if (field === 'teamMembers') {
+      this.selectedEmployees = Array.isArray(event.value) ? event.value : [event.value];
+      this.selectedEmployeeIds = this.selectedEmployees.map(emp => emp.employeeId);
+    }
+    if (field === 'reportingManager') {
+      this.teamForm.patchValue({
+        reportingManager: event.value
+      });
+    }
+  }
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
+  }
+
+  openModals(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' , size: 'lg' });
   }
 
   selectedEmployeeDetails = {} as any;
@@ -161,8 +190,6 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   updateRM() {
     this.spinnerLoader = true;
-    console.log(this.selectedEmployeeDetails);
-    
     let jobid = this.selectedEmployeeDetails.id;
     let ManagerEmployeeId = this.selectedData.employeeId;
     this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
@@ -170,6 +197,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         console.log('Next callback');
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+        this.getAllTeammembersList();
         console.log(data);
       },
       error: (reason: any) => {
@@ -178,7 +206,9 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
         if (reason) {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.getAllTeammembersList();
           this.spinnerLoader = false;
+          this.rmForm.reset();
         }
       }
     });
@@ -235,7 +265,66 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
 
   resetAndClose(modal: any): void {
     this.rmForm.reset();
+    this.teamForm.reset();
     this.modalService.dismissAll();
+  }
+
+
+  updateTeamsRM() {
+    this.spinnerLoader = true;
+    if (!Array.isArray(this.selectedEmployees) || this.selectedEmployees.length === 0) {
+      console.error("selectedEmployees is not a valid array", this.selectedEmployees);
+      return;
+    }
+    let requestBody = this.selectedEmployees.map(employee => ({
+      jobRole: employee.jobRole,
+      firstName: employee.firstName,
+      lastName: employee.lastName,
+      middleName: employee.middleName ?? "",
+      workEmail: employee.workEmail,
+      fusionEmpId: employee.fusionEmpId,
+      employeeId: employee.employeeId,
+      contactnumber: employee.contactnumber,
+      id: employee.id
+    }));
+    const ManagerId = this.teamForm.value.reportingManager?.employeeId;
+    if (!ManagerId) {
+      console.error("No valid ManagerId found.");
+      return;
+    }
+    this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody)
+    .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.getAllTeammembersLists();
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          if (reason) {
+            this.modalService.dismissAll();
+            this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+            this.getAllTeammembersLists();
+            this.spinnerLoader = false;
+            this.teamForm.reset();  // Reset the form
+          }
+        },
+      });
+  }
+
+  getAllTeammembersLists() {
+    let EmployeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
+      next: (data: any) => {
+        this.teamMembersdata = data.map((member: any) => ({
+          ...member,
+          name: `${member.fusionEmpId} - ${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`
+        }));
+      },
+      error: (err: any) => console.log(err),
+    }
+    );
   }
 
   ngOnDestroy(): void {

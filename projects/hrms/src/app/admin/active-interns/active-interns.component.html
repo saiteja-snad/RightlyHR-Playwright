@@ -1,123 +1,130 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-          <p class="component-header mb-0">
-            <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Active Trainees'|translate}}
-          </p>
-        </div>
-    </div>
-    <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search"  #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
-        </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="component-header mb-0">
+      <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Active Trainees'|translate}}
+    </p>
+  </div>
 
-        <div class="custom-table-content">
-          @if (!loader) {
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>{{'ID'|translate}}</th>
-                        <th>{{'EMPLOYEE NAME'|translate}}</th>
-                        <th>{{'WORK EMAIL'|translate}}</th>
-                        <th>{{'PHONE NUMBER'|translate}}</th>
-                        <th>{{'LOCATION'|translate}}</th>
-                        <th>{{'SUB LOCATION'|translate}}</th>
-                        <th>{{'SHIFT NAME'|translate}}</th>
-                        <th>{{'DESIGNATION'|translate}}</th>
+  <!--Input search-->
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+      placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
+  </div>
 
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let act of TraineeActive | activeEmployee : searchValue">
-                      <td>
-                        <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span> 
-                        <ng-template #fusionid>
-                          -
-                        </ng-template></td>
-                        <td>
-                          <span *ngIf="act.firstName ; else firstname">
-                            <a class="select-item cursor" (click)="select(act)">{{act?.firstName}} {{act?.middleName}} {{act?.lastName}}</a>
-                          </span>
-                          <ng-template #firstname>
-                            <div>-</div>
-                          </ng-template>
-                        </td>
-                      <td><span *ngIf="act.workEmail;else workemail"> {{act.workEmail}}</span>
-                        <ng-template #workemail>
-                          -
-                        </ng-template></td>
-                      <td><span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span> 
-                        <ng-template #contactnumb>
-                          -
-                        </ng-template></td>
-                      <td>
-                        <ng-container *ngIf="act?.jobDetails ; else noData">
-                          <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                            <span *ngIf="first"><span *ngIf="jobDetail.lopcation;else location">{{ jobDetail.lopcation }} </span>
-                            <ng-template #location>
-                              -
-                            </ng-template>
-                          </span>
-                          </div>
-                        </ng-container>
-                        <ng-template #noData>
-                          <div>-</div>
-                        </ng-template>
-                      </td>
-                      <td>
-                        <ng-container *ngIf="act?.jobDetails ; else noData">
-                          <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                            <span *ngIf="first">
-                               <span *ngIf="jobDetail.subLocation;else subloaction">{{ jobDetail.subLocation }} </span>
-                            <ng-template #subloaction>
-                              <div>-</div>
-                            </ng-template>
-                          </span>
-                          </div>
-                        </ng-container>
-                        <ng-template #noData>
-                          <div>-</div>
-                        </ng-template>
-                      </td>
-                      <td>
-                        <ng-container *ngIf="act?.jobDetails ; else noData">
-                          <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                            <span *ngIf="first">
-                               <span *ngIf="jobDetail.shiftName;else shift">{{ jobDetail.shiftName}} </span>
-                            <ng-template #shift>
-                              <div>-</div>
-                            </ng-template>
-                          </span>
-                          </div>
-                        </ng-container>
-                        <ng-template #noData>
-                          <div>-</div>
-                        </ng-template>
-                      </td>
-                      <td>
-                        <ng-container *ngIf="act?.jobDetails ; else noData">
-                          <div *ngFor="let jobDetail of act.jobDetails; let first = first">
-                            <span *ngIf="first"><span *ngIf="jobDetail.jobRole;else jobrole">{{ jobDetail.jobRole }} </span>
-                            <ng-template #jobrole>
-                              -
-                            </ng-template>
-                           </span>
-                          </div>
-                        </ng-container>
-                        
-                        <ng-template #noData>
-                          <div>-</div>
-                        </ng-template>
-                      </td>
-                    </tr>
-                  </tbody>
-            </table>
-          } @else {
-            <app-data-loader-content/>
-          }
-        </div>
-    </div>
+  <div class="custom-table-content">
+    @if (!loader) {
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>{{'ID'|translate}}</th>
+          <th>{{'EMPLOYEE NAME'|translate}}</th>
+          <th>{{'WORK EMAIL'|translate}}</th>
+          <th>{{'PHONE NUMBER'|translate}}</th>
+          <th>{{'LOCATION'|translate}}</th>
+          <th>{{'SUB LOCATION'|translate}}</th>
+          <th>{{'SHIFT NAME'|translate}}</th>
+          <th>{{'DESIGNATION'|translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let act of TraineeActive | activeEmployee : searchValue">
+          <td>
+            <span *ngIf="act.fusionEmpId;else fusionid"> {{act.fusionEmpId}}</span>
+            <ng-template #fusionid>
+              -
+            </ng-template>
+          </td>
+          <td>
+            <span *ngIf="act.firstName ; else firstname">
+              <a class="select-item cursor" (click)="select(act)">{{act?.firstName}} {{act?.middleName}}
+                {{act?.lastName}}</a>
+            </span>
+            <ng-template #firstname>
+              <div>-</div>
+            </ng-template>
+          </td>
+          <td><span *ngIf="act.workEmail;else workemail"> {{act.workEmail}}</span>
+            <ng-template #workemail>
+              -
+            </ng-template>
+          </td>
+          <td><span *ngIf="act.contactnumber;else contactnumb">+91 {{act.contactnumber}}</span>
+            <ng-template #contactnumb>
+              -
+            </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="act?.jobDetails ; else noData">
+              <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                <span *ngIf="first"><span *ngIf="jobDetail.lopcation;else location">{{ jobDetail.lopcation }} </span>
+                  <ng-template #location>
+                    -
+                  </ng-template>
+                </span>
+              </div>
+            </ng-container>
+            <ng-template #noData>
+              <div>-</div>
+            </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="act?.jobDetails ; else noData">
+              <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                <span *ngIf="first">
+                  <span *ngIf="jobDetail.subLocation;else subloaction">{{ jobDetail.subLocation }} </span>
+                  <ng-template #subloaction>
+                    <div>-</div>
+                  </ng-template>
+                </span>
+              </div>
+            </ng-container>
+            <ng-template #noData>
+              <div>-</div>
+            </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="act?.jobDetails ; else noData">
+              <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                <span *ngIf="first">
+                  <span *ngIf="jobDetail.shiftName;else shift">{{ jobDetail.shiftName}} </span>
+                  <ng-template #shift>
+                    <div>-</div>
+                  </ng-template>
+                </span>
+              </div>
+            </ng-container>
+            <ng-template #noData>
+              <div>-</div>
+            </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="act?.jobDetails ; else noData">
+              <div *ngFor="let jobDetail of act.jobDetails; let first = first">
+                <span *ngIf="first"><span *ngIf="jobDetail.jobRole;else jobrole">{{ jobDetail.jobRole }} </span>
+                  <ng-template #jobrole>
+                    -
+                  </ng-template>
+                </span>
+              </div>
+            </ng-container>
+
+            <ng-template #noData>
+              <div>-</div>
+            </ng-template>
+          </td>
+        </tr>
+        @if ((TraineeActive | activeEmployee : searchValue).length === 0) {
+        <tr>
+          <td>
+            <app-no-data-found />
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+    } @else {
+    <app-data-loader-content />
+    }
+  </div>
 </div>
-

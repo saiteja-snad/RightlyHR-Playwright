@@ -31,22 +31,18 @@ export class RelievingLetterComponent {
   gender2: any;
   gender3: any
   employeeForm!: FormGroup;
-
   employeeDetails: IEmployeeDetails[] = [];
   selectedEmployee!: IEmployeeDetails;
   signatureAuthorityDetails: IEmployeeSignatures[] = [];
   selectedAuthority!: IEmployeeSignatures;
   selectedEmployeeJobDetails!: IEmployeeJobDetails;
-
   employeeFullname!: string;
   jobErrorMessage!: string;
   authorityFullName!: string;
-
   employeementType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false }
   ];
-
   spinnerLoader= false;
 
   constructor(
@@ -82,7 +78,6 @@ export class RelievingLetterComponent {
   DateValidation() {
     const relievingDate = new Date(this.employeeForm.get('dateofRelieving')?.value);
     const joiningDate = new Date(this.selectedEmployeeJobDetails?.effectiveDate);
-
     if (relievingDate <= joiningDate) {
       this.jobErrorMessage = 'Bank loan date must be after the employee joining date.';
       this.employeeForm.get('jobValid')?.setValue(false);
@@ -141,9 +136,7 @@ export class RelievingLetterComponent {
     if (this.selectedEmployee.lastworkingday && !this.selectedEmployee.lastworkingday) {
       this.selectedEmployee.lastworkingday = this.selectedEmployee.lastworkingday;
     }
-
     this.employeeFullname = this.selectedEmployee.firstName + ' ' + (this.selectedEmployee.middleName ?? '') + ' ' + this.selectedEmployee.lastName;
-
     if (this.selectedEmployee.gender === 'Male') {
       this.gender = "his";
       this.gender2 = 'he';
@@ -165,7 +158,6 @@ export class RelievingLetterComponent {
         } else {
           let res = data.reverse()[0];  
           this.selectedEmployeeJobDetails = res;
-          console.log(this.selectedEmployeeJobDetails)
           this.jobErrorMessage = '';
           this.employeeForm.get('jobValid')?.setValue(true);
         }
@@ -179,12 +171,10 @@ export class RelievingLetterComponent {
   onclickDesignation(event: any) {
     this.selectedAuthority= event.value;
     if (this.selectedAuthority) {
-      this.authorityFullName = this.selectedAuthority.middleName
-        ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName} ${this.selectedAuthority.lastName}`
-        : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
+      this.authorityFullName = this.selectedAuthority.middleName ? `${this.selectedAuthority.firstName} ${this.selectedAuthority.middleName}
+       ${this.selectedAuthority.lastName}` : `${this.selectedAuthority.firstName} ${this.selectedAuthority.lastName}`;
     } 
   }
-
   private formatDate(dateString: Date): string {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, '0');
@@ -197,18 +187,15 @@ export class RelievingLetterComponent {
     const data = f.value;
     let fileName = '';
     this.spinnerLoader= true;
-
     if (this.selectedEmployee && this.selectedEmployee.firstName && this.selectedEmployee.lastName) {
       fileName = `${this.selectedEmployee.firstName}_${this.selectedEmployee.lastName}_${new Date().getTime()}_RelievingLetter.pdf`;
     } else {
       console.error('Employee first name or last name is missing');
       return; 
     }
-
     data.dateofRelieving = this.formatDate(data.dateofRelieving);
     data.dateOfJoining = this.formatDate(new Date(this.selectedEmployee.dateOfJoining));
     data.lastWorkingDay = this.formatDate(new Date(this.selectedEmployee.lastworkingday));
-
     const pdfContent = document.getElementById('pdfContent');
     if (pdfContent) {
       html2canvas(pdfContent, { scale: 3 }).then(canvas => {
@@ -217,9 +204,6 @@ export class RelievingLetterComponent {
         const imgWidth = pdf.internal.pageSize.getWidth();
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
         pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight, '', 'FAST');
-
-        // const fileName = `${data.firstName}_${data.lastName}_${new Date().getTime()}_RelievingLetter.pdf`;
-
         pdf.save(fileName);
         const blob = pdf.output('blob');
         //creating form file to upload into AZure
@@ -232,28 +216,22 @@ export class RelievingLetterComponent {
 
   uploadRelievingLetter() {
     let filePath = `/FusionDocuments/Employee Documents/Relieving Letters/${this.selectedEmployee.employeeId}`;
-    this.subscription = this.http
-      .uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filePath,
-        this.RelievingFile
-      )
-      .subscribe({
-        next: (data: any) => {
-          if (data) {
-            this.result.documentUrl = data.path;
-            this.conformationPopup.openSuccessModal('Relieving Letter Generated Successfully')
-            this.relievingemail();
-          }
-        },
-        error: (reason: any) => {
-          this.spinnerLoader= false;
-          this.conformationPopup.openErrorModal('File upload  is failed');
-        },
-        complete:()=>{
-          this.spinnerLoader= false;
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.RelievingFile).subscribe({
+      next: (data: any) => {
+        if (data) {
+          this.result.documentUrl = data.path;
+          this.conformationPopup.openSuccessModal('Relieving Letter Generated Successfully')
+          this.relievingemail();
         }
-      });
+      },
+      error: (reason: any) => {
+        this.spinnerLoader = false;
+        this.conformationPopup.openErrorModal('File upload  is failed');
+      },
+      complete: () => {
+        this.spinnerLoader = false;
+      }
+    });
   }
 
   relievingemail() {
@@ -270,12 +248,9 @@ export class RelievingLetterComponent {
       employeeId: this.selectedEmployee.employeeId,
     }
     if (loggedInUser.middleName) {
-
       emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.middleName} ${loggedInUser.lastName}`
-
     } else {
       emaildetails.senderName = `${loggedInUser.firstName} ${loggedInUser.lastName}`
-
     }
     this.subscription = this.http.postdata(`CustomEmail/relievingLetter`, emaildetails).subscribe({
       next: (data: any) => {
@@ -289,7 +264,6 @@ export class RelievingLetterComponent {
       },complete: ()=>{
         this.spinnerLoader= false;
       }
-
     })
   }
 

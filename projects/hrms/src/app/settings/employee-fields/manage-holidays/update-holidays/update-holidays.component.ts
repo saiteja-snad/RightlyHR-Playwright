@@ -298,7 +298,7 @@ get holidaysArray(): FormArray {
         .subscribe({
           next: (data: any) => {
             this.subLocationsDropdown = data.jobSubLocations || [];
-            this.holidayForm.get('shift')?.disable();
+            //this.holidayForm.get('shift')?.disable();
             if (patchForm) {
               this.holidayForm.patchValue({
                 subLocation: this.subLocationsDropdown.find(
@@ -332,7 +332,7 @@ get holidaysArray(): FormArray {
       .getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId.sublocid || subLocationId.value.id}`)
       .subscribe({
         next: (data: any) => {
-          this.holidayForm.get('shift')?.enable();
+          //this.holidayForm.get('shift')?.enable();
           this.shiftDropdown = [].concat(...data.map((element: any) => element.orgShiftsItems));
 
           if (patchForm) {

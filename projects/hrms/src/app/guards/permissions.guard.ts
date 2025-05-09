@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { AccessNavigationService } from '../services/access-navigation.service';
 import { RbacService } from '../services/rbac.service';
 
 @Injectable({

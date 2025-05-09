@@ -662,7 +662,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.modalService.dismissAll();
         this.selectedIds = [];
         if (err.status === 404) {
-          this.modal.openErrorModal('Select atleast one employee to assign the template');
+          this.modal.openErrorModal(err.error.message ?? 'Select atleast one employee to assign the template');
         }
         else if (err.status === 400) {
           this.modal.openErrorModal(err.error.message || 'An error occurred while assigning the template');

@@ -1,13 +1,15 @@
 <div class="custom-main-component-container">
-    @if(route.url !== '/time-off/leaves/team-leave-balance' && route.url !== '/time-off/leaves/team-leave-summary' 
-    && route.url !== '/time-off/leaves/org-leave-balance'){
+    @if(router.url !== '/time-off/leaves/team-leave-balance' && router.url !== '/time-off/leaves/team-leave-summary' 
+    && router.url !== '/time-off/leaves/org-leave-balance'){
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <p class="component-header cursor mb-0">Leave Balance</p>
         </div>
         <div class="d-flex gap-3">
+            <button type="button" class="custom-btn btn-secondary" *ngIf="rbac.allowedToAccess('Timeoff Tab.create')" 
+            (click)="navigateOrLeavebalance()">Org Leave Balance</button>
             <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary"
-                *ngIf="rbac.allowedToAccess('Timeoff Tab.create')"><i class="bi bi-plus me-2"></i>Request Leave</button>
+                *ngIf="rbac.allowedToAccess('Timeoff Tab.create')"><i class="bi bi-plus"></i>Request Leave</button>
         </div>
     </div>
 

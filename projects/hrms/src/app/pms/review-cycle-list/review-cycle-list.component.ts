@@ -279,7 +279,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   }
 
   initiateReviewCycle(cycle: any) {
-    const fusionUser = JSON.parse(localStorage.getItem('fusionuser') ?? '{}');
+    const fusionUser = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     const data = {
       status: 'Initiated',
       createdBy: fusionUser.employeeId,

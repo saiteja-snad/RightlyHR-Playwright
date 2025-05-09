@@ -467,10 +467,10 @@
             <label for="" class="form-label custom-label">Revised Designation<span class="text-danger"
                 *ngIf="assessmentFormData.eligibleforpromotion">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="getDesignationWithGradeIdDetails" optionLabel="designationName" optionValue="designationName" name="revisedDesignation"
+              <p-select [options]="getDesignationWithGradeIdDetails" optionLabel="designationName" name="revisedDesignation"
                 [(ngModel)]="assessmentFormData.revisedDesignation"
                 [disabled]="currentStage !== lastStage || !assessmentFormData.eligibleforpromotion"
-                placeholder="Please select revised designation" (onChange)="designationChange($event)" [showClear]="true"
+                placeholder="Please select revised designation" (onChange)="designationChange($event)" [showClear]="false"
                 [filter]="true" required>
               </p-select>
             </div>

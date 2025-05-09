@@ -156,13 +156,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     return disabledOptions.includes(field) && (action === 'delete' || action === 'create');
 }
 
-isDisabled(field: string, action: string): boolean {
-  const viewOnlyFields = ['Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Load Entitlements Tab', 'Attendance Eligibility Criteria Tab', 'Comp Off Entitlement Tab',
-    'WFH Entitlement Tab', 'Permission Elgibility Tab', 'Attendance Regularization Eligibility Tab'
-  ];
-  return viewOnlyFields.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
-}
-
   changePermissions() {
     if (!this.roleToFilter?.id) {
       this.permissions.forEach((permission: any) => {
@@ -249,6 +242,38 @@ isDisabled(field: string, action: string): boolean {
       }
     }
     return claims;
+  }
+
+  isDisabled(field: string, action: string): boolean {
+    const viewOnlyFields = ['Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Load Entitlements Tab', 'Attendance Eligibility Criteria Tab', 'Comp Off Entitlement Tab',
+      'WFH Entitlement Tab', 'Permission Elgibility Tab', 'Attendance Regularization Eligibility Tab', 'Shifts Published Tab', 'Policies Published Tab', 'Holidays Published Tab',
+      'Weekends Published Tab', 'Expense Allowed Days', 'DST Published Tab', 'Leave Category Published Tab','Active Forms','Inactive Forms','Draft Forms', 'Desk Allocation - Inactive',
+      'Desk Allocation - Create'
+    ];
+    return viewOnlyFields.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
+  }
+  
+  isActionEnabled(field: string, action: string): boolean {
+    const enabledTabs = ['Document Tab', 'NoDue Clearance Tab', 'Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Dynamic Forms Module', 'Desk Allocation - All', 
+      'Manage Policies Tab', 'Manage Weekends Tab', 'Manage DST Tab', 'My Info Job Details', 'My Info Previous Experience Details', 'My Info Certification Details', 
+      'Employee Info Onboarding Details', 'Employee Info Job Details', 'Employee Info Previous Experience Details', 'Employee Info Certification Details', 'Employee Info Compensation Details'];
+    return enabledTabs.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
+  }
+
+  isFieldDisabled(field: string, permission: string): boolean {
+    if (field === 'Asset Allocation - Create') {
+      return permission !== 'View'; // Only 'View' is enabled
+    }
+  
+    if (['Asset Allocation - All', 'Asset Allocation - Available'].includes(field)) {
+      return permission === 'Create'; // Disable only 'Create'
+    }
+  
+    if (['Asset Allocation - Under Maintenance', 'Asset Allocation - Inactive','Asset Allocation - Allocated'].includes(field)) {
+      return !['View', 'Update'].includes(permission); // Enable only 'View' and 'Update'
+    }
+  
+    return false; // Default: all enabled
   }
 
   ngOnDestroy(): void {

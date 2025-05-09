@@ -124,7 +124,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
   weightageValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: boolean } | null => {
       const formGroup = control as FormGroup; // Assert control as FormGroup
-      const moduleId = formGroup.get('moduleId')?.value.id;
+      const moduleId = formGroup.get('moduleId')?.value?.id;
       const overAllRating = formGroup.get('overAllRating')?.value;
       const sections = formGroup.get('sections') as FormArray; // Assert as FormArray
       if (!sections || sections.length === 0) {

@@ -50,7 +50,7 @@ export interface IInactiveReportRequest {
   TeamManagerName?: string;
   shift?: string;
   location?: string;
-  Month?: number;
+  LeaveName?: number;
   Year?: number;
   TeamManagerSnadId?: string;
 }

@@ -8,6 +8,8 @@
     </div>
 
     <div class="custom-table-content">
+
+       @if(!loading){
         <table class="w-100">
             <thead>
                 <tr>
@@ -17,7 +19,7 @@
                     <th>{{'Department' |translate}}</th>
                     <th>{{'Status' |translate}}</th>
                     <th>{{'Employee Emails' |translate}}</th>
-                    <th>{{'Action(S)' |translate}}</th>
+                    <th>Action<span class="text-lowercase">(s)</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -69,6 +71,10 @@
                 }
             </tbody>
         </table>
+       }
+       @else {
+        <app-data-loader-content />
+       }
     </div>
 </div>
 

@@ -14,6 +14,7 @@ import { environment } from '../../../../environments/environment';
 import { AuthService } from '../../../services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-job-details',
@@ -24,7 +25,8 @@ import { RbacService } from '../../../services/rbac.service';
     ReactiveFormsModule,
     DateformatPipe,
     NoDataFoundComponent,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss',
 })
@@ -46,7 +48,7 @@ export class JobDetailsComponent {
   employeinfo: any;
   allempdata: any;
   allReportees: any;
-
+  loader=false
   empdata: {
     id?: number;
     employeeId?: number;
@@ -553,11 +555,12 @@ export class JobDetailsComponent {
   getJobDetails() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     console.log(EmployeeId);
-
+    this.loader=true
     this.subscription = this.http
       .getData(`JobDetails/Empname/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
+          this.loader=false
           console.log(data);
           this.jobdetails.next(data);
           console.log(this.jobdetails);

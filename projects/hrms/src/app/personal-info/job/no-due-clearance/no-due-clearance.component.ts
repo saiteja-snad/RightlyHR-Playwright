@@ -14,10 +14,11 @@ import { PaginatorModule } from 'primeng/paginator';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { INodue } from '../../../myinfo/nodue-details/nodue-details';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-no-due-clearance',
-  imports: [NoDataFoundComponent,CommonModule,
+  imports: [NoDataFoundComponent, CommonModule,
     TranslateModule,
     NgbPopoverModule,
     ReactiveFormsModule,
@@ -26,7 +27,7 @@ import { INodue } from '../../../myinfo/nodue-details/nodue-details';
     DropdownModule,
     DateformatPipe,
     RouterModule,
-    NoDataFoundComponent,],
+    NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './no-due-clearance.component.html',
   styleUrl: './no-due-clearance.component.scss'
 })
@@ -37,6 +38,7 @@ export class NoDueClearanceComponent {
   empinfo = {} as Ipersonal;
   empdata = {} as Ipersonal;
   lineOrder = false;
+  loading=false
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
@@ -76,9 +78,11 @@ export class NoDueClearanceComponent {
     }
   //function to get the nodue data
   getNodueClearance() {
+    this.loading=true
     const employeeId = parseInt(this.empinfo.employeeId)
     this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.loading=false
         this.nodue_Clearance_Details.next(data);
         //const nodueapprovecount = data.filter((ele: any) => ele.status?.toLowerCase() === 'approved')
         this.nodueapprovalcount = data.length

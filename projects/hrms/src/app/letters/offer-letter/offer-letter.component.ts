@@ -602,11 +602,18 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     } else {
       Employee.esicContribution = 0;
 
-      const Input = document.getElementById('esic') as HTMLInputElement;
+      // const Input = document.getElementById('esic') as HTMLInputElement;
 
-      if (Input) {
-        Input.value = 'false';
+      // if (Input) {
+      //   Input.value = 'false';
+      // }
+     
+      const esicControl = this.employeeForm?.get('esic');
+      if (esicControl && esicControl.value!==false) {
+        esicControl.setValue(false, { emitEvent: false });
       }
+      
+      
     }
     //===================================================================================================================================
 
@@ -653,10 +660,16 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       }
     } else {
       Employee.employeeEsi = 0;
-      const Input = document.getElementById('esic') as HTMLInputElement;
-      if (Input) {
-        Input.value = 'false';
+      // const Input = document.getElementById('esic') as HTMLInputElement;
+      // if (Input) {
+      //   Input.value = 'false';
+      // }
+     
+      const esicControl = this.employeeForm?.get('esic');
+      if (esicControl && esicControl.value!==false) {
+        esicControl.setValue(false, { emitEvent: false });
       }
+      
     }
 
     //==================================================================================================================================

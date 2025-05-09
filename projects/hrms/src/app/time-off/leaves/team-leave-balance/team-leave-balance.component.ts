@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Select } from 'primeng/select';
 import { LeavesApprovaltabsComponent } from "../../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component";
 import { AccordionModule } from 'primeng/accordion';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 
 @Component({
@@ -17,6 +17,7 @@ import { HttpService } from '../../../services/http.service';
 export class TeamLeaveBalanceComponent implements OnInit, OnDestroy{
   teamLeaveBalance: any; 
   loggedInUser: any;
+  selectedYear: number | undefined;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   years = [
@@ -24,19 +25,30 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy{
     { label: new Date().getFullYear().toString(), value: new Date().getFullYear() },
     { label: (new Date().getFullYear() + 1).toString(), value: new Date().getFullYear() + 1 }
   ];  
-  
+
   constructor(
-    private http: HttpService
+    private http: HttpService,
   ) { }
 
   ngOnInit(): void {
-    this.loggedInUser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+   this.loggedInUser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
    this.getAllTeamLeaveBalance();
+  }
+
+  onSelectYear(event: any) {
+    this.selectedYear = event.value;
+    this.getAllTeamLeaveBalance();
   }
 
   getAllTeamLeaveBalance() {
     const employeeId = this.loggedInUser.employeeId;
-    this.http.getData(`LeaveEntitlements/team-leave-entitlements/${employeeId}`).subscribe({
+    let url = `LeaveEntitlements/team-leave-entitlements/${employeeId}`;
+  
+    if (this.selectedYear) {
+      url += `?year=${this.selectedYear}`;
+    }
+  
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.teamLeaveBalance = res;
         console.log(this.teamLeaveBalance);
@@ -44,8 +56,8 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy{
       error: (err) => {
         console.error(err);
       }
-    })
-  }
+    });
+  }  
   
   ngOnDestroy(): void {
     this.destroy$.next(true);

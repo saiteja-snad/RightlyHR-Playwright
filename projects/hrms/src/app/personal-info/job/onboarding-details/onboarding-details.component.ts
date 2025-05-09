@@ -90,7 +90,7 @@ export class OnboardingDetailsComponent {
     this.getWorkfromhomeManager();
 
     this.initializeTrainee();
-    this.onboardingForm.get('status')?.setValue(this.empinfo.empstatus);
+    
   }
 
   initializeForm(): void {

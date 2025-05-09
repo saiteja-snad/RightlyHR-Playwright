@@ -39,9 +39,9 @@ export class UpdateHolidaysComponent {
     this.getjobLocationList();
     this.holidayForm = this.fb.group({
       year: [{ value: '', disabled: true }, Validators.required],
-      location: ['', Validators.required],
-      subLocation: ['', Validators.required],
-      shift: ['', Validators.required],
+      location: [{ value:null, disabled: true }, Validators.required],
+      subLocation: [{ value: null, disabled: true }, Validators.required],
+      shift: [{ value: null, disabled: true }, Validators.required],
       holidays: this.fb.array([])
     });
     //default year show selected

@@ -10,6 +10,15 @@
             <div class="custom-p-select-content">
                 <p-select optionValue="value" placeholder="year" optionLabel="name" class="custom-select"></p-select>
             </div>
+
+            <!-- Year -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="custom-p-select-content">
+              <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year" placeholder="Select year"
+                class="form-select custom-select" [showClear]="true">
+              </p-select>
+            </div>
+          </div>
         </div>
     </div>
 
@@ -21,6 +30,7 @@
         <!--Employee Accordian-->
         <p-accordion value="0"  class="mb-3">
             <p-accordion-panel value="0">
+
                 <p-accordion-header>John Doe (SD213456)</p-accordion-header>
                 <p-accordion-content>
                     <div class="employee-data-table">

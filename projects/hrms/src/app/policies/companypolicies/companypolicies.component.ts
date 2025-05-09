@@ -13,10 +13,11 @@ import {  NgxDocViewerModule } from 'ngx-doc-viewer';
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule,NgxDocViewerModule, Select,NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })
@@ -31,7 +32,7 @@ export class CompanypoliciesComponent {
   currentYear: number = new Date().getFullYear();
   selectedYear: number = this.currentYear;
   years: { label: string; value: number }[] = [];
-
+  loading=false
   filteredpolicy:any =[] 
   orgPolicyItemsArray: any[] = [];
   EduViewURL: any; 
@@ -212,8 +213,10 @@ toggleViewModal() {
             this.getpolicys(data); 
         }
     });
+
   }
   getpolicys(jobShiftDetails: any) {
+    this.loading=true
     let policies = {
         locationId: jobShiftDetails[0].locationid,
         subLocationId: jobShiftDetails[0].sublocationid,
@@ -225,6 +228,7 @@ toggleViewModal() {
   
     this.subscription = this.http.getDataWithQueryParams(`orgPolicies/getpolicybylocation`, policies).subscribe({
         next: (response: any) => {
+          this.loading=false
             this.Policies = response;
             console.log(this.Policies);
             this.filteredpolicy = response.map((policy: any) => policy.orgPolicyItems);

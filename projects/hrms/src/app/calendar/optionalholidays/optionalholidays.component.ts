@@ -7,9 +7,10 @@ import { HolidayTabsComponent } from "../../shared/calendar-tabs/holiday-tabs/ho
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { Subscription } from 'rxjs';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-optionalholidays',
-  imports: [ReactiveFormsModule, CommonModule, HolidayTabsComponent, Select, NoDataFoundComponent],
+  imports: [ReactiveFormsModule, CommonModule, HolidayTabsComponent, Select, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './optionalholidays.component.html',
   styleUrl: './optionalholidays.component.scss'
 })
@@ -28,7 +29,7 @@ export class OptionalholidaysComponent {
   jobshiftdetails: any;
   years: number[] = [];
   empinfo = {} as any;
-
+  loading=false
   constructor(public router: Router, private http: HttpService) { }
 
   ngOnInit(): void {
@@ -57,6 +58,7 @@ export class OptionalholidaysComponent {
   }
 
   getHoliday(jobshiftdetails: any) {
+    this.loading=true
     this.orgHolidayItemsArrayTrue = [];
     this.orgHolidayItemsArrayFalse = [];
     this.length = 0;
@@ -69,6 +71,7 @@ export class OptionalholidaysComponent {
     }
     this.subscription = this.http.getDataWithQueryParams(`orgHolidays/getHolidaysbylocation`, holiday).subscribe({
       next: (response: any) => {
+        this.loading=false
         this.Policies = response;
         this.orgHolidayItemsArray = response[0]?.orgHolidaysItems;
         this.orgHolidayItemsArray?.forEach(item => {
@@ -81,7 +84,10 @@ export class OptionalholidaysComponent {
           }
         });
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) =>{
+        console.log(reason)
+        this.loading=false
+      }
     });
   }
 

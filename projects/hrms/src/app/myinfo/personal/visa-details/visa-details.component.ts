@@ -12,10 +12,11 @@ import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-visa-details',
-  imports: [NoDataFoundComponent, CommonModule, ReactiveFormsModule, TranslateModule, Select, DateformatPipe],
+  imports: [NoDataFoundComponent, CommonModule, ReactiveFormsModule, TranslateModule, Select, DateformatPipe, DataLoaderContentComponent],
   templateUrl: './visa-details.component.html',
   styleUrl: './visa-details.component.scss'
 })
@@ -27,6 +28,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   visaData = [] as any;
   Countrydetails: any;
   spinnerLoader=false
+  loading=false
   visaForm!: FormGroup;
   visaupdateForm!:FormGroup;
   currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
@@ -105,8 +107,10 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   }
 
   getVisaEmpId(): void {
+    this.loading=true
     this.subscription = this.http.getData(`Visa/${this.empinfo.employeeId}`).subscribe({
       next: (data: any) => {
+        this.loading=false
         this.visaData = data.map((visa: { issueddate: string; expirydate: string; }) => ({
           ...visa,
           issueddate: this.formatDateToLocal(visa.issueddate),

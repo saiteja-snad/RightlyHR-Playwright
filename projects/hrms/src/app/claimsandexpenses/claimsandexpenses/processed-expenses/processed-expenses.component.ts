@@ -10,10 +10,11 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-processed-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './processed-expenses.component.html',
   styleUrl: './processed-expenses.component.scss'
 })
@@ -31,6 +32,7 @@ export class ProcessedExpensesComponent {
     searchTerm: any = ''
     expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
   draftsCount: number = 0;
+  loading=false
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getexpensesheaderbyemployeeid();
@@ -45,10 +47,12 @@ export class ProcessedExpensesComponent {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
   getexpensesheaderbyemployeeid(): void {
+    this.loading=true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
       .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Processed&searchQuery=${cleanSearchQuery}`, ).subscribe({
         next: (data: any) => {
+          this.loading=false
           this.expenesEmplyeedata.next(data) 
 
         }, error(err) {

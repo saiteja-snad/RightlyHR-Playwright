@@ -9,6 +9,7 @@
         </div>
     </div>
     <div class="custom-table-content mt-2">
+        @if(!loading){
         <table class="w-100">
             <thead>
                 <tr>
@@ -68,6 +69,10 @@
                 </ng-template>
             </tbody>
         </table>
+        }
+        @else {
+        <app-data-loader-content />
+        }
     </div>
 </div>
 
@@ -93,7 +98,7 @@
                         </label>
                         <input type="text" class="form-control custom-input" id="certificationName"
                             formControlName="certificationName" placeholder="Please enter certification name"
-                            (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"/>
+                            (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                         <div class="error-msg"
                             *ngIf="certificationForm.get('certificationName')?.invalid && certificationForm.get('certificationName')?.touched">
                             <div *ngIf="certificationForm.get('certificationName')?.errors?.['required']">Certification

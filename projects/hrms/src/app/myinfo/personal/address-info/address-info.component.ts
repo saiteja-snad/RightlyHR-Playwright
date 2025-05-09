@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
@@ -15,7 +15,7 @@ import { RbacService } from '../../../services/rbac.service';
   templateUrl: './address-info.component.html',
   styleUrl: './address-info.component.scss'
 })
-export class AddressInfoComponent {
+export class AddressInfoComponent implements OnInit,OnDestroy {
   buttons = false;
   buttons2 = false;
   addressForm!: FormGroup;
@@ -301,6 +301,11 @@ export class AddressInfoComponent {
     }
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 }
 
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Select } from 'primeng/select';
 import { RbacService } from '../../services/rbac.service';
 import { HttpService } from '../../services/http.service';
@@ -12,15 +12,16 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { DomSanitizer } from '@angular/platform-browser';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-organizationchart',
-  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './organizationchart.component.html',
   styleUrl: './organizationchart.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class OrganizationchartComponent {
+export class OrganizationchartComponent  implements OnInit,OnDestroy{
 
   data: TreeNode[] = [];
   subscription!: Subscription;
@@ -165,5 +166,11 @@ export class OrganizationchartComponent {
           this.dataload = false;
         }
       });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

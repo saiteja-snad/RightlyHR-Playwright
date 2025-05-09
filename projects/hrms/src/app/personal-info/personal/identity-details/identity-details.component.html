@@ -9,63 +9,68 @@
         }
     </div>
     <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Identity Type</th>
-                    <th>Identity Number</th>
-                    <th>Attachment</th>
-                    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
-                    employedata?.empstatus?.toLowerCase()
-                    !== 'trainee prospective')){
-                    <th class="text-center">Action(s)</th>}
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((getIdentitydetails | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let identityDetails of getIdentitydetails | async">
-                        <td>{{ identityDetails.identityType }}</td>
-                        <td>{{ identityDetails.identityNumber }}</td>
-                        <td>
-                            <span *ngIf="identityDetails.attachment;else noData" class="dowload-text cursor"
-                                (click)="onSelectIdentityAttachmentDownload(identityDetails)">
-                                <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
-                                #noData>-</ng-template>
-                        </td>
+        @if (!loading) {
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Identity Type</th>
+                        <th>Identity Number</th>
+                        <th>Attachment</th>
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
-                        employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
-                        !== 'trainee inactive')){
-                        <td class="text-center">
-                            <div class="dropdown" *ngIf="!identityDetails.referenceId">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li (click)="openModalupdate(updateidentityModal, identityDetails)">
-                                        <a class="dropdown-item">
-                                            <i class="bi bi-pencil me-2"></i>Update
-                                        </a>
-                                    </li>
-                                    <li (click)="opendeletModal(deleteconformation,identityDetails)">
-                                        <a class="dropdown-item">
-                                            <i class="bi bi-trash3 me-2"></i>Delete
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                        }
+                        employedata?.empstatus?.toLowerCase()
+                        !== 'trainee prospective')){
+                        <th class="text-center">Action(s)</th>}
                     </tr>
-                </ng-container>
-            </tbody>
-            <!-- No Data Found Template -->
-            <ng-template #noDataTemplate>
-                <tr>
-                    <td colspan="5" class="text-center"><app-no-data-found></app-no-data-found></td>
-                </tr>
-            </ng-template>
-        </table>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="((getIdentitydetails | async) ?? []).length > 0; else noDataTemplate">
+                        <tr *ngFor="let identityDetails of getIdentitydetails | async">
+                            <td>{{ identityDetails.identityType }}</td>
+                            <td>{{ identityDetails.identityNumber }}</td>
+                            <td>
+                                <span *ngIf="identityDetails.attachment;else noData" class="dowload-text cursor"
+                                    (click)="onSelectIdentityAttachmentDownload(identityDetails)">
+                                    <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
+                                    #noData>-</ng-template>
+                            </td>
+                            @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
+                            employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+                            && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
+                            !== 'trainee inactive')){
+                            <td class="text-center">
+                                <div class="dropdown" *ngIf="!identityDetails.referenceId">
+                                    <span type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li (click)="openModalupdate(updateidentityModal, identityDetails)">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-pencil me-2"></i>Update
+                                            </a>
+                                        </li>
+                                        <li (click)="opendeletModal(deleteconformation,identityDetails)">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-trash3 me-2"></i>Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                            }
+                        </tr>
+                    </ng-container>
+                </tbody>
+                <!-- No Data Found Template -->
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <td colspan="5" class="text-center"><app-no-data-found></app-no-data-found></td>
+                    </tr>
+                </ng-template>
+            </table>
+        }
+        @else {
+            <app-data-loader-content/>
+        }
     </div>
 </div>
 

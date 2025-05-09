@@ -47,7 +47,7 @@ export class TeamMangerMemberComponent {
     private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     console.log(this.empinfo);
     this.initializeForm()
     this.getEmployeeId()

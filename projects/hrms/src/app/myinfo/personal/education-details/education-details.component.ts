@@ -12,9 +12,10 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
@@ -34,7 +35,7 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   empinfo: any = {}
   dateofbirth: any;
-
+  loading=false
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService, public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -237,9 +238,11 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   }
 
   getEducationEmpid() {
+    this.loading=true
     let employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Education/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.loading=false
         this.dateofbirth = this.formatDateToLocal(data.dob)
         localStorage.setItem('educationinfodata', JSON.stringify(data));
         this.educationData.next(data);

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Select } from 'primeng/select';
 import { RbacService } from '../../services/rbac.service';
 import { HttpService } from '../../services/http.service';
@@ -12,22 +12,23 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { DomSanitizer } from '@angular/platform-browser';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-organizationchart',
-  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './organizationchart.component.html',
   styleUrl: './organizationchart.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class OrganizationchartComponent {
+export class OrganizationchartComponent  implements OnInit,OnDestroy{
 
   data: TreeNode[] = [];
   subscription!: Subscription;
   activeEmplist = [] as any;
   selectedEmployeeId: number | null = null;
   employeedata: any;
-  compensationyesorno: boolean | null = null;
+  compensationyesorno=false;
   compensationOptions = [
     { label: 'Yes', value: true },
     { label: 'No', value: false }
@@ -38,6 +39,8 @@ export class OrganizationchartComponent {
   ngOnInit(): void {
     this.employeedata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllEmployeeDetails()
+    this.getAllEmployeeDetailsformanger();
+
     if(this.selectedEmployeeId===null){
       this.getOrghierarchy(this.employeedata.employeeId)
     }
@@ -58,6 +61,27 @@ export class OrganizationchartComponent {
             label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.lastName ?? ''}`,
             value: employee.employeeId
           }));
+        },
+      });
+  }
+
+  mangeractiveEmplist = [] as any;
+  getAllEmployeeDetailsformanger() {
+    const EmployeeId = this.employeedata.employeeId;
+
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (res: any) => {
+          // console.log(response);
+          this.mangeractiveEmplist = res.map((employee: any) => {
+            return {
+              ...employee, 
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+              employeeid:employee.employeeId
+            };
+          });
         },
       });
   }
@@ -165,5 +189,11 @@ export class OrganizationchartComponent {
           this.dataload = false;
         }
       });
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

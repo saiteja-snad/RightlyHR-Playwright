@@ -10,10 +10,11 @@ import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-under-maintenance-desk-list',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule, DropdownModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule, DropdownModule, DataLoaderContentComponent],
   templateUrl: './under-maintenance-desk-list.component.html',
   styleUrl: './under-maintenance-desk-list.component.scss'
 })

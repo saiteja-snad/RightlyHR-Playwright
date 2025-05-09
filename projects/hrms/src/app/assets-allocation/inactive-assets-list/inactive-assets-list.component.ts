@@ -11,10 +11,11 @@ import { Select } from 'primeng/select';
 import { AssetTransaction, IAsset, IAssetAllocation, IAssetid, ICategory, IVendor } from '../../Interfaces/assets-management.model';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-inactive-assets-list',
-  imports: [NoDataFoundComponent, CommonModule, FormsModule, ReactiveFormsModule, Select, PaginatorModule, DropdownModule],
+  imports: [NoDataFoundComponent, CommonModule, FormsModule, ReactiveFormsModule, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent],
   templateUrl: './inactive-assets-list.component.html',
   styleUrl: './inactive-assets-list.component.scss',
   providers: [DatePipe]

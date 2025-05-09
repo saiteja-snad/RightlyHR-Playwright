@@ -12,10 +12,11 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-education-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './education-details.component.html',
   styleUrl: './education-details.component.scss'
 })
@@ -40,6 +41,7 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
   employedata={} as any;
   showErrorr=false;
   spinnerLoader=false
+  loading=false
   dateofbirth: any;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,   public formValidation: FormValidationService,) { }
   ngOnInit(): void {
@@ -276,10 +278,12 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
   }
 
   getEducationEmpid() {
+    this.loading=true
     let employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Education/${employeeId}`).subscribe({
       next: (data: any) => {
         localStorage.setItem('educationinfodata', JSON.stringify(data));
+        this.loading=false
         this.educationData.next(data);
 
       },

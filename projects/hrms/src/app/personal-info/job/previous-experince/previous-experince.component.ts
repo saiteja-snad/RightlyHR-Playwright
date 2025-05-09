@@ -12,10 +12,11 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-previous-experince',
-  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, NoDataFoundComponent, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, TranslateModule, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
@@ -35,6 +36,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   isInvalidToDate = false;
   showError = false;
   showErrorr = false;
+  loading=false
   empinfo: any
   dateofbirth: any
   previousexperincedocument: any
@@ -301,13 +303,18 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
   //function to get all experiences 
   getexperiencedetailsbyemployeid() {
+    this.loading=true
     let EmployeeId = parseInt(this.empinfo.employeeId)
     console.log(EmployeeId);
     this.subscription = this.http.getData(`ExperienceDetail/${EmployeeId}`).subscribe({
       next: (data: any) => {
+        this.loading=false
         console.log(data);
         this.getempexpdata.next(data);
-      }
+      },
+      error:(err)=> {
+        this.loading=false
+      },
     })
 
   }

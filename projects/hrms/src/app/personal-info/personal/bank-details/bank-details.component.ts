@@ -11,9 +11,10 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { IProbationEmployees } from '../../../admin/probation-employees/probation-emp-module';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-bank-details',
-  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent,TranslateModule],
+  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })
@@ -31,6 +32,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   displayblankdocument: any
   employedata = {} as IProbationEmployees;
   spinnerLoader=false;
+  loading=false
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService,public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
@@ -129,10 +131,15 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
 
   //Bank Details
   getbankempid() {
+    this.loading=true
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`BankDetail/${EmpId}`).subscribe({
       next: (data: any) => {
+        this.loading=false
         this.bankDetails.next(data);
+      },
+      error:(err)=> {
+        this.loading=false
       },
     });
   }

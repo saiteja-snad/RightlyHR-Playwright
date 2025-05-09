@@ -11,10 +11,11 @@ import { AssetTransaction, IAsset, IAssetAllocation, IAssetid, ICategory, IVendo
 import { Select } from 'primeng/select';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-all-assets-list',
-  imports: [NoDataFoundComponent, CommonModule, FormsModule, PaginatorModule, DropdownModule, ReactiveFormsModule, Select],
+  imports: [NoDataFoundComponent, CommonModule, FormsModule, PaginatorModule, DropdownModule, ReactiveFormsModule, Select, DataLoaderContentComponent],
   templateUrl: './all-assets-list.component.html',
   styleUrl: './all-assets-list.component.scss',
   providers: [DatePipe]

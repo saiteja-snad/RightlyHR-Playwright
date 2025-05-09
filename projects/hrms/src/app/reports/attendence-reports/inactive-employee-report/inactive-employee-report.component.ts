@@ -100,13 +100,14 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.getEmployeeId();
     this.getTeam();
+    this.getInactiveReports();
   }
 
   initializeForm() {
     this.inactiveReportForm = this.fb.group({
       employee: [null, Validators.required],
       manager: [null],
-      month: [null],
+      leaveCategory: [null],
       // dateRange: [null]
     });
 
@@ -120,7 +121,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     return !(
       form.get('employee')?.value ||
       form.get('manager')?.value ||
-      form.get('month')?.value ||
+      form.get('leaveCategory')?.value ||
       form.get('dateRange')?.value
     );
   }
@@ -172,6 +173,24 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       });
   }
 
+  getInactiveReports() {
+    this.subscription = this.reportsService.getInactiveReports({}).subscribe({
+      next: (res: any) => {
+        this.extractUniqueYearlyFilters(res);
+      }
+    });
+  }
+
+  uniqueLeaveCategory: any[] = [];
+  extractUniqueYearlyFilters(data: any[]): void {
+    const uniqueLeaveCategory = Array.from(new Set(data.map((item: any) => item.leaveType))).filter(Boolean);
+  
+    this.uniqueLeaveCategory = uniqueLeaveCategory.map(category => ({
+      label: category,
+      value: category
+    }));
+  }
+
   generateInactiveReport(): void {
     this.spinnerLoader1 = true;
     this.isLoading = true;
@@ -201,8 +220,8 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     }
 
     // Month filter
-    if (formValue.month) {
-      request.Month = formValue.month;
+    if (formValue.leaveCategory) {
+      request.LeaveName = formValue.leaveCategory.value;
     }
 
     // Manager full name

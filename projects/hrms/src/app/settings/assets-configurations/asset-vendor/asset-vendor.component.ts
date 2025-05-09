@@ -47,28 +47,52 @@ export class AssetVendorComponent {
 
   initialform() {
     this.assetForm = this.fb.group({
-      phonenumber: [null, [Validators.required, Validators.maxLength(10), Validators.minLength(10), Validators.pattern(/^(?!0{10})\d{10}$/)]],
+      phonenumber: [null, [Validators.required, Validators.maxLength(15), Validators.minLength(10),Validators.pattern(/^(?!0{10,15}$)\d{10,15}$/),this.allZeroesIfMaxLength()]],
       vendordetailes: [null, [Validators.required, Validators.maxLength(50)]],
       email: [null, [Validators.required, Validators.email, Validators.maxLength(30), this.customEmailValidator()]],
-      address: [null, [Validators.required, Validators.maxLength(50)]],
-      secondaryphonenumber: [null, [Validators.maxLength(10), Validators.minLength(10), Validators.pattern(/^(?!0{10})\d{10}$/)]],
+      address: [null, [Validators.required, Validators.maxLength(100)]],
+      secondaryphonenumber: [null, [Validators.required,Validators.maxLength(15), Validators.minLength(10),Validators.pattern(/^(?!0{10,15})\d{10,15}$/), this.allZeroesIfMaxLength()]],
     }
     )
   }
 
   initialvedorupdateform() {
     this.assetverderupdataform = this.fb.group({
-      phonenumber: [null, [Validators.required, Validators.maxLength(10), Validators.minLength(10),Validators.pattern(/^(?!0{10})\d{10}$/)]],
+      phonenumber: [null, [Validators.required, Validators.maxLength(15), Validators.minLength(10),Validators.pattern(/^(?!0{10,15}$)\d{10,15}$/),this.allZeroesIfMaxLength()]],
       vendordetailes: [null, [Validators.required, Validators.maxLength(50)]],
-      email: [null, [Validators.required, Validators.email, Validators.maxLength(30), this.customEmailValidator()]],
-      address: [null, [Validators.required, Validators.maxLength(50)]],
-      secondaryphonenumber: [null, [Validators.maxLength(10), Validators.minLength(10),Validators.pattern(/^(?!0{10})\d{10}$/)]],
+      email: [null, [Validators.required,Validators.email, Validators.maxLength(30),this.customEmailValidator()]],
+      address: [null, [Validators.required, Validators.maxLength(100)]],
+      secondaryphonenumber: [null, [Validators.maxLength(15), Validators.minLength(10),Validators.pattern(/^(?!0{10,15}$)\d{10,15}$/),this.allZeroesIfMaxLength()]],
     }
     )
   }
-
+  // moreThanZeros(): ValidatorFn {
+  //   return (control: AbstractControl): { [key: string]: any } | null => {
+  //     const value = control.value;
+  //     const zeroCount = (value?.match(/0/g) || []).length;
+  
+  //     if (zeroCount > 9) {
+  //       return { moreThanZeros: true };
+  //     }
+  //     return null;
+  //   };
+  // }
+  allZeroesIfMaxLength(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = String(control.value || '');
+      
+      if (/^0{10,}$/.test(value)) {
+        return { allZeroesIfMaxLength: true };
+      }
+  
+      return null;
+    };
+  }
+  
+  
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.ngOnInit();
   }
 
   postvendor(assetForm: FormGroup) {
@@ -237,7 +261,15 @@ export class AssetVendorComponent {
       console.log("Asset Form is invalid.");
     }
   }
-
+  //close button click open delet pop up dailog add vender
+  openaddventermodal(content:any){
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+  //no button click close the  dailog add vender
+  cleardata(){
+   this.assetForm.reset()
+    this.modalService.dismissAll();
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -129,6 +129,29 @@ export class FormValidationService {
       event.preventDefault();
     }
   }
+// restrict allowed only few specialcharacter
+restrictInputAllowAlphaNumericAndCommonSpecialChars(event: KeyboardEvent): void {
+  const key = event.key;
+  const inputElement = event.target as HTMLInputElement;
+
+  // Allow navigation/control keys
+  const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'];
+  if (allowedKeys.includes(key)) {
+    return;
+  }
+
+  // Prevent first character from being a space
+  if (key === ' ' && inputElement.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  // Allow alphabets, numbers, &, -, ., '
+  const isValidCharacter = /^[A-Za-z0-9&\-.'\s]$/.test(key);
+  if (!isValidCharacter) {
+    event.preventDefault();
+  }
+}
 
   rateGreaterThanZero(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {

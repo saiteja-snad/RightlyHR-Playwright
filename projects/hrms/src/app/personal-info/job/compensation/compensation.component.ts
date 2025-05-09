@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -11,14 +11,15 @@ import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-compensation',
-  imports: [CommonModule, ReactiveFormsModule, Select, NoDataFoundComponent, DateformatPipe],
+  imports: [CommonModule, ReactiveFormsModule, Select, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent],
   templateUrl: './compensation.component.html',
   styleUrl: './compensation.component.scss'
 })
-export class CompensationComponent {
+export class CompensationComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   compForm!: FormGroup;
   compupdateForm!: FormGroup
@@ -28,7 +29,7 @@ export class CompensationComponent {
   frequencyDetails = [] as IFrequency[];
   compensationdetails = new BehaviorSubject<any>([])
   compensationReason = [] as ICompensation[]
-
+  loading=false
   empinfo: any
   selectedid: any;
   constructor(
@@ -135,29 +136,22 @@ export class CompensationComponent {
 
   getCompensationempid() {
     let employeeId = parseInt(this.empinfo.employeeId);
-    console.log(employeeId);
+   
+    this.loading=true
     this.subscription = this.http
       .getData(`Compensationdata/${employeeId}`)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
+         this.loading=false
           this.compensationdetails.next(data)
+        },
+        error:(err)=> {
+          this.loading=false
         },
       })
   }
 
-  // dateAfterJoiningAsyncValidator(joiningDate: Date): AsyncValidatorFn {
-  //   return (control: AbstractControl) => {
-  //     const selectedDate = new Date(control.value);
-  //     if (!control.value) {
-  //       return of(null); // No validation error if the field is empty
-  //     }
-  //     return of(selectedDate > joiningDate).pipe(
-  //       delay(500), // Simulate async delay
-  //       map((isValid: any) => (isValid ? null : { dateInvalid: true })) // Return validation error if invalid
-  //     );
-  //   };
-  // }
+  
 
   postcompensation(formdata: FormGroup) {
     const formattedEffectiveDate = formdata.value.compeffectivedate

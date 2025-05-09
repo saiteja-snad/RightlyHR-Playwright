@@ -15,10 +15,11 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-drafts-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, Select, NoDataFoundComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, TranslateModule, ReactiveFormsModule, FormsModule, Select, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './drafts-expenses.component.html',
   styleUrl: './drafts-expenses.component.scss',
   providers: [DatePipe]

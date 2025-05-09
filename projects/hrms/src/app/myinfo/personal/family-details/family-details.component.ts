@@ -12,9 +12,10 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-family-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './family-details.component.html',
   styleUrl: './family-details.component.scss'
 })
@@ -30,6 +31,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   selectedFamilyMemberid:any
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
   spinnerLoader=false;
+  loading=false
   educationtypes = [
     { label: 'Select', value: null },]
 
@@ -108,11 +110,13 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
 
   //get family details by employee id
   getfamilyDetailsByEmployeid() {
+    this.loading=true
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http
       .getData(`FamilyMembers/getByEmpId/${EmpId}`)
       .subscribe({
         next: (data: any) => {
+          this.loading=false
           this.familyDetailsdisplay.next(data);
         },
         error: (err: any) => {

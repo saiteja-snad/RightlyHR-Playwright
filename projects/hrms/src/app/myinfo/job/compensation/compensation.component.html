@@ -5,19 +5,16 @@
     </div>
 
     <div class="custom-table-content mt-2">
-        <table class="w-100">
+        @if(!loading){
+             <table class="w-100">
             <thead>
                 <tr>
-              
                     <th>Effective Date</th>
                     <th>Overtime Eligibility</th>
                     <th>Reason</th>
                     <th>Frequency</th>
                     <th>Pay Type</th>
                     <th>Amount (Yearly CTC)</th>
-                   
-
-
                 </tr>
             </thead>
             <tbody>
@@ -41,5 +38,9 @@
                 </ng-template>
             </tbody>
         </table>
+        }
+       @else {
+        <app-data-loader-content/>
+       }
     </div>
 </div>

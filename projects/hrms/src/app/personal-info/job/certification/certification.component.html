@@ -7,64 +7,69 @@
     </div>
 
     <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Certification Name</th>
-                    <th>Certification Id</th>
-                    <th>Issued Date</th>
-                    <th>Expiry Date</th>
-                    <th class="text-center">Document</th>
-                    <th class="text-center">Action(S)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((empcertsdata | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let empcreficition of empcertsdata | async">
-                        <td>{{ empcreficition.certificationName }}</td>
-                        <td>{{empcreficition.certificationId}}</td>
-                        <td>{{empcreficition.issuedDate | dateformat}}</td>
-                        <td>
-                            <span *ngIf="empcreficition.expirationDate != null; else NoExpiration"></span><ng-template
-                                #NoExpiration>No Expiration</ng-template>{{ empcreficition.expirationDate | dateformat
-                            }}
-                        </td>
-                        <td class="text-center">
-                            <span *ngIf="empcreficition.attachment;else noData" class="dowload-text cursor"
-                                (click)="onSelectBankProofDownload(empcreficition)">
-                                <i class="bi bi-download clip-icon px-2"></i>Download</span>
-                            <ng-template #noData><span class="text-center">-</span></ng-template>
-                        </td>
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
-                                        <a class="dropdown-item">
-                                            <i class="bi bi-pencil me-2"></i>Update
-                                        </a>
-                                    </li>
-                                    <li (click)="opendeletModal(deleteconformation,empcreficition)">
-                                        <a class="dropdown-item">
-                                            <i class="bi bi-trash3 me-2"></i>Delete
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
+        @if(!loading){
+            <table class="w-100">
+                <thead>
                     <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
+                        <th>Certification Name</th>
+                        <th>Certification Id</th>
+                        <th>Issued Date</th>
+                        <th>Expiry Date</th>
+                        <th class="text-center">Document</th>
+                        <th class="text-center">Action(S)</th>
                     </tr>
-                </ng-template>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="((empcertsdata | async) ?? []).length > 0; else noDataTemplate">
+                        <tr *ngFor="let empcreficition of empcertsdata | async">
+                            <td>{{ empcreficition.certificationName }}</td>
+                            <td>{{empcreficition.certificationId}}</td>
+                            <td>{{empcreficition.issuedDate | dateformat}}</td>
+                            <td>
+                                <span *ngIf="empcreficition.expirationDate != null; else NoExpiration"></span><ng-template
+                                    #NoExpiration>No Expiration</ng-template>{{ empcreficition.expirationDate | dateformat
+                                }}
+                            </td>
+                            <td class="text-center">
+                                <span *ngIf="empcreficition.attachment;else noData" class="dowload-text cursor"
+                                    (click)="onSelectBankProofDownload(empcreficition)">
+                                    <i class="bi bi-download clip-icon px-2"></i>Download</span>
+                                <ng-template #noData><span class="text-center">-</span></ng-template>
+                            </td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <span type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-pencil me-2"></i>Update
+                                            </a>
+                                        </li>
+                                        <li (click)="opendeletModal(deleteconformation,empcreficition)">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-trash3 me-2"></i>Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <td>
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        }
+        @else {
+            <app-data-loader-content/>
+        }
     </div>
 </div>
 

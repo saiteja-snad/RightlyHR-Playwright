@@ -4,6 +4,7 @@
       
     </div>
     <div class="custom-table-content mt-2">
+      @if(!loading){
         <table class="w-100">
             <thead>
                 <tr>
@@ -35,5 +36,9 @@
                 </ng-template>
             </tbody>
         </table>
+      }
+      @else {
+        <app-data-loader-content/>
+      }
     </div>
 </div>

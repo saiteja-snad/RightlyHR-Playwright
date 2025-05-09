@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { IRelation } from '../../../Interfaces/personal-modal';
@@ -13,14 +13,15 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { IProbationEmployees } from '../../../Interfaces/letters-model';
 import { IJob } from '../../../Interfaces/job-model';
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-family-details',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './family-details.component.html',
   styleUrl: './family-details.component.scss'
 })
-export class FamilyDetailsComponent implements OnInit {
+export class FamilyDetailsComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
   familyRelations: IRelation[] = [];
   selectedFamilyMembername: any
@@ -30,7 +31,7 @@ export class FamilyDetailsComponent implements OnInit {
   familyDetailsupdateForm!: FormGroup
   selectedFamilyMemberid:any
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
- 
+  loading=false
     employedata={} as IProbationEmployees;
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder,   public formValidation: FormValidationService,) { }
   ngOnInit(): void {
@@ -107,14 +108,17 @@ export class FamilyDetailsComponent implements OnInit {
 
   //get family details by employee id
   getfamilyDetailsByEmployeid() {
+    this.loading=true
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http
       .getData(`FamilyMembers/getByEmpId/${EmpId}`)
       .subscribe({
         next: (data: any) => {
+          this.loading=false
           this.familyDetailsdisplay.next(data);
         },
         error: (err: any) => {
+          this.loading=false
           console.error('Error fetching family details:', err);
         },
       });

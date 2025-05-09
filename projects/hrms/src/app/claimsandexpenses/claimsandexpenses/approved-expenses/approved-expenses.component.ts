@@ -12,11 +12,12 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import {  NgxDocViewerModule } from 'ngx-doc-viewer';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 
 @Component({
   selector: 'app-approved-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './approved-expenses.component.html',
   styleUrl: './approved-expenses.component.scss'
 })
@@ -26,7 +27,7 @@ export class ApprovedExpensesComponent implements OnInit,OnDestroy{
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
   commentsrecivced = [] as any
-
+  loading=false
    expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   constructor(public router: Router, private fb: FormBuilder, 
@@ -54,10 +55,12 @@ export class ApprovedExpensesComponent implements OnInit,OnDestroy{
 
 
   getexpensesheaderbyemployeeid(): void {
+    this.loading=true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
       .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Approved&searchQuery=${cleanSearchQuery}`, ).subscribe({
         next: (data: any) => {
+          this.loading=false
           this.expenesEmplyeedata.next(data) 
 
         }, error(err) {

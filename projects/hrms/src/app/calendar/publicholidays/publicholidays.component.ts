@@ -7,9 +7,10 @@ import { HolidayTabsComponent } from "../../shared/calendar-tabs/holiday-tabs/ho
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-publicholidays',
-  imports: [RouterModule, ReactiveFormsModule, CommonModule, HolidayTabsComponent, NoDataFoundComponent,Select],
+  imports: [RouterModule, ReactiveFormsModule, CommonModule, HolidayTabsComponent, NoDataFoundComponent, Select, DataLoaderContentComponent],
   templateUrl: './publicholidays.component.html',
   styleUrl: './publicholidays.component.scss'
 })
@@ -23,19 +24,19 @@ export class PublicholidaysComponent {
   optional: number = 0;
   currentYear: number = new Date().getFullYear();
   selectedYear: number = this.currentYear;
-    subscription!: Subscription;
+  subscription!: Subscription;
   Policies: any = [];
   jobshiftdetails: any;
   years: number[] = [];
   empinfo = {} as any;
-
+  loading = false
   constructor(public router: Router, private http: HttpService) { }
 
   ngOnInit(): void {
-  
+
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.getjobDetails();
-    
+
     this.http.selectedYear$.subscribe((year) => {
       if (year) {
         this.selectedYear = year;
@@ -56,19 +57,21 @@ export class PublicholidaysComponent {
 
 
   getHoliday(jobshiftdetails: any) {
+    this.loading=true
     this.orgHolidayItemsArrayTrue = [];
     this.orgHolidayItemsArrayFalse = [];
     this.length = 0;
     this.optional = 0;
-   
+
     let holiday = {
       locationId: jobshiftdetails[0].locationid,
       subLocationId: jobshiftdetails[0].sublocationid,
       shiftId: jobshiftdetails[0].shiftId,
-      Applicableyear:   this.selectedYear 
+      Applicableyear: this.selectedYear
     };
     this.subscription = this.http.getDataWithQueryParams(`orgHolidays/getHolidaysbylocation`, holiday).subscribe({
       next: (response: any) => {
+        this.loading=false
         this.Policies = response;
         this.orgHolidayItemsArray = response[0]?.orgHolidaysItems;
         this.orgHolidayItemsArray?.forEach(item => {
@@ -81,7 +84,10 @@ export class PublicholidaysComponent {
           }
         });
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) =>{
+        console.log(reason)
+        this.loading=false
+      }
     });
   }
 

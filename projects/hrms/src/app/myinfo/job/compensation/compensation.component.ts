@@ -11,10 +11,11 @@ import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-compensation',
-  imports: [CommonModule, ReactiveFormsModule, Select, NoDataFoundComponent, DateformatPipe],
+  imports: [CommonModule, ReactiveFormsModule, Select, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent],
   templateUrl: './compensation.component.html',
   styleUrl: './compensation.component.scss'
 })
@@ -30,6 +31,7 @@ export class CompensationComponent {
   COMPDETAILS = { submitted: false, isempeffectivevaild: true };
   empinfo: any
   selectedid: any;
+  loading=false
   constructor(
     private modalService: NgbModal,
     private authService: AuthService,
@@ -118,20 +120,18 @@ export class CompensationComponent {
   }
 
   getCompensationempid() {
+    this.loading=true
     let employeeId = parseInt(this.empinfo.employeeId);
     console.log(employeeId);
     this.subscription = this.http
       .getData(`Compensationdata/${employeeId}`)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
+          this.loading=false
           this.compensationdetails.next(data)
         },
       })
   }
-
-
-
 
 
   ngOnDestroy(): void {

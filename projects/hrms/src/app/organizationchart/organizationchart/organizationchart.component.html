@@ -71,8 +71,8 @@
 
       <ng-template #showChart>
         <div class="organization-chart-container">
-          <p-organizationChart [value]="data" class="custom-organition-data">
-            <ng-template let-node pTemplate="person">
+          <p-organizationChart [value]="data" class="custom-organition-data" [collapsible]="true">
+            <ng-template let-node pTemplate="default">
               <div class="p-2 text-center ">
                 <img [src]="node?.data?.imageUrl ? node?.data?.imageUrl : 'images/alternate.png'"
                   class="image-content" />

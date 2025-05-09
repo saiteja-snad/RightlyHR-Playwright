@@ -1,6 +1,7 @@
 import { Route, } from '@angular/router';
 import { SettingsPersonalTabsComponent } from '../../shared/settings-tabs/settings-personal-tabs/settings-personal-tabs.component';
 import { SettingsJobTabsComponent } from '../../shared/settings-tabs/settings-job-tabs/settings-job-tabs.component';
+import { PermissionsGuard } from '../../guards/permissions.guard';
 
 
 export default [
@@ -8,7 +9,7 @@ export default [
     {
         path: 'personal', children: [
             { path: '', component : SettingsPersonalTabsComponent },
-            { path: 'salutation', loadComponent: () => import('./personal/salutation/salutation.component').then(m => m.SalutationComponent) },
+            { path: 'salutation', loadComponent: () => import('./personal/salutation/salutation.component').then(m => m.SalutationComponent), canActivate: [PermissionsGuard],data: { permission: 'Salutation.view' }  },
             { path: 'gender', loadComponent: () => import('./personal/gender/gender.component').then(m => m.GenderComponent) },
             { path: 'maritalstatus', loadComponent: () => import('./personal/maritalstatus/maritalstatus.component').then(m => m.MaritalstatusComponent) },
             { path: 'identitytype', loadComponent: () => import('./personal/identitytype/identitytype.component').then(m => m.IdentitytypeComponent) },

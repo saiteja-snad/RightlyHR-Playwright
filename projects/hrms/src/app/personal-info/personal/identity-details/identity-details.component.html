@@ -95,8 +95,7 @@
                         <input type="text" formControlName="identityNumber" [maxlength]="IdentityMaxNumber"
                             [minlength]="IdentityMinNumber" class="form-control custom-input"
                             id="exampleFormControlInput1" placeholder="Please enter Identity Number">
-                        <div class="error-msg" *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched 
-                        || identityForm.get('identityNumber')?.dirty)">
+                        <div class="error-msg" *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched   || identityForm.get('identityNumber')?.dirty)">
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['required']">
                                 Identity Number is required
                             </div>

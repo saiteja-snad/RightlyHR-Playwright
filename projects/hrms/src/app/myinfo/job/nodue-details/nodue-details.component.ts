@@ -14,10 +14,11 @@ import { Router, RouterModule } from '@angular/router';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { INodue } from './nodue-details';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-nodue-details',
-  imports: [NoDataFoundComponent,CommonModule,
+  imports: [NoDataFoundComponent, CommonModule,
     TranslateModule,
     NgbPopoverModule,
     ReactiveFormsModule,
@@ -26,7 +27,7 @@ import { INodue } from './nodue-details';
     DropdownModule,
     DateformatPipe,
     RouterModule,
-    NoDataFoundComponent,],
+    NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './nodue-details.component.html',
   styleUrl: './nodue-details.component.scss'
 })
@@ -37,6 +38,7 @@ export class NodueDetailsComponent implements OnInit,OnDestroy {
   empinfo = {} as Ipersonal;
   empdata = {} as Ipersonal;
   lineOrder = false;
+  loader=false
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
@@ -76,9 +78,11 @@ export class NodueDetailsComponent implements OnInit,OnDestroy {
     }
   //function to get the nodue data
   getNodueClearance() {
+    this.loader=true
     const employeeId = parseInt(this.empinfo.employeeId)
     this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.loader=false
         this.nodue_Clearance_Details.next(data);
         const nodueapprovecount = data.filter((ele: any) => ele.status?.toLowerCase() == 'approved')
         this.nodueapprovalcount = nodueapprovecount.length

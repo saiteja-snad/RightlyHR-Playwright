@@ -14,10 +14,11 @@ import moment from 'moment';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-nodue-approval-details',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule,
-    PaginatorModule, NoDataFoundComponent, NodueDetailsPipe, DateformatPipe],
+    PaginatorModule, NoDataFoundComponent, NodueDetailsPipe, DateformatPipe, DataLoaderContentComponent],
   templateUrl: './nodue-approval-details.component.html',
   styleUrl: './nodue-approval-details.component.scss',
 })
@@ -28,6 +29,7 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
+  loading=false
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -74,10 +76,12 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
   }
 
   getAllPendingApprovalsNoDue() {
+    this.loading=true
     let loggedInuser = this.authService.getToken();
     const EmployeeId = loggedInuser.employeeId;
     this.subscription = this.http.getData(`NoDueClearanceForm/getByApproverIdPendingApprovals/${EmployeeId}`).subscribe({
       next: (data: any) => {
+      this.loading=false
         this.nodue_Request_data.next(data);
       },
     });

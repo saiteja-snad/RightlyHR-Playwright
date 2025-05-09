@@ -31,6 +31,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   empdata = {} as Ipersonal;
   substatus: any;
   status: any;
+  loading=false
   recallbuttonConditions = false;
   recallandearlyrelievingbuttonConditions = false;
   isLastWorkingDatePassed = false;

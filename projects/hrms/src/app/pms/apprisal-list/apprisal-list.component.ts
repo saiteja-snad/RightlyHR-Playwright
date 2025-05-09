@@ -772,6 +772,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.modalService.dismissAll();
+          this.Effectivedatefrom.reset();
           if (err.status === 500) {
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
@@ -806,45 +807,47 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   initiateDateForm() {
     this.Effectivedatefrom = this.fb.group({
-      effectiveFromDATE: [null, [Validators.required, this.effectiveDateValidator()]],
+      effectiveFromDATE: [null, [Validators.required]],
       signaturename: [null, [Validators.required]],
     });
 
-    this.Effectivedatefrom.get('effectiveFromDATE')?.valueChanges.subscribe(() => {
-      const control = this.Effectivedatefrom.get('effectiveFromDATE');
-      control?.setValidators([Validators.required, this.effectiveDateValidator()]);
-      control?.updateValueAndValidity({ emitEvent: false });
-    });
+    // this.Effectivedatefrom.get('effectiveFromDATE')?.valueChanges.subscribe(() => {
+    //   const control = this.Effectivedatefrom.get('effectiveFromDATE');
+    //   control?.setValidators([Validators.required, this.effectiveDateValidator()]);
+    //   control?.updateValueAndValidity({ emitEvent: false });
+    // });
   }
 
-  effectiveDateValidator(): ValidatorFn {
-    if (!this.filteredEmployees || !Array.isArray(this.filteredEmployees)) {
-      return () => ({ reviewCycleNotAvailable: true });
-    }
+  // effectiveDateValidator(): ValidatorFn {
+  //   console.log('effectiveDateValidator called');
+  //   if (!this.filteredEmployees || !Array.isArray(this.filteredEmployees)) {
+  //     console.log('effectiveDateValidator called');
+  //     return () => ({ reviewCycleNotAvailable: true });
+  //   }
   
-    const rCycle = this.filteredEmployees.find(
-      (emp: { id: any }) => emp.id === this.seletedid
-    );
+  //   const rCycle = this.filteredEmployees.find(
+  //     (emp: { id: any }) => emp.id === this.selectedIds
+  //   );
     
-    if (!rCycle) {
-      return () => ({ reviewCycleNotFound: true });
-    }
+  //   if (!rCycle) {
+  //     return () => ({ reviewCycleNotFound: true });
+  //   }
   
-    const joiningDate = new Date(rCycle.dateofjoining);
-    const effectiveJobDate = new Date(rCycle.effectivedate);
+  //   const joiningDate = new Date(rCycle.dateofjoining);
+  //   const effectiveJobDate = new Date(rCycle.effectivedate);
   
-    return (control: AbstractControl): ValidationErrors | null => {
-      const selectedDate = control.value ? new Date(control.value) : null;
+  //   return (control: AbstractControl): ValidationErrors | null => {
+  //     const selectedDate = control.value ? new Date(control.value) : null;
   
-      if (!selectedDate) return null;
+  //     if (!selectedDate) return null;
   
-      if (selectedDate <= joiningDate || selectedDate <= effectiveJobDate) {
-        return { invalidEffectiveDate: true };
-      }
+  //     if (selectedDate <= joiningDate || selectedDate <= effectiveJobDate) {
+  //       return { invalidEffectiveDate: true };
+  //     }
       
-      return null;
-    };
-  }  
+  //     return null;
+  //   };
+  // }  
    
   Click(id: number, status: string) {
     if (id) {
@@ -973,6 +976,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         },
         error: (err) => { 
           this.modalService.dismissAll();
+          this.Effectivedatefrom.reset();
           if (err.status === 500) {
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
@@ -1229,7 +1233,11 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     return this.listOfAllEmployees.some(employee => employee.status === 'Promotion Letter Generated');
   }
 
-  generateLetters(): void {
+  generateLetters(f: FormGroup): void {
+    if(f.invalid){
+      console.log(f);
+      return;
+    }
     this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value.employeeId
     }&status=${this.status}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
@@ -1239,6 +1247,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.modalService.dismissAll();
+          this.Effectivedatefrom.reset();
           if (err.status === 500) {
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
           }
@@ -1332,7 +1341,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.modal.openSuccessModal('Promotion Letter Sent Successfully');
       },
       error: (err: any) => {
-        console.error('Error generating letters:', err);
         if(err.status===500){
           this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
         }else{
@@ -1360,30 +1368,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     });
   }
 
-  // generatepromationLetters(): void {
-  //   this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value}&status=${this.status}`)
-  //     .pipe(takeUntil(this.destroy$)).subscribe({
-  //       next: (data: any) => { 
-  //         this.modal.openSuccessModal('Promotion Letter Generated Successfully');
-  //       },
-  //       error: (err: any) => {
-  //         if (err.status === 500) {
-  //           this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
-  //         }
-  //         else if (err.status === 409) {
-  //           this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
-  //         }
-  //         else {
-  //           this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
-  //         }
-  //       },
-  //       complete: () =>{
-  //         this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
-  //         this.Effectivedatefrom.reset();
-  //       }
-  //     });
-  // }
-
   generatePromotionLetters(f: FormGroup): void {
     const form= f.value;
     const reviewCycleItemId = this.selectedIds || this.allSelected;
@@ -1402,6 +1386,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.modalService.dismissAll();
+        this.Effectivedatefrom.reset();
         const errorMessage = err?.error?.details || 'An error occurred while generating letters';
         this.modal.openErrorModal(errorMessage);
       },

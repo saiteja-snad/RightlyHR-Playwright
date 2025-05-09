@@ -13,7 +13,7 @@
             <button class="custom-btn btn-primary" *ngIf="filteredEmployees.length > 0 "
                 (click)="openModal(downloadConfirmation)">{{'Download Appraisal Report' | translate}}</button>
             <button class="custom-btn btn-primary" *ngIf="showGenerateAppirtialButton()"
-                (click)="openModal(appraisaletters) ;onclickStatusupdate('Completed')">{{'Generate Appraisal Letters' |
+                (click)="openModal(appraisaletters);onclickStatusupdate('Completed')">{{'Generate Appraisal Letters' |
                 translate}}</button>
             <button class="custom-btn btn-primary" *ngIf="showsentAppirtialButton()"
                 (click)="onclickstatusforappraisal('Appraisal Letter Sent')">{{'Send Appraisal Letters' |
@@ -243,7 +243,7 @@
                                         </li>
 
                                         <li class="dropdown-item "
-                                            *ngIf="employee.applicableForPromotion===true && employee.status ==='Completed'"
+                                            *ngIf="employee.applicableForPromotion===true && employee.status ==='Completed'" (change)="onCheckboxChange($event, employee.id)"
                                             (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Completed')">
                                             <a class="dropdown-custom-btn">{{'Generate Promotion Letter' | translate}}</a>
                                         </li>
@@ -411,10 +411,6 @@
                         class="error-msg">
                         Effective From Date is required
                     </div>
-                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('invalidEffectiveDate')"
-                        class="error-msg">
-                        Date must be after joining date and effective date.
-                    </div>
                 </div>
 
                 <div class="mb-3">
@@ -467,7 +463,7 @@
                     <p class="popup-heading mb-0">{{'Generate Promotion Letter' | translate}}</p>
                 </div>
                 <div>
-                    <a (click)="closeModal()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                    <a (click)="openConfirmation()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
 
@@ -480,10 +476,6 @@
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">
                         Effective From Date is required
-                    </div>
-                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('invalidEffectiveDate')"
-                        class="error-msg">
-                        Date must be after joining date and effective date.
                     </div>
                 </div>
 
@@ -619,18 +611,33 @@
 <!-- Generate Multiple Appraisal Letters Modal -->
 <ng-template #appraisaletters let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <form autocomplete="off" [formGroup]="Effectivedatefrom" (ngSubmit)="generateLetters()">
+        <form autocomplete="off" [formGroup]="Effectivedatefrom" (ngSubmit)="generateLetters(Effectivedatefrom)">
             <div class="custom-poup-header-content popup-header-border">
                 <div>
                     <p class="popup-heading mb-0">{{'Generate Appraisal Letter' | translate}}</p>
                 </div>
                 <div>
-                    <a (click)="closeModal()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                    <a (click)="openConfirmation()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
 
             <div class="custom-main-popup-content">
                 <div class="mb-3">
+                    <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}
+                        <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE" id="effectiveFrom"
+                        placeholder="Effective From" onkeypress="return false">
+                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
+                        class="error-msg">
+                        Effective From Date is required
+                    </div>
+                    <!-- <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('invalidEffectiveDate')"
+                        class="error-msg">
+                        Date must be after joining date and effective date.
+                    </div> -->
+                </div>
+
+                <!-- <div class="mb-3">
                     <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}
                         <span class="text-danger">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE"
@@ -642,7 +649,7 @@
                         class="error-msg">
                         Date must be after joining date and effective date.
                     </div>
-                </div>
+                </div> -->
 
                 <div class="mb-3">
                     <label for="" class="form-label custom-label">{{'Signature Authority Name' | translate}}
@@ -679,7 +686,7 @@
                     <p class="popup-heading mb-0">{{'Generate Promotion Letter' | translate}}</p>
                 </div>
                 <div>
-                    <a (click)="closeModal()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                    <a (click)="openConfirmation()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
                 </div>
             </div>
 
@@ -691,10 +698,6 @@
                         id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">{{'Effective From Date is required' | translate}}
-                    </div>
-                    <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('invalidEffectiveDate')"
-                        class="error-msg">
-                        Date must be after joining date and effective date.
                     </div>
                 </div>
 

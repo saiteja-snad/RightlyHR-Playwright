@@ -153,17 +153,7 @@ export class OrganizationchartComponent {
           console.log(response);
           if (response.length > 0) {
             this.data = response  || [];
-            // this.data.forEach((employee: any) => {
-            //   this.onSelectprofilePicDownload(employee.data.image).subscribe((imageUrl: any) => {
-            //     employee.data.imageUrl = imageUrl;
-            //   });
-            //   employee.children?.forEach((child: any) => {
-            //     this.onSelectprofilePicDownload(child.data.image).subscribe((imageUrl: any) => {
-            //       child.data.imageUrl = imageUrl;
-            //     });
-            //   });
-            // });
-
+           
             this.isDataPresent = false;
           } else {
             this.data=[]

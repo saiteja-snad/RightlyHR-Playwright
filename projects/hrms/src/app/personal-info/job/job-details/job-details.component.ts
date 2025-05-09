@@ -14,9 +14,10 @@ import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-job-details',
-  imports: [CommonModule, TranslateModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, TranslateModule, Select, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './job-details.component.html',
   styleUrl: './job-details.component.scss'
 })
@@ -26,6 +27,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   jobDetailsupdateForm!: FormGroup;
   jobdetails = new BehaviorSubject<any[]>([]);
   teamDropdownValues: any[] = [];
+  loading=false
   teamManagerDropdownValues: any[] = [];
   selectedDepartmentId: number = 0;
   jobDetailsForm!: FormGroup;
@@ -547,9 +549,11 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
   }
   getJobDetails() {
+    this.loading=true
     let EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`JobDetails/Empname/${EmployeeId}`).subscribe({
       next: (data: any) => {
+        this.loading=false
         this.jobdetails.next(data);
         console.log(this.jobdetails.value);
 

@@ -81,7 +81,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   countryvalues = {} as any;
   loadingCode = true;
   selectedCountryCode: any;
-  countryCode = 'Country Code'
+  countryCode = 'Country code'
   selectedCountryConfig = {
     hideCode: true,
     hideName: true
@@ -162,7 +162,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       pf: [null, Validators.required],
       amount: ['', Validators.required],
       isVariablePay: [null, Validators.required],
-      variablePayAmount: ['', Validators.required],
+      variablePayAmount: [{ value: null, disabled: true }, Validators.required],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
@@ -481,6 +481,9 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
               if (this.prospectiveEmpData.amount) {
                 this.ctcCalculation();
               }
+              if(this.prospectiveEmpData.isVariablePay){
+                this.employeeForm.get('variablePayAmount')?.enable();
+              }
             }
           }
         },
@@ -599,11 +602,18 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     } else {
       Employee.esicContribution = 0;
 
-      const Input = document.getElementById('esic') as HTMLInputElement;
+      // const Input = document.getElementById('esic') as HTMLInputElement;
 
-      if (Input) {
-        Input.value = 'false';
+      // if (Input) {
+      //   Input.value = 'false';
+      // }
+     
+      const esicControl = this.employeeForm?.get('esic');
+      if (esicControl && esicControl.value!==false) {
+        esicControl.setValue(false, { emitEvent: false });
       }
+      
+      
     }
     //===================================================================================================================================
 
@@ -650,10 +660,16 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       }
     } else {
       Employee.employeeEsi = 0;
-      const Input = document.getElementById('esic') as HTMLInputElement;
-      if (Input) {
-        Input.value = 'false';
+      // const Input = document.getElementById('esic') as HTMLInputElement;
+      // if (Input) {
+      //   Input.value = 'false';
+      // }
+     
+      const esicControl = this.employeeForm?.get('esic');
+      if (esicControl && esicControl.value!==false) {
+        esicControl.setValue(false, { emitEvent: false });
       }
+      
     }
 
     //==================================================================================================================================
@@ -737,8 +753,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   onVariablePayChange(isVariablePay: any) {
     this.prospectiveEmpData.isVariablePay = isVariablePay.value;
     if (isVariablePay.value === false) {
-      this.prospectiveEmpData.variablePayAmount = '0';
-      this.employeeForm.get('variablePayAmount')?.setValue(0);
+      this.prospectiveEmpData.variablePayAmount = '';
+      this.employeeForm.get('variablePayAmount')?.setValue(null);
       this.employeeForm.get('variablePayAmount')?.disable();
     }
     else if (isVariablePay.value === true) {
@@ -980,7 +996,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       paytype: null,
       compensationamount: parseInt(data.amount),
       variablePayAmount: data.variablePayAmount,
-      isVariablePay: this.employeeForm.get('isVariablePay')?.value.value,
+      isVariablePay: this.employeeForm.get('isVariablePay')?.value,
       status: 'Active',
       compensationcomments: null,
     };

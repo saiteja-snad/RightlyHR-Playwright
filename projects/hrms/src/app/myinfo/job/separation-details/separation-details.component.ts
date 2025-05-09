@@ -57,6 +57,7 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
   isLoading = false;
   requestraise: any;
   profileForm!: FormGroup;
+
   isDataLoaded = false;
   constructor(
     private authService: AuthService,
@@ -282,7 +283,7 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
   }
   //function to open the modal for the comments
   approverCommentsFunction(Value: any, content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop : 'static' });
     console.log(Value);
     this.appover_comments = Value.map((ele: any) => {
       const parsedMetaData = JSON.parse(ele.metaData);
@@ -294,18 +295,18 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
   }
   //function to store the disaciption values
   decription(value: any, content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true , backdrop : 'static'});
     this.decription_Storing_Variable = value;
   }
   //function to select data of perticular record to  recall the request
   recallRequest(data: any, content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true , backdrop : 'static'});
     this.selectRecallrequest = JSON.parse(JSON.stringify(data));
     console.log(this.selectRecallrequest);
   }
   //function to select the data of early relieving request
   earlyReleivingdata(data: any, content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop : 'static' });
     this.postEarlyRelievingRequest = data;
     console.log(this.postEarlyRelievingRequest);
   }

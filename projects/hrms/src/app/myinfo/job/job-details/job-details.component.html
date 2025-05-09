@@ -5,117 +5,122 @@
     </div>
 
     <div class="custom-table-content mt-2">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Effective date</th>
-                    <th>Job role</th>
-                    <th>Grade</th>
-                    <th>Department</th>
-                    <th>Team</th>
-                    <th>Team manager</th>
-                    <th>Reporting manager</th>
-                    <th>Location</th>
-                    <th>Sub location</th>
-                    <th>Shift</th>
-                    <th>Job type</th>
-                    <th class="text-center">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((jobdetails | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let item of jobdetails | async ;let first = first ">
-
-                        <td><span *ngIf="item.effectiveDate;else effectivedate"> {{item.effectiveDate|
-                                dateformat}}</span>
-                            <ng-template #effectivedate>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td> <span *ngIf="item.jobRole;else jobrole"> {{item.jobRole}}</span>
-                            <ng-template #jobrole>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td> <span *ngIf="item.gradeId;else gradeid"> {{item.gradeName}}</span>
-                            <ng-template #gradeid>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td><span *ngIf="item.departmentName;else department"> {{item.departmentName}}</span>
-                            <ng-template #department>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td> <span *ngIf="item.subdepartmentName;else subdepartment"> {{item.subdepartmentName}}</span>
-                            <ng-template #subdepartment>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td> <span *ngIf="item.firstName;else firstname">{{item.firstName}} {{item.middleName}}
-                                {{item.lastName}} </span>
-                            <ng-template #firstname>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td><span *ngIf="item.fName;else repotingmanager">{{item?.fName}} {{item?.mName}}
-                                {{item?.lName}}
-                            </span>
-                            <ng-template #repotingmanager>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td> <span *ngIf="item.lopcation;else location">{{item.lopcation}} </span>
-                            <ng-template #location>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td><span *ngIf="item.subLocation;else sublocation"> {{item.subLocation}}</span>
-                            <ng-template #sublocation>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td> <span *ngIf="item.shiftName;else shift"> {{item.shiftName}}</span>
-                            <ng-template #shift>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-                        <td>
-                            <span *ngIf="item.jobTypeName;else jobtype"> {{item.jobTypeName}}</span>
-                            <ng-template #jobtype>
-                                <div class="centerhypen">-</div>
-                            </ng-template>
-                        </td>
-
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical" *ngIf="first && showSaperationDots "></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                              
-                                    @if (first && showSaperationDots && this.rbac.allowedToAccess('Separation Request.view')) {
-                                        <li (click)="openModalforSeparationupdate(seprationModal, item)">
-                                            <a class="dropdown-item">
-                                              <img src="icons/sepration.png" alt=""  class="speration-icon">  Separation Request
-                                            </a>
-                                        </li>
-                                    }
-                                    
-                                  
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </ng-container>
-
-                <ng-template #noDataTemplate>
+        @if(!loader){
+            <table class="w-100">
+                <thead>
                     <tr>
-                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                        <th>Effective date</th>
+                        <th>Job role</th>
+                        <th>Grade</th>
+                        <th>Department</th>
+                        <th>Team</th>
+                        <th>Team manager</th>
+                        <th>Reporting manager</th>
+                        <th>Location</th>
+                        <th>Sub location</th>
+                        <th>Shift</th>
+                        <th>Job type</th>
+                        <th class="text-center">Action</th>
                     </tr>
-                </ng-template>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="((jobdetails | async) ?? []).length > 0; else noDataTemplate">
+                        <tr *ngFor="let item of jobdetails | async ;let first = first ">
+    
+                            <td><span *ngIf="item.effectiveDate;else effectivedate"> {{item.effectiveDate|
+                                    dateformat}}</span>
+                                <ng-template #effectivedate>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+                            <td> <span *ngIf="item.jobRole;else jobrole"> {{item.jobRole}}</span>
+                                <ng-template #jobrole>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+                            <td> <span *ngIf="item.gradeId;else gradeid"> {{item.gradeName}}</span>
+                                <ng-template #gradeid>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+                            <td><span *ngIf="item.departmentName;else department"> {{item.departmentName}}</span>
+                                <ng-template #department>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+                            <td> <span *ngIf="item.subdepartmentName;else subdepartment"> {{item.subdepartmentName}}</span>
+                                <ng-template #subdepartment>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+                            <td> <span *ngIf="item.firstName;else firstname">{{item.firstName}} {{item.middleName}}
+                                    {{item.lastName}} </span>
+                                <ng-template #firstname>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+                            <td><span *ngIf="item.fName;else repotingmanager">{{item?.fName}} {{item?.mName}}
+                                    {{item?.lName}}
+                                </span>
+                                <ng-template #repotingmanager>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+                            <td> <span *ngIf="item.lopcation;else location">{{item.lopcation}} </span>
+                                <ng-template #location>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+                            <td><span *ngIf="item.subLocation;else sublocation"> {{item.subLocation}}</span>
+                                <ng-template #sublocation>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+                            <td> <span *ngIf="item.shiftName;else shift"> {{item.shiftName}}</span>
+                                <ng-template #shift>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+                            <td>
+                                <span *ngIf="item.jobTypeName;else jobtype"> {{item.jobTypeName}}</span>
+                                <ng-template #jobtype>
+                                    <div class="centerhypen">-</div>
+                                </ng-template>
+                            </td>
+    
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <span type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical" *ngIf="first && showSaperationDots "></i>
+                                    </span>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                  
+                                        @if (first && showSaperationDots && this.rbac.allowedToAccess('Separation Request.view')) {
+                                            <li (click)="openModalforSeparationupdate(seprationModal, item)">
+                                                <a class="dropdown-item">
+                                                  <img src="icons/sepration.png" alt=""  class="speration-icon">  Separation Request
+                                                </a>
+                                            </li>
+                                        }
+                                        
+                                      
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+    
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        }@else {
+            <app-data-loader-content/>
+          }
+      
     </div>
 </div>
 

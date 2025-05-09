@@ -134,11 +134,15 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     });
     this.getDuration();
   }
+
   //function to open modal
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  openModalLarge(content: any) {
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
 
   getAttendanceCriteria() {
     const params = 'AttendanceRegularization'

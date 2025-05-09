@@ -5,13 +5,14 @@
         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
         'trainee inactive' )){
-            <div class="custom-add-btn" (click)="openModal(addEducationmodal)">
-                <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
-            </div>
+        <div class="custom-add-btn" (click)="openModal(addEducationmodal)">
+            <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
+        </div>
         }
-      
+
     </div>
     <div class="custom-table-content">
+        @if(!loading){
         <table class="w-100">
             <thead>
                 <tr>
@@ -33,52 +34,78 @@
                 <ng-container *ngIf="((jobdetails | async) ?? []).length > 0; else noDataTemplate">
                     <tr *ngFor="let item of jobdetails | async; let first = first">
                         <td>
-                            <span *ngIf="item.effectiveDate;else effectivedate">{{item.effectiveDate | dateformat}}</span>
-                            <ng-template #effectivedate><div>-</div></ng-template>
+                            <span *ngIf="item.effectiveDate;else effectivedate">{{item.effectiveDate |
+                                dateformat}}</span>
+                            <ng-template #effectivedate>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.jobRole;else jobrole">{{item.jobRole}}</span>
-                            <ng-template #jobrole><div>-</div></ng-template>
+                            <ng-template #jobrole>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.gradeId;else gradeid"> {{item.gradeName}}</span>
-                            <ng-template #gradeid><div>-</div></ng-template>
+                            <ng-template #gradeid>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.departmentName;else department"> {{item.departmentName}}</span>
-                            <ng-template #department><div>-</div></ng-template>
+                            <ng-template #department>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.subdepartmentName;else subdepartment"> {{item.subdepartmentName}}</span>
-                            <ng-template #subdepartment><div>-</div></ng-template>
+                            <ng-template #subdepartment>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.firstName;else firstname">{{item.firstName}} {{item.middleName}} {{item.lastName}}</span>
-                            <ng-template #firstname><div>-</div></ng-template>
+                            <span *ngIf="item.firstName;else firstname">{{item.firstName}} {{item.middleName}}
+                                {{item.lastName}}</span>
+                            <ng-template #firstname>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.fName;else repotingmanager">{{item?.fName}} {{item?.mName}} {{item?.lName}}</span>
-                            <ng-template #repotingmanager><div>-</div></ng-template>
+                            <span *ngIf="item.fName;else repotingmanager">{{item?.fName}} {{item?.mName}}
+                                {{item?.lName}}</span>
+                            <ng-template #repotingmanager>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.lopcation;else location">{{item.lopcation}} </span>
-                            <ng-template #location><div>-</div></ng-template>
+                            <ng-template #location>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.subLocation;else sublocation"> {{item.subLocation}}</span>
-                            <ng-template #sublocation><div>-</div></ng-template>
+                            <ng-template #sublocation>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.shiftName;else shift"> {{item.shiftName}}</span>
-                            <ng-template #shift><div>-</div></ng-template>
+                            <ng-template #shift>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         <td>
                             <span *ngIf="item.jobTypeName;else jobtype"> {{item.jobTypeName}}</span>
-                            <ng-template #jobtype><div>-</div></ng-template>
+                            <ng-template #jobtype>
+                                <div>-</div>
+                            </ng-template>
                         </td>
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
+                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
+                        !==
                         'trainee inactive' )){<td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
@@ -88,18 +115,19 @@
                                     <li (click)="openModalupdate(updatejobmodal, item)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
                                     </li>
-                                    @if (first && showSaperationDots ) {
-                                    <li (click)="openModalforSeparationupdate(seprationModal, item)">
-                                        <a class="dropdown-item"> <img src="icons/sepration.png" alt=""  class="speration-icon"/> Separation Request</a>
-                                    </li>
-                                    }
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a>
                                     </li>
+                                    @if (first && showSaperationDots ) {
+                                    <li (click)="openModalforSeparationupdate(seprationModal, item)">
+                                        <a class="dropdown-item"> <img src="icons/sepration.png" alt=""
+                                                class="speration-icon" /> Separation Request</a>
+                                    </li>
+                                    }
                                 </ul>
                             </div>
                         </td>
-                    }
+                        }
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
@@ -109,6 +137,12 @@
                 </ng-template>
             </tbody>
         </table>
+        }
+
+        @else {
+        <app-data-loader-content />
+        }
+
     </div>
 </div>
 

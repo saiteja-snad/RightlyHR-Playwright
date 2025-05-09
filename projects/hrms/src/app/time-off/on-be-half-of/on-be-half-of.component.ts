@@ -245,9 +245,13 @@ export class OnBeHalfOfComponent {
     this.categoryDetails = [];
     this.cadidateEmployeeId = 0;
     localStorage.removeItem('onbehalfof');
-    window.location.reload();
+  
+    // Navigate first, then reload if necessary
+    this.router.navigate(['/time-off/on-behalf-of/waiting-for-approval']).then(() => {
+      window.location.reload();  // Reload after navigation is complete
+    });
   }
-
+  
   onleaveSelect(categoryId: number) {
     this.leaveFormData.categoryId = categoryId;
     this.isSubmitted = false;

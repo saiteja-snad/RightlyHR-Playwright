@@ -15,10 +15,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-trainee-appointment-letter',
-  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent],
+  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule],
   templateUrl: './trainee-appointment-letter.component.html',
   styleUrl: './trainee-appointment-letter.component.scss'
 })
@@ -61,7 +62,7 @@ export class TraineeAppointmentLetterComponent {
   addressFlag = false;
   address = {} as IAddress;
   todayDate!: string;
-
+  spinnerLoader= false;
   constructor(private http: HttpService, private router: Router, private authService: AuthService, private fb: FormBuilder,
     private conformationPopup: OpenModalService,) {
   }
@@ -77,9 +78,27 @@ export class TraineeAppointmentLetterComponent {
     this.getIssuedEmployeebyId();
     this.getAssertType();
     this.getAuthorityDetails();
-
   }
 
+  initializeForm() {
+    this.employeeForm = this.fb.group({
+      fusionEmpId: ['', Validators.required],
+      // fullName: ['', Validators.required],
+      appointmentdate: ['', Validators.required],
+      SelectDropDown: ['', Validators.required],
+      dateOfJoining: ['', Validators.required],
+      department: ['', Validators.required],
+      branchCode: ['', Validators.required],
+      // Documenttype: ['', Validators.required],
+      asserttype: ['', Validators.required],
+      // note: ['', Validators.required],
+      model: ['', Validators.required],
+      serial: ['', Validators.required],
+      signatureAuthority: ['', Validators.required],
+      documentType: ['', Validators.required],
+    });
+  }
+  
   //function for assert type get
   getAssertType() {
     this.subscription = this.http.getData(`AssetType`).subscribe({
@@ -105,7 +124,6 @@ export class TraineeAppointmentLetterComponent {
     let employeeinfo = this.employeeiddetails.find(
       (c: any) => c.fusionEmpId == Value
     );
-    console.log(employeeinfo);
     if (Value != employeeinfo && employeeinfo != undefined) {
       this.disablebuttonforemployeeid = false
     }
@@ -140,6 +158,7 @@ export class TraineeAppointmentLetterComponent {
         serial: this.traineeAppointmentletterData.serialNumber,
         signatureAuthority: this.traineeAppointmentletterData.authorityName,
       });
+      console.log(this.employeeForm)
       this.getJobdetails(this.traineeAppointmentletterData);
       this.getCompensationDetails(this.traineeAppointmentletterData);
       this.getEmployeeAddress(this.traineeAppointmentletterData.employeeId);
@@ -151,6 +170,7 @@ export class TraineeAppointmentLetterComponent {
     }
  
   }
+  
 getOfferdetails(Value: any) {
   this.subscription = this.http.getData(`TraineeOfferLetter/getbyEmpidNames/${Value}`).subscribe({
     next: (data: any) => {
@@ -161,25 +181,7 @@ getOfferdetails(Value: any) {
     }
   })
 }
-  initializeForm() {
-    this.employeeForm = this.fb.group({
-      fusionEmpId: ['', Validators.required],
-      fullName: ['', Validators.required],
-      appointmentdate: ['', Validators.required],
-      SelectDropDown: ['', Validators.required],
-      dateOfJoining: ['', Validators.required],
-      department: ['', Validators.required],
-      branchCode: ['', Validators.required],
-      Documenttype: ['', Validators.required],
-      asserttype: ['', Validators.required],
-      note: ['', Validators.required],
-      model: ['', Validators.required],
-      serial: ['', Validators.required],
-      signatureAuthority: ['', Validators.required],
-      documentType: ['', Validators.required],
-    });
-  
-  }
+
 
   //function to get the address 
   getEmployeeAddress(Value: any) {
@@ -240,6 +242,7 @@ getOfferdetails(Value: any) {
   onclickDesignation(data: any) {
     this.traineeAppointmentletterData.authorityName = data.value.firstName + ' ' + data.value.middleName + ' ' + data.value.lastName;
     this.authorityDesignation = data.value.designation;
+    console.log(this.employeeForm)
   }
 
   //get offer letter Authority list 
@@ -258,12 +261,15 @@ getOfferdetails(Value: any) {
     });
   }
 
-  private formatDatewithDate(date: Date): string | void {
-    if (date) {
-      return moment(date).format('YYYY-MM-DD');
-    }
+  private formatDatewithDate(date: any): string | null {
+    if (!date) return null;
+    const localDate = new Date(date);
+    const year = localDate.getFullYear();
+    const month = String(localDate.getMonth() + 1).padStart(2, '0');
+    const day = String(localDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`; // format: YYYY-MM-DD
   }
-
+  
   //get Job Details by empployeeid
   getJobdetails(Employee: any) {
     this.subscription = this.http.getData(`JobDetails/Empname/${Employee.employeeId}`).subscribe({
@@ -351,6 +357,7 @@ getOfferdetails(Value: any) {
 
   isLoading: boolean = false;
   async onTraineeAppointmentLetterSubmit() {
+    this.spinnerLoader= true;
     const data = this.traineeAppointmentletterData;
     //data.dateOfJoining = this.formatDate(data.dateOfJoining);
     //data.appointmentdate = this.formatDate(data.appointmentdate);
@@ -404,7 +411,7 @@ getOfferdetails(Value: any) {
       next: (data: any) => {
       },
       error: (reason: any) => {
-        console.log(reason);
+       this.spinnerLoader= false;
       },
     });
   }
@@ -438,7 +445,7 @@ getOfferdetails(Value: any) {
         this.router.navigate(['/admin']);
       },
       error: (reason: any) => {
-        console.log(reason);
+        this.spinnerLoader= false;
       },
     });
   }
@@ -454,8 +461,12 @@ getOfferdetails(Value: any) {
         }
       },
       error: (reason: any) => {
-        this.conformationPopup.openErrorModal('File upload Failed')
+        this.spinnerLoader= false;
+        this.conformationPopup.openErrorModal('File upload Failed');
       },
+      complete: ()=>{
+        this.spinnerLoader= false;
+      }
     });
   }
 

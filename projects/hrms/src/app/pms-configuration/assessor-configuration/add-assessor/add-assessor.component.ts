@@ -45,14 +45,17 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
     this.getReviewCycledata();
     this.getAllasessors();
     this.getAllActiveEmpList();
-    const currentdate = moment();
-    this.currentDate = this.formatDate(currentdate);
+    const today = new Date();
+  this.currentDate = this.formatDate(today);
   }
 
-  formatDate(date: any) {
-    return date?.split('T')[0];
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
   }
-
+  
   getAllasessors() {
     this.subscription = this.http.getData('entityAttributeValues?entity=PMS&attribute=assessorconfig').subscribe({
       next: (data: any) => {

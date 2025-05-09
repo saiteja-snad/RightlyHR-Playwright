@@ -146,6 +146,7 @@ export class WfhComponent {
           this.approveForm.reset();
           this.selectedLeaveData = {} as AttendanceRequest;
           this.http.triggerActionSignal();
+          this.getAllPendingApprovals();
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -171,10 +172,11 @@ export class WfhComponent {
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request Rejcted Successfully');
+          this.sharedModalService.openSuccessModal('Request Rejected Successfully');
           this.rejectForm.reset();
           this.selectedLeaveData = {} as AttendanceRequest;
           this.http.triggerActionSignal();
+          this.getAllPendingApprovals();
         },
         error: (reason: any) => {
           this.spinnerLoader = false;
@@ -200,6 +202,7 @@ export class WfhComponent {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
         this.http.triggerActionSignal();
+        this.getAllPendingApprovals();
       },
       error: (reason: any) => {
         this.modalService.dismissAll();

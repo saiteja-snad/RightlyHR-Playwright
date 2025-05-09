@@ -11,6 +11,7 @@ import { IStatus } from '../../../Interfaces/personal-modal';
 import { IJobdetails } from '../../../admin/active-employees/active-model';
 import { Select } from 'primeng/select';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import moment from 'moment';
 
 @Component({
   selector: 'app-employe-off-boarding',
@@ -32,6 +33,7 @@ export class EmployeOffBoardingComponent {
   currentDate = new Date().toISOString().slice(0, 10);
   Statusdetails = [] as IStatus[]
   joiningDate: any;
+  dateOfJoining :any
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private router: Router) { }
 
@@ -47,7 +49,10 @@ export class EmployeOffBoardingComponent {
     this.getEmployeeId()
     
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-  
+    this.dateOfJoining = moment(this.empinfo.dateOfJoining).format('YYYY-MM-DD')
+    console.log(this.dateOfJoining);
+    
+
 
 
     if (this.empinfo?.lastworkingday) {
@@ -87,8 +92,15 @@ export class EmployeOffBoardingComponent {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
+  openModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+  cleardata() {
+    this.offBoardingForm.reset();
+    this.modalService.dismissAll();
+    this.router.navigate(['/personalinfo/job/employmentType']);
 
-
+  }
   getStatus() {
     this.subscription = this.http.getData(`Status`).subscribe({
       next: (data: any) => {
@@ -146,7 +158,7 @@ export class EmployeOffBoardingComponent {
       this.subscription = this.http.postdata(`Employeedata/UPDATER`, this.empinfo).subscribe({
         next: (res: any) => {
           console.log(res);
-          this.successstatus = `${res.firstName ?? ''} ${res.middleName ?? ''} ${res.lastName ?? ''}`.trim() + ' Inactived successfully';
+          this.successstatus = 'Employee Inactived successfully';
           this.conformationPopup.openSuccessModal(this.successstatus)
           this.router.navigate(['/admin/inactive-employees']);
           this.InactiveEmail(this.empinfo.employeeId);

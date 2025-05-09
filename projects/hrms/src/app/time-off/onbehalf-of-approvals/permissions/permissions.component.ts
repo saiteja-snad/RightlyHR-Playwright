@@ -169,6 +169,7 @@ export class PermissionsComponent {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
         this.http.triggerActionSignal();
+        this.getAllPendingApprovals();
       },
       error: (reason: any) => {
         this.modalService.dismissAll();
@@ -194,11 +195,12 @@ export class PermissionsComponent {
         next: (response: any) => {
           this.modalService.dismissAll();
           this.sharedModalService.openSuccessModal(
-            'Request Rejcted Successfully'
+            'Request Rejected Successfully'
           );
           this.rejectForm.reset();
           this.selectedLeaveData = {} as PermissionRequestResponse;
           this.http.triggerActionSignal();
+          this.getAllPendingApprovals();
         },
         error: (reason: any) => {
           this.spinnerLoader = false;

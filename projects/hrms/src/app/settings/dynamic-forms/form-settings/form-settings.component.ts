@@ -67,7 +67,7 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
           null,
           [Validators.required, Validators.min(1), Validators.max(10)],
         ],
-        finalRating: ['', Validators.required],
+        // finalRating: ['', Validators.required],
         ratingType: [
           '',
           [
@@ -449,7 +449,7 @@ export class FormSettingsComponent implements OnInit, OnDestroy {
       this.updateFormRating.patchValue({
         minimumRatingScale: formToEdit.minimumRatingScale,
         maximumRatingScale: formToEdit.maximumRatingScale,
-        finalRating: formToEdit.finalRating,
+        // finalRating: formToEdit.finalRating,
         ratingType: formToEdit.ratingType,
       });
       // Clear the existing scales array

@@ -213,7 +213,7 @@ export class TraineeOfferLetterComponent {
 
   onDateOfJoiningChange() {
     this.traineeEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value;
-    this.calculateEndDate(this.traineeEmpData.internshipperiod);
+    this.calculateEndDate(this.employeeForm.get('internshipperiod')?.value);
   }
 
   calculateEndDate(value: any) {
@@ -473,7 +473,8 @@ export class TraineeOfferLetterComponent {
       note: this.traineeEmpData?.note,
       authorityid: data?.authorityid,
       phoneNumber: data?.phoneNumber,
-      reportingmanagerId: data?.reportsTo
+      reportingmanagerId: data?.reportsTo,
+      internshipperiod:data?.internshipperiod
     })
     this.traineeEmpData.note = this.employeeForm.get('note')?.value;
   }

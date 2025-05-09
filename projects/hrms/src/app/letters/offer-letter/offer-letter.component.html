@@ -21,7 +21,7 @@
             <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-                filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="onClickValidation($event)"
+                filterBy="fullName" placeholder="Please select employee" (onChange)="onClickValidation($event)"
                 formControlName="fusionEmpId" class="custom-select w-100" resetFilterOnHide="true">
               </p-select>
             </div>
@@ -251,7 +251,7 @@
             <label class="form-label custom-label mb-2">Work Location<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="LocationDropDownData" optionValue="id" optionLabel="jobLocationName" [filter]="true"
-                filterBy="name" [showClear]="true" placeholder="Please select work location" formControlName="locationId"
+                filterBy="name" [showClear]="true" placeholder="Work location" formControlName="locationId"
                 class="custom-select w-100" resetFilterOnHide="true"></p-select>
             </div>
             <div *ngIf="employeeForm.get('locationId')?.invalid && employeeForm.get('locationId')?.touched">
@@ -263,7 +263,7 @@
             <label class="form-label custom-label mb-2">Sub Location<span class="error-msg">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName" [filter]="true"
-                filterBy="name" [showClear]="true" placeholder="Please select sub location" resetFilterOnHide="true"
+                filterBy="name" [showClear]="true" placeholder="Sub location" resetFilterOnHide="true"
                 formControlName="JobSubLocationName" class="custom-select w-100"></p-select>
             </div>
             <div *ngIf="employeeForm.get('JobSubLocationName')?.invalid && employeeForm.get('JobSubLocationName')?.touched">
@@ -343,7 +343,7 @@
                 optionLabel="fullName" placeholder="Please select signature authority" formControlName="authorityid"
                 class="form-select custom-select" resetFilterOnHide="true" [filter]="true" filterBy="fullName"></p-select>
               <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
-                <div class="error-msg">Signature Authority is required</div>
+                <div class="error-msg">Signature authority name is required</div>
               </div>
             </div>
           </div>
@@ -612,7 +612,7 @@
                     <div class="hard-copy-letter"></div>
                   </ng-template>
                   <p class="letter-header text-center mb-4">ANNEXURE - 1</p>
-                  <p class="letter-sub-header">Documents / Infermation required to be submitted on the day of joining:</p>
+                  <p class="letter-sub-header">Documents / Information required to be submitted on the day of joining:</p>
                   <p class="mb-3">On the day joining, you are requested to bring to the following original
                     documents and certificates (For verification purpose), along with 1 copy of each</p>
                   <div class="mb-1">
@@ -869,7 +869,7 @@
                   </div>
                   <!-- table end -->
                   <p class="letter-sub-header mb-1 mt-2">Note: {{prospectiveEmpData.note}}</p>
-                  <p class="letter-sub-header mb-2 mt-2">The Company presently has a Perfomance Award Program.Performance
+                  <p class="letter-sub-header mb-2 mt-2">The Company presently has a Perfomance Award Program. Performance
                     Award Program will be made available to you upon joining RightlyHR. Please note: RightlyHR reserves the
                     right in its sole discretion to amend, change, suspend, or terminate the Performance Award Program at
                     any time.

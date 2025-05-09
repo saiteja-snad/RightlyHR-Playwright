@@ -30,7 +30,7 @@
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
                         <td class="text-center">
-                            <div class="dropdown">
+                            <div class="dropdown"  *ngIf="!identityDetails.referenceId">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
@@ -89,15 +89,13 @@
                             Identity Type is required
                         </div>
                     </div>
-
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
                         <input type="text" formControlName="identityNumber" [maxlength]="IdentityMaxNumber"
                             [minlength]="IdentityMinNumber" class="form-control custom-input"
                             id="exampleFormControlInput1" placeholder="Please enter Identity Number">
-                        <div class="error-msg" *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched 
-                        || identityForm.get('identityNumber')?.dirty)">
+                        <div class="error-msg" *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched   || identityForm.get('identityNumber')?.dirty)">
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['required']">
                                 Identity Number is required
                             </div>

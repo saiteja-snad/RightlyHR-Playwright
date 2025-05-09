@@ -240,13 +240,9 @@
         <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
       </div>
   
-      <div class="d-flex justify-content-center gap-3 mt-4">
-        <button type="reset" class="custom-btn btn-secondary">
-          No
-        </button>
-        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
-          Yes
-        </button>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary">No</button>
+        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
       </div>
     </div>
   </ng-template>

@@ -31,6 +31,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   empdata = {} as Ipersonal;
   substatus: any;
   status: any;
+  loading=false
   recallbuttonConditions = false;
   recallandearlyrelievingbuttonConditions = false;
   isLastWorkingDatePassed = false;
@@ -55,7 +56,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     this.formInitialization();
     // Simulate fetching separation details
     this.fetchSeparationDetails();
-    this.getonboardPeriodData();
+    this.getonboardPeriodData() ;
     this.getNodueClearance();
   }
 
@@ -135,30 +136,10 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
 
   //function to get the nodue list
-  nodueclearancedetails = [] as any;
-  getNodueClearance() {
-    let employeeId = parseInt(this.empinfo.employeeId)
-    this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.nodueclearancedetails = data;
-      }
-    })
-  }
+ 
 
   //funtion to check the valudation
-  isLastWorkingDate(lastWorkingDate: string): boolean {
-    if (lastWorkingDate) {
-      const endDate = moment(lastWorkingDate);
-      const buttonEnabledDate = moment(lastWorkingDate).subtract(this.nodueDuration, 'days');
-      const currentDate = moment();
-      // Check if current date is between buttonEnabledDate and endDate
-      const isWithinWindow = currentDate.isBetween(buttonEnabledDate, endDate, undefined, '[]');
-      // Check if current date is after endDate
-      const isPastLastWorkingDate = currentDate.isAfter(endDate);
-      return isWithinWindow || isPastLastWorkingDate;
-    }
-    return false;
-  }
+
   
   //function to get employee by id
   getEmployeeId() {
@@ -166,11 +147,51 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empdata = data as Ipersonal;
+        console.log(this.empdata);
+        // this.isLastWorkingDate(this.empdata.lastworkingday);
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal('Insertion of data faild');
       },
     });
+  }
+  nodueclearancedetails = [] as any;
+  getNodueClearance() {
+    let employeeId = parseInt(this.empinfo.employeeId)
+    this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
+      next: (data: any) => {
+        console.log(data);
+        
+        this.nodueclearancedetails = data;
+      }
+    })
+  }
+  shouldShowButton(date:string): boolean {
+    let lastworkingdate=date;
+    const shouldShow = (this.isLastWorkingDate(lastworkingdate)) ;
+    return shouldShow;
+  }
+
+  isLastWorkingDate(lastWorkingDate: string): boolean {
+    if (lastWorkingDate) {
+      const endDate = new Date(lastWorkingDate);
+      const buttonEnabledDate = new Date(endDate);
+      buttonEnabledDate.setDate(endDate.getDate() - parseInt(this.nodueDuration));
+      const currentDate = new Date();
+      console.log(this.nodueDuration);
+  
+      // Check if the current date is between buttonEnabledDate and endDate
+      const isComplete = currentDate >= buttonEnabledDate && currentDate <= endDate;
+      console.log(isComplete)
+      // Check if the current date is past the last working date
+      const isPastLastWorkingDate = currentDate > endDate;
+      console.log(isPastLastWorkingDate);
+      
+      // Return true if either condition is met
+      return isComplete || isPastLastWorkingDate;
+      
+    }
+    return false;
   }
 
   //function to get the separation details of the employee
@@ -256,13 +277,13 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to select data of perticular record to  recall the request
   recallRequest(data: any, content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop : 'static' });
     this.selectRecallrequest = JSON.parse(JSON.stringify(data));
   }
 
   //function to select the data of early relieving request
   earlyReleivingdata(data: any, content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop : 'static' });
     this.postEarlyRelievingRequest = data;
     console.log(this.postEarlyRelievingRequest.appliedDate);
   }
@@ -280,6 +301,8 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
   popupclose(){
     this.profileForm.reset();
+    this.recallreason.reset();
+    this.earlyReleivingform.reset();
     this.modalService.dismissAll();
     
   }

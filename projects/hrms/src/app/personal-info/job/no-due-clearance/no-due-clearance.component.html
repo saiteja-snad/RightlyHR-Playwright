@@ -13,60 +13,65 @@
   </div>
   <!--Input search-->
   <div class="custom-table-content">
-    <table class="w-100">
-      <thead>
-        <tr>
-          <th>{{'DEPARTMENT'|translate}}</th>
-          <th>{{'APPROVAL DATE'|translate}}</th>
-          <th>{{'APPROVER NAME'|translate}}</th>
-          <th>{{'APPROVAL STATUS'|translate}}</th>
-          <th>{{'SUB STATUS'|translate}}</th>
-          <th>{{'LAST WORKING DAY'|translate}}</th>
-          <th ></th>
-        </tr>
-      </thead>
-      <tbody>
-        @if(((nodue_Clearance_Details | async) ?? []).length > 0) {
-        @for (item of (nodue_Clearance_Details|async); track item.id) {
-        <tr>
-          <td>{{ item.departmentName?item.departmentName:'NA' }}
-          </td>
-          <td>
-              {{ item.requestedDate?(item.requestedDate | dateformat):'NA' }}
-          </td>
-          <td>{{item.processedByName?item.processedByName:'NA'}}</td>
-          <td>{{item.status?item.status:'NA'}}</td>
-          <td>{{item.subStatus?item.subStatus:'NA'}}</td>
-          <td>
-            {{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}
-          </td>
-          <td>
-            <div class="dropdown">
-              @if(item.status === 'Rejected' && item.subStatus !== 'ReRequested'){
-              <span type="button" data-bs-toggle="dropdown">
-                <i class="bi bi-three-dots-vertical"></i>
-              </span>
-              }
-  
-              <ul class="dropdown-menu custom-dropdown-menu">
-                <li >
-                  <a class="dropdown-item" (click)="rerequestFornoDue(item)">
-                    <i class="bi bi-repeat me-2 fs-5"></i>Re-request for no due
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </td>
-          <!-- </ng-container> -->
-        </tr>}}
-        @else{
-        <tr>
-          <td>
-            <app-no-data-found />
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
+    @if(!loading){
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>{{'Department'|translate}}</th>
+            <th>{{'Approval Date'|translate}}</th>
+            <th>{{'Approver Name'|translate}}</th>
+            <th>{{'Approval Status'|translate}}</th>
+            <th>{{'Sub Status'|translate}}</th>
+            <th>{{'Last Working Day'|translate}}</th>
+            <th ></th>
+          </tr>
+        </thead>
+        <tbody>
+          @if(((nodue_Clearance_Details | async) ?? []).length > 0) {
+          @for (item of (nodue_Clearance_Details|async); track item.id) {
+          <tr>
+            <td>{{ item.departmentName?item.departmentName:'NA' }}
+            </td>
+            <td>
+                {{ item.requestedDate?(item.requestedDate | dateformat):'NA' }}
+            </td>
+            <td>{{item.processedByName?item.processedByName:'NA'}}</td>
+            <td>{{item.status?item.status:'NA'}}</td>
+            <td>{{item.subStatus?item.subStatus:'NA'}}</td>
+            <td>
+              {{ item.lastWorkingDate ? (item.lastWorkingDate | dateformat) : 'NA' }}
+            </td>
+            <td>
+              <div class="dropdown">
+                @if(item.status === 'Rejected' && item.subStatus !== 'ReRequested'){
+                <span type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </span>
+                }
+    
+                <ul class="dropdown-menu custom-dropdown-menu">
+                  <li >
+                    <a class="dropdown-item" (click)="rerequestFornoDue(item)">
+                      <i class="bi bi-repeat me-2 fs-5"></i>Re-request for no due
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </td>
+            <!-- </ng-container> -->
+          </tr>}}
+          @else{
+          <tr>
+            <td>
+              <app-no-data-found />
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    }
+    @else {
+      <app-data-loader-content />
+    }
   </div>
 

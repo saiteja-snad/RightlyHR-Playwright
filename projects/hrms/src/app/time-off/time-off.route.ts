@@ -74,6 +74,8 @@ import { RemoteRejectedComponent } from './remote-login/remote-rejected/remote-r
 import { GlobalPermissionsComponent } from './global-permissions/global-permissions.component';
 import { TeamLeaveBalanceComponent } from './leaves/team-leave-balance/team-leave-balance.component';
 import { TeamLeaveSummaryComponent } from './leaves/team-leave-summary/team-leave-summary.component';
+import { CancelledComponent } from './leaves/cancelled/cancelled.component';
+import { OrgLeaveBalanceComponent } from './leaves/org-leave-balance/org-leave-balance.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
@@ -83,8 +85,10 @@ export default [
       { path: 'approved', component: LeavesApprovalComponent },
       { path: 'processed', component: LeavesProcessedComponent },
       { path: 'rejected', component: LeavesRejectedComponent },
+      { path: 'cancelled', component: CancelledComponent },
       { path: 'team-leave-balance', component: TeamLeaveBalanceComponent },
       { path: 'team-leave-summary', component: TeamLeaveSummaryComponent },
+      { path: 'org-leave-balance', component: OrgLeaveBalanceComponent },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },

@@ -8,14 +8,14 @@
 }
 
 .image-content {
-    width: 4.5rem !important;
-    height: 4.5rem !important;
+    width: 3.5rem !important;
+    height: 3.5rem !important;
     border-radius: 50%;
-    border: 5px solid #2e427d;
-    margin-bottom: 0.25rem !important;
+    border: 3px solid #2e427d;
+    margin-bottom: 0.5rem;
 }
 
-.custom-organition-data{
+.custom-organition-data {
     background-color: transparent !important;
     color: #003366;
     border: none !important;
@@ -24,6 +24,9 @@
     font-weight: 700;
 }
 
+.p-organizationchart-node {
+    padding: 1rem;
+}
 
 .p-organizationchart .p-organizationchart-line-down {
     border: 1px solid #c3bebe !important;
@@ -41,15 +44,23 @@
 }
 
 .p-organizationchart .p-organizationchart-node-content {
-    color: black !important;
+    color: #000 !important;
 }
 
 .jobrole {
-    color: rgb(102, 97, 97);
+    font-size: var(--fontsize12) !important;
+    color: #6c757d;
 }
 
 .name {
-    color: black;
+    font-size: var(--fontsize14) !important;
+    color: #305889;
+}
+
+.btn-primary {
+    font-size: 14px;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.5rem;
 }
 
 .department {

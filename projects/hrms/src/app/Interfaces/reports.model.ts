@@ -63,7 +63,7 @@ export interface IYearlyReportRequest {
   LeaveName?: string;
   Location?: string;
   Shift?: string;
-  Year?: number;
+  EntitlementYear?: number;
   TeamManagerSnadId?: string;
 }
 

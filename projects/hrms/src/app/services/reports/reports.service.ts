@@ -224,7 +224,7 @@ export class ReportsService {
     
     if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
     if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
-    if (request.Year) params = params.set('Year', request.Year);
+    if (request.EntitlementYear) params = params.set('EntitlementYear', request.EntitlementYear);
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
   
     return this.http.get('Reports/YearSummaryReports', { params });

@@ -12,11 +12,12 @@ import { CommonModule } from '@angular/common';
 import { HttpService } from '../../services/http.service';
 import { FileSizePipe } from "../../Pipes/file-size.pipe";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 
 @Component({
   selector: 'app-documents',
-  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent],
+  imports: [LastValuePipe, DateformatPipe, ReactiveFormsModule, FormsModule, TranslateModule, CommonModule, FileSizePipe, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.scss'
 })
@@ -30,6 +31,7 @@ export class DocumentsComponent {
   selectedFolder = [] as IFolders[];
   mainDir = {} as ICreateSubDir;
   Files = [] as IFolders[];
+  loading=false
   empdata: any;
   searchfolder!: string;
   uploadfrom!: FormGroup;
@@ -116,15 +118,17 @@ export class DocumentsComponent {
   }
 
   getAllFiles() {
+    this.loading=true
     if (!this.selectedFile?.isEmpDir) {
       this.subscription = this.http
         .getDataWithQuery('FileSystem/Files',  `${this.selectedFile?.name}/${this.empdata.employeeId}`)
         .subscribe({
           next: (data: any) => {
-            console.log(data);
+            this.loading=false
             this.Files = data as IFolders[];
           },
           error: (err: any) => {
+            this.loading=false
             this.Files = [];
           },
         });

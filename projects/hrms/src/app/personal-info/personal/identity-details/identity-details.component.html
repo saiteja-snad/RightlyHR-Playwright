@@ -30,7 +30,7 @@
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
                         <td class="text-center">
-                            <div class="dropdown">
+                            <div class="dropdown"  *ngIf="!identityDetails.referenceId">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>

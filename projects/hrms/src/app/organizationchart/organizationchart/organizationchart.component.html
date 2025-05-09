@@ -20,7 +20,7 @@
       <label for="education" class="form-label custom-label mb-2">Select Employee<span
           class="text-danger"></span></label>
       <div class="custom-p-select-content">
-        <p-select [options]="mangeractiveEmplist" [filter]="true" filterBy="label" optionLabel="fullName"
+        <p-select [options]="mangeractiveEmplist" [filter]="true" filterBy="fullName"  resetFilterOnHide="true" optionLabel="fullName"
           optionValue="employeeid" [(ngModel)]="selectedEmployeeId" placeholder="Please select employee"
           (onChange)="getOrghierarchy($event.value)" class="form-select custom-select"></p-select>
       </div>

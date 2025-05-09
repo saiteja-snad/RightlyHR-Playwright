@@ -81,7 +81,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   countryvalues = {} as any;
   loadingCode = true;
   selectedCountryCode: any;
-  countryCode = 'Country Code'
+  countryCode = 'Country code'
   selectedCountryConfig = {
     hideCode: true,
     hideName: true
@@ -737,8 +737,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   onVariablePayChange(isVariablePay: any) {
     this.prospectiveEmpData.isVariablePay = isVariablePay.value;
     if (isVariablePay.value === false) {
-      this.prospectiveEmpData.variablePayAmount = '0';
-      this.employeeForm.get('variablePayAmount')?.setValue(0);
+      this.prospectiveEmpData.variablePayAmount = '';
+      // this.employeeForm.get('variablePayAmount')?.setValue(0);
       this.employeeForm.get('variablePayAmount')?.disable();
     }
     else if (isVariablePay.value === true) {

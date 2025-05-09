@@ -5,56 +5,61 @@
   </div>
 
   <div class="custom-table-content">
-    <table class="w-100">
-      <thead>
-        <tr>
-         
-          <th>Visa Type</th>
-          <th>Issued Date</th>
-          <th>Expiry Date</th>
-          <th>Issued Country</th>
-          <th>Status</th>
-          <th class="text-center">Action(S)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="visaData.length > 0; else noDataTemplate">
-          <tr *ngFor="let visa of visaData; let i = index">
-          
-            <td>{{ visa.visatype }}</td>
-            <td>{{ visa.issueddate   | dateformat}}</td>
-            <td>{{ visa.expirydate  | dateformat  }}</td>
-            <td>{{ visa.issuedcountry }}</td>
-            <td>{{ visa.status }}</td>
-            <td class="text-center">
-              <div class="dropdown">
-                <span type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </span>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li (click)="openModalupdate(updatevisamodal, visa)">
-                    <a class="dropdown-item">
-                      <i class="bi bi-pencil me-2"></i>Update
-                    </a>
-                  </li>
-                  <li (click)="opendeletModal(deleteconformation,visa)">
-                    <a class="dropdown-item">
-                      <i class="bi bi-trash3 me-2"></i>Delete
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </ng-container>
-    
-        <ng-template #noDataTemplate>
+    @if(!loading){
+      <table class="w-100">
+        <thead>
           <tr>
-            <td colspan="6"><app-no-data-found></app-no-data-found></td>
+          
+            <th>Visa Type</th>
+            <th>Issued Date</th>
+            <th>Expiry Date</th>
+            <th>Issued Country</th>
+            <th>Status</th>
+            <th class="text-center">Action(S)</th>
           </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="visaData.length > 0; else noDataTemplate">
+            <tr *ngFor="let visa of visaData; let i = index">
+            
+              <td>{{ visa.visatype }}</td>
+              <td>{{ visa.issueddate   | dateformat}}</td>
+              <td>{{ visa.expirydate  | dateformat  }}</td>
+              <td>{{ visa.issuedcountry }}</td>
+              <td>{{ visa.status }}</td>
+              <td class="text-center">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openModalupdate(updatevisamodal, visa)">
+                      <a class="dropdown-item">
+                        <i class="bi bi-pencil me-2"></i>Update
+                      </a>
+                    </li>
+                    <li (click)="opendeletModal(deleteconformation,visa)">
+                      <a class="dropdown-item">
+                        <i class="bi bi-trash3 me-2"></i>Delete
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+      
+          <ng-template #noDataTemplate>
+            <tr>
+              <td colspan="6"><app-no-data-found></app-no-data-found></td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </table>
+    }
+   @else {
+    <app-data-loader-content/>
+   }
     
   </div>
 </div>

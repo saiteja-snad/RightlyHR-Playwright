@@ -11,11 +11,12 @@ import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 
 @Component({
   selector: 'app-all-desk-list',
-  imports: [CommonModule, TabsModule, RouterModule,FormsModule,PaginatorModule, DropdownModule, NoDataFoundComponent, FormsModule, ReactiveFormsModule, Select],
+  imports: [CommonModule, TabsModule, RouterModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, FormsModule, ReactiveFormsModule, Select, DataLoaderContentComponent],
   templateUrl: './all-desk-list.component.html',
   styleUrl: './all-desk-list.component.scss'
 })

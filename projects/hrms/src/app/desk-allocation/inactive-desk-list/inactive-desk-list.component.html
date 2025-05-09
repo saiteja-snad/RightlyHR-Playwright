@@ -6,20 +6,12 @@
       <input type="search" class="form-control custom-input custom-search-input" placeholder="search Here"
         aria-label="Username" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
     </div>
-    <ng-container *ngIf="loading; else maincontent">
-      <ng-template #loadingSpinner>
-        <div class="loader-placeholder-content text-center">
-          <div>
-            <img src="images\loader.gif" alt="Sand clock" class="sand-loder">
-          </div>
-        </div>
-      </ng-template>
-      <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
+
   
-    <ng-template #maincontent>
   
       <div class="custom-table-content">
+          @if(!loading){
+            
         <table class="w-100">
           <thead>
             <tr>
@@ -77,6 +69,10 @@
             </ng-template>
           </tbody>
         </table>
+          }  
+          @else {
+            <app-data-loader-content/>
+          }
       </div>
       <div class="pagination-content pt-2 w-100" *ngIf="totalRecords > 0">
         <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
@@ -97,7 +93,7 @@
                 (onPageChange)="onPageChange($event)"></p-paginator>
         </div>
     </div>
-    </ng-template>
+  
   </div>
   
  

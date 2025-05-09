@@ -11,10 +11,11 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-previous-experince',
-  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, NoDataFoundComponent, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, Select, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './previous-experince.component.html',
   styleUrl: './previous-experince.component.scss'
 })
@@ -30,7 +31,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   isCurrentdateDisable = false;
   isDisabletoDate = false;
   disableFromandtovalidationbutton = false;
-
+  loading=false
   spinnerLoader = false;
   empinfo: any
   previousexperincedocument: any
@@ -290,12 +291,12 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
   //function to get all experiences 
   getexperiencedetailsbyemployeid() {
+    this.loading=true
     let EmployeeId = parseInt(this.empinfo.employeeId)
     console.log(EmployeeId);
     this.subscription = this.http.getData(`ExperienceDetail/${EmployeeId}`).subscribe({
       next: (data: any) => {
-        console.log(data);
-
+        this.loading=false
         this.getempexpdata.next(data);
       }
     })

@@ -11,10 +11,11 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-rejected-expenses',
-  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule],
+  imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './rejected-expenses.component.html',
   styleUrl: './rejected-expenses.component.scss'
 })
@@ -27,6 +28,7 @@ export class RejectedExpensesComponent {
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
+  loading=false
   constructor(
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
 
@@ -51,12 +53,13 @@ export class RejectedExpensesComponent {
 
 
   getexpensesheaderbyemployeeid(): void {
+    this.loading=true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
       .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Rejected&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
           this.expenesEmplyeedata.next(data)
-
+          this.loading=false
         }, error(err) {
           console.log("expensesheadererror", err)
         },

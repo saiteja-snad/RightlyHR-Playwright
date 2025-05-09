@@ -11,10 +11,11 @@ import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-available-assets-list',
-  imports: [CommonModule,ReactiveFormsModule,FormsModule, PaginatorModule, DropdownModule,Select,NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule, Select, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './available-assets-list.component.html',
   styleUrl: './available-assets-list.component.scss',
   providers: [DatePipe]

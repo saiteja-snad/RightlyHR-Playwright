@@ -11,10 +11,11 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-pending-expenses',
-  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent],
+  imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './pending-expenses.component.html',
   styleUrl: './pending-expenses.component.scss'
 })
@@ -30,7 +31,7 @@ export class PendingExpensesComponent {
   commentsrecivced = [] as any
   searchTerm:any=''
   approverComments = [] as any[];
-  
+  loading=false
   @ViewChild('commentspopup') modalContent: any;
   constructor( 
     private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
@@ -52,10 +53,12 @@ export class PendingExpensesComponent {
   }
 
   getexpensesheaderbyemployeeid(): void {
+    this.loading=true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
       .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Waiting for Approval&searchQuery=${cleanSearchQuery}`, ).subscribe({
         next: (data: any) => {
+          this.loading=false
           this.expenesEmplyeedata.next(data) 
 
         }, error(err) {

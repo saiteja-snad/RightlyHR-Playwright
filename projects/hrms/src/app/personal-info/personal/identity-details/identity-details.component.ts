@@ -10,10 +10,11 @@ import { Iidentity, Iidentitydrop } from '../../../Interfaces/personal-modal';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-identity-details',
-  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, DropdownModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './identity-details.component.html',
   styleUrls: ['./identity-details.component.scss']
 })
@@ -32,6 +33,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   IdentityMinNumber = 12;
   employedata = {} as any;
   spinnerLoader=false
+  loading=false
   selectedIdentityTypetoUpdate: any;
   constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
@@ -105,6 +107,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   }
   // Fetch identity details by employee ID
   getIdentityByEmpid(): void {
+    this.loading=true
     const EmpId = parseInt(this.empinfo.employeeId);
     if (!EmpId) {
       console.error('Invalid Employee ID');
@@ -114,9 +117,10 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`IdentityTable/${EmpId}`).subscribe({
       next: (data: any) => {
         this.getIdentitydetails.next(data);
-
+        this.loading=false
       },
       error: (err: any) => {
+        this.loading=false
         console.error('Error fetching identity details:', err);
       },
     });

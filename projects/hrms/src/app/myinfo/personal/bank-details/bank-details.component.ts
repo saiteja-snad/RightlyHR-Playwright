@@ -11,10 +11,12 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { ThLargeIcon } from 'primeng/icons';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-bank-details',
-  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent,TranslateModule],
+  imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })
@@ -29,6 +31,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   proofValid: boolean = true;
   bankdocument: any
   spinnerLoader=false;
+  loading=false
   displayblankdocument:any
   constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService,public rbac: RbacService) { }
   ngOnInit(): void {
@@ -106,28 +109,17 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   }
   //Bank Details
   getbankempid() {
+    this.loading=true
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`BankDetail/${EmpId}`).subscribe({
       next: (data: any) => {
+        this.loading=false
         this.bankDetails.next(data);
       },
     });
   }
 
-  // onBankProofSelected(event: any): void {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const fileSizeInMB = file.size / (1024 * 1024);
-  //     const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
-  //     const fileExtension = file.name.split('.').pop()?.toLowerCase();
 
-  //     if (fileSizeInMB > 25 || !allowedExtensions.includes(fileExtension || '')) {
-  //       console.error('Invalid file. Only PDF and image files under 25MB are allowed.');
-  //       // this.proofValid = false;
-  //       // this.bankDetailsForm.get('attachment')?.setErrors({ invalidFile: true });
-  //     } 
-  //   }
-  // }
 
   onBankProofSelected(event: any): void {
     this.displayblankdocument=null

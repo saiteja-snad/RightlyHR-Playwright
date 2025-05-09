@@ -10,72 +10,77 @@
   </div>
 
   <div class="custom-table-content">
-    <table class="w-100">
-      <thead>
-        <tr>
-          <th>Education</th>
-          <th>University</th>
-          <th>Specialization</th>
-          <th>GPA</th>
-          <th>From Date</th>
-          <th>To Date</th>
-          <th>Document</th>
-          @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
-          'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
-          employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-          <th class="text-center">Action(s)</th>
-          }
-        </tr>
-      </thead>
-      <tbody>
-        <ng-container *ngIf="((educationData | async) ?? []).length > 0; else noDataTemplate">
-          <tr *ngFor="let edacationDetails of educationData | async">
-            <td>{{ edacationDetails.degree }}</td>
-            <td>{{edacationDetails.university}}</td>
-            <td>{{edacationDetails.specialization}}</td>
-            <td>{{edacationDetails.gpa}}</td>
-            <td>{{edacationDetails.degreeStartDate | dateformat}}</td>
-            <td>{{edacationDetails.degreeEndDate | dateformat}}</td>
-            <td>
-              <span *ngIf="edacationDetails.attachment;else noData" class="dowload-text cursor"
-                (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
-                <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
-            </td>
+    @if (!loading) {
+      <table class="w-100">
+        <thead>
+          <tr>
+            <th>Education</th>
+            <th>University</th>
+            <th>Specialization</th>
+            <th>GPA</th>
+            <th>From Date</th>
+            <th>To Date</th>
+            <th>Document</th>
             @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
             'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
             employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-            <td class="text-center">
-              <div class="dropdown">
-                <span type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </span>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                  <li (click)="openModalupdate(updateEducationmodal, edacationDetails)">
-                    <a class="dropdown-item">
-                      <i class="bi bi-pencil me-2"></i>Update
-                    </a>
-                  </li>
-                  <li (click)="opendeletModal(deleteconformation,edacationDetails)">
-                    <a class="dropdown-item">
-                      <i class="bi bi-trash3 me-2"></i>Delete
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </td>
+            <th class="text-center">Action(s)</th>
             }
           </tr>
-        </ng-container>
-        <!-- No Data Found Template -->
-        <ng-template #noDataTemplate>
-          <tr>
-            <td>
-              <app-no-data-found />
-            </td>
-          </tr>
-        </ng-template>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <ng-container *ngIf="((educationData | async) ?? []).length > 0; else noDataTemplate">
+            <tr *ngFor="let edacationDetails of educationData | async">
+              <td>{{ edacationDetails.degree }}</td>
+              <td>{{edacationDetails.university}}</td>
+              <td>{{edacationDetails.specialization}}</td>
+              <td>{{edacationDetails.gpa}}</td>
+              <td>{{edacationDetails.degreeStartDate | dateformat}}</td>
+              <td>{{edacationDetails.degreeEndDate | dateformat}}</td>
+              <td>
+                <span *ngIf="edacationDetails.attachment;else noData" class="dowload-text cursor"
+                  (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
+                  <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
+              </td>
+              @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
+              'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
+              employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
+              <td class="text-center">
+                <div class="dropdown">
+                  <span type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </span>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <li (click)="openModalupdate(updateEducationmodal, edacationDetails)">
+                      <a class="dropdown-item">
+                        <i class="bi bi-pencil me-2"></i>Update
+                      </a>
+                    </li>
+                    <li (click)="opendeletModal(deleteconformation,edacationDetails)">
+                      <a class="dropdown-item">
+                        <i class="bi bi-trash3 me-2"></i>Delete
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </td>
+              }
+            </tr>
+          </ng-container>
+          <!-- No Data Found Template -->
+          <ng-template #noDataTemplate>
+            <tr>
+              <td>
+                <app-no-data-found />
+              </td>
+            </tr>
+          </ng-template>
+        </tbody>
+      </table>
+    }
+    @else {
+      <app-data-loader-content/>
+    }
   </div>
 </div>
 

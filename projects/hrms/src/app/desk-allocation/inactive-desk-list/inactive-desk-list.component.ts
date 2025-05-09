@@ -9,10 +9,11 @@ import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-inactive-desk-list',
-  imports: [CommonModule, FormsModule, NoDataFoundComponent, PaginatorModule, DropdownModule],
+  imports: [CommonModule, FormsModule, NoDataFoundComponent, PaginatorModule, DropdownModule, DataLoaderContentComponent],
   templateUrl: './inactive-desk-list.component.html',
   styleUrl: './inactive-desk-list.component.scss'
 })
@@ -29,6 +30,7 @@ export class InactiveDeskListComponent {
   first:any = 1;
   rows:any = 10;
   totalRecords = 100;
+
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },

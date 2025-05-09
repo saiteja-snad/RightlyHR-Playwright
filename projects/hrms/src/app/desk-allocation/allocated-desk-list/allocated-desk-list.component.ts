@@ -8,10 +8,11 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-allocated-desk-list',
-  imports: [CommonModule, Select, ReactiveFormsModule, FormsModule, NoDataFoundComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './allocated-desk-list.component.html',
   styleUrl: './allocated-desk-list.component.scss'
 })

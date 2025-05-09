@@ -172,7 +172,7 @@
                 @if(early){
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{"Early Relieving Date" | translate}}<span
-                            class="error-msg">*</span></label>
+                            class="text-danger">*</span></label>
                     <input type="date" class="form-control custom-input" id="Earlyreleiving" name="Earlyreleiving"
                         [min]="getBlockedPastDate(selectedSpRequestData.spRequestAppliedDate)" #Earlyreleiving="ngModel"
                         autocomplete="off" (keypress)="letters($event)"
@@ -184,7 +184,7 @@
                 @if(early){
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{"Comments" | translate}}<span
-                            class="error-msg">*</span></label>
+                            class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                         #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3"
@@ -207,7 +207,7 @@
                 <div class="mb-3">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{"Extend Date"
                         |translate}}
-                        <span class="error-msg">*</span>
+                        <span class="text-danger">*</span>
                     </label>
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
                         id="extenddate" name="extenddate" #extenddate="ngModel"
@@ -224,7 +224,7 @@
                 @if(extend){
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">{{"Feedback for Extend" | translate}}<span
-                            class="error-msg">*</span></label>
+                            class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
@@ -247,7 +247,7 @@
                 @if(regular){
                 <div class="mb-3">
                     <label for="Effective Date" class="form-label custom-label mb-2">{{"Last Working Date" |
-                        translate}}<span class="error-msg">*</span></label>
+                        translate}}<span class="text-danger">*</span></label>
                     <div class="form-control custom-input">{{ selectedSpRequestData?.spRequestLastWorkingDate |
                         date }}</div>
                     <div class="error-msg" *ngIf="!islastworking">Last working day should be after the date of joining
@@ -258,7 +258,7 @@
 
                 <div class="mb-3">
                     <label for="Descriptiondetails" type="Notes" class="form-label custom-label mb-2">{{"Comments" |
-                        translate}}<span class="error-msg">*</span></label>
+                        translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                         #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" rows="3" pattern="^[^\s].*"
@@ -307,7 +307,7 @@
                 (ngSubmit)="Separationrequestrejected.valid && handleReject(Separationrequestrejected)">
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label labell">{{"Rejected Reason" |
-                        translate}}<span class="tect-danger">*</span></label>
+                        translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter reason" name="notes" #notes="ngModel" [maxLength]="250"
                         [(ngModel)]="selectedSpRequestData.rejectedReason" required rows="3"></textarea>
@@ -354,7 +354,7 @@
 
                 <div class="mb-3" *ngIf="selectedSpRequestData.spIsEarlyRelieveing">
                     <label for="Effective Date">{{"Are you willing to accept an early Relieving?" | translate}}
-                        <span class="error-msg">*</span></label>
+                        <span class="text-danger">*</span></label>
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" id="relieving" name="isreliving"
                             [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck" (click)="toggleEarly()">
@@ -364,7 +364,7 @@
 
                 <div class="mb-3">
                     <label for="Effective Date" class="form-label custom-label mb-2">{{"Salary Hold" | translate}}<span
-                            class="error-msg">*</span></label>
+                            class="text-danger">*</span></label>
                     <select class="form-select custom-p-select-content" aria-label="Default select example"
                         id="holdsalary" #issalaryhold="ngModel" [(ngModel)]="selectedSpRequestData.spsalaryhold"
                         name="holdsalary" required>
@@ -394,7 +394,7 @@
                     *ngIf="selectedSpRequestData.noticperiodType=='Notice Period Recovery' ||selectedSpRequestData.noticperiodType=='Notice Period Payable' ">
                     <label for="noticperioddays"
                         class="form-label custom-label mb-2">{{selectedSpRequestData.noticperiodType}} {{"Days" |
-                        translate}}<span class="error-msg">*</span></label>
+                        translate}}<span class="text-danger">*</span></label>
                     <input type="number" class="form-control custom-input" id="noticperioddays" name="noticperioddays"
                         #noticperioddays="ngModel" autocomplete="off" min="0" max="365" placeholder="Notice Days"
                         [(ngModel)]="selectedSpRequestData.noticperioddays" required>
@@ -427,7 +427,7 @@
 
                 <div class="mb-3" *ngIf="early">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
-                        {{'Early Relieving Date' | translate}}<span class="error-msg">*</span>
+                        {{'Early Relieving Date' | translate}}<span class="text-danger">*</span>
                     </label>
                     <input type="date" class="form-control custom-input" id="Earlyreleiving" name="Earlyreleiving"
                         [min]="getBlockedPastDate(selectedSpRequestData.spRequestAppliedDate)" #Earlyreleiving="ngModel"
@@ -439,7 +439,7 @@
 
                 <div class="mb-3" *ngIf="early">
                     <label for="exampleFormControlTextarea1" class="form-label custom-label mb-2">
-                        {{'Reason for Early Relieving' | translate}}<span class="error-msg">*</span></label>
+                        {{'Reason for Early Relieving' | translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                         pattern="^[^\s].*" #earlyrelievingreason="ngModel" [(ngModel)]="selectedSpRequestData.comments"
@@ -458,7 +458,7 @@
                 <div class="mb-3" *ngIf="extend">
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Extend Date' |
                         translate}}
-                        <span class="error-msg">*</span>
+                        <span class="text-danger">*</span>
                     </label>
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
                         id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
@@ -474,7 +474,7 @@
 
                 <div class="mb-3" *ngIf="extend">
                     <label for="exampleFormControlTextarea1" class="form-label custom-label mb-2">
-                        {{'Feedback for Extend' | translate}}<span class="error-msg">*</span></label>
+                        {{'Feedback for Extend' | translate}}<span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedSpRequestData.comments" maxlength="250" required rows="3"
@@ -500,7 +500,7 @@
                 <div class="mb-3" *ngIf="regular">
                     <label for="Descriptiondetails" type="Notes"
                         class="form-label custom-label mb-2">{{'Comments'|translate}}
-                        <span class="error-msg">*</span></label>
+                        <span class="text-danger">*</span></label>
                     <textarea class="form-control custome-input" id="exampleFormControlTextarea1"
                         placeholder="Please enter comments" name="Reason" #Reason="ngModel" maxlength="250"
                         #comments="ngModel" [(ngModel)]="selectedSpRequestData.comments" pattern="^[^\s].*" rows="3"

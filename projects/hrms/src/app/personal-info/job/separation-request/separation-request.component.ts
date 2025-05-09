@@ -271,7 +271,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to store the disaciption values
   decription(value: any, content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true,backdrop:'static' });
     this.decription_Storing_Variable = value;
   }
 

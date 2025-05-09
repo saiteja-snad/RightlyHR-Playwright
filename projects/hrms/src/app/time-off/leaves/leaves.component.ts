@@ -88,7 +88,7 @@ export class LeavesComponent {
     private authService: AuthService,
     private fb: FormBuilder,
     public rbac: RbacService,
-    public route:Router
+    public router:Router
   ) { }
 
   ngOnInit(): void {
@@ -107,6 +107,10 @@ export class LeavesComponent {
     this.checkPreviousOptionalLeaves();
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+  }
+
+  navigateOrLeavebalance() {
+    this.router.navigate(['/time-off/leaves/org-leave-balance'])
   }
 
   convertHexToRgba(hex: string, alpha: number): string {

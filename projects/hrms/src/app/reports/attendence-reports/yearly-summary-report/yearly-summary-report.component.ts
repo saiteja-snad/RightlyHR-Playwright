@@ -195,7 +195,7 @@ export class YearlySummaryReportComponent {
 
     // Year
     if (formValue.year) {
-      request.Year = formValue.year;
+      request.EntitlementYear = formValue.year;
     }
 
     // Call service with the constructed request

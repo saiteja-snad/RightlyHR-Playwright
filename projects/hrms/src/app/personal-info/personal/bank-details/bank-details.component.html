@@ -8,61 +8,66 @@
     </div>
 
     <div class="custom-table-content">
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Bank Name</th>
-                    <th>Account Holder'S Name</th>
-                    <th>Account Number</th>
-                    <th>IFSC Code</th>
-                    <th>Proof</th>
-                    <th class="text-center">Primary Bank</th>
-                    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' )){
-                    <th class="text-center">Action(s)</th>}
-                </tr>
-            </thead>
-            <tbody>
-                <ng-container *ngIf="((bankDetails | async) ?? []).length > 0; else noDataTemplate">
-                    <tr *ngFor="let bankiteams of bankDetails | async">
-                        <td>{{ bankiteams.bankName }}</td>
-                        <td>{{bankiteams.accountName}}</td>
-                        <td>{{bankiteams.accountNo}}</td>
-                        <td>{{bankiteams.ifscCode}}</td>
-                        <td>
-                            <span *ngIf="bankiteams.docUrl;else noData" class="dowload-text cursor" (click)="onSelectBankProofDownload(bankiteams)">
-                                <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
-                        </td>
-                        <td class="text-center">{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li (click)="openModalupdate(updateBankmodal, bankiteams)">
-                                        <a class="dropdown-item">
-                                            <i class="bi bi-pencil me-2"></i>Update
-                                        </a>
-                                    </li>
-                                    <li (click)="opendeletModal(deleteconformation,bankiteams)">
-                                      <a class="dropdown-item">
-                                          <i class="bi bi-trash3 me-2"></i>Delete
-                                      </a>
-                                  </li>  
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
-                </ng-container>
-                <ng-template #noDataTemplate>
+        @if (!loading) {
+            <table class="w-100">
+                <thead>
                     <tr>
-                        <td>
-                            <app-no-data-found />
-                        </td>
+                        <th>Bank Name</th>
+                        <th>Account Holder'S Name</th>
+                        <th>Account Number</th>
+                        <th>IFSC Code</th>
+                        <th>Proof</th>
+                        <th class="text-center">Primary Bank</th>
+                        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' )){
+                        <th class="text-center">Action(s)</th>}
                     </tr>
-                </ng-template>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <ng-container *ngIf="((bankDetails | async) ?? []).length > 0; else noDataTemplate">
+                        <tr *ngFor="let bankiteams of bankDetails | async">
+                            <td>{{ bankiteams.bankName }}</td>
+                            <td>{{bankiteams.accountName}}</td>
+                            <td>{{bankiteams.accountNo}}</td>
+                            <td>{{bankiteams.ifscCode}}</td>
+                            <td>
+                                <span *ngIf="bankiteams.docUrl;else noData" class="dowload-text cursor" (click)="onSelectBankProofDownload(bankiteams)">
+                                    <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
+                            </td>
+                            <td class="text-center">{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
+                            <td class="text-center">
+                                <div class="dropdown">
+                                    <span type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </span>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        <li (click)="openModalupdate(updateBankmodal, bankiteams)">
+                                            <a class="dropdown-item">
+                                                <i class="bi bi-pencil me-2"></i>Update
+                                            </a>
+                                        </li>
+                                        <li (click)="opendeletModal(deleteconformation,bankiteams)">
+                                          <a class="dropdown-item">
+                                              <i class="bi bi-trash3 me-2"></i>Delete
+                                          </a>
+                                      </li>  
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                    <ng-template #noDataTemplate>
+                        <tr>
+                            <td>
+                                <app-no-data-found />
+                            </td>
+                        </tr>
+                    </ng-template>
+                </tbody>
+            </table>
+        }
+      @else {
+        <app-data-loader-content/>
+      }
     </div>
 </div>
 

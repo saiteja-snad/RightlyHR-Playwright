@@ -160,8 +160,8 @@ export class ReportsService {
     //   params = params.set('Location', request.location);	
     // }
     
-    if(request.Month) {
-      params = params.set('Month', request.Month);
+    if(request.LeaveName) {
+      params = params.set('LeaveName', request.LeaveName);
     }
 
    if(request.Year) {
@@ -224,7 +224,7 @@ export class ReportsService {
     
     if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
     if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
-    if (request.Year) params = params.set('Year', request.Year);
+    if (request.EntitlementYear) params = params.set('EntitlementYear', request.EntitlementYear);
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
   
     return this.http.get('Reports/YearSummaryReports', { params });

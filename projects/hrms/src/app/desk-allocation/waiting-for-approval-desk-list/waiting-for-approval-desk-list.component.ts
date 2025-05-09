@@ -8,10 +8,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
+import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-waiting-for-approval-desk-list',
-  imports: [NoDataFoundComponent,CommonModule,FormsModule, PaginatorModule, DropdownModule],
+  imports: [NoDataFoundComponent, CommonModule, FormsModule, PaginatorModule, DropdownModule, DataLoaderContentComponent],
   templateUrl: './waiting-for-approval-desk-list.component.html',
   styleUrl: './waiting-for-approval-desk-list.component.scss'
 })

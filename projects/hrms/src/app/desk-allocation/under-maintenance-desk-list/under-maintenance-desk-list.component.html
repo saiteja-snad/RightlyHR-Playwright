@@ -5,77 +5,72 @@
       <input type="search" class="form-control custom-input custom-search-input" placeholder="search Here"
         aria-label="Username" [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange($event)" aria-describedby="basic-addon1">
     </div>
-    <ng-container *ngIf="loading; else maincontent">
-      <ng-template #loadingSpinner>
-        <div class="loader-placeholder-content text-center">
-          <div>
-            <img src="images\loader.gif" alt="Sand clock" class="sand-loder">
-          </div>
-        </div>
-      </ng-template>
-      <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
-  
-    <ng-template #maincontent>
+
+    
   
       <div class="custom-table-content">
-        <table class="w-100">
-          <thead>
-            <tr>
-              <th>Desk ID</th>
-              <th>Desk Type</th>
-              <th>Location</th>
-              <th>Sub Location</th>
-              <th>Desk Status</th>
-              <th class="text-center">Action(s)</th>
-  
-            </tr>
-          </thead>
-          <tbody>
-            <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
-              <tr *ngFor="let desk of desklist | async">
-                <td>{{ desk.deskName }}</td>
-                <td>{{ desk.deskType }}</td>
-               
-  
-                <td>{{ desk.location?.jobLocationName }}</td>
-                <td>{{ desk.subLocation?.jobSubLocationName }}</td>
-                <td>{{ desk.deskStatus }}</td>
-                
-  
-                <td class="text-center">
-                  <div class="dropdown">
-                    <a data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="bi bi-three-dots-vertical"></i>
-                    </a>
-  
-                    <ul class="dropdown-menu custom-dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" (click)="openModal(avitivedest);selectedAsset=desk;viewdata(desk) ">
-                              Mark as Available
-                            </a>
-                          </li>
-                          <li>
-                            <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
-                              View Desk Details
-                            </a>
-                          </li>
-  
-                    </ul>
-                  </div>
-                </td>
-              </tr>
-            </ng-container>
-            <!-- No Data Found Template -->
-            <ng-template #noDataTemplate>
+        @if(!loading){
+          <table class="w-100">
+            <thead>
               <tr>
-                <td>
-                  <app-no-data-found />
-                </td>
+                <th>Desk ID</th>
+                <th>Desk Type</th>
+                <th>Location</th>
+                <th>Sub Location</th>
+                <th>Desk Status</th>
+                <th class="text-center">Action(s)</th>
+    
               </tr>
-            </ng-template>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
+                <tr *ngFor="let desk of desklist | async">
+                  <td>{{ desk.deskName }}</td>
+                  <td>{{ desk.deskType }}</td>
+                 
+    
+                  <td>{{ desk.location?.jobLocationName }}</td>
+                  <td>{{ desk.subLocation?.jobSubLocationName }}</td>
+                  <td>{{ desk.deskStatus }}</td>
+                  
+    
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <a data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-three-dots-vertical"></i>
+                      </a>
+    
+                      <ul class="dropdown-menu custom-dropdown-menu">
+                          <li>
+                              <a class="dropdown-item" (click)="openModal(avitivedest);selectedAsset=desk;viewdata(desk) ">
+                                Mark as Available
+                              </a>
+                            </li>
+                            <li>
+                              <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
+                                View Desk Details
+                              </a>
+                            </li>
+    
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+              <!-- No Data Found Template -->
+              <ng-template #noDataTemplate>
+                <tr>
+                  <td>
+                    <app-no-data-found />
+                  </td>
+                </tr>
+              </ng-template>
+            </tbody>
+          </table>
+        }
+       @else {
+        <app-data-loader-content/>
+       }
       </div>
       <div class="pagination-content pt-2 w-100" *ngIf="totalRecords > 0">
         <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
@@ -96,7 +91,7 @@
                 (onPageChange)="onPageChange($event)"></p-paginator>
         </div>
     </div>
-    </ng-template>
+
   </div>
   
  

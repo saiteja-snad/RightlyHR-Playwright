@@ -10,10 +10,11 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-certification',
-  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, DateformatPipe, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './certification.component.html',
   styleUrl: './certification.component.scss'
 })
@@ -22,6 +23,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
   selectedCertification: any;
   empcertsdata = new BehaviorSubject<any>([]);
   empinfo: any
+  loading=false
   certificationForm!: FormGroup;
   updateCertificationForm!: FormGroup;
   certificationDocument: any;
@@ -266,16 +268,18 @@ export class CertificationComponent implements OnInit, OnDestroy {
   getEmpcertdata() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     console.log(EmployeeId);
+    this.loading=true
     this.subscription = this.http
       .getData(`Certification/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
-          console.log(data);
-
+        
+          this.loading=false
           this.empcertsdata.next(data);
         },
         error: (err: any) => {
           console.log(err);
+          this.loading=false
         },
       });
   }

@@ -47,22 +47,23 @@
 
          <div class="mb-3">
             <span class="component-sub-header">
-              <ng-container *ngIf="!selectedMainFolder">
-                Please select folder
-              </ng-container>
-              <ng-container *ngIf="selectedMainFolder && !selectedFile">
-                Please select subfolder
-              </ng-container>
-              <ng-container *ngIf="selectedFile">
-                {{ selectedFile.name | lastValue }}
-              </ng-container>
+               <ng-container *ngIf="!selectedMainFolder">
+                  Please select folder
+               </ng-container>
+               <ng-container *ngIf="selectedMainFolder && !selectedFile">
+                  Please select subfolder
+               </ng-container>
+               <ng-container *ngIf="selectedFile">
+                  {{ selectedFile.name | lastValue }}
+               </ng-container>
             </span>
-          </div>
+         </div>
 
          <div class="custom-table-content">
+            @if (!loading) {
             <table class="w-100">
                <thead>
-                  <th>File  name</th>
+                  <th>File name</th>
                   <th>Created Date</th>
                   <th>Size</th>
                   <th class="text-center">Action</th>
@@ -91,6 +92,10 @@
                   </ng-template>
                </tbody>
             </table>
+            }
+            @else {
+            <app-data-loader-content />
+            }
          </div>
       </div>
    </div>

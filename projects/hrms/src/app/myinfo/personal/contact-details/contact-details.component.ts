@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, effect, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import {  Component, effect, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models/mobilenumber.model';
@@ -45,7 +44,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   selectedworkcoutrycode = signal<any>('');
   selectedpersonalnumbercode = signal<any>('');
 
-  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService, private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService) {
+  constructor(private fb: FormBuilder,public formValidation: FormValidationService, private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService) {
     effect(() => {
       this.selectedworkcoutrycode.set(this.selectedDialCode);
       this.selectedpersonalnumbercode.set(this.selectedDialphoneCode);

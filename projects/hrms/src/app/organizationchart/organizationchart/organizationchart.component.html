@@ -1,34 +1,35 @@
 <div>
-    <div><span class="component-sub-header mb-3">Organizational Hierarchy</span></div>
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        
-        <div>
-            <div >
-                <label for="education" class="form-label custom-label mb-2">Select Employee<span
-                    class="text-danger"></span></label>
-                <div class="custom-p-select-content">
-                  <p-select [options]="activeEmplist" [filter]="true" filterBy="label" optionLabel="label" optionValue="value"  [(ngModel)]="selectedEmployeeId"
-                   placeholder="Please select employee"   (onChange)="getOrghierarchy($event.value)"
-                    class="form-select custom-select"></p-select>
-                </div>
-               
-              </div>
+  <div><span class="component-sub-header mb-3">Organizational Hierarchy</span></div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    
+      <div>
+        <label for="education" class="form-label custom-label mb-2">Select Employee<span
+            class="text-danger"></span></label>
+        <div class="custom-p-select-content">
+          <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+          optionLabel="label" optionValue="value"
+            [(ngModel)]="selectedEmployeeId" placeholder="Please select employee"
+            (onChange)="getOrghierarchy($event.value)" class="form-select custom-select"></p-select>
         </div>
-        <div>
-            <label for="education" class="form-label custom-label mb-2">Select Compensation<span
-                class="text-danger"></span></label>
-            <div class="custom-p-select-content">
-                <p-select [options]="compensationOptions" optionLabel="label" optionValue="value" [(ngModel)]="compensationyesorno"  
-                  placeholder="Please select compensation"
-                    class="form-select custom-select"></p-select>
-            </div>
-        </div>
-        <div>
-          <button class="custom-btn btn-primary me-3" (click)="downloadChart('pdf')">Download as PDF</button>
-        <button class="custom-btn btn-primary" (click)="downloadChart('jpg')">Download as JPG</button>
-        </div>
+
+      </div>
+   
+    <div>
+      <label for="education" class="form-label custom-label mb-2">Select Compensation<span
+          class="text-danger"></span></label>
+      <div class="custom-p-select-content">
+        <p-select [options]="compensationOptions" optionLabel="label" optionValue="value"
+          [(ngModel)]="compensationyesorno" placeholder="Please select compensation"
+          class="form-select custom-select"></p-select>
+      </div>
     </div>
-    <!-- <div class="d-flex justify-content-between align-items-center mb-3">
+    <div *ngIf="data && data.length > 0">
+      <button class="custom-btn btn-primary me-3" (click)="downloadChart('pdf')">Download as PDF</button>
+      <button class="custom-btn btn-primary" (click)="downloadChart('jpg')">Download as JPG</button>
+    </div>
+  </div>
+  <!-- <div class="d-flex justify-content-between align-items-center mb-3">
         
       <div>
           <div >
@@ -56,43 +57,43 @@
       <button class="custom-btn btn-primary" (click)="downloadChart('jpg')">Download as JPG</button>
       </div>
   </div> -->
-    <ng-container *ngIf="dataload; else maincontent">
-        <ng-template #loadingSpinner>
-            <div class="loader-placeholder-content text-center">
-                <div>
-                    <img src="images\loader.gif" alt="Sand clock" class="sand-loder">
-                </div>
-            </div>
-        </ng-template>
-        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
-    
-
-    <ng-template #maincontent>
-        <div class="card my-5 p-3">
-            <ng-container *ngIf="!data?.length; else showChart">
-              <div class="no-data-content mb-0">
-                <app-no-data-found></app-no-data-found>
-              </div>
-            </ng-container>
-          
-            <ng-template #showChart>
-           <div class="organization-chart-container">
-            <p-organizationChart [value]="data" class="custom-organition-data">
-              <ng-template let-node pTemplate="person">
-                <div class="p-2 text-center ">
-                  <img [src]="node?.data?.imageUrl ? node?.data?.imageUrl : 'images/alternate.png'" class="image-content" />
-                  <p class="name mb-0">{{ node?.data?.name }}</p>
-                  <p class="name mb-0">{{ node?.data?.doj | dateformat }}</p>
-                  <p class="jobrole mb-0">{{ node?.data?.title }}</p>
-                  <p class="jobrole mb-0"*ngIf="compensationyesorno !== null">{{  node?.data?.compensationamount }}</p>
-                  <p class="department mb-0">{{ node?.data?.department }}</p>
-                </div>
-              </ng-template>
-            </p-organizationChart>
-           </div>
-            </ng-template>
-          </div>
+  <ng-container *ngIf="dataload; else maincontent">
+    <ng-template #loadingSpinner>
+      <div class="loader-placeholder-content text-center">
+        <div>
+          <app-data-loader-content />
+        </div>
+      </div>
     </ng-template>
-</div>
+    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+  </ng-container>
 
+
+  <ng-template #maincontent>
+    <div class="card my-5 p-3">
+      <ng-container *ngIf="!data?.length; else showChart">
+        <div class="no-data-content mb-0">
+          <app-no-data-found></app-no-data-found>
+        </div>
+      </ng-container>
+
+      <ng-template #showChart>
+        <div class="organization-chart-container">
+          <p-organizationChart [value]="data" class="custom-organition-data">
+            <ng-template let-node pTemplate="person">
+              <div class="p-2 text-center ">
+                <img [src]="node?.data?.imageUrl ? node?.data?.imageUrl : 'images/alternate.png'"
+                  class="image-content" />
+                <p class="name mb-0">{{ node?.data?.name }}</p>
+                <p class="name mb-0">{{ node?.data?.doj | dateformat }}</p>
+                <p class="jobrole mb-0">{{ node?.data?.title }}</p>
+                <p class="jobrole mb-0" *ngIf="compensationyesorno !== null">{{ node?.data?.compensationamount }}</p>
+                <p class="department mb-0">{{ node?.data?.department }}</p>
+              </div>
+            </ng-template>
+          </p-organizationChart>
+        </div>
+      </ng-template>
+    </div>
+  </ng-template>
+</div>

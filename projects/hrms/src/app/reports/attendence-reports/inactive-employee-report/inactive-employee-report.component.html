@@ -34,10 +34,22 @@
           </div>
 
           <!-- Month Dropdown -->
-          <div class="d-flex align-items-center gap-2">
+          <!-- <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="months" optionLabel="name" optionValue="value" placeholder="Please select month"
                 formControlName="month" class="form-select custom-select" [showClear]="true">
+              </p-select>
+            </div>
+          </div> -->
+
+          <!-- Leave Category -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="custom-p-select-content">
+              <p-select [options]="uniqueLeaveCategory" [filter]="true" [showClear]="true" optionLabel="label"
+                filterBy="label" formControlName="leaveCategory" placeholder="Select leave category"
+                class="form-select custom-select" filterPlaceholder="Search leave type">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
+                <ng-template let-employee #item>{{ employee.label }}</ng-template>
               </p-select>
             </div>
           </div>

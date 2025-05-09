@@ -1,34 +1,30 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="d-flex gap-2">
-            <p class="component-header cursor mb-0">Attendance Log</p>
-            
-            @if(empName){
-            ( {{empName}} )
-            }
-            
-            </div>
-        <div class="d-flex align-items-center gap-3">
+            <p class="component-header cursor mb-0 text-nowrap">Attendance  @if(empName){( {{empName}} )}</p>
+        </div>
+        <div class="d-flex align-items-center flex-wrap gap-3">
             <label class="form-label custom-label pt-2" for="">Select</label>
 
-            <div>
+            <div class="custom-p-select-content">
                 <p-select [options]="yearOptions" optionValue="value" [(ngModel)]="selectedYear" placeholder="Year"
-                    optionLabel="name"  (onChange)="getAttendnaceData(getSelectedEmployee())" class="custom-select">
+                    optionLabel="name" (onChange)="getAttendnaceData(getSelectedEmployee())" class="custom-select">
                 </p-select>
             </div>
 
-            <div>
+            <div class="custom-p-select-content">
                 <p-select [options]="monthOptions" optionValue="value" [(ngModel)]="selectedMonth" placeholder="Month"
-                (onChange)="getAttendnaceData(getSelectedEmployee())" optionLabel="name" class="custom-select">
+                    (onChange)="getAttendnaceData(getSelectedEmployee())" optionLabel="name" class="custom-select">
                 </p-select>
             </div>
             <!-- select all employees drop down for HR code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
             <label class="form-label custom-label pt-2" for="">Select Employee</label>
-            <div>
-                <p-select [options]="getAllEmployeeInfo"  [filter]="true" filterBy="fullName"
-                    [showClear]="false" [(ngModel)]="selectedEmployee" placeholder="Select Employee"
-                    (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null" optionLabel="fullName" class="custom-select">
+            <div class="custom-p-select-content">
+                <p-select [options]="getAllEmployeeInfo" [filter]="true" filterBy="fullName" [showClear]="false"
+                    [(ngModel)]="selectedEmployee" placeholder="Select Employee"
+                    (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null"
+                    optionLabel="fullName" class="custom-select">
                 </p-select>
             </div>
             }
@@ -36,14 +32,16 @@
             <!-- select all employees drop down for team manager code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')){
             <label class="form-label custom-label pt-2" for="">Select Employee</label>
-            <div>
-                <p-select [options]="get_Employeelist_forTM"  [filter]="true"
-                    filterBy="fullName" [showClear]="false" [(ngModel)]="selectedEmployeeOfHr" placeholder="Select Employee"
-                    (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null" optionLabel="fullName" class="custom-select">
+            <div class="custom-p-select-content">
+                <p-select [options]="get_Employeelist_forTM" [filter]="true" filterBy="fullName" [showClear]="false"
+                    [(ngModel)]="selectedEmployeeOfHr" placeholder="Select Employee"
+                    (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null"
+                    optionLabel="fullName" class="custom-select">
                 </p-select>
             </div>
             }
-            <button type="button" class="custom-btn btn-primary" (click)="getAttendnaceData(empdata);this.selectedEmployee=null;this.selectedEmployeeOfHr=null">
+            <button type="button" class="custom-btn btn-primary"
+                (click)="getAttendnaceData(empdata);this.selectedEmployee=null;this.selectedEmployeeOfHr=null">
                 <i class="bi bi-plus me-2"></i>My Attendance
             </button>
         </div>
@@ -52,7 +50,7 @@
 
     <div class="row">
         <div class="col-9">
-            <div class="custom-table-content ">
+            <div class="custom-table-content">
                 <table class="w-100">
                     <thead>
                         <tr>
@@ -60,64 +58,73 @@
                             <th>First In</th>
                             <th>Last Out</th>
                             <th>Duration</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                            <th></th>
+                            <th>Logs</th>
+                            <th class="text-end pe-5">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if(!dataLoader){
-                            @if(attendanceData.value.length>0){
-                                @for (item of attendanceData|async; track $index) {
-                                    <tr>
-                                        <td>{{(item.date|dateformat)??'-'}}</td>
-                                        <td>{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
-                                        <td>{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>                                        
-                                        <td>
-                                            {{item.duration?.totalDuration??'-'}}
-                                            <span *ngIf="item?.duration?.totalDuration&&(item?.duration?.permissionDuration!=='00:00:00'||item?.duration?.regularizationDuration!=='00:00:00')">
-                                                <a
-                                                    (click)="onclickDuration(durationPopup,item.duration.biometricDuration,item?.duration?.totalDuration,item?.duration?.permissionDuration,item?.duration?.regularizationDuration)">
-                                                    <i class="bi bi-info-circle-fill ms-2"></i> </a>
-                                            </span>
-
-
-                                        </td>
-                                         <td [ngClass]="getStatusClass(item.status)">
-                                            {{item?.status ??'-'}} 
-                                            @if((item?.tags ?? []).length > 0){
-                                                <span>({{item?.tags}}) </span>
-                                            } 
-                                            @if(item.status=='Absent' && item.duration.biometricDuration=='00:00:00'&& item.employeeId==empdata.employeeId){
-                                               <a  class="ms-2" (click)="navigateToLeave()"><u>Leave</u> </a>
-                                            } 
-
-                                             @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) > shiftDetails.halfDayMinHrs && 
-                                            (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs) && currentMonth == selectedMonth && 
-                                            this.rbac.allowedToAccess('Attendance Regularization Button.view') && item.employeeId==empdata.employeeId){ 
-                                                <a class="ms-2" (click)="openModal(raiseregularization); onclickRegularization(item.date)"><u>Regularization</u> </a>
-                                            } 
-                                            
-                                       </td>
-                                        <td>
-                                            @if((item?.dayLogs??[]).length>0){
-                                                <div>
-                                                    <a type="button" (click)="openModal(punchintimes);dayLogsData(item.dayLogs,item.date)">
-                                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                                    </a>
-                                                </div>
-                                            }
-                                        </td>
-                                        <td></td>
-                                    </tr>
+                        @if(attendanceData.value.length>0){
+                        @for (item of attendanceData|async; track $index) {
+                        <tr>
+                            <td>{{(item.date|dateformat)??'-'}}</td>
+                            <td>{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
+                            <td>{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
+                            <td>{{item.duration?.totalDuration??'-'}}
+                                <span *ngIf="item?.duration?.totalDuration && (item?.duration?.permissionDuration!=='00:00:00' || 
+                                item?.duration?.regularizationDuration!=='00:00:00')">
+                                    <a (click)="onclickDuration(durationPopup,item.duration.biometricDuration,item?.duration?.totalDuration,item?.duration?.permissionDuration,
+                                    item?.duration?.regularizationDuration)"><i class="bi bi-info-circle-fill ms-2"></i> </a>
+                                </span>
+                            </td>
+                            <td>
+                                @if((item?.dayLogs??[]).length>0){
+                                <div>
+                                    <a type="button"
+                                        (click)="openModalLarge(punchintimes);dayLogsData(item.dayLogs,item.date)">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    </a>
+                                </div>
                                 }
-                            }
-                            @else {
-                            <app-no-data-found />
-                            }
+                            </td>
+                            <td class="pe-4">
+                                <!--Main status content-->
+                                <div class="d-flex justify-content-end">
+                                    <ul class="ps-0 mb-2">
+                                        <li [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}}</li>
+                                    </ul>
+                                </div>
+                                <!--Sub status content-->
+                                @if((item?.tags ?? []).length > 0){
+                                    <div class="d-flex justify-content-end flex-wrap">
+                                        <div class="card substatus-card">({{item?.tags}})</div>
+                                    </div>
+                                }
+
+                                <!-- action btns content-->
+                                <div class="d-flex gap-3 justify-content-end">
+                                    @if(item.status == 'Absent' && item.duration.biometricDuration == '00:00:00' &&
+                                    item.employeeId == empdata.employeeId){
+                                    <a class="leave-btn" (click)="navigateToLeave()"><u>Apply Leave</u> </a>
+                                    }
+                                    @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) >
+                                    shiftDetails.halfDayMinHrs && (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs) &&
+                                        currentMonth==selectedMonth && this.rbac.allowedToAccess('Attendance Regularization Button.view') &&
+                                        item.employeeId==empdata.employeeId){ 
+                                        <a class="regulazie-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
+                                        <u>Regularization</u></a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                        }
                         }
                         @else {
-                            <app-data-loader-content/>
+                        <app-no-data-found />
+                        }
+                        }
+                        @else {
+                        <app-data-loader-content />
                         }
                     </tbody>
                 </table>
@@ -125,40 +132,37 @@
         </div>
 
         <div class="col-3">
-            <div class="custom-table-content ">
+            <div class="attendance-summary-table">
                 <table class="w-100">
                     <thead>
-                        <tr>
-                            <th>Status</th>
-                            <th>Count</th>
-                        </tr>
+                        <th colspan="2">Attendance summary</th>
                     </thead>
                     <tbody>
                         @if(!dataLoader){
-                            @if(statusCounts$.value){
-                                <ng-container *ngIf="statusCounts$ | async as statusCounts">
-                                    @for (status of statusCounts | keyvalue; track $index) {
-                                    <tr>
-                                        <td>{{ status.key.toUpperCase() }}</td>
-                                        <td>{{ status.value }}</td>
-                                    </tr>
-                                    }
-                                </ng-container>
-                                @if(statusCounts$.value.length<=0){
-                                    <tr>
-                                        <td><app-no-data-found/></td>
-                                    </tr> 
-                                }
-                            }
-                           @else {
+                        @if(statusCounts$.value){
+                        <ng-container *ngIf="statusCounts$ | async as statusCounts">
+                            @for (status of statusCounts | keyvalue; track $index) {
                             <tr>
-                                <td><app-no-data-found/> </td>
+                                <td>{{ status.key.toUpperCase() }}</td>
+                                <td>{{ status.value }}</td>
                             </tr>
-                           }
-                        }
-                        @else {
-                            <app-data-loader-content/>
-                        }
+                            }
+                        </ng-container>
+                        @if(statusCounts$.value.length<=0){ 
+                            <tr>
+                                <td><app-no-data-found /></td>
+                            </tr>
+                            }
+                            }
+                            @else {
+                            <tr>
+                                <td><app-no-data-found /></td>
+                            </tr>
+                            }
+                            }
+                            @else {
+                            <app-data-loader-content />
+                            }
                     </tbody>
                 </table>
             </div>
@@ -180,10 +184,12 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <form autocomplete="off" [formGroup]="regularizationForm" (ngSubmit)="applyRgularization(regularizationForm)">
+            <form autocomplete="off" [formGroup]="regularizationForm"
+                (ngSubmit)="applyRgularization(regularizationForm)">
                 <div class="row">
                     <div class="col-md-12 mb-3">
-                        <label for="Date" class="form-label custom-label pt-2 mb-2">Date<span class="text-danger">*</span></label>
+                        <label for="Date" class="form-label custom-label pt-2 mb-2">Date<span
+                                class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="permissionDate" id="Date"
                             (keydown)="false" placeholder="Select Date" />
                         <div *ngIf="regularizationForm.get('permissionDate')?.touched && regularizationForm.get('permissionDate')?.invalid"
@@ -195,7 +201,8 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="duration" class="form-label custom-label pt-2 mb-2">Duration<span class="text-danger">*</span></label>
+                        <label for="duration" class="form-label custom-label pt-2 mb-2">Duration<span
+                                class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="duration" optionLabel="name" id="duration" formControlName="duration"
                                 placeholder="Please select duration" class="form-select custom-select" />
@@ -206,10 +213,12 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="leaveType" class="form-label custom-label pt-2 mb-2">Regularization Type<span class="text-danger">*</span></label>
+                        <label for="leaveType" class="form-label custom-label pt-2 mb-2">Regularization Type<span
+                                class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="regularizationTypes" optionLabel="name" formControlName="leaveType"
-                                placeholder="Please select regularization type" id="leaveType" class="form-select custom-select" />
+                                placeholder="Please select regularization type" id="leaveType"
+                                class="form-select custom-select" />
                         </div>
                         <div *ngIf="regularizationForm.get('leaveType')?.touched && regularizationForm.get('leaveType')?.invalid"
                             class="error-msg">Regularization Type is required.
@@ -217,13 +226,16 @@
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label for="reason" class="form-label custom-label pt-2 mb-2">Reason<span class="text-danger">*</span></label>
+                        <label for="reason" class="form-label custom-label pt-2 mb-2">Reason<span
+                                class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="reason" id="reason" rows="3"
-                            placeholder="Type here" maxlength="250" placeholder="Reason for regularization" (input)="formsValidation.validateInput(regularizationForm.get('reason'))" ></textarea>
+                            placeholder="Type here" maxlength="250" placeholder="Reason for regularization"
+                            (input)="formsValidation.validateInput(regularizationForm.get('reason'))"></textarea>
                         <div class="textarea-count-text">
                             {{ regularizationForm.get('reason')?.value?.length || 0 }}/250
                         </div>
-                        <div class="error-msg" *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
+                        <div class="error-msg"
+                            *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
                                 Reason is required.
                             </div>
@@ -235,8 +247,10 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">Close</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="regularizationForm.invalid || spinnerLoader">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="openModal(confirmationpopup)">Close</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="regularizationForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
                         <div class="button-loader-content">
                             <div class="spinner-border button-spinner text-light" role="status"></div>
@@ -252,11 +266,12 @@
     </div>
 </ng-template>
 
+<!--Attendance Logs popup-->
 <ng-template #punchintimes let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Punch in-Out Timings ({{selectedDate|dateformat}})</p>
+                <p class="popup-heading mb-0">Logs Information ({{selectedDate|dateformat}})</p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -264,27 +279,35 @@
         </div>
 
         <div class="custom-main-popup-content">
-            <div class="custom-table-content time-custom">
-                <table class="w-100">
-                    <thead>
-                        <tr>
-                            <th>In</th>
-                            <th>Out</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let item of punchPairs">
-                            <td>{{ item.in ??'-' }}</td>
-                            <td>{{ item.out ??'-' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="popup-table-wrapper">
+                <div class="popup-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="3" class="custom-popup-header">Biometric Logs</th>
+                            </tr>
+                            <tr>
+                                <th>In</th>
+                                <th>Out</th>
+                                <!-- <th>Duration</th> -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let log of punchPairs">
+                                <td class="log-time">{{ log.in }}</td>
+                                <td class="log-time">{{ log.out }}</td>
+                                <!-- <td class="duration-time">{{ log.duration }}</td> -->
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="popup-td">Total Duration: <b>{{ logsDuration }}</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </ng-template>
-
-
 
 <ng-template #durationPopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -296,35 +319,35 @@
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content" >
+        <div class="custom-main-popup-content">
             <div class="modal-body">
                 <div class="d-block">
                     <div class="d-flex flex-column">
-    
+
                         <p class="m-0 p-2 rounded popupcomments">
                             Total Duration: <span *ngIf="totalDurationHours;else durationtotal"> {{totalDurationHours}}
-    
+
                             </span>
                             <ng-template #durationtotal>{{logsDuration}}</ng-template>
                         </p>
                         <p class="m-0 p-2 rounded popupcomments">
                             <span> Logs Duration: {{logsDuration}} </span>
-    
+
                         </p>
                         <p class="m-0 p-2 rounded popupcomments">
-    
+
                             Permissions Duration: <span *ngIf="permissionsDuration;else permisiondur">
                                 {{permissionsDuration}}
-    
+
                             </span>
                             <ng-template #permisiondur>NA</ng-template>
                         </p>
                         <p class="m-0 p-2 rounded popupcomments">
                             Regularization Duration:
                             <span *ngIf="regularizationAttendDuration;else regularization">
-    
+
                                 {{regularizationAttendDuration}}
-    
+
                             </span>
                             <ng-template #regularization>NA</ng-template>
                         </p>
@@ -341,18 +364,19 @@
 
 <ng-template #confirmationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
-      <div>
-        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-        <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
-      </div>
-  
-      <div class="d-flex justify-content-center gap-3 mt-4">
-        <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-          No
-        </button>
-        <button type="submit" class="custom-btn btn-primary" (click)="modalService.dismissAll();this.regularizationForm.reset()">
-          Yes
-        </button>
-      </div>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+        </div>
+
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                No
+            </button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="modalService.dismissAll();this.regularizationForm.reset()">
+                Yes
+            </button>
+        </div>
     </div>
-  </ng-template>
+</ng-template>

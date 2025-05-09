@@ -241,7 +241,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Variable Amount<span class="error-msg">*</span></label>
             <input type="text" class="form-control custom-input" formControlName="variablePayAmount"
-              (ngModelChange)="onVariablePayChange($event)" placeholder="Please enter variable amount" />
+              (ngModelChange)="onVariablePayChangeAmount($event)" placeholder="Please enter variable amount" />
             <div *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
               <div class="error-msg">Variable Amount is required</div>
             </div>

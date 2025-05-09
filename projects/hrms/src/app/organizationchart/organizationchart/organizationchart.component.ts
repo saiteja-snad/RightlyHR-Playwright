@@ -28,7 +28,7 @@ export class OrganizationchartComponent  implements OnInit,OnDestroy{
   activeEmplist = [] as any;
   selectedEmployeeId: number | null = null;
   employeedata: any;
-  compensationyesorno: boolean | null = null;
+  compensationyesorno=false;
   compensationOptions = [
     { label: 'Yes', value: true },
     { label: 'No', value: false }
@@ -39,6 +39,8 @@ export class OrganizationchartComponent  implements OnInit,OnDestroy{
   ngOnInit(): void {
     this.employeedata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllEmployeeDetails()
+    this.getAllEmployeeDetailsformanger();
+
     if(this.selectedEmployeeId===null){
       this.getOrghierarchy(this.employeedata.employeeId)
     }
@@ -59,6 +61,27 @@ export class OrganizationchartComponent  implements OnInit,OnDestroy{
             label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.lastName ?? ''}`,
             value: employee.employeeId
           }));
+        },
+      });
+  }
+
+  mangeractiveEmplist = [] as any;
+  getAllEmployeeDetailsformanger() {
+    const EmployeeId = this.employeedata.employeeId;
+
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (res: any) => {
+          // console.log(response);
+          this.mangeractiveEmplist = res.map((employee: any) => {
+            return {
+              ...employee, 
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+              employeeid:employee.employeeId
+            };
+          });
         },
       });
   }

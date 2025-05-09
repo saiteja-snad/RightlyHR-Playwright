@@ -238,5 +238,11 @@ export const permissionsData = [
 
     //Custom Fields   
     { fields: 'Custom Events', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Pending Approvals', View: false, Update: false, Create: false, Delete: false }
+    { fields: 'Pending Approvals', View: false, Update: false, Create: false, Delete: false },
+
+    //custom Organizational Hierarchy
+    { fields: 'HR Hierarchy select Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Maganger Hierarchy select Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Hierarchy Compensation select Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Hierarchy Download Tab', View: false, Update: false, Create: false, Delete: false },
 ];

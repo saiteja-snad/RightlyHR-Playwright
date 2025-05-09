@@ -50,7 +50,7 @@ export interface IInactiveReportRequest {
   TeamManagerName?: string;
   shift?: string;
   location?: string;
-  Month?: number;
+  LeaveName?: number;
   Year?: number;
   TeamManagerSnadId?: string;
 }
@@ -63,7 +63,7 @@ export interface IYearlyReportRequest {
   LeaveName?: string;
   Location?: string;
   Shift?: string;
-  Year?: number;
+  EntitlementYear?: number;
   TeamManagerSnadId?: string;
 }
 

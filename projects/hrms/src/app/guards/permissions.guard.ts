@@ -15,7 +15,7 @@ export class PermissionsGuard implements CanActivate {
     if (this.rbac.allowedToAccess(requiredPermission)) {
       return true;
     } else {
-      this.router.navigate(['/uservalidate']);
+      this.router.navigate(['/uservalidation']);
       return false; 
     }
   }

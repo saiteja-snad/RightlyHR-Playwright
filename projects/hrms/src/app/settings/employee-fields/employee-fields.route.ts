@@ -9,7 +9,7 @@ export default [
     {
         path: 'personal', children: [
             { path: '', component : SettingsPersonalTabsComponent },
-            { path: 'salutation', loadComponent: () => import('./personal/salutation/salutation.component').then(m => m.SalutationComponent), canActivate: [PermissionsGuard],data: { permission: 'Salutation.view' }  },
+            { path: 'salutation', loadComponent: () => import('./personal/salutation/salutation.component').then(m => m.SalutationComponent), canActivate: [PermissionsGuard],data: { permission: 'Salutation.view' } },
             { path: 'gender', loadComponent: () => import('./personal/gender/gender.component').then(m => m.GenderComponent) },
             { path: 'maritalstatus', loadComponent: () => import('./personal/maritalstatus/maritalstatus.component').then(m => m.MaritalstatusComponent) },
             { path: 'identitytype', loadComponent: () => import('./personal/identitytype/identitytype.component').then(m => m.IdentitytypeComponent) },

@@ -545,7 +545,7 @@ export class SeparationForYourRoleRequestComponent {
     if (this.selectedSpRequestData.spMangerEarlyreliveingDate !=
       this.selectedSpRequestData.spearlyReliveingDate
     ) {
-      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
+      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
       this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
       this.selectedRadio = 'early';
       this.selectedSpRequestData.requestSelectedType = 'Early';

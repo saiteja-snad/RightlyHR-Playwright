@@ -325,7 +325,7 @@ get holidaysArray(): FormArray {
   ////this method used for shifts list show in shiftname dropdown 
   getShiftBYid(selectedSubLocation: any, patchForm: boolean = true): void {
     const formValue = this.holidayForm.value;
-    const locationId = formValue.location?.id;
+    const locationId = this.updateHolidaysData.locationId ??  formValue.location?.id;
     const subLocationId = selectedSubLocation?.id ?? selectedSubLocation;
 
     this.subscription = this.http

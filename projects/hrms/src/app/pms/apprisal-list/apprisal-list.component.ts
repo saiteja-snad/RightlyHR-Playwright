@@ -661,7 +661,6 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.spinnerLoader= false;
         this.modalService.dismissAll();
         this.reviewtemplatedropdowns.reset();
-        this.selectedIds = [];
         if (err.status === 404) {
           this.modal.openErrorModal(err.error.message || 'Select atleast one employee to assign the template');
         }

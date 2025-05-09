@@ -98,16 +98,16 @@
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
                 
             <button *ngIf="this.empDetails.experienceType == 'Trainee' && getempexpdata.length > 0"
-                class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+                class="custom-btn btn-primary px-5" (click)="navigateNext()" >Next</button>
 
             <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length <= 0"
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button>
 
             <button *ngIf="this.empDetails.experienceType == 'Fresher' && getempexpdata.length > 0"
-                class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+                class="custom-btn btn-primary px-5" (click)="navigateNext()" >Next</button>
 
-            <button *ngIf="this.empDetails.experienceType == 'Experienced' && (getempexpdata.length > 0)" 
-                class="custom-btn btn-primary px-5" (click)="navigateNext()">Next</button>
+            <button *ngIf="this.empDetails.experienceType == 'Experienced'" 
+                class="custom-btn btn-primary px-5" (click)="navigateNext()" [disabled]="getempexpdata.length <= 0" >Next</button>
                 <!-- <button *ngIf="this.empDetails.experienceType == 'Experienced' && (getempexpdata.length <= 0)" 
                 class="custom-btn btn-primary px-5" (click)="navigateNext()">Skip & continue</button> -->
         </div>

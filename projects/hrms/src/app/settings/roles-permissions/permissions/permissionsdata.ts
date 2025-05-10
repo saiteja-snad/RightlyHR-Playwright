@@ -377,6 +377,10 @@ export const permissionsData = [
     { fields: 'Processed (Time Off)', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Rejected (Time Off)', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Request Leave Button', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Cancelled(Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Team Leave Balance(Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Team Leave Balance Summary(Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Org Leave Balance(Time Off)', View: false, Update: false, Create: false, Delete: false },
 
     //Work From Home Sub Tabs Section
     { fields: 'Waiting For Approval (WFH)', View: false, Update: false, Create: false, Delete: false },
@@ -496,7 +500,7 @@ export const permissionsData = [
 
     //Pending Approval Probation Details Section
     { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
-    // { fields: 'Probation Assessment Form', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Probation Assessment Form', View: false, Update: false, Create: false, Delete: false },
 
     //On Behalf Of  Approvals Sub Tabs Section
     { fields: 'Time Off (On Behalf Of Approvals)', View: false, Update: false, Create: false, Delete: false },

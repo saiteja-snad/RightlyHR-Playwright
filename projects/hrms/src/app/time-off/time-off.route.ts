@@ -76,46 +76,47 @@ import { TeamLeaveBalanceComponent } from './leaves/team-leave-balance/team-leav
 import { TeamLeaveSummaryComponent } from './leaves/team-leave-summary/team-leave-summary.component';
 import { CancelledComponent } from './leaves/cancelled/cancelled.component';
 import { OrgLeaveBalanceComponent } from './leaves/org-leave-balance/org-leave-balance.component';
+import { PermissionsGuard } from "../guards/permissions.guard";
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
-  { path: 'leaves', component: LeavesComponent,
+  { path: 'leaves', component: LeavesComponent, 
     children: [
-      { path: 'waiting-for-approval', component: LeavesWaitingForApprovalComponent },
-      { path: 'approved', component: LeavesApprovalComponent },
-      { path: 'processed', component: LeavesProcessedComponent },
-      { path: 'rejected', component: LeavesRejectedComponent },
-      { path: 'cancelled', component: CancelledComponent },
-      { path: 'team-leave-balance', component: TeamLeaveBalanceComponent },
-      { path: 'team-leave-summary', component: TeamLeaveSummaryComponent },
-      { path: 'org-leave-balance', component: OrgLeaveBalanceComponent },
+      { path: 'waiting-for-approval', component: LeavesWaitingForApprovalComponent,canActivate: [PermissionsGuard], data: { permission: 'Waiting For Approval (Time Off).view' } },
+      { path: 'approved', component: LeavesApprovalComponent,canActivate: [PermissionsGuard], data: { permission: 'Approved (Time Off).view' } },
+      { path: 'processed', component: LeavesProcessedComponent,canActivate: [PermissionsGuard], data: { permission: 'Processed (Time Off).view' } },
+      { path: 'rejected', component: LeavesRejectedComponent,canActivate: [PermissionsGuard], data: { permission: 'Rejected (Time Off).view' } },
+      { path: 'cancelled', component: CancelledComponent ,canActivate: [PermissionsGuard], data: { permission: 'Cancelled(Time Off).view' }},
+      { path: 'team-leave-balance', component: TeamLeaveBalanceComponent ,canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance(Time Off).view' }},
+      { path: 'team-leave-summary', component: TeamLeaveSummaryComponent ,canActivate: [PermissionsGuard], data: { permission: 'Team Leave Balance Summary(Time Off).view' }},
+      { path: 'org-leave-balance', component: OrgLeaveBalanceComponent,canActivate: [PermissionsGuard], data: { permission: 'Org Leave Balance(Time Off).view' } },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
   { path: 'wfh', component: WorkFromHomeComponent,
     children: [
-      { path: 'waiting-for-approval', component: WfhWaitingForApprovalComponent },
-      { path: 'approved', component: WfhApprovedComponent },
-      { path: 'processed', component: WfhProcessedComponent },
-      { path: 'rejected', component: WfhRejectedComponent },
+      { path: 'waiting-for-approval', component: WfhWaitingForApprovalComponent,canActivate: [PermissionsGuard], data: { permission: 'Waiting For Approval (WFH).view' } },
+      { path: 'approved', component: WfhApprovedComponent,canActivate: [PermissionsGuard], data: { permission: 'Approved (WFH).view' } },
+      { path: 'processed', component: WfhProcessedComponent,canActivate: [PermissionsGuard], data: { permission: 'Processed (WFH).view' } },
+      { path: 'rejected', component: WfhRejectedComponent,canActivate: [PermissionsGuard], data: { permission: 'Rejected (WFH).view' } },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
   { path: 'remote', component: RemoteLoginComponent,
     children: [
-      { path: 'waiting-for-approval', component: RemoteWaitingForApprovalComponent },
-      { path: 'approved', component: RemoteApprovedComponent },
-      { path: 'processed', component: RemoteProcessedComponent },
-      { path: 'rejected', component: RemoteRejectedComponent },
+      { path: 'waiting-for-approval', component: RemoteWaitingForApprovalComponent,canActivate: [PermissionsGuard], data: { permission: 'Remote Login.view' } },
+      { path: 'approved', component: RemoteApprovedComponent,canActivate: [PermissionsGuard], data: { permission: 'Remote Login.view' } },
+      { path: 'processed', component: RemoteProcessedComponent,canActivate: [PermissionsGuard], data: { permission: 'Remote Login.view' } },
+      { path: 'rejected', component: RemoteRejectedComponent,canActivate: [PermissionsGuard], data: { permission: 'Remote Login.view' } },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
   { path: 'comp-off', component: CompOffComponent,
     children: [
-      { path: 'waiting-for-approval', component: CompOffWaitingForApprovalComponent },
-      { path: 'approved', component: CompOffApprovalComponent },
-      { path: 'processed', component: CompOffProcessComponent },
-      { path: 'rejected', component: CompOffRejectComponent },
+      { path: 'waiting-for-approval', component: CompOffWaitingForApprovalComponent,canActivate: [PermissionsGuard], data: { permission: 'Waiting For Approval (Comp Off).view' } },
+      { path: 'approved', component: CompOffApprovalComponent,canActivate: [PermissionsGuard], data: { permission: 'Approved (Comp Off).view' } },
+      { path: 'processed', component: CompOffProcessComponent,canActivate: [PermissionsGuard], data: { permission: 'Processed (Comp Off).view' } },
+      { path: 'rejected', component: CompOffRejectComponent,canActivate: [PermissionsGuard], data: { permission: 'Rejected (Comp Off).view' } },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
@@ -126,10 +127,10 @@ export default [
     children: [
       {
         path: 'waiting-for-approval',
-        component: PremissionsWaitingForApprovalComponent,
+        component: PremissionsWaitingForApprovalComponent,canActivate: [PermissionsGuard], data: { permission: 'Waiting For Approval (Permissions).view' }
       },
-      { path: 'approved', component: PremissionsApprovedComponent },
-      { path: 'rejected', component: PremissionsRejectedComponent },
+      { path: 'approved', component: PremissionsApprovedComponent,canActivate: [PermissionsGuard], data: { permission: 'Approved (Permissions).view' } },
+      { path: 'rejected', component: PremissionsRejectedComponent ,canActivate: [PermissionsGuard], data: { permission: 'Rejected (Permissions).view' }},
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
@@ -139,11 +140,11 @@ export default [
     children: [
       {
         path: 'waiting-for-approval',
-        component: RegularizationWaitingForApprovalComponent,
+        component: RegularizationWaitingForApprovalComponent,canActivate: [PermissionsGuard], data: { permission: 'Waiting For Approval (Time Off).view' }
       },
-      { path: 'approved', component: RegularizationApprovedComponent },
-      { path: 'rejected', component: RegularizationRejectedComponent },
-      { path: 'process', component: RegularizationProcessedComponent },
+      { path: 'approved', component: RegularizationApprovedComponent,canActivate: [PermissionsGuard], data: { permission: 'Waiting For Approval (Time Off).view' } },
+      { path: 'rejected', component: RegularizationRejectedComponent,canActivate: [PermissionsGuard], data: { permission: 'Waiting For Approval (Time Off).view' } },
+      { path: 'process', component: RegularizationProcessedComponent,canActivate: [PermissionsGuard], data: { permission: 'Waiting For Approval (Time Off).view' } },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
@@ -153,15 +154,15 @@ export default [
     children: [
       {
         path: 'waiting-for-approval',
-        component: OnBeHalfOfWaitingForApprovalComponent,
+        component: OnBeHalfOfWaitingForApprovalComponent,canActivate: [PermissionsGuard], data: { permission: 'Waiting For Approval (Regularization).view' }
       },
-      { path: 'approved', component: OnBeHalfOfApprovalComponent },
-      { path: 'processed', component: OnBeHalfOfProcessComponent },
-      { path: 'rejected', component: OnBeHalfOfRejectComponent },
+      { path: 'approved', component: OnBeHalfOfApprovalComponent ,canActivate: [PermissionsGuard], data: { permission: 'Approved (Regularization).view' }},
+      { path: 'processed', component: OnBeHalfOfProcessComponent,canActivate: [PermissionsGuard], data: { permission: 'Processed (Regularization).view' } },
+      { path: 'rejected', component: OnBeHalfOfRejectComponent,canActivate: [PermissionsGuard], data: { permission: 'Rejected (Regularization).view' } },
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
-  { path: 'attendance', component: AttendanceComponent },
+  { path: 'attendance', component: AttendanceComponent,canActivate: [PermissionsGuard], data: { permission: 'Attendance Module.view' } },
   {
     path: 'pending-approvals',
     component: PendingApprovalsComponent,
@@ -170,10 +171,10 @@ export default [
         path: 'time-off-request',
         component: TimeOffRequestComponent,
         children: [
-          { path: 'for-you', component: TimeOffForYouRequestComponent },
+          { path: 'for-you', component: TimeOffForYouRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (Time Off).view' } },
           {
             path: 'for-your-role',
-            component: TimeOffForYourRoleRequestComponent,
+            component: TimeOffForYourRoleRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (Time Off).view' }
           },
           { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
@@ -182,8 +183,8 @@ export default [
         path: 'wfh',
         component: WfhRequestComponent,
         children: [
-          { path: 'for-you', component: WfhForYouRequsetComponent },
-          { path: 'for-your-role', component: WfhForYourRoleRequsetComponent },
+          { path: 'for-you', component: WfhForYouRequsetComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (WFH).view'  }},
+          { path: 'for-your-role', component: WfhForYourRoleRequsetComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (WFH).view'  }},
           { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
@@ -192,8 +193,8 @@ export default [
         component:DeskApprovalRequestComponent,
         children: [
           { path: '', redirectTo: 'for-you', pathMatch: 'full' },
-          { path: 'for-you', component: DeskForYouRequestComponent },
-          { path: 'for-your-role', component: DeskForYourRoleRequestComponent },
+          { path: 'for-you', component: DeskForYouRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (Desk Requests).view'  }},
+          { path: 'for-your-role', component: DeskForYourRoleRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (Desk Requests).view' } },
          
         ],
       },
@@ -201,10 +202,10 @@ export default [
         path: 'comp-off',
         component: CompOffRequestComponent,
         children: [
-          { path: 'for-you', component: CompoffForYouRequestComponent },
+          { path: 'for-you', component: CompoffForYouRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (Comp Off).view' } },
           {
             path: 'for-your-role',
-            component: CompoffForYourRoleRequestComponent,
+            component: CompoffForYourRoleRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (Comp Off).view' }
           },
           { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
@@ -213,10 +214,10 @@ export default [
         path: 'permissions',
         component: PremissionRequestComponent,
         children: [
-          { path: 'for-you', component: PremissionForYouRequestComponent },
+          { path: 'for-you', component: PremissionForYouRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (Permission).view'}  },
           {
             path: 'for-your-role',
-            component: PremissionForYourRoleRequestComponent,
+            component: PremissionForYourRoleRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (Permission).view' }
           },
           { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
@@ -225,10 +226,10 @@ export default [
         path: 'regularization-request',
         component: RegularizationRequestComponent,
         children: [
-          { path: 'for-you', component: RegularizationForYouRequestComponent },
+          { path: 'for-you', component: RegularizationForYouRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (Regularization).view' } },
           {
             path: 'for-your-role',
-            component: RegularizationForYourRoleRequestComponent,
+            component: RegularizationForYourRoleRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (Regularization).view' }  
           },
           { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
@@ -239,11 +240,11 @@ export default [
         children: [
           {
             path: 'for-you',
-            component: ClaimsandexpensesForYouRequestComponent,
+            component: ClaimsandexpensesForYouRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (Claims and Expenses).view' }  
           },
           {
             path: 'for-your-role',
-            component: ClaimsandexpensesForYourRoleRequestComponent,
+            component: ClaimsandexpensesForYourRoleRequestComponent,canActivate: [PermissionsGuard], data : { permission: 'For Role (Claims and Expenses).view' }
           },
 
           { path: '', redirectTo: 'for-you', pathMatch: 'full' },
@@ -251,11 +252,11 @@ export default [
       },
       {
         path: 'probation-request',
-        component: ProbationPendingApprovalsComponent,
+        component: ProbationPendingApprovalsComponent,canActivate: [PermissionsGuard], data: { permission: 'Probation Details.view' }
       },
       {
         path: 'assessmentform',
-        component: AssessmentformComponent,
+        component: AssessmentformComponent,canActivate: [PermissionsGuard], data: { permission: 'Probation Assessment Form.view' }
       },
       {
         path: 'separation-request',
@@ -263,11 +264,11 @@ export default [
         children: [
           {
             path: 'separation-for-you',
-            component: SeparationForYouRequestComponent,
+            component: SeparationForYouRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (Separation).view' }
           },
           {
             path: 'separation-for-role',
-            component: SeparationForYourRoleRequestComponent,
+            component: SeparationForYourRoleRequestComponent,canActivate: [PermissionsGuard], data  : { permission: 'For Role (Separation).view' }
           },
           { path: '', redirectTo: 'separation-for-you', pathMatch: 'full' },
         ],
@@ -276,33 +277,34 @@ export default [
         path: 'recall-request',
         component: RecallRequestsComponent,
         children: [
-          { path: 'recall-for-you', component: RecallForYouRequestComponent },
+          { path: 'recall-for-you', component: RecallForYouRequestComponent ,canActivate: [PermissionsGuard], data: { permission: 'For You (Recall Requests).view' }
+        },
           {
             path: 'recall-for-role',
-            component: RecallForYourRoleRequestComponent,
+            component: RecallForYourRoleRequestComponent, canActivate: [PermissionsGuard], data: { permission: 'For Role (Recall Requests).view' }
           },
           { path: '', redirectTo: 'recall-for-you', pathMatch: 'full' },
         ],
       },
 
-      { path: 'nodue-request', component: NodueApprovalDetailsComponent,
+      { path: 'nodue-request', component: NodueApprovalDetailsComponent, canActivate: [PermissionsGuard], data: { permission: 'No Due Clearance Request.view'  },
         children: [
           { path: '', redirectTo: 'nodue-request', pathMatch: 'full' },
         ],
       },
       { path: '', redirectTo: 'time-off-request', pathMatch: 'full' },
-      { path: 'trainee-approvals', component: TraineeApprovalsComponent },
+      { path: 'trainee-approvals', component: TraineeApprovalsComponent, canActivate: [PermissionsGuard], data: { permission: 'Trainee Details.view' } },
     ],
   },
   // on be half of approvals
   { path: 'on-behalf-of-approvals', component: OnbehalfOfApprovalsComponent,
     children: [
       { path: '', redirectTo: 'time-off', pathMatch: 'full' },
-      { path: 'time-off', component: TimeOffComponent, },
-      { path: 'entitlement', component: CompOffEntitlementComponent },
-      { path: 'wfh', component: WfhComponent },
-      { path: 'permissions', component: PermissionsComponent },
+      { path: 'time-off', component: TimeOffComponent,canActivate: [PermissionsGuard], data: { permission: 'Time Off (On Behalf Of Approvals).view' } },
+      { path: 'entitlement', component: CompOffEntitlementComponent,canActivate: [PermissionsGuard], data: { permission: 'Comp Off (On Behalf Of Approvals).view' } },
+      { path: 'wfh', component: WfhComponent ,canActivate: [PermissionsGuard], data: { permission: 'WFH (On Behalf Of Approvals).view' }},
+      { path: 'permissions', component: PermissionsComponent,canActivate: [PermissionsGuard], data: { permission: 'Permissions (On Behalf Of Approvals).view' } },
     ],
   },
-  { path: 'global-permissions', component: GlobalPermissionsComponent },
+  { path: 'global-permissions', component: GlobalPermissionsComponent ,canActivate: [PermissionsGuard], data: { permission: 'Global Permissions Module.view' } },
 ] as Route[];

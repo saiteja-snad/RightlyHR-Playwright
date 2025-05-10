@@ -13,6 +13,7 @@ import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootst
 import dayjs from 'dayjs';
 import { AccordionModule } from 'primeng/accordion';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../services/rbac.service';
 interface FieldGroup {
   name: string;
   fields: string[];
@@ -298,7 +299,8 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private http: HttpService
+    private http: HttpService,
+    public rbac: RbacService
   ) {}
 
   ngOnInit(): void {

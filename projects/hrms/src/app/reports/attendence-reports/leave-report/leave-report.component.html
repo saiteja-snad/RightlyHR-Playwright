@@ -6,9 +6,11 @@
     <div>
       <form autocomplete="off" [formGroup]="LeaveReportForm" (ngSubmit)="generateleaveReport()">
         <div class="d-flex align-items-center gap-3">
+          @if(rbac.allowedToAccess('Leave Report - Generate.view')){
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
             Clear All
           </button>
+        }
 
           <!-- Date Range -->
           <div class="d-flex align-items-center gap-2">
@@ -58,6 +60,7 @@
 
           <!-- Buttons -->
           <div class="d-flex gap-2">
+            @if(rbac.allowedToAccess('Leave Report - Generate.view')){
             <button type="submit" class="custom-btn btn-secondary" [disabled]="isLeaveGenerateDisabled">
               @if(spinnerLoader1){
               <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -66,6 +69,8 @@
               <span>{{'Generate'}}</span>
               }
             </button>
+          }
+          @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
               [disabled]="filteredleaveRecord.length == 0 || disableBtn">
               @if(spinnerLoader2){
@@ -75,6 +80,7 @@
               <span>{{'Export'}}</span>
               }
             </button>
+          }
           </div>
         </div>
       </form>

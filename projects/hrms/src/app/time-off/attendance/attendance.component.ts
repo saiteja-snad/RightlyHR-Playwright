@@ -12,7 +12,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { OpenModalService } from '../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
-import { IAttendance } from './attendance-modal';
+import { IAttendance, IdayLogs } from './attendance-modal';
 import { Ipersonal } from '../../Interfaces/personal-modal';
 import { RbacService } from '../../services/rbac.service';
 import moment from 'moment';
@@ -92,11 +92,14 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   permissionsDuration!: string;
   regularizationAttendDuration!: string;
   regularizationValues=[] as IPermissionsvalue[];
-  punchPairs: { in?: string, out?: string }[] = [];
+  punchPairs = [] as IdayLogs[];
   selectedDate!:Date;
   getAllEmployeeInfo = [] as any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   get_Employeelist_forTM = [] as any;
+  permissions_list=[] as any;
+  regularization_list=[] as any;
+  currentDate:any;
   constructor(
     private authService: AuthService,
     private http: HttpService,
@@ -110,7 +113,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Get current date
-    const currentDate = moment().date();
+    this.currentDate = moment().date();
     // Get current month (1-based)
     this.currentMonth = moment().month() + 1;
     this.selectedMonth=this.currentMonth;
@@ -124,6 +127,10 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     this.getEmployeeDetails();
     this.initializeForm();
   }
+  //function to check the date
+ isPastOrToday(date: any): boolean {
+  return moment(date).isSameOrBefore(moment(), 'day');
+}
   //function to inialize form
   initializeForm() {
     this.regularizationForm = this.fb.group({
@@ -165,39 +172,13 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   }
 
   //function to get the day logs
-  dayLogsData(Value:any,date:Date){
+  dayLogsData(Value:any,date:Date,totalduration:any,permissions:any,regularizations:any){
+    this.logsDuration=totalduration;
     this.selectedDate=date;
+    this.permissions_list=permissions;
+    this.regularization_list=regularizations
     if(Value){
-      this.punchPairs=[];
-      const inOutList = Value;
-      let temp: { in?: string, out?: string } = {};
-    
-      inOutList.forEach((log: { direction: string; punchTime: string | undefined; }) => {
-        if (log.direction === 'in') {
-          // If there is already an unpaired 'in', push it and start a new one
-          if (temp.in && !temp.out) {
-            this.punchPairs.push(temp);
-            temp = {};
-          }
-          temp.in = log.punchTime;
-        } else {
-          // If there's already an 'in', complete the pair
-          if (temp.in && !temp.out) {
-            temp.out = log.punchTime;
-            this.punchPairs.push(temp);
-            temp = {};
-          } else {
-            // No previous 'in', just push with only 'out'
-            this.punchPairs.push({ out: log.punchTime });
-          }
-        }
-      });
-    
-      // If there's a remaining 'in' without a pair
-      if (temp.in && !temp.out) {
-        this.punchPairs.push(temp);
-      }
-      this.punchInData=this.punchPairs;
+      this.punchPairs=Value;
     }
     else{
       this.punchPairs=[];
@@ -287,7 +268,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   getAttendnaceData(employee: any) {
     this.dataLoader=true;
     const employeeId = employee.employeeId
-    this.empName = `${employee.fusionEmpId} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`;
+    this.empName = `${employee.fusionEmpId ??''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`;
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`
@@ -295,7 +276,13 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.dataLoader=false;
-          this.attendanceData.next(response.data.attendanceData);
+          const updatedAttendanceData = response.data.attendanceData.map(
+            (item: any) => ({
+              ...item,
+              employeeId: response.data.employeeId,
+            })
+          );
+          this.attendanceData.next(updatedAttendanceData);
           this.statusCounts$.next(response.data.summary);
           this.shiftDetails = response.data.shiftDetails;
           // this.attendanceData.next(response.data);
@@ -341,11 +328,12 @@ export class AttendanceComponent implements OnInit, OnDestroy {
         return 'status-wfh';
       case 'compoff':
         return 'status-compoff';
-      case 'weekoff':
+      case 'weekend':
         return 'status-weekend';
       case 'half day remote':
         return 'status-remote';
-      case 'no records':
+        case 'half day':
+        return 'status-halfday';
       case 'norecords':
         return 'status-norecords';
       default:
@@ -395,7 +383,8 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           if (response) {
-            this.get_Employeelist_forTM = response.map((employee: any) => {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.get_Employeelist_forTM = myTeam.map((employee: any) => {
               return {
                 ...employee,
                 fullName: `${

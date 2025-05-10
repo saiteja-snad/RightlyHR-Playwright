@@ -37,23 +37,20 @@
                                     </a>
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <li *ngIf="rbac.allowedToAccess('Vendor Details.update')">
-                                            <a class="dropdown-item"
-                                                (click)="openModal(updateanassets );viewdata(asset);selectedAsset = asset">
-                                                <i class="bi bi-pencil"></i> Update
+                                            <a class="dropdown-item" (click)="openModal(updateanassets );viewdata(asset);selectedAsset = asset">
+                                                <i class="bi bi-pencil me-2"></i> Update
                                             </a>
                                         </li>
-                                        <li
-                                            *ngIf="asset.status==='Active' && rbac.allowedToAccess('Vendor Details.delete')">
-                                            <a class="dropdown-item"
-                                                (click)="openModal(inactivevendor);viewdata(asset);selectedAsset = asset">
-                                                <i class="bi bi-trash3"></i> Inactive
+                                        <li *ngIf="asset.status==='Active' && rbac.allowedToAccess('Vendor Details.delete')">
+                                            <a class="dropdown-item" (click)="openModal(inactivevendor);viewdata(asset);selectedAsset = asset">
+                                                <i class="bi bi-trash3 me-2"></i> Inactive
                                             </a>
                                         </li>
                                         <li
                                             *ngIf="asset.status==='Inactive' && rbac.allowedToAccess('Vendor Details.update')">
                                             <a class="dropdown-item"
                                                 (click)="openModal(activevendor);viewdata(asset);selectedAsset = asset">
-                                                <i class="bi bi-trash3"></i>Active
+                                                <i class="bi bi-trash3 me-2"></i>Active
                                             </a>
                                         </li>
                                     </ul>

@@ -132,9 +132,9 @@ export class IdentityDetailsComponent implements OnInit,OnDestroy {
       if (fileSizeInMB > 25) {
         this.IdentityAttachment = null;
         this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
-        this.identityForm.get('identityAttachment')?.reset();
+        this.identityForm.get('identityAttachment')?.setValue(null);
         this.identityForm.get('identityAttachment')?.markAsUntouched();
-        this.identityupdateForm.get('identityupdateAttachment')?.reset();
+        this.identityupdateForm.get('identityupdateAttachment')?.setValue(null);
         this.identityupdateForm.get('identityupdateAttachment')?.markAsUntouched();
        
         return;

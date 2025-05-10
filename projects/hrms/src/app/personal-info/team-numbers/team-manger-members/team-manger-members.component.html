@@ -24,40 +24,47 @@
                     <th>Employee Name</th>
                     <th>Work Email</th>
                     <th>Phone Number</th>
-                    <th>Employee Job Details</th>
+                    <!-- <th>Employee Job Details</th> -->
                     <th class="text-center">Action</th>
                 </tr>
             </thead>
-            <tbody
-                *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'firstName','middleName', 'lastName','workEmail', 'contactnumber', 'jobRole']) as filteredMembers">
+            <tbody *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
                 <ng-container *ngIf="filteredMembers.length > 0; else noData">
-                    <tr *ngFor="let details of filteredMembers">
-                        <td>{{details.fusionEmpId}}</td>
-                        <td>{{details.firstName}} {{details.middleName}} {{details.lastName}}</td>
-                        <td>{{details.workEmail}}</td>
-                        <td>{{details.contactnumber}}</td>
-                        <td class="text-center">
-                            <i *ngIf="details.jobDetails.length>0;else na" class="bi bi-info-circle-fill cursor"
-                              (click)="viwejobhistoy(jobdeatilesmodal,details.jobDetails)" ></i>
-                            <ng-template #na>
-                              N/A
-                            </ng-template>
-                          </td>
-                        <td class="text-center">
-                            <div class="dropdown">
-                                <a type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </a>
-                                <ul class="dropdown-menu py-0">
-                                    <li (click)="assigintm(changetmmodalforsingle,details)">
-                                        <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change TM</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </td>
-                    </tr>
+                  <tr *ngFor="let details of filteredMembers">
+                    <td>{{ details.fusionEmpId }}</td>
+                    <td>{{ details.employeeName }}</td>
+                    <td>{{ details.workEmail }}</td>
+                    <td>{{ details.contactnumber }}</td>
+                    <!-- <td class="text-center">
+                      <ng-container *ngIf="details.jobDetails.length > 0; else na">
+                        <i class="bi bi-info-circle-fill cursor" (click)="viwejobhistoy(jobdeatilesmodal, details.jobDetails)"></i>
+                      </ng-container>
+                      <ng-template #na>
+                        N/A
+                      </ng-template>
+                    </td> -->
+                    <td class="text-center">
+                      <div class="dropdown">
+                        <a type="button" data-bs-toggle="dropdown">
+                          <i class="bi bi-three-dots-vertical"></i>
+                        </a>
+                        <ul class="dropdown-menu py-0">
+                          <li (click)="assigintm(changetmmodalforsingle, details)">
+                            <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change TM</a>
+                          </li>
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
                 </ng-container>
-            </tbody>
+              </tbody>
+              
+              <ng-template #noData>
+                <tr>
+                  <td colspan="6" class="text-center">No team members found.</td>
+                </tr>
+              </ng-template>
+              
         </table>
 
         <!-- Show when no data -->

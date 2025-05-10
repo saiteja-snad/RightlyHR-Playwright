@@ -81,9 +81,10 @@
                                 class="form-select custom-select"></p-dropdown>
                         </div>
                         <div class="error-msg"
-                            *ngIf="identityForm.get('identityType')?.invalid && identityForm.get('identityType')?.touched">
+                            *ngIf="identityForm.get('identityType')?.errors?.['required'] && identityForm.get('identityType')?.touched">
                             Identity Type is required
                         </div>
+                      
                     </div>
                     } @if(this.rbac.allowedToAccess('Identity.view')){
                     <div class="col-md-6 mb-3">
@@ -104,12 +105,13 @@
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['maxlength']">
                                 Identity Number must not exceed {{ IdentityMaxNumber }} digits
                             </div>
-                            <div *ngIf="identityForm.get('identityNumber')?.errors?.['pattern']">
-                                Identity Number is required
-                            </div>
+                            
                             <div class="error-msg"
                                 *ngIf="identityForm.get('identityNumber')?.errors?.['invalidIdentityNumber'] && identityForm.get('identityNumber')?.touched">
                                 Identity Number cannot be all zeroes
+                            </div>
+                            <div *ngIf="identityForm.get('identityNumber')?.errors?.['pattern']">
+                                Invalid format based on selected Identity Type.
                             </div>
                         </div>
                     </div>}

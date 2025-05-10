@@ -48,8 +48,8 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
 
   // function to get the data of employees by hierarchy
   getAllEmployeeDetails() {
-    const satus = ['active', 'Trainee Active'];
-    this.subscription = this.http.getData(`Employeedata/Getallemployees?statuses=${satus}`)
+    const satus = ['Active', 'Trainee Active'];
+    this.subscription = this.http.getData(`Employeedata/v3/Getallemployees?statuses=${satus}`)
       .subscribe({
         next: (res: any) => {
           this.activeEmplist = res.map((employee: any) => ({

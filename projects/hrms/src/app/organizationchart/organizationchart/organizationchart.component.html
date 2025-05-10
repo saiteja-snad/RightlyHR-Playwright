@@ -15,7 +15,7 @@
 
     </div>
     }
-    @if(this.rbac.allowedToAccess('Organization Hierarchy - HR.view')){
+    @if(this.rbac.allowedToAccess('Organization Hierarchy - TM.view')){
     <div>
       <label for="education" class="form-label custom-label mb-2">Select Employee<span
           class="text-danger"></span></label>
@@ -25,40 +25,9 @@
           (onChange)="getOrghierarchy($event.value)" class="form-select custom-select"></p-select>
       </div>
 
-      @if(this.rbac.allowedToAccess('Organization Hierarchy - TM.view')){
-      <div class="d-flex align-items-center gap-2">
-        <label for="education" class="form-label custom-label pt-2">Select Employee</label>
-        <div class="custom-p-select-content">
-          <p-select [options]="mangeractiveEmplist" [filter]="true" filterBy="fullName" resetFilterOnHide="true"
-            optionLabel="fullName" optionValue="employeeid" [(ngModel)]="selectedEmployeeId"
-            placeholder="Please select employee" (onChange)="getOrghierarchy($event.value)"
-            class="form-select custom-select"></p-select>
-        </div>
-      </div>
-      }
-
-      @if(rbac.allowedToAccess('Organization Hierarchy - Compensation.view')){
-      <div class="d-flex align-items-center gap-2">
-        <label for="education" class="form-label custom-label pt-2">Select Compensation</label>
-        <div class="custom-p-select-content">
-          <p-select [options]="compensationOptions" optionLabel="label" optionValue="value"
-            [(ngModel)]="compensationyesorno" placeholder="Please select compensation"
-            class="form-select custom-select"></p-select>
-        </div>
-      </div>
-      }
-
-      <div *ngIf="data && data.length > 0">
-        @if(rbac.allowedToAccess('Organization Hierarchy - Download PDF.view')){
-        <button class="custom-btn btn-primary me-3" (click)="downloadChart('pdf')">Download as PDF</button>
-        }
-        @if(rbac.allowedToAccess('Organization Hierarchy - Download JPG.view')){
-        <button class="custom-btn btn-primary" (click)="downloadChart('jpg')">Download as JPG</button>
-        }
-      </div>
     </div>
     }
-    @if(this.rbac.allowedToAccess('Hierarchy Compensation select Tab.view')){
+    @if(this.rbac.allowedToAccess('Organization Hierarchy - Compensation.view')){
     <div>
       <label for="education" class="form-label custom-label mb-2">Select Compensation<span
           class="text-danger"></span></label>
@@ -70,12 +39,14 @@
     </div>
     }
 
-    @if(this.rbac.allowedToAccess('Hierarchy Download Tab.view')){
     <div *ngIf="data && data.length > 0">
+      @if(this.rbac.allowedToAccess('Organization Hierarchy - Download PDF.view')){
       <button class="custom-btn btn-primary me-3" (click)="downloadChart('pdf')">Download as PDF</button>
+      }
+      @if(this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view')){
       <button class="custom-btn btn-primary" (click)="downloadChart('jpg')">Download as JPG</button>
+      }
     </div>
-    }
   </div>
 
 

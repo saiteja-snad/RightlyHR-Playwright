@@ -1,56 +1,57 @@
-<div>
-  <div><span class="component-sub-header mb-3">Organizational Hierarchy</span></div>
+<div class="custom-main-component-container">
+  <div class="d-flex justify-content-between flex-wrap align-items-center mb-3">
+    <!--Header-->
+    <div class="component-header mb-3">Organizational Hierarchy</div>
 
-
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    @if(this.rbac.allowedToAccess('Organization Hierarchy - HR.view')){
-    <div>
-      <label for="education" class="form-label custom-label mb-2">Select Employee<span
-          class="text-danger"></span></label>
-      <div class="custom-p-select-content">
-        <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-          optionLabel="label" optionValue="value" [(ngModel)]="selectedEmployeeId" placeholder="Please select employee"
-          (onChange)="getOrghierarchy($event.value)" class="form-select custom-select"></p-select>
+    <!--Dropdown Content-->
+    <div class="d-flex align-items-center gap-3">
+      @if(this.rbac.allowedToAccess('Organization Hierarchy - HR.view')){
+      <div class="d-flex align-items-center gap-2">
+        <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Employee</b><span class="text-danger"></span></label>
+        <div class="custom-p-select-content">
+          <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
+            optionLabel="label" optionValue="value" [(ngModel)]="selectedEmployeeId"
+            placeholder="Please select employee" (onChange)="getOrghierarchy($event.value)"
+            class="form-select custom-select"></p-select>
+        </div>
       </div>
-
-    </div>
-    }
-    @if(this.rbac.allowedToAccess('Organization Hierarchy - TM.view')){
-    <div>
-      <label for="education" class="form-label custom-label mb-2">Select Employee<span
-          class="text-danger"></span></label>
-      <div class="custom-p-select-content">
-        <p-select [options]="mangeractiveEmplist" [filter]="true" filterBy="fullName"  resetFilterOnHide="true" optionLabel="fullName"
-          optionValue="employeeid" [(ngModel)]="selectedEmployeeId" placeholder="Please select employee"
-          (onChange)="getOrghierarchy($event.value)" class="form-select custom-select"></p-select>
-      </div>
-
-    </div>
-    }
-    @if(this.rbac.allowedToAccess('Organization Hierarchy - Compensation.view')){
-    <div>
-      <label for="education" class="form-label custom-label mb-2">Select Compensation<span
-          class="text-danger"></span></label>
-      <div class="custom-p-select-content">
-        <p-select [options]="compensationOptions" optionLabel="label" optionValue="value"
-          [(ngModel)]="compensationyesorno" placeholder="Please select compensation"
-          class="form-select custom-select"></p-select>
-      </div>
-    </div>
-    }
-
-    <div *ngIf="data && data.length > 0">
-      @if(this.rbac.allowedToAccess('Organization Hierarchy - Download PDF.view')){
-      <button class="custom-btn btn-primary me-3" (click)="downloadChart('pdf')">Download as PDF</button>
       }
-      @if(this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view')){
-      <button class="custom-btn btn-primary" (click)="downloadChart('jpg')">Download as JPG</button>
+
+      @if(this.rbac.allowedToAccess('Organization Hierarchy - TM.view')){
+      <div class="d-flex align-items-center gap-2">
+        <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Employee</b><span class="text-danger"></span></label>
+        <div class="custom-p-select-content">
+          <p-select [options]="mangeractiveEmplist" [filter]="true" filterBy="fullName" resetFilterOnHide="true"
+            optionLabel="fullName" optionValue="employeeid" [(ngModel)]="selectedEmployeeId"
+            placeholder="Please select employee" (onChange)="getOrghierarchy($event.value)"
+            class="form-select custom-select"></p-select>
+        </div>
+      </div>
       }
+
+      @if(this.rbac.allowedToAccess('Organization Hierarchy - Compensation.view')){
+      <div class="d-flex align-items-center gap-2">
+        <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Compensation</b><span class="text-danger"></span></label>
+        <div class="custom-p-select-content">
+          <p-select [options]="compensationOptions" optionLabel="label" optionValue="value"
+            [(ngModel)]="compensationyesorno" placeholder="Please select compensation"
+            class="form-select custom-select"></p-select>
+        </div>
+      </div>
+      }
+
+      <div>
+        @if(this.rbac.allowedToAccess('Organization Hierarchy - Download PDF.view')){
+        <button class="custom-btn btn-primary me-3"   [disabled]="!data || data.length === 0" (click)="downloadChart('pdf')">Download as PDF</button>
+        }
+        @if(this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view')){
+        <button class="custom-btn btn-primary" [disabled]="!data || data.length === 0" (click)="downloadChart('jpg')">Download as JPG</button>
+        }
+      </div>
     </div>
   </div>
 
-
-
+  <!--loader-->
   <ng-container *ngIf="dataload; else maincontent">
     <ng-template #loadingSpinner>
       <div class="loader-placeholder-content text-center">
@@ -62,7 +63,7 @@
     <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
   </ng-container>
 
-
+  <!--Data Content-->
   <ng-template #maincontent>
     <div class="card my-5 p-3">
       <ng-container *ngIf="!data?.length; else showChart">
@@ -73,13 +74,13 @@
 
       <ng-template #showChart>
         <div class="organization-chart-container">
-          <p-organization-chart [value]="data" [collapsible]="true" class="custom-organition-data">
-            <ng-template let-node pTemplate="person"  >
+          <p-organization-chart [value]="data" [collapsible]="true" class="custom-organition-data mt-2">
+            <ng-template let-node pTemplate="person">
               <div class="p-2 text-center ">
                 <img [src]="node?.data?.imageUrl ? node?.data?.imageUrl : 'images/alternate.png'"
                   class="image-content" />
                 <p class="name mb-0">{{ node?.data?.name }}</p>
-                <p class="name mb-0">{{ node?.data?.doj | dateformat }}</p>
+                <p class="name mb-0 text-nowrap">{{ node?.data?.doj | dateformat }}</p>
                 <p class="jobrole mb-0">{{ node?.data?.title }}</p>
                 <p class="jobrole mb-0" *ngIf="compensationyesorno">{{ node?.data?.compensationamount }}</p>
                 <p class="department mb-0">{{ node?.data?.department }}</p>

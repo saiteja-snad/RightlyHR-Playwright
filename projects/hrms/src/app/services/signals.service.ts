@@ -37,5 +37,8 @@ export class SignalsService {
   regularizationForRoleTriggerSignal = signal<boolean>(false);
   regularizationSidNavCountTriggerSignal = signal<boolean>(false);
 
+  noDueTriggerSignal = signal<boolean>(false);
+  noDueSideNavCountTriggerSignal = signal<boolean>(false);
+
   constructor() {}
 }

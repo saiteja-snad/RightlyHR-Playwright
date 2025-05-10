@@ -127,7 +127,7 @@
 <ng-template #seprationModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
-            <div >
+            <div>
                 <p class="popup-heading mb-0">Separation Request</p>
             </div>
             <div>
@@ -193,7 +193,7 @@
                             <textarea class="form-control custom-input" id="description" [maxLength]="400" formControlName="description"
                                 rows="3" placeholder="Please provide separation reason..."></textarea>
                             <div class="textarea-count-text">{{ separationRequestForm.get('description')?.value?.length || 0 }}/400</div>
-                            <small class="error-msg"
+                            <div class="error-msg"
                             *ngIf="separationRequestForm.get('description')?.touched && separationRequestForm.get('description')?.invalid">
                             <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['required']">
                               Reason for Separation is required
@@ -204,15 +204,15 @@
                             <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['pattern']">
                               Reason for Separation should not start with a space.
                             </ng-container>
-                          </small>
+                          </div>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <input class="form-check-input me-2" type="checkbox" id="check1"
                             formControlName="isEarlyRelieving" (change)="onCheckEarlyRelieving()" />
-                        <label class="form-check-label custom-label mb-2">
-                            <span>Request For Early Relieving?</span>
+                        <label class="form-check-label custom-label request-early mb-2">
+                            <b>Request For Early Relieving?</b>
                         </label>
                     </div>
 
@@ -237,18 +237,18 @@
                                 formControlName="reasonForEarlyRelieving" rows="3" [maxlength]="400"
                                 placeholder="Please provide early relieving reason..."></textarea>
                             <div class="textarea-count-text">{{ separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }}/400</div>
-                            <small class="error-msg"
-                      *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
-                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">
-                        Reason for Early Relieving is required
-                      </ng-container>
-                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['maxlength']">
-                        Maximum 400 characters allowed
-                      </ng-container>
-                      <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['pattern']">
-                        Reason for Early Relieving should not start with a space.
-                      </ng-container>
-                    </small>
+                            <div class="error-msg"
+                                *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
+                                <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">
+                                    Reason for Early Relieving is required
+                                </ng-container>
+                                <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['maxlength']">
+                                    Maximum 400 characters allowed
+                                </ng-container>
+                                <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['pattern']">
+                                    Reason for Early Relieving should not start with a space.
+                                </ng-container>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -272,6 +272,7 @@
         </div>
     </div>
 </ng-template>
+
 <!--separation confirmation popup-->
 <ng-template #closeconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
@@ -285,6 +286,7 @@
         </div>
     </div>
 </ng-template>
+
 <ng-template #addEducationmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
@@ -295,6 +297,7 @@
                 <a (click)="modal.dismiss();jobDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
+
         <div class="custom-main-popup-content ">
             <form autocomplete="off" [formGroup]="jobDetailsForm" (ngSubmit)="postJobDetails()">
                 <div class="row">
@@ -428,7 +431,6 @@
                         </div>
                     </div>
         
-        
                     <div class="col-md-6 mb-3">
                         <label for="jobType" class="form-label custom-label mb-2">Job Type<span
                                 class="text-danger">*</span></label>
@@ -450,9 +452,6 @@
         </div>
     </div>
 </ng-template>
-
-
-
 
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>

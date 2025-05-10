@@ -6,10 +6,19 @@ export interface IAttendance {
   duration: any,
   status: string,
   subStatus?: [],
-  tags: [],
+  tags: Itags[],
   dayLogs: IdayLogs[],
+  biometricLogs:[],
+  permissions:[],
+  regularizations:[]
 }
 export interface IdayLogs {
-  direction: string;
-  punchTime: any
+  in:any;
+  out:any;
+  duration:any;
+}
+export interface Itags{
+  name:string;
+  order:any;
+  colour:any;
 }

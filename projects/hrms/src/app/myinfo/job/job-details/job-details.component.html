@@ -20,7 +20,7 @@
                         <th>Sub location</th>
                         <th>Shift</th>
                         <th>Job type</th>
-                        <th class="text-center">Action</th>
+                        <th>Action<span class="text-lowercase">(s)</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -190,12 +190,9 @@
                         <div class="mb-3">
                             <label for="description" class="form-label custom-label mb-2">Reason for Separation <span
                                     class="text-danger">*</span></label>
-                            <textarea class="form-control custom-input" id="description" formControlName="description"
+                            <textarea class="form-control custom-input" id="description" [maxLength]="400" formControlName="description"
                                 rows="3" placeholder="Please provide separation reason..."></textarea>
-                            <div>
-                                <span class="color">{{ separationRequestForm.get('description')?.value?.length || 0 }} /
-                                    400</span>
-                            </div>
+                            <div class="textarea-count-text">{{ separationRequestForm.get('description')?.value?.length || 0 }}/400</div>
                             <small class="error-msg"
                             *ngIf="separationRequestForm.get('description')?.touched && separationRequestForm.get('description')?.invalid">
                             <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['required']">
@@ -237,13 +234,9 @@
                             <label for="reasonForEarlyRelieving" class="form-label custom-label mb-2">Reason for Early
                                 Relieving <span class="text-danger">*</span></label>
                             <textarea class="form-control custom-input" id="reasonForEarlyRelieving"
-                                formControlName="reasonForEarlyRelieving" rows="3"
+                                formControlName="reasonForEarlyRelieving" rows="3" [maxlength]="400"
                                 placeholder="Please provide early relieving reason..."></textarea>
-                            <div>
-                                <span class="color">{{
-                                    separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }} /
-                                    400</span>
-                            </div>
+                            <div class="textarea-count-text">{{ separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }}/400</div>
                             <small class="error-msg"
                       *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
                       <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">
@@ -261,7 +254,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="confirmationopenModal(closeconformation)">{{'Close'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="confirmationopenModal(closeconformation)">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="separationRequestForm.invalid||isLoading">
                         @if(!isLoading){
                               {{'Submit'|translate}}

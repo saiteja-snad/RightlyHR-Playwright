@@ -108,7 +108,12 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
   }
   //function to open the modal
   openModal(content: any) {
-    this.modalService.open(content, { centered: true });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+  closepopup(){
+    this.earlyReleivingform.reset();
+    this.recallreason.reset();
+    this.modalService.dismissAll();
   }
   removeSection(index: number) {
     this.formemailsfornodue.removeAt(index);
@@ -304,10 +309,12 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
     this.selectRecallrequest = JSON.parse(JSON.stringify(data));
     console.log(this.selectRecallrequest);
   }
+  blockAppliedDate : any;
   //function to select the data of early relieving request
   earlyReleivingdata(data: any, content: any) {
     this.modalService.open(content, { centered: true, backdrop : 'static' });
     this.postEarlyRelievingRequest = data;
+    this.blockAppliedDate = moment(this.postEarlyRelievingRequest.appliedDate).format('YYYY-MM-DD')
     console.log(this.postEarlyRelievingRequest);
   }
   //function to recall the request

@@ -1,0 +1,62 @@
+<div class="custom-main-component-container">
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Leave Type</th>
+                    <th>Duration</th>
+                    <th>Availed</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Reason</th>
+                    <th>Cancelled Reason</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (rbac.allowedToAccess('Timeoff Tab.view')) {
+                @if (lpdata.length > 0) {
+                <tr *ngFor="let item of lpdata">
+                    <td>{{item.date | dateformat}}</td>
+                    <td>{{item.categoryName}}</td>
+                    <td>{{item.duration}}</td>
+                    <td>{{ item.durationType == 1 ? 'First Half' : item.durationType == 2 ? 'Full Day' :
+                        item.durationType == 3 ? 'Second Half' : 'Unknown' }}
+                    </td>
+                    <td>{{item.startdate | dateformat}}</td>
+                    <td>{{item.enddate | dateformat}}</td>
+                    <td>
+                        <div>
+                            <a type="button" [ngbPopover]="reason">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #reason>
+                                <p class="mb-0">{{item.notes}}</p>
+                            </ng-template>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <a type="button" [ngbPopover]="reason">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #reason>
+                                <p class="mb-0">{{item.rejectedReason}}</p>
+                            </ng-template>
+                        </div>
+                    </td>
+                    <td>{{item.status}}</td>
+                </tr>
+                }
+                @else {
+                <tr>
+                    <app-no-data-found></app-no-data-found>
+                </tr>
+                }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

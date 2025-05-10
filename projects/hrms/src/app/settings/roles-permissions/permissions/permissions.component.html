@@ -650,16 +650,13 @@
                                 (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
                         </td>
                         <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"
-                            (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
                         </td>
                         <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" 
-                            (change)="onCheckboxChange(per, 'Create')"[disabled]="!roleToFilter?.id">
+                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
                         </td>
                         <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" 
-                            (change)="onCheckboxChange(per, 'Delete')" [disabled]="!roleToFilter?.id">
+                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
                         </td>
                     </tr>
                 </ng-container>

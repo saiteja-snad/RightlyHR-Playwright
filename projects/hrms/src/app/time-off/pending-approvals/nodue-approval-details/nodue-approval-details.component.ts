@@ -14,6 +14,7 @@ import moment from 'moment';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-nodue-approval-details',
@@ -42,8 +43,8 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
   isLoading = false;
   selectedNoDueData = {} as any;
 
-  constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, 
-    private authService: AuthService, private fb: FormBuilder, public rbac: RbacService,
+  constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private signalService:SignalsService, private http: HttpService, 
+    private authService: AuthService, private fb: FormBuilder, public rbac: RbacService
   ) { }
 
   ngOnInit(): void {
@@ -117,11 +118,13 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.modalService.dismissAll();
         this.AcceptForm.reset();
+        this.signalService.noDueTriggerSignal.set(true);
+        this.signalService.noDueSideNavCountTriggerSignal.set(true);
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           nodue: true,
         }));
-        this.conformationPopup.openSuccessModal('Request Approved Successfully');
+        this.conformationPopup.openSuccessModal('No Due Request Approved Successfully');
         this.getAllPendingApprovalsNoDue();
       },
       error: (reason: any) => {
@@ -147,11 +150,14 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.modalService.dismissAll();
         this.rejectForm.reset();
+        this.signalService.noDueTriggerSignal.set(true);
+        this.signalService.noDueSideNavCountTriggerSignal.set(true);
+
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           nodue: true,
         }));
-        this.conformationPopup.openSuccessModal('Request rejected successfully');
+        this.conformationPopup.openSuccessModal('No Due Request rejected successfully');
         this.getAllPendingApprovalsNoDue();
       },
       error: (reason: any) => {

@@ -1,8 +1,7 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="component-sub-header">Separation Details</div>
-    @if(isLastWorkingDate(this.empdata.lastworkingday)&&nodueclearancedetails.length <= 0
-      &&getSeparationDetails.value.length>0){
+    @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length >= 0)){
       <div class="custom-add-btn" (click)="openModal(raiseNodue)"><i class="bi bi-plus plus-icon me-1"></i>Raise No Due</div>
       }
   </div>
@@ -115,7 +114,6 @@
       </tbody>
     </table>
   </div>
-
 </div>
 
 <!-- Modal -->
@@ -123,19 +121,16 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
-        <p class="popup-heading mb-0">View Comments</p>
+        <p class="popup-heading mb-0">View Reason</p>
       </div>
       <div>
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
+    <div class="custom-main-popup-content">
       <p>
-        <b> Comments:</b> {{ decription_Storing_Variable }}
+        <b>Reason:</b> {{ decription_Storing_Variable }}
       </p>
-      <div class="d-flex justify-content-end gap-3 pt-4">
-        <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
-      </div>
     </div>
   </div>
 </ng-template>
@@ -150,8 +145,8 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="custom-main-popup-content p-4">
-      <div class="custom-table-content mb-3">
+    <div class="custom-main-popup-content">
+      <div class="custom-table-content custom-height mb-3">
         <table class="w-100">
           <thead>
             <tr>
@@ -233,9 +228,6 @@
             </tr>
           </tbody>
         </table>
-      </div>
-      <div class="d-flex justify-content-end gap-3">
-        <button type="reset" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
       </div>
     </div>
   </div>
@@ -351,22 +343,22 @@
 
 <!-- modal open to raise nodue -->
 <ng-template #raiseNodue let-modal>
-  <div class="custom-main-popup-container p-4" ngbAutofocus>
-    <div class="text-center pt-2">
-      <p class="popup-heading">Raise No Due Request</p>
-      <p class="popup-heading">Provide your official work email addresses!</p>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Raise No Due Request</p>
+      <p class="confirmation-text">Provide your official work email addresses!</p>
     </div>
-    <div class="custom-main-popup-content">
+    <div class="custom-main-popup-content p-0 pt-3">
       <form autocomplete="off" [formGroup]="profileForm">
         <div class="mb-3">
-          <p class="popup-heading mb-2">Add Emails<span class="error-msg">*</span></p>
-
+          <label for="comments" class="form-label custom-label mb-2">Add Emails<span class="error-msg">*</span></label>
           <div class="mb-3">
             <div class="d-flex">
-              <input name="addemail" class="form-control w-100" placeholder="Enter email" type="text"
+              <input name="addemail" class="form-control custom-input" placeholder="Enter email" type="text"
                 formControlName="emails" />
               <div class="pt-2 ps-2">
-                <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close me-2"></button>
               </div>
             </div>
             <!-- Error message for the main email input -->
@@ -377,11 +369,11 @@
           </div>
 
           <!-- Dynamic email inputs from FormArray -->
-          <div class="" formArrayName="noduerequestedemails">
-            <div *ngFor="let item of formemailsfornodue.controls; let i = index">
+          <div formArrayName="noduerequestedemails">
+            <div *ngFor="let item of formemailsfornodue.controls; let i = index" class="mb-3">
               <div class="d-flex">
-                <input [formControlName]="i" class="form-control mt-2 w-100" placeholder="Enter email" id="item-{{ i }}"
-                  type="text" />
+                <input [formControlName]="i" class="form-control custom-input" placeholder="Enter email"
+                  id="item-{{ i }}" type="text" />
                 <div class="pt-3 ps-2">
                   <button type="button" class="btn-close me-2" data-bs-dismiss="modal" aria-label="Close"
                     (click)="removeSection(i)"></button>
@@ -395,23 +387,23 @@
           </div>
 
           <!-- Add button at the bottom -->
-          <div class="d-flex text-end my-1">
-            <button type="button" class="custom-btn btn-primary" (click)="addAlias()">+ Add</button>
+          <div class="d-flex justify-content-end mb-3">
+            <button type="button" class="custom-btn btn-primary text-nowrap w-25 px-2" (click)="addAlias()">+
+              Add</button>
           </div>
 
-          <div class="d-flex justify-content-end w-100 gap-2 pt-3">
-            <button type="button" class="custom-btn btn-secondary px-4"
+          <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary"
               (click)="modal.dismiss(); profileForm.reset(); formemailsfornodue.clear()">
-              {{'Cancel'|translate}}
-            </button>
-            <button type="submit" class="custom-btn btn-primary px-4" [disabled]="profileForm.invalid||isLoading"
+              {{'Close'|translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" [disabled]="profileForm.invalid||isLoading"
               (click)="requestNoDue(profileForm)">
               @if(!isLoading){
               {{'Submit'|translate}}
               }
               @else {
-              <div class="d-flex">
-                <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
+              <div class="button-loader-content">
+                <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
                 <div> {{'Submitting'|translate}}</div>
               </div>
               }
@@ -422,17 +414,18 @@
     </div>
   </div>
 </ng-template>
+
 <ng-template #confirmationpopup let-model>
-    <div class="result-popup-content" ngbAutofocus>
-      <div>
-        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-        <p class="confirmation-text mb-4">Are you sure you want to close?</p>
-      </div>
-  
-      <div class="custom-modal-footer">
-        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-        <button type="reset" class="custom-btn btn-primary" (click)="closepopup()">Yes</button>
-      </div>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4">Are you sure you want to close?</p>
     </div>
-  </ng-template>
+
+    <div class="custom-modal-footer">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+      <button type="reset" class="custom-btn btn-primary" (click)="closepopup()">Yes</button>
+    </div>
+  </div>
+</ng-template>
 <!-- modal end to close the nodue -->

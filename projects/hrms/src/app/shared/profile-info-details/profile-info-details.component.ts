@@ -105,12 +105,12 @@ export class ProfileInfoDetailsComponent {
             next: (data: any) => {
               if (data.statusCode === 409) { }
               else if (data.statusCode === 200) {
-                this.conformationPopup.openSuccessModal('Basic Info updated successfully')
+                this.conformationPopup.openSuccessModal('Profile picture updated successfully')
                 this.getEmployeeId();
               }
             },
             error: (reason: any) => {
-              this.conformationPopup.openErrorModal('Basic Info update failed')
+              this.conformationPopup.openErrorModal('Profile picture update failed')
 
             },
           });

@@ -274,14 +274,13 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
 
   // Update bindLabel dynamically based on revisedDesignation
   gradeId!: any;
-  designationChange(Value:any){
-     if(Value.value){
-       this.gradeId=Value.value.gradeId;
-     }
-     else{  
-      this.gradeId=null;
-     }
+  designationChange(event: any) {
+    const selectedName = event.value;
+    const fullObj = this.getDesignationWithGradeIdDetails.find((d: { designationName: any; }) => d.designationName === selectedName);
+    this.gradeId = fullObj?.gradeId || null;
+    
   }
+
 
   @ViewChild('form') form!: NgForm;
   postcomments(Value: any) {
@@ -915,7 +914,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
       currentSalaryAuto: this.assessmentFormData.currentSalaryAuto,
       revisedSalaryAuto: this.assessmentFormData.revicedSalary,
       currentDesignation: this.assessmentFormData.currentDesignation,
-      revisedDesignation: this.assessmentFormData.revisedDesignation?.designationName,
+      revisedDesignation: this.assessmentFormData.revisedDesignation,
       totalDurationInMonths: this.assessmentFormData.totaldurationinmonths,
       status: "Submitted",
       currentStage: this.currentStage + 1,
@@ -929,7 +928,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
       salaryCorrectionCurrentAmount:this.assessmentFormData.sccurrentSalaryAuto,
       salaryCorrectionRevisedAmount: this.assessmentFormData.screvicedSalary,
     };
-
+    
     this.subscription= this.http.postdata(`reviewCycleHeader/upsertquery`, payload).subscribe({
       next: (data) => {
         if (this.modalRef) {
@@ -960,7 +959,6 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
     //function to re-submit the form
     onReSubmit() {
       this.modalRef = this.modalService.open(this.loading, { centered: true });
-
       const payload = {
         employeeId: this.employeeId,
         formId: this.assessmentFormData.formId,
@@ -990,7 +988,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
         currentSalaryAuto: this.assessmentFormData.currentSalaryAuto,
         revisedSalaryAuto: this.assessmentFormData.revicedSalary,
         currentDesignation: this.assessmentFormData.currentDesignation,
-        revisedDesignation: this.assessmentFormData.revisedDesignation?.designationName,
+        revisedDesignation: this.assessmentFormData.revisedDesignation,
         totalDurationInMonths: this.assessmentFormData.totaldurationinmonths,
         status: "Re-Submitted",
         currentStage: this.currentStage + 1,
@@ -1066,7 +1064,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
       currentSalaryAuto: this.assessmentFormData.currentSalaryAuto,
       revisedSalaryAuto: this.assessmentFormData.revicedSalary,
       currentDesignation: this.assessmentFormData.currentDesignation,
-      revisedDesignation: this.assessmentFormData.revisedDesignation?.designationName,
+      revisedDesignation: this.assessmentFormData.revisedDesignation,
       totalDurationInMonths: this.assessmentFormData.totaldurationinmonths,
       status: "Draft",
       currentStage: this.currentStage,

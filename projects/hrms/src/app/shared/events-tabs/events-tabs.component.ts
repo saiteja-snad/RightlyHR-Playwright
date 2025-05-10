@@ -12,6 +12,7 @@ import { TabsModule } from 'primeng/tabs';
 export class EventsTabsComponent {
   navTabs: any[] = [
     { label: 'Upcoming Events', link: '/events/upcoming' },
-    { label: 'past Events', link: '/events/past' },
+    { label: 'Past Events', link: '/events/past' },
+    { label: 'Published Events', link: '/events/published' },
   ];
 }

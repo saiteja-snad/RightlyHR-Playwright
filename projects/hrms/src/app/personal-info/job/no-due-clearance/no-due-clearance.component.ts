@@ -77,6 +77,8 @@ export class NoDueClearanceComponent {
         });
     }
   //function to get the nodue data
+  allApproved = false;
+  nodueapprovedcount = 0;
   getNodueClearance() {
     this.loading=true
     const employeeId = parseInt(this.empinfo.employeeId)
@@ -84,7 +86,10 @@ export class NoDueClearanceComponent {
       next: (data: any) => {
         this.loading=false
         this.nodue_Clearance_Details.next(data);
-        //const nodueapprovecount = data.filter((ele: any) => ele.status?.toLowerCase() === 'approved')
+        const totalCount = data.filter((ele: any) => (ele.subStatus?.toLowerCase() !== 'rerequested')).length;
+        const approvedCount = data.filter((ele: any) => (ele.status?.toLowerCase() === 'approved')).length;
+        this.nodueapprovedcount = approvedCount;
+        this.allApproved = totalCount > 0 && approvedCount === totalCount;
         this.nodueapprovalcount = data.length
         if (data.length > 0) {
           const lineOrders = data.map((item: any) => item.lineOrder);

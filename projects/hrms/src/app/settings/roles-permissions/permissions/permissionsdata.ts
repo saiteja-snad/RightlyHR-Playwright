@@ -381,7 +381,8 @@ export const permissionsData = [
     { fields: 'Team Leave Balance(Time Off)', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Team Leave Balance Summary(Time Off)', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Org Leave Balance(Time Off)', View: false, Update: false, Create: false, Delete: false },
-
+    { fields:'Org Leave Balance', View: false, Update: false, Create: false, Delete: false},
+    
     //Work From Home Sub Tabs Section
     { fields: 'Waiting For Approval (WFH)', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Approved (WFH)', View: false, Update: false, Create: false, Delete: false },

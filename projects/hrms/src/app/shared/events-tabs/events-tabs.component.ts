@@ -5,7 +5,7 @@ import { RbacService } from '../../services/rbac.service';
 import { TabsModule } from 'primeng/tabs';
 @Component({
   selector: 'app-events-tabs',
-  imports: [CommonModule,RouterModule,TabsModule],
+  imports: [CommonModule,RouterModule, TabsModule],
   templateUrl: './events-tabs.component.html',
   styleUrl: './events-tabs.component.scss'
 })

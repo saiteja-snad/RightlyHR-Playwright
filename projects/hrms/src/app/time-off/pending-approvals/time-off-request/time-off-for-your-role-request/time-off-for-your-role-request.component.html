@@ -22,11 +22,13 @@
                         <th>End Date</th>
                         <th>Reason</th>
                         <th>Approver Comments</th>
+                        @if(rbac.allowedToAccess('For Role (Time Off).update') || rbac.allowedToAccess('For Role (Time Off).delete')) {
                         <th class="text-center">Action(S)</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
-                    @if (rbac.allowedToAccess('Timeoff Tab.view')) {
+                    @if (rbac.allowedToAccess('For Role (Time Off).view')) {
                     @if ((((leaves | async) ?? []) | timeoffsearch: searchValue).length > 0) {
                     @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track
                     item.approvalHeader.id){
@@ -57,23 +59,28 @@
                                 </a>
                             </div>
                         </td>
+                        @if(rbac.allowedToAccess('For Role (Time Off).update') || rbac.allowedToAccess('For Role (Time Off).delete')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('For Role (Time Off).update') ) {
                                     <li>
-                                        <a class="dropdown-item" (click)="processleave(item)"><i class="bi bi-check-circle me-2"
-                                                *ngIf="rbac.allowedToAccess('Timeoff Tab.update')"></i>Process</a>
+                                        <a class="dropdown-item" (click)="processleave(item)"><i class="bi bi-check-circle me-2" ></i>Process</a>
                                     </li>
+                                }
+                                @if(rbac.allowedToAccess('For Role (Time Off).delete')) {
                                     <li>
                                         <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)">
-                                            <i class="bi bi-x-circle me-2" *ngIf="rbac.allowedToAccess('Timeoff Tab.delete')"></i>Reject</a>
+                                            <i class="bi bi-x-circle me-2" ></i>Reject</a>
                                     </li>
+                                }
                                 </ul>
                             </div>
                         </td>
+                    }
                     </tr>
                     }
                     }

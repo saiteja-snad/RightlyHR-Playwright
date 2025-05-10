@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { TabsModule } from 'ngx-bootstrap/tabs'; // Adjust the import path if necessary
 import { RouterModule } from '@angular/router';
 import { RbacService } from '../../services/rbac.service';
+import { TabsModule } from 'primeng/tabs';
 @Component({
   selector: 'app-events-tabs',
-  imports: [CommonModule,RouterModule,TabsModule],
+  imports: [CommonModule,RouterModule, TabsModule],
   templateUrl: './events-tabs.component.html',
   styleUrl: './events-tabs.component.scss'
 })

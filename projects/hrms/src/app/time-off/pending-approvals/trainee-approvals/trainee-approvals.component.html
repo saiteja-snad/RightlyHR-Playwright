@@ -20,11 +20,13 @@
                     <th class="text-nowrap">{{'Training Start Date'|translate}}</th>
                     <th class="text-nowrap">{{'Training End Date'|translate}}</th>
                     <th class="text-nowrap">{{'Approver Comments'|translate}}</th>
-                    <th class="text-nowrap"></th>
+                    @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('TraineeDetails.delete')) {
+                    <th class="text-nowrap">{{'Action(s)' | translate}}</th>
+                    }
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Trainee Tab.view')) {
+                @if (rbac.allowedToAccess('Trainee Details.view')) {
                 @if(((Trainees | async) ?? []).length > 0) {
                 <tr *ngFor="let trn of ((Trainees |async) ?? [] ) | traineesearchfilter:Traineeaprovalsearch ; ">
                     <td>
@@ -59,40 +61,46 @@
                         </div>
                         }
                     </td>
+                    @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('Trainee Details.delete')) {
                     <td>
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </span>
                             <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(rbac.allowedToAccess('Trainee Details.update') ) {
                                 @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
                                 <li>
-                                    <a class="dropdown-item" (click)="openModal(PermissionsApprove);handleRequests(trn)"
-                                        *ngIf="rbac.allowedToAccess('Trainee Tab.update')">Approve</a>
+                                    <a class="dropdown-item" (click)="openModal(PermissionsApprove);handleRequests(trn)">Approve</a>
                                 </li>
                                 }
+                                }
+                                @if( rbac.allowedToAccess('Trainee Details.delete')) {
                                 @if(trn.approvalHeader.currentapprovalStage != trn.approvalHeader.finalapprovalStage){
                                 <li>
-                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"
-                                        *ngIf="rbac.allowedToAccess('Trainee Tab.delete')">Reject</a>
+                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)">Reject</a>
                                 </li>
                                 }
+                                }
+                                @if(rbac.allowedToAccess('Trainee Details.update')) {
                                 @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
                                 <li>
-                                    <a class="dropdown-item" (click)="handleProcess(trn)"
-                                        *ngIf="rbac.allowedToAccess('Trainee Tab.update')">
+                                    <a class="dropdown-item" (click)="handleProcess(trn)">
                                         Process</a>
                                 </li>
                                 }
+                                }
+                                @if(rbac.allowedToAccess('Trainee Details.delete')) {
                                 @if(trn.approvalHeader.currentapprovalStage == trn.approvalHeader.finalapprovalStage){
                                 <li>
-                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)"
-                                        *ngIf="rbac.allowedToAccess('Trainee Tab.delete')">Reject</a>
+                                    <a class="dropdown-item" (click)="openModal(RejectTrainee);handleRequests(trn)">Reject</a>
                                 </li>
+                                }
                                 }
                             </ul>
                         </div>
                     </td>
+                    }
                 </tr>
                 }
                 @else{
@@ -121,15 +129,20 @@
                     <span class="error-msg">*</span></label>
                 <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                     placeholder="Please provide feedback" name="Feedback" #Feedback="ngModel" maxlength="250"
-                    [(ngModel)]="selectedLeaveData.trcomments" (input)="blockLeadingSpace($event,selectedLeaveData.trcomments)" rows="3" required></textarea>
-                <div class="textarea-count-text">{{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
-                <div class="error-msg" *ngIf="(Feedback.touched && Feedback.invalid) || (Feedback.invalid && acceptForm.submitted)">
+                    [(ngModel)]="selectedLeaveData.trcomments"
+                    (input)="blockLeadingSpace($event,selectedLeaveData.trcomments)" rows="3" required></textarea>
+                <div class="textarea-count-text">
+                    {{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
+                <div class="error-msg"
+                    *ngIf="(Feedback.touched && Feedback.invalid) || (Feedback.invalid && acceptForm.submitted)">
                     Feedback is required</div>
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'| translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="acceptForm.invalid || ! selectedLeaveData.trcomments || isLoading">
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'|
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary"
+                    [disabled]="acceptForm.invalid || ! selectedLeaveData.trcomments || isLoading">
                     @if(!isLoading){ {{'Approve'|translate}} }
                     @else {
                     <div class="button-loader-content">
@@ -150,7 +163,7 @@
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">{{'Are you sure you want to Reject?' | translate}}</p>
         </div>
-        <form autocomplete="off" name="acceptForm"  #acceptForm="ngForm">
+        <form autocomplete="off" name="acceptForm" #acceptForm="ngForm">
             <div class="custom-main-popup-content">
                 <div class="form-outline d-flex justify-content-center  gap-3 mb-3 ">
                     <div class="form-check form-check-inline">
@@ -173,13 +186,14 @@
                         <span class="error-msg">*</span>
                     </label>
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
-                        id="extenddate" name="extenddate" [min]="minExtendDate" #extenddate="ngModel" (change)="updateExtendDateValidity()"
-                        [(ngModel)]="selectedLeaveData.extenddate">
+                        id="extenddate" name="extenddate" [min]="minExtendDate" #extenddate="ngModel"
+                        (change)="updateExtendDateValidity()" [(ngModel)]="selectedLeaveData.extenddate">
                     <div class="error-msg"
                         *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && acceptForm.submitted)">
                         Extend date is required
                     </div>
-                    <div class="error-msg" *ngIf="!isempeffectivevaild">Extend Date cannot be less than Training End date</div>
+                    <div class="error-msg" *ngIf="!isempeffectivevaild">Extend Date cannot be less than Training End
+                        date</div>
                 </div>
 
                 <div *ngIf="extend" class="mb-3">
@@ -188,7 +202,8 @@
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
                         placeholder="Please provide Feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedLeaveData.trcomments" required rows="3" maxlength="250"></textarea>
-                        <div class="textarea-count-text">{{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
+                    <div class="textarea-count-text">
+                        {{selectedLeaveData.trcomments?.length?selectedLeaveData.trcomments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptForm.submitted) || 
                     (Extendreason.errors?.['pattern']) ">Feedback for Extend is required</div>
                 </div>

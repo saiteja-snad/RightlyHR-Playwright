@@ -22,14 +22,16 @@
                     <th>{{'Reason' | translate}}</th>
                     <th>{{'Request Type' | translate}}</th>
                     <th>{{'Approver History' | translate}}</th>
+                    @if(rbac.allowedToAccess('For You (Seperation Request).update') || rbac.allowedToAccess('For You(Seperation Request).delete')) {
                     <th>Action<span class="text-lowercase">(s)</span></th>
+                    }
                 </tr>
             </thead>
             <tbody>
                 <ng-container
                     *ngIf="((separation_For_You_Details | async) ?? [] | pendingapprovalsseparation: searchValue) as filteredData">
                     <tr *ngFor="let item of filteredData">
-    
+
                         @if(item.approvalHeader?.status?.toLowerCase() == 'waiting for approval'
                         ||item.approvalHeader?.status?.toLowerCase() =='approved'){
                         <td>{{item.entity?.spRequesterName?item.entity?.spRequesterName:'-'}}</td>
@@ -67,44 +69,49 @@
                             }
                             @else{-}
                         </td>
+                        @if(rbac.allowedToAccess('For You (Seperation Request).update') || rbac.allowedToAccess('ForYou(Seperation Request).delete')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('For You (Seperation Request).update') ) {
                                     @if(item.approvalHeader?.currentapprovalStage !=
                                     item.approvalHeader?.finalapprovalStage){
-                                    <li (click)="openModal(approval);handleRequest(item)"
-                                        *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
+                                    <li (click)="openModal(approval);handleRequest(item)">
                                         <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Approve" |
                                             translate}}</a>
                                     </li>
                                     }
+                                    }
+                                    @if(rbac.allowedToAccess('For You (Seperation Request).delete') ) {
                                     @if((item.approvalHeader?.currentapprovalStage !=
                                     item.approvalHeader?.finalapprovalStage) ||
                                     (item.approvalHeader?.currentapprovalStage ==
                                     item.approvalHeader?.finalapprovalStage)){
-                                    <li (click)="openModal(rejectmodal);handleRequest(item)"
-                                        *ngIf="rbac.allowedToAccess('Separation Requests Tab.delete')">
+                                    <li (click)="openModal(rejectmodal);handleRequest(item)">
                                         <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{"Reject" |
                                             translate}}</a>
                                     </li>
                                     }
+                                    }
+                                    @if(rbac.allowedToAccess('For You (Seperation Request).update') ) {
                                     @if(item?.approvalHeader?.currentapprovalStage ==
                                     item?.approvalHeader?.finalapprovalStage){
-                                    <li (click)="openModalLarge(processmodal);handleRequest(item)"
-                                        *ngIf="rbac.allowedToAccess('Separation Requests Tab.update')">
+                                    <li (click)="openModalLarge(processmodal);handleRequest(item)">
                                         <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{"Process" |
                                             translate}}</a>
                                     </li>
+                                    }
                                     }
                                 </ul>
                             </div>
                         </td>
                         }
-    
-    
+                        }
+
+
                     </tr>
                     <tr *ngIf="filteredData.length === 0">
                         <td colspan="9"><app-no-data-found></app-no-data-found></td>
@@ -127,7 +134,8 @@
             <p class="confirmation-text">{{"Are you sure you want to approve Separation Request?" | translate}}</p>
         </div>
         <div class="custom-main-popup-content">
-            <form autocomplete="off" name="acceptForm" #acceptForm="ngForm" (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)">
+            <form autocomplete="off" name="acceptForm" #acceptForm="ngForm"
+                (ngSubmit)="acceptForm.valid && handleAccept(acceptForm)">
                 @if(selectedSpRequestData.spIsEarlyRelieveing){
                 <div class="mb-3 text-center">
                     <label><b>{{"This employee has opted for an Early Relieving!" | translate}}</b></label>
@@ -412,12 +420,14 @@
                     *ngIf="selectedSpRequestData.spIsAcceptEarlyrelievingcheck!=true">
                     <div class="form-check form-check-inline ">
                         <input type="radio" name="flexRadioDefault" id="flexRadioDiscontinue" (click)="toggleRegular()">
-                        <label class="form-check-label ms-2" for="flexRadioDiscontinue">{{'Regular' | translate}}</label>
+                        <label class="form-check-label ms-2" for="flexRadioDiscontinue">{{'Regular' |
+                            translate}}</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input type="radio" name="flexRadioDefault" id="flexRadioEarly"
                             [checked]="selectedRadio === 'early'" (click)="toggleEarly()">
-                        <label class="form-check-label ms-2" for="flexRadioEarly">{{'Early Relieving' | translate}}</label>
+                        <label class="form-check-label ms-2" for="flexRadioEarly">{{'Early Relieving' |
+                            translate}}</label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input type="radio" name="flexRadioDefault" id="flexRadioExtend" (click)="toggleExtend()">
@@ -484,7 +494,8 @@
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || 
                     (Extendreason.invalid && acceptFormforprocess.submitted)">
                         <span *ngIf="Extendreason.errors?.['required']">Feedback for Extend is required.</span>
-                        <span *ngIf="Extendreason.errors?.['pattern']">Feedback for Extend should not start with a space.</span>
+                        <span *ngIf="Extendreason.errors?.['pattern']">Feedback for Extend should not start with a
+                            space.</span>
                     </div>
                 </div>
 
@@ -493,8 +504,10 @@
                         <span class="error-msg"></span></label>
                     <div class="form-control custom-input">{{ selectedSpRequestData.spRequestLastWorkingDate |
                         date }}</div>
-                    <div class="error-msg" *ngIf="!islastworking">Last working day should be after the date of joining</div>
-                    <div class="error-msg" *ngIf="!lastworkingValidation">Last working day should be after the current date</div>
+                    <div class="error-msg" *ngIf="!islastworking">Last working day should be after the date of joining
+                    </div>
+                    <div class="error-msg" *ngIf="!lastworkingValidation">Last working day should be after the current
+                        date</div>
                 </div>
 
                 <div class="mb-3" *ngIf="regular">
@@ -627,7 +640,8 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="resetForm(acceptForm);model.dismiss()">Yes</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="resetForm(acceptForm);model.dismiss()">Yes</button>
         </div>
     </div>
 </ng-template>

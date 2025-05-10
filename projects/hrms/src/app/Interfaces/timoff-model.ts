@@ -440,3 +440,11 @@ export interface ShiftData {
   statusCode: number;
   orgShiftsItems: OrgShiftItem[];
 }
+
+export interface ApprovalStatusCount {
+  moduleId: number;
+  moduleName: string;
+  forYou: number;
+  forYourRole: number;
+  totalCount: number;
+}

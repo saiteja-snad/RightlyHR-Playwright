@@ -25,10 +25,10 @@ export class OnBeHalfOfApprovalTabsComponent {
   approvedCount: any;
   rejectedCount: any;
   navLinks: any[] = [
-    { label: 'Waiting For Approval', route: 'waiting-for-approval', },
-    { label: 'Approved', route: 'approved', },
-    { label: 'Processed', route: 'processed', },
-    { label: 'Rejected', route: 'rejected', }
+    { label: 'Waiting For Approval', route: 'waiting-for-approval',permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' }},
+    { label: 'Approved', route: 'approved',permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
+    { label: 'Processed', route: 'processed', permission: { feature: 'Processed (On Behalf Of)', action: 'view' }},
+    { label: 'Rejected', route: 'rejected',permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } }
   ];
 
   constructor(

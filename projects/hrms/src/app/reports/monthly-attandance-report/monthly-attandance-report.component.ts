@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-monthly-attandance-report',
   imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule],
@@ -46,7 +47,8 @@ export class MonthlyAttandanceReportComponent {
     private router: Router,
     private openmodalservice:OpenModalService,
     private modalService:NgbModal,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {

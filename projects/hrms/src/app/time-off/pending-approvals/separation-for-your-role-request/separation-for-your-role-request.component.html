@@ -467,8 +467,8 @@
                         /250</div>
                     <div class="error-msg"
                         *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptFormforprocess.submitted)">
-                        <span *ngIf="earlyrelievingreason.errors?.['required']">Reason for Early Relieving is required.</span>
-                        <span *ngIf="earlyrelievingreason.errors?.['pattern']">Reason for Early Relieving should not start with a space.</span>
+                        <span *ngIf="earlyrelievingreason.errors?.['required']">Reason for Early Relieving is required</span>
+                        <span *ngIf="earlyrelievingreason.errors?.['pattern']">Reason for Early Relieving should not start with a space</span>
                     </div>
                 </div>
     
@@ -499,8 +499,8 @@
                         pattern="^[^\s].*"></textarea>
                     <div class="textarea-count-text">{{selectedSpRequestData.comments?.length?selectedSpRequestData.comments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && acceptFormforprocess.submitted)">
-                        <span *ngIf="Extendreason.errors?.['required']">Feedback for Extend is required.</span>
-                        <span *ngIf="Extendreason.errors?.['pattern']">Feedback for Extend should not start with a space.</span>
+                        <span *ngIf="Extendreason.errors?.['required']">Feedback for Extend is required</span>
+                        <span *ngIf="Extendreason.errors?.['pattern']">Feedback for Extend should not start with a space</span>
                     </div>
                 </div>
             </div>

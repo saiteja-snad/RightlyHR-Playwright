@@ -93,10 +93,9 @@
                 </li>
                 @if( item.recallStatus.toLowerCase() !='earlyrelieving' && !recallandearlyrelievingbuttonConditions){
                 <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
-                  <a class="dropdown-item"> <i class="bi bi-trash3 me-2"></i>Early relieving</a>
+                  <a class="dropdown-item"><img src="icons/sepration.png" alt=""  class="speration-icon me-2">Early relieving</a>
                 </li>
                 }
-
               </ul>
             </div>
           </td>
@@ -271,8 +270,8 @@
         </div>
 
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">
-            {{'Cancel'|translate}}
+          <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">
+            {{'Close'|translate}}
           </button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid||isLoading">
             @if(!isLoading){
@@ -303,7 +302,7 @@
         <div class="mb-3">
           <label for="Effective Date" class="form-label custom-label mb-2">Early Relieving Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
-            id="Effective Date" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" required>
+            id="Effective Date" [min]="this.blockAppliedDate" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" required>
           <div class="error-msg"
             *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && earlyReleivingform.get('earlyReleivingDate')?.touched">
             Early relieving Date is required
@@ -331,7 +330,7 @@
         </div>
       
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|translate}}</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)">{{'Close'|translate}}</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="earlyReleivingform.invalid||isLoading">
             @if(!isLoading){
             {{'Submit'|translate}}
@@ -423,4 +422,17 @@
     </div>
   </div>
 </ng-template>
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+        <p class="confirmation-text mb-4">Are you sure you want to close?</p>
+      </div>
+  
+      <div class="custom-modal-footer">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+        <button type="reset" class="custom-btn btn-primary" (click)="closepopup()">Yes</button>
+      </div>
+    </div>
+  </ng-template>
 <!-- modal end to close the nodue -->

@@ -822,11 +822,11 @@ export const permissionsData = [
    { fields: 'Assessor Update(Status - Initialted)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Assessor Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
 
+  //Events sub tabs
+  { fields: 'Holidays(Optional)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Holidays(Public)', View: false, Update: false, Create: false, Delete: false },
+
    //Events sub tabs
    { fields: 'Events(Upcoming Events)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Events(Past Events)', View: false, Update: false, Create: false, Delete: false },
- 
-   //Holidays sub tabs
-   { fileds: 'Holidays(Public)', View: false, Update: false, Create: false, Delete: false },
-   { fileds: 'Holidays(Optional)', View: false, Update: false, Create: false, Delete: false },
 ];

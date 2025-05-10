@@ -4,10 +4,12 @@
             <p class="component-header mb-0">IT Support</p>
         </div>
 
+        @if(rbac.allowedToAccess('My Tickets Tab.create')){
         <div>
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)"><i
                     class="bi bi-plus me-2"></i>Add New Ticket</button>
         </div>
+        }
 
     </div>
     <div class="custom-table-content">

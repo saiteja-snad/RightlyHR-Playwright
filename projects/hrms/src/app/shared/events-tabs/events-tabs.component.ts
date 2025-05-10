@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-events-tabs',
   imports: [CommonModule,RouterModule,TabsModule],
@@ -10,8 +11,27 @@ import { TabsModule } from 'primeng/tabs';
 })
 
 export class EventsTabsComponent {
+
+  filteredTabs: any[] = [];
+  constructor(public rbac: RbacService) { }
+  
   navTabs: any[] = [
-    { label: 'Upcoming Events', link: '/events/upcoming' },
-    { label: 'past Events', link: '/events/past' },
+    { label: 'Upcoming Events', link: '/events/upcoming', permission: { feature: 'Events(Upcoming Events)', action: 'view' } },
+    { label: 'past Events', link: '/events/past', permission: { feature: 'Events(Past Events)', action: 'view' } },
   ];
+
+  ngOnInit(): void {
+    this.filterTabsByRbac();
+  }
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs.filter(tab => {
+      if (!tab.permission) return true;
+
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      const value = this.rbac.allowedToAccess(permissionString);
+      console.log(value);
+      return value;
+    });
+  }
 }

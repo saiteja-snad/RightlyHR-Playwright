@@ -10,7 +10,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
-
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-desk-for-you-request',
   imports: [CommonModule, NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule],
@@ -29,7 +29,7 @@ export class DeskForYouRequestComponent {
   rejectForm!: FormGroup;
 
   constructor(private http: HttpService, private readonly modalService: NgbModal, 
-    public conformationPopup: OpenModalService, private fb: FormBuilder) { }
+    public conformationPopup: OpenModalService, private fb: FormBuilder,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.employdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');

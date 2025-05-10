@@ -28,6 +28,7 @@ export class LeavesApprovaltabsComponent {
     { label: 'Approved', link: 'approved', },
     { label: 'Processed', link: 'processed', },
     { label: 'Rejected', link: 'rejected', },
+    { label: 'Cancelled', link: 'cancelled', },
     { label: 'Team Leave balance', link: 'team-leave-balance', },
     { label: 'Team Leave Summary', link: 'team-leave-summary', }
   ];
@@ -56,6 +57,7 @@ export class LeavesApprovaltabsComponent {
             { label: 'Approved', link: 'approved', count: approved.length },
             { label: 'Processed', link: 'processed', count: processed.length },
             { label: 'Rejected', link: 'rejected', count: rejected.length },
+            { label: 'Cancelled', link: 'cancelled' },
             { label: 'Team Leave balance', link: 'team-leave-balance', },
             { label: 'Team Leave Summary', link: 'team-leave-summary', }
           ];

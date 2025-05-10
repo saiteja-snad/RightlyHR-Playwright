@@ -99,6 +99,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   get_Employeelist_forTM = [] as any;
   permissions_list=[] as any;
   regularization_list=[] as any;
+  currentDate:any;
   constructor(
     private authService: AuthService,
     private http: HttpService,
@@ -112,7 +113,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Get current date
-    const currentDate = moment().date();
+    this.currentDate = moment().date();
     // Get current month (1-based)
     this.currentMonth = moment().month() + 1;
     this.selectedMonth=this.currentMonth;
@@ -126,6 +127,10 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     this.getEmployeeDetails();
     this.initializeForm();
   }
+  //function to check the date
+ isPastOrToday(date: any): boolean {
+  return moment(date).isSameOrBefore(moment(), 'day');
+}
   //function to inialize form
   initializeForm() {
     this.regularizationForm = this.fb.group({
@@ -263,7 +268,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   getAttendnaceData(employee: any) {
     this.dataLoader=true;
     const employeeId = employee.employeeId
-    this.empName = `${employee.fusionEmpId} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`;
+    this.empName = `${employee.fusionEmpId ??''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`;
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`
@@ -271,7 +276,13 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.dataLoader=false;
-          this.attendanceData.next(response.data.attendanceData);
+          const updatedAttendanceData = response.data.attendanceData.map(
+            (item: any) => ({
+              ...item,
+              employeeId: response.data.employeeId,
+            })
+          );
+          this.attendanceData.next(updatedAttendanceData);
           this.statusCounts$.next(response.data.summary);
           this.shiftDetails = response.data.shiftDetails;
           // this.attendanceData.next(response.data);

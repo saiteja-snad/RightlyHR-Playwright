@@ -73,7 +73,7 @@
                             <td>{{(item.date|dateformat)??'-'}}</td>
                             <td>{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
                             <td>{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
-                            <td>{{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' : item.duration}}
+                            <td>{{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' : item.duration.totalDuration}}
                                 
                             </td>
                             <td>
@@ -112,11 +112,11 @@
 
                                 <!-- action btns content-->
                                 <div class="d-flex gap-3 justify-content-end">
-                                    @if(item.status == 'Absent' && item.duration.biometricDuration == '00:00:00' &&
+                                    @if(item.status == 'Absent' && item.duration.totalDuration >= '00:00:00' &&
                                     currentMonth==selectedMonth && item.employeeId == empdata.employeeId){
                                     <a class="leave-btn" (click)="navigateToLeave()"><u>Apply Leave</u> </a>
                                     }
-                                    @if(item.duration.totalDuration != '00:00:00' && item.status !=='Present'&& item.status!=='Weekend' 
+                                    @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&  (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs && item.status!=='Weekend' 
                                     && currentMonth==selectedMonth && this.rbac.allowedToAccess('Attendance Regularization Button.view') 
                                     && item.employeeId==empdata.employeeId){
                                     <a class="regulazie-btn"

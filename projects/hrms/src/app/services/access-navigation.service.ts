@@ -510,8 +510,9 @@ export class AccessNavigationService {
 
     case '/calendar':
         if (this.rbac.allowedToAccess('Calender Tab.view')) {
-          return route = '/calendar/calendarview';
+          return (route = '/calendar/calendarview');
         }
+
         if (this.rbac.allowedToAccess('Holidays Tab.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -520,6 +521,17 @@ export class AccessNavigationService {
           }
         }
         break;
+
+      case '/calendar/holiday':
+        
+        if (this.rbac.allowedToAccess('Holidays Tab.view')) {
+          for (const item of HOLIDAYS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+      break;
 
         case '/dashboard':
           if(this.rbac.allowedToAccess('Dashboard Module.view')){
@@ -658,6 +670,17 @@ navigateToAccessedRoute(actualRoute: string): string {
         }
       }
       break;
+
+      case '/calendar/holiday':
+
+        if (this.rbac.allowedToAccess('Holidays Tab.view')) {
+          for (const item of HOLIDAYS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
   }
   return route;
 }

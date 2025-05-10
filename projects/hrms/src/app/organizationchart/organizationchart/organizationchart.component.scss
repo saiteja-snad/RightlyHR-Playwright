@@ -26,7 +26,7 @@
 .p-organizationchart-table > tbody > tr > td {
     text-align: center;
     vertical-align: top;
-    padding: 0rem 0.25rem;
+    padding: 0rem 0.25rem !important;
 }
 
 .p-organizationchart-node-toggle-button {
@@ -40,8 +40,6 @@
 .p-organizationchart-connector-left {
     border-inline-end: 1px solid #305889 !important;
 }
-
-
 
 .p-organizationchart-connector-down {
     background: #305889 !important;
@@ -77,4 +75,13 @@
         width: 16rem;
         height: 12rem;
     }
+}
+
+.p-organizationchart-connectors :nth-child(1 of .p-organizationchart-connector-right) {
+    border-inline-start: none !important;
+    border-start-start-radius: 0rem !important;
+}
+
+.p-organizationchart-connectors :nth-last-child(1 of .p-organizationchart-connector-left) {
+    border-start-end-radius: 0rem !important;
 }

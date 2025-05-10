@@ -10,8 +10,7 @@
                     <th>Reason</th>
                     <th>Approver Comments</th>
                     <th>Applied Date</th>
-                    @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).update') || rbac.allowedToAccess('WFH (On
-                    Behalf Of Approvals).delete')) {
+                    @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).update') || rbac.allowedToAccess('WFH (On Behalf Of Approvals).delete')) {
                     <th>Action<span class="text-lowercase">(s)</span></th>
                     }
                 </tr>

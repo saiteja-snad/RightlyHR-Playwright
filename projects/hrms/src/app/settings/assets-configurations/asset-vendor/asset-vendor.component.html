@@ -97,7 +97,7 @@
                                 class="text-danger">*</span></label>
                         <input id="vendordetailes" type="text" (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
                             formControlName="vendordetailes" class="form-control custom-input" autocomplete="off"
-                            placeholder="Enter Vendor Name" />
+                            placeholder="Please enter vendor name" />
                         <div class="error-msg"
                             *ngIf="assetForm.get('vendordetailes')?.invalid && assetForm.get('vendordetailes')?.touched">
                             <!-- Required error -->
@@ -118,10 +118,10 @@
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2" for="phonenumber">Primary Contact<span
                                 class="text-danger">*</span></label>
-                        <input id="phonenumber" type="text"  inputmode="numeric" maxlength="15" minlength="10" formControlName="phonenumber"
+                        <input id="phonenumber" type="text"  (paste)="formValidation.validatePaste($event)" inputmode="numeric" maxlength="15" minlength="10" formControlName="phonenumber"
                             class="form-control custom-input"
                             (keypress)="formValidation.restrictAlphabets($event)"autocomplete="off"
-                            placeholder="Enter Primary Contact Number" />
+                            placeholder="Please enter primary contact number" />
 
                         <div class="error-msg"
                             *ngIf="assetForm.controls['phonenumber'].invalid && (assetForm.controls['phonenumber'].touched)">
@@ -148,7 +148,7 @@
                         <label class="form-label custom-label mb-2" for="email">Email Address<span
                                 class="text-danger">*</span></label>
                         <input id="email" type="email" formControlName="email"  class="form-control custom-input" (keypress)="formValidation.checkNoSpaceForEmail($event,assetForm,'email')" autocomplete="off"
-                            placeholder="Enter Email Address" autocomplete="off"/>
+                            placeholder="Please enter email address" autocomplete="off"/>
                         <div class="error-msg"
                             *ngIf="assetForm.get('email')?.invalid && assetForm.get('email')?.touched">
                             <div *ngIf="assetForm.get('email')?.errors?.['required']">
@@ -167,7 +167,7 @@
                         <label class="form-label custom-label mb-2" for="address">Address<span
                                 class="text-danger">*</span></label>
                         <input id="address" type="text" name="random-address-field" formControlName="address" autocomplete="off" (keypress)="formValidation.restrictInput($event)" class="form-control custom-input"
-                            placeholder="Enter Address" />
+                            placeholder="Please enter address" />
                         <div class="error-msg"
                             *ngIf="assetForm.get('address')?.invalid && assetForm.get('address')?.touched">
                             <!-- Required error -->
@@ -187,9 +187,9 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label custom-label mb-2" for="phonenumber">Secondary Contact</label>
-                        <input id="phonenumber" type="text"  inputmode="numeric" maxlength="15" formControlName="secondaryphonenumber" autocomplete="off"
+                        <input id="phonenumber"  (paste)="formValidation.validatePaste($event)" type="text"  inputmode="numeric" maxlength="15" formControlName="secondaryphonenumber" autocomplete="off"
                             (keypress)="formValidation.restrictAlphabets($event)" class="form-control custom-input"
-                            placeholder="Enter secondary contact number" />
+                            placeholder="Please enter secondary contact number" />
                         <div class="error-msg"
                             *ngIf="assetForm.controls['secondaryphonenumber'].invalid && (assetForm.controls['secondaryphonenumber'].touched || assetForm.controls['secondaryphonenumber'].dirty)">
                             <!-- Required error -->
@@ -279,7 +279,7 @@
                 <p class="popup-heading mb-0">Update Vendor Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();assetverderupdataform.reset()">
+                <a (click)="openupdatemodal(confirmationupdatedeletepopup)">
                     <img src="icons/close.png" alt="Close Icon" class="close-icon">
                 </a>
             </div>
@@ -293,7 +293,7 @@
                         <label for="vendordetailes" class="form-label custom-label mb-2">Vendor Name
                             <span class="text-danger">*</span></label>
                         <input id="vendordetailes" type="text" formControlName="vendordetailes"
-                            class="form-control custom-input" placeholder="Enter Vendor Details"
+                            class="form-control custom-input" placeholder="Please enter vendor details"
                             (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" />
                         <div class="error-msg"
                             *ngIf="assetverderupdataform.get('vendordetailes')?.invalid && assetverderupdataform.get('vendordetailes')?.touched">
@@ -318,7 +318,7 @@
                         <input id="phonenumber" type="text" formControlName="phonenumber" maxlength="15"
                             (keypress)="formValidation.restrictAlphabets($event)"
                             (paste)="formValidation.validatePaste($event)" class="form-control custom-input"
-                            placeholder="Enter Primary Contact" />
+                            placeholder="Please enter primary contact" />
                         <div class="error-msg"
                             *ngIf="assetverderupdataform.controls['phonenumber'].invalid && 
                         (assetverderupdataform.controls['phonenumber'].touched || assetverderupdataform.controls['phonenumber'].dirty)">
@@ -346,7 +346,7 @@
                         <label for="email" class="form-label custom-label mb-2">Email Address
                             <span class="text-danger">*</span></label>
                         <input id="email" type="email" formControlName="email" class="form-control custom-input" (keypress)="formValidation.checkNoSpaceForEmail($event,assetForm,'email')"
-                            placeholder="Enter Email" />
+                            placeholder="Please enter email" />
                         <div class="error-msg"
                             *ngIf="assetverderupdataform.get('email')?.invalid && assetverderupdataform.get('email')?.touched">
                             <div *ngIf="assetverderupdataform.get('email')?.errors?.['required']">
@@ -363,7 +363,7 @@
                         <label for="address" class="form-label custom-label mb-2">Address<span
                                 class="text-danger">*</span></label>
                         <input id="address" type="text" formControlName="address" class="form-control custom-input"
-                            placeholder="Enter Address" (keydown)="formValidation.restrictInput($event)" />
+                            placeholder="Please enter address" (keydown)="formValidation.restrictInput($event)" />
                         <div class="error-msg"
                             *ngIf="assetverderupdataform.get('address')?.invalid && assetverderupdataform.get('address')?.touched">
                             <!-- Required error -->
@@ -385,13 +385,13 @@
                         </label>
                         <input id="phonenumber" type="text" formControlName="secondaryphonenumber" maxlength="15"  (keypress)="formValidation.restrictAlphabets($event)"
                         (paste)="formValidation.validatePaste($event)"
-                            class="form-control custom-input" placeholder="Enter Secondary Contact " />
+                            class="form-control custom-input" placeholder="Please enter secondary contact number " />
                         <div class="error-msg" *ngIf="assetverderupdataform.controls['secondaryphonenumber'].invalid && (assetverderupdataform.controls['secondaryphonenumber'].touched 
                             || assetverderupdataform.controls['secondaryphonenumber'].dirty)">
                             <!-- Required error -->
-                            <div *ngIf="assetverderupdataform.controls['secondaryphonenumber'].errors?.['required']">
+                            <!-- <div *ngIf="assetverderupdataform.controls['secondaryphonenumber'].errors?.['required']">
                                 Secondary Contact is required
-                            </div>
+                            </div> -->
                             <div *ngIf="assetverderupdataform.controls['secondaryphonenumber'].errors?.['maxlength']">
                                 Secondary Contact must be 10 to 15 digits
                             </div>
@@ -411,12 +411,29 @@
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-
-                        (click)="modal.dismiss();assetverderupdataform.reset()">Close</button>
+                        (click)="openupdatemodal(confirmationupdatedeletepopup)">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="assetverderupdataform.invalid">Update</button>
                 </div>
             </form>
+        </div>
+    </div>
+</ng-template>
+<!-- update vender close button click conformation -->
+<ng-template #confirmationupdatedeletepopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> Are you sure you want to close?</p>
+        </div>
+
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+                No
+            </button>
+            <button type="submit" class="custom-btn btn-primary" (click)="clearupdatedata();model.dismiss()">
+                Yes
+            </button>
         </div>
     </div>
 </ng-template>

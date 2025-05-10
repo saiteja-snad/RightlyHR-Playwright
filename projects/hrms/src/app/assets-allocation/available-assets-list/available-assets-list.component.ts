@@ -12,6 +12,7 @@ import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.c
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-available-assets-list',
@@ -81,7 +82,8 @@ export class AvailableAssetsListComponent {
     private readonly router: Router,
     public conformationPopup: OpenModalService,
     private readonly datepipe: DatePipe,
-
+    public formValidation: FormValidationService,
+    
     config: NgbModalConfig) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -150,7 +152,7 @@ export class AvailableAssetsListComponent {
       enddate: [null],
       comments: [null],
       vendorname: [{ value: null, disabled: true }, []],
-      contactnumber: [{ value: null, disabled: true }, [Validators.maxLength(10), Validators.pattern("[0-9]+$")]]
+      contactnumber: [{ value: null, disabled: true }, [Validators.maxLength(15),Validators.minLength(10) ,Validators.pattern("[0-9]+$"),this.allZeroesIfMaxLength()]]
     })
   }
 
@@ -202,6 +204,16 @@ export class AvailableAssetsListComponent {
       return null;
     };
   }
+  //if user put only zero multipul times mobile no field
+allZeroesIfMaxLength(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = String(control.value || '');
+    if (/^0{10,}$/.test(value)) {
+      return { allZeroesIfMaxLength: true };
+    }
+    return null;
+  };
+}
   openModal(content: any,) {
     this.modalService.open(content, { centered: true })
 
@@ -521,7 +533,7 @@ export class AvailableAssetsListComponent {
       this.assetForm.get('amcstartdate')?.setValidators([Validators.required]);
       this.assetForm.get('amcenddate')?.setValidators([Validators.required]);
       this.assetForm.get('vendorname')?.setValidators([Validators.required, Validators.pattern(/^(?!\s*$).+/)]);
-      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(10), Validators.minLength(10)]);
+      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]);
     } else {
       this.assetForm.get('amcstartdate')?.disable();
       this.assetForm.get('amcenddate')?.disable();
@@ -828,6 +840,8 @@ export class AvailableAssetsListComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset Allocated Successfully ');
             this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+            this.getcount(null,null,this.Status);
+
           },
           error: (error) => {
             console.error("Error updating asset:", error);
@@ -868,6 +882,7 @@ export class AvailableAssetsListComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset Transferred  Successfully ');
             this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+            this.getcount(null,this.selectedSubLocationId,this.Status);
             this.locationfromdata.reset();
           },
           error: (error) => {
@@ -1047,6 +1062,7 @@ export class AvailableAssetsListComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset marked as Inactivated Successfully');
             this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+            this.getcount(null,this.selectedSubLocationId,this.Status);
             this.inactiveForm.reset()
           },
           error: (err) => {
@@ -1127,7 +1143,7 @@ export class AvailableAssetsListComponent {
           this.undermainteenceForm.reset()
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset marked as Maintenance Successfully ');
-
+          this.getcount(null,this.selectedSubLocationId,this.Status);
         },
         error: (error) => {
           console.error("Error updating asset:", error);
@@ -1301,7 +1317,13 @@ export class AvailableAssetsListComponent {
       }
     });
   }
-
+  openupdatepopup(content: any){
+    this.modalService.open(content, { centered: true });
+  }
+resetupdateassiginform(){
+  this.assetForm.reset();
+   this.modalService.dismissAll();
+}
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

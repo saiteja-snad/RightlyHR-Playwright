@@ -9,7 +9,7 @@
     <ng-template #loadingSpinner>
       <div class="loader-placeholder-content text-center">
         <div>
-          <app-data-loader-content/>
+          <app-data-loader-content />
         </div>
       </div>
     </ng-template>
@@ -116,7 +116,7 @@
                         Mark as Active
                       </a>
                     </li>
-                    <li  >
+                    <li>
 
                       <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
                         View Asset Details
@@ -146,23 +146,23 @@
     </div>
     <div class="pagination-content pt-2 w-100">
       <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-          
-          <div class="d-flex align-items-center gap-3 p-2">
-              
-              <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                  (ngModelChange)="onRowsChange()">
-                  <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                  </option>
-              </select>
-              <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                  totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-          </div>
 
-          <!-- Pagination -->
-          <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-              (onPageChange)="onPageChange($event)"></p-paginator>
+        <div class="d-flex align-items-center gap-3 p-2">
+
+          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+            (ngModelChange)="onRowsChange()">
+            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+            </option>
+          </select>
+          <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+            totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+        </div>
+
+        <!-- Pagination -->
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+          (onPageChange)="onPageChange($event)"></p-paginator>
       </div>
-  </div>
+    </div>
   </ng-template>
 </div>
 
@@ -188,7 +188,8 @@
           <div class=" col-md-6 mb-2">
             <label for="location" class="form-label custom-label mb-2 custom-label mb-2">Location<span
                 class="error-msg">*</span></label>
-                <input type="text"  class="form-control custom-input custom-input"  placeholder="Please enter location"   formControlName="locationId" >
+            <input type="text" class="form-control custom-input custom-input" placeholder="Please enter location"
+              formControlName="locationId">
             <div *ngIf="assetForm.get('locationId')?.invalid && assetForm.get('locationId')?.touched" class="error-msg">
               Location is required.
             </div>
@@ -198,8 +199,9 @@
           <div class="col-md-6 mb-2">
             <label for="subLocation" class="form-label custom-label mb-2 custom-label mb-2">Sub Location<span
                 class="error-msg">*</span></label>
-                <input type="text"  class="form-control custom-input custom-input" placeholder="Please enter sub location"   formControlName="subLocationId" >
-       
+            <input type="text" class="form-control custom-input custom-input" placeholder="Please enter sub location"
+              formControlName="subLocationId">
+
             <div *ngIf="assetForm.get('subLocationId')?.invalid && assetForm.get('subLocationId')?.touched"
               class="error-msg">
               Sub Location is required.
@@ -228,8 +230,9 @@
               Category<span class="error-msg">*</span></label>
 
             <div class="custom-p-select-content">
-              <p-select [options]="assetSubCategory" optionLabel="name" optionValue="name"  formControlName="assetSubCategory"
-                placeholder="Please select asset sub category" class="form-select custom-select"></p-select>
+              <p-select [options]="assetSubCategory" optionLabel="name" optionValue="name"
+                formControlName="assetSubCategory" placeholder="Please select asset sub category"
+                class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="assetForm.get('assetSubCategory')?.invalid && assetForm.get('assetSubCategory')?.touched">
               <div class="error-msg">Asset sub category is required</div>
@@ -241,8 +244,9 @@
           <div class="col-md-6 mb-2">
             <label for="assetModel" class="form-label custom-label mb-2 custom-label mb-2">Asset Model<span
                 class="error-msg">*</span></label>
-            <input id="assetModel" formControlName="assetModel" class="form-control custom-input custom-input"
-              placeholder="Enter asset model">
+            <input id="assetModel" formControlName="assetModel"
+              (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
+              class="form-control custom-input custom-input" placeholder="Please enter asset model">
             <div *ngIf="assetForm.get('assetModel')?.hasError('required') && assetForm.get('assetModel')?.touched">
               <div class="error-msg">Asset model is required</div>
             </div>
@@ -254,8 +258,9 @@
           <div class="col-md-6  mb-2">
             <label for="serialnumber" class="form-label custom-label mb-2 custom-label mb-2">Serial Number<span
                 class="error-msg">*</span></label>
-            <input id="serialnumber" formControlName="serialnumber" class="form-control custom-input custom-input"
-              placeholder="Enter serial number">
+            <input id="serialnumber" formControlName="serialnumber"
+              (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
+              class="form-control custom-input custom-input" placeholder="Enter serial number">
             <div *ngIf="assetForm.get('serialnumber')?.hasError('required') && assetForm.get('serialnumber')?.touched">
               <div class="error-msg">Serial number is required</div>
             </div>
@@ -380,8 +385,10 @@
           <div class="col-md-6 mb-2">
             <label for="vendordetailes" class="form-label custom-label mb-2 custom-label mb-2">AMC Vendor Name<span
                 class="error-msg" *ngIf="isToggledamc">*</span></label>
-            <input type="text" formControlName="vendorname" class="form-control custom-input custom-input"
-              name="vendorname" placeholder="AMC Vendor Name" autocomplete="off" />
+            <input type="text" formControlName="vendorname"
+              (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
+              class="form-control custom-input custom-input" name="vendorname" placeholder="AMC Vendor Name"
+              autocomplete="off" />
             <div *ngIf="assetForm.get('vendorname')?.invalid && assetForm.get('vendorname')?.touched">
               <div class="error-msg">AMC Vendor Name is required</div>
             </div>
@@ -392,27 +399,29 @@
           <div class="col-md-6 mb-2">
             <label for="vendor" class="form-label custom-label mb-2 custom-label mb-2">AMC Vendor Contact<span
                 class="error-msg" *ngIf="isToggledamc">*</span></label>
-            <input type="text" formControlName="contactnumber" class="form-control custom-input custom-input"
-              maxlength="10" minlength="10" placeholder="AMC Vendor Contact" />
+            <input type="text" formControlName="contactnumber" (paste)="formValidation.validatePaste($event)"
+              (keypress)="formValidation.restrictAlphabets($event)" class="form-control custom-input custom-input"
+              maxlength="15" minlength="10" placeholder="AMC Vendor Contact" />
             <div class="error-msg"
               *ngIf="assetForm.get('contactnumber')?.errors?.['required'] && assetForm.get('contactnumber')?.touched">
               AMC vendor contact is required
             </div>
 
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['minlength'] ">
-              AMC vendor contact must be 10 digits
+              AMC vendor contact must be 10 to 15 digits
             </div>
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['maxlength'] ">
-              AMC vendor contact must be 10 digits
+              AMC vendor contact must be 10 to 15 digits
             </div>
-
+            <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
+              AMC vendor Contact is not valid
+            </div>
           </div>
-
-
         </div>
 
         <div class="d-flex justify-content-end gap-3">
-          <button type="button" class="custom-btn btn-secondary " (click)="openConfirmationModal(confirmatideleteonpopup)">Close</button>
+          <button type="button" class="custom-btn btn-secondary "
+            (click)="openConfirmationModal(confirmatideleteonpopup)">Close</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
                                  ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
                                  (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
@@ -447,8 +456,8 @@
 <ng-template #conformationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-4">
@@ -494,7 +503,8 @@
             </label>
             <div class="textarea-container">
               <textarea class="form-control custom-input" formControlName="reason"
-                placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+                (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
+                maxlength="250" rows="3"></textarea>
               <!-- Error messages -->
               <div>
                 <div class="error-msg"
@@ -517,7 +527,7 @@
 
         <div class="d-flex justify-content-end gap-3">
           <button type="button" class="custom-btn btn-secondary "
-            (click)="openModal(inativeconfromation);model.dismiss()">Cancel</button>
+            (click)="openModal(inativeconfromation);model.dismiss()">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="inactiveForm.invalid">Submit</button>
         </div>
 
@@ -530,8 +540,8 @@
 <ng-template #inativeconfromation let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(deleteasstes)">
@@ -601,7 +611,7 @@
         </div>
         <div class="d-flex justify-content-end gap-3">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="openModal(relaseconformation);modal.dismiss()">Cancel</button>
+            (click)="openModal(relaseconformation);modal.dismiss()">Close</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="releaseform.invalid">Submit</button>
         </div>
 
@@ -615,8 +625,8 @@
 <ng-template #relaseconformation let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(releaseassets)">
@@ -673,7 +683,7 @@
 
           <div class="d-flex justify-content-end gap-3">
             <button type="button" class="custom-btn btn-secondary mt-3"
-              (click)="modal.dismiss();openModal(assiginconformation)">Cancel</button>
+              (click)="modal.dismiss();openModal(assiginconformation)">Close</button>
             <button type="submit" class="custom-btn btn-primary mt-3" [disabled]="assiginForm.invalid">Submit</button>
           </div>
 
@@ -687,8 +697,8 @@
 <ng-template #assiginconformation let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to Close ?</p>
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-4">
@@ -740,7 +750,7 @@
           </div>
           <div class="d-flex justify-content-end gap-3">
             <button type="button" class="custom-btn btn-secondary mt-3"
-              (click)="modal.dismiss();openModal(updateconformation)">Cancel</button>
+              (click)="modal.dismiss();openModal(updateconformation)">Close</button>
             <button type="submit" class="custom-btn btn-primary mt-3" [disabled]="reassiginForm.invalid">Submit</button>
           </div>
         </div>
@@ -753,8 +763,8 @@
 <ng-template #updateconformation let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(reallocateanasset);model.dismiss()">
@@ -833,7 +843,7 @@
             </label>
             <div class="textarea-container">
               <textarea formControlName="comments" class="form-control custom-input" placeholder="Please enter reason"
-                maxlength="250" rows="3"></textarea>
+                maxlength="250" rows="3" (keypress)="formValidation.blockLeadingSpace($event)"></textarea>
 
               <div>
                 <div class="error-msg"
@@ -855,7 +865,7 @@
 
           <div class="d-flex justify-content-end gap-3">
             <button type="button" class="custom-btn btn-secondary"
-              (click)="modal.dismiss();openModal(tranferconformation)">Cancel</button>
+              (click)="modal.dismiss();openModal(tranferconformation)">Close</button>
             <button type="submit" class="custom-btn btn-primary" [disabled]="locationfromdata.invalid">Submit</button>
           </div>
         </div>
@@ -869,8 +879,8 @@
 <ng-template #tranferconformation let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(tranferaerasset)">
@@ -917,7 +927,8 @@
             </label>
             <div class="textarea-container">
               <textarea class="form-control custom-input" formControlName="comments"
-                placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+                (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
+                maxlength="250" rows="3"></textarea>
 
               <div>
                 <div class="error-msg"
@@ -971,6 +982,7 @@
             <label for="vendordetailes" class="form-label custom-label mb-2">Contact Name<span class="text-danger"
                 *ngIf="isToggledvender">*</span></label>
             <input type="text" formControlName="vendorname" class="form-control custom-input"
+              (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
               placeholder="Contact Name" />
             <div
               *ngIf="undermainteenceForm.get('vendorname')?.invalid && undermainteenceForm.get('vendorname')?.touched">
@@ -982,7 +994,8 @@
             <label for="vendor" class="form-label custom-label mb-2">Contact Number<span class="text-danger"
                 *ngIf="isToggledvender">*</span></label>
             <input type="text" formControlName="contactnumber" class="form-control custom-input"
-              placeholder="Contact Number" maxlength="10" />
+              placeholder="Contact Number" maxlength="15" minlength="10" (paste)="formValidation.validatePaste($event)"
+              (keypress)="formValidation.restrictAlphabets($event)" autocomplete="off" />
             <div
               *ngIf="undermainteenceForm.get('contactnumber')?.invalid && undermainteenceForm.get('contactnumber')?.touched">
               <div class="error-msg">Contact Number is required</div>
@@ -990,12 +1003,15 @@
             <div *ngIf="undermainteenceForm.get('contactnumber')?.errors?.['maxlength']" class="error-msg">
               Contact Number cannot exceed 10 digits
             </div>
+            <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
+              AMC vendor Contact is not valid
+            </div>
           </div>
 
         </div>
         <div class="d-flex justify-content-end gap-3">
           <button type="button" class="custom-btn btn-secondary "
-            (click)="openModal(conformationpopup);model.dismiss()">Cancel</button>
+            (click)="openModal(conformationpopup);model.dismiss()">Close</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="undermainteenceForm.invalid">Submit</button>
         </div>
       </form>

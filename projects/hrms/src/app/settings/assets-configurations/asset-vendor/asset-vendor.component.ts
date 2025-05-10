@@ -62,7 +62,7 @@ export class AssetVendorComponent {
       vendordetailes: [null, [Validators.required, Validators.maxLength(50)]],
       email: [null, [Validators.required, Validators.email, Validators.maxLength(30), this.customEmailValidator()]],
       address: [null, [Validators.required, Validators.maxLength(50)]],
-      secondaryphonenumber: [null, [Validators.required,Validators.maxLength(15),Validators.pattern(/^(?!0{10,15}$)\d{10,15}$/), Validators.minLength(10),this.allZeroesIfMaxLength()]],
+      secondaryphonenumber: [null, [Validators.maxLength(15),Validators.pattern(/^(?!0{10,15}$)\d{10,15}$/), Validators.minLength(10),this.allZeroesIfMaxLength()]],
     }
     )
   }
@@ -250,13 +250,22 @@ export class AssetVendorComponent {
       console.log("Asset Form is invalid.");
     }
   }
-  //close button click open delet pop up dailog add vender
+  //add close button click open delet pop up dailog add vender
   openaddventermodal(content:any){
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  //no button click close the  dailog add vender
+  //add no button click close the  dailog add vender
   cleardata(){
    this.assetForm.reset()
+    this.modalService.dismissAll();
+  }
+   //update close button click open delet pop up dailog add vender
+   openupdatemodal(content:any){
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+  //update no button click close the  dailog add vender
+  clearupdatedata(){
+   this.assetverderupdataform.reset()
     this.modalService.dismissAll();
   }
   ngOnDestroy(): void {

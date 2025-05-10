@@ -3,11 +3,13 @@
         <div>
             <p class="component-header cursor mb-0">My Expenses</p>
         </div>
+        @if(rbac.allowedToAccess('Expenses Module.create')){
         <div>
             <button type="button" (click)="navigatetoAddExpenses()" class="custom-btn btn-primary">
                 <i class="bi bi-plus me-2"></i>Add New Expense
             </button>
         </div>
+        }
     </div>
     <div class="mb-3">
         <app-expenes-header-tabs></app-expenes-header-tabs>

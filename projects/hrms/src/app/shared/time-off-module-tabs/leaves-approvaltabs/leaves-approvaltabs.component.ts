@@ -51,13 +51,14 @@ export class LeavesApprovaltabsComponent {
           const approved = response.filter(item => item.status === 'Approved');
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
+          const cancelled = response.filter(item => item.status === 'Cancelled');
           // Set counts
           this.statusTabs = [
             { label: 'Waiting For Approval', link: 'waiting-for-approval', count: waiting.length },
             { label: 'Approved', link: 'approved', count: approved.length },
             { label: 'Processed', link: 'processed', count: processed.length },
             { label: 'Rejected', link: 'rejected', count: rejected.length },
-            { label: 'Cancelled', link: 'cancelled' },
+            { label: 'Cancelled', link: 'cancelled', count: cancelled.length},
             { label: 'Team Leave balance', link: 'team-leave-balance', },
             { label: 'Team Leave Summary', link: 'team-leave-summary', }
           ];

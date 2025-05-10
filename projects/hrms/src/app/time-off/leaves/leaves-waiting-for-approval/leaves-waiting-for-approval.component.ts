@@ -79,8 +79,8 @@ isLoading=false;
       next:(res:any)=>{
         console.log(res);
         if(res){
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Leave cancelled successfully')
-            this.modalService.dismissAll();
             this.getDataByLPID();
           
         }

@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { OnBeHalfOfApprovalTabsComponent } from "../../shared/time-off-module-tabs/on-be-half-of-approval-tabs/on-be-half-of-approval-tabs.component";
 import { noWhitespaceValidator } from '../../shared/nowhitespace/nowhitespace.component';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-on-be-half-of',
@@ -124,7 +125,7 @@ export class OnBeHalfOfComponent {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private http: HttpService,
+    private http: HttpService,public rbac: RbacService,
   ) {
     const today = new Date();
     this.minStartDate = today.toISOString().split('T')[0];

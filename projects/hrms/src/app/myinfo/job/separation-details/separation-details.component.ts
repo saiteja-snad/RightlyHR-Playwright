@@ -185,19 +185,30 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
     })
   }
   //funtion to check the valudation
+   shouldShowButton(date:string): boolean {
+    let lastworkingdate=date;
+    const shouldShow = (this.isLastWorkingDate(lastworkingdate)) ;
+    return shouldShow;
+  }
+
   isLastWorkingDate(lastWorkingDate: string): boolean {
     if (lastWorkingDate) {
-      const endDate = moment(lastWorkingDate);
-      const buttonEnabledDate = moment(lastWorkingDate).subtract(this.nodueDuration, 'days');
-      const currentDate = moment();
+      const endDate = new Date(lastWorkingDate);
+      const buttonEnabledDate = new Date(endDate);
+      buttonEnabledDate.setDate(endDate.getDate() - parseInt(this.nodueDuration));
+      const currentDate = new Date();
+      console.log(this.nodueDuration);
   
-      // Check if current date is between buttonEnabledDate and endDate
-      const isWithinWindow = currentDate.isBetween(buttonEnabledDate, endDate, undefined, '[]');
-  
-      // Check if current date is after endDate
-      const isPastLastWorkingDate = currentDate.isAfter(endDate);
-  
-      return isWithinWindow || isPastLastWorkingDate;
+      // Check if the current date is between buttonEnabledDate and endDate
+      const isComplete = currentDate >= buttonEnabledDate && currentDate <= endDate;
+      console.log(isComplete)
+      // Check if the current date is past the last working date
+      const isPastLastWorkingDate = currentDate > endDate;
+      console.log(isPastLastWorkingDate);
+      
+      // Return true if either condition is met
+      return isComplete || isPastLastWorkingDate;
+      
     }
     return false;
   }
@@ -288,7 +299,7 @@ export class SeparationDetailsComponent implements OnInit, OnDestroy {
   }
   //function to open the modal for the comments
   approverCommentsFunction(Value: any, content: any) {
-    this.modalService.open(content, { centered: true, backdrop : 'static' });
+    this.modalService.open(content, { centered: true, backdrop : 'static',size:'xl' });
     console.log(Value);
     this.appover_comments = Value.map((ele: any) => {
       const parsedMetaData = JSON.parse(ele.metaData);

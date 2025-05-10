@@ -219,7 +219,7 @@ export default [
             path: 'for-your-role',
             component: PremissionForYourRoleRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (Permission).view' }
           },
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
+          // { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
       },
       {
@@ -264,11 +264,11 @@ export default [
         children: [
           {
             path: 'separation-for-you',
-            component: SeparationForYouRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (Separation).view' }
+            component: SeparationForYouRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (Seperation Request)' }
           },
           {
             path: 'separation-for-role',
-            component: SeparationForYourRoleRequestComponent,canActivate: [PermissionsGuard], data  : { permission: 'For Role (Separation).view' }
+            component: SeparationForYourRoleRequestComponent,canActivate: [PermissionsGuard], data  : { permission: 'For Role (Seperation Request)' }
           },
           { path: '', redirectTo: 'separation-for-you', pathMatch: 'full' },
         ],

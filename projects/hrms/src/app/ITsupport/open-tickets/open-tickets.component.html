@@ -22,8 +22,9 @@
                     <th>Assignee</th>
                     <th>Status</th>
                     <th>Updated Date</th>
+                    @if(rbac.allowedToAccess('Open Tickets Tab.update')){
                     <th>Action(s)</th>
-
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -50,6 +51,7 @@
                     <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
                     <td>{{ticket.ticketStatus || '-'}}</td>
                     <td>{{ticket.updatedAt | dateformat}}</td>
+                    @if(rbac.allowedToAccess('Open Tickets Tab.update')){
                     <td class="text-center">
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
@@ -65,7 +67,7 @@
                         </div>
                     </td>
 
-
+                    }
                 </tr>
                 <tr *ngIf="filteredTickets.length === 0">
                     <td colspan="9"><app-no-data-found></app-no-data-found></td>

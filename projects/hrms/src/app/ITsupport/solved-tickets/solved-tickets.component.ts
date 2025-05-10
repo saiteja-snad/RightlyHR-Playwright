@@ -13,6 +13,7 @@ import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-solved-tickets',
@@ -44,7 +45,8 @@ export class SolvedTicketsComponent {
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private fb: FormBuilder,
-    private confirmation: OpenModalService
+    private confirmation: OpenModalService,
+    public rbac : RbacService
   ) { }
 
   ngOnInit() {

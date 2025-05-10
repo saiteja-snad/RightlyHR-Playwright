@@ -114,6 +114,19 @@ export class PendingApprovalsTabsComponent {
         this.getAllPendingApprovalsCount();
         this.signalService.regularizationSidNavCountTriggerSignal.set(false);
       }
+      if(this.signalService.separationSidNavCountTriggerSignal()){
+        this.getAllPendingApprovalsCount();
+        this.signalService.separationSidNavCountTriggerSignal.set(false);
+      }
+      if(this.signalService.recallSeparationSidNavCountTriggerSignal()){
+        this.getAllPendingApprovalsCount();
+        this.signalService.recallSeparationSidNavCountTriggerSignal.set(false);
+      }
+      if(this.signalService.noDueSideNavCountTriggerSignal()){
+        this.getAllPendingApprovalsCount();
+        this.signalService.noDueSideNavCountTriggerSignal.set(false);
+      }
+      
     });
   }
 

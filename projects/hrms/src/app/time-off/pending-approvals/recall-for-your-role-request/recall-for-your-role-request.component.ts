@@ -272,15 +272,16 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
         this.recallAcceptFormForProcess.reset();
         this.modalService.dismissAll();
         this.getAllPendingApprovals();
+        this.signalService.recallSeparationForYouTriggerSignal.set(true);
+        this.signalService.recallSeparationForRoleTriggerSignal.set(true);
+        this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,
           recall: true,
         }));
         this.conformationPopup.openSuccessModal('Recall Request Processed Successfull');
         this.isLoading = false;
-        this.signalService.recallSeparationForYouTriggerSignal.set(true);
-        this.signalService.recallSeparationForRoleTriggerSignal.set(true);
-        this.signalService.recallSeparationSidNavCountTriggerSignal.set(true);
+        
       },
       error: (reason: any) => {
         this.isLoading = false;

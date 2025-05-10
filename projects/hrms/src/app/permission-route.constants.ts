@@ -100,6 +100,11 @@ export const MY_INFO_PERSONAL_ROUTES = [
       {  route: '/settings/employee-fields/personal/bank-name', permission:  'Bank Names.view' } ,
   ]
   
+  export const TIME_OFF_TABS =[
+      { route: '/time-off/leaves', permission: 'Time Off Tab.view' },
+      { route: '/time-off/remote', permission: 'Remote Login Tab.view' },
+  ]
+
   export const TIME_OFF_SUB_TABS = [
   
     {route: '/time-off/leaves/waiting-for-approval',permission:'Waiting For Approval (Time Off).view'},

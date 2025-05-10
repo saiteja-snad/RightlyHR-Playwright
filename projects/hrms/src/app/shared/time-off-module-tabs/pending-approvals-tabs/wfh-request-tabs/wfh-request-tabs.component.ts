@@ -30,8 +30,8 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
   readonly navTabs = computed(() => {
     const data = this.pendingApprovalCount().find(item => item.moduleId === 2);
     return [
-      { label: 'For You', link: 'for-you', count: data?.forYou ?? 0 },
-      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0 }
+      { label: 'For You', link: 'for-you', count: data?.forYou ?? 0,permission: { feature: 'For You (WFH)', action: 'view' } },
+      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0,permission: { feature: 'For Role (WFH)', action: 'view' } }
     ];
   });
   

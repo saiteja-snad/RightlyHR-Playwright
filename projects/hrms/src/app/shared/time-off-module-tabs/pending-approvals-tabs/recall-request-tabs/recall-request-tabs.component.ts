@@ -27,8 +27,8 @@ export class RecallRequestTabsComponent {
     const moduleId = environment.RecallrequestmoduleId;
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
     return [
-      { label: 'For You ', link: 'recall-for-you', count: data?.forYou ?? 0 },
-      { label: 'For Your Role', link: 'recall-for-role', count: data?.forYourRole ?? 0 }
+      { label: 'For You ', link: 'recall-for-you', count: data?.forYou ?? 0,permission: { feature: 'For You (Recall Requests)', action: 'view' } },
+      { label: 'For Your Role', link: 'recall-for-role', count: data?.forYourRole ?? 0,permission: { feature: 'For Role (Recall Requests)', action: 'view' } }
     ];
   });
 

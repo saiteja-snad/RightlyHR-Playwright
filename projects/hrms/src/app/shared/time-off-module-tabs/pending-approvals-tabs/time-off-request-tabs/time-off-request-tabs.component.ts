@@ -21,8 +21,8 @@ export class TimeOffRequestTabsComponent {
   countEmp: any = 0;
   countRole: any = 0;
   navTabs: any[] = [
-    { label: 'For You', link: 'for-you', count: this.countEmp ?? 0 },
-    { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0  },
+    { label: 'For You', link: 'for-you', count: this.countEmp ?? 0,permission: { feature: 'For You (Time Off)', action: 'view' } },
+    { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0,permission: { feature: 'For Role (Time Off)', action: 'view' }  },
   ];
 
   constructor(public readonly router: Router, private http: HttpService) { }

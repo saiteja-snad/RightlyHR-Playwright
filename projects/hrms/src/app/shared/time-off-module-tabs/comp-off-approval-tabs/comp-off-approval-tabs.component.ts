@@ -71,8 +71,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
           this.compOff = []; // Set to empty array on error
         },
       });
-  }
-
+  } 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

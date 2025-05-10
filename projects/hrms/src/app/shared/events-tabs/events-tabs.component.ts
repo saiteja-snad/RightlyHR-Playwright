@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../services/rbac.service';
+import { TabsModule } from 'primeng/tabs';
 @Component({
   selector: 'app-events-tabs',
-  imports: [CommonModule,RouterModule,TabsModule],
+  imports: [CommonModule,RouterModule, TabsModule],
   templateUrl: './events-tabs.component.html',
   styleUrl: './events-tabs.component.scss'
 })
@@ -18,6 +18,7 @@ export class EventsTabsComponent {
   navTabs: any[] = [
     { label: 'Upcoming Events', link: '/events/upcoming', permission: { feature: 'Events(Upcoming Events)', action: 'view' } },
     { label: 'past Events', link: '/events/past', permission: { feature: 'Events(Past Events)', action: 'view' } },
+    { label: 'Published Events', link: '/events/published' },
   ];
 
   ngOnInit(): void {

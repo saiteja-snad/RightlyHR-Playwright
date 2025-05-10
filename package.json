@@ -48,6 +48,7 @@
     "jspdf": "^3.0.1",
     "libphonenumber-js": "^1.12.6",
     "moment": "^2.30.1",
+    "ngx-bootstrap": "^19.0.2",
     "ngx-countries-dropdown": "^3.0.1",
     "ngx-daterangepicker-bootstrap": "^19.5.4",
     "ngx-doc-viewer": "^15.0.1",

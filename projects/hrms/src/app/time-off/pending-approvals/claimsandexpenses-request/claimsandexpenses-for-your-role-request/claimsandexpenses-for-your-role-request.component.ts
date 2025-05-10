@@ -18,10 +18,11 @@ import { environment } from '../../../../../environments/environment';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
+import { SearchfilterPipe } from "../../../../Pipes/searchfilter.pipe";
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
-  imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule, 
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule],
+  imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
+    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe],
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
 })
@@ -29,6 +30,7 @@ import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitesp
 export class ClaimsandexpensesForYourRoleRequestComponent
   implements OnInit, OnDestroy {
   totalRecords = 100;
+  searchValue: any;
   first: any = 0;
   rows: any = 10;
   empinfo = {} as IJob;
@@ -44,7 +46,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   selectedLeaveData = {} as ExpenseApprovalResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  searchValue: any;
+  
   expenseImageUrl: any;
   expenseViewURL: any;
   expenseheaderiteams!: IExpenseHeaders;

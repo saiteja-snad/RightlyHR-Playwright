@@ -87,57 +87,82 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
 
 
 
+
   downloadChart(format: 'pdf' | 'jpg'): void {
     const chartElement = document.querySelector('.organization-chart-container');
+  
     if (!chartElement) {
       console.error('Chart element not found!');
       return;
     }
-    // Set the width and height to capture the entire chart
+  
     const originalWidth = chartElement.scrollWidth;
     const originalHeight = chartElement.scrollHeight;
-    // Temporarily set the chart container's dimensions to ensure the entire chart is rendered
     const originalStyle = chartElement.getAttribute('style');
-    chartElement.setAttribute('style', `width: ${originalWidth}px; height: ${originalHeight}px; overflow: visible;`);
-    html2canvas(chartElement as HTMLElement, { width: originalWidth, height: originalHeight, scale: 2, 
-      useCORS: true }).then((canvas) => {
-      const imageData = canvas.toDataURL('image/png');
-      if (format === 'pdf') {
-        // Generate PDF
-        const pdf = new jsPDF('l', 'mm', 'a4'); // Landscape mode
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-        const canvasWidth = canvas.width;
-        const canvasHeight = canvas.height;
-        // Calculate scaling factor to fit the chart within the PDF page
-        const scaleFactor = Math.min(pageWidth / canvasWidth, pageHeight / canvasHeight);
-        const imgWidth = canvasWidth * scaleFactor;
-        const imgHeight = canvasHeight * scaleFactor;
-        // Center the image on the PDF page
-        const xOffset = (pageWidth - imgWidth) / 2;
-        const yOffset = (pageHeight - imgHeight) / 2;
-        pdf.addImage(imageData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
-        pdf.save('organization-chart.pdf');
-      } else if (format === 'jpg') {
-        // Generate JPG
-        const link = document.createElement('a');
-        link.href = imageData;
-        link.download = 'organization-chart.jpg';
-        link.click();
-      }
+  
+    chartElement.setAttribute(
+      'style',
+      `width: ${originalWidth}px; height: ${originalHeight}px; overflow: visible;`
+    );
+   
+    html2canvas(chartElement as HTMLElement, {
+      width: originalWidth,
+      height: originalHeight,
+      scale: 2,
+      useCORS: true,
     })
+      .then((canvas) => {
+        const imageData = canvas.toDataURL('image/png');
+  
+        if (format === 'pdf') {
+          const pdf = new jsPDF('l', 'mm', 'a4');
+          const pageWidth = pdf.internal.pageSize.getWidth();
+          const pageHeight = pdf.internal.pageSize.getHeight();
+  
+          const canvasWidth = canvas.width;
+          const canvasHeight = canvas.height;
+          const scaleFactor = Math.min(pageWidth / canvasWidth, pageHeight / canvasHeight);
+  
+          const imgWidth = canvasWidth * scaleFactor;
+          const imgHeight = canvasHeight * scaleFactor;
+          const xOffset = (pageWidth - imgWidth) / 2;
+          const yOffset = (pageHeight - imgHeight) / 2;
+  
+          pdf.addImage(imageData, 'PNG', xOffset, yOffset, imgWidth, imgHeight);
+          pdf.save('organization-chart.pdf');
+        } else if (format === 'jpg') {
+          // Center the chart on a white canvas before saving
+          const padding = 50;
+          const newCanvas = document.createElement('canvas');
+          newCanvas.width = canvas.width + padding * 2;
+          newCanvas.height = canvas.height + padding * 2;
+  
+          const ctx = newCanvas.getContext('2d');
+          if (ctx) {
+            ctx.fillStyle = 'white'; // Optional background
+            ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+            ctx.drawImage(canvas, padding, padding);
+  
+            const centeredImage = newCanvas.toDataURL('image/jpeg', 1.0);
+            const link = document.createElement('a');
+            link.href = centeredImage;
+            link.download = 'organization-chart.jpg';
+            link.click();
+          }
+        }
+      })
       .catch((error: any) => {
         console.error('Error capturing chart:', error);
       })
       .finally(() => {
-        // Restore the original style of the chart container
         if (originalStyle) {
           chartElement.setAttribute('style', originalStyle);
         } else {
           chartElement.removeAttribute('style');
         }
-    });
+      });
   }
+  
 
   getOrghierarchy(employeeId?: any) {
     this.dataload = true;
@@ -146,7 +171,9 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.http.getData(`Employeedata/getOrganizationalhierarchybyid/${employeeId}`).subscribe({
       next: (response: any) => {
+
         if (response.length > 0) {
+          this.dataload=false
           this.data = response || [];
           this.isDataPresent = false;
         } else {
@@ -154,6 +181,7 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
           this.isDataPresent = true;
         }
       }, error: (error: any) => {
+        this.dataload=false
         console.log(error);
       }, complete: () => {
         this.dataload = false;

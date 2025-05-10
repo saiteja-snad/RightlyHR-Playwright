@@ -7,13 +7,14 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 
 @Component({
   selector: 'app-desk-for-you-request',
-  imports: [CommonModule, NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, NoDataFoundComponent,FormsModule, DateformatPipe, ReactiveFormsModule, TranslateModule, SearchfilterPipe],
   templateUrl: './desk-for-you-request.component.html',
   styleUrl: './desk-for-you-request.component.scss'
 })
@@ -27,6 +28,7 @@ export class DeskForYouRequestComponent {
   selectedexpenesid: any
   subscription!: Subscription
   rejectForm!: FormGroup;
+searchValue: any;
 
   constructor(private http: HttpService, private readonly modalService: NgbModal, 
     public conformationPopup: OpenModalService, private fb: FormBuilder) { }

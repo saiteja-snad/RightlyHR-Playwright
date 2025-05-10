@@ -18,10 +18,11 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model';
+import { SearchfilterPipe } from "../../../../Pipes/searchfilter.pipe";
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule],
+    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
 })

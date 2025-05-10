@@ -15,53 +15,62 @@
                     <th>{{'Probation Start Date' | translate}}</th>
                     <th>{{'Probation End Date' | translate}}</th>
                     <th class="text-center">{{'Approved History' | translate}}</th>
+                    @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
                     <th class="text-center">Action(s)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
-                
-                <ng-container *ngIf="(probationDetails | probationdetails: searchValue) as filteredDetails" >
-                <tr *ngFor="let item of filteredDetails">
-                    <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
-                    <td>{{item.entity?.employeeName ?? '-'}}</td>
-                    <td>{{item.entity?.probationStartDate ?? '-' | dateformat}}</td>
-                    <td>{{item.entity?.probationEndDate ?? '-' | dateformat}}</td>
-                    <td class="text-center">
-                        <div>
-                            <span *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
-                                <span id="tooltip">
-                                    <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
-                                    <div (click)="handleData(item)"
-                                        (click)="approverComments(item.entity?.prApproverComments)">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </div>
-                                    <!-- </div> -->
+
+                <ng-container *ngIf="(probationDetails | probationdetails: searchValue) as filteredDetails">
+                    <tr *ngFor="let item of filteredDetails">
+                        <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
+                        <td>{{item.entity?.employeeName ?? '-'}}</td>
+                        <td>{{item.entity?.probationStartDate ?? '-' | dateformat}}</td>
+                        <td>{{item.entity?.probationEndDate ?? '-' | dateformat}}</td>
+                        <td class="text-center">
+                            <div>
+                                <span *ngIf="item.entity?.prApproverComments.length>0;else approvercomments">
+                                    <span id="tooltip">
+                                        <!-- <div *ngFor="let item of trn?.entity?.comments"> -->
+                                        <div (click)="handleData(item)"
+                                            (click)="approverComments(item.entity?.prApproverComments)">
+                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                        </div>
+                                        <!-- </div> -->
+                                    </span>
                                 </span>
-                            </span>
-                            <ng-template #approvercomments>-</ng-template>
-                        </div>
-                    </td>
-                    <td class="text-center">
-                        <div>
-                            <button class="custom-btn btn-primary"
-                                (click)="handleRequests(item,ProbationProcess); getComments(item.entity?.prApproverComments)"
-                                *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage"
-                                >{{'Process' | translate}}</button>
-                            <button class="custom-btn btn-primary"
-                                *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
-                                [routerLink]="['/time-off/pending-approvals/assessmentform']"
-                                (click)="setData(item)">{{'Assessment form' | translate}}</button>
-                        </div>
-                    </td>
-                </tr>
-                <tr *ngIf="filteredDetails.length === 0">
-                    <td colspan="9"><app-no-data-found></app-no-data-found></td>
-                </tr>
-            </ng-container>
-       
+                                <ng-template #approvercomments>-</ng-template>
+                            </div>
+                        </td>
+                        @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
+                        <td class="text-center">
+                            <div>
+                                @if(rbac.allowedToAccess('Probation Details.update') ) {
+                                <button class="custom-btn btn-primary"
+                                    (click)="handleRequests(item,ProbationProcess); getComments(item.entity?.prApproverComments)"
+                                    *ngIf="item.approvalHeader?.currentapprovalStage == item.approvalHeader?.finalapprovalStage">{{'Process'
+                                    | translate}}</button>
+                                }
+                                @if(rbac.allowedToAccess('Probation Details.update') ) {
+                                <button class="custom-btn btn-primary"
+                                    *ngIf="item.approvalHeader?.currentapprovalStage != item.approvalHeader?.finalapprovalStage"
+                                    [routerLink]="['/time-off/pending-approvals/assessmentform']"
+                                    (click)="setData(item)">{{'Assessment form' | translate}}</button>
+
+                                }
+                            </div>
+                        </td>
+                        }
+                    </tr>
+                    <tr *ngIf="filteredDetails.length === 0">
+                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                    </tr>
+                </ng-container>
+
             </tbody>
-                
-            
+
+
         </table>
     </div>
 </div>
@@ -96,13 +105,16 @@
                     <tbody>
                         @for (comment of myApproverComments; track $index) {
                         <tr>
-                            <td>{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) : '-'}}</td>
-                            <td>{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating | number:'1.2-2') : '-'}}</td>
+                            <td>{{comment.approverRole ? (comment.approverRole === 'EM' ? 'HR' : comment.approverRole) :
+                                '-'}}</td>
+                            <td>{{comment.metadata?.Overallrating != null ? (comment.metadata.Overallrating |
+                                number:'1.2-2') : '-'}}</td>
                             <td>{{comment.metadata.status ? comment.metadata.status : 'NA'}}</td>
-                            <td>{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) : 'NA'}}
+                            <td>{{comment.metadata.PrExtendedDate ? (comment.metadata.PrExtendedDate | dateformat) :
+                                'NA'}}
                             </td>
                             <td>
-                                
+
                                 <div>
                                     <span class="ms-2" *ngIf="comment?.comments;else popupcomments">
                                         <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave"
@@ -231,9 +243,9 @@
                     <label for="Descriptiondetails" type="Notes" class="form-label custom-label">{{'Reject Reason' |
                         translate}}
                         <span class="text-danger">*</span></label>
-                    <textarea type="text" class="form-control custom-input" id="Descriptiondetails" name="Descriptiondetails"
-                        aria-label="Description" rows="3" maxlength="250" placeholder="Please Provide Reason"
-                        #Descriptiondetails="ngModel" autocomplete="off"
+                    <textarea type="text" class="form-control custom-input" id="Descriptiondetails"
+                        name="Descriptiondetails" aria-label="Description" rows="3" maxlength="250"
+                        placeholder="Please Provide Reason" #Descriptiondetails="ngModel" autocomplete="off"
                         (ngModelChange)="ifreasonnull(selectedData.rejectedReason)"
                         [(ngModel)]="selectedData.rejectedReason" required></textarea>
                     <div class="textarea-count-text">{{selectedData.rejectedReason?.length ?

@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-desk-for-your-role-request',
   imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe],
@@ -26,7 +27,7 @@ export class DeskForYourRoleRequestComponent {
   subscription!: Subscription;
   rejectForm!: FormGroup;
 
-  constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService,
+  constructor(private http: HttpService,public rbac: RbacService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService,
      private fb: FormBuilder) { }
 
 

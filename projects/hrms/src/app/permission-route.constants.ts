@@ -373,8 +373,8 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const HOLIDAYS_SUB_TABS =[
-    { route:'/calendar/holiday/optional-holidays', permission: 'Holidays(Optional).view' },
     { route:'/calendar/holiday/public-holidays', permission: 'Holidays(Public).view' },
+    { route:'/calendar/holiday/optional-holidays', permission: 'Holidays(Optional).view' },
   ]
   
   export const DASHBOARD_SUB_TABS =[

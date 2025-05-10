@@ -12,6 +12,7 @@ import { Select } from 'primeng/select';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-all-assets-list',
@@ -81,6 +82,7 @@ export class AllAssetsListComponent {
     private readonly modalService: NgbModal,
     private readonly router: Router,
     public conformationPopup: OpenModalService,
+    public rbac: RbacService,
     private readonly datepipe: DatePipe,
 
     config: NgbModalConfig) {

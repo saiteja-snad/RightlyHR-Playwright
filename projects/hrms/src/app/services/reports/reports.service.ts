@@ -160,8 +160,8 @@ export class ReportsService {
     //   params = params.set('Location', request.location);	
     // }
     
-    if(request.Month) {
-      params = params.set('Month', request.Month);
+    if(request.LeaveName) {
+      params = params.set('LeaveName', request.LeaveName);
     }
 
    if(request.Year) {

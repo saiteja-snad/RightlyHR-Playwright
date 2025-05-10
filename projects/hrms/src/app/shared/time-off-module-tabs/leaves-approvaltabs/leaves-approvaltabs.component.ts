@@ -27,7 +27,10 @@ export class LeavesApprovaltabsComponent {
     { label: 'Waiting For Approval', link: 'waiting-for-approval', },
     { label: 'Approved', link: 'approved', },
     { label: 'Processed', link: 'processed', },
-    { label: 'Rejected', link: 'rejected', }
+    { label: 'Rejected', link: 'rejected', },
+    { label: 'Cancelled', link: 'cancelled', },
+    { label: 'Team Leave balance', link: 'team-leave-balance', },
+    { label: 'Team Leave Summary', link: 'team-leave-summary', }
   ];
 
   constructor(public readonly router: Router, private http: HttpService, private authService: AuthService) { }
@@ -53,7 +56,10 @@ export class LeavesApprovaltabsComponent {
             { label: 'Waiting For Approval', link: 'waiting-for-approval', count: waiting.length },
             { label: 'Approved', link: 'approved', count: approved.length },
             { label: 'Processed', link: 'processed', count: processed.length },
-            { label: 'Rejected', link: 'rejected', count: rejected.length }
+            { label: 'Rejected', link: 'rejected', count: rejected.length },
+            { label: 'Cancelled', link: 'cancelled' },
+            { label: 'Team Leave balance', link: 'team-leave-balance', },
+            { label: 'Team Leave Summary', link: 'team-leave-summary', }
           ];
         } else {
           console.error("Invalid response format");

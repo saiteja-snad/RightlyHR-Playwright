@@ -66,7 +66,7 @@
           </label>
           <div class="custom-p-select-content">
             <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="" formControlName="shift"
-              placeholder="Please select shift" class="form-select custom-select"></p-select>
+              placeholder="Please select shift" class="form-select custom-select" [disabled]="true"></p-select>
             <div *ngIf="holidayForm.get('shift')?.touched && holidayForm.get('shift')?.hasError('required')"
               class="error-msg">
               {{'Shift is required' | translate}}

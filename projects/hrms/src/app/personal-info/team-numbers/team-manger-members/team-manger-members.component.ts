@@ -29,10 +29,10 @@ export class TeamMangerMembersComponent {
   teammangerid: any
   teamMembersdata: any[] = [];
   spinnerLoader = false
-  getTeamMemberArray: Iteammembers[] = [];
+  getTeamMemberArray: any[] = [];
   departmentDetails = [] as IDepartment[];
   teamDropdownValues: any[] = [];
-  teamMemberArray: Iteammembers[] = [];
+  teamMemberArray: any[] = [];
   requestForm!: FormGroup
   foremployeeForm!: FormGroup
   teamManagerDropdownValues: any[] = [];
@@ -102,26 +102,23 @@ export class TeamMangerMembersComponent {
 
   //function to get the all the team members
   getAllTeammembersList(): void {
-    const statuses = ['active', 'trainee active'];
     const loggedInUserId = this.empinfo.employeeId;
-
-    this.subscription = this.http.getData(`Employeedata/GetallemployeeswithJobdetails?statuses=${statuses}`)
+  
+    this.subscription = this.http.getData(`JobDetails/GetByreporteesEmployeeId?employeeId=${loggedInUserId}`)
       .subscribe({
         next: (responseData: any) => {
           console.log('Response Data:', responseData);
-
-          // Filter out the logged-in user and map the data to include fullName and selectedAllGroup
+  
           this.teamMemberArray = responseData
             .filter((employee: any) => employee.employeeId !== loggedInUserId)
             .map((employee: any) => ({
               ...employee,
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`,
+              jobDetails: employee.jobDetails ?? [], // Default to [] if undefined
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.employeeName ?? ''}`,
               selectedAllGroup: 'Group 1',
             }));
-
-          // Clone the filtered data for other uses
+  
           this.getTeamMemberArray = [...this.teamMemberArray];
-
           console.log('Filtered Team Member Array:', this.teamMemberArray);
         },
         error: (error: any) => {
@@ -129,6 +126,8 @@ export class TeamMangerMembersComponent {
         }
       });
   }
+  
+
 
   viwejobhistoy(content: any, Value: any) {
     this.modalService.open(content, { size: 'lg', centered: true, scrollable: true });
@@ -151,7 +150,7 @@ export class TeamMangerMembersComponent {
     this.selectedemployeid = details.employeeId
 
     this.foremployeeForm.patchValue({
-      teamEmpselectedOptions: `${details.fusionEmpId} - ${details.firstName ?? ''} ${details.middleName ?? ''} ${details.lastName ?? ''}`
+      teamEmpselectedOptions: `${details.fusionEmpId} - ${details.employeeName ?? ''} `
     })
 
     this.modalService.open(content, { size: 'lg', centered: true, scrollable: true });
@@ -243,7 +242,7 @@ export class TeamMangerMembersComponent {
       },
       error: (err: any) => {
         console.error('Error:', err);
-        this.conformationPopup.openErrorModal('Team manager updated failed ')
+        this.conformationPopup.openErrorModal( err.error.Message ||'Team manager updated failed ')
       }
     });
   }
@@ -269,7 +268,7 @@ export class TeamMangerMembersComponent {
       },
       error: (err: any) => {
         console.error('Error:', err);
-        this.conformationPopup.openErrorModal('Team manager updated failed ')
+        this.conformationPopup.openErrorModal( err.error.Message ||'Team manager updated failed ')
       }
     });
   }

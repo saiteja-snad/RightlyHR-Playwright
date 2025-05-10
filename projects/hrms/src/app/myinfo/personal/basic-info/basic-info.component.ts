@@ -39,7 +39,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   Maritaldetails: IMarital[] = [];
   buttons = false
   changeingdob:any
-  constructor(private modalService: NgbModal, private cdr: ChangeDetectorRef, private fb: FormBuilder, public formValidation: FormValidationService,
+  constructor( private fb: FormBuilder, public formValidation: FormValidationService,
     private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {

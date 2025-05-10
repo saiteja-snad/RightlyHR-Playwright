@@ -27,7 +27,7 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
-                    <th class="text-center">Action(s)</th>
+                    <th>Action<span class="text-lowercase">(s)</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -594,7 +594,7 @@
                             <label for="reasonForEarlyRelieving" class="form-label custom-label mb-2">Reason for Early
                                 Relieving<span class="text-danger">*</span></label>
                             <textarea class="form-control custom-input" id="reasonForEarlyRelieving" formControlName="reasonForEarlyRelieving"
-                             rows="3" placeholder="Please provide early relieving reason..."  (keydown)="formValidations.restrictInput($event)"></textarea>
+                             rows="3" placeholder="Please provide early relieving reason..." [maxlength]="400"  (keydown)="formValidations.restrictInput($event)"></textarea>
                             <div class="textarea-count-text">{{ separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }}/400</div>
                             <div class="error-msg" *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
                                 <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">

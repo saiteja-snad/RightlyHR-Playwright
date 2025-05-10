@@ -137,13 +137,13 @@ export class MyinfoDetailsComponent {
                 else if (data.statusCode === 200) {
                   console.log(data)
                   //this.modalService.dismissAll();
-                  this.conformationPopup.openSuccessModal('Basic Info updated successfully')  
+                  this.conformationPopup.openSuccessModal('Profile picture updated successfully')  
                   this.getEmployeeId();
                 }
               },
               error: (reason: any) => {
                // console.log(reason);
-                this.conformationPopup.openErrorModal('Basic Info update failed')
+                this.conformationPopup.openErrorModal('Profile picture Info update failed')
 
               },
             });

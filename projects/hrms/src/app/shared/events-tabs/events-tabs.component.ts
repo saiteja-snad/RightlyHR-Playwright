@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { TabsModule } from 'ngx-bootstrap/tabs'; // Adjust the import path if necessary
 import { RouterModule } from '@angular/router';
-import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-events-tabs',
@@ -18,6 +18,7 @@ export class EventsTabsComponent {
   navTabs: any[] = [
     { label: 'Upcoming Events', link: '/events/upcoming', permission: { feature: 'Events(Upcoming Events)', action: 'view' } },
     { label: 'past Events', link: '/events/past', permission: { feature: 'Events(Past Events)', action: 'view' } },
+    { label: 'Published Events', link: '/events/published' },
   ];
 
   ngOnInit(): void {

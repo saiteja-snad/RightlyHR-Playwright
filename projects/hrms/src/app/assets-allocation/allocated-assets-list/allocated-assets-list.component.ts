@@ -12,6 +12,7 @@ import { Select } from 'primeng/select';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-allocated-assets-list',
@@ -82,7 +83,7 @@ export class AllocatedAssetsListComponent {
     private readonly router: Router,
     public conformationPopup: OpenModalService,
     private readonly datepipe: DatePipe,
-
+   public formValidation: FormValidationService,
     config: NgbModalConfig) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -151,9 +152,19 @@ export class AllocatedAssetsListComponent {
       enddate: [null],
       comments: [null],
       vendorname: [{ value: null, disabled: true }, []],
-      contactnumber: [{ value: null, disabled: true }, [Validators.maxLength(10), Validators.pattern("[0-9]+$")]]
+      contactnumber: [{ value: null, disabled: true }, [Validators.maxLength(15),Validators.minLength(10), Validators.pattern("[0-9]+$"),this.allZeroesIfMaxLength()]]
     })
   }
+//if user put only zero multipul times mobile no field
+allZeroesIfMaxLength(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = String(control.value || '');
+    if (/^0{10,}$/.test(value)) {
+      return { allZeroesIfMaxLength: true };
+    }
+    return null;
+  };
+}
 
   initialassiginform() {
     this.assiginForm = this.fb.group({
@@ -518,7 +529,7 @@ export class AllocatedAssetsListComponent {
       this.assetForm.get('amcstartdate')?.setValidators([Validators.required]);
       this.assetForm.get('amcenddate')?.setValidators([Validators.required]);
       this.assetForm.get('vendorname')?.setValidators([Validators.required, Validators.pattern(/^(?!\s*$).+/)]);
-      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(10), Validators.minLength(10)]);
+      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]);
     } else {
       this.assetForm.get('amcstartdate')?.disable();
       this.assetForm.get('amcenddate')?.disable();
@@ -917,6 +928,7 @@ export class AllocatedAssetsListComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset Released Successfully ');
             this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+            this.getcount(null,this.selectedSubLocationId,this.Status);
           },
           error: (error) => {
             this.conformationPopup.openErrorModal("Asset Assigned Failed")
@@ -1004,7 +1016,7 @@ export class AllocatedAssetsListComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset Reallocated Successfully ');
             this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-
+            this.getcount(null,this.selectedSubLocationId,this.Status);
           },
           error: (error) => {
             console.error("Error updating asset:", error);
@@ -1397,6 +1409,14 @@ export class AllocatedAssetsListComponent {
         console.error('Error fetching count:', error);
       }
     });
+  }
+  // update close pop up
+  openclosemodal(content:any){
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+  opendeletclosepopup(){
+     this.modalService.dismissAll();
+     this.assetForm.reset();
   }
   ngOnDestroy(): void {
     this.destroy$.next(true);

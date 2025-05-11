@@ -126,7 +126,16 @@ export class AssetCatagoryComponent {
       console.log("Asset Form is invalid.");
     }
   }
-
+ //update close  button click open delet pop up dailog add vender
+ openaddmodal(content:any){
+  this.modalService.open(content, { centered: true, backdrop: 'static' });
+}
+//no button click close the  dailog add vender
+cleardata(){
+ this.assetCategorydataForm.reset()
+  this.modalService.dismissAll();
+}
+ 
   opendelete(content: any, data: any) {
     this.assetdataid = data?.id
     this.modalService.open(content, { centered: true, backdrop: 'static' });

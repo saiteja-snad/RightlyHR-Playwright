@@ -34,6 +34,7 @@ export class UpdateHolidaysComponent {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.updateHolidaysData = JSON.parse(localStorage.getItem('updateholidays') ?? '{}');
+    console.log(this.updateHolidaysData);
     const currentYear = new Date().getFullYear();
     this.yearDetails = this.generateYears(2000, currentYear+1);
     this.getjobLocationList();
@@ -191,7 +192,7 @@ get holidaysArray(): FormArray {
     const payload = {
       locationId: formValue.location?.id ?? this.updateHolidaysData.locationId,
       locationName: formValue.location?.locationName ??this.updateHolidaysData.locationName,
-      subLocationId: formValue.subLocation.id ?? this.updateHolidaysData.subLocationId,
+      subLocationId: formValue.subLocation?.id ?? this.updateHolidaysData.subLocationId,
       applicableyear: formValue.year?.value ?? this.updateHolidaysData.applicableyear,
       subLocationName: formValue.location?.subLocationName ??this.updateHolidaysData.subLocationName,
       addedby: parseInt(this.empinfo.employeeId) ?? this.updateHolidaysData.addedby,
@@ -201,14 +202,14 @@ get holidaysArray(): FormArray {
       status: this.updateHolidaysData.status,
       authorizedDate: new Date().toISOString() ?? this.updateHolidaysData.authorizedDate,
       authorizedstatus: 'string',
-      shiftID: formValue.shift.id ?? this.updateHolidaysData.shiftID,
-      jobSubLocationName: this.updateHolidaysData.jobSubLocationName,
-      addedbyName: this.updateHolidaysData.addedbyName,
-      authorizedbyName: this.updateHolidaysData.authorizedbyName,
-      lastModifedby: parseInt(this.empinfo.employeeId)??this.updateHolidaysData.employeeId,
+      shiftID: formValue.shift?.id ?? this.updateHolidaysData.shiftID,
+      jobSubLocationName: this.updateHolidaysData?.jobSubLocationName,
+      addedbyName: this.updateHolidaysData?.addedbyName,
+      authorizedbyName: this.updateHolidaysData?.authorizedbyName,
+      lastModifedby: parseInt(this.empinfo?.employeeId)??this.updateHolidaysData?.employeeId,
       lastModifeddate: new Date(),
-      jobLocationName: this.updateHolidaysData.jobLocationName,
-      id: this.updateHolidaysData.id,
+      jobLocationName: this.updateHolidaysData?.jobLocationName,
+      id: this.updateHolidaysData?.id,
       orgHolidaysItems: formValue.holidays.map((item: any) => ({
         holidayName: item.holidayName,
         holidayDate: item.holidayDate,

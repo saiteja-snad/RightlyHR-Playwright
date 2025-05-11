@@ -1144,6 +1144,7 @@ allZeroesIfMaxLength(): ValidatorFn {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset marked as Maintenance Successfully ');
           this.getcount(null,this.selectedSubLocationId,this.Status);
+          this.getassetsdata(this.first, this.rows,null, null, this.Status);
         },
         error: (error) => {
           console.error("Error updating asset:", error);

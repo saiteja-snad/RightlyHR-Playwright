@@ -1269,8 +1269,9 @@ allZeroesIfMaxLength(): ValidatorFn {
             console.log("Assignment Response:", res);
             // Call the updateAssets function if the assignment is successful
             this.updateundermaitence(undermainteenceForm, removeAsset);
-            this.getassetsdata(this.first, this.rows,null, null, this.Status);
+           
              this.getcount(null,null,this.Status);
+               this.getassetsdata(this.first, this.rows,null, null, this.Status);
           },
           error: (error) => {
 
@@ -1314,7 +1315,7 @@ allZeroesIfMaxLength(): ValidatorFn {
          
           this.conformationPopup.openSuccessModal('Asset marked as Maintenance Successfully ');
           this.getcount(null,null,this.Status);
-
+ this.getassetsdata(this.first, this.rows,null, null, this.Status);
         },
         error: (error) => {
           console.error("Error updating asset:", error);
@@ -1406,7 +1407,7 @@ allZeroesIfMaxLength(): ValidatorFn {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset marked as Available Successfully ');
           this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-
+          this.getcount(null,null,this.Status);
         },
         error: (err) => {
           console.error('Error deleting asset:', err);

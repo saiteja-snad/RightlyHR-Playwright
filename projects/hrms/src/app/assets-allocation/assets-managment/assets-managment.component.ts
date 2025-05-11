@@ -43,6 +43,7 @@ export class AssetsManagmentComponent {
   page = 1;
   pageSize = 10;
   collectionSize = 100;
+  purchesdate:any;
   constructor(
     private readonly fb: FormBuilder,
     private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,public formValidation: FormValidationService) { }
@@ -55,6 +56,8 @@ export class AssetsManagmentComponent {
     this.intiallocationandsublocation()
     this.getcount(null, null)
     this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
+   const currentYear = new Date().getFullYear();
+  this.purchesdate = `${currentYear}-12-31`; 
     this.navTabs = [
       { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject },
       { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject },
@@ -480,7 +483,7 @@ allZeroesIfMaxLength(): ValidatorFn {
           console.log(res);
           this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Asset Registered Successfully ');
-
+          this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
           this.assetForm.reset();
         },
         error: (error) => {

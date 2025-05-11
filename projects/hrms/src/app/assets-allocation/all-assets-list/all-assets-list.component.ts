@@ -218,10 +218,14 @@ export class AllAssetsListComponent {
   
     }
     onPageChange(event: PaginatorState) {
-      this.first = event.first;
-      this.rows = event.rows;
+      const page = event.page ?? 0;
+      const rows = event.rows ?? 10;
+      this.rows = rows;
+      // Calculate first record index (0-based), then add 1 to make it 1-based
+      this.first = page * rows + 1;
       this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
+
 
   getFilteredData() {
     this.subscription = this.http.assetslocationId$.subscribe({

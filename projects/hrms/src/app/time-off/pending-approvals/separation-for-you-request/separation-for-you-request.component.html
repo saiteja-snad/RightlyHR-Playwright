@@ -70,6 +70,16 @@
                                 </ng-template>
                             </div>
                             }
+                            @if(item.entity?.spEarlyRelievingReason && item.entity?.sprecalledStatus=='EarlyRelieving'){
+                            <div>
+                                <a type="button" [ngbPopover]="reason">
+                                    <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
+                                </ng-template>
+                            </div>
+                            }
                             @else {
                             <div>-</div>
                             }

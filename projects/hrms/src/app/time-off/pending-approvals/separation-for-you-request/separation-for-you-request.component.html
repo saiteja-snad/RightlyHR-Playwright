@@ -20,6 +20,7 @@
                     <th class="text-nowrap">{{'Last Working Day' | translate}}</th>
                     <th class="text-nowrap">{{'Early Relieving Day' | translate}}</th>
                     <th>{{'Separation Reason' | translate}}</th>
+                    <th>{{'Early Relieving Reason' | translate}}</th>
                     <th>{{'Request Type' | translate}}</th>
                     <th>{{'Approver History' | translate}}</th>
                     <th>Action<span class="text-lowercase">(s)</span></th>
@@ -51,6 +52,21 @@
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity?.spRequestDescription}}</p>
+                                </ng-template>
+                            </div>
+                            }
+                            @else {
+                            <div>-</div>
+                            }
+                        </td>
+                        <td>
+                            @if(item.entity?.spEarlyRelievingReason && item.entity?.sprecalledStatus=='Separation'){
+                            <div>
+                                <a type="button" [ngbPopover]="reason">
+                                    <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{item.entity?.spEarlyRelievingReason}}</p>
                                 </ng-template>
                             </div>
                             }

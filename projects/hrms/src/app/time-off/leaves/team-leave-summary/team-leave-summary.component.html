@@ -59,7 +59,7 @@
                     @if(teamLeaveSummary.length > 0) {
                     @for (employee of teamLeaveSummary; track employee.employeeId) {
                     <tr>
-                        <td>{{ employee.employeeName }}</td>
+                        <td>{{ employee.employeeName }} ({{employee.fusionEmpId}})</td>
 
                         <td>
                             <span [ngClass]="{ 'clickable-text': (employee.leaves.length || 0) > 0 }"
@@ -83,19 +83,18 @@
                             <span [ngClass]="{ 'clickable-text': calculateDuration(employee.permissions) > 0 }"
                                 *ngIf="calculateDuration(employee.permissions) > 0; else noPermission"
                                 (click)="openPopup(permissionModal, employee, 'Permission')">
-                                {{ calculateDuration(employee.permissions) }}
+                                {{ calculateDuration(employee.permissions)}} HR(s)
                             </span>
-                            <ng-template #noPermission>{{ calculateDuration(employee.permissions) }}</ng-template>
+                            <ng-template #noPermission>{{ calculateDuration(employee.permissions)}} HR(s)</ng-template>
                         </td>
 
                         <td>
                             <span [ngClass]="{ 'clickable-text': calculateDuration(employee.regularization) > 0 }"
                                 *ngIf="calculateDuration(employee.regularization) > 0; else noRegularization"
                                 (click)="openPopup(permissionModal, employee, 'Regularization')">
-                                {{ calculateDuration(employee.regularization) }} 
+                                {{ calculateDuration(employee.regularization)}} HR(s)
                             </span>
-                            <ng-template #noRegularization>{{ calculateDuration(employee.regularization)
-                                }}</ng-template>
+                            <ng-template #noRegularization>{{ calculateDuration(employee.regularization)}} HR(s)</ng-template>
                         </td>
                     </tr>
                     }
@@ -130,14 +129,16 @@
                 <div class="popup-table-content">
                     <table>
                         <thead>
+                            <th>Category</th>
                             <th>Start Date</th>
-                             <th>End Date</th>
+                            <th>End Date</th>
                             <th>Type</th>
                             <th>Duration</th>
                             <th>Status</th>
                         </thead>
                         <tbody>
                             <tr *ngFor="let item of popupData">
+                                <td class="log-time">{{ item.categoryName }}</td>
                                 <td class="log-time">{{ item.startdate | dateformat }}</td>
                                 <td class="log-time">{{ item.enddate | dateformat }}</td>
                                 <td class="log-time">{{ item.durationType || '-' }}</td>

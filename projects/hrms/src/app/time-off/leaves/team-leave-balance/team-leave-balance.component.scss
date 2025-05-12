@@ -64,6 +64,7 @@
     height: max-content;
     border: 1px solid #767676;
     border-radius: 0.5rem;
+    margin-bottom: 1rem;
 
     .popup-table-content {
       table {
@@ -84,16 +85,17 @@
         th {
           color: #141414;
           font-weight: 500;
+          background-color: #E0E6ED !important;
+        }
+
+        .custom-popup-header {
+          background-color: #305889 !important;
+          color: #fff !important;
+          font-weight: 600;
+          border-top-left-radius: 0.5rem;
+          border-top-right-radius: 0.5rem;
         }
       }
-    }
-
-    .custom-popup-header {
-      background-color: #2e427d !important;
-      color: #fff !important;
-      font-weight: 600;
-      border-top-left-radius: 0.5rem;
-      border-top-right-radius: 0.5rem;
     }
 
     .log-time {
@@ -104,4 +106,11 @@
       color: #232222 !important;
     }
   }
+}
+
+.clickable-text {
+  text-decoration: underline;
+  color: #305889 !important;
+  font-weight: 600;
+  cursor: pointer;
 }

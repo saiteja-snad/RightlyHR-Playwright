@@ -14,6 +14,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
 
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-all-assets-list',
   imports: [NoDataFoundComponent, CommonModule, FormsModule, PaginatorModule, DropdownModule, ReactiveFormsModule, Select, DataLoaderContentComponent],
@@ -81,10 +82,10 @@ export class AllAssetsListComponent {
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private readonly router: Router,
-    public conformationPopup: OpenModalService,
+    public conformationPopup: OpenModalService, public formValidation: FormValidationService,
     public rbac: RbacService,
     private readonly datepipe: DatePipe,
-
+   
     config: NgbModalConfig) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -153,7 +154,7 @@ export class AllAssetsListComponent {
       enddate: [null],
       comments: [null],
       vendorname: [{ value: null, disabled: true }, []],
-      contactnumber: [{ value: null, disabled: true }, [Validators.maxLength(10), Validators.pattern("[0-9]+$")]]
+      contactnumber: [{ value: null, disabled: true }, [Validators.maxLength(15),Validators.minLength(10), Validators.pattern("[0-9]+$"),this.allZeroesIfMaxLength()]]
     })
   }
 
@@ -220,10 +221,14 @@ export class AllAssetsListComponent {
   
     }
     onPageChange(event: PaginatorState) {
-      this.first = event.first;
-      this.rows = event.rows;
+      const page = event.page ?? 0;
+      const rows = event.rows ?? 10;
+      this.rows = rows;
+      // Calculate first record index (0-based), then add 1 to make it 1-based
+      this.first = page * rows + 1;
       this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
+
 
   getFilteredData() {
     this.subscription = this.http.assetslocationId$.subscribe({
@@ -523,7 +528,7 @@ export class AllAssetsListComponent {
       this.assetForm.get('amcstartdate')?.setValidators([Validators.required]);
       this.assetForm.get('amcenddate')?.setValidators([Validators.required]);
       this.assetForm.get('vendorname')?.setValidators([Validators.required, Validators.pattern(/^(?!\s*$).+/)]);
-      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(10), Validators.minLength(10)]);
+      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]);
     } else {
       this.assetForm.get('amcstartdate')?.disable();
       this.assetForm.get('amcenddate')?.disable();
@@ -561,6 +566,16 @@ export class AllAssetsListComponent {
     });
   }
 
+//if user put only zero multipul times mobile no field
+allZeroesIfMaxLength(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = String(control.value || '');
+    if (/^0{10,}$/.test(value)) {
+      return { allZeroesIfMaxLength: true };
+    }
+    return null;
+  };
+}
 
   onToggleChangeWarranty(event: Event) {
     this.isToggledWarranty = (event.target as HTMLInputElement).checked;
@@ -690,6 +705,8 @@ export class AllAssetsListComponent {
       this.amcDateMismatch = false;
     }
   }
+
+
 
   amcDateWithinWarrantyExpiryValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -951,6 +968,8 @@ export class AllAssetsListComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset Released Successfully ');
             this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+            this.getcount(null,null,this.Status);
+
           },
           error: (error) => {
             this.conformationPopup.openErrorModal("Asset Assigned Failed")
@@ -993,8 +1012,10 @@ export class AllAssetsListComponent {
           next: (res) => {
 
             this.modalService.dismissAll();
+            this.getcount(null,null,this.Status);
             this.conformationPopup.openSuccessModal('Asset Allocated Successfully ');
             this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+           
           },
           error: (error) => {
             console.error("Error updating asset:", error);
@@ -1035,6 +1056,7 @@ export class AllAssetsListComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset Transferred  Successfully ');
             this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+            this.getcount(null,null,this.Status);
             this.locationfromdata.reset();
           },
           error: (error) => {
@@ -1077,7 +1099,7 @@ export class AllAssetsListComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset Reallocated Successfully ');
             this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-
+            this.getcount(null,null,this.Status);
           },
           error: (error) => {
             console.error("Error updating asset:", error);
@@ -1214,6 +1236,7 @@ export class AllAssetsListComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset marked as Inactivated Successfully');
             this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+            this.getcount(null,this.selectedSubLocationId,this.Status);
             this.inactiveForm.reset()
           },
           error: (err) => {
@@ -1253,7 +1276,9 @@ export class AllAssetsListComponent {
             console.log("Assignment Response:", res);
             // Call the updateAssets function if the assignment is successful
             this.updateundermaitence(undermainteenceForm, removeAsset);
-            this.getassetsdata(this.first, this.rows,null, null, this.Status);
+           
+             this.getcount(null,null,this.Status);
+               this.getassetsdata(this.first, this.rows,null, null, this.Status);
           },
           error: (error) => {
 
@@ -1294,9 +1319,10 @@ export class AllAssetsListComponent {
           console.log("Update Response:", res);
           this.undermainteenceForm.reset()
           this.modalService.dismissAll();
-          this.getcount(null,  null,this.Status);
+         
           this.conformationPopup.openSuccessModal('Asset marked as Maintenance Successfully ');
-
+          this.getcount(null,null,this.Status);
+ this.getassetsdata(this.first, this.rows,null, null, this.Status);
         },
         error: (error) => {
           console.error("Error updating asset:", error);
@@ -1388,7 +1414,7 @@ export class AllAssetsListComponent {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset marked as Available Successfully ');
           this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-
+          this.getcount(null,null,this.Status);
         },
         error: (err) => {
           console.error('Error deleting asset:', err);

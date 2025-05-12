@@ -4,7 +4,7 @@
         <form autocomplete="off" [formGroup]="assetCategorydata" (ngSubmit)="postasset(assetCategorydata)" 
         *ngIf="rbac.allowedToAccess('Asset Catagory.create')">
             <div class="custom-settings-add-input input-group">
-                <input type="text" class="form-control custom-input" placeholder="Please enter asset Category"
+                <input type="text" class="form-control custom-input" placeholder="Please enter asset category"
                     aria-label="role" aria-describedby="role" formControlName="assetcaassetCategory"   (keypress)="formValidation.restrictInput($event)" >
                 <span class="input-group-text" id="role">
                     <button type="submit" class="custom-btn btn-primary" [disabled]="assetCategorydata.invalid">{{'Add'| translate}}</button>
@@ -13,7 +13,7 @@
             <div *ngIf="assetCategorydata.get('assetcaassetCategory')?.touched || assetCategorydata.get('assetcaassetCategory')?.dirty"
                 class="error-msg">
                 <!-- Required validation message -->
-                <div *ngIf="assetCategorydata.get('assetcaassetCategory')?.hasError('required')">Please enter asset Category</div>
+                <div *ngIf="assetCategorydata.get('assetcaassetCategory')?.hasError('required')">Asset Category is required</div>
             </div>
             <div class="error-msg" *ngIf="assetCategorydata.controls['assetcaassetCategory'].errors?.['maxlength']">
                 Asset Category should not exceed 30 characters
@@ -69,7 +69,7 @@
                 <p class="popup-heading mb-0">Update Asset Category</p>
             </div>
             <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="openaddmodal(confirmationdeletepopup)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content ">
@@ -78,7 +78,7 @@
                     <label for="assetCategory" class="form-label custom-label mb-2">Asset Category
                         <span class="text-danger">*</span></label>
                     <input type="text" id="assetCategory" formControlName="assetcaassetCategorydata"
-                        class="form-control custom-input" placeholder="Enter asset category" (keypress)="formValidation.restrictInput($event)" />
+                        class="form-control custom-input" placeholder="Please enter asset category" (keypress)="formValidation.restrictInput($event)" />
                     <div class="error-msg" *ngIf="assetCategorydataForm.get('assetcaassetCategorydata')?.errors?.['required']">
                         Asset Category is required
                     </div>
@@ -88,7 +88,7 @@
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();assetCategorydataForm.reset()">Close</button>
+                        (click)="openaddmodal(confirmationdeletepopup)">Close</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="assetCategorydataForm.invalid">
                         Update</button>
                 </div>
@@ -96,7 +96,24 @@
         </div>
     </div>
 </ng-template>
-
+<!-- close buttton open update  icon click -->
+<ng-template #confirmationdeletepopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> Are you sure you want to close?</p>
+        </div>
+  
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+                No
+            </button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+                Yes
+            </button>
+        </div>
+    </div>
+  </ng-template>
 
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>

@@ -39,10 +39,10 @@
                         <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
                         <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
                         <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
-                        <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|date):'-'}}</td>
-                        <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|date):'-'}}
+                        <td class="text-nowrap">{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|date):'-'}}</td>
+                        <td class="text-nowrap">{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|date):'-'}}
                         </td>
-                        <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|date):'-'}}</td>
+                        <td class="text-nowrap">{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|date):'-'}}</td>
                         <td>
                             @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
                             <div>

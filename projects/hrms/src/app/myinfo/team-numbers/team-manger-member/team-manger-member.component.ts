@@ -243,6 +243,7 @@ export class TeamMangerMemberComponent {
         this.requestForm.reset()
       },
       error: (err: any) => {
+        this.http.setBasicDetails();
         console.error('Error:', err);
         this.conformationPopup.openErrorModal('Team manager updated failed ')
       }
@@ -269,6 +270,7 @@ export class TeamMangerMemberComponent {
         this.foremployeeForm.reset()
       },
       error: (err: any) => {
+        this.http.setBasicDetails();
         console.error('Error:', err);
         this.conformationPopup.openErrorModal('Team manager updated failed ')
       }

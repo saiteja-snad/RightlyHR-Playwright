@@ -110,7 +110,6 @@ export class TeamMangerMembersComponent {
           console.log('Response Data:', responseData);
   
           this.teamMemberArray = responseData
-            .filter((employee: any) => employee.employeeId !== loggedInUserId)
             .map((employee: any) => ({
               ...employee,
               jobDetails: employee.jobDetails ?? [], // Default to [] if undefined
@@ -241,6 +240,7 @@ export class TeamMangerMembersComponent {
         this.requestForm.reset()
       },
       error: (err: any) => {
+        this.getAllTeammembersList()
         console.error('Error:', err);
         this.conformationPopup.openErrorModal( err.error.Message ||'Team manager updated failed ')
       }
@@ -267,6 +267,7 @@ export class TeamMangerMembersComponent {
         this.foremployeeForm.reset()
       },
       error: (err: any) => {
+        this.getAllTeammembersList()
         console.error('Error:', err);
         this.conformationPopup.openErrorModal( err.error.Message ||'Team manager updated failed ')
       }

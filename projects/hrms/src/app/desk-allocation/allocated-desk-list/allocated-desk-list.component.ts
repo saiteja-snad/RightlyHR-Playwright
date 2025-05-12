@@ -10,6 +10,7 @@ import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-allocated-desk-list',
@@ -69,6 +70,7 @@ export class AllocatedDeskListComponent {
     public conformationPopup: OpenModalService,
     public rbac: RbacService,
 
+  public formValidation: FormValidationService,
     config: NgbModalConfig) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -608,6 +610,14 @@ export class AllocatedDeskListComponent {
       }
     });
   }
+       //close dailog open
+  openallocationModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+  cleardata(){
+    this.reassiginForm.reset();
+      this.modalService.dismissAll();
+    }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -58,45 +58,45 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if(teamLeaveSummary.length > 0) {
-                    @for (employee of teamLeaveSummary; track employee.employeeId) {
-                    <tr>
-                        <td>{{ employee.employeeName }} ({{employee.fusionEmpId}})</td>
-                        <td>
-                            <span [ngClass]="{ 'clickable-text': (employee.leaves.length || 0) > 0 }"
-                                *ngIf="(employee.leaves?.length || 0) > 0; else noLeaves"
-                                (click)="openPopup(leavesModal, employee, 'Leaves')">
-                                {{ employee.leaves.length || 0 }}
-                            </span>
-                            <ng-template #noLeaves>{{ employee.leaves.length || 0 }}</ng-template>
-                        </td>
-                        <td>
-                            <span [ngClass]="{ 'clickable-text': (employee.wfh.length || 0) > 0 }"
-                                *ngIf="(employee.wfh?.length || 0) > 0; else noWfh"
-                                (click)="openPopup(wfhModal, employee, 'WFH')">
-                                {{ employee.wfh.length || 0 }}
-                            </span>
-                            <ng-template #noWfh>{{ employee.wfh.length || 0 }}</ng-template>
-                        </td>
-                        <td>
-                            <span [ngClass]="{ 'clickable-text': calculateDuration(employee.permissions) > 0 }"
-                                *ngIf="calculateDuration(employee.permissions) > 0; else noPermission"
-                                (click)="openPopup(permissionModal, employee, 'Permission')">
-                                {{ calculateDuration(employee.permissions)}} Hr(s)
-                            </span>
-                            <ng-template #noPermission>{{ calculateDuration(employee.permissions)}} Hr(s)</ng-template>
-                        </td>
-                        <td>
-                            <span [ngClass]="{ 'clickable-text': calculateDuration(employee.regularization) > 0 }"
-                                *ngIf="calculateDuration(employee.regularization) > 0; else noRegularization"
-                                (click)="openPopup(permissionModal, employee, 'Regularization')">
-                                {{ calculateDuration(employee.regularization)}} Hr(s)
-                            </span>
-                            <ng-template #noRegularization>{{ calculateDuration(employee.regularization)}}
-                                Hr(s)</ng-template>
-                        </td>
-                    </tr>
-                    }
+                    @if(filteredTeamLeaveSummary.length > 0) {
+                        @for (employee of filteredTeamLeaveSummary; track employee.employeeId) {
+                        <tr>
+                            <td>{{ employee.employeeName }} ({{employee.fusionEmpId}})</td>
+                            <td>
+                                <span [ngClass]="{ 'clickable-text': (employee.leaves.length || 0) > 0 }"
+                                    *ngIf="(employee.leaves?.length || 0) > 0; else noLeaves"
+                                    (click)="openPopup(leavesModal, employee, 'Leaves')">
+                                    {{ employee.leaves.length || 0 }}
+                                </span>
+                                <ng-template #noLeaves>{{ employee.leaves.length || 0 }}</ng-template>
+                            </td>
+                            <td>
+                                <span [ngClass]="{ 'clickable-text': (employee.wfh.length || 0) > 0 }"
+                                    *ngIf="(employee.wfh?.length || 0) > 0; else noWfh"
+                                    (click)="openPopup(wfhModal, employee, 'WFH')">
+                                    {{ employee.wfh.length || 0 }}
+                                </span>
+                                <ng-template #noWfh>{{ employee.wfh.length || 0 }}</ng-template>
+                            </td>
+                            <td>
+                                <span [ngClass]="{ 'clickable-text': calculateDuration(employee.permissions) > 0 }"
+                                    *ngIf="calculateDuration(employee.permissions) > 0; else noPermission"
+                                    (click)="openPopup(permissionModal, employee, 'Permission')">
+                                    {{ calculateDuration(employee.permissions)}} Hr(s)
+                                </span>
+                                <ng-template #noPermission>{{ calculateDuration(employee.permissions)}} Hr(s)</ng-template>
+                            </td>
+                            <td>
+                                <span [ngClass]="{ 'clickable-text': calculateDuration(employee.regularization) > 0 }"
+                                    *ngIf="calculateDuration(employee.regularization) > 0; else noRegularization"
+                                    (click)="openPopup(permissionModal, employee, 'Regularization')">
+                                    {{ calculateDuration(employee.regularization)}} Hr(s)
+                                </span>
+                                <ng-template #noRegularization>{{ calculateDuration(employee.regularization)}}
+                                    Hr(s)</ng-template>
+                            </td>
+                        </tr>
+                        }
                     }@else {
                     <tr>
                         <app-no-data-found></app-no-data-found>
@@ -123,7 +123,7 @@
                                 <th>Category</th>
                                 <th>Start Date</th>
                                 <th>End Date</th>
-                                <th>Type</th>
+                                <th>Availing</th>
                                 <th>Duration (In Days)</th>
                                 <th>Status</th>
                             </tr>
@@ -162,7 +162,7 @@
                             <tr>
                                 <th>Start Date</th>
                                 <th>End Date</th>
-                                <th>Type</th>
+                                <th>Availing</th>
                                 <th>Duration (In Days)</th>
                                 <th>Status</th>
                             </tr>
@@ -200,7 +200,11 @@
                             </tr>
                             <tr>
                                 <th>Requested Date</th>
-                                <th>Type</th>
+                                @if(popupType === 'Permission') {
+                                    <th>Permission Type</th>
+                                }@else {
+                                    <th>Regularization Type</th>
+                                }
                                 <th>Duration (In Hrs)</th>
                                 <th>Status</th>
                             </tr>

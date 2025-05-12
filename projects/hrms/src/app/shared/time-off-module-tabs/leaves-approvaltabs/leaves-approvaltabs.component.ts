@@ -20,18 +20,22 @@ export class LeavesApprovaltabsComponent {
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
   processedCount: any;
-  waitingForApprovalCount: any;
-  approvedCount: any;
-  rejectedCount: any;
-  statusTabs: any[] = [
-    { label: 'Waiting For Approval', link: 'waiting-for-approval', },
-    { label: 'Approved', link: 'approved', },
-    { label: 'Processed', link: 'processed', },
-    { label: 'Rejected', link: 'rejected', },
-    { label: 'Cancelled', link: 'cancelled', },
-    { label: 'Team Leave balance', link: 'team-leave-balance', },
-    { label: 'Team Leave Summary', link: 'team-leave-summary', }
-  ];
+  waitingForApprovalCount: number = 0;
+  approvedCount: number = 0;
+  rejectedCount: number = 0;
+  cancelCount:number=0;
+  teamLeaveBalanceCount: number = 0;
+  teamLeaveSummaryCount: number = 0;
+
+  // statusTabs: any[] = [
+  //   { label: 'Waiting For Approval', link: 'waiting-for-approval', },
+  //   { label: 'Approved', link: 'approved', },
+  //   { label: 'Processed', link: 'processed', },
+  //   { label: 'Rejected', link: 'rejected', },
+  //   { label: 'Cancelled', link: 'cancelled', },
+  //   { label: 'Team Leave balance', link: 'team-leave-balance', },
+  //   { label: 'Team Leave Summary', link: 'team-leave-summary', }
+  // ];
 
   constructor(public readonly router: Router, private http: HttpService, private authService: AuthService) { }
 
@@ -39,6 +43,8 @@ export class LeavesApprovaltabsComponent {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getDataByLPID();
+    this.getAllTeamLeaveBalance();
+    this.getAllTeamLeaveSummary();
   }
 
   getDataByLPID() {
@@ -46,22 +52,19 @@ export class LeavesApprovaltabsComponent {
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
-          // Count based on status
           const waiting = response.filter(item => item.status === 'Waiting for Approval');
           const approved = response.filter(item => item.status === 'Approved');
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
           const cancelled = response.filter(item => item.status === 'Cancelled');
-          // Set counts
-          this.statusTabs = [
-            { label: 'Waiting For Approval', link: 'waiting-for-approval', count: waiting.length },
-            { label: 'Approved', link: 'approved', count: approved.length },
-            { label: 'Processed', link: 'processed', count: processed.length },
-            { label: 'Rejected', link: 'rejected', count: rejected.length },
-            { label: 'Cancelled', link: 'cancelled', count: cancelled.length},
-            { label: 'Team Leave balance', link: 'team-leave-balance', },
-            { label: 'Team Leave Summary', link: 'team-leave-summary', }
-          ];
+
+          this.waitingForApprovalCount = waiting.length;
+          this.approvedCount = approved.length;
+          this.rejectedCount = rejected.length;
+          this.processedCount = processed.length;
+          this.cancelCount=cancelled.length
+
+          this.updateStatusTabs();
         } else {
           console.error("Invalid response format");
         }
@@ -69,4 +72,58 @@ export class LeavesApprovaltabsComponent {
       error: (reason: any) => console.log(reason)
     });
   }
+
+  getAllTeamLeaveBalance() {
+    const employeeId = this.empdata.employeeId;
+    let url = `LeaveEntitlements/team-leave-entitlements/${employeeId}`;
+
+    this.subscription = this.http.getData(url).subscribe({
+      next: (res: any) => {
+        if (res?.success && Array.isArray(res?.data)) {
+          this.teamLeaveBalanceCount = res.data.length;
+          this.updateStatusTabs();
+        }
+      },
+      error: (err) => {
+        this.teamLeaveBalanceCount = 0;
+        this.updateStatusTabs();
+      }
+    });
+  }
+
+  getAllTeamLeaveSummary() {
+    const employeeId = this.empdata.employeeId;
+    let url = `Employeedata/v1/getreportessdata?employeeId=${employeeId}`;
+
+    this.subscription = this.http.getData(url).subscribe({
+      next: (res: any) => {
+        this.teamLeaveSummaryCount = res.length;
+        this.updateStatusTabs();
+      },
+      error: (err) => {
+        this.teamLeaveSummaryCount = 0;
+        this.updateStatusTabs();
+      }
+    });
+  }
+
+  private updateStatusTabs() {
+    this.statusTabs = [
+      { label: 'Waiting For Approval', link: 'waiting-for-approval', count: this.waitingForApprovalCount },
+      { label: 'Approved', link: 'approved', count: this.approvedCount },
+      { label: 'Processed', link: 'processed', count: this.processedCount },
+      { label: 'Rejected', link: 'rejected', count: this.rejectedCount },
+      { label: 'Cancelled', link: 'cancelled',count:this.cancelCount },
+      { label: 'Team Leave balance', link: 'team-leave-balance', count: this.teamLeaveBalanceCount },
+      { label: 'Team Leave Summary', link: 'team-leave-summary', count: this.teamLeaveSummaryCount }
+    ];
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
+
+
 }

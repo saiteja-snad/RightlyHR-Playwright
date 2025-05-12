@@ -9,6 +9,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { RouterModule } from '@angular/router';
 import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { IAsset, ICategory, IVendor } from '../../Interfaces/assets-management.model';
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-assets-managment',
@@ -42,9 +43,10 @@ export class AssetsManagmentComponent {
   page = 1;
   pageSize = 10;
   collectionSize = 100;
+  purchesdate:any;
   constructor(
     private readonly fb: FormBuilder,
-    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,) { }
+    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,public formValidation: FormValidationService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initialform()
@@ -54,6 +56,8 @@ export class AssetsManagmentComponent {
     this.intiallocationandsublocation()
     this.getcount(null, null)
     this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
+   const currentYear = new Date().getFullYear();
+  this.purchesdate = `${currentYear}-12-31`; 
     this.navTabs = [
       { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject },
       { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject },
@@ -147,7 +151,7 @@ export class AssetsManagmentComponent {
       this.assetForm.get('amcstartdate')?.setValidators([Validators.required]);
       this.assetForm.get('amcenddate')?.setValidators([Validators.required]);
       this.assetForm.get('vendorname')?.setValidators([Validators.required, Validators.maxLength(20)]);
-      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(10), Validators.pattern("[0-9]+$"), Validators.minLength(10)]);
+      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.pattern("[0-9]+$"), Validators.minLength(10),this.allZeroesIfMaxLength()]);
     } else {
       this.assetForm.get('amcstartdate')?.disable();
       this.assetForm.get('amcenddate')?.disable();
@@ -172,6 +176,16 @@ export class AssetsManagmentComponent {
 
 
   }
+//if user put only zero multipul times mobile no field
+allZeroesIfMaxLength(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = String(control.value || '');
+    if (/^0{10,}$/.test(value)) {
+      return { allZeroesIfMaxLength: true };
+    }
+    return null;
+  };
+}
 
 
   toggleAmcFields(enable: boolean, resetValues: boolean = false) {
@@ -469,7 +483,7 @@ export class AssetsManagmentComponent {
           console.log(res);
           this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Asset Registered Successfully ');
-
+          this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
           this.assetForm.reset();
         },
         error: (error) => {

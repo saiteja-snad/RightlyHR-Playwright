@@ -1,0 +1,46 @@
+.popup-table {
+  &-wrapper {
+    width: 100%;
+    height: max-content;
+    border: 1px solid #767676;
+    border-radius: 0.5rem;
+
+    .popup-table-content {
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #767676;
+        border-radius: 0.5rem;
+        overflow: hidden;
+
+        th,
+        td {
+          text-align: center;
+          padding: 0.5rem;
+          border: 1px solid #767676;
+          font-size: var(--fontsize15);
+        }
+
+        th {
+          background-color: #2e427d !important;
+          color: #fff;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .log-time {
+      color: #585858 !important;
+    }
+
+    .duration-time {
+      color: #232222 !important;
+    }
+  }
+}
+
+.clickable-text {
+  text-decoration: underline;
+  color: blue;
+  cursor: pointer;
+}

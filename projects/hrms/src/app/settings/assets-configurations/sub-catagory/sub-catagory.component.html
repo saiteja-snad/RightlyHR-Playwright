@@ -57,7 +57,7 @@
         <p class="popup-heading mb-0">Add Asset Sub Category</p>
       </div>
       <div>
-        <a (click)="modal.dismiss();assetcataeryForm.reset()"><img src="icons/close.png" alt="Close Icon"
+        <a (click)="openaaddmodal(confirmationadddeletepopup)"><img src="icons/close.png" alt="Close Icon"
             class="close-icon"></a>
       </div>
     </div>
@@ -82,7 +82,7 @@
           <div class="col-md-6 mb-3">
             <label for="assetSubCategory" class="form-label custom-label mb-2">Asset Sub Category<span
                 class="text-danger">*</span></label>
-            <input class="form-control custom-input" formControlName="assetSubCategory" placeholder="Asset Sub Category"
+            <input class="form-control custom-input" formControlName="assetSubCategory" placeholder="please enter asset sub category"
               type="text" (keypress)="formValidation.restrictInput($event)" />
             <div *ngIf="assetcataeryForm.get('assetSubCategory')?.invalid && assetcataeryForm.get('assetSubCategory')?.touched" class="error-msg">
               <div *ngIf="assetcataeryForm.get('assetSubCategory')?.errors?.['required']">
@@ -95,14 +95,31 @@
           </div>
         </div>
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="openaaddmodal(confirmationadddeletepopup)">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="assetcataeryForm.invalid">Submit</button>
         </div>
       </form>
     </div>
   </div>
 </ng-template>
+<!-- add close button click close pop up -->
+<ng-template #confirmationadddeletepopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+      <div>
+          <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+          <p class="confirmation-text"> Are you sure you want to close?</p>
+      </div>
 
+      <div class="custom-modal-footer">
+          <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+              No
+          </button>
+          <button type="submit" class="custom-btn btn-primary" (click)="clearadddata();model.dismiss()">
+              Yes
+          </button>
+      </div>
+  </div>
+</ng-template>
 <ng-template #updateassetescataerys let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
@@ -110,7 +127,7 @@
         <p class="popup-heading mb-0">Update Asset Sub Category </p>
       </div>
       <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+        <a (click)="openaddventermodal(confirmationdeletepopup)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
     <div class="custom-main-popup-content">
@@ -136,7 +153,7 @@
           <div class="col-md-6 mb-3">
             <label for="assetSubCategorys" class="form-label custom-label mb-2">Asset Sub Category<span
                 class="text-danger">*</span></label>
-            <input class="form-control custom-input" formControlName="assetSubCategory"
+            <input class="form-control custom-input" formControlName="assetSubCategory" placeholder="please enter asset sub category"
               (keypress)="formValidation.restrictInput($event)" />
             <div *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.invalid && 
                       assetcataeryupdateForm.get('assetSubCategory')?.touched" class="error-msg">
@@ -151,7 +168,7 @@
         </div>
 
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+          <button type="reset" class="custom-btn btn-secondary" (click)="openaddventermodal(confirmationdeletepopup)">Close</button>
           <button type="submit" class="custom-btn btn-primary"
             [disabled]="assetcataeryupdateForm.invalid">Update</button>
         </div>
@@ -170,5 +187,23 @@
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
       <button type="submit" class="custom-btn btn-primary" (click)="deleteasstescatagorydata()">Yes</button>
     </div>
+  </div>
+</ng-template>
+<!--update popup close button click conformation -->
+<ng-template #confirmationdeletepopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+      <div>
+          <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+          <p class="confirmation-text"> Are you sure you want to close?</p>
+      </div>
+
+      <div class="custom-modal-footer">
+          <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+              No
+          </button>
+          <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+              Yes
+          </button>
+      </div>
   </div>
 </ng-template>

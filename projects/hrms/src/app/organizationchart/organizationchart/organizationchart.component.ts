@@ -53,7 +53,7 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: any) => {
           this.activeEmplist = res.map((employee: any) => ({
-            label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''} ${employee.lastName ?? ''}`,
+            label: `${employee.fusionEmpId ?? ''} - ${employee.firstName ?? ''}  ${employee.middleName ?? ''} ${employee.lastName ?? ''} `,
             value: employee.employeeId
           }));
         },

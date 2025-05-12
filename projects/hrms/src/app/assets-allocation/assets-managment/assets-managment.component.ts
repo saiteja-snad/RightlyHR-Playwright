@@ -482,6 +482,7 @@ allZeroesIfMaxLength(): ValidatorFn {
         next: (res) => {
           console.log(res);
           this.modalService.dismissAll()
+          this.http.setnewassetsDetails()
           this.conformationPopup.openSuccessModal('Asset Registered Successfully ');
           this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
           this.assetForm.reset();

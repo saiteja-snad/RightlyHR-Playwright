@@ -726,7 +726,7 @@ navigateToAccessedRoute(actualRoute: string): string {
         break;
 
         case '/settings/timeoff-configurations/eligibility-criterias':
-          if(this.rbac.allowedToAccess('')){
+          if(this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')){
             for(const item of ATTENDANCE_ELIGIBILITY_CRITERIA_TABS){
               if(this.rbac.allowedToAccess(item.permission)){
                 return item.route;
@@ -742,6 +742,24 @@ navigateToAccessedRoute(actualRoute: string): string {
                 return item.route;
               }
             }
+          }
+          break;
+
+        case '/settings/timeoff-configurations/leave-allocation':
+          if(this.rbac.allowedToAccess('Leave Allocation Tab.view')){
+            return (route = '/settings/timeoff-configurations/leave-allocation');
+          }
+          break;
+
+        case '/settings/timeoff-configurations/flexible-leave-allocation':
+          if(this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')){
+            return (route = '/settings/timeoff-configurations/flexible-leave-allocation');
+          }
+          break;
+
+        case '/settings/timeoff-configurations/load-entitlements':
+          if(this.rbac.allowedToAccess('Load Entitlements Tab.view')){
+            return (route = '/settings/timeoff-configurations/load-entitlements')
           }
           break;
   }

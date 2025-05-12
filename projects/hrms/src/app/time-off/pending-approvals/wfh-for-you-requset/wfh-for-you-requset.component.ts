@@ -68,7 +68,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   searchValue: any;
   dataload = false;
-  leavesselect!: LeaveApproval[];
+  wfhsselect!: LeaveApproval[];
   selectedProducts!: LeaveApproval[];
   multiSelect=false;
   requestBody={} as any;
@@ -141,7 +141,7 @@ bulkProcess(){
         next: (response: any) => {
           console.log(response);
           this.leaves.next(response.data);
-           this.leavesselect = response.data;
+           this.wfhsselect = response.data;
         },
         error: (reason) => console.log(reason),
         complete: ()  =>{
@@ -294,7 +294,7 @@ bulkProcess(){
       'Processing Request, Please wait...');
     this.http
       .putData(
-        `PendingApproval/multiapprovereject`,
+        `PendingApproval/multiprocess`,
         this.requestBody
       ).pipe(takeUntil(this.destroy$))
       .subscribe({

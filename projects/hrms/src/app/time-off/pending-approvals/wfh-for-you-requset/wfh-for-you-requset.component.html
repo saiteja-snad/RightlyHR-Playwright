@@ -20,7 +20,7 @@
     <div class="custom-table-content">
 
         @if(!dataload){
-               <p-table [value]="leavesselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts" 
+               <p-table [value]="wfhsselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts" 
              dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
                 <ng-template #header>
                     <tr>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -16,6 +16,8 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
 import { PermissionsearchPipe } from "../../../Pipes/permissionsearch.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
+import { TableModule } from 'primeng/table';
+import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 
 @Component({
   selector: 'app-premission-for-you-request',
@@ -29,10 +31,12 @@ import { SignalsService } from '../../../services/signals.service';
     ReactiveFormsModule,
     TranslateModule,
     PermissionsearchPipe,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    TableModule,
 ],
   templateUrl: './premission-for-you-request.component.html',
   styleUrl: './premission-for-you-request.component.scss',
+   encapsulation: ViewEncapsulation.None,
 })
 
 export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
@@ -56,6 +60,10 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   searchValue: any;
   spinnerLoader = false;
   dataload = false;
+  permissionsselect!: LeaveApproval[];
+    selectedProducts!: LeaveApproval[];
+    multiSelect=false;
+    requestBody={} as any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -70,7 +78,40 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
-
+selectCheck(Value:any){
+  this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  console.log(this.multiSelect)
+  }
+  bulkapprove(approverPopup: any){
+   this.intializeApproveForm()
+   this.modalService.open(approverPopup, {
+      centered: true,
+      backdrop: 'static',
+    });
+}
+bulkReject(rejectPopup: any){
+  this.intializeRejectForm();
+ this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
+}
+bulkProcess(){
+//  this.handleProcess();
+}
+ canBulkApprove(): boolean {
+    return this.selectedProducts?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage !==
+          item.approvalHeader.finalapprovalStage &&
+        this.rbac.allowedToAccess('Timeoff Tab.update')
+    );
+  }
+  canBulkProcess(): boolean {
+    return this.selectedProducts?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage ===
+          item.approvalHeader.finalapprovalStage &&
+        this.rbac.allowedToAccess('Timeoff Tab.update')
+    );
+  }
   intializeApproveForm() {
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
@@ -94,6 +135,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           console.log(response);
           this.leaves.next(response.data);
+           this.permissionsselect = response.data;
           console.log(this.leaves);
         },
         error: (reason) => {console.log(reason);
@@ -127,17 +169,29 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
-      const requestBody = {
+      if(this.selectedProducts &&this.selectedProducts.length>0){
+         let approvedBy =this.empinfo.employeeId.toString()
+         let comments = formData.comments
+        this.requestBody = this.selectedProducts.map((item) => ({
+         id: item.approvalHeader.id,
+        status: 'Approved',
+        comments: comments,
+        approvedBy: approvedBy,
+        }));
+      }else{
+         this.requestBody = [{
+           id: this.selectedLeaveData.approvalHeader.id,
         status: 'Approved',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
-      };
+      }];
+      }
       this.sharedModalService.openLoaderModal(
         'Approving Request, Please wait...');
       this.http
         .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
+           `PendingApproval/multiapprovereject`,
+          this.requestBody
         )
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -166,16 +220,26 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   handleProcess(request: PermissionRequestResponse) {
-    let requestBody = {
-      status: 'Processed',
-      approvedBy: this.empinfo.employeeId.toString(),
-    };
+      if(this.selectedProducts &&this.selectedProducts.length>0){
+         let approvedBy =this.empinfo.employeeId.toString()
+        this.requestBody = this.selectedProducts.map((item) => ({
+         id: item.approvalHeader.id,
+        status: 'Processed',
+        approvedBy: approvedBy,
+        }));
+      }else{
+         this.requestBody =[ {
+        id: this.selectedLeaveData.approvalHeader.id,
+        status: 'Processed',
+        approvedBy: this.empinfo.employeeId.toString(),
+      }];
+      }
     this.sharedModalService.openLoaderModal(
       'Processing Request, Please wait...');
     this.http
       .putData(
-        `PendingApproval/process/${request.approvalHeader.id}`,
-        requestBody
+       `PendingApproval/multiprocess`,
+        this.requestBody
       ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
@@ -202,17 +266,29 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
-      const requestBody = {
+       if(this.selectedProducts &&this.selectedProducts.length>0){
+         let approvedBy =this.empinfo.employeeId.toString()
+         let comments = formData.comments
+        this.requestBody = this.selectedProducts.map((item) => ({
+         id: item.approvalHeader.id,
         status: 'Rejected',
+        comments: comments,
+        approvedBy: approvedBy,
+        }));
+      }else{
+         this.requestBody = [{
+          id: this.selectedLeaveData.approvalHeader.id,
+         status: 'Rejected',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
-      };
+      }];
+      }
       this.sharedModalService.openLoaderModal(
         'Rejecting Request, Please wait...');
       this.http
         .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
+              `PendingApproval/multiapprovereject`,
+          this.requestBody
         ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {

@@ -16,6 +16,7 @@ import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { TeamMembersTabsComponent } from "../../../shared/personalinfo-tabs/team-members-tabs/team-members-tabs.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-team-manger-member',
@@ -44,7 +45,7 @@ export class TeamMangerMemberComponent {
   constructor(
     private http: HttpService,
     private router: Router,
-    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac:RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');

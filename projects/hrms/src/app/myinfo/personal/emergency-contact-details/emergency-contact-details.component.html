@@ -8,7 +8,8 @@
       'trainee prospective' && employedata?.empstatus?.toLowerCase() !== 'inactive' &&
       employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
       <div *ngIf="!buttons">
-        <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>
+        @if(rbac.allowedToAccess('My Info Emergency Contact Details.update')){
+        <a (click)="enableForm()"><i class="bi bi-pencil-square"></i></a>}
       </div>}
       
       <div class="d-flex justify-content-end gap-3" *ngIf="buttons">

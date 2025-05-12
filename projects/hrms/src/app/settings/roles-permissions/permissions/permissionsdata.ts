@@ -468,19 +468,20 @@ export const permissionsData = [
     { fields: 'My Info Compensation Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Desk Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'My Info Asset Details', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'My Info Separation Request', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Separation Request Button', View: false, Update: false, Create: false, Delete: false },
 
     //My Info Documents Sub Tabs Section
-    { fields: 'My Info Documents', View: false, Update: false, Create: false, Delete: false },
-
+    { fields: 'My Info Documents(Upload File)', View: false, Update: false, Create: false, Delete: false },
+    
     //My Info Team Members Sub Tabs Section
-    { fields: 'My Info Team Members', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Reporting Managers Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Change RM Button', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'My Info Team Managers Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Change TM Button', View: false, Update: false, Create: false, Delete: false },
 
     //My Info Onboard Request Sub Tabs Section
     { fields: 'My Info Onboard Request', View: false, Update: false, Create: false, Delete: false },
 
-    
     //My Info Separation Request Details
     { fields: 'Raise No Due', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Recall', View: false, Update: false, Create: false, Delete: false },
@@ -489,8 +490,6 @@ export const permissionsData = [
     //My Info No Due Clearance Details
     { fields: 'Submission Of No Due Clearance', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Re-request for no due', View: false, Update: false, Create: false, Delete: false }, 
-
-
 
     //Employee Info Sub Tabs Section
     // My Info Sub Tabs Section

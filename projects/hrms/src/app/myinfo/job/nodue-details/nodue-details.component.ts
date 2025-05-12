@@ -15,6 +15,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import { INodue } from './nodue-details';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-nodue-details',
@@ -45,7 +46,7 @@ export class NodueDetailsComponent implements OnInit,OnDestroy {
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal
+    private modalService: NgbModal,public rbac: RbacService
   ) {
     // Initialize any required services or dependencies here
   }

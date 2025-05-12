@@ -15,6 +15,7 @@ import { MyinfoDetailsComponent } from "../../shared/myinfo-details/myinfo-detai
 import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SignalsService } from '../../services/signals.service';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-myinfo-layout',
   imports: [CommonModule, RouterOutlet, Select, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, FormsModule, ReactiveFormsModule, MyinfoDetailsComponent, TranslateModule, MultiSelectModule],
@@ -42,7 +43,7 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(private http: HttpService, private router: Router, private modalService: NgbModal,
-    private fb: FormBuilder, private conformationPopup: OpenModalService, private signalService: SignalsService) { }
+    private fb: FormBuilder, private conformationPopup: OpenModalService, private signalService: SignalsService,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.formsubmit();

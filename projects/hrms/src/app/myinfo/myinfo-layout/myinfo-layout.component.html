@@ -4,8 +4,10 @@
       <p class="component-header mb-0">My Info</p>
     </div>
     <div>
+      @if(rbac.allowedToAccess('Change RM Button.update')) {
       <button class="custom-btn btn-primary" *ngIf="isActive('myinfo/team-members')"
         (click)="openModal(changermmodal)">Change RM</button>
+        }
     </div>
   </div>
 

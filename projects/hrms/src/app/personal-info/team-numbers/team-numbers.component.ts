@@ -19,7 +19,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent, TeamMembersTabsComponent,MultiSelectModule],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent, TeamMembersTabsComponent, MultiSelectModule],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })
@@ -78,7 +78,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   }
 
   openModals(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' , size: 'lg' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   formsubmit() {
@@ -100,7 +100,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   }
 
   selectedEmployeeDetails = {} as any;
-  openModal(content: any,details : any) {
+  openModal(content: any, details: any) {
     this.selectedEmployeeDetails = details;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -232,7 +232,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.managers = data
           .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: { fusionEmpId:string; firstName: string; middleName?: string; lastName: string }) => ({
+          .map((emp: { fusionEmpId: string; firstName: string; middleName?: string; lastName: string }) => ({
             ...emp,
             name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
           }));
@@ -261,10 +261,10 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   resetAndClose(modal: any): void {
     this.rmForm.reset();
     this.teamForm.reset();
-    this.modalService.dismissAll(); 
+    this.modalService.dismissAll();
   }
 
-onSelectManagers(event: any, field: string) {
+  onSelectManagers(event: any, field: string) {
     if (field === 'teamMembers') {
       this.selectedEmployees = Array.isArray(event.value) ? event.value : [event.value];
       this.selectedEmployeeIds = this.selectedEmployees.map(emp => emp.employeeId);

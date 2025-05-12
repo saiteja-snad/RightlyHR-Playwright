@@ -11,10 +11,12 @@
   color: rgb(243, 109, 234);
   font-weight: 700;
 }
-.status-halfday{
+
+.status-halfday {
   color: rgb(218, 86, 93);
   font-weight: 700;
 }
+
 .status-absent {
   color: #D8332A;
   font-weight: 700;
@@ -140,16 +142,17 @@
         th {
           color: #141414;
           font-weight: 500;
+          background-color: #E0E6ED !important;
+        }
+
+        .custom-popup-header {
+          background-color: #305889 !important;
+          color: #fff !important;
+          font-weight: 600;
+          border-top-left-radius: 0.5rem;
+          border-top-right-radius: 0.5rem;
         }
       }
-    }
-
-    .custom-popup-header {
-      background-color: #2e427d !important;
-      color: #fff !important;
-      font-weight: 600;
-      border-top-left-radius: 0.5rem;
-      border-top-right-radius: 0.5rem;
     }
 
     .log-time {

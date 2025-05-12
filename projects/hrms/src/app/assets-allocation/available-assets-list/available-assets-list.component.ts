@@ -66,6 +66,8 @@ export class AvailableAssetsListComponent {
   employeeiddetails: any;
   loactionid: any;
   sublocation: any;
+    minpurchesDate: any;
+  maxpurchesDate: any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -104,7 +106,14 @@ export class AvailableAssetsListComponent {
     this.initialinactiveform();
     this.initialReleaseform();
     this.intialfromundermatince();
-    this.intialtransferfrom()
+    this.intialtransferfrom();
+    const today = new Date();
+  // Set max to today's date
+  this.maxpurchesDate = today.toISOString().split('T')[0];
+  // Set min to Jan 1st of the current year
+  const startOfYear = new Date(today.getFullYear(), 0, 1); 
+  this.minpurchesDate = startOfYear.toISOString().split('T')[0];
+    
   }
 
   initialform() {

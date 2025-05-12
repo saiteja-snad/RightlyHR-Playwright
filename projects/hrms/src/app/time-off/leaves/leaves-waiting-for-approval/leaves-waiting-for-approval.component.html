@@ -21,12 +21,11 @@
                     <td>{{item.date| dateformat}}</td>
                     <td>{{item.categoryName}}</td>
                     <td>{{item.duration}}</td>
-                    <td>
-                        {{ item.durationType == 1 ? 'First Half' : item.durationType == 2 ? 'Full Day' :
+                    <td>{{ item.durationType == 1 ? 'First Half' : item.durationType == 2 ? 'Full Day' :
                         item.durationType == 3 ? 'Second Half' : 'Unknown' }}
                     </td>
-                    <td>{{item.startdate| dateformat}}</td>
-                    <td>{{item.enddate| dateformat}}</td>
+                    <td>{{item.startdate | dateformat}}</td>
+                    <td>{{item.enddate | dateformat}}</td>
                     <td>
                         <div>
                             <a type="button" [ngbPopover]="reason">

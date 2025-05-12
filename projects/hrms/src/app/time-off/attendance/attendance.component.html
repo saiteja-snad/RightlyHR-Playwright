@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="d-flex gap-2">
-            <p class="component-header cursor mb-0 text-nowrap">Attendance  @if(empName){( {{empName}} )}</p>
+            <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){( {{empName}} )}</p>
         </div>
         <div class="d-flex align-items-center flex-wrap gap-3">
             <label class="form-label custom-label pt-2" for="">Select</label>
@@ -19,7 +19,7 @@
             </div>
             <!-- select all employees drop down for HR code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
-            <label class="form-label custom-label pt-2" for="">Select Employee</label>
+            <label class="form-label custom-label pt-2" for="">All Employees</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getAllEmployeeInfo" [filter]="true" filterBy="fullName" [showClear]="false"
                     [(ngModel)]="selectedEmployee" placeholder="Select Employee"
@@ -30,8 +30,8 @@
             }
             <!-- select all employees drop down for HR code end -->
             <!-- select all employees drop down for team manager code start -->
-            @if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')){
-            <label class="form-label custom-label pt-2" for="">Select Employee</label>
+            @else if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')){
+            <label class="form-label custom-label pt-2" for="">My Team</label>
             <div class="custom-p-select-content">
                 <p-select [options]="get_Employeelist_forTM" [filter]="true" filterBy="fullName" [showClear]="false"
                     [(ngModel)]="selectedEmployeeOfHr" placeholder="Select Employee"
@@ -40,10 +40,13 @@
                 </p-select>
             </div>
             }
-            <button type="button" class="custom-btn btn-primary"
+            @if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')||this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
+                <button type="button" class="custom-btn btn-primary"
                 (click)="getAttendnaceData(empdata);this.selectedEmployee=null;this.selectedEmployeeOfHr=null">
                 <i class="bi bi-plus me-2"></i>My Attendance
             </button>
+            }
+           
         </div>
         <!-- select all employees drop down for team manager code end -->
     </div>
@@ -70,18 +73,14 @@
                             <td>{{(item.date|dateformat)??'-'}}</td>
                             <td>{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
                             <td>{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
-                            <td>{{item.duration?.totalDuration??'-'}}
-                                <span *ngIf="item?.duration?.totalDuration && (item?.duration?.permissionDuration!=='00:00:00' || 
-                                item?.duration?.regularizationDuration!=='00:00:00')">
-                                    <a (click)="onclickDuration(durationPopup,item.duration.biometricDuration,item?.duration?.totalDuration,item?.duration?.permissionDuration,
-                                    item?.duration?.regularizationDuration)"><i class="bi bi-info-circle-fill ms-2"></i> </a>
-                                </span>
+                            <td>{{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' : item.duration.totalDuration}}
+                                
                             </td>
                             <td>
-                                @if((item?.dayLogs??[]).length>0){
+                                @if((item?.biometricLogs??[]).length>0){
                                 <div>
-                                    <a type="button"
-                                        (click)="openModalLarge(punchintimes);dayLogsData(item.dayLogs,item.date)">
+                                    <a type="button" (click)="openModalLarge(punchintimes);dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,
+                                        item.permissions,item.regularizations)">
                                         <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                     </a>
                                 </div>
@@ -89,29 +88,39 @@
                             </td>
                             <td class="pe-4">
                                 <!--Main status content-->
-                                <div class="d-flex justify-content-end">
-                                    <ul class="ps-0 mb-2">
-                                        <li [ngClass]="getStatusClass(item.status)">{{item?.status ??'-'}}</li>
-                                    </ul>
-                                </div>
-                                <!--Sub status content-->
-                                @if((item?.tags ?? []).length > 0){
-                                    <div class="d-flex justify-content-end flex-wrap">
-                                        <div class="card substatus-card">({{item?.tags}})</div>
+                                
+                                    <div class="d-flex justify-content-end">
+                                        @if(item.status !== '-'){
+                                        <ul class="ps-0 mb-2">
+                                            <li [ngClass]="getStatusClass(item.status)">{{item?.status}}</li>
+                                        </ul>
+                                    }
+                                    @else {
+                                    <div class="pe-4">-</div>
+                                    }
                                     </div>
+                               
+                                <!--Sub status content-->
+                                @if((item?.tags ?? []).length > 0 &&item.status){
+                                <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                    @for(item of item.tags; track $index){
+                                    <div class="card substatus-card">{{item?.name}}</div>
+                                    }
+
+                                </div>
                                 }
 
                                 <!-- action btns content-->
                                 <div class="d-flex gap-3 justify-content-end">
-                                    @if(item.status == 'Absent' && item.duration.biometricDuration == '00:00:00' &&
-                                    item.employeeId == empdata.employeeId){
+                                    @if(item.status == 'Absent' && item.duration.totalDuration >= '00:00:00' &&
+                                    currentMonth==selectedMonth && item.employeeId == empdata.employeeId){
                                     <a class="leave-btn" (click)="navigateToLeave()"><u>Apply Leave</u> </a>
                                     }
-                                    @if(item.duration.totalDuration != '00:00:00' && ((item.duration.totalDuration|tohours) >
-                                    shiftDetails.halfDayMinHrs && (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs) &&
-                                        currentMonth==selectedMonth && this.rbac.allowedToAccess('Attendance Regularization Button.view') &&
-                                        item.employeeId==empdata.employeeId){ 
-                                        <a class="regulazie-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
+                                    @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&  (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs && item.status!=='Weekend' 
+                                    && currentMonth==selectedMonth && this.rbac.allowedToAccess('Attendance Regularization Button.view') 
+                                    && item.employeeId==empdata.employeeId){
+                                    <a class="regulazie-btn"
+                                        (click)="openModal(raiseregularization); onclickRegularization(item.date)">
                                         <u>Regularization</u></a>
                                     }
                                 </div>
@@ -142,15 +151,14 @@
                         @if(statusCounts$.value){
                         <ng-container *ngIf="statusCounts$ | async as statusCounts">
                             @for (status of statusCounts | keyvalue; track $index) {
-                            <tr>
-                                <td>{{ status.key.toUpperCase() }}</td>
-                                <td>{{ status.value }}</td>
-                            </tr>
+                                <tr *ngIf="status.value !== 0">
+                                    <td>{{ status.key.toUpperCase() }}</td>
+                                    <td>{{ status.value }}</td>
+                                  </tr>
                             }
                         </ng-container>
-                        @if(statusCounts$.value.length<=0){ 
-                            <tr>
-                                <td><app-no-data-found /></td>
+                        @if(statusCounts$.value.length<=0){ <tr>
+                            <td><app-no-data-found /></td>
                             </tr>
                             }
                             }
@@ -289,14 +297,14 @@
                             <tr>
                                 <th>In</th>
                                 <th>Out</th>
-                                <!-- <th>Duration</th> -->
+                                <th>Duration</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let log of punchPairs">
                                 <td class="log-time">{{ log.in }}</td>
                                 <td class="log-time">{{ log.out }}</td>
-                                <!-- <td class="duration-time">{{ log.duration }}</td> -->
+                                <td class="duration-time">{{ log.duration }}</td>
                             </tr>
                             <tr>
                                 <td colspan="3" class="popup-td">Total Duration: <b>{{ logsDuration }}</b></td>
@@ -305,6 +313,54 @@
                     </table>
                 </div>
             </div>
+
+            @if(permissions_list.length>0){
+            <div class="popup-table-wrapper">
+                <div class="popup-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="3" class="custom-popup-header">Permissions</th>
+                            </tr>
+                            <tr>
+                                <th>Type</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let log of permissions_list">
+                                <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                                <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            }
+
+            @if(regularization_list.length>0){
+            <div class="popup-table-wrapper">
+                <div class="popup-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th colspan="3" class="custom-popup-header">Regularizations</th>
+                            </tr>
+                            <tr>
+                                <th>Type</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let log of regularization_list">
+                                <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                                <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            }
         </div>
     </div>
 </ng-template>
@@ -323,44 +379,41 @@
             <div class="modal-body">
                 <div class="d-block">
                     <div class="d-flex flex-column">
-
                         <p class="m-0 p-2 rounded popupcomments">
-                            Total Duration: <span *ngIf="totalDurationHours;else durationtotal"> {{totalDurationHours}}
+                            Total Duration: <span *ngIf="totalDurationHours;else durationtotal"> {{totalDurationHours
+                                === '00:00:00' || !totalDurationHours ? '-' : totalDurationHours}}
 
                             </span>
                             <ng-template #durationtotal>{{logsDuration}}</ng-template>
                         </p>
-                        <p class="m-0 p-2 rounded popupcomments">
-                            <span> Logs Duration: {{logsDuration}} </span>
 
+                        <p class="m-0 p-2 rounded popupcomments">
+                            <span> Logs Duration: {{logsDuration === '00:00:00' || !logsDuration ? '-' : logsDuration}}
+                            </span>
                         </p>
+
                         <p class="m-0 p-2 rounded popupcomments">
-
                             Permissions Duration: <span *ngIf="permissionsDuration;else permisiondur">
-                                {{permissionsDuration}}
-
+                                {{permissionsDuration === '00:00:00' || !permissionsDuration ? '-' :
+                                permissionsDuration}}
                             </span>
                             <ng-template #permisiondur>NA</ng-template>
                         </p>
+
                         <p class="m-0 p-2 rounded popupcomments">
                             Regularization Duration:
                             <span *ngIf="regularizationAttendDuration;else regularization">
-
-                                {{regularizationAttendDuration}}
-
+                                {{regularizationAttendDuration === '00:00:00' || !regularizationAttendDuration ? '-' :
+                                regularizationAttendDuration}}
                             </span>
                             <ng-template #regularization>NA</ng-template>
                         </p>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="custom-btn btn-primary" (click)="modal.dismiss()">Close</button>
-            </div>
         </div>
     </div>
 </ng-template>
-
 
 <ng-template #confirmationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>

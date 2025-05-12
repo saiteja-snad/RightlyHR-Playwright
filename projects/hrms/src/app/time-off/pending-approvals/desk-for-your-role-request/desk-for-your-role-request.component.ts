@@ -8,9 +8,10 @@ import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 @Component({
   selector: 'app-desk-for-your-role-request',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe],
   templateUrl: './desk-for-your-role-request.component.html',
   styleUrl: './desk-for-your-role-request.component.scss'
 })
@@ -25,7 +26,7 @@ export class DeskForYourRoleRequestComponent {
   selectedexpenesid: any;
   subscription!: Subscription;
   rejectForm!: FormGroup;
-
+  searchValue:any
   constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService,
      private fb: FormBuilder) { }
 

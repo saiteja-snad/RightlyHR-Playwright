@@ -469,9 +469,9 @@ export class SeparationForYourRoleRequestComponent {
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
     return formattedDate;
   }
-
+isCheckBoxEnabledEarly = false;
   toggleEarly() {
-    if (!this.early) {
+     if (!this.early) {
       if (this.selectedSpRequestData.spIsEarlyRelieveing == true) {
         this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
         this.selectedSpRequestData.isAcceptEarlyRequest = 'Yes';
@@ -483,16 +483,26 @@ export class SeparationForYourRoleRequestComponent {
       this.extend = false;
       this.early = true;
       this.buttondisable = true;
+      this.isCheckBoxEnabledEarly = true;
       // Clear data related to Extend and Discontinue
       this.clearExtendData();
       this.clearDiscontinueData();
-    } else {
-      // Toggle off Early Relieving
-      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
-      this.early = false;
-      this.buttondisable = false;
-      this.clearEarlyData();
     }
+     else {
+      if(!this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck){
+        this.early=true;
+      }
+      else {
+        // Toggle off Early Relieving
+        this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
+        this.early = false;
+        this.selectedRadio=''
+        this.buttondisable = false;
+        this.clearEarlyData();
+      }
+     
+    }
+ 
   }
 
   toggleRegular() {
@@ -545,7 +555,7 @@ export class SeparationForYourRoleRequestComponent {
     if (this.selectedSpRequestData.spMangerEarlyreliveingDate !=
       this.selectedSpRequestData.spearlyReliveingDate
     ) {
-      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
+      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
       this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
       this.selectedRadio = 'early';
       this.selectedSpRequestData.requestSelectedType = 'Early';

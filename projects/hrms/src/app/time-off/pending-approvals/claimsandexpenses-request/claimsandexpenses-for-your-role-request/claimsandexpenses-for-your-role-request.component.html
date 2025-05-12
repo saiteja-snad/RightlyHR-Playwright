@@ -2,7 +2,7 @@
   <!--Input search-->
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+    <input type="search" class="form-control custom-search-input" placeholder="Search here" [(ngModel)]="searchValue" aria-label="Username"
       aria-describedby="basic-addon1" />
   </div>
 
@@ -22,8 +22,8 @@
       </thead>
       <tbody>
         @if (rbac.allowedToAccess('Expenses Tab.view')) {
-        <ng-container *ngIf="expenseheaderpending!.length > 0; else noDataTemplate">
-          <tr *ngFor="let leave of expenseheaderpending; let i = index">
+          <ng-container *ngIf="(expenseheaderpending | searchfilter: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status']).length > 0; else noDataTemplate">
+          <tr *ngFor="let leave of expenseheaderpending  | searchfilter: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status'];  let i = index">
             <td>{{ leave.entity.employeeName }}</td>
             <td>{{ leave.entity.expenses_Title }}</td>
             <td>{{ leave.entity.applied_date | dateformat }}</td>

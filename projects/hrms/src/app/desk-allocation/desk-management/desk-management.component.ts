@@ -520,7 +520,14 @@ export class DeskManagementComponent {
   navigateToAsset() {
     this.router.navigate(['/desk/management/all-desks']);
   }
-  
+        //close dailog open
+  openConfirmationModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+  cleardata(){
+    this.deskForm.reset();
+      this.modalService.dismissAll();
+    }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

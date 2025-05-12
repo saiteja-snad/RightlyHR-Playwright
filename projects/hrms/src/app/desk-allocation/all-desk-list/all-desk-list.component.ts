@@ -12,6 +12,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 
 @Component({
@@ -84,6 +85,7 @@ export class AllDeskListComponent {
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private readonly router: Router,
+    public formValidation: FormValidationService,
     public conformationPopup: OpenModalService,
 
     config: NgbModalConfig) {
@@ -862,7 +864,23 @@ export class AllDeskListComponent {
     console.log(this.approvalid)
   }
 
-
+  //close dailog open
+  openConfirmationModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+  cleardata(){
+    this.reassiginForm.reset();
+      this.modalService.dismissAll();
+    }
+    // close allocation data
+      //close dailog open
+  openallocationModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+  cleardataallocation(){
+    this.reassiginForm.reset();
+      this.modalService.dismissAll();
+    }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

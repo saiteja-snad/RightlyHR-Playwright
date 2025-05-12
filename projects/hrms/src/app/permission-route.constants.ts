@@ -274,7 +274,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   
   export const SETTINGS_MAIN_HEADER_TABS = [
     { label: 'Employee Fields', route: '/settings/employee-fields', permission: { feature: 'Employee Fields Module', action: 'view' } },
-    { label: 'Roles', route: '/settings/roles-permissions', permission: { feature: 'Roles Module', action: 'view' } },
+    { label: 'Roles', route: '/settings/roles-permissions'},
     { label: 'Time Off', route: '/settings/timeoff-configurations', permission: { feature: 'Settings Timeoff Module', action: 'view' } },
     { label: 'Asset Configuration', route: '/settings/assets-configuration', permission: { feature: 'Assets Management Configuration Module', action: 'view' } },
     { label: 'Dynamic Forms', route: '/settings/dynamic-forms', permission: { feature: 'Dynamic Forms Module', action: 'view' } }

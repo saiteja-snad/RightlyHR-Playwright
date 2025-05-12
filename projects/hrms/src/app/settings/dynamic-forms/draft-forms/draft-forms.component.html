@@ -16,8 +16,9 @@
           <th>{{'Created By' | translate}}</th>
           <th>{{'Updated By' | translate}}</th>
           <th>{{'Status' | translate}}</th>
-          <th *ngIf="rbac.allowedToAccess('Draft Forms.update') || rbac.allowedToAccess('Draft Forms.delete')"
-            class="text-center">{{'Action' | translate}}<span class="text-lowercase">(s)</span></th>
+          @if(rbac.allowedToAccess('Draft Forms.update') || rbac.allowedToAccess('Draft Forms.delete')){
+          <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">(s)</span></th>
+          }
         </tr>
       </thead>
       <tbody>
@@ -29,31 +30,38 @@
               <td>{{ form.createdBy }}</td>
               <td>{{ form.updatedBy ? form.updatedBy : '-' }}</td>
               <td>{{ form.status | titlecase }}</td>
-              <td class="text-center"
-                *ngIf="rbac.allowedToAccess('Draft Forms.update') || rbac.allowedToAccess('Draft Forms.delete')">
+              @if(rbac.allowedToAccess('Draft Forms.update') || rbac.allowedToAccess('Draft Forms.delete')){
+              <td class="text-center">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
                   </span>
                   <ul class="dropdown-menu custom-dropdown-menu">
-                    <li *ngIf="rbac.allowedToAccess('Draft Forms.update')">
+                    @if(rbac.allowedToAccess('Draft Forms.update')){
+                    <li>
                       <a class="dropdown-item" (click)="openmodal(activedfrom);seletedid=form.formId">
                         <i class="bi bi-pencil me-2"></i>{{'Make as Active'}}
                       </a>
                     </li>
-                    <li *ngIf="rbac.allowedToAccess('Draft Forms.update')">
+                    }
+                    @if(rbac.allowedToAccess('Draft Forms.update')){
+                    <li>
                       <a class="dropdown-item" (click)="navigationToFrom(form.formId);">
                         <i class="bi bi-pencil me-2"></i>{{'Update'}}
                       </a>
                     </li>
-                    <li *ngIf="rbac.allowedToAccess('Draft Forms.delete')">
+                    }
+                    @if(rbac.allowedToAccess('Draft Forms.delete')){
+                    <li>
                       <a class="dropdown-item" (click)="openConfirmModal(form.formId);">
                         <i class="bi bi-trash me-2"></i>{{'Delete'}}
                       </a>
                     </li>
+                    }
                   </ul>
                 </div>
               </td>
+            }
             </tr>
           </ng-container>
         </ng-container>

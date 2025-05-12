@@ -6,7 +6,7 @@
     <div class="sidnav-main-content px-2">
         <ul class="nav-items-list text-center ps-0">
             @if(this.rbac.allowedToAccess('Dashboard.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/admin')" [class.active-nav-link]="isActiveRoute('/admin')">
+            <li class="nav-item" [routerLink]="['/admin']" routerLinkActive="active-nav-link">
                 <i class="bi bi-columns-gap custom-icon"></i>Dashboard
             </li>
             }

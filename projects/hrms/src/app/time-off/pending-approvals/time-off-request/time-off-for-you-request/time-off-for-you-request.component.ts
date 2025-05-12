@@ -17,6 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TimeoffsearchPipe } from "../../../../Pipes/timeoffsearch.pipe";
 import { TableModule } from 'primeng/table';
 import { environment } from '../../../../../environments/environment';
+import { SignalsService } from '../../../../services/signals.service';
 @Component({
   selector: 'app-time-off-for-you-request',
   imports: [
@@ -71,7 +72,7 @@ export class TimeOffForYouRequestComponent {
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
-    public rbac: RbacService
+    public rbac: RbacService,private signalService:SignalsService
   ) {}
 
   ngOnInit(): void {
@@ -269,10 +270,8 @@ bulkProcess(){
         },
         complete: () => {
           this.spinnerLoader = false;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          separation: true,
-        }));
+         this.signalService.timeoffForYouTriggerSignal.set(true);
+        this.signalService.timeoffForRoleTriggerSignal.set(true);
         },
       });
   }
@@ -307,10 +306,8 @@ bulkProcess(){
         },
         complete: () => {
           this.spinnerLoader = false;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          separation: true,
-        }));
+         this.signalService.timeoffForYouTriggerSignal.set(true);
+        this.signalService.timeoffForRoleTriggerSignal.set(true);
         },
       });
   }
@@ -348,10 +345,8 @@ bulkProcess(){
           this.conformationPopup.openSuccessModal('Request Processed Failed');
         },
         complete: () => {
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          separation: true,
-        }));
+        this.signalService.timeoffForYouTriggerSignal.set(true);
+        this.signalService.timeoffForRoleTriggerSignal.set(true);
         },
       });
   }

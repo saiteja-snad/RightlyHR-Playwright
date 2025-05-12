@@ -20,6 +20,7 @@ import { TableModule } from 'primeng/table';
 import { ICategoryDetails } from '../../../../Interfaces/timoff-model';
 import moment from 'moment';
 import { environment } from '../../../../../environments/environment';
+import { SignalsService } from '../../../../services/signals.service';
 @Component({
   selector: 'app-time-off-for-your-role-request',
   imports: [
@@ -74,7 +75,7 @@ export class TimeOffForYourRoleRequestComponent {
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
-    public rbac: RbacService
+    public rbac: RbacService,private signalService:SignalsService
   ) {}
 
   ngOnInit(): void {
@@ -272,10 +273,8 @@ export class TimeOffForYourRoleRequestComponent {
         },
         complete: () => {
           this.spinnerLoader = false;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            separation: true,
-          }));
+        this.signalService.timeoffForYouTriggerSignal.set(true);
+        this.signalService.timeoffForRoleTriggerSignal.set(true);
         },
       });
   }
@@ -310,10 +309,8 @@ export class TimeOffForYourRoleRequestComponent {
         },
         complete: () => {
           this.spinnerLoader = false;
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            separation: true,
-          }));
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+        this.signalService.timeoffForRoleTriggerSignal.set(true);
         },
       });
   }
@@ -351,10 +348,8 @@ export class TimeOffForYourRoleRequestComponent {
           this.conformationPopup.openSuccessModal('Request Processed Failed');
         },
         complete: () => {
-          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-            ...status,
-            separation: true,
-          }));
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+        this.signalService.timeoffForRoleTriggerSignal.set(true);
         },
       });
   }

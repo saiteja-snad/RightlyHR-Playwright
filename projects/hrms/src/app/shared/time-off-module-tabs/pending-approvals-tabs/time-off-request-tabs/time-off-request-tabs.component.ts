@@ -22,7 +22,7 @@ export class TimeOffRequestTabsComponent {
   destroy$: Subject<boolean> = new Subject<boolean>();
   pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
   navTabs = computed(() => {
-    const moduleId=environment.SeparationrequestmoduleId
+    const moduleId=environment.leavesModuleId
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
     return [
       { label: 'For You ', link: 'for-you', count:data?.forYou ?? 0 },
@@ -37,17 +37,17 @@ export class TimeOffRequestTabsComponent {
 
   constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService) {
     effect(() => {
-      if (this.signalService.separationForYouTriggerSignal() || this.signalService.separationForRoleTriggerSignal()) {
+      if (this.signalService.timeoffForYouTriggerSignal() || this.signalService.timeoffForRoleTriggerSignal()) {
         // Call the function to fetch the pending approvals count
         this.getAllLeavesPendingApprovalsCount();
 
         // Conditionally reset the signals based on their current state
-        if (this.signalService.separationForRoleTriggerSignal()) {
-          this.signalService.separationForRoleTriggerSignal.set(false);
+        if (this.signalService.timeoffForRoleTriggerSignal()) {
+          this.signalService.timeoffForRoleTriggerSignal.set(false);
         }
 
-        if (this.signalService.separationForYouTriggerSignal()) {
-          this.signalService.separationForYouTriggerSignal.set(false);
+        if (this.signalService.timeoffForYouTriggerSignal()) {
+          this.signalService.timeoffForYouTriggerSignal.set(false);
         }
       }
     });

@@ -41,5 +41,7 @@ export class SignalsService {
   noDueSideNavCountTriggerSignal = signal<boolean>(false);
   //Time off request
   timecountTriggerSignal = signal<boolean>(false);
+  timeoffForYouTriggerSignal = signal<boolean>(false);
+  timeoffForRoleTriggerSignal = signal<boolean>(false);
   constructor() {}
 }

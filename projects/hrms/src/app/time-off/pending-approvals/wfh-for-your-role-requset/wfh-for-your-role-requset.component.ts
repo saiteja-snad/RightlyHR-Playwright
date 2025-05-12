@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -16,6 +16,8 @@ import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
+import { TableModule } from 'primeng/table';
+import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 
 @Component({
   selector: 'app-wfh-for-your-role-requset',
@@ -29,13 +31,15 @@ import { SignalsService } from '../../../services/signals.service';
     TranslateModule,
     ReactiveFormsModule,
     WfhsearchfilterPipe,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    TableModule,
 ],
   templateUrl: './wfh-for-your-role-requset.component.html',
   styleUrl: './wfh-for-your-role-requset.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
-  totalRecords = 100;
+totalRecords = 100;
   first: any = 0;
   rows: any = 10;
   empinfo = {} as IJob;
@@ -48,15 +52,18 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   leaves = new BehaviorSubject<AttendanceRequest[]>([]);
   approverComments = [] as any[];
-  // approverComments = [] as AttendanceRequestC[];
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
+  selectedLeaveData = {} as AttendanceRequest;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  selectedLeaveData = {} as AttendanceRequest;
-  searchValue: any;
   spinnerLoader = false;
+  searchValue: any;
   dataload = false;
+  leavesselect!: LeaveApproval[];
+  selectedProducts!: LeaveApproval[];
+  multiSelect=false;
+  requestBody={} as any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -64,13 +71,45 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
     private signalService:SignalsService
-
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
-
+selectCheck(Value:any){
+  this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  console.log(this.multiSelect)
+  }
+  bulkapprove(approverPopup: any){
+   this.intializeApproveForm()
+   this.modalService.open(approverPopup, {
+      centered: true,
+      backdrop: 'static',
+    });
+}
+bulkReject(rejectPopup: any){
+  this.intializeRejectForm();
+ this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
+}
+bulkProcess(){
+//  this.handleProcess();
+}
+ canBulkApprove(): boolean {
+    return this.selectedProducts?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage !==
+          item.approvalHeader.finalapprovalStage &&
+        this.rbac.allowedToAccess('Timeoff Tab.update')
+    );
+  }
+  canBulkProcess(): boolean {
+    return this.selectedProducts?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage ===
+          item.approvalHeader.finalapprovalStage &&
+        this.rbac.allowedToAccess('Timeoff Tab.update')
+    );
+  }
   intializeApproveForm() {
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
@@ -92,18 +131,20 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
       ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
+          console.log(response);
           this.leaves.next(response.data);
+           this.leavesselect = response.data;
         },
         error: (reason) => console.log(reason),
-        complete: () => {
+        complete: ()  =>{
           this.dataload = false;
-        }
+        },
       });
   }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  
+
   openApproveModal(content: any, request: AttendanceRequest) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeApproveForm();
@@ -117,37 +158,54 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   }
 
   handleAccept(approveForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
-      const requestBody = {
+      if(this.selectedProducts &&this.selectedProducts.length>0){
+         let approvedBy =this.empinfo.employeeId.toString()
+         let comments = formData.comments
+        this.requestBody = this.selectedProducts.map((item) => ({
+         id: item.approvalHeader.id,
+        status: 'Approved',
+        comments: comments,
+        approvedBy: approvedBy,
+        }));
+      }else{
+         this.requestBody = [{
+           id: this.selectedLeaveData.approvalHeader.id,
         status: 'Approved',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
-      };
+      }];
+      }
+    
       this.sharedModalService.openLoaderModal(
         'Approving Request, Please wait...');
       this.http
         .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
+          `PendingApproval/multiapprovereject`,
+          this.requestBody
         ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
+            this.selectedProducts=[];
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Approved Successfully'
             );
             this.approveForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
-            this.signalService.wfhForRoleTriggerSignal.set(true);
+            this.signalService.wfhForYouTriggerSignal.set(true);
             this.signalService.wfhSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
           },
         });
     }
@@ -155,28 +213,43 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
 
   handleReject(rejectForm: FormGroup): void {
     this.spinnerLoader = true;
+    this.spinnerLoader = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
-      const requestBody = {
+        if(this.selectedProducts &&this.selectedProducts.length>0){
+         let approvedBy =this.empinfo.employeeId.toString()
+         let comments = formData.comments
+        this.requestBody = this.selectedProducts.map((item) => ({
+         id: item.approvalHeader.id,
         status: 'Rejected',
+        comments: comments,
+        approvedBy: approvedBy,
+        }));
+      }else{
+         this.requestBody = [{
+          id: this.selectedLeaveData.approvalHeader.id,
+         status: 'Rejected',
         comments: formData.comments,
-      };
+        approvedBy: this.empinfo.employeeId.toString(),
+      }];
+      }
       this.sharedModalService.openLoaderModal(
         'Rejecting Request, Please wait...');
       this.http
         .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
+          `PendingApproval/multiapprovereject`,
+          this.requestBody
         ).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
+            this.selectedProducts=[];
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Rejected Successfully'
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
-            this.signalService.wfhForRoleTriggerSignal.set(true);    
+            this.signalService.wfhForYouTriggerSignal.set(true);
             this.signalService.wfhSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
@@ -187,35 +260,43 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
           complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+
           },
         });
     }
   }
 
   handleProcess(request: AttendanceRequest) {
-    let requestBody = {
-      status: 'Processed',
-      approvedBy: this.empinfo.employeeId.toString(),
-    };
+    this.selectedLeaveData=request;
+      if(this.selectedProducts &&this.selectedProducts.length>0){
+         let approvedBy =this.empinfo.employeeId.toString()
+        this.requestBody = this.selectedProducts.map((item) => ({
+         id: item.approvalHeader.id,
+        status: 'Processed',
+        approvedBy: approvedBy,
+        }));
+      }else{
+         this.requestBody =[ {
+        id: this.selectedLeaveData.approvalHeader.id,
+        status: 'Processed',
+        approvedBy: this.empinfo.employeeId.toString(),
+      }];
+      }
     this.sharedModalService.openLoaderModal(
       'Processing Request, Please wait...');
     this.http
       .putData(
-        `PendingApproval/process/${request.approvalHeader.id}`,
-        requestBody
+        `PendingApproval/multiapprovereject`,
+        this.requestBody
       ).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
+          this.selectedProducts=[];
           this.modalService.dismissAll();
           this.sharedModalService.openSuccessModal(
             'Request Processed Successfully'
           );
-          this.selectedLeaveData = {} as AttendanceRequest;
-          // this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          //   ...status,
-          //   wfh: true,
-          // }));
-          this.signalService.wfhForRoleTriggerSignal.set(true);
+          this.signalService.wfhForYouTriggerSignal.set(true);
           this.signalService.wfhSidNavCountTriggerSignal.set(true);
         },
         error: (reason: any) => {
@@ -229,8 +310,6 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
         },
       });
   }
-
-
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
       centered: true,

@@ -112,6 +112,11 @@
                                                 *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.update')">
                                                 <i class="bi bi-check-circle me-2"></i>Process</a>
                                         </li>
+                                            <li>
+                                            <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
+                                                *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.delete')">
+                                                <i class="bi bi-x-circle me-2"></i>Reject</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </td>

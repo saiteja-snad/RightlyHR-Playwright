@@ -60,14 +60,31 @@ export class SubCatagoryComponent {
   intialupdateasetsubcatarys() {
     this.assetcataeryupdateForm = this.fb.group({
       assetCategory: [{ value: null, disabled: true }, Validators.required],
-      assetSubCategory: [null, [Validators.required, Validators.maxLength(30), Validators.pattern('^[a-zA-Z][a-zA-Z\s\S]*$')]],
+      assetSubCategory: [null, [Validators.required, Validators.maxLength(30)]],
     })
   }
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true })
   }
-
+   //add close button click open delet pop up dailog add vender
+   openaaddmodal(content:any){
+  this.modalService.open(content, { centered: true, backdrop: 'static' });
+}
+//no button click close the  dailog add vender
+clearadddata(){
+ this.assetcataeryForm.reset()
+  this.modalService.dismissAll();
+}
+ //update close  button click open delet pop up dailog add vender
+ openaddventermodal(content:any){
+  this.modalService.open(content, { centered: true, backdrop: 'static' });
+}
+//no button click close the  dailog add vender
+cleardata(){
+ this.assetcataeryupdateForm.reset()
+  this.modalService.dismissAll();
+}
   getassetsCategory() {
     this.http.getData('AssetCategory?parentId=0')
       .pipe(takeUntil(this.destroy$))

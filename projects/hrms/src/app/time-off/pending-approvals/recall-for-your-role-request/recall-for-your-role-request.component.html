@@ -20,7 +20,7 @@
           <th class="text-nowrap">{{'Raised Date' | translate}}</th>
           <th class="text-nowrap">{{'Last Working Day' | translate}}</th>
           <th class="text-nowrap">{{'Early Relieving Day' | translate}}</th>
-          <th>{{'Reason' | translate}}</th>
+          <th>{{'Recall Reason' | translate}}</th>
           <th>{{'Request Type' | translate}}</th>
           <th>{{'Approver History' | translate}}</th>
           @if(rbac.allowedToAccess('For Role (Recall Requests).update') || rbac.allowedToAccess('For Role (Recall Requests).delete')) {
@@ -39,9 +39,9 @@
             <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
             <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
             <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
-            <td>{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|date):'-'}}</td>
-            <td>{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|date):'-'}}</td>
-            <td>{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|date):'-'}}</td>
+            <td class="text-nowrap">{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|date):'-'}}</td>
+            <td class="text-nowrap">{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|date):'-'}}</td>
+            <td class="text-nowrap">{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|date):'-'}}</td>
             <td>
               @if(item.entity?.spRecallReason){
               <div>

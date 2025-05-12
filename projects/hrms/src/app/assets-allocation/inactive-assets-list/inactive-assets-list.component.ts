@@ -13,6 +13,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-inactive-assets-list',
@@ -70,6 +71,7 @@ export class InactiveAssetsListComponent {
     public conformationPopup: OpenModalService,
     public rbac: RbacService,
     private readonly datepipe: DatePipe,
+    public formValidation: FormValidationService,
 
     config: NgbModalConfig) {
     config.backdrop = 'static';
@@ -371,7 +373,7 @@ export class InactiveAssetsListComponent {
       this.assetForm.get('amcstartdate')?.setValidators([Validators.required]);
       this.assetForm.get('amcenddate')?.setValidators([Validators.required]);
       this.assetForm.get('vendorname')?.setValidators([Validators.required, Validators.pattern(/^(?!\s*$).+/)]);
-      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(10), Validators.minLength(10)]);
+      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]);
     } else {
       this.assetForm.get('amcstartdate')?.disable();
       this.assetForm.get('amcenddate')?.disable();
@@ -396,6 +398,16 @@ export class InactiveAssetsListComponent {
 
 
   }
+    //if user put only zero multipul times mobile no field
+allZeroesIfMaxLength(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = String(control.value || '');
+    if (/^0{10,}$/.test(value)) {
+      return { allZeroesIfMaxLength: true };
+    }
+    return null;
+  };
+}
   toggleAmcFields(enable: boolean, resetValues: boolean = false) {
     const amcFields = ['amcstartdate', 'amcenddate', 'vendorname', 'contactnumber'];
 
@@ -655,7 +667,14 @@ export class InactiveAssetsListComponent {
       }
     });
   }
-  
+    // update delet pop up
+  opendeletepopup(content:any){
+ this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+closedailog(){
+    this.assetForm.reset();
+      this.modalService.dismissAll();
+}
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

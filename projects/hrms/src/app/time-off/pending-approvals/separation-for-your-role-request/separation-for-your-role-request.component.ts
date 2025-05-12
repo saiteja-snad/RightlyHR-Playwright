@@ -83,6 +83,7 @@ export class SeparationForYourRoleRequestComponent {
   empdata = {} as any;
   jsonData = {} as any;
   myApproverComments = {} as any;
+  successmessage !: string;
 
   constructor(
     private authService: AuthService,
@@ -384,6 +385,7 @@ export class SeparationForYourRoleRequestComponent {
         splastworkingDate: this.selectedSpRequestData.spRequestLastWorkingDate,
         isAcceptEarlyRequest: this.selectedSpRequestData.isAcceptEarlyRequest,
         status: 'Processed',
+
       });
     }
     if (this.selectedSpRequestData.requestSelectedType == 'Early') {
@@ -413,17 +415,20 @@ export class SeparationForYourRoleRequestComponent {
     };
     if (this.selectedSpRequestData.requestSelectedType == 'Regular') {
       requestBody.lastWorkingDate =
-        this.selectedSpRequestData.spRequestLastWorkingDate;
+      this.selectedSpRequestData.spRequestLastWorkingDate;
       requestBody.isAcceptEarly = false;
+      this.successmessage = 'Separation Request Processed Successfully'
     }
     if (this.selectedSpRequestData.requestSelectedType == 'Early') {
       requestBody.earlyRelievingDate =
-        this.selectedSpRequestData.spMangerEarlyreliveingDate;
+      this.selectedSpRequestData.spMangerEarlyreliveingDate;
       requestBody.isAcceptEarly = true;
+      this.successmessage = 'Early Relieving Request Processed Successfully'
     }
     if (this.selectedSpRequestData.requestSelectedType == 'Extend') {
       requestBody.extendedDate = this.selectedSpRequestData.extenddate;
       requestBody.isAcceptEarly = false;
+      this.successmessage = 'Separation Request Extended Successfully'
     }
     this.subscription = this.http
       .putData(
@@ -439,9 +444,7 @@ export class SeparationForYourRoleRequestComponent {
             ...status,
             separation: true,
           }));
-          this.conformationPopup.openSuccessModal(
-            'Separation Request Processed Successfully'
-          );
+          this.conformationPopup.openSuccessModal(this.successmessage);
           this.signalService.separationForYouTriggerSignal.set(true);
           this.signalService.separationForRoleTriggerSignal.set(true);
           this.signalService.separationSidNavCountTriggerSignal.set(true);

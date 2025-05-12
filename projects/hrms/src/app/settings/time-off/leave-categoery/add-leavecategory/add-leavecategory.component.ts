@@ -369,7 +369,7 @@ export class AddLeavecategoryComponent {
     this.http.postdata('OrgLeavesCategories', payload).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Leave Category added successfully');
-        this.router.navigate(['/settings/employee-fields/manage-leave-categories/pending-for-submit']);
+        this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
         this.leavePolicyForm.reset();
       },
       error: (err: any) => {

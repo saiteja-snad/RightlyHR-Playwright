@@ -18,7 +18,7 @@ export class ViewAssetsDetailsComponent {
   assetDetails: any
   subscription!: Subscription;
   navTabs = [
-    { label: 'Asset Management', route: '/assets-management/view-assets-details/asset-data', },
+    { label: 'Asset Details', route: '/assets-management/view-assets-details/asset-data', },
     { label: 'Asset History', route: '/assets-management/view-assets-details/asset-history', },
 
   ];

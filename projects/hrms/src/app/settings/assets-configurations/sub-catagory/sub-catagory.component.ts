@@ -52,8 +52,7 @@ export class SubCatagoryComponent {
   intialasetsubcatary() {
     this.assetcataeryForm = this.fb.group({
       assetCategoryvalue: [null, Validators.required],
-      assetSubCategory: [{ value: null, disabled: true }, [Validators.required, Validators.maxLength(30), 
-        Validators.pattern('^[a-zA-Z][a-zA-Z\s\S]*$')]],
+      assetSubCategory: [{ value: null, disabled: true }, [Validators.required, Validators.maxLength(30)]],
     })
   }
 
@@ -216,8 +215,8 @@ cleardata(){
             this.assetcataeryForm.reset()
           },
           error: (error) => {
-            this.modalService.dismissAll();
-            this.conformationPopup.openErrorModal(error.error?.Message || 'Error occurred while adding Sub category.',)
+           // this.modalService.dismissAll();
+            this.conformationPopup.openErrorModal(error.error?.Message || 'Error occurred while adding Sub category.',)          
           }
         });
     } else {

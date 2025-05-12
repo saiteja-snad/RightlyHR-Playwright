@@ -145,8 +145,7 @@
           <div class="col-md-6 mb-2">
             <label for="assetModel" class="form-label custom-label mb-2">Asset Model<span
                 class="text-danger">*</span></label>
-            <input id="assetModel" formControlName="assetModel"
-            (keypress)="formValidation.blockLeadingSpace($event)"
+            <input id="assetModel" formControlName="assetModel" (keypress)="formValidation.blockLeadingSpace($event)"
               class="form-control custom-input" placeholder="Enter asset model">
             <div *ngIf="assetForm.get('assetModel')?.hasError('required') && assetForm.get('assetModel')?.touched">
               <div class="error-msg">Asset model is required</div>
@@ -160,8 +159,8 @@
             <label for="serialnumber" class="form-label custom-label mb-2">Serial Number<span
                 class="text-danger">*</span></label>
             <input id="serialnumber" type="text" formControlName="serialnumber"
-            (keypress)="formValidation.blockLeadingSpace($event)"
-              class="form-control custom-input" placeholder="Enter serial number">
+              (keypress)="formValidation.blockLeadingSpace($event)" class="form-control custom-input"
+              placeholder="Enter serial number">
             <div *ngIf="assetForm.get('serialnumber')?.hasError('required') && assetForm.get('serialnumber')?.touched">
               <div class="error-msg">Serial number is required</div>
             </div>
@@ -193,22 +192,16 @@
             </div>
           </div> -->
 
-<div class="col-md-6 mb-2">
-  <label for="purchasedate" class="form-label custom-label mb-2">
-    Purchase Date<span class="text-danger">*</span>
-  </label>
-  <input
-    id="purchasedate"
-    type="date"
-    formControlName="purchasedate"
-    onkeypress="return false;"
-    class="form-control custom-input"
-    [max]="purchesdate"
-  />
-  <div *ngIf="assetForm.get('purchasedate')?.invalid && assetForm.get('purchasedate')?.touched">
-    <div class="error-msg">Purchase date is required</div>
-  </div>
-</div>
+          <div class="col-md-6 mb-2">
+            <label for="purchasedate" class="form-label custom-label mb-2">
+              Purchase Date<span class="text-danger">*</span>
+            </label>
+            <input id="purchasedate" type="date" formControlName="purchasedate" onkeypress="return false;"
+              class="form-control custom-input"  [min]="minpurchesDate"[max]="maxpurchesDate" />
+            <div *ngIf="assetForm.get('purchasedate')?.invalid && assetForm.get('purchasedate')?.touched">
+              <div class="error-msg">Purchase date is required</div>
+            </div>
+          </div>
 
 
 

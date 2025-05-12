@@ -1,8 +1,10 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div> <span class="component-sub-header">Family Details</span></div>
+       @if(rbac.allowedToAccess('My Info Family Details.create')){
         <div class="custom-add-btn" (click)="openModal(addFamilyModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New
         </div>
+    }
     </div>
     <div class="custom-table-content">
      @if(!loading){
@@ -13,7 +15,9 @@
                     <th>Relationship</th>
                     <th>Date of Birth</th>
                     <th>Dependent</th>
+                    @if( rbac.allowedToAccess('My Info Family Details.update') || rbac.allowedToAccess('My Info Family Details.delete')) {
                     <th class="text-center">Action(s)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -24,25 +28,31 @@
                         <td>{{ familyDetail.relationShipName }}</td>
                         <td>{{ familyDetail.dateOfBirth | dateformat }}</td>
                         <td>{{ familyDetail.isDependent ? 'Yes' : 'No' }}</td>
+                         @if( rbac.allowedToAccess('My Info Family Details.update') || rbac.allowedToAccess('My Info Family Details.delete')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
+                                     @if( rbac.allowedToAccess('My Info Family Details.update')) {
                                     <li (click)="openModalupdate(updateFamilyModal, familyDetail)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
+                                }
+                                 @if(  rbac.allowedToAccess('My Info Family Details.delete')) {
                                     <li (click)="opendeletModal(deleteconformation,familyDetail)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
                                     </li>
+                                }
                                 </ul>
                             </div>
                         </td>
+                    }
                     </tr>
                 </ng-container>
             </tbody>

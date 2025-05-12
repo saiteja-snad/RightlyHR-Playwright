@@ -16,6 +16,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { TeamMemberTabsComponent } from "../../shared/myinfo-tabs/team-member-tabs/team-member-tabs.component";
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-team-numbers',
   imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent, MultiSelectModule, TeamMemberTabsComponent],
@@ -55,7 +56,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
  
   constructor(
     private http: HttpService,
-    private router: Router,
+    private router: Router,public rbac: RbacService,
     private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   onRowsChange() {

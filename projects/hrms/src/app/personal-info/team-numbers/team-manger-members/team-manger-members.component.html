@@ -90,12 +90,12 @@
             
                     <!-- Team Employees (MultiSelect) -->
                     <div class="col-6 mb-3">
-                        <label for="teamEmpselectedOptions" class="form-label custom-label mb-2">Team Employees<span
+                        <label for="teamEmpselectedOptions" class="form-label custom-label mb-2">Team Employee(s)<span
                             class="text-danger">*</span></label>
                         <div class="custom-p-multiSelect-content">
                             <p-multiSelect [options]="teamMemberArray" class="form-select custom-select"
                                 formControlName="teamEmpselectedOptions" optionLabel="fullName" filterBy="fullName" filter="true" optionValue="employeeId"
-                                placeholder="Select Employees" display="chip">
+                                placeholder="Select employee(s)">
                             </p-multiSelect>
                         </div>
                         <div *ngIf="requestForm.get('teamEmpselectedOptions')?.touched && requestForm.get('teamEmpselectedOptions')?.invalid"
@@ -142,7 +142,7 @@
                         </div>
                         <div *ngIf="requestForm.get('teamSelectedOptions')?.touched && requestForm.get('teamSelectedOptions')?.invalid"
                             class="error-msg">
-                            Please select a team.
+                             Team is required.
                         </div>
                     </div>
 
@@ -150,7 +150,7 @@
                     <div class="col-6 mb-3">
                         <label for="teamManagerName" class="form-label custom-label mb-2">Team Manager<span
                             class="text-danger">*</span></label>
-                        <input id="teamManagerName"  placeholder="Please enter team manager" class="form-control" formControlName="teamManagerName"
+                        <input id="teamManagerName"  placeholder="Team manager" class="form-control custom-input" formControlName="teamManagerName"
                             [disabled]="true" />
                         <div *ngIf="requestForm.get('teamManagerName')?.touched && requestForm.get('teamManagerName')?.invalid"
                             class="error-msg">
@@ -244,7 +244,7 @@
                         <label for="teamEmpselectedOptions" class="form-label custom-label mb-2">Team Employees<span
                             class="text-danger">*</span></label>
                         <div class="custom-p-multiSelect-content">
-                            <input type="text"  class="form-control custom-input" formControlName="teamEmpselectedOptions" >
+                            <input type="text"   class="form-control custom-input" formControlName="teamEmpselectedOptions" >
                         </div>
                         <div *ngIf="foremployeeForm.get('teamEmpselectedOptions')?.touched && foremployeeForm.get('teamEmpselectedOptions')?.invalid"
                             class="error-msg">
@@ -290,7 +290,7 @@
                         </div>
                         <div *ngIf="foremployeeForm.get('teamSelectedOptions')?.touched && foremployeeForm.get('teamSelectedOptions')?.invalid"
                             class="error-msg">
-                            Please select a team.
+                           Team is required.
                         </div>
                     </div>
 
@@ -298,7 +298,7 @@
                     <div class="col-6 mb-3">
                         <label for="teamManagerName" class="form-label custom-label mb-2">Team Manager<span
                             class="text-danger">*</span></label>
-                        <input id="teamManagerName"  placeholder="Please enter team manager"   class="form-select custom-select" formControlName="teamManagerName"
+                        <input id="teamManagerName"  placeholder="Team manager"   class="form-select custom-input" formControlName="teamManagerName"
                             [disabled]="true" />
                         <div *ngIf="foremployeeForm.get('teamManagerName')?.touched && foremployeeForm.get('teamManagerName')?.invalid"
                             class="error-msg">

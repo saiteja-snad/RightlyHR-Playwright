@@ -12,6 +12,7 @@ import { IProbationEmployees } from '../../../admin/probation-employees/probatio
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-bank-details',
   imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
@@ -33,7 +34,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   employedata = {} as IProbationEmployees;
   spinnerLoader=false;
   loading=false
-  constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService,public formValidation: FormValidationService) { }
+  constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService,public formValidation: FormValidationService,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');

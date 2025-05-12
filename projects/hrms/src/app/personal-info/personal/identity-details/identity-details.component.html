@@ -1,12 +1,13 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">{{'Identity Details' | translate}}</span></div>
+         @if(rbac.allowedToAccess('Employee Info Identity Details.create')){
         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
         'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
         <div class="custom-add-btn" (click)="openModal(addEducationmodal)"><i class="bi bi-plus plus-icon me-1"></i>Add
             New</div>
-        }
+        }}
     </div>
     <div class="custom-table-content">
         @if (!loading) {
@@ -16,10 +17,11 @@
                         <th>Identity Type</th>
                         <th>Identity Number</th>
                         <th>Attachment</th>
+                         @if(rbac.allowedToAccess('Employee Info Identity Details.update') || rbac.allowedToAccess('Employee Info Identity Details.delete')){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase()
                         !== 'trainee prospective')){
-                        <th class="text-center">Action(s)</th>}
+                        <th class="text-center">Action(s)</th>}}
                     </tr>
                 </thead>
                 <tbody>
@@ -33,6 +35,7 @@
                                     <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
                                     #noData>-</ng-template>
                             </td>
+                            @if(rbac.allowedToAccess('Employee Info Identity Details.update') || rbac.allowedToAccess('Employee Info Identity Details.delete')){
                             @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                             employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                             && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
@@ -43,20 +46,22 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                     <ul class="dropdown-menu custom-dropdown-menu">
+                                        @if(rbac.allowedToAccess('Employee Info Identity Details.update')){
                                         <li (click)="openModalupdate(updateidentityModal, identityDetails)">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-pencil me-2"></i>Update
                                             </a>
-                                        </li>
+                                        </li>}
+                                         @if( rbac.allowedToAccess('Employee Info Identity Details.delete')){
                                         <li (click)="opendeletModal(deleteconformation,identityDetails)">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-trash3 me-2"></i>Delete
                                             </a>
-                                        </li>
+                                        </li>}
                                     </ul>
                                 </div>
                             </td>
-                            }
+                            }}
                         </tr>
                     </ng-container>
                 </tbody>

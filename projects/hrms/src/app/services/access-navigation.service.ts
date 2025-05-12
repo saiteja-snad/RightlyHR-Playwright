@@ -47,6 +47,8 @@ import {
   MY_PERFORMANCE_TABS,
   HOLIDAYS_SUB_TABS,
   DASHBOARD_SUB_TABS,
+  EMPLOYEE_INFO_PERSONAL_ROUTES,
+  EMPLOYEE_INFO_JOB_ROUTES,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -548,15 +550,45 @@ export class AccessNavigationService {
         }
         break;
 
-      // case '/dashboard':
-      //   if (this.rbac.allowedToAccess('Dashboard Module.view')) {
-      //     for (const item of DASHBOARD_SUB_TABS) {
-      //       if (this.rbac.allowedToAccess(item.permission)) {
-      //         return item.route;
-      //       }
-      //     }
-      //   }
-      //   break;
+      case '/personalinfo/personal/basic-info':
+         if (this.rbac.allowedToAccess('Employee Info Personal Tab.view')) {
+          for (const item of EMPLOYEE_INFO_PERSONAL_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+        if (this.rbac.allowedToAccess('Employee Info Job Tab.view')) {
+          for (const item of EMPLOYEE_INFO_JOB_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+        if (this.rbac.allowedToAccess('Employee Info Documents Tab.view')) {
+          return (route = '/myinfo/documents');
+        }
+
+        if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
+          return (route = '/myinfo/team-members');
+        }
+
+        if (this.rbac.allowedToAccess('Employee Info Onboard Request Tab.view')) {
+          return (route = '/myinfo/onboarding-request');
+        }
+        break;
+
+      case '/dashboard':
+        if (this.rbac.allowedToAccess('Dashboard Module.view')) {
+          for (const item of DASHBOARD_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
     }
     return route;
   }

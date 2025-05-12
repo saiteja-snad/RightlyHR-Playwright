@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -36,7 +36,7 @@ import { SignalsService } from '../../../../services/signals.service';
   styleUrl: './time-off-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class TimeOffForYouRequestComponent {
+export class TimeOffForYouRequestComponent implements OnInit,OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
@@ -51,6 +51,7 @@ export class TimeOffForYouRequestComponent {
   selectedProducts!: LeaveApproval[];
   @ViewChild('commentspopup') modalContent: any;
   spinnerLoader = false;
+  multiSelect=false;
   destroy$: Subject<boolean> = new Subject<boolean>();
   options = [
     { label: 10, value: 10 },
@@ -78,6 +79,11 @@ export class TimeOffForYouRequestComponent {
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovals();
+  }
+  selectCheck(Value:any){
+    console.log(Value)
+  this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  console.log(this.multiSelect)
   }
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
@@ -191,7 +197,7 @@ export class TimeOffForYouRequestComponent {
   }
   rejectleave(rejectPopup: any, selecteddata: any) {
     this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
-    this.approveRequest(selecteddata);
+    this.selectedProducts=[selecteddata];
   }
 bulkapprove(approverPopup: any){
  this.modalService.open(approverPopup, {
@@ -210,29 +216,15 @@ bulkProcess(){
       centered: true,
       backdrop: 'static',
     });
-    this.approveRequest(selecteddata);
+    this.selectedProducts=[selecteddata];
   }
 
   processleave(selecteddata: any) {
-    this.approveRequest(selecteddata);
-    this.handleProcess();
-  }
+    this.selectedProducts=[selecteddata];
 
-  approveRequest(leaveRequest: LeaveApproval) {
-    if (leaveRequest) {
-      this.subscription = this.http
-        .getData(
-          `Timeoff/getById/${leaveRequest.approvalHeader.referenceEntityId}`
-        )
-        .subscribe({
-          next: (response: any) => {
-            this.selectedLeaveData = response;
-            this.selectedLeaveData.request = leaveRequest;
-          },
-          error: (err) => {},
-          complete: () => {},
-        });
-    }
+     setTimeout(() => {
+    this.handleProcess();
+       }, 500);
   }
 
   handleAccept(data: LeaveApproval) {
@@ -276,7 +268,7 @@ bulkProcess(){
       });
   }
 
-  handleReject(data: LeaveApproval) {
+  handleReject() {
     this.spinnerLoader = true;
     let approvedBy = this.LOGIN.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';

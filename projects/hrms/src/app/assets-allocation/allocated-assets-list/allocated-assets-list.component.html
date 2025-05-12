@@ -39,7 +39,7 @@
           <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
             <tr *ngFor="let asset of assetslist | async">
               <td>{{ asset.assetCategory }}</td>
-              <td>{{ asset.assetCategory }}</td>
+              <td>{{ asset.assetSubCategory }}</td>
               <td>{{ asset.serialNumber }}</td>
               <td>{{ asset.status }}</td>
               <td>

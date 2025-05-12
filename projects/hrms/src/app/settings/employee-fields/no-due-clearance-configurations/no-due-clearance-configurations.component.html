@@ -14,11 +14,12 @@
           <th>Department/Employee Manager</th>
           <th>Employee Name</th>
           <th>Role Name</th>
+          @if(rbac.allowedToAccess('NoDue Clearance Tab.update') || rbac.allowedToAccess('NoDue Clearance Tab.delete')){
           <th class="text-center">Action</th>
+          }
         </tr>
       </thead>
       <tbody>
-        @if (!rbac.allowedToAccess('No Due Clearance.View')) {}
         @if (noDueList.length > 0) {
         @for (item of noDueList; track item.id) {
         <tr>
@@ -35,8 +36,8 @@
           </td>
           <td>{{ item.employeeNames || '-' }}</td>
           <td>{{ item.roleName || '-' }}</td>
-          <td class="text-center"
-            *ngIf="rbac.allowedToAccess('No Due Clearance.update') || rbac.allowedToAccess('No Due Clearance.delete')">
+          @if(rbac.allowedToAccess('NoDue Clearance Tab.update') || rbac.allowedToAccess('NoDue Clearance Tab.delete')){
+          <td class="text-center">
             <div class="dropdown">
               <span type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
@@ -55,6 +56,7 @@
               </ul>
             </div>
           </td>
+        }
         </tr>
         }
         } @else {

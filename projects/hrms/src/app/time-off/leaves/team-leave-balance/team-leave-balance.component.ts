@@ -98,6 +98,7 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
 
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
+        console.log('Leave data:', res);
         const filteredData = (res as any[]).filter(item => {
           const leaveYear = new Date(item.startdate).getFullYear();
           return item.categoryId === categoryId && leaveYear === yearToFilter;

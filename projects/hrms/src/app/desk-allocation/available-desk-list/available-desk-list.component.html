@@ -139,7 +139,7 @@
                 <p class="popup-heading mb-0">Allocate an Desk</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();assiginForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                <a (click)="openallocationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon"
                         class="close-icon"></a>
             </div>
         </div>
@@ -195,7 +195,7 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+                    <button type="button" class="custom-btn btn-secondary" (click)="openallocationModal(confirmationpopup)">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="assiginForm.invalid">Submit</button>
                 </div>
@@ -204,7 +204,23 @@
     </div>
 </ng-template>
 
+<ng-template #confirmationpopup let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text"> Are you sure you want to close?</p>
+    </div>
 
+    <div class="custom-modal-footer">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+        No
+      </button>
+      <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+        Yes
+      </button>
+    </div>
+  </div>
+</ng-template>
 
 <ng-template #deleteasstes let-model>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -237,7 +253,7 @@
                             Additional Comments
                         </label>
                         <div class="textarea-container">
-                            <textarea class="form-control custom-input" formControlName="reason"
+                            <textarea class="form-control custom-input" formControlName="reason" (keypress)="formValidation.blockLeadingSpace($event)"
                                 placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
                             <!-- Error messages -->
                             <div>
@@ -262,7 +278,7 @@
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openModal(inativeconfromation);model.dismiss()">Cancel</button>
+                        (click)="openModal(inativeconfromation);model.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="inactiveForm.invalid">Submit</button>
                 </div>
@@ -278,8 +294,8 @@
 <ng-template #inativeconfromation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+             <img src="icons/reject.png"alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
             <button type="button" class="custom-btn btn-secondary"
@@ -330,7 +346,7 @@
                             Additional Comments
                         </label>
                         <div class="textarea-container">
-                            <textarea class="form-control custom-input" formControlName="reason"
+                            <textarea class="form-control custom-input" formControlName="reason" (keypress)="formValidation.blockLeadingSpace($event)"
                                 placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
                             <!-- Error messages -->
                             <div>
@@ -377,7 +393,7 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openModal(conformationpopup);model.dismiss()">Cancel</button>
+                        (click)="openModal(conformationpopup);model.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="undermaintancedata.invalid">Submit</button>
                 </div>
@@ -393,8 +409,8 @@
 <ng-template #conformationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+             <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
             <button type="button" class="custom-btn btn-secondary" (click)="openModal(undermaintance)">No</button>

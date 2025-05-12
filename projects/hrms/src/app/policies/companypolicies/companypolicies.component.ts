@@ -218,9 +218,9 @@ toggleViewModal() {
   getpolicys(jobShiftDetails: any) {
     this.loading=true
     let policies = {
-        locationId: jobShiftDetails[0].locationid,
-        subLocationId: jobShiftDetails[0].sublocationid,
-        shiftId: jobShiftDetails[0].shiftId,
+        locationId: jobShiftDetails[0]?.locationid,
+        subLocationId: jobShiftDetails[0]?.sublocationid,
+        shiftId: jobShiftDetails[0]?.shiftId,
         Applicableyear: this.selectedYear 
     };
   
@@ -235,7 +235,13 @@ toggleViewModal() {
             this.orgPolicyItemsArray = [].concat(...this.filteredpolicy);
             console.log(this.orgPolicyItemsArray);
         },
-        error: (reason: any) => console.log(reason)
+        error: (reason: any) => {
+          console.log(reason)
+          this.loading=false
+        },
+        complete:()=> {
+          this.loading=false
+        },
     });
   }
 

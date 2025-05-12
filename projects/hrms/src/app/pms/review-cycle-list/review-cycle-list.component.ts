@@ -12,6 +12,7 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-review-cycle-list',
@@ -56,7 +57,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   @ViewChild('confirmation') confirmation: any;
 
-  constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService) {
+  constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac : RbacService) {
     effect(() => {
       if (this.http.reviewCycleTriggerSignal()) {
         this.getAllReviewCyclesList(this.page, this.pageSize);

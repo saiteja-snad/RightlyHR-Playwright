@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -16,6 +16,8 @@ import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitesp
 import { WfhsearchfilterPipe } from "../../../../Pipes/wfhsearchfilter.pipe";
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../../services/signals.service';
+import { TableModule } from 'primeng/table';
+import { LeaveApproval } from '../../../../Interfaces/pendingapprovalsmodel';
 
 @Component({
   selector: 'app-compoff-for-you-request',
@@ -29,12 +31,13 @@ import { SignalsService } from '../../../../services/signals.service';
     ReactiveFormsModule,
     TranslateModule,
     WfhsearchfilterPipe,
-    DataLoaderContentComponent
-],
+    DataLoaderContentComponent,
+    TableModule,
+  ],
   templateUrl: './compoff-for-you-request.component.html',
   styleUrl: './compoff-for-you-request.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
@@ -58,29 +61,72 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   searchValue: any;
   spinnerLoader = false;
   dataload = false;
+  compOffselect!: LeaveApproval[];
+  selectedProducts!: LeaveApproval[];
+  multiSelect = false;
+  requestBody = {} as any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    private signalService:SignalsService
+    private signalService: SignalsService
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
     this.intializeApproveForm();
   }
-
+selectCheck(Value:any){
+  this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  console.log(this.multiSelect)
+  }
+  bulkapprove(approverPopup: any){
+   this.intializeApproveForm()
+   this.modalService.open(approverPopup, {
+      centered: true,
+      backdrop: 'static',
+    });
+}
+bulkReject(rejectPopup: any){
+  this.intializeRejectForm();
+ this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
+}
+bulkProcess(){
+ this.handleProcess(this.compOffselect);
+}
+ canBulkApprove(): boolean {
+    return this.selectedProducts?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage !==
+          item.approvalHeader.finalapprovalStage &&
+        this.rbac.allowedToAccess('Timeoff Tab.update')
+    );
+  }
+  canBulkProcess(): boolean {
+    return this.selectedProducts?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage ===
+          item.approvalHeader.finalapprovalStage &&
+        this.rbac.allowedToAccess('Timeoff Tab.update')
+    );
+  }
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: [
+        '',
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: [
+        '',
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
     });
   }
 
@@ -90,18 +136,20 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=3&approvedType=EMP`
-      ).pipe(takeUntil(this.destroy$))
+      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           console.log(response);
           // this.leaves = response.data as AttendanceRequest[];
           this.leaves.next(response.data);
+          this.compOffselect = response.data;
           console.log(this.leaves);
         },
         error: (reason) => console.log(reason),
         complete: () => {
           this.dataload = false;
-        }
+        },
       });
   }
 
@@ -119,22 +167,34 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.intializeRejectForm();
     this.selectedLeaveData = request;
   }
-  
 
-  handleProcess(request: AttendanceRequest): void {
-    const requestBody = {
-      status: 'Processed',
-      approvedBy: this.empinfo.employeeId.toString(),
-    };
+  handleProcess(request: any): void {
+    if(this.selectedProducts &&this.selectedProducts.length>0){
+         let approvedBy =this.empinfo.employeeId.toString()
+        this.requestBody = this.selectedProducts.map((item) => ({
+         id: item.approvalHeader.id,
+        status: 'Processed',
+        approvedBy: approvedBy,
+        }));
+      }else{
+         this.requestBody =[ {
+        id: this.selectedLeaveData.approvalHeader.id,
+        status: 'Processed',
+        approvedBy: this.empinfo.employeeId.toString(),
+      }];
+      }
     this.sharedModalService.openLoaderModal(
-      'Processing Request, Please wait...');
+      'Processing Request, Please wait...'
+    );
     this.http
       .putData(
-        `PendingApproval/process/${request.approvalHeader.id}`,
-        requestBody
-      ).pipe(takeUntil(this.destroy$))
+      `PendingApproval/multiprocess`,
+        this.requestBody
+      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
+          this.selectedProducts=[];
           this.modalService.dismissAll();
           this.sharedModalService.openSuccessModal(
             'Request Processed Successfully'
@@ -156,20 +216,35 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
-      const requestBody = {
+        if(this.selectedProducts &&this.selectedProducts.length>0){
+         let approvedBy =this.empinfo.employeeId.toString()
+         let comments = formData.comments
+        this.requestBody = this.selectedProducts.map((item) => ({
+         id: item.approvalHeader.id,
+        status: 'Approved',
+        comments: comments,
+        approvedBy: approvedBy,
+        }));
+      }else{
+         this.requestBody = [{
+           id: this.selectedLeaveData.approvalHeader.id,
         status: 'Approved',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
-      };
+      }];
+      }
       this.sharedModalService.openLoaderModal(
-        'Approving Request, Please wait...');
+        'Approving Request, Please wait...'
+      );
       this.http
         .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
-        ).pipe(takeUntil(this.destroy$))
+           `PendingApproval/multiapprovereject`,
+          this.requestBody
+        )
+        .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
+            this.selectedProducts=[];
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Approved Successfully'
@@ -194,19 +269,35 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
-      const requestBody = {
+     if(this.selectedProducts &&this.selectedProducts.length>0){
+         let approvedBy =this.empinfo.employeeId.toString()
+         let comments = formData.comments
+        this.requestBody = this.selectedProducts.map((item) => ({
+         id: item.approvalHeader.id,
         status: 'Rejected',
+        comments: comments,
+        approvedBy: approvedBy,
+        }));
+      }else{
+         this.requestBody = [{
+          id: this.selectedLeaveData.approvalHeader.id,
+         status: 'Rejected',
         comments: formData.comments,
-      };
+        approvedBy: this.empinfo.employeeId.toString(),
+      }];
+      }
       this.sharedModalService.openLoaderModal(
-        'Rejecting Request, Please wait...');
+        'Rejecting Request, Please wait...'
+      );
       this.http
         .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
-        ).pipe(takeUntil(this.destroy$))
+            `PendingApproval/multiapprovereject`,
+          this.requestBody
+        )
+        .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
+            this.selectedProducts=[];
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Rejected Successfully'
@@ -230,7 +321,11 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', size: 'lg' });
+    this.modalService.open(commentspopup, {
+      centered: true,
+      backdrop: 'static',
+      size: 'lg',
+    });
     this.approverComments = value;
   }
 

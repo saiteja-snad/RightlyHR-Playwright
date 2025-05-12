@@ -92,7 +92,7 @@ bulkReject(rejectPopup: any){
  this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
 }
 bulkProcess(){
-//  this.handleProcess();
+ this.handleProcess(this.wfhsselect);
 }
  canBulkApprove(): boolean {
     return this.selectedProducts?.every(
@@ -266,7 +266,7 @@ bulkProcess(){
     }
   }
 
-  handleProcess(request: AttendanceRequest) {
+  handleProcess(request: any) {
     this.selectedLeaveData=request;
       if(this.selectedProducts &&this.selectedProducts.length>0){
          let approvedBy =this.empinfo.employeeId.toString()

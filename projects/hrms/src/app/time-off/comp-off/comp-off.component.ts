@@ -118,6 +118,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
     let selectedDate1 = moment(selectedDate);
     let dayOfMonth = selectedDate1.date();
     let weekNumber = Math.ceil(dayOfMonth / 7);
+    debugger
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate1.day()];
     let captureHoliday: any;

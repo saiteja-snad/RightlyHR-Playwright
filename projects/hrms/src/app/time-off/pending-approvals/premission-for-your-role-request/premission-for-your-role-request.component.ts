@@ -97,7 +97,7 @@ export class PremissionForYourRoleRequestComponent
   this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
  }
  bulkProcess(){
- //  this.handleProcess();
+  this.handleProcess(this.permissionsselect);
  }
   canBulkApprove(): boolean {
      return this.selectedProducts?.every(
@@ -199,6 +199,7 @@ export class PremissionForYourRoleRequestComponent
          .pipe(takeUntil(this.destroy$))
          .subscribe({
            next: (response: any) => {
+              this.selectedProducts=[];
              this.modalService.dismissAll();
              this.sharedModalService.openSuccessModal(
                'Request Approved Successfully'
@@ -222,7 +223,8 @@ export class PremissionForYourRoleRequestComponent
      }
    }
  
-   handleProcess(request: PermissionRequestResponse) {
+   handleProcess(request: any) {
+       this.selectedLeaveData=request;
        if(this.selectedProducts &&this.selectedProducts.length>0){
           let approvedBy =this.empinfo.employeeId.toString()
          this.requestBody = this.selectedProducts.map((item) => ({
@@ -246,6 +248,7 @@ export class PremissionForYourRoleRequestComponent
        ).pipe(takeUntil(this.destroy$))
        .subscribe({
          next: (respone: any) => {
+            this.selectedProducts=[];
            this.modalService.dismissAll();
            this.sharedModalService.openSuccessModal(
              'Request Processed Successfully'
@@ -295,6 +298,7 @@ export class PremissionForYourRoleRequestComponent
          ).pipe(takeUntil(this.destroy$))
          .subscribe({
            next: (response: any) => {
+              this.selectedProducts=[];
              this.modalService.dismissAll();
              this.sharedModalService.openSuccessModal(
                'Request Rejected Successfully'

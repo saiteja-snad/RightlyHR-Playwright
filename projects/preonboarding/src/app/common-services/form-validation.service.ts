@@ -129,6 +129,34 @@ export class FormValidationService {
       event.preventDefault();
     }
   }
+  // allowed only alphbet,number,-,/
+restrictInputallowhypen(event: KeyboardEvent): void {
+  const key = event.key;
+  const inputElement = event.target as HTMLInputElement;
+
+  // Always allow navigation and control keys
+  if (
+    key === 'Backspace' || key === 'Delete' || 
+    key === 'ArrowLeft' || key === 'ArrowRight' || 
+    key === 'Tab'
+  ) {
+    return;
+  }
+
+  // Prevent space as the first character
+  if (key === ' ' && inputElement.selectionStart === 0) {
+    event.preventDefault();
+    return;
+  }
+
+  // Allow only A-Z, a-z, 0-9, hyphen (-), forward slash (/), and space
+  const isValidCharacter = /^[A-Za-z0-9\-\/ ]$/.test(key);
+  if (!isValidCharacter) {
+    event.preventDefault();
+  }
+}
+
+
 // restrict allowed only few specialcharacter
 restrictInputAllowAlphaNumericAndCommonSpecialChars(event: KeyboardEvent): void {
   const key = event.key;

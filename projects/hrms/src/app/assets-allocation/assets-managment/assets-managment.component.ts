@@ -43,7 +43,8 @@ export class AssetsManagmentComponent {
   page = 1;
   pageSize = 10;
   collectionSize = 100;
-  purchesdate:any;
+  minpurchesDate: any;
+  maxpurchesDate: any;
   constructor(
     private readonly fb: FormBuilder,
     private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,public formValidation: FormValidationService) { }
@@ -56,8 +57,12 @@ export class AssetsManagmentComponent {
     this.intiallocationandsublocation()
     this.getcount(null, null)
     this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
-   const currentYear = new Date().getFullYear();
-  this.purchesdate = `${currentYear}-12-31`; 
+    const today = new Date();
+  // Set max to today's date
+  this.maxpurchesDate = today.toISOString().split('T')[0];
+  // Set min to Jan 1st of the current year
+  const startOfYear = new Date(today.getFullYear(), 0, 1); 
+  this.minpurchesDate = startOfYear.toISOString().split('T')[0];
     this.navTabs = [
       { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject },
       { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject },

@@ -63,11 +63,11 @@
     </div>
 
     <div class="custom-main-popup-content">
-      <form autocomplete="off" [formGroup]="assetcataeryForm" (ngSubmit)="postassetscatry(assetcataeryForm); modal.dismiss()">
+      <form autocomplete="off" [formGroup]="assetcataeryForm" (ngSubmit)="postassetscatry(assetcataeryForm);">
         <div class="row">
           <!-- Asset Category -->
           <div class="col-md-6 mb-3">
-            <label for="assetCategory" class="form-label custom-label mb-2">Asset Category
+            <label for="assetCategory" class="form-label custom-label mb-2">Asset Category 
               <span class="text-danger">*</span></label>
             <div class="custom-p-select-content">
               <p-select [options]="assetCategorys" optionLabel="name" optionValue="id"
@@ -83,7 +83,7 @@
             <label for="assetSubCategory" class="form-label custom-label mb-2">Asset Sub Category<span
                 class="text-danger">*</span></label>
             <input class="form-control custom-input" formControlName="assetSubCategory" placeholder="please enter asset sub category"
-              type="text" (keypress)="formValidation.restrictInput($event)" />
+              type="text" (keypress)="formValidation.restrictInputallowhypen($event)" />
             <div *ngIf="assetcataeryForm.get('assetSubCategory')?.invalid && assetcataeryForm.get('assetSubCategory')?.touched" class="error-msg">
               <div *ngIf="assetcataeryForm.get('assetSubCategory')?.errors?.['required']">
                 Asset Sub category is required
@@ -132,7 +132,7 @@
     </div>
     <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="assetcataeryupdateForm"
-        (ngSubmit)="updateastessubcategory(assetcataeryupdateForm);modal.dismiss()">
+        (ngSubmit)="updateastessubcategory(assetcataeryupdateForm)">
         <div class="row">
           <!-- Asset Category -->
           <div class="col-md-6 mb-3">
@@ -154,7 +154,7 @@
             <label for="assetSubCategorys" class="form-label custom-label mb-2">Asset Sub Category<span
                 class="text-danger">*</span></label>
             <input class="form-control custom-input" formControlName="assetSubCategory" placeholder="please enter asset sub category"
-              (keypress)="formValidation.restrictInput($event)" />
+              (keypress)="formValidation.restrictInputallowhypen($event)" />
             <div *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.invalid && 
                       assetcataeryupdateForm.get('assetSubCategory')?.touched" class="error-msg">
               <div *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.errors?.['required']">

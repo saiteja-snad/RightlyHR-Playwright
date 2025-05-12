@@ -75,6 +75,8 @@ export class AllAssetsListComponent {
   transactionid: any;
   transitionsid: any;
   employeid: any;
+  minpurchesDate: any;
+  maxpurchesDate: any;
   constructor(
     private readonly fb: FormBuilder,
     private readonly http: HttpService,
@@ -104,6 +106,12 @@ export class AllAssetsListComponent {
     this.initialReleaseform();
     this.intialfromundermatince();
     this.intialtransferfrom();
+    const today = new Date();
+  // Set max to today's date
+  this.maxpurchesDate = today.toISOString().split('T')[0];
+  // Set min to Jan 1st of the current year
+  const startOfYear = new Date(today.getFullYear(), 0, 1); 
+  this.minpurchesDate = startOfYear.toISOString().split('T')[0];
   }
 
   initialform() {
@@ -854,6 +862,7 @@ allZeroesIfMaxLength(): ValidatorFn {
           next: (res: any) => {
             console.log("Assignment Response:", res);
             // Call the updateAssets function if the assignment is successful
+           this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Asset Allocated Successfully')
             this.reassiginForm.reset();
           },

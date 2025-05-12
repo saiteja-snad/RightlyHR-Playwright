@@ -392,3 +392,32 @@ export const MY_INFO_PERSONAL_ROUTES = [
     { route:'/admin/current-openings', permission: 'Dashboard Current Openings Card.view' },
     { route:'/admin/probation-employees', permission: 'Dashboard Probation Employees Card.view' },
   ]
+
+  export const EMPLOYEE_INFO_PERSONAL_ROUTES = [
+    { permission: 'Employee Info Basic Information.view', route: '/personalinfo/personal/basic-info' },
+    { permission: 'Employee Info Address Details.view', route: '/personalinfo/personal/address-info' },
+    { permission: 'Employee Info Contact Details.view', route: '/personalinfo/personal/contact-details' },
+    { permission: 'Employee Info Emergency Contact Details.view', route: '/personalinfo/personal/emergency-contact-details' },
+    { permission: 'Employee Info Education Details.view', route: '/personalinfo/personal/education-details' },
+    { permission: 'Employee Info Identity Details.view', route: '/personalinfo/personal/identity-details' },
+    { permission: 'Employee Info Family Details.view', route: '/personalinfo/personal/family-details' },
+    { permission: 'Employee Info Bank Details.view', route: '/personalinfo/personal/bank-details' },
+    { permission: 'Employee Info Visa Details.view', route: '/personalinfo/personal/visa-details' }
+  ];
+  
+  export const EMPLOYEE_INFO_JOB_ROUTES = [
+    { permission: 'Employee Info Pre-Onboarding Details.view', route: '/personalinfo/job/pre-onboarding-details' },
+    { permission: 'Employee Info Onboarding Details.view', route: '/personalinfo/job/onboarding-details' },
+    { permission: 'Employee Info Offboarding Details.view', route: '/personalinfo/job/employmentType' },
+    { permission: 'Employee Info Job Details.view', route: '/personalinfo/job/job-details' },
+    { permission: 'Employee Info Separation Request Details.view', route: '/personalinfo/job/separation-details' },
+    { permission: 'Employee Info No Due Clearance Details.view', route: '/personalinfo/job/no-due-clearance-details' },
+    { permission: 'Employee Info Probation Details.view', route: '/personalinfo/job/probation-details' },
+    { permission: 'Employee Info Previous Experience Details.view', route: '/personalinfo/job/past-experiences' },
+    { permission: 'Employee Info Certification Details.view', route: '/personalinfo/job/certifications' },
+    { permission: 'Employee Info Compensation Details.view', route: '/personalinfo/job/compensation-details' },
+    { permission: 'Employee Info Desk Details.view', route: '/personalinfo/job/desk-details' },
+    { permission: 'Employee Info Asset Details.view', route: '/personalinfo/job/assets-details' }
+  ];
+
+  

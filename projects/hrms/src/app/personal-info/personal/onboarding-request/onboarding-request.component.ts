@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { environment } from '../../../../environments/environment';
 import { Router } from '@angular/router';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-onboarding-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, DropdownModule,
@@ -40,7 +41,7 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
   @ViewChild('viewmodel') viewmodel!: NgbModal;
   
   constructor(private authService: AuthService, private fb: FormBuilder, private http: HttpService, private router: Router,
-    private conformationPopup: OpenModalService, private modalService: NgbModal,) { this.intitalizeForm(); }
+    private conformationPopup: OpenModalService, private modalService: NgbModal,public rbac: RbacService) { this.intitalizeForm(); }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');

@@ -530,11 +530,13 @@ export const permissionsData = [
     { fields: 'Employee Info Separation Request', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Documents Sub Tabs Section
-    { fields: 'Employee Info Documents', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Documents(Upload File)', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Team Members Sub Tabs Section
-    { fields: 'Employee Info Team Members', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Employee Info Change RM Button', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Reporting Manager', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Change RM Button', View: false, Update: false, Create: false, Delete: false }, 
+    { fields: 'Employee Info Team Manager', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Change TM Button', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Onboard Request Sub Tabs Section
     { fields: 'Employee Info Onboard Request', View: false, Update: false, Create: false, Delete: false },

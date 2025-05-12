@@ -40,8 +40,10 @@
             </div>
 
             <div *ngIf="selectedFile">
+                @if(rbac.allowedToAccess('Employee Info Documents.create')) {
                <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
                      class="bi bi-upload me-2"></i>Upload File</button>
+               }
             </div>
          </div>
 
@@ -66,7 +68,9 @@
                   <th>File name</th>
                   <th>Created Date</th>
                   <th>Size</th>
+                  @if(rbac.allowedToAccess('Employee Info Documents.update')) {
                   <th class="text-center">Action</th>
+                  }
                </thead>
                <tbody>
                   <ng-container *ngIf="getVisibleFiles().length > 0; else noDataTemplate">
@@ -75,6 +79,7 @@
                            <td>{{ file.name | lastValue }}</td>
                            <td>{{ file.createdOn | dateformat }}</td>
                            <td>{{ file.contentLength | fileSize }}</td>
+                            @if(rbac.allowedToAccess('Employee Info Documents.update')) {
                            <td class="text-center">
                               <div>
                                  <span class="dowload-text cursor" (click)="onSelectDownload(file)">
@@ -82,6 +87,7 @@
                                  </span>
                               </div>
                            </td>
+                        }
                         </tr>
                      </ng-container>
                   </ng-container>

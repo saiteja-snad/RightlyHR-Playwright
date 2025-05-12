@@ -392,7 +392,7 @@ export class DeskManagementComponent {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Desk Registered Successfully ');
             this.deskForm.reset()
-
+            this.http.setnewdeskDetails()
           },
           error: (error: any) => {
             console.error('Error fetching locations', error);

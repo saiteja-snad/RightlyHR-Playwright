@@ -106,7 +106,6 @@ export class AddEventComponent implements OnInit {
             this.conformationPopup.openSuccessModal('Event added successfully');
             // Optionally send custom emails or reset the form
             this.CustomEmail();
-            // window.location.reload()
           }
         },
         error: (err: any) => {

@@ -104,6 +104,9 @@ export class AllAssetsListComponent {
     this.initialReleaseform();
     this.intialfromundermatince();
     this.intialtransferfrom();
+    this.http.assetDetailesadded$.subscribe(() => {
+      this.getFilteredData(); 
+    });
   }
 
   initialform() {

@@ -11,6 +11,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-available-desk-list',
@@ -82,7 +83,7 @@ export class AvailableDeskListComponent {
     private readonly modalService: NgbModal,
     private readonly router: Router,
     public conformationPopup: OpenModalService,
-
+   public formValidation: FormValidationService,
     config: NgbModalConfig) {
     config.backdrop = 'static';
     config.keyboard = false;
@@ -706,6 +707,14 @@ onRowsChange() {
       }
     });
   }
+    //close dailog open
+  openallocationModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+  cleardata(){
+    this.assiginForm.reset();
+      this.modalService.dismissAll();
+    }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

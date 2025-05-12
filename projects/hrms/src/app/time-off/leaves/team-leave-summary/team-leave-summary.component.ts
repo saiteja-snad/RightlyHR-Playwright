@@ -17,6 +17,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
   templateUrl: './team-leave-summary.component.html',
   styleUrl: './team-leave-summary.component.scss'
 })
+
 export class TeamLeaveSummaryComponent {
   teamLeaveSummary: ITeamLeaveSummary[] = [];
   loggedInUser: any;
@@ -26,14 +27,17 @@ export class TeamLeaveSummaryComponent {
   popupData: any[] = [];
   popupType: string = '';
   selectedMonth: any;
-  destroy$: Subject<boolean> = new Subject<boolean>();
+  searchText: string = '';
+  filteredTeamLeaveSummary: any[] = [];
 
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  // year
   years = [
     { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
     { label: new Date().getFullYear().toString(), value: new Date().getFullYear() },
     { label: (new Date().getFullYear() + 1).toString(), value: new Date().getFullYear() + 1 }
   ];
-
+  // Months
   monthOptions = [
     { name: 'January', value: 1 },
     { name: 'February', value: 2 },
@@ -64,7 +68,7 @@ export class TeamLeaveSummaryComponent {
   ngOnInit(): void {
     this.loggedInUser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     const currentDate = new Date();
-    this.selectedMonth = currentDate.getMonth() + 1; 
+    this.selectedMonth = currentDate.getMonth() + 1;
     this.selectedYear = currentDate.getFullYear();
     this.getAllTeamLeaveSummary();
   }
@@ -73,18 +77,16 @@ export class TeamLeaveSummaryComponent {
     this.dataload = true;
     const employeeId = this.loggedInUser.employeeId;
     let url = `Employeedata/v1/getreportessdata?employeeId=${employeeId}`;
-
     if (this.selectedYear) {
       url += `&year=${this.selectedYear}`;
     }
-
     if (this.selectedMonth) {
       url += `&month=${this.selectedMonth}`;
     }
-
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.teamLeaveSummary = res;
+        this.filteredTeamLeaveSummary = res;
       },
       error: (err) => {
         this.dataload = false;
@@ -93,6 +95,19 @@ export class TeamLeaveSummaryComponent {
       complete: () => {
         this.dataload = false;
       }
+    });
+  }
+
+  filterTeamLeaveSummary() {
+    const term = this.searchText.trim().toLowerCase();
+    if (!term) {
+      this.filteredTeamLeaveSummary = this.teamLeaveSummary;
+      return;
+    }
+    this.filteredTeamLeaveSummary = this.teamLeaveSummary.filter(item => {
+      const name = item.employeeName?.toLowerCase() || '';
+      const fusionId = item.fusionEmpId?.toLowerCase() || '';
+      return name.includes(term) || fusionId.includes(term);
     });
   }
 
@@ -110,11 +125,11 @@ export class TeamLeaveSummaryComponent {
     const actualKey = this.TYPE_MAP[type];
     this.popupData = employee[actualKey] || [];
     this.popupType = type;
-    this.openModal(content);    
+    this.openModal(content);
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   calculateDuration(entries: any[]): number {

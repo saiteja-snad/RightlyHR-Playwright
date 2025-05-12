@@ -228,15 +228,17 @@ export class TeamMangerMembersComponent {
       : [];
     console.log(teammanagers)
     const effectiveDate = this.requestForm.get('effectiveDate')?.value;
-    const url = `JobDetails/TeamManagerUpdate?teamManagerEmployeeId=${this.teammangerid}&effectiveDate=${effectiveDate}`;
+    const departentid=this.requestForm.get('department')?.value?.sno
+    const subdepartentid= this.requestForm.get('teamSelectedOptions')?.value?.subdepartmentId;
+    const url = `JobDetails/TeamManagerUpdate?teamManagerEmployeeId=${this.teammangerid}&effectiveDate=${effectiveDate}&DeptId=${departentid}&SubdeptId=${subdepartentid}`;
 
     this.subscription = this.http.postdata(url, teammanagers).subscribe({
       next: (data: any) => {
+        this.getAllTeammembersList()
         console.log('Success:', data);
         this.modalService.dismissAll()
         this.http.setBasicDetails();
         this.conformationPopup.openSuccessModal('Team manager updated successfully ')
-        this.getAllTeammembersList()
         this.requestForm.reset()
       },
       error: (err: any) => {
@@ -254,16 +256,20 @@ export class TeamMangerMembersComponent {
       ? selectedEmployees
       : [selectedEmployees];
     console.log(teammanagers)
+    const departentid=this.foremployeeForm.get('department')?.value?.sno
+    const subdepartentid= this.foremployeeForm.get('teamSelectedOptions')?.value?.subdepartmentId;
     const effectiveDate = this.foremployeeForm.get('effectiveDate')?.value;
-    const url = `JobDetails/TeamManagerUpdate?teamManagerEmployeeId=${this.teammangerid}&effectiveDate=${effectiveDate}`;
+    console.log(departentid)
+    console.log(subdepartentid)
+    const url = `JobDetails/TeamManagerUpdate?teamManagerEmployeeId=${this.teammangerid}&effectiveDate=${effectiveDate}&DeptId=${departentid}&SubdeptId=${subdepartentid}`;
 
     this.subscription = this.http.postdata(url, teammanagers).subscribe({
       next: (data: any) => {
         console.log('Success:', data);
         this.modalService.dismissAll()
         this.http.setBasicDetails();
+        this.getAllTeammembersList()
         this.conformationPopup.openSuccessModal('Team manager updated successfully ')
-        this.getAllTeammembersList
         this.foremployeeForm.reset()
       },
       error: (err: any) => {

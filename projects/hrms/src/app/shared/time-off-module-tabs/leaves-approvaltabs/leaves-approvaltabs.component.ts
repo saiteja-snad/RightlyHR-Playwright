@@ -35,8 +35,8 @@ export class LeavesApprovaltabsComponent {
     { label: 'Processed', link: 'processed',permission: { feature: 'Processed (Time Off)', action: 'view' }, },
     { label: 'Rejected', link: 'rejected', permission: { feature: 'Rejected (Time Off)', action: 'view' },},
     { label: 'Cancelled', link: 'cancelled', permission: { feature: 'Cancelled(Time Off)', action: 'view' },},
-    { label: 'Team Leave balance', link: 'team-leave-balance',permission: { feature: 'Team Leave Balance(Time Off)', action: 'view' }, },
-    { label: 'Team Leave Summary', link: 'team-leave-summary', permission: { feature: 'Team Leave Balance Summary(Time Off)', action: 'view' },}
+    { label: 'Team Leave balance', link: 'team-leave-balance'},
+    { label: 'Team Leave Summary', link: 'team-leave-summary'}
   ];
 
   constructor(public readonly router: Router, private http: HttpService, private authService: AuthService) { }
@@ -107,19 +107,7 @@ export class LeavesApprovaltabsComponent {
     });
   }
 
-  // private updateStatusTabs() {
-  //   this.statusTabs = [
-  //     { label: 'Waiting For Approval', link: 'waiting-for-approval', count: this.waitingForApprovalCount },
-  //     { label: 'Approved', link: 'approved', count: this.approvedCount },
-  //     { label: 'Processed', link: 'processed', count: this.processedCount },
-  //     { label: 'Rejected', link: 'rejected', count: this.rejectedCount },
-  //     { label: 'Cancelled', link: 'cancelled' },
-  //     { label: 'Team Leave balance', link: 'team-leave-balance', count: this.teamLeaveBalanceCount },
-  //     { label: 'Team Leave Summary', link: 'team-leave-summary', count: this.teamLeaveSummaryCount }
-  //   ];
-  // }
-
-    private updateStatusTabs() {
+  private updateStatusTabs() {
     this.statusTabs = [
       { label: 'Waiting For Approval', link: '/time-off/leaves/waiting-for-approval', count: this.waitingForApprovalCount },
       { label: 'Approved', link: '/time-off/leaves/approved', count: this.approvedCount },
@@ -130,13 +118,11 @@ export class LeavesApprovaltabsComponent {
       { label: 'Team Leave Summary', link: '/time-off/leaves/team-leave-summary', count: this.teamLeaveSummaryCount }
     ];
   }
- 
 
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
   }
-
 
 }

@@ -486,11 +486,12 @@ allZeroesIfMaxLength(): ValidatorFn {
       this.http.postdata('AssetMaster', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           console.log(res);
-          this.modalService.dismissAll()
-          this.http.setnewassetsDetails()
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset Registered Successfully ');
           this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
+           this.getcount(null, null)
           this.assetForm.reset();
+           this.http.setnewassetsDetails();
         },
         error: (error) => {
 
@@ -501,11 +502,6 @@ allZeroesIfMaxLength(): ValidatorFn {
           else {
             this.conformationPopup.openErrorModal("There was a problem on our side. Please try again later, or contact the administrator if the issue persists.")
           }
-        },
-        complete: () => {
-          setTimeout(() => {
-            window.location.reload()
-          }, 2000);
         },
       });
     } else {

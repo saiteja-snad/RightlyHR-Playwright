@@ -1,9 +1,11 @@
 <div class="custom-main-component-container">
   @if(!loader){
-  <div class="mb-3" *ngIf="rbac.allowedToAccess('Form Settings.create')">
+    @if(rbac.allowedToAccess('Form Settings.create')){
+  <div class="mb-3">
     <button class="custom-btn btn-primary" (click)="openModal(addRatingScale,{size:'lg',centered: true})">
       {{'Add Rating Scale'}}</button>
   </div>
+  }
 
   <div class="custom-table-content">
     <table class="w-100">
@@ -12,8 +14,10 @@
           <th>{{'Rating Type' | translate}}</th>
           <th class="text-center">{{'Min-Rating Scale' | translate}}</th>
           <th class="text-center">{{'Max-Rating Scale' | translate}}</th>
-          <th class="text-center" *ngIf="rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')">
+          @if(rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')){
+          <th class="text-center">
             {{'Action' | translate}}<span class="text-lowercase">(s)</span></th>
+          }
         </tr>
       </thead>
       <tbody>
@@ -23,25 +27,31 @@
               <td>{{ formSetting.ratingType }}</td>
               <td class="text-center">{{ formSetting.minimumRatingScale }}</td>
               <td class="text-center">{{ formSetting.maximumRatingScale }}</td>
-              <td class="text-center" *ngIf="rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')">
+              @if(rbac.allowedToAccess('Form Settings.update') || rbac.allowedToAccess('Form Settings.delete')){
+              <td class="text-center">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-three-dots-vertical"></i>
                   </span>
                   <ul class="dropdown-menu custom-dropdown-menu">
-                    <li *ngIf="rbac.allowedToAccess('Form Settings.update')">
+                    @if(rbac.allowedToAccess('Form Settings.update')){
+                    <li>
                       <a class="dropdown-item" (click)="assignValues(formSetting.ratingType)">
                         <i class="bi bi-pencil me-2"></i>Update
                       </a>
                     </li>
-                    <li *ngIf="rbac.allowedToAccess('Form Settings.delete')">
+                    }
+                    @if(rbac.allowedToAccess('Form Settings.delete')){
+                    <li>
                       <a class="dropdown-item" (click)="openDeleteModal(formSetting.ratingType)">
                         <i class="bi bi-trash3 me-2"></i>Delete
                       </a>
                     </li>
+                    }
                   </ul>
                 </div>
               </td>
+              }
             </tr>
           </ng-container>
         </ng-container>

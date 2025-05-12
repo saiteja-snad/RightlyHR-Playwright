@@ -50,17 +50,17 @@
                     <p class="date mb-0">{{ item.eventDate | date: 'shortDate' }}  {{ item.eventDate  | date: 'shortTime' }}</p>
                   </div>
                 </div>
-                @if(rbac.allowedToAccess('Events Module.update') || rbac.allowedToAccess('Events Module.delete')){
+                @if(rbac.allowedToAccess('Events(Upcoming Events).update') || rbac.allowedToAccess('Events(Upcoming Events).delete')){
                 <div class="dropdown">
                   <a data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-three-dots-vertical"></i>
                   </a>
                   <ul class="dropdown-menu custom-dropdown-menu">
-                    @if(rbac.allowedToAccess('Events Module.update')){
+                    @if(rbac.allowedToAccess('Events(Upcoming Events).update')){
                     <li (click)="openModalupdate(updateevets,item)"><a class="dropdown-item">
                         <i class="bi bi-pencil me-2"></i>Update</a></li>
                     }
-                    @if(rbac.allowedToAccess('Events Module.delete')){
+                    @if(rbac.allowedToAccess('Events(Upcoming Events).delete')){
                     <li (click)="setdata=item;openmodal(deleteconformation)"><a class="dropdown-item">
                         <i class="bi bi-trash3 me-2"></i>Delete</a></li>
                     }

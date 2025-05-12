@@ -14,7 +14,9 @@
                     <th>{{'SUBMITTED DATE'|translate}}</th>
                     <th>{{'DOCUMENT'|translate}}</th>
                     <th>{{'STATUS'|translate}}</th>
-                    <th>{{'ACTION'|translate}}</th>
+                    @if(rbac.allowedToAccess('Employee Info Documents Verification.update') 
+                    || rbac.allowedToAccess('Employee Info Documents Verification.delete')){
+                    <th>{{'ACTION'|translate}}</th>}
                 </tr>
             </thead>
             <tbody>
@@ -48,18 +50,22 @@
                             <div>-</div>
                         </ng-template>
                     </td>
+                     @if(rbac.allowedToAccess('Employee Info Documents Verification.update') 
+                    || rbac.allowedToAccess('Employee Info Documents Verification.delete')){
                     <td>
                         <span *ngIf="!data.documentUrl; else approverejectbuttons"></span>
                         <ng-template #approverejectbuttons>
+                            @if(rbac.allowedToAccess('Employee Info Documents Verification.update')){
                             <button class="custom-btn btn-primary-approve me-2" *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' 
                             && data.status=='Submitted'"
                                 (click)="approveDocument( data.id,data.empId,data.documentType,data.documentUrl,data.rejectedBy,data.reason,
                                 data.referenceNumber,data.referenceId); openModal(approveModal)">Approve
-                            </button>
+                            </button>}
+                             @if(rbac.allowedToAccess('Employee Info Documents Verification.delete')){
                             <button class="custom-btn btn-primary-reject" *ngIf="data.status !== 'Verified' && data.status !== 'Rejected' 
-                            && data.status=='Submitted' " (click)="submitRejectReason(data);openModal(rejectModal)">Reject</button>
+                            && data.status=='Submitted' " (click)="submitRejectReason(data);openModal(rejectModal)">Reject</button>}
                         </ng-template>
-                    </td>
+                    </td>}
                 </tr>
                 }
                 }

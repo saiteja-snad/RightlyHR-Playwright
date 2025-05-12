@@ -14,6 +14,7 @@ import { IProbationEmployees } from '../../../Interfaces/letters-model';
 import { IJob } from '../../../Interfaces/job-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-family-details',
@@ -33,7 +34,9 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
   loading=false
     employedata={} as IProbationEmployees;
-  constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder,   public formValidation: FormValidationService,) { }
+  constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, 
+    private http: HttpService, private fb: FormBuilder,
+    public formValidation: FormValidationService,public rbac: RbacService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeFamilyDetailsForm();

@@ -1,8 +1,9 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
+        @if(rbac.allowedToAccess('Employee Info Compensation Details.view')){
         <div><span class="component-sub-header">Compensation Details</span></div>
         <div class="custom-add-btn" (click)="openModal(addcomfDetailes)"><i class="bi bi-plus plus-icon me-1"></i>Add
-            New</div>
+            New</div>}
     </div>
 
     <div class="custom-table-content mt-2">
@@ -16,7 +17,10 @@
                     <th>Frequency</th>
                     <th>Pay Type</th>
                     <th>Amount (Yearly CTC)</th>
-                    <th class="text-center">Action(s)</th>
+                    @if(rbac.allowedToAccess('Employee Info Compensation Details.update') ||
+                    rbac.allowedToAccess('Employee Info Compensation Details.delete')){
+                    <th class="text-center">Action(S)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -28,27 +32,32 @@
                         <td>{{item.frequency}}</td>
                         <td>{{item.paytype}}</td>
                         <td>{{item.compensationamount}}</td>
+                        @if(rbac.allowedToAccess('Employee Info Compensation Details.update') ||
+                        rbac.allowedToAccess('Employee Info Compensation Details.delete')){
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('Employee Info Compensation Details.update')){
                                     <li (click)="openModalupdate(updatecomfDetailes, item)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
-
-
+                                    }
+                                    @if(rbac.allowedToAccess('Employee Info Compensation Details.delete')){
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
                                     </li>
+                                    }
                                 </ul>
                             </div>
                         </td>
+                        }
                     </tr>
 
                 </ng-container>

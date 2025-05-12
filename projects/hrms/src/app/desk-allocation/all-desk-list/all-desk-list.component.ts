@@ -100,7 +100,9 @@ export class AllDeskListComponent {
     this.getdatabyentriyinactive()
     this.intialassigindesk()
     this.getAllLocations();
-
+    this.http.deskDetailesadded$.subscribe(() => {
+      this.getFilteredData(); 
+    });
     this.getapproval()
     this.intialreassigindesk();
     this.initialinactiveform();
@@ -108,7 +110,6 @@ export class AllDeskListComponent {
     this.getdatabyentriyundermaintance()
     this.getdatabyentriy()
     this.intialrealsedata()
-
     this.getdatabyentriyrealse();
     // this.getAllDesks(this.first, this.rows, this.selectedLocationId, null,null);
     this.getFilteredData();

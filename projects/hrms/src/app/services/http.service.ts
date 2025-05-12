@@ -15,15 +15,15 @@ export class HttpService {
     wfh: boolean;
     employeeId: number;
     permission: boolean;
-    remote:boolean;
-    global:boolean
+    remote: boolean;
+    global: boolean
   }>({
     compOff: false,
     wfh: false,
     employeeId: 0,
     permission: false,
-    remote:false,
-    global:false
+    remote: false,
+    global: false
   });
   tirggerPendingApprovalCountSignal = signal<{
     compOff: boolean;
@@ -31,9 +31,9 @@ export class HttpService {
     permission: boolean;
     separation: boolean;
     recall: boolean;
-    expenses:boolean;
-    nodue:boolean,
-    
+    expenses: boolean;
+    nodue: boolean,
+
   }>({
     compOff: false,
     wfh: false,
@@ -41,16 +41,16 @@ export class HttpService {
     separation: false,
     recall: false,
     expenses: false,
-    nodue:false,
-   
+    nodue: false,
+
   });
   desklocationIdSubject = new BehaviorSubject<string | null>(null);
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);
   assetslocationIdSubject = new BehaviorSubject<string | null>(null);
   assetssublocationIdSubject = new BehaviorSubject<string | null>(null);
 
-  
-  
+
+
   reviewCycleTriggerSignal = signal<boolean>(false);
   wfhTriggerSignal = signal<boolean>(false);
   permissionTriggerSignal = signal<boolean>(false);
@@ -59,40 +59,55 @@ export class HttpService {
     this.communicationService = new BehaviorSubject(null);
   }
 
- 
+
 
   ApiUrl = environment.ApiUrl;
   activeTabSubject = new BehaviorSubject<boolean>(false);
   activeTabStatus$ = this.activeTabSubject.asObservable();
 
-   eventAddedSource = new Subject<void>();
+  eventAddedSource = new Subject<void>();
   eventAdded$ = this.eventAddedSource.asObservable();
   // Function to notify that an event has been added
   notifyEventAdded() {
     this.eventAddedSource.next();
   }
   // Function to set the communication service data for basic info 
-  basicDetailes=new Subject<void>();
-  basicDetailesadded$=this.basicDetailes.asObservable();
-  setBasicDetails(){
+  basicDetailes = new Subject<void>();
+  basicDetailesadded$ = this.basicDetailes.asObservable();
+  setBasicDetails() {
     this.basicDetailes.next();
   }
 
-   //holidays year
-   public selectedYearSubject = new BehaviorSubject<number | null>(null);
-   selectedYear$ = this.selectedYearSubject.asObservable();
+  //funtion to call add desk
+  deskadded = new Subject<void>();
+  deskDetailesadded$ = this.deskadded.asObservable();
+  setnewdeskDetails() {
+    this.deskadded.next();
+  }
+
+    // Function to set the communication service data for basic info 
+    assetsadded = new Subject<void>();
+    assetDetailesadded$ = this.assetsadded.asObservable();
+    setnewassetsDetails() {
+      this.assetsadded.next();
+    }
+  
+
   //holidays year
-   setSelectedYear(year: number) {
-     this.selectedYearSubject.next(year);
-   }
- private triggerSignal = signal(false);
- readonly trigger = this.triggerSignal;
- triggerActionSignal() {
-  this.triggerSignal.set(true);
-}
-resetTriggerSignal() {
-  this.triggerSignal.set(false);
-}
+  public selectedYearSubject = new BehaviorSubject<number | null>(null);
+  selectedYear$ = this.selectedYearSubject.asObservable();
+  //holidays year
+  setSelectedYear(year: number) {
+    this.selectedYearSubject.next(year);
+  }
+  private triggerSignal = signal(false);
+  readonly trigger = this.triggerSignal;
+  triggerActionSignal() {
+    this.triggerSignal.set(true);
+  }
+  resetTriggerSignal() {
+    this.triggerSignal.set(false);
+  }
 
   updateTabStatus(isActive: boolean) {
     this.activeTabSubject.next(isActive);
@@ -101,25 +116,25 @@ resetTriggerSignal() {
 
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
-    //function to update the desk Updatelocation
-    deskUpdateLocationId(id: string | null) {
-      this.desklocationIdSubject.next(id);
-    }
-    //function to update the desk sublocation
-    deskUpdateSubLocationId(id: string | null) {
-      this.desksublocationIdSubject.next(id);
-    }
+  //function to update the desk Updatelocation
+  deskUpdateLocationId(id: string | null) {
+    this.desklocationIdSubject.next(id);
+  }
+  //function to update the desk sublocation
+  deskUpdateSubLocationId(id: string | null) {
+    this.desksublocationIdSubject.next(id);
+  }
 
-    assetslocationId$ = this.assetslocationIdSubject.asObservable();
-    assetssublocationId$ = this.assetssublocationIdSubject.asObservable();
-      //function to update the desk Updatelocation
-      assetsUpdateLocationId(id: string | null) {
-        this.assetslocationIdSubject.next(id);
-      }
-      //function to update the desk sublocation
-      assetsUpdateSubLocationId(id: string | null) {
-        this.assetssublocationIdSubject.next(id);
-      }
+  assetslocationId$ = this.assetslocationIdSubject.asObservable();
+  assetssublocationId$ = this.assetssublocationIdSubject.asObservable();
+  //function to update the desk Updatelocation
+  assetsUpdateLocationId(id: string | null) {
+    this.assetslocationIdSubject.next(id);
+  }
+  //function to update the desk sublocation
+  assetsUpdateSubLocationId(id: string | null) {
+    this.assetssublocationIdSubject.next(id);
+  }
 
   //to get the employee id
   employeeIdSubject = new BehaviorSubject<number>(0);
@@ -151,7 +166,7 @@ resetTriggerSignal() {
     return this.http.get(item_url);
   }
 
-  getData(url: string ) {
+  getData(url: string) {
     return this.http.get(`${this.ApiUrl}${url}`);
   }
   postletters(url: string) {

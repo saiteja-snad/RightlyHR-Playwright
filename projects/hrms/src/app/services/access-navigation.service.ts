@@ -47,6 +47,7 @@ import {
   MY_PERFORMANCE_TABS,
   HOLIDAYS_SUB_TABS,
   DASHBOARD_SUB_TABS,
+  SETTINGS_MAIN_HEADER_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -89,8 +90,126 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/settings':
-        
+      // case '/settings':
+      //   for(const item of SETTINGS_MAIN_HEADER_TABS){
+      //     if(this.rbac.allowedToAccess('Employee Fields Module.view')){
+      //       for(const item of SETTINGS_EMPLOYEE_FIELDS_TABS){
+      //         if(this.rbac.allowedToAccess('Personal Tab.view')){
+      //           for(const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS){
+      //             if(this.rbac.allowedToAccess(item.permission)){
+      //               return item.route;
+      //             }
+      //           }
+      //         }
+
+      //         if(this.rbac.allowedToAccess('Job Tab.view')){
+      //           for(const item of SETTINGS_EMPLOYEE_FIELDS_JOB_TABS){
+      //             if(this.rbac.allowedToAccess(item.permission)){
+      //               return item.route;
+      //             }
+      //           }
+      //         }
+
+      //         if(this.rbac.allowedToAccess('Document Tab.view')){
+      //           return (route = '/settings/employee-fields/documents');
+      //         }
+
+      //         if(this.rbac.allowedToAccess('Manage Shifts Tab.view')){
+      //           for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_SHIFTS_TABS){
+      //             if(this.rbac.allowedToAccess(item.permission)){
+      //               return item.route;
+      //             }
+      //           }
+      //         }
+
+      //         if(this.rbac.allowedToAccess('Manage Policies Tab.view')){
+      //           for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_POLICIES_TABS){
+      //             if(this.rbac.allowedToAccess(item.permission)){
+      //               return item.route;
+      //             }
+      //           }
+      //         }
+
+      //         if(this.rbac.allowedToAccess('Manage Holidays Tab.view')){
+      //           for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_HOLIDAYS_TABS){
+      //             if(this.rbac.allowedToAccess(item.permission)){
+      //               return item.route;
+      //             }
+      //           }
+      //         }
+
+      //         if(this.rbac.allowedToAccess('Manage Weekends Tab.view')){
+      //           for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_WEEKENDS_TABS){
+      //             if(this.rbac.allowedToAccess(item.permission)){
+      //               return item.route;
+      //             }
+      //           }
+      //         }
+
+      //         if(this.rbac.allowedToAccess('Expense Tab.view')){
+      //           for(const item of SETTINGS_EMPLOYEE_FIELDS_EXPENSES_TABS){
+      //             if(this.rbac.allowedToAccess(item.permission)){
+      //               return item.route;
+      //             }
+      //           }
+      //         }
+
+      //         if(this.rbac.allowedToAccess('Manage DST Tab.view')){
+      //           for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS){
+      //             if(this.rbac.allowedToAccess(item.permission)){
+      //               return item.route;
+      //             }
+      //           }
+      //         }
+      //       }
+      //     }
+      //   }
+      //   break;
+      case '/settings' :
+        if (this.rbac.allowedToAccess('Employee Fields Module.view')) {
+          for (const item of SETTINGS_EMPLOYEE_FIELDS_TABS) {
+            if (this.rbac.allowedToAccess('Personal Tab.view')) {
+              for (const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS) {
+                if (this.rbac.allowedToAccess(item.permission)) {
+                  return item.route;
+                }
+              }
+            }
+
+            if (this.rbac.allowedToAccess('Personal Tab.view')) {
+              for (const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS) {
+                if (this.rbac.allowedToAccess(item.permission)) {
+                  return item.route;
+                }
+              }
+            }
+          }
+        }
+
+        if (this.rbac.allowedToAccess('Settings Timeoff Module.view')) {
+          for (const item of SETTINGS_TIMEOFF_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+        if (this.rbac.allowedToAccess('Assets Management Configuration Module.view')) {
+          for (const item of SETTINGS_ASSEST_CONFIGURATION_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
+        if (this.rbac.allowedToAccess('Dynamic Forms Module.view')) {
+          for (const item of SETTINGS_DYNAMIC_FORMS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+
         break;
 
       case '/events':
@@ -671,6 +790,25 @@ navigateToAccessedRoute(actualRoute: string): string {
             return (route = '/settings/timeoff-configurations/load-entitlements')
           }
           break;
+
+        case '/settings/employee-fields/personal':
+          if(this.rbac.allowedToAccess('Personal Tab.view')){
+            for(const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS){
+              if(this.rbac.allowedToAccess(item.permission)){
+                return item.route;
+              }
+            }
+          }
+          break;
+
+        case '/settings/employee-fields/job':
+          if(this.rbac.allowedToAccess('Job Tab.view')){
+            for(const item of SETTINGS_EMPLOYEE_FIELDS_JOB_TABS){
+              if(this.rbac.allowedToAccess(item.permission)){
+                return item.route;
+              }
+            }
+          }
   }
   return route;
 }

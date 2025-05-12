@@ -47,7 +47,8 @@ export class AssetHistoryComponent {
     });
   }
   navigateassets(){
-    this.router.navigate(['/desk/management/all-desks']);
+   // this.router.navigate(['/desk/management/all-desks']);
+    this.router.navigate(['/assets-management/all-assets']);
   }
 
   tranferasetdata(assetId: any) {

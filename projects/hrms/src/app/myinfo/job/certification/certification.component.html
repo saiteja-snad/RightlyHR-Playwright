@@ -2,11 +2,13 @@
     <div class="d-flex justify-content-between align-items-center">
         <div> <span class="education-sub-header">Certification Details
             </span></div>
+             @if(rbac.allowedToAccess('My Info Certification Details.create') ){
         <div class="plus-button">
             <span class="anchor"><i class="bi bi-plus plus-icon px-2 "></i><span type="button"
                     (click)="openModal(addexperincemodal)" class="plus-text">Add
                     New</span></span>
         </div>
+    }
     </div>
     <div class="custom-table-content mt-2">
         @if(!loading){
@@ -18,7 +20,9 @@
                     <th>Issued date</th>
                     <th>Expiry date</th>
                     <th class="text-center">Document</th>
+                    @if(rbac.allowedToAccess('My Info Certification Details.update') || rbac.allowedToAccess('My Info Certification Details.delete') ){
                     <th class="text-center">Action(s)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -38,25 +42,31 @@
                                 <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData><span
                                     class="text-center">-</span></ng-template>
                         </td>
+                         @if(rbac.allowedToAccess('My Info Certification Details.update') || rbac.allowedToAccess('My Info Certification Details.delete') ){
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('My Info Certification Details.update') ){
                                     <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
+                                }
+                                 @if(rbac.allowedToAccess('My Info Certification Details.delete') ){
                                     <li (click)="opendeletModal(deleteconformation,empcreficition)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
                                     </li>
+                                }
                                 </ul>
                             </div>
                         </td>
+                    }
                     </tr>
                 </ng-container>
 
@@ -91,7 +101,7 @@
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="certificationForm" (ngSubmit)="postCertificationDetails()">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Certification Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="certificationName" class="form-label custom-label mb-2">
                             Certification Name <span class="text-danger">*</span>
@@ -112,7 +122,7 @@
                         </div>
                     </div>}
 
-                    @if(this.rbac.allowedToAccess('Certification Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="certificationId" class="form-label custom-label mb-2">
                             Certification ID <span class="text-danger">*</span>
@@ -130,7 +140,7 @@
                         </div>
                     </div>}
 
-                    @if(this.rbac.allowedToAccess('Certification Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="issuedDate" class="form-label custom-label mb-2 ">
                             Issued Date <span class="text-danger">*</span>
@@ -144,7 +154,7 @@
                         </div>
                     </div>}
 
-                    @if(this.rbac.allowedToAccess('Certification Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="expiryDate" class="form-label custom-label mb-2">
                             Expiry Date <span class="text-danger">*</span>
@@ -156,7 +166,7 @@
                             Expiry Date is required
                         </div>
                         <!-- <div class="error-msg" *ngIf="!isExpiryDate">Expiry Date cannot be less than Issued Date</div> -->
-                        @if(this.rbac.allowedToAccess('Certification Details.view')){
+                        @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                         <div class="form-check">
                             <input class="form-check-input mt-2" type="checkbox" id="noExpiry"
                                 formControlName="isExpired" />
@@ -164,7 +174,7 @@
                         </div>}
                     </div>}
 
-                    @if(this.rbac.allowedToAccess('Certification Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">
                             Attachment <span class="text-danger">*</span>
@@ -217,7 +227,7 @@
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="updateCertificationForm" (ngSubmit)="updateCertificationDetails()">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Certification Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="certificationName" class="form-label custom-label mb-2">
                             Certification Name <span class="text-danger">*</span>
@@ -237,7 +247,7 @@
                         </div>
                     </div>}
 
-                    @if(this.rbac.allowedToAccess('Certification Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="certificationId" class="form-label custom-label mb-2">
                             Certification ID <span class="text-danger">*</span>
@@ -257,7 +267,7 @@
                         </div>
                     </div>}
 
-                    @if(this.rbac.allowedToAccess('Certification Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="issuedDate" class="form-label custom-label mb-2 ">
                             Issued Date <span class="text-danger">*</span>
@@ -271,7 +281,7 @@
                         </div>
                     </div>}
 
-                    @if(this.rbac.allowedToAccess('Certification Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="expiryDate" class="form-label custom-label mb-2">
                             Expiry Date <span class="text-danger">*</span>
@@ -290,7 +300,7 @@
                         </div>
                     </div>}
 
-                    @if(this.rbac.allowedToAccess('Certification Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Certification Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">
                             Attachment <span class="text-danger">*</span>

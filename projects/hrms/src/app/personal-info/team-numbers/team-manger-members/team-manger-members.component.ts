@@ -4,8 +4,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
-import { Router } from '@angular/router';
-import { Ipersonal, Iteammembers } from '../../../Interfaces/members-model';
+import { Ipersonal } from '../../../Interfaces/members-model';
 import { Subscription } from 'rxjs';
 import { IDepartment } from '../../../Interfaces/letters-model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
@@ -42,17 +41,14 @@ export class TeamMangerMembersComponent {
   selectedemployeid: any
   constructor(
     private http: HttpService,
-    private router: Router,
     private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
-    console.log(this.empinfo);
     this.initializeForm()
     this.getEmployeeId()
     this.initializeFormforeachemploye()
     this.getAllTeammembersList()
-
     this.getDepartment()
   }
 
@@ -80,11 +76,11 @@ export class TeamMangerMembersComponent {
   openModals(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
+  
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-
         this.joiningDate = this.formatDateToLocal(data.dateOfJoining)
       },
       error: (reason: any) => console.error('Error fetching employee data:', reason),

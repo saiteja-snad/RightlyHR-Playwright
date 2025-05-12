@@ -40,8 +40,10 @@
             </div>
 
             <div *ngIf="selectedFile">
+               @if(rbac.allowedToAccess('My Info Documents(Upload File).create')) {
                <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
                      class="bi bi-upload me-2"></i>Upload File</button>
+               }
             </div>
          </div>
 
@@ -66,7 +68,9 @@
                   <th>File  name</th>
                   <th>Created Date</th>
                   <th>Size</th>
+                   @if(rbac.allowedToAccess('My Info Documents(Upload File).update')) {
                   <th class="text-center">Action</th>
+                   }
                </thead>
                <tbody>
                   <ng-container *ngIf="getVisibleFiles().length > 0; else noDataTemplate">

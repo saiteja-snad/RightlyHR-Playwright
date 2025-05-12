@@ -1741,7 +1741,7 @@
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"
-                        *ngIf="per.fields === 'My Info Documents'" >
+                        *ngIf="per.fields === 'My Info Documents(Upload File)'" >
 
                         <td class="text-align-center">{{ per.fields }}</td>
                         <td scope="row">
@@ -1766,7 +1766,7 @@
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"
-                        *ngIf="per.fields === 'My Info Team Members' || per.fields === 'Change RM Button'" >
+                        *ngIf="per.fields === 'My Info Reporting Managers Tab' || per.fields === 'Change RM Button'||per.fields === 'My Info Team Managers Tab' || per.fields === 'Change TM Button'" >
 
                         <td class="text-align-center">{{ per.fields }}</td>
                         <td scope="row">
@@ -1774,7 +1774,7 @@
                                 (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
                         </td>
                         <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"   (change)="onCheckboxChange(per, 'Update')"  [disabled]="!roleToFilter?.id || per.fields === 'Change RM Button'">
+                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update"   (change)="onCheckboxChange(per, 'Update')"  [disabled]="!roleToFilter?.id">
                         </td>
                         <td scope="row">
                             <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create"    [disabled]="true">
@@ -1794,7 +1794,7 @@
                         *ngIf="per.fields === 'My Info Pre-Onboarding Details' ||  per.fields === 'My Info Onboarding Details' || per.fields === 'My Info Offboarding Details' || per.fields === 'My Info Job Details'
                         ||  per.fields === 'My Info Separation Request Details' || per.fields === 'My Info No Due Clearance Details' || 
                         per.fields === 'My Info Probation Details' ||  per.fields === 'My Info Previous Experience Details' || per.fields === 'My Info Certification Details'
-                        ||  per.fields === 'My Info Compensation Details' || per.fields === 'My Info Desk Details' || per.fields === 'My Info Asset Details' || per.fields === 'My Info Separation Request'" >
+                        ||  per.fields === 'My Info Compensation Details' || per.fields === 'My Info Desk Details' || per.fields === 'My Info Asset Details' || per.fields === 'My Info Separation Request Button'" >
 
                         <td class="text-align-center">{{ per.fields }}</td>
                         <td scope="row">

@@ -106,10 +106,10 @@
             </thead>
             <tbody>
               <tr *ngFor="let item of popupData">
-                <td class="log-time">{{item.startdate | dateformat}}</td>
-                  <td class="log-time">{{item.enddate  | dateformat}}</td>
-                <td class="log-time">{{item.duration}}</td>
-                <td class="log-time">{{item.status}}</td>
+                <td class="log-time">{{item.startdate ? (item.startdate | dateformat) : '-'}}</td>
+                <td class="log-time">{{item.enddate? (item.enddate  | dateformat) : '-'}}</td>
+                <td class="log-time">{{item.duration? item.duration : '-'}}</td>
+                <td class="log-time">{{item.status? item.status : '-'}}</td>
               </tr>
             </tbody>
           </table>

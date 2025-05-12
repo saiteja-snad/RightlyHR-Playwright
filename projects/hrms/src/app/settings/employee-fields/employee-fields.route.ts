@@ -5,10 +5,10 @@ import { PermissionsGuard } from '../../guards/permissions.guard';
 
 
 export default [
-    { path: '', redirectTo: '/settings/employee-fields/personal', pathMatch: 'full' },
+    // { path: '', redirectTo: '/settings/employee-fields/personal', pathMatch: 'full' },
     {
         path: 'personal', children: [
-            { path: '', component : SettingsPersonalTabsComponent },
+            // { path: '', component : SettingsPersonalTabsComponent },
             { path: 'salutation', loadComponent: () => import('./personal/salutation/salutation.component').then(m => m.SalutationComponent), canActivate: [PermissionsGuard],data: { permission: 'Salutation.view' } },
             { path: 'gender', loadComponent: () => import('./personal/gender/gender.component').then(m => m.GenderComponent) },
             { path: 'maritalstatus', loadComponent: () => import('./personal/maritalstatus/maritalstatus.component').then(m => m.MaritalstatusComponent) },
@@ -22,7 +22,7 @@ export default [
     },
     {
         path: 'job', children: [
-            { path: '', component : SettingsJobTabsComponent },
+            // { path: '', component : SettingsJobTabsComponent },
             { path: 'location', loadComponent: () => import('./job/location/location.component').then((m) => m.LocationComponent) },
             { path: 'sub-location', loadComponent: () => import('./job/sub-location/sub-location.component').then((m) => m.SubLocationComponent) },
             { path: 'termination', loadComponent: () => import('./job/termination/termination.component').then((m) => m.TerminationComponent) },
@@ -50,7 +50,7 @@ export default [
     {
         path: 'expenes',
         children: [
-            { path: '', redirectTo: 'configuartion', pathMatch: 'full' },
+            // { path: '', redirectTo: 'configuartion', pathMatch: 'full' },
             { path: 'configuartion', loadComponent: () => import('./expenses-configuration/expenses-configuration.component').then((m) => m.ExpensesConfigurationComponent) },
             { path: 'allowed-days', loadComponent: () => import('./expenses-configuration/expenses-allowed-days/expenses-allowed-days.component').then((m) => m.ExpensesAllowedDaysComponent) }
         ]
@@ -58,7 +58,7 @@ export default [
     {
         path: 'manage-shifts',
         children: [
-            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
+            // { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
             { path: 'pending-for-submit', loadComponent: () => import('./manage-shifts/pending-shifts/pending-shifts.component').then((m) => m.PendingShiftsComponent) },
             { path: 'published-shifts', loadComponent: () => import('./manage-shifts/published-shifts/published-shifts.component').then((m) => m.PublishedShiftsComponent) },
         ]
@@ -74,7 +74,7 @@ export default [
     {
         path: 'manage-policies',
         children: [
-            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
+            // { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
             { path: 'pending-for-submit', loadComponent: () => import('./manage-policies/pending-policies/pending-policies.component').then((m) => m.PendingPoliciesComponent) },
             { path: 'published-policies', loadComponent: () => import('./manage-policies/published-policies/published-policies.component').then((m) => m.PublishedPoliciesComponent) }
         ]
@@ -86,7 +86,7 @@ export default [
     {
         path: 'manage-holidays',
         children: [
-            { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
+            // { path: '', redirectTo: 'pending-for-submit', pathMatch: 'full' },
             { path: 'pending-for-submit', loadComponent: () => import('./manage-holidays/pending-holidays/pending-holidays.component').then((m) => m.PendingHolidaysComponent) },
             { path: 'published-holidays', loadComponent: () => import('./manage-holidays/published-holidays/published-holidays.component').then((m) => m.PublishedHolidaysComponent) },
         ]
@@ -95,7 +95,7 @@ export default [
     {
         path: 'manage-weekends',
         children: [
-            { path: '', redirectTo: 'pending-for-submission', pathMatch: 'full' },
+            // { path: '', redirectTo: 'pending-for-submission', pathMatch: 'full' },
             { path: 'pending-for-submission', loadComponent: () => import('./manage-weekends/pending-weekends/pending-weekends.component').then((m) => m.PendingWeekendsComponent) },
             { path: 'published-weekends', loadComponent: () => import('./manage-weekends/published-weekends/published-weekends.component').then((m) => m.PublishedWeekendsComponent) },
         ]
@@ -107,7 +107,7 @@ export default [
     {
         path: 'manage-dsts',
         children: [
-            { path: '', redirectTo: 'pending-for-submission', pathMatch: 'full' },
+            // { path: '', redirectTo: 'pending-for-submission', pathMatch: 'full' },
             { path: 'pending-for-submission', loadComponent: () => import('./manage-dsts/pending-dsts/pending-dsts.component').then((m) => m.PendingDstsComponent) },
             { path: 'published-dsts', loadComponent: () => import('./manage-dsts/published-dsts/published-dsts.component').then((m) => m.PublishedDstsComponent) },
         ]

@@ -839,7 +839,7 @@ allZeroesIfMaxLength(): ValidatorFn {
           },
           error: (error) => {
             console.error("Error assigning asset:", error);
-            this.conformationPopup.openErrorModal(error.error)
+            this.conformationPopup.openErrorModal(error.error.message)
           },
 
         });

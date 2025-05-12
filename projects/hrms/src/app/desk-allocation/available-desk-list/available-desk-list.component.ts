@@ -332,7 +332,7 @@ onRowsChange() {
         },
         error: (reason: any) => {
 
-          console.log(reason);
+          console.log(reason.message);
         },
       });
   }
@@ -374,7 +374,7 @@ onRowsChange() {
          
         },
         error: (error) => {
-          console.log('Error:', error);
+          console.log('Error:', error.message);
           this.conformationPopup.openErrorModal(error.error || 'Error occurred during assignment.')
         }
       });

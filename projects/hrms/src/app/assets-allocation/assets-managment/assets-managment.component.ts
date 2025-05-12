@@ -48,7 +48,7 @@ export class AssetsManagmentComponent {
   purchesdate:any;
   constructor(
     private readonly fb: FormBuilder,
-    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,public formValidation: FormValidationService,public rbac : RbacService) { }
+    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,public formValidation: FormValidationService, public rbac : RbacService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initialform()
@@ -59,7 +59,7 @@ export class AssetsManagmentComponent {
     this.getcount(null, null)
     this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
     const currentYear = new Date().getFullYear();
-  this.purchesdate = `${currentYear}-12-31`;
+    this.purchesdate = `${currentYear}-12-31`; 
     this.initializeNavTabs();
   }
 

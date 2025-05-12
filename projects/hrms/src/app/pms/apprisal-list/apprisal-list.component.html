@@ -6,24 +6,38 @@
 
         <!--Buttons Content-->
         <div class="d-flex gap-3 flex-wrap">
+            @if(rbac.allowedToAccess('Assign Review Template.view')){
             <button class="custom-btn btn-primary" *ngIf="filteredEmployees.length > 0"
                 (click)="openModal(reviewtemplate)">{{'Assign Review Template' | translate}}</button>
+            }
+            @if(rbac.allowedToAccess('Employee List Add Employee.view')){
             <button class="custom-btn btn-primary" (click)="openCreate()"
                 *ngIf="createdStatuses.length > 0 && filteredEmployees.length>0">{{'Add Employee' | translate}}</button>
+            }
+            @if(rbac.allowedToAccess('Download Appraisal Report.view')){
             <button class="custom-btn btn-primary" *ngIf="filteredEmployees.length > 0 "
                 (click)="openModal(downloadConfirmation)">{{'Download Appraisal Report' | translate}}</button>
+            }
+            @if(rbac.allowedToAccess('Generate Appraisal Letters.view')){
             <button class="custom-btn btn-primary" *ngIf="showGenerateAppirtialButton()"
                 (click)="openModal(appraisaletters);onclickStatusupdate('Completed')">{{'Generate Appraisal Letters' |
                 translate}}</button>
+            }
+            @if(rbac.allowedToAccess('Send Appraisal Letters.view')){
             <button class="custom-btn btn-primary" *ngIf="showsentAppirtialButton()"
                 (click)="onclickstatusforappraisal('Appraisal Letter Sent')">{{'Send Appraisal Letters' |
                 translate}}</button>
+            }
+            @if(rbac.allowedToAccess('Generate Promotion Letters.view')){
             <button *ngIf="showGeneratePromotionButton()" class="custom-btn btn-primary"
                 (click)="openModal(promationletter);onclickStatusupdate('Completed')">{{'Generate Promotion Letters' |
                 translate}}</button>
+            }
+            @if(rbac.allowedToAccess('Send Promotion Letters.view')){
             <button class="custom-btn btn-primary" *ngIf="showsentpromotionButton()"
                 (click)="onclickstatusforPromotion('Promotion Letter Sent')">
                 {{'Send Promotion Letters' | translate}}</button>
+            }
         </div>
         <!--Buttons Content ends-->
     </div>
@@ -144,7 +158,14 @@
                         <th>{{'Review Template Name' | translate}}</th>
                         <th>{{'Status' | translate}}</th>
                         <th>{{'Final Rating' | translate}}</th>
+                        @if(rbac.allowedToAccess('Employee List Hold.view') || rbac.allowedToAccess('Assign Review Template(Review on Hold).view') || rbac.allowedToAccess('Update Review Template.view') ||
+                        rbac.allowedToAccess('Employee List Resume.view') || rbac.allowedToAccess('Promotion Letter Download.view') || rbac.allowedToAccess('Appraisal Letter Download.view') || 
+                        rbac.allowedToAccess('Generate Appraisal Letter(Status - Completed).view') || rbac.allowedToAccess('Send Appraisal Letter(Appraisal Letter Generated).view') || rbac.allowedToAccess('Re-Generate Appraisal Letter.view') || 
+                        rbac.allowedToAccess('Re-Send Appraisal Letter.view') || rbac.allowedToAccess('Re-Generate Appraisal Letter(Promotion Letter Generated).view') || rbac.allowedToAccess('Re-Send Appraisal Letter(Promotion Letter Sent).view') || 
+                        rbac.allowedToAccess('Generate Promotion Letter(Status - Completed).view') || rbac.allowedToAccess('Re-Generate Promotion Letter.view') || rbac.allowedToAccess('Send Promotion Letter.view') || 
+                        rbac.allowedToAccess('Re-Send Promotion Letter.view') || rbac.allowedToAccess('Re-Generate Promotion Letter(Appraisal Letter Generated).view') || rbac.allowedToAccess('Re-Send Promotion Letter(Appraisal Letter Sent).view')){
                         <th class="text-center">{{'Action(S)' | translate}}</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -170,6 +191,12 @@
                                 <span *ngIf="employee.overallRating;else rating">{{employee.overallRating}}</span>
                                 <ng-template #rating>--</ng-template>
                             </td>
+                            @if(rbac.allowedToAccess('Employee List Hold.view') || rbac.allowedToAccess('Assign Review Template(Review on Hold).view') || rbac.allowedToAccess('Update Review Template.view') ||
+                            rbac.allowedToAccess('Employee List Resume.view') || rbac.allowedToAccess('Promotion Letter Download.view') || rbac.allowedToAccess('Appraisal Letter Download.view') || 
+                            rbac.allowedToAccess('Generate Appraisal Letter(Status - Completed).view') || rbac.allowedToAccess('Send Appraisal Letter(Appraisal Letter Generated).view') || rbac.allowedToAccess('Re-Generate Appraisal Letter.view') || 
+                            rbac.allowedToAccess('Re-Send Appraisal Letter.view') || rbac.allowedToAccess('Re-Generate Appraisal Letter(Promotion Letter Generated).view') || rbac.allowedToAccess('Re-Send Appraisal Letter(Promotion Letter Sent).view') || 
+                            rbac.allowedToAccess('Generate Promotion Letter(Status - Completed).view') || rbac.allowedToAccess('Re-Generate Promotion Letter.view') || rbac.allowedToAccess('Send Promotion Letter.view') || 
+                            rbac.allowedToAccess('Re-Send Promotion Letter.view') || rbac.allowedToAccess('Re-Generate Promotion Letter(Appraisal Letter Generated).view') || rbac.allowedToAccess('Re-Send Promotion Letter(Appraisal Letter Sent).view')){
                             <td class="text-center">
                                 <div class="dropdown" *ngIf="employee.status === 'Created'|| employee.status === 'Review Template Assigned'|| employee.status ==='Completed' 
                                 || employee.status === 'Review on Hold'||employee.status === 'Promotion Letter Sent' || employee.status === 'Promotion Letter Generated' 
@@ -178,106 +205,128 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
                                     <ul class="dropdown-menu">
+                                        @if(rbac.allowedToAccess('Employee List Hold.view')){
                                         <li *ngIf="employee.status !== 'Review on Hold'"
                                                 class="dropdown-item border-bottom" (click)="openModal(holdconformation);seletedid=employee.id">
                                                 <a class="dropdown-custom-btn">Hold</a>
                                         </li>
+                                        }
                                         <ng-container *ngIf="employee.status !== 'Review on Hold'">
+                                            @if(rbac.allowedToAccess('Assign Review Template(Review on Hold).view')){
                                             <li class="dropdown-item" *ngIf="(employee.rchstatus === 'Created' && employee.status === 'Created') || (employee.rchstatus === 'Initiated' && employee.status === 'Created')">
                                                 <a class="dropdown-custom-btn"
                                                     (click)="OnClickToassesinreviewTemplate(employee.id);openModal(reviewtemplate)">Assign
                                                     Review Template
                                                 </a>
                                             </li>
+                                            }
+                                            @if(rbac.allowedToAccess('Update Review Template.view')){
                                             <li class="dropdown-item" *ngIf="employee.status === 'Review Template Assigned'">
                                                 <a class="dropdown-custom-btn"
                                                     (click)="OnClickToassesinreviewTemplate(employee.id);openModal(reviewtemplate)">
                                                     Update Review Template
                                                 </a>
                                             </li>
+                                            }
                                         </ng-container>
 
+                                        @if(rbac.allowedToAccess('Employee List Resume.view')){
                                         <li class="dropdown-item" *ngIf="employee.status === 'Review on Hold'" (click)="openModal(Resumeconformation);seletedid=employee.id">
                                             <a class="dropdown-custom-btn">{{'Resume' | translate}}</a></li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Promotion Letter Download.view')){
                                         <li class="dropdown-item" *ngIf="employee.status === 'Promotion Letter Sent' || employee.status === 'Promotion Letter Generated'"
                                             (click)="downloadPromotionletter(employee)">
                                             <a class="dropdown-custom-btn">{{'Promotion Letter Download' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Appraisal Letter Download.view')){
                                         <li class="dropdown-item" *ngIf="employee.status === 'Appraisal Letter Sent' || employee.status === 'Appraisal Letter Generated'"
                                             (click)="downloadletter(employee)">
                                             <a class="dropdown-custom-btn">{{'Appraisal Letter Download' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Generate Appraisal Letter(Status - Completed).view')){
                                         <li class="dropdown-item" *ngIf="employee.applicableForPromotion===false && employee.status ==='Completed'"
                                             (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Completed')">
                                             <a class="dropdown-custom-btn">{{'Generate Appraisal Letter' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Send Appraisal Letter(Appraisal Letter Generated).view')){
                                         <li class="dropdown-item" *ngIf="employee.applicableForPromotion===false && employee.status ==='Appraisal Letter Generated'"
                                         (click)="seletedid=employee.id;onclickstatusforappraisalById('Appraisal Letter Sent',employee.id)"><a
                                             class="dropdown-custom-btn">Send Appraisal Letter</a></li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Re-Generate Appraisal Letter.view')){
                                         <li class="dropdown-item" *ngIf="employee.applicableForPromotion===false && (employee.status ==='Appraisal Letter Generated' 
                                         || employee.status ==='Appraisal Letter Sent')" (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Re-Send Appraisal Letter.view')){
                                         <li class="dropdown-item"
                                             *ngIf="employee.applicableForPromotion===false && (employee.status ==='Appraisal Letter Sent')"
                                             (click)="openModal(resend);Click(employee.id,'Re-Send Appraisal Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Send Appraisal Letter' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Re-Generate Appraisal Letter(Promotion Letter Generated).view')){
                                         <li class="dropdown-item"
                                             *ngIf="employee.applicableForPromotion===false && (employee.status ==='Promotion Letter Generated'|| employee.status ==='Promotion Letter Sent')"
                                             (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Re-Send Appraisal Letter(Promotion Letter Sent).view')){
                                         <li class="dropdown-item"
                                             *ngIf="employee.applicableForPromotion===false && (employee.status ==='Promotion Letter Sent')"
                                             (click)="openModal(resend);Click(employee.id,'Re-Send Appraisal Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Send Appraisal Letter' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Generate Promotion Letter(Status - Completed).view')){
                                         <li class="dropdown-item "
                                             *ngIf="employee.applicableForPromotion===true && employee.status ==='Completed'" (change)="onCheckboxChange($event, employee.id)"
                                             (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Completed')">
                                             <a class="dropdown-custom-btn">{{'Generate Promotion Letter' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Re-Generate Promotion Letter.view')){
                                         <li class="dropdown-item "
                                             *ngIf="employee.applicableForPromotion===true && (employee.status ==='Promotion Letter Generated'||employee.status ==='Promotion Letter Sent')"
                                             (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
                                             <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Send Promotion Letter.view')){
                                         <li class="dropdown-item " *ngIf="employee.applicableForPromotion===true && employee.status ==='Promotion Letter Generated'"
                                         (click)="seletedid=employee.id;onclickstatusforPromotionById('Promotion Letter Sent',employee.id)"><a
                                             class="dropdown-custom-btn">Send Promotion Letter</a></li>
-
+                                        }
+                                        @if (rbac.allowedToAccess('Re-Send Promotion Letter.view')) {
                                         <li class="dropdown-item"
                                             *ngIf="employee.applicableForPromotion===true && (employee.status ==='Promotion Letter Sent')"
                                             (click)="openModal(resendpromotion);Click(employee.id,'Re-Send Promotion Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Send Promotion Letter' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Re-Generate Promotion Letter(Appraisal Letter Generated).view')){
                                         <li class="dropdown-item "
                                             *ngIf="employee.applicableForPromotion===true && (employee.status ==='Appraisal Letter Generated'||employee.status ==='Appraisal Letter Sent')"
                                             (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
                                             <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' | translate}}</a>
                                         </li>
-
+                                        }
+                                        @if(rbac.allowedToAccess('Re-Send Promotion Letter(Appraisal Letter Sent).view')){
                                         <li class="dropdown-item" *ngIf="employee.applicableForPromotion===true && (employee.status ==='Appraisal Letter Sent')"
                                             (click)="openModal(resendpromotion);Click(employee.id,'Re-Send Promotion Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Send Promotion Letter' | translate}}</a>
                                         </li>
-                                        
+                                        }
                                     </ul>
                                 </div>
                             </td>
+                            }
                         </tr>
                     </ng-container>
 

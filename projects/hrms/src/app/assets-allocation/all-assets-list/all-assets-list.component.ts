@@ -82,8 +82,7 @@ export class AllAssetsListComponent {
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private readonly router: Router,
-    public conformationPopup: OpenModalService, public formValidation: FormValidationService,
-    public rbac: RbacService,
+    public conformationPopup: OpenModalService, public formValidation: FormValidationService,public rbac: RbacService,
     private readonly datepipe: DatePipe,
    
     config: NgbModalConfig) {

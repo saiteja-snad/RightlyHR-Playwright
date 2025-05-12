@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -6,6 +6,7 @@ import { TabsModule } from 'primeng/tabs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
+import { SignalsService } from '../../../services/signals.service';
 
 @Component({
   selector: 'app-leaves-approvaltabs',
@@ -26,7 +27,7 @@ export class LeavesApprovaltabsComponent {
   cancelCount:number=0;
   teamLeaveBalanceCount: number = 0;
   teamLeaveSummaryCount: number = 0;
-
+  statusTabs: any[]=[];
   // statusTabs: any[] = [
   //   { label: 'Waiting For Approval', link: 'waiting-for-approval', },
   //   { label: 'Approved', link: 'approved', },
@@ -37,7 +38,21 @@ export class LeavesApprovaltabsComponent {
   //   { label: 'Team Leave Summary', link: 'team-leave-summary', }
   // ];
 
-  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService) { }
+  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService,private signalService:SignalsService) { 
+     effect(() => {
+      if (this.signalService.timecountTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
+         this.getDataByLPID();
+         this.getAllTeamLeaveBalance();
+         this.getAllTeamLeaveSummary();
+
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.timecountTriggerSignal()) {
+          this.signalService.timecountTriggerSignal.set(false);
+        }
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();

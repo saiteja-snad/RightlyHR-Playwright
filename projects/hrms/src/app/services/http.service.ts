@@ -33,7 +33,7 @@ export class HttpService {
     recall: boolean;
     expenses:boolean;
     nodue:boolean,
-    
+    timeoff:boolean,
   }>({
     compOff: false,
     wfh: false,
@@ -42,6 +42,7 @@ export class HttpService {
     recall: false,
     expenses: false,
     nodue:false,
+    timeoff:false
    
   });
   desklocationIdSubject = new BehaviorSubject<string | null>(null);

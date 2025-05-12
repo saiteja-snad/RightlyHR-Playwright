@@ -15,6 +15,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { OpenModalService } from '../../../services/open-modal.service';
 import moment from 'moment';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-leaves-waiting-for-approval',
   imports: [CommonModule,TranslateModule,ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
@@ -46,7 +47,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit,OnDestroy{
     this.rows = event.rows;
   }
 isLoading=false;
-  constructor(private http: HttpService, private modalService: NgbModal,private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService,private fb:FormBuilder) { }
+  constructor(private http: HttpService, private signalService:SignalsService, private modalService: NgbModal,private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService,private fb:FormBuilder) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -84,6 +85,7 @@ isLoading=false;
             this.getDataByLPID();
           
         }
+       this.signalService.timecountTriggerSignal.set(true);
       
       },
       error:(err:any)=>{

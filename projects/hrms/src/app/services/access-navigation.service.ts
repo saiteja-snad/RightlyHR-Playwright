@@ -826,6 +826,108 @@ navigateToAccessedRoute(actualRoute: string): string {
               }
             }
           }
+          break;
+          
+        case '/settings/employee-fields/documents':
+          if(this.rbac.allowedToAccess('Document Tab.view')){
+            return (route = '/settings/employee-fields/documents');
+          }
+          break;
+
+        case '/settings/employee-fields/manage-shifts':
+          if(this.rbac.allowedToAccess('Manage Shifts Tab.view')){
+            for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_SHIFTS_TABS){
+              if(this.rbac.allowedToAccess(item.permission)){
+                return item.route;
+              }
+            }
+          }
+          break;
+        case '/settings/employee-fields/manage-policies':
+          if(this.rbac.allowedToAccess('Manage Policies Tab.view')){
+            for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_POLICIES_TABS){
+              if(this.rbac.allowedToAccess(item.permission)){
+                return item.route;
+              }
+            }
+          }
+          break;
+
+        case '/settings/employee-fields/manage-holidays':
+          if(this.rbac.allowedToAccess('Manage Holidays Tab.view')){
+            for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_HOLIDAYS_TABS){
+              if(this.rbac.allowedToAccess(item.permission)){
+                return item.route;
+              }
+            }
+          }
+          break;
+        case '/settings/employee-fields/manage-weekends':
+          if(this.rbac.allowedToAccess('Manage Weekends Tab.view')){
+            for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_WEEKENDS_TABS){
+              if(this.rbac.allowedToAccess(item.permission)){
+                return item.route;
+              }
+            }
+          }
+          break;
+        case '/settings/employee-fields/expenes':
+          if(this.rbac.allowedToAccess('Expense Tab.view')){
+            for(const item of SETTINGS_EMPLOYEE_FIELDS_EXPENSES_TABS){
+              if(this.rbac.allowedToAccess(item.permission)){
+                return item.route;
+              }
+            }
+          }
+          break;
+
+        case '/settings/employee-fields/manage-dsts':
+          if(this.rbac.allowedToAccess('Manage DST Tab.view')){
+            for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS){
+              if(this.rbac.allowedToAccess(item.permission)){
+                return item.route;
+              }
+            }
+          }
+          break;
+        case '/settings/employee-fields/no-due-clearnce':
+          if(this.rbac.allowedToAccess('NoDue Clearance Tab.view')){
+            return (route = '/settings/employee-fields/no-due-clearnce');
+          }
+          break;
+
+          case '/settings/timeoff-configurations':
+            if(this.rbac.allowedToAccess('Settings Timeoff Module.view')){
+              for(const item of SETTINGS_TIMEOFF_TABS){
+                if(this.rbac.allowedToAccess('Leave Category Tab.view')){
+                  for(const item of SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS){
+                    if(this.rbac.allowedToAccess(item.permission)){
+                      return item.route;
+                    }
+                  }
+
+                  if(this.rbac.allowedToAccess('Leave Allocation Tab.view')){
+                    return (route = '/settings/timeoff-configurations/leave-allocation');
+                  }
+
+                  if(this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')){
+                    return (route = '/settings/timeoff-configurations/flexible-leave-allocation');
+                  }
+
+                  if(this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')){
+                    for(const item of ATTENDANCE_ELIGIBILITY_CRITERIA_TABS){
+                      if(this.rbac.allowedToAccess(item.permission)){
+                        return item.route;
+                      }
+                    }
+                  }
+                  if(this.rbac.allowedToAccess('Load Entitlements Tab.view')){
+                    return (route = '/settings/timeoff-configurations/load-entitlements');
+                  }
+                }
+              }
+            }
+            break;
   }
   return route;
 }

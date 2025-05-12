@@ -393,8 +393,10 @@ export class DeskManagementComponent {
             this.conformationPopup.openSuccessModal('Desk Registered Successfully ');
              this.getAllDesks(this.page, this.pageSize, null, null,'All');            
             this.getcount(null,null);          
-            this.deskForm.reset();
            this.navigateToAsset();
+            this.deskForm.reset()
+            this.http.setnewdeskDetails()
+
           },
           error: (error: any) => {
             console.error('Error fetching locations', error);

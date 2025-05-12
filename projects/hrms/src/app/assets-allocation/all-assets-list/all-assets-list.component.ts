@@ -112,6 +112,9 @@ export class AllAssetsListComponent {
   // Set min to Jan 1st of the current year
   const startOfYear = new Date(today.getFullYear(), 0, 1); 
   this.minpurchesDate = startOfYear.toISOString().split('T')[0];
+    this.http.assetDetailesadded$.subscribe(() => {
+      this.getFilteredData(); 
+    });
   }
 
   initialform() {

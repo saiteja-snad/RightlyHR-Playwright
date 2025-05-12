@@ -28,6 +28,8 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
   dataload = false;
   popupData: any[] = [];
   popupType: string = '';
+  searchText: string = '';
+  filteredTeamLeaveBalance: any[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('leavesModal') leavesModal!: TemplateRef<any>;
 
@@ -58,15 +60,14 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
     this.dataload = true;
     const employeeId = this.loggedInUser.employeeId;
     let url = `LeaveEntitlements/team-leave-entitlements/${employeeId}`;
-
     if (this.selectedYear) {
       url += `?year=${this.selectedYear}`;
     }
-
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         if (res.success && res.data) {
           this.teamLeaveBalance = res.data;
+          this.filteredTeamLeaveBalance = res.data;
           this.activeIndex = 0;
         } else {
           this.dataload = false
@@ -92,7 +93,6 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
   onClickCategory(employee: any, category: any) {
     const employeeId = employee.employeeBasicDetails.employeeId;
     const categoryId = category.category?.id;
-
     const yearToFilter = this.selectedYear || new Date().getFullYear();
     const url = `Timeoff?EmployeeId=${employeeId}`;
 
@@ -102,12 +102,9 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
           const leaveYear = new Date(item.startdate).getFullYear();
           return item.categoryId === categoryId && leaveYear === yearToFilter;
         });
-
-        console.log('Filtered Leaves for Category and Year:', filteredData);
-
         this.popupData = filteredData;
         this.popupType = category.category?.name;
-        this.modal.open(this.leavesModal, { centered: true, backdrop: 'static' });
+        this.modal.open(this.leavesModal, { centered: true, backdrop: 'static', size: 'lg' });
       },
       error: (err) => {
         console.error('Error fetching leave data:', err);
@@ -115,10 +112,21 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
     });
   }
 
+  filterTeamLeaveSummary() {
+    const term = this.searchText.trim().toLowerCase();
+    if (!term) {
+      this.filteredTeamLeaveBalance = this.teamLeaveBalance;
+      return;
+    }
+    this.filteredTeamLeaveBalance = this.teamLeaveBalance.filter(item => {
+      const name = item.employeeBasicDetails.employeeName?.toLowerCase() || '';
+      const fusionId = item.employeeBasicDetails.snadEmployeeId?.toLowerCase() || '';
+      return name.includes(term) || fusionId.includes(term);
+    });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
   }
-
 }

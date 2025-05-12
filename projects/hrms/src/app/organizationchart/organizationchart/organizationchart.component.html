@@ -8,9 +8,9 @@
       @if(this.rbac.allowedToAccess('HR Hierarchy select Tab.view')){
       <div class="d-flex align-items-center gap-2">
         <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Employee</b><span class="text-danger"></span></label>
-        <div class="custom-p-select-content">
+        <div class="custom-p-select-content ">
           <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-            optionLabel="label" optionValue="value" [(ngModel)]="selectedEmployeeId"
+            optionLabel="label" optionValue="value" showClear="true"   [(ngModel)]="selectedEmployeeId"
             placeholder="Please select employee" (onChange)="getOrghierarchy($event.value)"
             class="form-select custom-select"></p-select>
         </div>
@@ -21,7 +21,7 @@
       <div class="d-flex align-items-center gap-2">
         <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Employee</b><span class="text-danger"></span></label>
         <div class="custom-p-select-content">
-          <p-select [options]="mangeractiveEmplist" [filter]="true" filterBy="fullName" resetFilterOnHide="true"
+          <p-select [options]="mangeractiveEmplist" showClear="true" [filter]="true" filterBy="fullName" resetFilterOnHide="true"
             optionLabel="fullName" optionValue="employeeid" [(ngModel)]="selectedEmployeeId"
             placeholder="Please select employee" (onChange)="getOrghierarchy($event.value)"
             class="form-select custom-select"></p-select>

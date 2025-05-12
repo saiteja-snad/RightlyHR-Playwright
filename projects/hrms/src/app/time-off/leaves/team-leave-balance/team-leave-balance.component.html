@@ -30,14 +30,51 @@
 
   <ng-template #maincontent>
     <div class="team-data-content">
-      <p-accordion class="mb-3" [(activeIndex)]="activeIndex">
+       <p-accordion>
+          @if(teamLeaveBalance.length > 0) {
+          @for (employee of teamLeaveBalance; track employee.employeeBasicDetails.employeeId; let i = $index) {
+            <p-accordion-panel [value]="employee.employeeBasicDetails.employeeId">
+                <p-accordion-header>{{ employee.employeeBasicDetails.employeeName }} ({{ employee.employeeBasicDetails.snadEmployeeId }})</p-accordion-header>
+                <p-accordion-content>
+                    <div class="employee-data-table">
+                <table class="w-100">
+                  <thead>
+                    <tr>
+                      <th class="text-start">Category</th>
+                      <th>Allowed Days</th>
+                      <th>Utilized Days</th>
+                      <th>Booked Days</th>
+                      <th>Available Days</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (category of employee.categories; track $index) {
+                      <tr>
+                        <td class="text-start" (click)="onClickCategory(employee, category)">{{ category.category?.name || '-' }}</td>
+                        <td>{{ category.allowedDays }}</td>
+                        <td>{{ category.utilizedDays }}</td>
+                        <td>{{ category.booked }}</td>
+                        <td class="available-number">
+                          {{ category.allowedDays - category.utilizedDays - category.booked }}
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+                </p-accordion-content>
+            </p-accordion-panel>
+        }
+      }
+    </p-accordion>
+      <!-- <p-accordion class="mb-3" [(activeIndex)]="activeIndex">
         @if(teamLeaveBalance.length > 0) {
           @for (employee of teamLeaveBalance; track employee.employeeBasicDetails.employeeId; let i = $index) {
             <p-accordion-tab>
               <ng-template pTemplate="header">
                 <div class="accordion-header">
-                  <span class="employee-name">{{ employee.employeeBasicDetails.employeeName }}</span>
-                  <span class="employee-id">({{ employee.employeeBasicDetails.snadEmployeeId }})</span>
+                  <span class="employee-name"></span>
+                  <span class="employee-id"></span>
                 </div>
               </ng-template>
               <div class="employee-data-table">
@@ -71,10 +108,9 @@
         }@else {
         <app-no-data-found></app-no-data-found>
         }
-      </p-accordion>
+      </p-accordion> -->
     </div>
   </ng-template>
-
 </div>
 
 <!--Attendance Logs popup-->

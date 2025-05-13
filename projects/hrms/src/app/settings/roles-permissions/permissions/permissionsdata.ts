@@ -295,7 +295,7 @@ export const permissionsData = [
     { fields: 'Comp Off Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Permissions Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Regularization Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Seperation Request Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Separation Request Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Recall Request Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Trainee Details Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'No Due Clearence Requests Tab', View: false, Update: false, Create: false, Delete: false },
@@ -328,8 +328,8 @@ export const permissionsData = [
 
 
     //Pending Approval Seperation Request Tabs Section
-    { fields: 'For You (Seperation Request)', View: false, Update: false, Create: false, Delete: false },   
-    { fields: 'For Role (Seperation Request)', View: false, Update: false, Create: false, Delete: false }, 
+    { fields: 'For You (Separation Request)', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role (Separation Request)', View: false, Update: false, Create: false, Delete: false }, 
  
 
     //Pending Approval Recall Requests Tabs Section

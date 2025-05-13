@@ -218,7 +218,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
     { route: '/time-off/pending-approvals/comp-off', permission: 'Comp Off Tab.view' },
     { route: '/time-off/pending-approvals/permissions', permission: 'Permissions Tab.view' },
     { route: '/time-off/pending-approvals/regularization-request', permission: 'Regularization Tab.view' },
-    { route: '/time-off/pending-approvals/separation-request', permission: 'Seperation Request Tab.view' },
+    { route: '/time-off/pending-approvals/separation-request', permission: 'Separation Request Tab.view' },
     { route: '/time-off/pending-approvals/recall-request', permission: 'Recall Request Tab.view' },
     { route: '/time-off/pending-approvals/trainee-approvals', permission: 'Trainee Details Tab.view' },
     { route: '/time-off/pending-approvals/nodue-request', permission: 'No Due Clearence Requests Tab.view' },
@@ -253,8 +253,8 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const SEPARATION_REQUEST_SUB_TABS =[
-    {route: '/time-off/pending-approvals/separation-request/separation-for-you', permission: 'For You (Seperation Request).view'},
-    {route: '/time-off/pending-approvals/separation-request/separation-for-role', permission: 'For Role (Seperation Request).view'},
+    {route: '/time-off/pending-approvals/separation-request/separation-for-you', permission: 'For You (Separation Request).view'},
+    {route: '/time-off/pending-approvals/separation-request/separation-for-role', permission: 'For Role (Separation Request).view'},
   ]
   
   export const RECALL_REQUEST_SUB_TABS =[

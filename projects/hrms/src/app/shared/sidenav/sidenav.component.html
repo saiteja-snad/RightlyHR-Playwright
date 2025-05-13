@@ -59,9 +59,9 @@
                 <i class="bi bi-pc-display custom-icon"></i>Desk<br>Allocation
             </li>
             }
-            @if(this.rbac.allowedToAccess('Asset Allocation.view')){
+            @if(this.rbac.allowedToAccess('Asset Management.view')){
             <li class="nav-item" (click)="goToAccessibleRoute('/assets-management')" [class.active-nav-link]="isActiveRoute('/assets-management')">
-                <i class="bi bi-display custom-icon"></i>Asset<br>Allocation
+                <i class="bi bi-display custom-icon"></i>Asset<br>Management
             </li>
             }
             @if(this.rbac.allowedToAccess('IT Support.view')){

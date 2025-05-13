@@ -115,7 +115,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const REMOTE_LOGIN_SUB_TABS =[
-    {route: '/time-off/remote/waiting-for-approval',permission:'Remote Login.view'},
+    {route: '/time-off/remote/waiting-for-approval',permission:'Remote Login Module.view'},
     {route: '/time-off/remote/approved',permission: 'Remote Login.view'},
     {route: '/time-off/remote/processed',permission: 'Remote Login.view'},
     {route: '/time-off/remote/rejected',permission: 'Remote Login.view',},
@@ -178,11 +178,11 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ];
   
   export const ASSEST_ALLOCATION_TABS = [
-      { route: '/assets-management/all-assets', permission:  'Asset Allocation - All.view'} ,
-      { route: '/assets-management/available-assets',permission:  'Asset Allocation - Available.view'} ,
-      { route: '/assets-management/allocated-assets', permission:  'Asset Allocation - Allocated.view'} ,
-      { route: '/assets-management/under-maintenance-assets',permission:  'Asset Allocation - Under Maintenance.view'} ,
-      { route: '/assets-management/inactive-assets',permission:  'Asset Allocation - Inactive.view'} ,
+      { route: '/assets-management/all-assets', permission:  'Asset Management - All.view'} ,
+      { route: '/assets-management/available-assets',permission:  'Asset Management - Available.view'} ,
+      { route: '/assets-management/allocated-assets', permission:  'Asset Management - Allocated.view'} ,
+      { route: '/assets-management/under-maintenance-assets',permission:  'Asset Management - Under Maintenance.view'} ,
+      { route: '/assets-management/inactive-assets',permission:  'Asset Management - Inactive.view'} ,
   ];
   
   
@@ -243,8 +243,8 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const PENDING_APPROVALS_PERMISSIONS_SUB_TABS = [
-    {route: '/time-off/pending-approvals/permissions/for-you', permission: 'For You (Permissions).view'},
-    {route: '/time-off/pending-approvals/permissions/for-your-role', permission: 'For Role (Permissions).view'},  
+    {route: '/time-off/pending-approvals/permissions/for-you', permission: 'For You (Permission).view'},
+    {route: '/time-off/pending-approvals/permissions/for-your-role', permission: 'For Role (Permission).view'},  
   ]
   
   export const PENDING_APPROVALS_REGULARIZATION_SUB_TABS =[
@@ -258,8 +258,8 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const RECALL_REQUEST_SUB_TABS =[
-    {route: '/time-off/pending-approvals/recall-request/recall-for-you', permission: 'For You (Recall Request).view'},
-    {route: '/time-off/pending-approvals/recall-request/recall-for-role', permission: 'For Role (Recall Request).view'},
+    {route: '/time-off/pending-approvals/recall-request/recall-for-you', permission: 'For You (Recall Requests).view'},
+    {route: '/time-off/pending-approvals/recall-request/recall-for-role', permission: 'For Role (Recall Requests).view'},
   ]
   
   export const EXPENSES_REQUEST_SUB_TABS =[

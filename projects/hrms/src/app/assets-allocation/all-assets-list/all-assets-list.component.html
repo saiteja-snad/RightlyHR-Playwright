@@ -30,7 +30,10 @@
             <th>Asset ID</th>
             <th>Location </th>
             <th>Sub Location </th>
-            @if(rbac.allowedToAccess('Asset Allocation - All.update') || rbac.allowedToAccess('Asset Allocation - All.delete')) {
+             @if(rbac.allowedToAccess('All Allocate Asset.view') || rbac.allowedToAccess('All Inactive Asset.view') || rbac.allowedToAccess('All Mark as Maintenance.view') || 
+            rbac.allowedToAccess('All Transfer Asset.view') || rbac.allowedToAccess('All Reallocate Asset.view') ||
+             rbac.allowedToAccess('All Release Asset.view')  || rbac.allowedToAccess('All Mark as Available Asset.view') || 
+            rbac.allowedToAccess('All Mark as Active Asset.view') || rbac.allowedToAccess('All View Asset Details.view') || rbac.allowedToAccess('All Update Asset Details.view')){
             <th class="text-center">Action(s)</th>
             }
           </tr>
@@ -56,7 +59,10 @@
               <td>{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td>
               <td>{{ asset.locationName }}</td>
               <td>{{ asset?.sublocationName || 'N/A' }}</td>
-              @if(rbac.allowedToAccess('Asset Allocation - All.update') || rbac.allowedToAccess('Asset Allocation - All.delete')) {
+            @if(rbac.allowedToAccess('All Allocate Asset.view') || rbac.allowedToAccess('All Inactive Asset.view') || rbac.allowedToAccess('All Mark as Maintenance.view') || 
+            rbac.allowedToAccess('All Transfer Asset.view') || rbac.allowedToAccess('All Reallocate Asset.view') ||
+             rbac.allowedToAccess('All Release Asset.view')  || rbac.allowedToAccess('All Mark as Available Asset.view') || 
+            rbac.allowedToAccess('All Mark as Active Asset.view') || rbac.allowedToAccess('All View Asset Details.view') || rbac.allowedToAccess('All Update Asset Details.view')){
               <td class="text-center">
                 <div class="dropdown">
                   <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -64,7 +70,7 @@
                   </a>
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <ng-container *ngIf="asset.status === 'Available'">
-                      @if(rbac.allowedToAccess('Asset Allocation - All.update') ) {
+                      @if(rbac.allowedToAccess('All Allocate Asset.view') ) {
                       <li>
                         <a class="dropdown-item"
                           (click)="openModal(allocateAnasset); storeassetid = asset.id; selectedAsset = asset;viewasetsdata(asset)">
@@ -72,7 +78,7 @@
                         </a>
                       </li>
                     }
-                    @if( rbac.allowedToAccess('Asset Allocation - All.delete')) {
+                    @if( rbac.allowedToAccess('All Inactive Asset.view')) {
                       <li>
                         <a class="dropdown-item"
                           (click)="openModal(deleteasstes); storeassetid = asset.id; selectedAsset = asset ">
@@ -80,7 +86,7 @@
                         </a>
                       </li>
                     }
-                    @if(rbac.allowedToAccess('Asset Allocation - All.update') ) {
+                    @if(rbac.allowedToAccess('All Mark as Maintenance.view') ) {
                       <li>
                         <a class="dropdown-item"
                           (click)="openModal(underMaintenance); storeassetid = asset.id; selectedAsset = asset">
@@ -88,7 +94,7 @@
                         </a>
                       </li>
                     }
-                    @if(rbac.allowedToAccess('Asset Allocation - All.update') ) {
+                    @if(rbac.allowedToAccess('All Transfer Asset.view') ) {
                       <li>
                         <a class="dropdown-item"
                           (click)="openModal(tranferaerasset); storeassetid = asset.id; selectedAsset = asset;viewdatatrasfer(asset) ">
@@ -98,7 +104,7 @@
                     }
                     </ng-container>
                     <ng-container *ngIf="asset.status === 'Allocated'">
-                      @if(rbac.allowedToAccess('Asset Allocation - All.update') ) {
+                      @if(rbac.allowedToAccess('All Reallocate Asset.view') ) {
                       <li>
                         <a class="dropdown-item"
                           (click)="openModal(reallocateanasset ); viewasset(asset.id); storeassetid = asset.id; selectedAsset = asset;viewassetdata(asset.id); viewasetsdata(asset)">
@@ -106,7 +112,7 @@
                         </a>
                       </li>
                     }
-                    @if(rbac.allowedToAccess('Asset Allocation - All.update') ) {
+                    @if(rbac.allowedToAccess('All Release Asset.view') ) {
                       <li>
                         <a class="dropdown-item"
                           (click)="openModal(releaseassets); viewasset(asset.id); storeassetid = asset.id; selectedAsset = asset;viewassetdata(asset.id);viewasetsdata(asset)">
@@ -115,7 +121,7 @@
                       </li>
                     }
                     </ng-container>
-                    @if(rbac.allowedToAccess('Asset Allocation - All.update') ) {
+                    @if(rbac.allowedToAccess('All Mark as Available Asset.view') ) {
                     <li *ngIf="asset.status === 'Under Maintenance'">
                       <a class="dropdown-item"
                         (click)="openModal(avilableasstes); storeassetid = asset.id; selectedAsset = asset">
@@ -123,7 +129,7 @@
                       </a>
                     </li>
                   }
-                  @if(rbac.allowedToAccess('Asset Allocation - All.update') ) {
+                  @if(rbac.allowedToAccess('All Mark as Active Asset.view') ) {
                     <li *ngIf="asset.status === 'Inactive'">
                       <a class="dropdown-item"
                         (click)="openModal(activeanasstes); storeassetid = asset.id; selectedAsset = asset">
@@ -131,13 +137,15 @@
                       </a>
                     </li>
                   }
+                   @if(rbac.allowedToAccess('All View Asset Details.view') ) {
                     <li>
 
                       <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
                         View Asset Details
                       </a>
                     </li>
-                    @if(rbac.allowedToAccess('Asset Allocation - All.update') ) {
+                  }
+                    @if(rbac.allowedToAccess('All Update Asset Details.view') ) {
                     <li>
                       <a class="dropdown-item"
                         (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">

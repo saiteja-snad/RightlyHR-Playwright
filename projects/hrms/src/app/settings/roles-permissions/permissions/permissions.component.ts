@@ -267,15 +267,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   isFieldDisabled(field: string, permission: string): boolean {
-    if (field === 'Asset Allocation - Create') {
+    if (field === 'Asset Management - Create') {
       return permission !== 'View'; // Only 'View' is enabled
     }
   
-    if (['Asset Allocation - All', 'Asset Allocation - Available'].includes(field)) {
+    if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
       return permission === 'Create'; // Disable only 'Create'
     }
   
-    if (['Asset Allocation - Under Maintenance', 'Asset Allocation - Inactive','Asset Allocation - Allocated'].includes(field)) {
+    if (['Asset Management - Under Maintenance', 'Asset Management - Inactive','Asset Management - Allocated'].includes(field)) {
       return !['View', 'Update'].includes(permission); // Enable only 'View' and 'Update'
     }
   

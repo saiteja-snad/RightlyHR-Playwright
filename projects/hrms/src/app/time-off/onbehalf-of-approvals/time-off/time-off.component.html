@@ -19,7 +19,6 @@
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Time Off (On Behalf Of Approvals).view')) {
                 @if(leaves.length > 0){
                 <tr *ngFor="let item of leaves | leavesPendingapprovals : searchValue">
                     <td>{{item.entity.leavefusionempId}}</td>
@@ -83,7 +82,7 @@
                     <app-no-data-found></app-no-data-found>
                 </tr>
                 }
-                }
+                
             </tbody>
         </table>
     </div>

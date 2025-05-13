@@ -19,13 +19,13 @@
                     <th>{{'Permission Type' | translate}}</th>
                     <th>{{'Reason' | translate}}</th>
                     <th>{{'Approver Comments' | translate}}</th>
-                    @if(rbac.allowedToAccess('For Role (Permission).update') || rbac.allowedToAccess('For Role(Permission).delete')) {
+                    @if(rbac.allowedToAccess('For Role (Permission).update') || rbac.allowedToAccess('For Role (Permission).delete')) {
                     <th>{{'Action(s)' | translate}}</th>
                     }
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('For Role (Permission).view')) {
+               
                 @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
                 @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
                 leave.approvalHeader.id){
@@ -100,7 +100,7 @@
                     </td>
                 </tr>
                 }
-                }
+                
         </table>
         }@else{<app-data-loader-content />}
     </div>

@@ -20,7 +20,7 @@
                     <th>Regularization Type</th>
                     <th>Reason</th>
                     <th>Approver Comments</th>
-                    @if(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role(Regularization).delete')) {
+                    @if(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete')) {
                     <th>Action(s)</th>
                     }
                 </tr>
@@ -57,7 +57,7 @@
 
                         <ng-template #permissionComments>-</ng-template>
                     </td>
-                    @if(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role(Regularization).delete')) {
+                    @if(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete')) {
                     <td>
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
@@ -68,7 +68,7 @@
                                 @if( leave.approvalHeader.currentapprovalStage !=
                                 leave.approvalHeader.finalapprovalStage){
                                 <li (click)="openApproveModal(approval,leave)"
-                                    *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                   >
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
                                         translate}}</a>
                                 </li>}
@@ -76,14 +76,14 @@
                                 @if(rbac.allowedToAccess('For Role (Regularization).update')) {
                                 @if( leave.approvalHeader.currentapprovalStage ==
                                 leave.approvalHeader.finalapprovalStage){
-                                <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                <li (click)="handleProcess(leave)" >
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
                                         {{'Process' | translate}}</a>
                                 </li>
                                 }}
                                 @if(rbac.allowedToAccess('For Role (Regularization).delete')) {
                                 <li (click)="openRejectModal(rejectmodal,leave)"
-                                    *ngIf="rbac.allowedToAccess('Permissions.delete')">
+                                    >
                                     <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
                                         translate}}</a>
                                 </li>}

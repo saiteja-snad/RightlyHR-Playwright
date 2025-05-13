@@ -35,8 +35,8 @@ export class LeavesApprovaltabsComponent {
     { label: 'Processed', link: 'processed',permission: { feature: 'Processed (Time Off)', action: 'view' }, },
     { label: 'Rejected', link: 'rejected', permission: { feature: 'Rejected (Time Off)', action: 'view' },},
     { label: 'Cancelled', link: 'cancelled', permission: { feature: 'Cancelled(Time Off)', action: 'view' },},
-    { label: 'Team Leave balance', link: 'team-leave-balance'},
-    { label: 'Team Leave Summary', link: 'team-leave-summary'}
+    { label: 'Team Leave balance', link: 'team-leave-balance', permission: { feature: 'Team Leave Balance(Time Off)', action: 'view' }},
+    { label: 'Team Leave Summary', link: 'team-leave-summary', permission: { feature: 'Team Leave Balance Summary(Time Off)', action: 'view' }}
   ];
 
   constructor(public readonly router: Router, private http: HttpService, private authService: AuthService) { }

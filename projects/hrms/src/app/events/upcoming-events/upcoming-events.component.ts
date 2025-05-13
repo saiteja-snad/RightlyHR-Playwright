@@ -97,7 +97,7 @@ export class UpcomingEventsComponent {
       },
       error: (reason: any) => {
         console.error('Error downloading file:', reason);
-        this.imageUrl = 'images/alternate.png'; // Fallback to a default image
+        employee.imageUrl = 'images/noevents.png'; // Fallback to a default image
       }
     });
   }

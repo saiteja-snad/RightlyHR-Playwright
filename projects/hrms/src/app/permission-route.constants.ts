@@ -346,7 +346,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS = [
-    { route: '/settings/employee-fields/manage-dsts/pending-for-submit', permission: 'DST Pending Tab.view' },
+    { route: '/settings/employee-fields/manage-dsts/pending-for-submission', permission: 'DST Pending Tab.view' },
     { route: '/settings/employee-fields/manage-dsts/published-dsts', permission: 'DST Published Tab.view' }
   ]
   

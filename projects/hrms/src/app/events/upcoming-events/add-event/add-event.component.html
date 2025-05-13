@@ -51,7 +51,7 @@
 
                 <div class="col-md-12 mb-3">
                     <label for="file" class="form-label custom-label mb-2">Attachment</label>
-                    <input type="file" class="form-control custom-input px-0" (change)="onFileSelected($event)" id="file">
+                    <input type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png"  class="form-control custom-input px-0" (change)="onFileSelected($event)" id="file">
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <p class="note-text"><span class="note">Note:</span> Only Image are allowed.
                             The file size should be less than 2MB.</p>

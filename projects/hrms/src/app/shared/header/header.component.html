@@ -81,10 +81,12 @@
                     <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image" class="profile-img cursor">
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
+                   @if(rbac.allowedToAccess('Invite New User.view')){
                     <li>
-                        <a class="dropdown-item" [routerLink]="['/admin/active-new-user']">
+                        <a class="dropdown-item" (click)="navigateToAccessedRoute('/admin/active-new-user')">
                             <i class="bi bi-envelope-plus me-2"></i>Invite New User</a>
                     </li>
+                   }
                     <li><a class="dropdown-item" [routerLink]="['/myinfo/personal/basic-info']">
                         <i class="bi bi-file-earmark-text-fill me-2"></i>View Profile</a>
                     </li>

@@ -6,11 +6,12 @@
         {{'Prospective Trainees'|translate}}
       </p>
     </div>
-
+   @if(this.rbac.allowedToAccess('Add Prospective Trainee.view')){
     <div class="d-flex">
       <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
         <i class="bi bi-plus me-2"></i>{{'Add Prospective Trainee'| translate}}</button>
     </div>
+   }
   </div>
 
   <!--Input search-->

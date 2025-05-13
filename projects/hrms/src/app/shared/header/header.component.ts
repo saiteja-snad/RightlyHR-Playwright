@@ -14,6 +14,8 @@ import { PmsSettingsTabsComponent } from "../pms-module-tabs/pms-settings-tabs/p
 import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt-header-tabs.component";
 import { CalendarHeaderTabsComponent } from "../calendar-tabs/calendar-header-tabs/calendar-header-tabs.component";
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
+import { RbacService } from '../../services/rbac.service';
+import { AccessNavigationService } from '../../services/access-navigation.service';
 
 @Component({
   selector: 'app-header',
@@ -28,7 +30,7 @@ export class HeaderComponent {
   imageUrl: any;
   subscription!: Subscription;
 
-  constructor(public readonly router: Router, private http: HttpService, private sanitizer: DomSanitizer) { }
+  constructor(public readonly router: Router, private http: HttpService, private sanitizer: DomSanitizer,public rbac:RbacService, private accessNav: AccessNavigationService) { }
 
   events = [
     { name: "John Doe's (SD153462) Birthday", time: '1 hour ago', type: 'birthday' },
@@ -103,4 +105,20 @@ export class HeaderComponent {
     ];
     return includeRoutes.includes(this.router.url);
   }
+
+
+    navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedHeaderRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
+  }
+
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
+  }
+
+  
 }

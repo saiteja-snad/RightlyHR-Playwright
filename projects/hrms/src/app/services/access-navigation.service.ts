@@ -50,6 +50,7 @@ import {
   SETTINGS_MAIN_HEADER_TABS,
   EMPLOYEE_INFO_PERSONAL_ROUTES,
   EMPLOYEE_INFO_JOB_ROUTES,
+  INVITE_NEW_USER_TABS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -539,7 +540,7 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/personalinfo/personal/basic-info':
+      case '/personalinfo':
          if (this.rbac.allowedToAccess('Employee Info Personal Tab.view')) {
           for (const item of EMPLOYEE_INFO_PERSONAL_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -569,15 +570,29 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/dashboard':
-        if (this.rbac.allowedToAccess('Dashboard Module.view')) {
-          for (const item of DASHBOARD_SUB_TABS) {
+      case '/admin':
+        if (this.rbac.allowedToAccess('Dashboard.view')) {
+          // for (const item of DASHBOARD_SUB_TABS) {
+          //   if (this.rbac.allowedToAccess(item.permission)) {
+          //     return item.route;
+          //   }
+          // }
+
+          return route = '/admin/dashboard'
+        }
+        break;
+      
+      case '/admin/active-new-user':
+        if (this.rbac.allowedToAccess('Invite New User.view')) {
+          for (const item of INVITE_NEW_USER_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
           }
         }
         break;
+      
+      
     }
     return route;
   }

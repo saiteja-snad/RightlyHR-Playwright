@@ -2,6 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
+import { AccessNavigationService } from '../../services/access-navigation.service';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-new-user-invitation-tabs',
   imports: [RouterModule, CommonModule, TabsModule],
@@ -12,7 +14,26 @@ import { TabsModule } from 'primeng/tabs';
 
 export class NewUserInvitationTabsComponent {
   navTabs: any[] = [
-    { label: 'Active Employees', link: '/admin/active-new-user' },
-    { label: 'Trainee Active Employees', link: '/admin/prospective-new-user' },
+    { label: 'Active Employees', link: '/admin/active-new-user', permission: { feature: 'Dashboard Active Invite New User', action: 'view' }},
+    { label: 'Active Trainees', link: '/admin/prospective-new-user', permission: { feature: 'Dashboard Trainee Active Invite New User', action: 'view' }},
   ];
+
+  constructor(
+    private rbac: RbacService,
+    private accessNav: AccessNavigationService
+  ) {}
+
+    ngOnInit(): void {
+    this.navTabs = this.navTabs.filter(
+      (tab) =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(
+          `${tab.permission.feature}.${tab.permission.action}`
+        )
+    );
+  }
+
+  
 }

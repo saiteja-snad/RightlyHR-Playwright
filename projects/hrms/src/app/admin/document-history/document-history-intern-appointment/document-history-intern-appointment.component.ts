@@ -7,6 +7,7 @@ import { IAppointmentLetterDetails } from '../../../Interfaces/documentsHistory'
 import { AppointmentletterpipePipe } from '../../../Pipes/appointmentletterpipe.pipe';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-document-history-intern-appointment',
@@ -28,7 +29,7 @@ export class DocumentHistoryInternAppointmentComponent
   AppointmentLetters = [] as IAppointmentLetterDetails[];
   searchValue: any;
 
-  constructor(private http: HttpService) {}
+  constructor(private http: HttpService,public rbac: RbacService) {}
 
   ngOnInit(): void {
     this.getAppointmentLetters();

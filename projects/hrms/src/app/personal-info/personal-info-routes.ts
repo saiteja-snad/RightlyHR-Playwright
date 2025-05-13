@@ -5,10 +5,10 @@ import { DocumentsComponent } from './documents/documents.component';
 import { PermissionsGuard } from '../guards/permissions.guard';
 
 export default [
-    { path: '', redirectTo: '/personalinfo/personal/basic-info', pathMatch: 'full' },
+    // { path: '', redirectTo: '/personalinfo/personal/basic-info', pathMatch: 'full' },
     {
         path: 'personal', children: [
-            { path: '', redirectTo: 'basic-info', pathMatch: 'full' },
+            // { path: '', redirectTo: 'basic-info', pathMatch: 'full' },
             { path: 'basic-info', component: BasicInfoComponent },
             { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then(m => m.AddressInfoComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Basic Information.view' } },
             { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then(m => m.FamilyDetailsComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Family Details.view' } },
@@ -24,7 +24,7 @@ export default [
     },
     {
         path: 'job', children: [
-            { path: '', redirectTo: 'pre-onboarding-details', pathMatch: 'full' },
+            // { path: '', redirectTo: 'pre-onboarding-details', pathMatch: 'full' },
             { path: 'pre-onboarding-details', loadComponent: () => import('./job/pre-onboaring-details/pre-onboaring-details.component').then((m) => m.PreOnboaringDetailsComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Pre-Onboarding Details.view' } },
             { path: 'onboarding-details', loadComponent: () => import('./job/onboarding-details/onboarding-details.component').then((m) => m.OnboardingDetailsComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Onboarding Details.view' } },
             { path: 'employmentType', loadComponent: () => import('./job/offboarding-details/offboarding-details.component').then((m) => m.OffboardingDetailsComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Offboarding Details.view' } },
@@ -46,7 +46,7 @@ export default [
     {
         path: 'team',
         children: [
-            { path: '', redirectTo: 'team-members', pathMatch: 'full' },
+            // { path: '', redirectTo: 'team-members', pathMatch: 'full' },
             { path: 'team-members', loadComponent: () => import('./team-numbers/team-numbers.component').then((m) => m.TeamNumbersComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Reporting Manager Tab.view' } },
             {
                 path: 'team-manger-members', loadComponent: () => import('./team-numbers/team-manger-members/team-manger-members.component').then((m) => m.TeamMangerMembersComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Team Manager Tab.view' },

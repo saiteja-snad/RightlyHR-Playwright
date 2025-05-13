@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">No Due Clearance</span></div>
     <div class="custom-add-btn cursor" (click)="openModal(addnodue)"
-      *ngIf="rbac.allowedToAccess('No Due Clearance.create')">
+      *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.create')">
       <i class="bi bi-plus plus-icon me-1"></i>Add New
     </div>
   </div>
@@ -43,12 +43,12 @@
                 <i class="bi bi-three-dots-vertical"></i>
               </span>
               <ul class="dropdown-menu custom-dropdown-menu">
-                <li (click)="openupdateDialog(item)" *ngIf="rbac.allowedToAccess('No Due Clearance.update')">
+                <li (click)="openupdateDialog(item)" *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.update')">
                   <a class="dropdown-item">
                     <i class="bi bi-pencil me-2"></i>Update
                   </a>
                 </li>
-                <li (click)="opendelete(item)" *ngIf="rbac.allowedToAccess('No Due Clearance.delete')">
+                <li (click)="opendelete(item)" *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.delete')">
                   <a class="dropdown-item">
                     <i class="bi bi-trash3 me-2"></i>Delete
                   </a>
@@ -85,7 +85,7 @@
 
     <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="noDueForm" (ngSubmit)="addNoDue(noDueForm)"
-        *ngIf="rbac.allowedToAccess('No Due Clearance.create')">
+        *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.create')">
         <!-- Select Type -->
         <div class="form-outline p-2 mb-2">
           <label class="form-label custom-label mb-2">Select Type</label>
@@ -227,7 +227,7 @@
 
     <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="updateDueForm" (ngSubmit)="updateNoDue(updateDueForm)"
-        *ngIf="rbac.allowedToAccess('No Due Clearance.update')">
+        *ngIf="rbac.allowedToAccess('NoDue Clearance Tab.update')">
         <!-- Select Type -->
         <div class="form-outline p-2 mb-2">
           <label class="form-label custom-label mb-2">Select Type</label>

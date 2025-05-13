@@ -254,8 +254,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
   
   isActionEnabled(field: string, action: string): boolean {
-    const enabledTabs = ['Document Tab', 'NoDue Clearance Tab', 'Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Dynamic Forms Module', 'Desk Allocation - All', 
-      'Manage Policies Tab', 'Manage Weekends Tab', 'Manage DST Tab', 'My Info Job Details', 'My Info Previous Experience Details', 'My Info Certification Details', 
+    const enabledTabs = ['Document Tab', 'NoDue Clearance Tab', 'Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Dynamic Forms Module', 'Desk Allocation - All', 'Manage Weekends Tab', 'Manage DST Tab', 'My Info Job Details', 'My Info Previous Experience Details', 'My Info Certification Details', 
       'Employee Info Onboarding Details', 'Employee Info Job Details', 'Employee Info Previous Experience Details', 'Employee Info Certification Details', 'Employee Info Compensation Details',
     'Draft Tab'];
     return enabledTabs.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');

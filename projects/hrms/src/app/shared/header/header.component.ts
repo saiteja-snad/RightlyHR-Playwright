@@ -15,6 +15,7 @@ import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt
 import { CalendarHeaderTabsComponent } from "../calendar-tabs/calendar-header-tabs/calendar-header-tabs.component";
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-header',
@@ -29,7 +30,7 @@ export class HeaderComponent {
   imageUrl: any;
   subscription!: Subscription;
 
-  constructor(public readonly router: Router, private http: HttpService, private sanitizer: DomSanitizer, private accessNav: AccessNavigationService) { }
+  constructor(public readonly router: Router, private http: HttpService, private sanitizer: DomSanitizer, private accessNav: AccessNavigationService, public rbac : RbacService) { }
 
   events = [
     { name: "John Doe's (SD153462) Birthday", time: '1 hour ago', type: 'birthday' },

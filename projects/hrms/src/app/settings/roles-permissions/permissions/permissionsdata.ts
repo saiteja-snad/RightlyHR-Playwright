@@ -51,7 +51,7 @@ export const permissionsData = [
     { fields: 'Sub Location', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Pre Onboard Documents', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Serving Period', View: false, Update: false, Create: false, Delete: false },
-    // { fields: 'Probation Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Settings Job Probation Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Consultancy', View: false, Update: false, Create: false, Delete: false },
 
     //Manage Shifts tab 
@@ -690,4 +690,12 @@ export const permissionsData = [
    //Events sub tabs
    { fields: 'Events(Upcoming Events)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Events(Past Events)', View: false, Update: false, Create: false, Delete: false },
+
+  //Settings Header Icon
+   { fields: 'Settings Icon', View: false, Update: false, Create: false, Delete: false },
+
+   //Draft Forms MArk As Active Action
+   { fields: 'Mark As Active Action', View: false, Update: false, Create: false, Delete: false },
+
+
 ];

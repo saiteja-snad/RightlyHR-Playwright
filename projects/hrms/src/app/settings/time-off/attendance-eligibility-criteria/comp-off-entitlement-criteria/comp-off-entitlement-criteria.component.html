@@ -1,4 +1,4 @@
-<div class="custom-main-component-container" *ngIf="rbac.allowedToAccess('Comp Off Entitlement Tab.view')">
+<div class="custom-main-component-container">
     @if(!dataLoad){
     <div class="custom-table-content">
         <ng-container *ngIf="eligibilityCriterias!.length > 0; else noDataTemplate">

@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 
 @Component({
   selector: 'app-time-off-tabs',
@@ -20,7 +21,7 @@ export class TimeOffTabsComponent implements OnInit {
   allowedWfh: boolean = false;
   navTabs: any[] = [];
 
-  constructor(public readonly router: Router, private rbac: RbacService) { }
+  constructor(public readonly router: Router, private rbac: RbacService,private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -49,4 +50,24 @@ export class TimeOffTabsComponent implements OnInit {
       return this.rbac.allowedToAccess(permissionString);
     });
   }
+
+
+    navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
+  }
+
+isActiveRoute(link: string): boolean {
+  const currentUrl = this.router.url;
+
+  // Exact match or starts with followed by `/` to avoid partial matches
+  return currentUrl === link || currentUrl.startsWith(link + '/');
+}
+
+
+
 }

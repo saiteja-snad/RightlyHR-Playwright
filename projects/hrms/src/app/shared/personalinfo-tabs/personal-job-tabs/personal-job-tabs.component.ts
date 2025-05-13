@@ -12,7 +12,7 @@ import { RbacService } from '../../../services/rbac.service';
 })
 export class PersonalJobTabsComponent implements OnInit {
   filteredTabs: any[] = [];
-
+ constructor(public rbac: RbacService) { }
   navTabs: any[] = [
     { label: 'Pre-Onboarding Details', link: '/personalinfo/job/pre-onboarding-details',permission: { feature: 'Employee Info Pre-Onboarding Details', action: 'view' } },
     { label: 'Onboarding Details', link: '/personalinfo/job/onboarding-details',permission: { feature: 'Employee Info Onboarding Details', action: 'view' } },
@@ -29,7 +29,6 @@ export class PersonalJobTabsComponent implements OnInit {
     { label: 'Assets Details', link: '/personalinfo/job/assets-details',permission: { feature: 'Employee Info Assets Details', action: 'view' } },
   
   ];
-  constructor(public rbac: RbacService) { }
   ngOnInit(): void {
    this.filterTabsByRbac();
   }

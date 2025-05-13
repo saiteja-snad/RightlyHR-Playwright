@@ -17,7 +17,7 @@ export class EventsTabsComponent {
   
   navTabs: any[] = [
     { label: 'Upcoming Events', link: '/events/upcoming', permission: { feature: 'Events(Upcoming Events)', action: 'view' } },
-    { label: 'past Events', link: '/events/past', permission: { feature: 'Events(Past Events)', action: 'view' } },
+    { label: 'Past Events', link: '/events/past', permission: { feature: 'Events(Past Events)', action: 'view' } },
     { label: 'Published Events', link: '/events/published' },
   ];
 

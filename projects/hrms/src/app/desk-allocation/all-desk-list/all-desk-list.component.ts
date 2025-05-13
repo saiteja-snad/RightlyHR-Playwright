@@ -516,7 +516,7 @@ export class AllDeskListComponent {
         },
         error: (error) => {
           console.log('Error:', error);
-          this.conformationPopup.openSuccessModal(error.error?.Message || 'Error occurred during assignment.');
+          this.conformationPopup.openSuccessModal(error.error.message || 'Error occurred during assignment.');
         }
       });
     } else {

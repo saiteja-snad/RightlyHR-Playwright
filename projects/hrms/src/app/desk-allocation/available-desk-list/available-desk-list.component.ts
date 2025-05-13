@@ -375,8 +375,8 @@ onRowsChange() {
          
         },
         error: (error) => {
-          console.log('Error:', error.message);
-          this.conformationPopup.openErrorModal(error.error || 'Error occurred during assignment.')
+          console.log('Error:', error);
+          this.conformationPopup.openErrorModal(error.error.message || 'Error occurred during assignment.')
         }
       });
     } else {

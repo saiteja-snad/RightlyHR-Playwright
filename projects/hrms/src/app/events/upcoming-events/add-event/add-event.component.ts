@@ -8,6 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-add-event',
@@ -23,9 +24,11 @@ export class AddEventComponent implements OnInit {
   Employeeinfo = {} as any;
   selectedCustomEventField: any;
   spinnerLoader=false
+  eventAttachment:any
   postEventsData:any
+  imageUrl: any;
   constructor(public router: Router, private fb: FormBuilder,
-    private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal,) { }
+    private http: HttpService, private conformationPopup: OpenModalService,private sanitizer: DomSanitizer, private modalService: NgbModal,) { }
 
   ngOnInit(): void {
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
@@ -40,7 +43,7 @@ export class AddEventComponent implements OnInit {
   initiateForm() {
     this.customEventForm = this.fb.group({
       eventDate: ['', [Validators.required, this.futureDateValidator()]],
-      eventTitle: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/)]],
+      eventTitle: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/),Validators.maxLength(50)]],
       eventMessage: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/), Validators.maxLength(250)]],
       imageUrl: ['']
     });
@@ -49,9 +52,9 @@ export class AddEventComponent implements OnInit {
     const selectedFile: File = event.target.files[0];
     const fileType = selectedFile?.type;
     const maxSize = 2 * 1024 * 1024; // 2MB
-  
+
     if (!selectedFile) return;
-  
+
     if (fileType === 'image/png' || fileType === 'image/jpeg') {
       if (selectedFile.size <= maxSize) {
         const reader = new FileReader();
@@ -67,8 +70,20 @@ export class AddEventComponent implements OnInit {
       this.conformationPopup.openErrorModal('Invalid file type. Only PNG and JPG are allowed.');
       event.target.value = '';
     }
+    const timestamp = new Date().getTime()
+    this.eventAttachment = this.renameFileAttachment(
+      selectedFile, `${this.Employeeinfo.employeeId}_${timestamp}_${selectedFile.name}`
+    );
   }
-  
+
+
+  private renameFileAttachment(originalFile: File, newName: string): File {
+    return new File([originalFile], newName, {
+      type: originalFile.type,
+      lastModified: originalFile.lastModified
+    });
+  }
+
   
   getToday(): string {
     const now = new Date();
@@ -82,44 +97,77 @@ export class AddEventComponent implements OnInit {
   
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
+
+
   
-  postevents(customEventForm: FormGroup): void {
-    if (customEventForm.valid) {
-      this.spinnerLoader=true
-      const formdata = customEventForm.value;
-
-      const data = {
-        eventDate: formdata.eventDate,
-        eventMessage: formdata.eventMessage,
-        empId: this.Employeeinfo.employeeId,
-        isDeleted: false,
-        eventTitle: formdata.eventTitle,
-        attachmentUrl: formdata.imageUrl || null
-      };
-
-      this.subscription = this.http.postdata(`CustomEvents`, data).subscribe({
-        next: (response: any) => {
-          if (response) {
-            this.spinnerLoader=false
-            this.http.notifyEventAdded();
-            this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Event added successfully');
-            // Optionally send custom emails or reset the form
-            this.CustomEmail();
-          }
-        },
-        error: (err: any) => {
-          this.spinnerLoader=false
-          this.modalService.dismissAll();
-          this.conformationPopup.openErrorModal('Insertion of data failed');
-        },
-
-      });
+  postevents(): void {
+    if (this.customEventForm.valid) {
+      this.spinnerLoader = true;
+      const payload = this.createEventPayload();
+  
+      const file = this.eventAttachment;
+      if (file) {
+        const filePath = `/Profilepics/${this.Employeeinfo.employeeId}`;
+        this.uploadEventAttachment(filePath, file, payload);
+      } else {
+        this.saveEvent(payload);
+      }
     } else {
-      // Optional: mark all controls as touched to trigger validation UI
-      this.customEventForm.markAllAsTouched();
+      this.customEventForm.markAllAsTouched(); // Show validation errors
     }
   }
+  
+  createEventPayload(attachmentPath: string = ''): any {
+    const formdata = this.customEventForm.value;
+    return {
+      eventDate: formdata.eventDate,
+      eventMessage: formdata.eventMessage,
+      empId: this.Employeeinfo.employeeId,
+      isDeleted: false,
+      eventTitle: formdata.eventTitle,
+      attachmentUrl: attachmentPath || null
+    };
+  }
+  
+  uploadEventAttachment(filePath: string, file: File, payload: any): void {
+    this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file)
+      .subscribe({
+        next: (data: any) => {
+          if (data?.path) {
+            payload.attachmentUrl = data.path;
+          }
+          this.saveEvent(payload);
+        },
+        error: () => {
+          this.spinnerLoader = false;
+          console.error('Event file upload failed');
+          this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal('File upload failed');
+        }
+      });
+  }
+  
+  saveEvent(payload: any): void {
+    this.subscription = this.http.postdata('CustomEvents', payload).subscribe({
+      next: (response: any) => {
+        this.spinnerLoader = false;
+        if (response) {
+          this.http.notifyEventAdded(); // Optional notification
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Event added successfully');
+          this.CustomEmail(); // Send email notification
+        }
+      },
+      error: () => {
+        this.spinnerLoader = false;
+        this.modalService.dismissAll();
+        this.conformationPopup.openErrorModal('Insertion of event data failed');
+      }
+    });
+  }
+  
+  
+  
 
   futureDateValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {

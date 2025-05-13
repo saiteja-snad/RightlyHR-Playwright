@@ -272,14 +272,11 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
   
     if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
-      return permission === 'Create'; // Disable only 'Create'
+      return permission !== 'View'; // Disable only 'Create'
     }
-   if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
-      return permission === 'Update'; // Disable only 'Create'
-    }
-     if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
-      return permission === 'Delete'; // Disable only 'Create'
-    }
+  //  if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
+  //     return permission === 'Update'; // Disable only 'Create'
+  //   }
     if (['Asset Management - Under Maintenance', 'Asset Management - Inactive','Asset Management - Allocated'].includes(field)) {
       return !['View'].includes(permission); // Enable only 'View' and 'Update'
     }

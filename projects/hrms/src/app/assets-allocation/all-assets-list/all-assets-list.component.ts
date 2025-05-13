@@ -195,6 +195,7 @@ export class AllAssetsListComponent {
     })
   }
 
+
   purchaseDateEqualWarrantyDateValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const purchaseDate = control.get('purchasedate')?.value;
@@ -1510,10 +1511,39 @@ allZeroesIfMaxLength(): ValidatorFn {
     openConfirmationModal(content: any) {
       this.modalService.open(content, {centered: true,backdrop: 'static'});
     }
+
     cleardata(){
       this.assetForm.reset();
         this.modalService.dismissAll();
       }
+       canPerformActionsOnDesk(asset: any): boolean {
+    const status = asset?.status;
+
+    return (
+      (status === 'Available' && (
+        this.rbac.allowedToAccess('All Allocate Asset.view') ||
+        this.rbac.allowedToAccess('All Inactive Asset.view') ||
+        this.rbac.allowedToAccess('All Mark as Maintenance.view') ||
+          this.rbac.allowedToAccess('All Reallocate Assetvieww') ||
+        this.rbac.allowedToAccess('All Release Asset.view') ||
+        this.rbac.allowedToAccess('All Mark as Available Asset.vieww')||
+        this.rbac.allowedToAccess('All Mark as Active Asset.view') ||
+        this.rbac.allowedToAccess('All View Asset Details.view') ||
+        this.rbac.allowedToAccess('All Update Asset Details.view')
+      ))
+       ||
+      (status === 'Allocated' && (
+        this.rbac.allowedToAccess('Allocated Reallocate Asset.view') ||
+        this.rbac.allowedToAccess('Allocated Release Asset.view') ||
+         this.rbac.allowedToAccess('Allocated View Asset Details.view') ||
+        this.rbac.allowedToAccess('Allocated Update Asset Details.view')
+      )) ||
+      (status === 'Inactive' && this.rbac.allowedToAccess('Inactive Mark as Active Asset.view')) ||
+      (status === 'Under Maintenance' && this.rbac.allowedToAccess('Inactive View Asset Details.view')) || 
+       (status === 'Under Maintenance' && this.rbac.allowedToAccess('Inactive Update Asset Details.view')) || 
+      this.rbac.allowedToAccess('View Desk Details.view')
+    );
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

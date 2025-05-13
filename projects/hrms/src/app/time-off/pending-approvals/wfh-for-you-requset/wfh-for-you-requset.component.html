@@ -1,6 +1,7 @@
 <div class="custom-main-component-container">
+     @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
       <div class="d-flex justify-content-end gap-3 mb-3">
-            @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
+           
             @if (canBulkApprove()) {
             <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
             <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
@@ -9,15 +10,16 @@
             <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
             <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
             }
-            }
+           
         </div>
+         }
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
             placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
     </div>
 
-    <div class="custom-table-content">
+    <div class="custom-p-multi-select-table">
 
         @if(!dataload){
                <p-table [value]="wfhsselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts" 

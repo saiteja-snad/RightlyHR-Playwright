@@ -94,6 +94,8 @@ isLoading=false;
         this.isLoading=false;
          this.cancelForm.reset();
           this.modalService.dismissAll();
+            this.getDataByLPID();
+            this.signalService.timecountTriggerSignal.set(true);
         this.conformationPopup.openErrorModal(err.error.message);
       },
       complete:()=> {

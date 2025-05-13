@@ -12,6 +12,7 @@ import { ProspectivePipe } from '../../Pipes/prospective.pipe';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
+import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-prospective-employees',
   imports: [CommonModule, FormsModule, ProspectivePipe, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent],
@@ -27,7 +28,7 @@ export class ProspectiveEmployeesComponent implements OnInit {
   emp = {} as any;
   loader = false;
 
-  constructor(private router: Router, private http: HttpService, public rbac: RbacService, private modalService: NgbModal) { }
+  constructor(private router: Router, private http: HttpService, public rbac: RbacService, private modalService: NgbModal,private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empdata();
@@ -66,6 +67,16 @@ export class ProspectiveEmployeesComponent implements OnInit {
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-    this.router.navigate(['/personalinfo']);
+    // this.router.navigate(['/personalinfo']);
+    this.goToAccessibleRoute('/personalinfo')
+  }
+
+      goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    }else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 }

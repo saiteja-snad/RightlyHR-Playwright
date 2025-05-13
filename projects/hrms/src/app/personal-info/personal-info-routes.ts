@@ -9,12 +9,12 @@ export default [
     {
         path: 'personal', children: [
             // { path: '', redirectTo: 'basic-info', pathMatch: 'full' },
-            { path: 'basic-info', component: BasicInfoComponent },
-            { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then(m => m.AddressInfoComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Basic Information.view' } },
+            { path: 'basic-info', component: BasicInfoComponent,},
+            { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then(m => m.AddressInfoComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Address Details.view' } },
             { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then(m => m.FamilyDetailsComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Family Details.view' } },
             { path: 'identity-details', loadComponent: () => import('./personal/identity-details/identity-details.component').then(m => m.IdentityDetailsComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Identity Details.view' } },
             { path: 'education-details', loadComponent: () => import('./personal/education-details/education-details.component').then(m => m.EducationDetailsComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Education Details.view' } },
-            { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then(m => m.BankDetailsComponent) ,canActivate: [PermissionsGuard], data: { permission: 'Employee Info Education Details.view' }},
+            { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then(m => m.BankDetailsComponent) ,canActivate: [PermissionsGuard], data: { permission: 'Employee Info Bank Details.view' }},
             { path: 'visa-details', loadComponent: () => import('./personal/visa-details/visa-details.component').then(m => m.VisaDetailsComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Visa Details.view' } },
             { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent),canActivate: [PermissionsGuard], data: { permission: 'Employee Info Contact Details.view' } },
             { path: 'onboarding-documents', loadComponent: () => import('./personal/onboarding-documents/onboarding-documents.component').then(m => m.OnboardingDocumentsComponent) ,canActivate: [PermissionsGuard], data: { permission: 'Employee Info onboarding-verification.view' }},

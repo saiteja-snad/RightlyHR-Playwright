@@ -18,4 +18,5 @@ import { RbacService } from '../../../services/rbac.service';
 export class DocumentHistoryLayoutComponent {
   active = 1;
   constructor(public rbac: RbacService) {}
+  
 }

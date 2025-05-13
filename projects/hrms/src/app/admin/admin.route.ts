@@ -14,7 +14,6 @@ import { NodueFormDetailsComponent } from "./nodue-form-details/nodue-form-detai
 import { PermissionsGuard } from "../guards/permissions.guard";
 
 export default [
-    // { path: '', redirectTo: '/admin/dashboard', pathMatch: 'full' },
     { path: 'dashboard', component: DashboardComponent ,},
     { path: 'prospective-employees', component: ProspectiveEmployeesComponent,},
     { path: 'active-employees', component: ActiveEmployeesComponent,  },

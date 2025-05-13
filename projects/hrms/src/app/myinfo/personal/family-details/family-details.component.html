@@ -83,7 +83,7 @@
         <div class="custom-main-popup-content ">
             <form autocomplete="off" [formGroup]="familyDetailsForm" (ngSubmit)="postFamilyDetails()">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Family Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="memberName" class="form-label custom-label mb-2">Name<span
                                 class="text-danger">*</span></label>
@@ -99,7 +99,7 @@
                         </div>
                     </div>
                     } 
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Family Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="dateOfBirth" class="form-label custom-label mb-2">Date of Birth<span
                                 class="text-danger">*</span></label>
@@ -111,7 +111,7 @@
                         </div>
                     </div>
                 }
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Family Details.view')){
                     <div class="col-md-12 mb-3">
                         <label for="relationShipId" class="form-label custom-label mb-2">Relationship<span
                                 class="text-danger">*</span></label>
@@ -126,7 +126,7 @@
                         </div>
                     </div>
                 }
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Family Details.view')){
                     <div class="col-md-6">
                         <div class="custom-toggle-btn">
                             <div class="form-check form-switch">
@@ -168,7 +168,7 @@
         <div class="custom-main-popup-content ">
             <form autocomplete="off" [formGroup]="familyDetailsupdateForm" (ngSubmit)="updatefamilyDetails()">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Family Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="memberNameupdate" class="form-label custom-label mb-2">Name<span
                                 class="text-danger">*</span></label>
@@ -184,7 +184,7 @@
                         </div>
                     </div>
                 }
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Family Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="dateOfBirthupdate" class="form-label custom-label mb-2">Date of Birth<span
                                 class="text-danger">*</span></label>
@@ -196,7 +196,7 @@
                         </div>
                     </div>
                 }
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Family Details.view')){
                     <div class="col-md-12 mb-3">
                         <label for="relationShipIdupdate" class="form-label custom-label mb-2">Relationship<span
                                 class="text-danger">*</span></label>
@@ -211,7 +211,7 @@
                         </div>
                     </div>
                 }
-                    @if(this.rbac.allowedToAccess('Family Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Family Details.view')){
                     <div class="col-md-6 mb-3">
                         <div class="custom-toggle-btn">
                             <div class="form-check form-switch">

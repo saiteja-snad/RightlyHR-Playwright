@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-regularization-tabs',
@@ -19,7 +20,7 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
   regularization = [] as any;
-  constructor(public readonly router: Router, private http: HttpService) {
+  constructor(public readonly router: Router, private http: HttpService,public rbac: RbacService) {
     effect(() => {
       if (this.http.tirggerCountSignal().compOff) {
         this.getregularizationRequest();

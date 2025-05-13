@@ -33,7 +33,7 @@ export class SettingsJobTabsComponent implements OnInit {
     { label: 'Sub Location', route: '/settings/employee-fields/job/sub-location', permission: { feature: 'Sub Location', action: 'view' } },
     { label: 'Pre Onboarding Documents', route: '/settings/employee-fields/job/pre-on-boarding-documents', permission: { feature: 'Pre Onboard Documents', action: 'view' } },
     { label: 'Serving period', route: '/settings/employee-fields/job/serving-period', permission: { feature: 'Serving Period', action: 'view' } },
-    { label: 'Probation Details', route: '/settings/employee-fields/job/probation-details', permission: { feature: 'Probation Details', action: 'view' } },
+    { label: 'Probation Details', route: '/settings/employee-fields/job/probation-details', permission: { feature: 'Settings Job Probation Details', action: 'view' } },
     { label: 'Interview Round', route: '/settings/employee-fields/job/interview-round', permission: { feature: 'Interview Round', action: 'view' }},
   ];
 

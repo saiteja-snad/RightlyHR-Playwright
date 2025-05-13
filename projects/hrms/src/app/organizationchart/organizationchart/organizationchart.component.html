@@ -77,8 +77,7 @@
           <p-organization-chart [value]="data" [collapsible]="true" class="custom-organition-data mt-2">
             <ng-template let-node pTemplate="person">
               <div class="p-2 text-center ">
-                <img [src]="node?.data?.imageUrl ? node?.data?.imageUrl : 'images/alternate.png'"
-                  class="image-content" />
+                <img [src]="node?.data?.imageUrl || 'images/alternate.png'" class="image-content" />
                 <p class="name mb-0">{{ node?.data?.name }}</p>
                 <p class="name mb-0 text-nowrap">{{ node?.data?.doj | dateformat }}</p>
                 <p class="jobrole mb-0">{{ node?.data?.title }}</p>

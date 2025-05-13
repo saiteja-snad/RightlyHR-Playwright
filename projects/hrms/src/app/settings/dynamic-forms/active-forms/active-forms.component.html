@@ -16,8 +16,7 @@
           <th>{{'Created By' | translate}}</th>
           <th>{{'Updated By' | translate}}</th>
           <th>{{'Status' | translate}}</th>
-          @if(rbac.allowedToAccess('Active Forms.update') || rbac.allowedToAccess('Active Forms.view') 
-          || rbac.allowedToAccess('Active Forms.delete')){
+          @if(rbac.allowedToAccess('Active Forms.update') || rbac.allowedToAccess('Active Forms.delete')){
           <th class="text-center">
             {{'Action' | translate}}<span class="text-lowercase">(s)</span></th>
           }
@@ -32,8 +31,7 @@
               <td>{{ form.createdBy }}</td>
               <td>{{ form.updatedBy ? form.updatedBy : '-' }}</td>
               <td>{{ form.status | titlecase }}</td>
-              @if(rbac.allowedToAccess('Active Forms.update') || rbac.allowedToAccess('Active Forms.view') 
-                  || rbac.allowedToAccess('Active Forms.delete')){
+              @if(rbac.allowedToAccess('Active Forms.update') || rbac.allowedToAccess('Active Forms.delete')){
               <td class="text-center">
                 <div class="dropdown">
                   <span type="button" data-bs-toggle="dropdown">
@@ -47,13 +45,13 @@
                       </a>
                     </li>
                     }
-                    @if(rbac.allowedToAccess('Active Forms.view')){
+                    <!-- @if(rbac.allowedToAccess('Active Forms.view')){ -->
                     <li *ngIf="">
                       <a class="dropdown-item" (click)="navigateToViewComponent(form.formId)">
                         <i class="bi bi-eye me-2"></i>Preview
                       </a>
                     </li>
-                    }
+                    <!-- } -->
                     @if(rbac.allowedToAccess('Active Forms.delete')){
                     <li>
                       <a class="dropdown-item" (click)="openmodal(confirmation);setfromid=form.formId">

@@ -176,7 +176,7 @@ export default [
             path: 'for-your-role',
             component: TimeOffForYourRoleRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (Time Off).view' }
           },
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
+          // { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
       },
       {
@@ -185,14 +185,14 @@ export default [
         children: [
           { path: 'for-you', component: WfhForYouRequsetComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (WFH).view'  }},
           { path: 'for-your-role', component: WfhForYourRoleRequsetComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (WFH).view'  }},
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+          // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
       {
         path: 'desk-approval',
         component:DeskApprovalRequestComponent,
         children: [
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+          // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
           { path: 'for-you', component: DeskForYouRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For You (Desk Requests).view'  }},
           { path: 'for-your-role', component: DeskForYourRoleRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (Desk Requests).view' } },
          
@@ -207,7 +207,7 @@ export default [
             path: 'for-your-role',
             component: CompoffForYourRoleRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (Comp Off).view' }
           },
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+          // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
       {
@@ -231,7 +231,7 @@ export default [
             path: 'for-your-role',
             component: RegularizationForYourRoleRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'For Role (Regularization).view' }  
           },
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
+          // { path: '', redirectTo: 'for-you', pathMatch: 'full' }, // Default child route
         ],
       },
       {
@@ -247,7 +247,7 @@ export default [
             component: ClaimsandexpensesForYourRoleRequestComponent,canActivate: [PermissionsGuard], data : { permission: 'For Role (Claims and Expenses).view' }
           },
 
-          { path: '', redirectTo: 'for-you', pathMatch: 'full' },
+          // { path: '', redirectTo: 'for-you', pathMatch: 'full' },
         ],
       },
       {
@@ -270,7 +270,7 @@ export default [
             path: 'separation-for-role',
             component: SeparationForYourRoleRequestComponent,canActivate: [PermissionsGuard], data  : { permission: 'For Role (Seperation Request)' }
           },
-          { path: '', redirectTo: 'separation-for-you', pathMatch: 'full' },
+          // { path: '', redirectTo: 'separation-for-you', pathMatch: 'full' },
         ],
       },
       {
@@ -283,23 +283,23 @@ export default [
             path: 'recall-for-role',
             component: RecallForYourRoleRequestComponent, canActivate: [PermissionsGuard], data: { permission: 'For Role (Recall Requests).view' }
           },
-          { path: '', redirectTo: 'recall-for-you', pathMatch: 'full' },
+          // { path: '', redirectTo: 'recall-for-you', pathMatch: 'full' },
         ],
       },
 
       { path: 'nodue-request', component: NodueApprovalDetailsComponent, canActivate: [PermissionsGuard], data: { permission: 'No Due Clearance Request.view'  },
         children: [
-          { path: '', redirectTo: 'nodue-request', pathMatch: 'full' },
+          // { path: '', redirectTo: 'nodue-request', pathMatch: 'full' },
         ],
       },
-      { path: '', redirectTo: 'time-off-request', pathMatch: 'full' },
+      // { path: '', redirectTo: 'time-off-request', pathMatch: 'full' },
       { path: 'trainee-approvals', component: TraineeApprovalsComponent, canActivate: [PermissionsGuard], data: { permission: 'Trainee Details.view' } },
     ],
   },
   // on be half of approvals
   { path: 'on-behalf-of-approvals', component: OnbehalfOfApprovalsComponent,
     children: [
-      { path: '', redirectTo: 'time-off', pathMatch: 'full' },
+      // { path: '', redirectTo: 'time-off', pathMatch: 'full' },
       { path: 'time-off', component: TimeOffComponent,canActivate: [PermissionsGuard], data: { permission: 'Time Off (On Behalf Of Approvals).view' } },
       { path: 'entitlement', component: CompOffEntitlementComponent,canActivate: [PermissionsGuard], data: { permission: 'Comp Off (On Behalf Of Approvals).view' } },
       { path: 'wfh', component: WfhComponent ,canActivate: [PermissionsGuard], data: { permission: 'WFH (On Behalf Of Approvals).view' }},

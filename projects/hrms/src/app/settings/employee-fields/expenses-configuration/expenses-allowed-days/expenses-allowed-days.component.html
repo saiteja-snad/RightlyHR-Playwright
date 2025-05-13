@@ -4,14 +4,14 @@
             <thead>
                 <th class="col-span-2">Name</th>
                 <th class="col-span-2">Expense Duration (Days)</th>
-                <th class="text-center" *ngIf="rbac.allowedToAccess('Expense Tab.update')">Action</th>
+                <th class="text-center" *ngIf="rbac.allowedToAccess('Expense Allowed Days.update')">Action</th>
             </thead>
             <tbody>
             
                 <tr >
                     <td class="w-50">{{attribute}}</td>
                     <td class="W-25">{{value}}</td>
-                    <td class="text-center" *ngIf="rbac.allowedToAccess('Expense Tab.update')">
+                    <td class="text-center" *ngIf="rbac.allowedToAccess('Expense Allowed Days.update')">
                          <!--Update-->
                          <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">

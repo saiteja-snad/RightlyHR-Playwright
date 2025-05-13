@@ -5,6 +5,7 @@ import { DocumentHistoryOfferLetterComponent } from "../document-history-offer-l
 import { DocumentHistoryInternOfferLetterComponent } from "../document-history-intern-offer-letter/document-history-intern-offer-letter.component";
 import { DocumentHistoryAppointmentLetterComponent } from "../document-history-appointment-letter/document-history-appointment-letter.component";
 import { DocumentHistoryInternAppointmentComponent } from "../document-history-intern-appointment/document-history-intern-appointment.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-document-history-layout',
@@ -16,4 +17,6 @@ import { DocumentHistoryInternAppointmentComponent } from "../document-history-i
 
 export class DocumentHistoryLayoutComponent {
   active = 1;
+  constructor(public rbac: RbacService) {}
+  
 }

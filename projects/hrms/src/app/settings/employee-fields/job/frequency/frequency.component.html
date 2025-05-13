@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <form autocomplete="off" [formGroup]="FrequencyForm" (ngSubmit)="addFrequency()" *ngIf="rbac.allowedToAccess('Frequency.view')">
+    <form autocomplete="off" [formGroup]="FrequencyForm" (ngSubmit)="addFrequency()" *ngIf="rbac.allowedToAccess('Frequency.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">

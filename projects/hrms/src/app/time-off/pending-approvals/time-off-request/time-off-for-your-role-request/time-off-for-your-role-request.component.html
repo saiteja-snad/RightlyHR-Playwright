@@ -28,7 +28,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (rbac.allowedToAccess('For Role (Time Off).view')) {
+                   
                     @if ((((leaves | async) ?? []) | timeoffsearch: searchValue).length > 0) {
                     @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track
                     item.approvalHeader.id){
@@ -91,7 +91,7 @@
                         </td>
                     </tr>
                     }
-                    }
+                    
                 </tbody>
             </table>
         </div>

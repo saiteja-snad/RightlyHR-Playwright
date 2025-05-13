@@ -26,7 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Trainee Details.view')) {
+               
                 @if(((Trainees | async) ?? []).length > 0) {
                 <tr *ngFor="let trn of ((Trainees |async) ?? [] ) | traineesearchfilter:Traineeaprovalsearch ; ">
                     <td>
@@ -110,7 +110,7 @@
                     </td>
                 </tr>
                 }
-                }
+                
             </tbody>
         </table>
     </div>

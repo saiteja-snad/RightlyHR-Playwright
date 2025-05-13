@@ -72,11 +72,11 @@ export class AssetsManagmentComponent {
 
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
-      { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject,permission: { feature: 'Asset Allocation - All', action: 'view'} },
-      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject,permission: { feature: 'Asset Allocation - Available', action: 'view'} },
-      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject,permission: { feature: 'Asset Allocation - Allocated', action: 'view'} },
-      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject,permission: { feature: 'Asset Allocation - Under Maintenance', action: 'view'} },
-      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject,permission: { feature: 'Asset Allocation - Inactive', action: 'view'} },
+      { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject,permission: { feature: 'Asset Management - All', action: 'view'} },
+      { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject,permission: { feature: 'Asset Management - Available', action: 'view'} },
+      { label: 'Allocated', route: '/assets-management/allocated-assets', count$: this.http.allocatedassetCountSubject,permission: { feature: 'Asset Management - Allocated', action: 'view'} },
+      { label: 'Under Maintenance', route: '/assets-management/under-maintenance-assets', count$: this.http.undermatinaceassetCountSubject,permission: { feature: 'Asset Management - Under Maintenance', action: 'view'} },
+      { label: 'Inactive', route: '/assets-management/inactive-assets', count$: this.http.inactiveaceassetCountSubject,permission: { feature: 'Asset Management - Inactive', action: 'view'} },
    ];
    
    // Filter navTabs based on permissions

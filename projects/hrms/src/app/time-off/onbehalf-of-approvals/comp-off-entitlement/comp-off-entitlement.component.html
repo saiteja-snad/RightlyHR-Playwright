@@ -10,14 +10,12 @@
                     <th>Reason</th>
                     <th>Approver Comments</th>
                     <th>Applied Date</th>
-                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') || rbac.allowedToAccess('Comp
-                    Off (On Behalf Of Approvals).delete')) {
+                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') || rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')) {
                     <th>Action<span class="text-lowercase">(s)</span></th>
                     }
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).view')) {
                 <ng-container *ngIf="leaves!.length > 0; else noDataTemplate">
                     <tr *ngFor="let leave of leaves; let i = index">
                         <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
@@ -62,7 +60,7 @@
                                     @if( leave.approvalHeader.currentapprovalStage !=
                                     leave.approvalHeader.finalapprovalStage){
                                     <li (click)="openApproveModal(approval,leave)"
-                                        *ngIf="rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')">
+                                       >
                                         <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
                                             translate}}</a>
                                     </li>
@@ -72,7 +70,7 @@
                                     @if( leave.approvalHeader.currentapprovalStage ==
                                     leave.approvalHeader.finalapprovalStage){
                                     <li (click)="handleProcess(leave)"
-                                        *ngIf="rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')">
+                                        >
                                         <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
                                             translate}}</a>
                                     </li>
@@ -80,7 +78,7 @@
                                     }
                                     @if( rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')) {
                                     <li (click)="openRejectModal(rejectmodal,leave)"
-                                        *ngIf="rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')">
+                                        >
                                         <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
                                             translate}}</a>
                                     </li>
@@ -99,7 +97,7 @@
                         </td>
                     </tr>
                 </ng-template>
-                }
+                
             </tbody>
         </table>
     </div>

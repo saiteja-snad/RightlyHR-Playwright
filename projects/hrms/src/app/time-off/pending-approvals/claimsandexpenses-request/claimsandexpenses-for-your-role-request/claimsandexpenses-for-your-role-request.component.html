@@ -23,7 +23,7 @@
         </tr>
       </thead>
       <tbody>
-        @if (rbac.allowedToAccess('For Role (Claims and Expenses).view')) {
+        
           <ng-container *ngIf="(expenseheaderpending | searchfilter: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status']).length > 0; else noDataTemplate">
           <tr *ngFor="let leave of expenseheaderpending  | searchfilter: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status'];  let i = index">
             <td>{{ leave.entity.employeeName }}</td>
@@ -37,13 +37,13 @@
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  @if(rbac.allowedToAccess('For Role (Claims and Expenses).view')) {
+                  
                   <li>
                     <a class="dropdown-item"
                       (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID)"><i
                         class="bi bi-paperclip me-2"></i>View</a>
                   </li>
-                  }
+                  
                 </ul>
               </div>
             </td>
@@ -100,7 +100,7 @@
             </td>
           </tr>
         </ng-template>
-        }
+        
       </tbody>
     </table>
   </div>

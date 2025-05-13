@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="custom-main-popup-content">
-        <form autocomplete="off" [formGroup]="customEventForm" (ngSubmit)="postevents(customEventForm)">
+        <form autocomplete="off" [formGroup]="customEventForm" (ngSubmit)="postevents()">
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
@@ -18,7 +18,7 @@
                     <div *ngIf="customEventForm.get('eventDate')?.errors?.['required'] &&  customEventForm.get('eventDate')?.touched" class="error-msg">Event date is required.
                     </div>
                     <div *ngIf="customEventForm.get('eventDate')?.touched && customEventForm.get('eventDate')?.hasError('pastDate')"
-                        class="error-msg">Event date cannot be in the past.
+                        class="error-msg">Event date cannot be in the past
                     </div>
                 </div>
 
@@ -31,13 +31,16 @@
                         class="error-msg">
                         Event Title is required
                     </div>
+                    <div  class="error-msg"  *ngIf="customEventForm.get('eventTitle')?.errors?.['maxlength']">
+                        Event Title cannot exceed 50 characters
+                    </div>
                 </div>
 
                 <div class="col-md-12">
                     <label for="description" class="form-label custom-label mb-2">Event Description<span
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" formControlName="eventMessage"
-                        placeholder="Please enter description" id="description"></textarea>
+                        placeholder="Please enter description" id="description" maxlength="250" ></textarea>
                     <div *ngIf=" customEventForm.get('eventMessage')?.touched && customEventForm.get('eventMessage')?.invalid "
                         class="error-msg">
                         Event Description is requied
@@ -51,7 +54,7 @@
                     <input type="file" class="form-control custom-input px-0" (change)="onFileSelected($event)" id="file">
                     <div class="d-flex justify-content-between align-items-center mt-3">
                         <p class="note-text"><span class="note">Note:</span> Only Image are allowed.
-                            The file size should be less than 25MB.</p>
+                            The file size should be less than 2MB.</p>
                     </div>
                 </div>
             </div>

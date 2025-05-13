@@ -232,7 +232,7 @@ export class AccessNavigationService {
           break;
 
       case '/events':
-        if (this.rbac.allowedToAccess('Events Module.view')) {
+        if (this.rbac.allowedToAccess('Events.view')) {
           for (const item of EVENTS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;

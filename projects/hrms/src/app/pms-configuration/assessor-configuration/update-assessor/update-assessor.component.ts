@@ -62,7 +62,7 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
     this.getReviewCycledata();
     this.getAllasessors();
     this.getAllActiveEmpList();
-     const today = new Date();
+    const today = new Date();
     this.currentDate = this.formatDate(today);
   }
 

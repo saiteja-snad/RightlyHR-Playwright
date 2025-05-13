@@ -32,7 +32,7 @@
             <th>Approver</th>
             @if(rbac.allowedToAccess('Request for Allocation.view') || rbac.allowedToAccess('Inactive desk.view') || rbac.allowedToAccess('Schedule for Maintenance.view') || 
             rbac.allowedToAccess('Reallocate desk.view') || rbac.allowedToAccess('Release Desk.view') || rbac.allowedToAccess('Release Desk.view') || rbac.allowedToAccess('Mark as Active.view') || 
-            rbac.allowedToAccess('Mark as Available.view') || rbac.allowedToAccess('View Desk Details.view')){
+            rbac.allowedToAccess('Asset All Mark as Active.view') || rbac.allowedToAccess('Asset All View Asset Details.view')|| rbac.allowedToAccess('Asset All Update.view')){
             <th class="text-center">Action(s)</th>
             }
           </tr>

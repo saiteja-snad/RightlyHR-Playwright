@@ -600,28 +600,22 @@ export class AccessNavigationService {
         }
 
         if (this.rbac.allowedToAccess('Employee Info Documents Tab.view')) {
-          return (route = '/myinfo/documents');
+          return (route = '/personalinfo/documents');
         }
 
         if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
-          return (route = '/myinfo/team-members');
+          return (route = '/personalinfo/team-members');
         }
 
         if (
           this.rbac.allowedToAccess('Employee Info Onboard Request Tab.view')
         ) {
-          return (route = '/myinfo/onboarding-request');
+          return (route = '/personalinfo/onboarding-request');
         }
         break;
 
       case '/admin':
         if (this.rbac.allowedToAccess('Dashboard.view')) {
-          // for (const item of DASHBOARD_SUB_TABS) {
-          //   if (this.rbac.allowedToAccess(item.permission)) {
-          //     return item.route;
-          //   }
-          // }
-
           return route = '/admin/dashboard'
         }
         break;

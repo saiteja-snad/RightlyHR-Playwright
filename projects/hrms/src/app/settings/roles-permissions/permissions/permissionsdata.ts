@@ -434,6 +434,42 @@ export const permissionsData = [
     { fields: 'Asset Allocation - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Asset Allocation - Inactive', View: false, Update: false, Create: false, Delete: false }, 
 
+//Asset Management All Tab Actions
+
+    { fields: 'All Allocate Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'All Inactive Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'All Mark as Maintenance', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'All Transfer Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'All Reallocate Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'All Release Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'All Mark as Available Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'All Mark as Active Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'All View Asset Details', View: false, Update: false, Create: false, Delete: false },
+	  { fields: 'All Update Asset Details', View: false, Update: false, Create: false, Delete: false },
+
+     //Asset Management Available Tab Actions
+    { fields: 'Available Allocate Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Available Inactive Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Available Mark as Maintenance Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Available Transfer Asset', View: false, Update: false, Create: false, Delete: false },
+	  { fields: 'Available View Asset Details', View: false, Update: false, Create: false, Delete: false }, 
+	  { fields: 'Available Update Asset Details', View: false, Update: false, Create: false, Delete: false }, 
+
+      //Asset Management Allocated Tab Actions
+    { fields: 'Allocated Reallocate Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Allocated Release Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Allocated View Asset Details', View: false, Update: false, Create: false, Delete: false },
+	 { fields: 'Allocated Update Asset Details', View: false, Update: false, Create: false, Delete: false },
+	
+    //Asset Management Under Maintenance Tab Actions
+    { fields: 'Under Maintenance Mark as Available Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Under Maintenance View Asset Details', View: false, Update: false, Create: false, Delete: false },
+	{ fields:   'Under Maintenance Update', View: false, Update: false, Create: false, Delete: false },
+	
+    //Asset Management Inactive Tab Actions
+    { fields: 'Inactive Mark as Active Asset', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Inactive View Asset Details', View: false, Update: false, Create: false, Delete: false },
+	{ fields: 'Inactive Update Asset Details', View: false, Update: false, Create: false, Delete: false },
 
     // My Info Sub Tabs Section
     { fields: 'My Info Personal Tab', View: false, Update: false, Create: false, Delete: false },

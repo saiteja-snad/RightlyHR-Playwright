@@ -30,10 +30,13 @@
                         <th>Asset ID</th>
                         <th>Location </th>
                         <th>Sub Location </th>
-                        @if(rbac.allowedToAccess('Asset Allocation - Inactive.update')) {
+                        <!-- @if(rbac.allowedToAccess('Asset Allocation - Inactive.update')) {
                         <th class="text-center">Action(s)</th>
-                        }
-
+                        } -->
+                        @if(rbac.allowedToAccess('Inactive Mark as Active Asset.view') || rbac.allowedToAccess('Inactive View Asset Details.view')
+                      || rbac.allowedToAccess('Inactive Update Asset Details.view')){
+                <th class="text-center">Action(s)</th>
+                }
                     </tr>
                 </thead>
                 <tbody>
@@ -57,32 +60,38 @@
                             <td>{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td>
                             <td>{{ asset.locationName }}</td>
                             <td>{{ asset?.sublocationName || 'N/A' }}</td>
-                            @if(rbac.allowedToAccess('Asset Allocation - Inactive.update')) {
+                            <!-- @if(rbac.allowedToAccess('Asset Allocation - Inactive.update')) { -->
+                                  @if(rbac.allowedToAccess('Inactive Mark as Active Asset.view') || rbac.allowedToAccess('Inactive View Asset Details.view')
+                      || rbac.allowedToAccess('Inactive Update Asset Details.view')){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
                                     <ul class="dropdown-menu custom-dropdown-menu">
-
+                                     @if(rbac.allowedToAccess('Inactive Mark as Active Asset.view')){
                                         <li>
                                             <a class="dropdown-item"
                                                 (click)="openModal(activeanasstes); storeassetid = asset.id; selectedAsset = asset">
                                                 Mark as Active
                                             </a>
                                         </li>
+                                    }
+                                     @if(rbac.allowedToAccess('Inactive View Asset Details.view')){
                                         <li>
-
                                             <a class="dropdown-item"   (click)="navigateToAsset(asset.id)">
                                                 View Asset Details
                                             </a>
                                         </li>
+                                    }
+                                     @if(rbac.allowedToAccess('Inactive Update Asset Details.view')){
                                         <li>
                                             <a class="dropdown-item"
                                                 (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
                                                 Update
                                             </a>
                                         </li>
+                                    }
                                     </ul>
                                 </div>
                             </td>

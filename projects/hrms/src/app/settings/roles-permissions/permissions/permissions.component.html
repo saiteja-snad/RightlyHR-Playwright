@@ -1661,6 +1661,129 @@
                     </tr>
                 </ng-container>
 
+                 <!--asset Allocation All Tabs Actions -->
+                <tr>
+                    <th colspan="5" class="custom-header">Asset Allocation All Tab Actions</th>
+                </tr>
+                <ng-container *ngFor="let per of permissions">
+                    <tr class="text-align-center"
+                        *ngIf="per.fields === 'All Allocate Asset'|| per.fields === 'All Inactive Asset' || per.fields === 'All Mark as Maintenance' || per.fields === 'All Transfer Asset'
+                        || per.fields === 'All Reallocate Asset' || per.fields === 'All Release Asset' 
+                        || per.fields === 'All Mark as Available Asset' || per.fields === 'All Mark as Active Asset' || per.fields === 'All View Asset Details' || per.fields === 'All Update Asset Details' ">
+                        
+                        <td class="text-align-center">{{ per.fields }}</td>
+
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
+                        </td>
+                    </tr>
+                </ng-container>
+                         <!-- Asset Allocation Available Tabs Actions -->
+                <tr>
+                    <th colspan="5" class="custom-header">Asset Allocation Available Tab Actions</th>
+                </tr>
+                <ng-container *ngFor="let per of permissions">
+                    <tr class="text-align-center"
+                        *ngIf="per.fields === 'Available Allocate Asset' || per.fields === 'Available Inactive Asset' || per.fields === 'Available Mark as Maintenance Asset'
+                        || per.fields === 'Available Transfer Asset' || per.fields === 'Available View Asset Details' || per.fields === 'Available Update Asset Details' ">
+                        <td class="text-align-center">{{ per.fields }}</td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
+                        </td>
+                    </tr>
+                </ng-container>
+
+                <!-- Asset Allocation Allocated Tabs Actions -->
+                <tr>
+                    <th colspan="5" class="custom-header">Asset Allocation Allocated Tab Actions</th>
+                </tr>
+                <ng-container *ngFor="let per of permissions">
+                    <tr class="text-align-center"
+                        *ngIf="per.fields === 'Allocated Reallocate Asset' || per.fields === 'Allocated Release Asset' || per.fields === 'Allocated View Asset Details' || per.fields === 'Allocated Update Asset Details'">
+                        <td class="text-align-center">{{ per.fields }}</td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
+                        </td>
+                    </tr>
+                </ng-container>
+
+                <!-- Asset Allocation Under Maintenance Tabs Actions -->
+                <tr>
+                    <th colspan="5" class="custom-header">Asset Allocation Under Maintenance Tab Actions</th>
+                </tr>
+                <ng-container *ngFor="let per of permissions">
+                    <tr class="text-align-center"
+                        *ngIf="per.fields === 'Under Maintenance Mark as Available Asset' || per.fields === 'Under Maintenance View Asset Details' || per.fields === 'Under Maintenance Update'">
+                        <td class="text-align-center">{{ per.fields }}</td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
+                        </td>
+                    </tr>
+                </ng-container>
+
+                <!-- Asset Allocation Inactive Tabs Actions -->
+                <tr>
+                    <th colspan="5" class="custom-header">Asset Allocation Inactive Tab Actions</th>
+                </tr>
+                <ng-container *ngFor="let per of permissions">
+                    <tr class="text-align-center"
+                        *ngIf="per.fields === 'Inactive Mark as Active Asset' || per.fields === 'Inactive View Asset Details' || per.fields === 'Inactive Update Asset Details'">
+                        <td class="text-align-center">{{ per.fields }}</td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
+                        </td>
+                        <td scope="row">
+                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
+                        </td>
+                    </tr>
+                </ng-container>
 
                 <!-- My Info Sub tabs -->
                 <tr>

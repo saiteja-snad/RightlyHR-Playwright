@@ -15,6 +15,7 @@
     align-items: center;
     height: calc(100dvh - 10rem);
     position: relative;
+
     .no-data-placeholder-container {
         position: absolute;
         top: 0;
@@ -26,7 +27,7 @@
         align-items: center;
         text-align: center;
     }
-    
+
     .no-data-image {
         width: 15rem;
         height: 15rem;

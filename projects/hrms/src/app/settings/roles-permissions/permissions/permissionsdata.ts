@@ -211,7 +211,7 @@ export const permissionsData = [
     { fields: 'PMS', View: false, Update: false, Create: false, Delete: false },
     { fields: 'PMS Configurations', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Desk Allocation', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Asset Allocation', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Management', View: false, Update: false, Create: false, Delete: false },
 
     //Time Off Tabs Section
     { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -426,13 +426,13 @@ export const permissionsData = [
     { fields: 'Regularization Report - Export', View: false, Update: false, Create: false, Delete: false },
 
 
-    //Asset Allocation Sub Tabs Section
-    { fields: 'Asset Allocation - Create', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Asset Allocation - All', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Asset Allocation - Available', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Asset Allocation - Allocated', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Asset Allocation - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Asset Allocation - Inactive', View: false, Update: false, Create: false, Delete: false }, 
+    //Asset Management Sub Tabs Section
+    { fields: 'Asset Management - Create', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Management - All', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Management - Available', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Management - Allocated', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Management - Under Maintenance', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Asset Management - Inactive', View: false, Update: false, Create: false, Delete: false }, 
 
 //Asset Management All Tab Actions
 

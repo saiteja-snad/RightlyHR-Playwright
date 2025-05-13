@@ -30,9 +30,6 @@
             <th>Asset ID</th>
             <th>Location </th>
             <th>Sub Location </th>
-            <!-- @if(rbac.allowedToAccess('Asset Allocation - All.update') || rbac.allowedToAccess('Asset Allocation - All.delete')) {
-            <th class="text-center">Action(s)</th>
-            } -->
              @if(rbac.allowedToAccess('All Allocate Asset.view') || rbac.allowedToAccess('All Inactive Asset.view') || rbac.allowedToAccess('All Mark as Maintenance.view') || 
             rbac.allowedToAccess('All Transfer Asset.view') || rbac.allowedToAccess('All Reallocate Asset.view') ||
              rbac.allowedToAccess('All Release Asset.view')  || rbac.allowedToAccess('All Mark as Available Asset.view') || 
@@ -62,7 +59,6 @@
               <td>{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td>
               <td>{{ asset.locationName }}</td>
               <td>{{ asset?.sublocationName || 'N/A' }}</td>
-              <!-- @if(rbac.allowedToAccess('Asset Allocation - All.update') || rbac.allowedToAccess('Asset Allocation - All.delete')) { -->
             @if(rbac.allowedToAccess('All Allocate Asset.view') || rbac.allowedToAccess('All Inactive Asset.view') || rbac.allowedToAccess('All Mark as Maintenance.view') || 
             rbac.allowedToAccess('All Transfer Asset.view') || rbac.allowedToAccess('All Reallocate Asset.view') ||
              rbac.allowedToAccess('All Release Asset.view')  || rbac.allowedToAccess('All Mark as Available Asset.view') || 

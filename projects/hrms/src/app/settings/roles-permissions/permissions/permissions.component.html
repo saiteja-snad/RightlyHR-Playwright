@@ -483,7 +483,7 @@
                         || per.fields === 'Reports' || per.fields === 'Policies' 
                         || per.fields === 'Calendar'  || per.fields === 'IT Support' 
                         || per.fields === 'Org Hierarchy' || per.fields === 'PMS' 
-                        || per.fields === 'PMS Configurations' || per.fields === 'Desk Allocation' || per.fields === 'Asset Allocation'">
+                        || per.fields === 'PMS Configurations' || per.fields === 'Desk Allocation' || per.fields === 'Asset Management'">
                         <td class="text-align-center">{{ per.fields }}</td>
                         <td scope="row">
                             <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -1622,14 +1622,14 @@
 
 
             
-                <!-- Asset Allocation Tabs -->
+                <!-- Asset Management  Tabs -->
                 <tr>
-                    <th colspan="5" class="custom-header">Asset Allocation</th>
+                    <th colspan="5" class="custom-header">Asset Management</th>
                 </tr>
                 <ng-container *ngFor="let per of permissions">
-                    <tr class="text-align-center" *ngIf="per.fields === 'Asset Allocation - Create'  || per.fields === 'Asset Allocation - All'
-                    || per.fields === 'Asset Allocation - Available'  || per.fields === 'Asset Allocation - Available' || per.fields === 'Asset Allocation - Allocated'
-                    || per.fields === 'Asset Allocation - Under Maintenance'  || per.fields === 'Asset Allocation - Inactive' 
+                    <tr class="text-align-center" *ngIf="per.fields === 'Asset Management - Create'  || per.fields === 'Asset Management - All'
+                    || per.fields === 'Asset Management - Available'  || per.fields === 'Asset Management - Available' || per.fields === 'Asset Management - Allocated'
+                    || per.fields === 'Asset Management - Under Maintenance'  || per.fields === 'Asset Management - Inactive' 
                     ">
                         <td class="text-align-center">{{ per.fields }}</td>
 
@@ -1661,9 +1661,9 @@
                     </tr>
                 </ng-container>
 
-                 <!--asset Allocation All Tabs Actions -->
+                 <!--Asset Management Allocation All Tabs Actions -->
                 <tr>
-                    <th colspan="5" class="custom-header">Asset Allocation All Tab Actions</th>
+                    <th colspan="5" class="custom-header">Asset Management All Tab Actions</th>
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"
@@ -1688,9 +1688,9 @@
                         </td>
                     </tr>
                 </ng-container>
-                         <!-- Asset Allocation Available Tabs Actions -->
+                         <!-- Asset Management Allocation Available Tabs Actions -->
                 <tr>
-                    <th colspan="5" class="custom-header">Asset Allocation Available Tab Actions</th>
+                    <th colspan="5" class="custom-header">Asset Management Available Tab Actions</th>
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"
@@ -1713,9 +1713,9 @@
                     </tr>
                 </ng-container>
 
-                <!-- Asset Allocation Allocated Tabs Actions -->
+                <!-- Asset Management Allocation Allocated Tabs Actions -->
                 <tr>
-                    <th colspan="5" class="custom-header">Asset Allocation Allocated Tab Actions</th>
+                    <th colspan="5" class="custom-header">Asset Management Allocated Tab Actions</th>
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"
@@ -1737,9 +1737,9 @@
                     </tr>
                 </ng-container>
 
-                <!-- Asset Allocation Under Maintenance Tabs Actions -->
+                <!-- Asset Management Allocation Under Maintenance Tabs Actions -->
                 <tr>
-                    <th colspan="5" class="custom-header">Asset Allocation Under Maintenance Tab Actions</th>
+                    <th colspan="5" class="custom-header">Asset Management Under Maintenance Tab Actions</th>
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"
@@ -1761,9 +1761,9 @@
                     </tr>
                 </ng-container>
 
-                <!-- Asset Allocation Inactive Tabs Actions -->
+                <!-- Asset Management Inactive Tabs Actions -->
                 <tr>
-                    <th colspan="5" class="custom-header">Asset Allocation Inactive Tab Actions</th>
+                    <th colspan="5" class="custom-header">Asset Management Inactive Tab Actions</th>
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"

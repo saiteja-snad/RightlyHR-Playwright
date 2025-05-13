@@ -18,7 +18,7 @@ import { RbacService } from '../../../services/rbac.service';
   templateUrl: './team-complete-reviews.component.html',
   styleUrl: './team-complete-reviews.component.scss'
 })
-export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
+export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
   Status: any;
 
   employeeId!: any;
@@ -46,12 +46,12 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
   ];
 
   first = 0;
-  
+
   constructor(
     private router: Router,
     private http: HttpService,
     private modal: OpenModalService,
-    public rbac : RbacService
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {
@@ -221,13 +221,22 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy{
     this.fetchReviewCycles();
   }
 
-
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
-    this.rows = newPageSize; 
+    this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
     this.fetchReviewCycles();
+  }
+
+  showTeamActionDropdown(item: any): boolean {
+    return (
+      (this.rbac.allowedToAccess('Team Assessment View.view')) ||
+      (this.rbac.allowedToAccess('Team Promotion Letter Download.view') &&
+        (item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated')) ||
+      (this.rbac.allowedToAccess('Team Appraisal Letter Download.view') &&
+        (item.rcItemStatus === 'Appraisal Letter Sent' || item.rcItemStatus === 'Appraisal Letter Generated'))
+    );
   }
 
   ngOnDestroy(): void {

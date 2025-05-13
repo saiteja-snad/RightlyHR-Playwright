@@ -75,7 +75,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   modalRef!: NgbModalRef;
 
-  spinnerLoader= false;
+  spinnerLoader = false;
 
   promotedOptions = [
     { label: 'Yes', value: true },
@@ -155,7 +155,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       console.error('No value selected.');
       return;
     }
-  
+
     const selectedCycle = this.getSelectedCycle(selectedId);
     if (!selectedCycle) {
       return;
@@ -164,48 +164,48 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.enableDropDowns();
     this.selectedReviewCycle = selectedCycle;
     this.reviewCycleID = selectedCycle.id;
-  
+
     this.updateStatuses(selectedCycle.status);
     this.resetDropdownData();
-  
+
     const { locations, sublocations, departments, subdepartments } = selectedCycle;
     this.updateDropdowns(locations, sublocations, departments, subdepartments);
-  
+
     this.patchFormValues(selectedId, departments, subdepartments, locations, sublocations);
-  
+
     this.setAdditionalFields(locations, sublocations, departments, subdepartments);
-  
+
     const params = this.buildParams(selectedCycle.id);
     this.first = 0;
     this.searchText = null;
-    this.rows= 10;
+    this.rows = 10;
     this.getEmployeesOfTheReviewCycle(params);
   }
-  
+
   getSelectedCycle(selectedId: any) {
     return this.reviewCyclesList.find((item: any) => item.id == selectedId.id);
   }
-  
+
   updateStatuses(status: string) {
     this.createdStatuses = status.trim().toLowerCase() === 'created' ? ['created'] : [];
   }
-  
+
   resetDropdownData() {
     this.jobLocationDropDownData = [];
     this.subLocationsDropdown = [];
     this.departmentDetails = [];
     this.subDepartmentsDropdownValues = [];
   }
-  
+
   updateDropdowns(locations: any[], sublocations: any[], departments: any[], subdepartments: any[]) {
     this.jobLocationDropDownData = locations ?? [];
     this.subLocationsDropdown = sublocations ?? [];
     this.departmentDetails = departments ?? [];
     this.subDepartmentsDropdownValues = subdepartments ?? [];
     this.allSubDepartments = subdepartments ?? [];
-    this.allSubLocations= sublocations ?? [];
+    this.allSubLocations = sublocations ?? [];
   }
-  
+
   patchFormValues(selectedId: any, departments: any[], subdepartments: any[], locations: any[], sublocations: any[]) {
     this.dependentdropdowns.patchValue({
       selectedReviewCycle: selectedId,
@@ -215,14 +215,14 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       subLocationId: sublocations ?? [],
     });
   }
-  
+
   setAdditionalFields(locations: any[], sublocations: any[], departments: any[], subdepartments: any[]) {
     this.loctionIds = locations.map(location => location.locationId).join(',');
     this.subLoctionIds = sublocations.map(subLocation => subLocation.subLocationId).join(',');
     this.departmentIds = departments.map(department => department.departmentId).join(',');
     this.subDepartmentIds = subdepartments.map(subDepartment => subDepartment.subDepartmentId).join(',');
   }
-  
+
   buildParams(reviewCycleId: any) {
     const promoted = this.dependentdropdowns.get('promoted')?.value;
     return {
@@ -232,12 +232,12 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       promotion: (promoted && promoted.value !== undefined && promoted.value !== null) ? promoted.value : ''
     };
   }
-  
-  enableDropDowns(){
+
+  enableDropDowns() {
     this.dependentdropdowns.get('departmentId')?.enable();
     this.dependentdropdowns.get('subDepartmentId')?.enable();
     this.dependentdropdowns.get('locationId')?.enable();
-    this.dependentdropdowns.get('subLocationId')?.enable();    
+    this.dependentdropdowns.get('subLocationId')?.enable();
   }
 
   onDepartmentNameChange(event: any) {
@@ -245,13 +245,13 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       const selectedDepartments = event.value;
       const selectedDeptIds = selectedDepartments.map((item: any) => item.departmentId);
       this.departmentIds = selectedDeptIds.join(",");
-  
+
       this.subDepartmentsDropdownValues = this.allSubDepartments.filter((subDept: { departmentId: any }) =>
         selectedDeptIds.includes(subDept.departmentId)
       );
 
-      this.dependentdropdowns.get('subDepartmentId')?.setValue( this.subDepartmentsDropdownValues); 
-  
+      this.dependentdropdowns.get('subDepartmentId')?.setValue(this.subDepartmentsDropdownValues);
+
       const promoted = this.dependentdropdowns.get('promoted')?.value;
       const params = {
         reviewcycleid: this.reviewCycleID,
@@ -261,19 +261,19 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         subdepartment: this.subDepartmentIds,
         promotion: (promoted && promoted.value !== undefined && promoted.value !== null) ? promoted.value : ''
       };
-  
+
       if (this.departmentIds) {
         this.getEmployeesOfTheReviewCycle(params);
       } else {
         this.subDepartmentsDropdownValues = [];
-        this.dependentdropdowns.get('subDepartmentId')?.setValue([]); 
+        this.dependentdropdowns.get('subDepartmentId')?.setValue([]);
       }
     } else {
       this.subDepartmentsDropdownValues = [];
-      this.dependentdropdowns.get('subDepartmentId')?.setValue([]); 
+      this.dependentdropdowns.get('subDepartmentId')?.setValue([]);
     }
-  }  
-  
+  }
+
   onSubDepartmentNameChange(event: any) {
     if (Array.isArray(event?.value)) {
       const joinedIds = event.value.map((item: any) => item.subDepartmentId).join(",");
@@ -289,25 +289,25 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       };
       if (joinedIds) {
         this.getEmployeesOfTheReviewCycle(params);
-      } 
+      }
     }
   }
 
   onLocationChange(event: any) {
     if (!Array.isArray(event?.value)) {
       this.subLocationsDropdown = [];
-      this.dependentdropdowns.get('subLocationId')?.setValue([]); 
+      this.dependentdropdowns.get('subLocationId')?.setValue([]);
       return;
     }
-  
+
     const selectedLocations = event.value;
     const selectedLocIds = selectedLocations.map((item: any) => item.locationId);
     this.loctionIds = selectedLocIds.join(',');
-  
+
     this.subLocationsDropdown = this.allSubLocations?.filter((subLoc: { locationId: any }) => selectedLocIds.includes(subLoc.locationId)) ?? [];
-  
-    this.dependentdropdowns.get('subLocationId')?.setValue(this.subLocationsDropdown);    
-  
+
+    this.dependentdropdowns.get('subLocationId')?.setValue(this.subLocationsDropdown);
+
     const promoted = this.dependentdropdowns.get('promoted')?.value;
     const params = {
       reviewcycleid: this.reviewCycleID,
@@ -317,13 +317,13 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       subdepartment: this.subDepartmentIds,
       promotion: (promoted?.value !== undefined && promoted?.value !== null) ? promoted.value : ''
     };
-  
+
     if (this.loctionIds) {
       this.getEmployeesOfTheReviewCycle(params);
     } else {
       this.subLocationsDropdown = [];
     }
-  }  
+  }
 
   onSubLocationChange(event: any) {
     const joinedIds = event.value.map((item: any) => item.subLocationId).join(",");
@@ -354,7 +354,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       subdepartment: this.subDepartmentIds,
     };
 
-    if(this.promoted){
+    if (this.promoted) {
       params.promotion = this.promoted.value;
     }
 
@@ -385,7 +385,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       params.searchQuery = this.searchText;
     }
 
-    if(this.promoted){
+    if (this.promoted) {
       params.promotion = this.promoted.value;
     }
 
@@ -394,7 +394,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
-    this.rows = newPageSize; 
+    this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
 
@@ -414,7 +414,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       params.searchQuery = this.searchText;
     }
 
-    if(this.promoted){
+    if (this.promoted) {
       params.promotion = this.promoted.value;
     }
 
@@ -433,7 +433,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         subdepartment: this.subDepartmentIds,
       };
 
-      this.getEmployeesOfTheReviewCycle(params); 
+      this.getEmployeesOfTheReviewCycle(params);
     } else {
       this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id });
     }
@@ -519,9 +519,9 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
     if (headerCheckbox) {
       if (allSelected) {
-        headerCheckbox.checked = true; 
+        headerCheckbox.checked = true;
       } else {
-        headerCheckbox.checked = false; 
+        headerCheckbox.checked = false;
       }
     }
     const anySelected = this.filteredEmployees.some(emp => emp.selected);
@@ -551,11 +551,11 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.id}`, { responseType: 'blob' as 'json' })
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: Blob) => {
-          const blob = new Blob([data], { type: 'application/pdf' }); 
+          const blob = new Blob([data], { type: 'application/pdf' });
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${iteamid.reviewEmployeeIdName}-Promotion Letter.pdf`; 
+          a.download = `${iteamid.reviewEmployeeIdName}-Promotion Letter.pdf`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -563,7 +563,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modal.openSuccessModal('Promotion Letter Downloaded Successfully');
         },
         error: (err) => {
-          this.modal.openErrorModal(err.error.message? err.error.message : 'Failed to download letter');
+          this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to download letter');
         },
       });
   }
@@ -572,11 +572,11 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.id}`, { responseType: 'blob' as 'json' })
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: Blob) => {
-          const blob = new Blob([data], { type: 'application/pdf' }); 
+          const blob = new Blob([data], { type: 'application/pdf' });
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = `${iteamid.reviewEmployeeIdName}-Appraisal Letter.pdf`; 
+          a.download = `${iteamid.reviewEmployeeIdName}-Appraisal Letter.pdf`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
@@ -591,7 +591,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
 
   holdemployee(seletedid: any) {
     this.modalRef = this.modalService.open(this.loading, { centered: true });
-    
+
     const payload = {
       status: 'Review on Hold',
       createdBy: this.empinfo.employeeId,
@@ -610,23 +610,23 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modalRef.close();
         }
         this.modalService.dismissAll();
-        this.modal.openErrorModal( err.error.reason? err.error.reason : 'Error updating review template');
+        this.modal.openErrorModal(err.error.reason ? err.error.reason : 'Error updating review template');
       },
-      complete: () =>{
-        const params:  EmployeeQueryParams  = {
+      complete: () => {
+        const params: EmployeeQueryParams = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
         };
-    
+
         if (this.searchText) {
           params.searchQuery = this.searchText;
         }
-    
-        if(this.promoted){
+
+        if (this.promoted) {
           params.promotion = this.promoted.value;
         }
-    
+
         this.getEmployeesOfTheReviewCycle(params);
         // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
       }
@@ -646,8 +646,8 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   assignReviewTemplate(form: FormGroup) {
-    this.spinnerLoader= true;
-    const formData= form.value;
+    this.spinnerLoader = true;
+    const formData = form.value;
 
     const payload = {
       reviewTemplateId: formData.reviewTemplateId.formId,
@@ -660,7 +660,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.modal.openSuccessModal('Form Assigned Successfully');
       },
       error: (err) => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
         this.modalService.dismissAll();
         this.reviewtemplatedropdowns.reset();
         if (err.status === 404) {
@@ -673,22 +673,22 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         }
       },
       complete: () => {
-        this.spinnerLoader= false;
+        this.spinnerLoader = false;
         this.selectedIds = [];
-        const params:  EmployeeQueryParams  = {
+        const params: EmployeeQueryParams = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
         };
-    
+
         if (this.searchText) {
           params.searchQuery = this.searchText;
         }
-    
-        if(this.promoted){
+
+        if (this.promoted) {
           params.promotion = this.promoted.value;
         }
-    
+
         this.getEmployeesOfTheReviewCycle(params);
         // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
         this.reviewtemplatedropdowns.reset();
@@ -715,23 +715,23 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modalRef.close();
         }
         this.modalService.dismissAll();
-        this.modal.openErrorModal(err.error.reason? err.error.reason: 'Error updating review template');
+        this.modal.openErrorModal(err.error.reason ? err.error.reason : 'Error updating review template');
       },
       complete: () => {
-        const params:  EmployeeQueryParams  = {
+        const params: EmployeeQueryParams = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
         };
-    
+
         if (this.searchText) {
           params.searchQuery = this.searchText;
         }
-    
-        if(this.promoted){
+
+        if (this.promoted) {
           params.promotion = this.promoted.value;
         }
-    
+
         this.getEmployeesOfTheReviewCycle(params);
         // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
       }
@@ -784,26 +784,26 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
         },
-        complete: () =>{
-          const params:  EmployeeQueryParams  = {
+        complete: () => {
+          const params: EmployeeQueryParams = {
             reviewcycleid: this.selectedReviewCycle.id,
             page: this.page,
             pageSize: this.pageSize
           };
-      
+
           if (this.searchText) {
             params.searchQuery = this.searchText;
           }
-      
-          if(this.promoted){
+
+          if (this.promoted) {
             params.promotion = this.promoted.value;
           }
-      
+
           this.getEmployeesOfTheReviewCycle(params);
           // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
           this.Effectivedatefrom.reset();
         }
-    })
+      })
   }
 
   initiateDateForm() {
@@ -825,31 +825,31 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   //     console.log('effectiveDateValidator called');
   //     return () => ({ reviewCycleNotAvailable: true });
   //   }
-  
+
   //   const rCycle = this.filteredEmployees.find(
   //     (emp: { id: any }) => emp.id === this.selectedIds
   //   );
-    
+
   //   if (!rCycle) {
   //     return () => ({ reviewCycleNotFound: true });
   //   }
-  
+
   //   const joiningDate = new Date(rCycle.dateofjoining);
   //   const effectiveJobDate = new Date(rCycle.effectivedate);
-  
+
   //   return (control: AbstractControl): ValidationErrors | null => {
   //     const selectedDate = control.value ? new Date(control.value) : null;
-  
+
   //     if (!selectedDate) return null;
-  
+
   //     if (selectedDate <= joiningDate || selectedDate <= effectiveJobDate) {
   //       return { invalidEffectiveDate: true };
   //     }
-      
+
   //     return null;
   //   };
   // }  
-   
+
   Click(id: number, status: string) {
     if (id) {
       this.selectedIds.push(id);
@@ -873,45 +873,45 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           }
         },
         complete: () => {
-          const params:  EmployeeQueryParams  = {
+          const params: EmployeeQueryParams = {
             reviewcycleid: this.selectedReviewCycle.id,
             page: this.page,
             pageSize: this.pageSize
           };
-      
+
           if (this.searchText) {
             params.searchQuery = this.searchText;
           }
-      
-          if(this.promoted){
+
+          if (this.promoted) {
             params.promotion = this.promoted.value;
           }
-      
+
           this.getEmployeesOfTheReviewCycle(params);
           // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
         }
-    });
+      });
   }
 
   sendLetters(): void {
     const reviewCycleItemIds = this.selectedIds || this.allSelected;
-  
+
     if (!reviewCycleItemIds || reviewCycleItemIds.length === 0) {
       this.modal.openErrorModal('No review cycle items selected.');
       return;
     }
-  
+
     const reviewcycleitemIdStr = Array.isArray(reviewCycleItemIds)
       ? reviewCycleItemIds.join(',')
       : reviewCycleItemIds;
-  
+
     const params = new URLSearchParams({
       reviewcycleitemId: reviewcycleitemIdStr,
       employeeId: this.empinfo.employeeId.toString(),
       lettertype: 'performanceappraisal',
       status: this.status
     });
-  
+
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?${params.toString()}`)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -924,26 +924,26 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modal.openErrorModal(errorMessage);
         },
         complete: () => {
-          const params:  EmployeeQueryParams  = {
+          const params: EmployeeQueryParams = {
             reviewcycleid: this.selectedReviewCycle.id,
             page: this.page,
             pageSize: this.pageSize
           };
-      
+
           if (this.searchText) {
             params.searchQuery = this.searchText;
           }
-      
-          if(this.promoted){
+
+          if (this.promoted) {
             params.promotion = this.promoted.value;
           }
-      
+
           this.getEmployeesOfTheReviewCycle(params);
           // this.getEmployeesOfTheReviewCycle({reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize});
         }
       });
   }
-  
+
   getAuthorityDetails() {
     const offertype = 'Promotion Letter'
     this.http.getData(`SignaturesList?LetterType=${offertype}`).pipe(takeUntil(this.destroy$)).subscribe({
@@ -952,7 +952,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.authorityDetailsForPromotion = data.map((user: any) => ({
           ...user,
           fullName: `${user.firstName} ${user.middleName ? user.middleName + ' ' : ''}${user.lastName}`
-        })); 
+        }));
       }
     })
   }
@@ -975,7 +975,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.modal.openSuccessModal('Promotion Letter Generated Successfully');
         },
-        error: (err) => { 
+        error: (err) => {
           this.modalService.dismissAll();
           this.Effectivedatefrom.reset();
           if (err.status === 500) {
@@ -988,21 +988,21 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters');
           }
         },
-        complete: () =>{
-          const params:  EmployeeQueryParams  = {
+        complete: () => {
+          const params: EmployeeQueryParams = {
             reviewcycleid: this.selectedReviewCycle.id,
             page: this.page,
             pageSize: this.pageSize
           };
-      
+
           if (this.searchText) {
             params.searchQuery = this.searchText;
           }
-      
-          if(this.promoted){
+
+          if (this.promoted) {
             params.promotion = this.promoted.value;
           }
-      
+
           this.getEmployeesOfTheReviewCycle(params);
           // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize});
           this.Effectivedatefrom.reset();
@@ -1025,20 +1025,20 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         }
       },
       complete: () => {
-        const params:  EmployeeQueryParams  = {
+        const params: EmployeeQueryParams = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
         };
-    
+
         if (this.searchText) {
           params.searchQuery = this.searchText;
         }
-    
-        if(this.promoted){
+
+        if (this.promoted) {
           params.promotion = this.promoted.value;
         }
-    
+
         this.getEmployeesOfTheReviewCycle(params);
         // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
       }
@@ -1116,32 +1116,32 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.http.postdata('reviewCycleHeader/reviewitem', payload).subscribe({
       next: (data: any) => {
         if (this.modalRef) {
-          this.modalRef.close(); 
+          this.modalRef.close();
         }
         this.modalService.dismissAll();
         this.modal.openSuccessModal('Employee Added Successfully');
       },
       error: (err) => {
         if (this.modalRef) {
-          this.modalRef.close(); 
+          this.modalRef.close();
         }
       },
-      complete:()=>{
+      complete: () => {
         this.addEmployeeForm.reset();
-        const params:  EmployeeQueryParams  = {
+        const params: EmployeeQueryParams = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
         };
-    
+
         if (this.searchText) {
           params.searchQuery = this.searchText;
         }
-    
-        if(this.promoted){
+
+        if (this.promoted) {
           params.promotion = this.promoted.value;
         }
-    
+
         this.getEmployeesOfTheReviewCycle(params);
         // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
       }
@@ -1189,14 +1189,14 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       'Team Manager Over All Rating': employee.tmoverallrating || '-',
       'Reporting Manager Over All Rating': employee.rmoverallrating || '-',
       'HR Over All Rating': employee.hroverallrating || '-',
-      'Final Revised Salary' : employee.salaryCorrectionRevisedAmount ? employee.salaryCorrectionRevisedAmount 
-                           : employee.revisedSalaryMannual ? employee.revisedSalaryMannual 
-                           : employee.revisedSalaryAuto ? employee.revisedSalaryAuto 
-                           : '-',
+      'Final Revised Salary': employee.salaryCorrectionRevisedAmount ? employee.salaryCorrectionRevisedAmount
+        : employee.revisedSalaryMannual ? employee.revisedSalaryMannual
+          : employee.revisedSalaryAuto ? employee.revisedSalaryAuto
+            : '-',
       'Final Rating': employee.overallRating || '-',
     }));
 
-    const fileType = 'excel'; 
+    const fileType = 'excel';
     this.reviewCyclename = payload[0]['Review Cycle Name']
     this.http.postDatareport(`reviewCycleHeader/export?fileType=${fileType}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: Blob) => {
@@ -1235,12 +1235,12 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   generateLetters(f: FormGroup): void {
-    if(f.invalid){
+    if (f.invalid) {
       console.log(f);
       return;
     }
     this.http.getData(`AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&effectivedate=${this.Effectivedatefrom.get('effectiveFromDATE')?.value}&signatureempId=${this.Effectivedatefrom.get('signaturename')?.value.employeeId
-    }&status=${this.status}`)
+      }&status=${this.status}`)
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
@@ -1259,21 +1259,21 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
             this.modal.openErrorModal(err.error.details || 'An error occurred while generating letters')
           }
         },
-        complete: () =>{
-          const params:  EmployeeQueryParams  = {
+        complete: () => {
+          const params: EmployeeQueryParams = {
             reviewcycleid: this.selectedReviewCycle.id,
             page: this.page,
             pageSize: this.pageSize
           };
-      
+
           if (this.searchText) {
             params.searchQuery = this.searchText;
           }
-      
-          if(this.promoted){
+
+          if (this.promoted) {
             params.promotion = this.promoted.value;
           }
-      
+
           this.getEmployeesOfTheReviewCycle(params);
           // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
           this.Effectivedatefrom.reset();
@@ -1291,78 +1291,78 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.SentpromationLetters();
   }
 
-  onclickstatusforPromotionById(Value:string,id:any){
-    this.status=Value;
+  onclickstatusforPromotionById(Value: string, id: any) {
+    this.status = Value;
     this.SentpromationLetterById(id);
   }
 
-  onclickstatusforappraisalById(Value:string,id:any){
-    this.status=Value;
+  onclickstatusforappraisalById(Value: string, id: any) {
+    this.status = Value;
     this.SentLettersById(id);
   }
 
-  SentLettersById(id:any): void {
+  SentLettersById(id: any): void {
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-         this.modal.openSuccessModal('Appraisal Letter Sent Successfully');
+        this.modal.openSuccessModal('Appraisal Letter Sent Successfully');
       },
       error: (err: any) => {
-        if(err.status===500){
+        if (err.status === 500) {
           this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
-        }else{
+        } else {
           this.modal.openErrorModal(err.error.message || 'An error occurred while sending letters');
         }
       },
-      complete: ()=>{
-        const params:  EmployeeQueryParams  = {
+      complete: () => {
+        const params: EmployeeQueryParams = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
         };
-    
+
         if (this.searchText) {
           params.searchQuery = this.searchText;
         }
-    
-        if(this.promoted){
+
+        if (this.promoted) {
           params.promotion = this.promoted.value;
         }
-    
+
         this.getEmployeesOfTheReviewCycle(params);
         // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
       }
     });
   }
 
-  SentpromationLetterById(id:any): void {
+  SentpromationLetterById(id: any): void {
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
         this.modal.openSuccessModal('Promotion Letter Sent Successfully');
       },
       error: (err: any) => {
-        if(err.status===500){
+        if (err.status === 500) {
           this.modal.openErrorModal(err.error.details || 'An error occurred while sending letters');
-        }else{
+        } else {
           this.modal.openErrorModal(err.error.message || 'An error occurred while sending letters');
         }
       },
-      complete: ()=>{
-        const params:  EmployeeQueryParams  = {
+      complete: () => {
+        const params: EmployeeQueryParams = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
         };
-    
+
         if (this.searchText) {
           params.searchQuery = this.searchText;
         }
-    
-        if(this.promoted){
+
+        if (this.promoted) {
           params.promotion = this.promoted.value;
         }
-    
+
         this.getEmployeesOfTheReviewCycle(params);
         // this.getEmployeesOfTheReviewCycle({ reviewcycleid: this.selectedReviewCycle.id, page: this.page, pageSize: this.pageSize });
       }
@@ -1370,16 +1370,16 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   }
 
   generatePromotionLetters(f: FormGroup): void {
-    const form= f.value;
+    const form = f.value;
     const reviewCycleItemId = this.selectedIds || this.allSelected;
     const employeeId = this.empinfo.employeeId;
     const letterType = 'PromotionLetter';
-    const effectiveDate = form.effectiveFromDATE; 
-    const signatureEmpId = form.signaturename.employeeId    ; 
+    const effectiveDate = form.effectiveFromDATE;
+    const signatureEmpId = form.signaturename.employeeId;
     const status = this.status;
-  
+
     const url = `AppraisalLetter/generateappraisalletter/?reviewcycleitemId=${reviewCycleItemId}&employeeId=${employeeId}&lettertype=${letterType}&effectivedate=${effectiveDate}&signatureempId=${signatureEmpId}&status=${status}`;
-  
+
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.modalService.dismissAll();
@@ -1392,20 +1392,20 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.modal.openErrorModal(errorMessage);
       },
       complete: () => {
-        const params:  EmployeeQueryParams  = {
+        const params: EmployeeQueryParams = {
           reviewcycleid: this.selectedReviewCycle.id,
           page: this.page,
           pageSize: this.pageSize
         };
-    
+
         if (this.searchText) {
           params.searchQuery = this.searchText;
         }
-    
-        if(this.promoted){
+
+        if (this.promoted) {
           params.promotion = this.promoted.value;
         }
-    
+
         this.getEmployeesOfTheReviewCycle(params);
         // this.getEmployeesOfTheReviewCycle({
         //   reviewcycleid: this.selectedReviewCycle.id,
@@ -1415,7 +1415,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.Effectivedatefrom.reset();
       }
     });
-  }  
+  }
 
   closeModal() {
     this.reviewtemplatedropdowns.reset();
@@ -1423,16 +1423,36 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.Effectivedatefrom.reset();
   }
 
-  openConfirmation(){
-    this.modalService.open(this.confirmation, { centered: true, backdrop: 'static'})
+  openConfirmation() {
+    this.modalService.open(this.confirmation, { centered: true, backdrop: 'static' })
   }
 
-  close(){
+  close() {
     this.modalService.dismissAll();
     this.addEmployeeForm.reset();
     this.reviewtemplatedropdowns.reset();
     this.Effectivedatefrom.reset();
   }
+
+hasAnyEmployeeActionsPermission(): boolean {
+  return (
+    this.rbac.allowedToAccess('Employee List Hold.view') ||
+    this.rbac.allowedToAccess('Assign Review Template(Employee).view') ||
+    this.rbac.allowedToAccess('Update Review Template.view') ||
+    this.rbac.allowedToAccess('Employee List Resume.view') ||
+    this.rbac.allowedToAccess('Promotion Letter Download.view') ||
+    this.rbac.allowedToAccess('Appraisal Letter Download.view') ||
+    this.rbac.allowedToAccess('Generate Appraisal Letter(Status - Completed).view') ||
+    this.rbac.allowedToAccess('Send Appraisal Letter(Appraisal Letter Generated).view') ||
+    this.rbac.allowedToAccess('Re-Generate Appraisal Letter.view') ||
+    this.rbac.allowedToAccess('Re-Send Appraisal Letter.view') ||
+    this.rbac.allowedToAccess('Re-Generate Appraisal Letter(Promotion Letter Generated).view') ||
+    this.rbac.allowedToAccess('Re-Send Appraisal Letter(Promotion Letter Sent).view') ||
+    this.rbac.allowedToAccess('Re-Generate Promotion Letter(Appraisal Letter Generated).view') ||
+    this.rbac.allowedToAccess('Re-Send Promotion Letter(Appraisal Letter Sent).view')
+  );
+}
+
 
   ngOnDestroy() {
     this.destroy$.next(true);

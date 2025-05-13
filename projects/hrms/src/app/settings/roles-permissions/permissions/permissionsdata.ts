@@ -295,7 +295,7 @@ export const permissionsData = [
     { fields: 'Comp Off Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Permissions Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Regularization Tab', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Seperation Request Tab', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Separation Request Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Recall Request Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Trainee Details Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'No Due Clearence Requests Tab', View: false, Update: false, Create: false, Delete: false },
@@ -328,8 +328,8 @@ export const permissionsData = [
 
 
     //Pending Approval Seperation Request Tabs Section
-    { fields: 'For You (Seperation Request)', View: false, Update: false, Create: false, Delete: false },   
-    { fields: 'For Role (Seperation Request)', View: false, Update: false, Create: false, Delete: false }, 
+    { fields: 'For You (Separation Request)', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role (Separation Request)', View: false, Update: false, Create: false, Delete: false }, 
  
 
     //Pending Approval Recall Requests Tabs Section
@@ -543,7 +543,7 @@ export const permissionsData = [
     { fields: 'Employee Info Identity Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Family Details', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Bank Details', View: false, Update: false, Create: false, Delete: false },
-    // { fields: 'Employee Info Visa Details', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Visa Details', View: false, Update: false, Create: false, Delete: false },
 
     //My Info Job Sub Tabs Section
     { fields: 'Employee Info Pre-Onboarding Details', View: false, Update: false, Create: false, Delete: false },
@@ -566,9 +566,9 @@ export const permissionsData = [
     { fields: 'Employee Info Documents(Upload File)', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Team Members Sub Tabs Section
-    { fields: 'Employee Info Reporting Manager', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Reporting Manager Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Change RM Button', View: false, Update: false, Create: false, Delete: false }, 
-    { fields: 'Employee Info Team Manager', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Team Manager Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Change TM Button', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Onboard Request Sub Tabs Section
@@ -676,7 +676,7 @@ export const permissionsData = [
    { fields: 'Generate Promotion Letters', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Send Promotion Letters', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Employee List Hold', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Assign Review Template(Review on Hold)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Assign Review Template(Employee)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Update Review Template', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Employee List Resume', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Promotion Letter Download', View: false, Update: false, Create: false, Delete: false },
@@ -685,14 +685,14 @@ export const permissionsData = [
    { fields: 'Send Appraisal Letter(Appraisal Letter Generated)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Re-Generate Appraisal Letter', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Re-Send Appraisal Letter', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Re-Generate Appraisal Letter(Promotion Letter Generated)', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Re-Send Appraisal Letter(Promotion Letter Sent)', View: false, Update: false, Create: false, Delete: false },
+  //  { fields: 'Re-Generate Appraisal Letter(Promotion Letter Generated)', View: false, Update: false, Create: false, Delete: false },
+  //  { fields: 'Re-Send Appraisal Letter(Promotion Letter Sent)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Generate Promotion Letter(Status - Completed)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Re-Generate Promotion Letter', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Send Promotion Letter', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Re-Send Promotion Letter', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Re-Generate Promotion Letter(Appraisal Letter Generated)', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Re-Send Promotion Letter(Appraisal Letter Sent)', View: false, Update: false, Create: false, Delete: false },
+  //  { fields: 'Re-Generate Promotion Letter(Appraisal Letter Generated)', View: false, Update: false, Create: false, Delete: false },
+  //  { fields: 'Re-Send Promotion Letter(Appraisal Letter Sent)', View: false, Update: false, Create: false, Delete: false },
 
    //My Performance Review Tabs Section
    { fields: 'Pending Reviews', View: false, Update: false, Create: false, Delete: false },
@@ -726,14 +726,14 @@ export const permissionsData = [
    { fields: 'Increment Create', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Increment Update(Status - Created)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Increment Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Increment View(Status - Initialted)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Increment View(Status - Initiated)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Increment Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
    
    //Assessor Configuration Actions
    { fields: 'Assessor Create', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Assessor Update(Status - Created)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Assessor Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Assessor Update(Status - Initialted)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Assessor Update(Status - Initiated)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Assessor Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
 
   //Events sub tabs

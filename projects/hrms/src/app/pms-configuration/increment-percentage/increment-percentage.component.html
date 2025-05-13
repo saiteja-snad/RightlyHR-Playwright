@@ -27,7 +27,7 @@
                         <th>Sub Location</th>
                         <th>Rating Scale</th>
                         @if (rbac.allowedToAccess('Increment Update(Status - Created).view') || rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
-                            rbac.allowedToAccess('Increment View(Status - Initialted).view') || rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
+                            rbac.allowedToAccess('Increment View(Status - Initiated).view') || rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
                         <th>Action(s)</th>
                         }
                     </tr>
@@ -45,9 +45,10 @@
                         </td>
                         <td>{{item?.rating?item?.rating:'-'}}</td>
                         @if (rbac.allowedToAccess('Increment Update(Status - Created).view') || rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
-                            rbac.allowedToAccess('Increment View(Status - Initialted).view') || rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
+                            rbac.allowedToAccess('Increment View(Status - Initiated).view') || rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
                         <td class="text-center">
-                            <div class="dropdown">
+                            @if(showIncrementActionDropdown(item)){
+                                <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                   </span>
@@ -59,7 +60,7 @@
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Created'"
                                             (click)="openDelete(confirmation, item.id)">Delete</a></li>
                                     }
-                                    @if(rbac.allowedToAccess('Increment View(Status - Initialted).view')){
+                                    @if(rbac.allowedToAccess('Increment View(Status - Initiated).view')){
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Initiated'" (click)="viewDetails(item)">View</a></li>
                                     }
                                     @if(rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')){
@@ -71,6 +72,7 @@
                                     }
                                 </ul>
                             </div>
+                            }
                         </td>
                         }
                     </tr>

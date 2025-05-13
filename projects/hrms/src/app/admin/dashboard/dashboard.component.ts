@@ -169,20 +169,17 @@ export class DashboardComponent {
     });
   }
 
-  // generateDocument() {
-  //   this.router.navigate(['/admin/letters/offer-letter']);
-  // }
 generateDocument() {
-  if (this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view')) {
-    this.router.navigate(['/admin/letters/welcome-letter']);
+  if (this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view')) {
+    this.router.navigate(['/admin/letters/offer-letter']);
   } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view')) {
     this.router.navigate(['/admin/letters/trainee-appointment-letter']);
   } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view')) {
     this.router.navigate(['/admin/letters/trainee-offer-letter']);
   } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view')) {
     this.router.navigate(['/admin/letters/appointment-letter']);
-  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view')) {
-    this.router.navigate(['/admin/letters/offer-letter']);
+  }else if (this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view')) {
+    this.router.navigate(['/admin/letters/welcome-letter']);
   }
 }
 

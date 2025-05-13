@@ -31,7 +31,7 @@
                     <div class="custom-p-select-content">
                         <p-select formControlName="selected_user" [options]="usersList" name="user" id="user"
                             optionLabel="fullName" placeholder="Please select user" class="w-100" [filter]="true" filterBy="fullName" 
-                            [showClear]="true" filterPlaceholder="Search user">
+                            [showClear]="true" filterPlaceholder="Search user" resetFilterOnHide="true">
                             <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                             <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                         </p-select>

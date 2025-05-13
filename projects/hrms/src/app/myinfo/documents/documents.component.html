@@ -40,7 +40,7 @@
             </div>
 
             <div *ngIf="selectedFile">
-               @if(rbac.allowedToAccess('My Info Documents(Upload File).create')) {
+               @if(rbac.allowedToAccess('My Info Documents(Upload File).view')) {
                <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
                      class="bi bi-upload me-2"></i>Upload File</button>
                }
@@ -68,7 +68,7 @@
                   <th>File  name</th>
                   <th>Created Date</th>
                   <th>Size</th>
-                   @if(rbac.allowedToAccess('My Info Documents(Upload File).update')) {
+                   @if(rbac.allowedToAccess('My Info Documents(Upload File).view')) {
                   <th class="text-center">Action</th>
                    }
                </thead>
@@ -81,9 +81,11 @@
                            <td>{{ file.contentLength | fileSize }}</td>
                            <td class="text-center">
                               <div>
+                                 @if(rbac.allowedToAccess('My Info Documents(Upload File).view')) {
                                  <span class="dowload-text cursor" (click)="onSelectDownload(file)">
                                     <i class="bi bi-download clip-icon me-2"></i>Download
                                  </span>
+                              }
                               </div>
                            </td>
                         </tr>

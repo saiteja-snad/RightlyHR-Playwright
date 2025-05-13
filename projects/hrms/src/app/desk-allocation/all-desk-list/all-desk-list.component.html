@@ -49,88 +49,88 @@
 
               <td>{{ desk.deskStatus }}</td>
               <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
-              @if(rbac.allowedToAccess('Request for Allocation.view') || rbac.allowedToAccess('Inactive desk.view') || rbac.allowedToAccess('Schedule for Maintenance.view') || 
-              rbac.allowedToAccess('Reallocate desk.view') || rbac.allowedToAccess('Release Desk.view') || rbac.allowedToAccess('Release Desk.view') || rbac.allowedToAccess('Mark as Active.view') || 
-              rbac.allowedToAccess('Mark as Available.view') || rbac.allowedToAccess('View Desk Details.view')){
-              <td class="text-center">
-                <div class="dropdown">
-                  <a data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </a>
+             
+                <td class="text-center">
+                   @if(canPerformActionsOnDesk(desk)){
+                  <div class="dropdown">
+                    <a data-bs-toggle="dropdown" aria-expanded="false">
+                      <i class="bi bi-three-dots-vertical"></i>
+                    </a>
 
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    <ng-container *ngIf="desk.deskStatus==='Available'">
-                      @if(rbac.allowedToAccess('Request for Allocation.view')){
-                      <li>
-                        <a class="dropdown-item"
-                          (click)="openModal(assigindesk); viewdata(desk); selectedAsset=desk;viewasetsdata(desk)">
-                          Request for Allocation
-                        </a>
-                      </li>
-                    }
-                    @if(rbac.allowedToAccess('Inactive desk.view')){
-                      <li>
-                        <a class="dropdown-item" (click)="openModal(deleteasstes); viewdata(desk); selectedAsset=desk">
-                          Inactive desk
-                        </a>
-                      </li>
-                    }
-                    @if(rbac.allowedToAccess('Schedule for Maintenance.view')){
-                      <li>
-                        <a class="dropdown-item"
-                          (click)="openModal(undermaintance); viewdata(desk); selectedAsset=desk">
-                          Schedule for Maintenance
-                        </a>
-                      </li>
-                    }
+                    <ul class="dropdown-menu custom-dropdown-menu">
+                      <ng-container *ngIf="desk.deskStatus==='Available'">
+                        @if(rbac.allowedToAccess('Request for Allocation.view')){
+                        <li>
+                          <a class="dropdown-item"
+                            (click)="openModal(assigindesk); viewdata(desk); selectedAsset=desk;viewasetsdata(desk)">
+                            Request for Allocation
+                          </a>
+                        </li>
+                      }
+                      @if(rbac.allowedToAccess('Inactive desk.view')){
+                        <li>
+                          <a class="dropdown-item" (click)="openModal(deleteasstes); viewdata(desk); selectedAsset=desk">
+                            Inactive desk
+                          </a>
+                        </li>
+                      }
+                      @if(rbac.allowedToAccess('Schedule for Maintenance.view')){
+                        <li>
+                          <a class="dropdown-item"
+                            (click)="openModal(undermaintance); viewdata(desk); selectedAsset=desk">
+                            Schedule for Maintenance
+                          </a>
+                        </li>
+                      }
 
-                    </ng-container>
+                      </ng-container>
 
-                    <ng-container *ngIf="desk.deskStatus==='Allocated'">
-                      @if(rbac.allowedToAccess('Reallocate desk.view')){
-                      <li>
-                        <a class="dropdown-item"
-                          (click)="openModal(reallcatedeskmodal);viewdata(desk);viewasetsdata(desk);selectedAsset=desk">
-                          Reallocate desk
-                        </a>
-                      </li>
-                    }
-                    @if(rbac.allowedToAccess('Release Desk.view')){
-                      <li>
-                        <a class="dropdown-item" (click)="openModal(relasedesk); viewdata(desk); selectedAsset=desk">
-                          Release Desk
-                        </a>
-                      </li>
-                    }
-                    </ng-container>
+                      <ng-container *ngIf="desk.deskStatus==='Allocated'">
+                        @if(rbac.allowedToAccess('Reallocate desk.view')){
+                        <li>
+                          <a class="dropdown-item"
+                            (click)="openModal(reallcatedeskmodal);viewdata(desk);viewasetsdata(desk);selectedAsset=desk">
+                            Reallocate desk
+                          </a>
+                        </li>
+                      }
+                      @if(rbac.allowedToAccess('Release Desk.view')){
+                        <li>
+                          <a class="dropdown-item" (click)="openModal(relasedesk); viewdata(desk); selectedAsset=desk">
+                            Release Desk
+                          </a>
+                        </li>
+                      }
+                      </ng-container>
 
-                    @if(rbac.allowedToAccess('Mark as Active.view')){
-                    <li *ngIf="desk.deskStatus === 'Inactive'">
-                      <a class="dropdown-item" (click)="openModal(avitive);selectedAsset=desk;viewdata(desk)">
-                        Mark as Active
-                      </a>
-                    </li>
-                  }
-                    <ng-container *ngIf="desk.deskStatus === 'Under Maintenance'">
-                      @if(rbac.allowedToAccess('Mark as Available.view')){
-                      <li>
-                        <a class="dropdown-item" (click)="openModal(Availabledest);selectedAsset=desk;viewdata(desk) ">
-                          Mark as Available
+                      @if(rbac.allowedToAccess('Mark as Active.view')){
+                      <li *ngIf="desk.deskStatus === 'Inactive'">
+                        <a class="dropdown-item" (click)="openModal(avitive);selectedAsset=desk;viewdata(desk)">
+                          Mark as Active
                         </a>
                       </li>
                     }
-                    </ng-container>
-                    @if(rbac.allowedToAccess('View Desk Details.view')){
-                    <li>
-                      <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
-                        View Desk Details
-                      </a>
-                    </li>
-                  }
-                  </ul>
-                </div>
-              </td>
-            }
+                      <ng-container *ngIf="desk.deskStatus === 'Under Maintenance'">
+                        @if(rbac.allowedToAccess('Mark as Available.view')){
+                        <li>
+                          <a class="dropdown-item" (click)="openModal(Availabledest);selectedAsset=desk;viewdata(desk) ">
+                            Mark as Available
+                          </a>
+                        </li>
+                      }
+                      </ng-container>
+                      @if(rbac.allowedToAccess('View Desk Details.view')){
+                      <li>
+                        <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
+                          View Desk Details
+                        </a>
+                      </li>
+                    }
+                    </ul>
+                  </div>
+                      }
+                </td>
+          
             </tr>
           </ng-container>
           <!-- No Data Found Template -->

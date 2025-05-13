@@ -883,6 +883,28 @@ export class AllDeskListComponent {
     this.reassiginForm.reset();
       this.modalService.dismissAll();
     }
+
+canPerformActionsOnDesk(desk: any): boolean {
+  const status = desk?.deskStatus;
+
+  return (
+    (status === 'Available' && (
+      this.rbac.allowedToAccess('Request for Allocation.view') ||
+      this.rbac.allowedToAccess('Inactive desk.view') ||
+      this.rbac.allowedToAccess('Schedule for Maintenance.view')
+    )) ||
+    (status === 'Allocated' && (
+      this.rbac.allowedToAccess('Reallocate desk.view') ||
+      this.rbac.allowedToAccess('Release Desk.view')
+    )) ||
+    (status === 'Inactive' && this.rbac.allowedToAccess('Mark as Active.view')) ||
+    (status === 'Under Maintenance' && this.rbac.allowedToAccess('Mark as Available.view')) ||
+    this.rbac.allowedToAccess('View Desk Details.view')
+  );
+}
+
+
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

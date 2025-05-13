@@ -22,7 +22,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 })
 
 export class VisaDetailsComponent implements OnInit,OnDestroy {
-    subscription!: Subscription;
+  subscription!: Subscription;
   empinfo: any;
   visa = [] as any;
   visaData = [] as any;
@@ -36,6 +36,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   selecteVisaId: any;
   selectedvisaDetails: any;
   loading=false
+  employedata: any;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -79,6 +80,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
+        this.employedata=data
         this.dateofbirth =this.formatDateToLocal(data.dob)
       },
       error: (reason) => console.error('Error fetching employee data:', reason),

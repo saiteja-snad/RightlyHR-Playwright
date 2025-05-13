@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { ProbationpipePipe } from "../../Pipes/probationpipe.pipe";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-probation-employees',
   imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ProbationpipePipe, DataLoaderContentComponent, NoDataFoundComponent],
@@ -27,7 +28,7 @@ export class ProbationEmployeesComponent {
   probationDuration:any;
   loader = false;
   
-  constructor(private router: Router,private http: HttpService, private modalService: NgbModal) { }
+  constructor(private router: Router,private http: HttpService, private modalService: NgbModal,public rbac:RbacService) { }
 
   ngOnInit(): void {
     this.getProbationEmployees()

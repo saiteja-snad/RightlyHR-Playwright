@@ -315,6 +315,11 @@ body {
         font-weight: 700;
     }
 
+    .active-nav-link{
+        border-bottom: 0.25rem solid rgba(6, 39, 79, 1);
+        font-weight: 700;
+    }
+
     a {
         color: var(--primary-color) !important;
 

@@ -178,11 +178,13 @@ export class LeavesApprovaltabsComponent {
         label: 'Team Leave balance',
         link: '/time-off/leaves/team-leave-balance',
         count: this.teamLeaveBalanceCount,
+         permission: { feature: 'Team Leave Balance(Time Off)', action: 'view' },
       },
       {
         label: 'Team Leave Summary',
         link: '/time-off/leaves/team-leave-summary',
         count: this.teamLeaveSummaryCount,
+         permission: { feature: 'Team Leave Balance Summary(Time Off)', action: 'view' },
       },
     ];
 

@@ -129,10 +129,10 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const WFH_ONDUTY_SUB_TABS =[
-    {route: '/time-off/wfh/waiting-for-approval',permission:'Waiting For Approval (WFH On Duty).view'},
-    {route: '/time-off/wfh/approved',permission: 'Approved (WFH On Duty).view'},
-    {route: '/time-off/wfh/processed',permission: 'Processed (WFH On Duty).view'},
-    {route: '/time-off/wfh/rejected',permission: 'Rejected (WFH On Duty).view',},
+    {route: '/time-off/wfh/waiting-for-approval',permission:'Waiting For Approval (WFH).view'},
+    {route: '/time-off/wfh/approved',permission: 'Approved (WFH).view'},
+    {route: '/time-off/wfh/processed',permission: 'Processed (WFH).view'},
+    {route: '/time-off/wfh/rejected',permission: 'Rejected (WFH).view',},
   ]
   
   export const PERMISSIONS_SUB_TABS =[

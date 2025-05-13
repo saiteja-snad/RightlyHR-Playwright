@@ -247,7 +247,7 @@ export const permissionsData = [
 
 
     //Remote Login
-    { fields: 'Remote Login', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Request Remote Login Button', View: false, Update: false, Create: false, Delete: false },
 
 
     //Comp Off Sub Tabs Section    
@@ -285,7 +285,7 @@ export const permissionsData = [
     { fields: 'Attendance Select Employee For HR', View: false, Update: false, Create: false, Delete: false },
 
     //Global Permissions 
-    { fields: 'Global Permissions', View: false, Update: false, Create: false, Delete: false },
+    // { fields: 'Global Permissions', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Request Global Permission Button', View: false, Update: false, Create: false, Delete: false },
 
 

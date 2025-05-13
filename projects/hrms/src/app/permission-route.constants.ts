@@ -115,7 +115,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const REMOTE_LOGIN_SUB_TABS =[
-    {route: '/time-off/remote/waiting-for-approval',permission:'Remote Login.view'},
+    {route: '/time-off/remote/waiting-for-approval',permission:'Remote Login Module.view'},
     {route: '/time-off/remote/approved',permission: 'Remote Login.view'},
     {route: '/time-off/remote/processed',permission: 'Remote Login.view'},
     {route: '/time-off/remote/rejected',permission: 'Remote Login.view',},

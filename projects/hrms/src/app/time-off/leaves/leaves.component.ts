@@ -1026,7 +1026,7 @@ export class LeavesComponent {
             setTimeout(() => {
               this.modalService.dismissAll();
               this.leaveForm.reset();
-             this.signalService.timecountTriggerSignal.set(true);
+             window.location.reload();
             }, 2000);
             this.isLoading = false;
           }

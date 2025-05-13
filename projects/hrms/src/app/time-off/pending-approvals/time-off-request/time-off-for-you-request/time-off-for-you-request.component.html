@@ -20,9 +20,9 @@
                 placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
 
-        <div class="custom-table-content">
-            <p-table [value]="leavesselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts" 
-             dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+        <div class="custom-p-multi-select-table">
+            <p-table [value]="leavesselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts"
+                dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
                 <ng-template #header>
                     <tr>
                         <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
@@ -45,7 +45,7 @@
                     @if (rbac.allowedToAccess('Timeoff Tab.view')) {
                     @if ((((leaves | async) ?? []) | timeoffsearch: searchValue).length > 0) {
                     <!-- @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track
-                    item.approvalHeader.id){ -->
+                            item.approvalHeader.id){ -->
                     <tr>
                         <td>
                             <p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" />
@@ -82,44 +82,44 @@
                                 </ng-template>
                             </div>
                         </td>
-                            @if(!multiSelect){
-                            <td class="text-center">
-                                <div class="dropdown">
-                                    <span type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </span>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item"
-                                                *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage"
-                                                (click)="checkLeaveBalance(item,checkbalancepopup)">
-                                                <i class="bi bi-calendar-check me-2"></i>Check Balance</a>
-                                        </li>
-                            
-                                        <li>
-                                            <a class="dropdown-item" (click)="approveleave(approverPopup,item)"
-                                                *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.update')">
-                                                <i class="bi bi-check-circle me-2"></i>Approve</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
-                                                *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.delete')">
-                                                <i class="bi bi-x-circle me-2"></i>Reject</a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" (click)="processleave(item)"
-                                                *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.update')">
-                                                <i class="bi bi-check-circle me-2"></i>Process</a>
-                                        </li>
-                                          <li>
-                                            <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
-                                                *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.delete')">
-                                                <i class="bi bi-x-circle me-2"></i>Reject</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                            }
+                        @if(!multiSelect){
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item"
+                                            *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage"
+                                            (click)="checkLeaveBalance(item,checkbalancepopup)">
+                                            <i class="bi bi-calendar-check me-2"></i>Check Balance</a>
+                                    </li>
+        
+                                    <li>
+                                        <a class="dropdown-item" (click)="approveleave(approverPopup,item)"
+                                            *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.update')">
+                                            <i class="bi bi-check-circle me-2"></i>Approve</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
+                                            *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.delete')">
+                                            <i class="bi bi-x-circle me-2"></i>Reject</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" (click)="processleave(item)"
+                                            *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.update')">
+                                            <i class="bi bi-check-circle me-2"></i>Process</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
+                                            *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.delete')">
+                                            <i class="bi bi-x-circle me-2"></i>Reject</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                        }
                     </tr>
                     <!-- } -->
                     }

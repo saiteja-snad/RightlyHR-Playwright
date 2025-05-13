@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div>
+        @if (selectedProducts && selectedProducts.length > 0 && multiSelect) {
         <div class="d-flex justify-content-end gap-3 mb-3">
-            @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
             @if (canBulkApprove()) {
             <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approverPopup)">Approve</button>
             <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
@@ -10,8 +10,9 @@
             <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
             <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
             }
-            }
         </div>
+        }
+
         <!--Input search-->
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
@@ -20,7 +21,7 @@
                 placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
 
-        <div class="custom-table-content">
+        <div class="custom-p-multi-select-table">
             <p-table [value]="leavesselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts" 
              dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
                 <ng-template #header>

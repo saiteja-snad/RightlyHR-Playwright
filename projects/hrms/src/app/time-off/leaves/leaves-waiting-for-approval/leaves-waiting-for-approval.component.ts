@@ -80,6 +80,7 @@ isLoading=false;
       next:(res:any)=>{
         console.log(res);
         if(res){
+          this.cancelForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Leave cancelled successfully')
             this.getDataByLPID();
@@ -91,8 +92,9 @@ isLoading=false;
       error:(err:any)=>{
         console.log(err)
         this.isLoading=false;
+         this.cancelForm.reset();
+          this.modalService.dismissAll();
         this.conformationPopup.openErrorModal(err.error.message);
-        this.modalService.dismissAll();
       },
       complete:()=> {
         this.isLoading=false;

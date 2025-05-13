@@ -242,16 +242,21 @@ bulkProcess(){
       status: 'Approved',
       comments: comments,
       approvedBy: approvedBy,
-      currentStage:item.approvalHeader.currentapprovalStage
+      currentapprovalStage:item.approvalHeader.currentapprovalStage
     }));
     this.subscription = this.http
       .putData(`PendingApproval/multiapprovereject`, requestBody)
       .subscribe({
         next: (respone: any) => {
             this.selectedProducts=[];
-          this.conformationPopup.openSuccessModal(
+             if(respone.data.success.length>0&&respone.data.failed.length<=0){
+             this.conformationPopup.openSuccessModal(
             'Request Approved Successfully'
           );
+          }
+          else if(respone.data.failed.length>0){
+            this.conformationPopup.multiapprovalsModal(respone.data)
+          }
           setTimeout(() => {
             this.modalService.dismissAll();
             this.getAllPendingApprovals();
@@ -279,16 +284,22 @@ bulkProcess(){
       status: 'Rejected',
       comments: comments,
       approvedBy: approvedBy,
-      currentStage:item.approvalHeader.currentapprovalStage
+      currentapprovalStage:item.approvalHeader.currentapprovalStage
     }));
     this.subscription = this.http
       .putData(`PendingApproval/multiapprovereject`, requestBody)
       .subscribe({
         next: (respone: any) => {
             this.selectedProducts=[];
-          this.conformationPopup.openSuccessModal(
+        console.log(respone.data)
+           if(respone.data.success.length>0&&respone.data.failed.length<=0){
+             this.conformationPopup.openSuccessModal(
             'Request Rejected Successfully'
           );
+          }
+          else if(respone.data.failed.length>0){
+            this.conformationPopup.multiapprovalsModal(respone.data)
+          }
           setTimeout(() => {
             this.modalService.dismissAll();
             this.getAllPendingApprovals();
@@ -314,7 +325,7 @@ bulkProcess(){
       id: item.approvalHeader.id,
       status: 'Processed',
       approvedBy: approvedBy,
-      currentStage:item.approvalHeader.currentapprovalStage
+      currentapprovalStage:item.approvalHeader.currentapprovalStage
     }));
     // let requestBody = {
     //   status: 'Processed',
@@ -325,11 +336,16 @@ bulkProcess(){
       .putData(`PendingApproval/multiprocess`, requestBody)
       .subscribe({
         next: (respone: any) => {
-          console.log(respone);
+         // console.log(respone);
           this.selectedProducts=[];
-          this.conformationPopup.openSuccessModal(
+             if(respone.data.success.length>0 &&respone.data.failed.length<=0){
+              this.conformationPopup.openSuccessModal(
             'Request Processed Successfully'
           );
+          }
+          else if(respone.data.failed.length>0){
+            this.conformationPopup.multiapprovalsModal(respone.data)
+          }
           setTimeout(() => {
             this.modalService.dismissAll();
             this.getAllPendingApprovals();

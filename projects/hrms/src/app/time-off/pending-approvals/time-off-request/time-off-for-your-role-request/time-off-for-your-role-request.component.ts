@@ -245,6 +245,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit,OnDestroy {
         status: 'Approved',
         comments: comments,
         approvedBy: approvedBy,
+        currentapprovalStage:item.approvalHeader.currentapprovalStage
       }));
       this.subscription = this.http
         .putData(`PendingApproval/multiapprovereject`, requestBody)
@@ -281,6 +282,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit,OnDestroy {
         status: 'Rejected',
         comments: comments,
         approvedBy: approvedBy,
+        currentapprovalStage:item.approvalHeader.currentapprovalStage
       }));
       this.subscription = this.http
         .putData(`PendingApproval/multiapprovereject`, requestBody)
@@ -315,6 +317,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit,OnDestroy {
         id: item.approvalHeader.id,
         status: 'Processed',
         approvedBy: approvedBy,
+        currentapprovalStage:item.approvalHeader.currentapprovalStage
       }));
       // let requestBody = {
       //   status: 'Processed',

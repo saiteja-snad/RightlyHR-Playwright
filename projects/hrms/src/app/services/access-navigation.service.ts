@@ -601,7 +601,6 @@ export class AccessNavigationService {
         }
         break;
       
-      
     }
     return route;
   }

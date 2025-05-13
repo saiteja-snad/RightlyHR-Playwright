@@ -47,6 +47,7 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
   @ViewChild('deletesuccess') deletesuccess: any;
   @ViewChild('deleterowincrement') deleterowincrement: any;
   @Input() updateData: any;
+
   constructor(
     private authService: AuthService,
     private conformationPopup: OpenModalService,
@@ -54,14 +55,15 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     public rbac: RbacService
   ) {}
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.editDetails(this.updateData);
     this.getReviewCycledata();
     this.getAllasessors();
     this.getAllActiveEmpList();
-    const currentdate = moment();
-    this.currentDate = this.formatDate(currentdate);
+     const today = new Date();
+    this.currentDate = this.formatDate(today);
   }
 
   //function to edit the details
@@ -116,10 +118,13 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
       : [];
   }
 
-  formatDate(date: any) {
-    return date?.split('T')[0];
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
   }
-
+  
   getAllasessors() {
     this.subscription = this.http
       .getData('entityAttributeValues?entity=PMS&attribute=assessorconfig')

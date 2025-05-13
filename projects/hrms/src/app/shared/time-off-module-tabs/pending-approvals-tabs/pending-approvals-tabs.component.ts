@@ -8,6 +8,7 @@ import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { SignalsService } from '../../../services/signals.service';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 
 interface NavLink {
   label: string;
@@ -83,7 +84,8 @@ export class PendingApprovalsTabsComponent {
   constructor(
     public readonly router: Router,
     private http: HttpService, public rbac: RbacService,
-    private signalService:SignalsService
+    private signalService:SignalsService,
+    private accessNav: AccessNavigationService
   ) {
     effect(() => {
       if ((this.http.tirggerPendingApprovalCountSignal().wfh) || (this.http.tirggerPendingApprovalCountSignal().separation)
@@ -130,9 +132,6 @@ export class PendingApprovalsTabsComponent {
     });
   }
 
-  isActive(router: string): boolean {
-    return this.router.isActive(router, true);
-  }
 
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -175,6 +174,18 @@ export class PendingApprovalsTabsComponent {
     });
   }
 
+  navigateToAccessedRoute(route: string) {
+    const actualRoute = this.accessNav.navigateToAccessedRoute(route);
+    if (actualRoute) {
+      this.router.navigate([actualRoute]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
+  }
+
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -42,17 +42,17 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
 
   first = 0;
   totalRecords = 0;
-  Status:any;
+  Status: any;
 
   destroy$: Subject<boolean> = new Subject();
 
-  
+
   constructor(
     private readonly modalService: NgbModal,
     private readonly http: HttpService,
     private router: Router,
     private sharedModalService: OpenModalService,
-    public rbac : RbacService
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {
@@ -70,7 +70,7 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
       this.page, this.pageSize,
       this.searchQuery,
       this.employeeId.toString(),
-      'Employee','Submitted').pipe(takeUntil(this.destroy$)).subscribe({
+      'Employee', 'Submitted').pipe(takeUntil(this.destroy$)).subscribe({
         next: (data) => {
           this.reviewCycles = data.items;
           this.totalItems = data.totalCount || 0;
@@ -81,7 +81,7 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
           }
         },
         error: (err) => {
-          this.dataload=false;
+          this.dataload = false;
         },
         complete: () => {
           this.dataload = false;
@@ -115,33 +115,33 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
 
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
-    this.rows = newPageSize; 
+    this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
     this.fetchReviewCycles();
   }
 
-  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId:number,reviewEmployeeId:number,reviewcycleitemformresponseid:number,formresponseid:number) {
+  selfAssessment(reviewCycleItemId: number, currentStage: number, assessorItemId: number, reviewEmployeeId: number, reviewcycleitemformresponseid: number, formresponseid: number) {
     const queryParams = {
       reviewCycleItemId: reviewCycleItemId,
       currentStage: currentStage,
       assessorItemId: assessorItemId,
       reviewCycles: JSON.stringify(this.reviewCycles), // Ensure this.reviewCycles is defined
-      reviewEmployeeId:reviewEmployeeId,
-      reviewcycleitemformresponseid:reviewcycleitemformresponseid,
-      formresponseid:formresponseid
+      reviewEmployeeId: reviewEmployeeId,
+      reviewcycleitemformresponseid: reviewcycleitemformresponseid,
+      formresponseid: formresponseid
     };
-  
+
     // Store queryParams in localStorage
     localStorage.setItem('queryParams', JSON.stringify(queryParams));
-  
-       // Navigate to the assessment route
+
+    // Navigate to the assessment route
     this.router.navigate(['/pms/assessment-form']);
   }
 
   downloadPromotionletter(iteamid: any) {
 
-     this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
+    this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PromotionLetter&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
 
       next: (data: Blob) => {
         const blob = new Blob([data], { type: 'application/pdf' }); // Ensure correct MIME type
@@ -164,13 +164,13 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
 
   downloadletter(iteamid: any) {
 
-     this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
+    this.http.getByDownload<Blob>(`Report/downloadletter/${iteamid.reviewEmployeeId}?lettertype=PerformanceAppraisal&reviewcycleitemid=${iteamid.reviewCycleItemId}`, { responseType: 'blob' as 'json' }).subscribe({
       next: (data: Blob) => {
-        const blob = new Blob([data], { type: 'application/pdf' }); 
+        const blob = new Blob([data], { type: 'application/pdf' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `PerformanceAppraisal_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`; 
+        a.download = `PerformanceAppraisal_${iteamid.reviewEmployeeId}_${iteamid.reviewEmployeeIdName}.pdf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -191,6 +191,17 @@ export class CompleteReviewsComponent implements OnInit, OnDestroy {
   closeModal() {
     this.modalService.dismissAll();
   }
+
+showActionDropdownForItem(item: any): boolean {
+  return (
+    (this.rbac.allowedToAccess('My Performance Assessment View.view')) ||
+    (this.rbac.allowedToAccess('My Performance Promotion Letter Download.view') &&
+      (item.rcItemStatus === 'Promotion Letter Sent' || item.rcItemStatus === 'Promotion Letter Generated')) ||
+    (this.rbac.allowedToAccess('My Performance Appraisal Letter Download.view') &&
+      (item.rcItemStatus === 'Appraisal Letter Sent' || item.rcItemStatus === 'Appraisal Letter Generated'))
+  );
+}
+
 
   ngOnDestroy() {
     this.destroy$.next(true);

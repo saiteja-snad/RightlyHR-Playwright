@@ -25,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('For Role (WFH).view')) {
+               
                 @if ((((leaves | async) ?? [])| wfhsearchfilter: searchValue).length > 0) {
                 @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ; track leave.approvalHeader.id){
                 <tr>
@@ -102,7 +102,7 @@
                     </td>
                 </tr>
                 }
-                }
+                
             </tbody>
         </table>
         }@else{

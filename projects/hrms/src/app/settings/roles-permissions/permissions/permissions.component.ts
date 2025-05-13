@@ -10,9 +10,10 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SettingsRolePermissionsModuleTabsComponent } from "../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 @Component({
   selector: 'app-permissions',
-  imports: [CommonModule, FormsModule, AutoCompleteModule, SettingsRolePermissionsModuleTabsComponent],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, SettingsRolePermissionsModuleTabsComponent, DataLoaderContentComponent],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -28,6 +29,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   filteredRole: any | undefined;
   destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
+  dataLoad: boolean = false;
 
   constructor(
     private http: HttpService, 
@@ -37,10 +39,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    if (this.roleToFilter === null) {
-      this.permissions = JSON.parse(JSON.stringify(permissionsData));
-    }
-    this.getAllroles();
+    this.dataLoad = true;
+    setTimeout(() => {
+      if (this.roleToFilter === null) {
+        this.permissions = JSON.parse(JSON.stringify(permissionsData));
+      }
+      this.getAllroles();
+      this.dataLoad = false;
+    });
   }
 
   getAllroles(): void {
@@ -207,7 +213,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     this.http.postdata("FusionRoleClaims/rolePermissions", payload).subscribe({
       next: (data) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal("Permissions updated successfully!");
+        this.modal.openSuccessModal("Permissions updated successfully");
       },
       error: (err) => {
         console.error("Error posting permissions:", err);
@@ -261,15 +267,15 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
 
   isFieldDisabled(field: string, permission: string): boolean {
-    if (field === 'Asset Allocation - Create') {
+    if (field === 'Asset Management - Create') {
       return permission !== 'View'; // Only 'View' is enabled
     }
   
-    if (['Asset Allocation - All', 'Asset Allocation - Available'].includes(field)) {
+    if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
       return permission === 'Create'; // Disable only 'Create'
     }
   
-    if (['Asset Allocation - Under Maintenance', 'Asset Allocation - Inactive','Asset Allocation - Allocated'].includes(field)) {
+    if (['Asset Management - Under Maintenance', 'Asset Management - Inactive','Asset Management - Allocated'].includes(field)) {
       return !['View', 'Update'].includes(permission); // Enable only 'View' and 'Update'
     }
   

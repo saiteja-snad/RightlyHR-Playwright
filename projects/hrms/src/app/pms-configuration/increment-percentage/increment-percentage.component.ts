@@ -178,6 +178,19 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
     });
   }
 
+  showIncrementActionDropdown(item: any): boolean {
+    return (
+      (this.rbac.allowedToAccess('Increment Update(Status - Created).view') &&
+        (item?.reviewCycleStatus === 'Created' || item?.reviewCycleStatus === 'Initiated')) ||
+      (this.rbac.allowedToAccess('Increment Delete(Status - Created).view') &&
+        item?.reviewCycleStatus === 'Created') ||
+      (this.rbac.allowedToAccess('Increment View(Status - Initiated).view') &&
+        item?.reviewCycleStatus === 'Initiated') ||
+      (this.rbac.allowedToAccess('Increment Update(Status - Review On Hold).view') &&
+        item?.reviewCycleStatus === 'Review on Hold')
+    );
+  }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

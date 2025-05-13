@@ -24,7 +24,7 @@ import { RbacService } from '../../services/rbac.service';
     TranslateModule,
     DataLoaderContentComponent,
     NoDataFoundComponent
-],
+  ],
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss',
 })
@@ -57,7 +57,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   @ViewChild('confirmation') confirmation: any;
 
-  constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac : RbacService) {
+  constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService) {
     effect(() => {
       if (this.http.reviewCycleTriggerSignal()) {
         this.getAllReviewCyclesList(this.page, this.pageSize);
@@ -91,7 +91,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
 
   onPageSizeChange(newPageSize: number) {
     this.pageSize = newPageSize;
-    this.rows = newPageSize; 
+    this.rows = newPageSize;
     this.page = 1;
     this.first = 0;
     this.getAllReviewCyclesList(this.page, this.pageSize);
@@ -148,12 +148,12 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`JobLocation/v2/sub-location-by-joblocation/${ValuesForSublocation}`).subscribe({
       next: (data: any) => {
         this.subLocationsDropdown = data.jobSubLocations.map((subLocation: any) => {
-            return {
-              ...subLocation,
-              fullName: `${subLocation.subLocationName}`,
-              selectedAllGroup: 'Group 4',
-            };
-          }
+          return {
+            ...subLocation,
+            fullName: `${subLocation.subLocationName}`,
+            selectedAllGroup: 'Group 4',
+          };
+        }
         );
       },
     });
@@ -164,11 +164,11 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
       page: pagenum,
       pageSize: pagesize,
     };
-    
+
     if (this.searchText) {
       params.searchQuery = this.searchText;
     }
-    
+
     this.dataload = true;
     this.subscription = this.http.getpagentiontData('reviewCycleHeader', params).subscribe({
       next: (data: any) => {
@@ -296,6 +296,16 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
         console.error('Error:', error);
       },
     });
+  }
+
+  canPerformActionsOnCycle(cycle: any): boolean {
+    const status = cycle?.status;
+    return (
+      (status === 'Initiated' && (this.rbac.allowedToAccess('Hold.view') || this.rbac.allowedToAccess('View.view'))) ||
+      (status === 'Review on Hold' && this.rbac.allowedToAccess('Resume.view')) ||
+      (status !== 'Initiated' && status !== 'Review on Hold' && this.rbac.allowedToAccess('Update.view')) ||
+      (status === 'Created' && this.rbac.allowedToAccess('Initiate.view'))
+    );
   }
 
   ngOnDestroy(): void {

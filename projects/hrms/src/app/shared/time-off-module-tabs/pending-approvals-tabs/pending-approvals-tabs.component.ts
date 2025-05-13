@@ -38,40 +38,40 @@ export class PendingApprovalsTabsComponent {
     {
       label: 'Time-Off',
       route: '/time-off/pending-approvals/time-off-request',
-      moduleId: environment.leavesModuleId, permission: { feature: 'Timeoff Tab', action: 'view' }
+      moduleId: environment.leavesModuleId, permission: { feature: 'Time Off Tab', action: 'view' }
     },
-    { label: 'WFH', route: '/time-off/pending-approvals/wfh', moduleId: environment.wfhModuleId, permission: { feature: 'Workfromhome Tab', action: 'view' } },
-    { label: 'Comp-Off', route: '/time-off/pending-approvals/comp-off', moduleId: environment.compoffModuleId, permission: { feature: 'Compoff Tab', action: 'view' } },
+    { label: 'WFH', route: '/time-off/pending-approvals/wfh', moduleId: environment.wfhModuleId, permission: { feature: 'WFH Tab', action: 'view' } },
+    { label: 'Comp-Off', route: '/time-off/pending-approvals/comp-off', moduleId: environment.compoffModuleId, permission: { feature: 'Comp Off Tab', action: 'view' } },
     { label: 'Permissions', route: '/time-off/pending-approvals/permissions', moduleId: environment.permissionsModuleId, permission: { feature: 'Permissions Tab', action: 'view' } },
     { label: 'Regularization', route: '/time-off/pending-approvals/regularization-request', moduleId: environment.attendanceRegularizationModuleId, permission: { feature: 'Regularization Tab', action: 'view' } },
     {
       label: 'Separation Requests',
       route: '/time-off/pending-approvals/separation-request',
-      moduleId: environment.SeparationrequestmoduleId, permission: { feature: 'Separation Requests Tab', action: 'view' }
+      moduleId: environment.SeparationrequestmoduleId, permission: { feature: 'Separation Request Tab', action: 'view' }
     },
     {
       label: 'Recall Requests',
       route: '/time-off/pending-approvals/recall-request',
-      moduleId: environment.RecallrequestmoduleId, permission: { feature: 'Recall Tab', action: 'view' }
+      moduleId: environment.RecallrequestmoduleId, permission: { feature: 'Recall Request Tab', action: 'view' }
     },
     {
       label: 'Trainee Details', route: '/time-off/pending-approvals/trainee-approvals',
-      moduleId: environment.traineeoffboardingModuleId, permission: { feature: 'Trainee Tab', action: 'view' }
+      moduleId: environment.traineeoffboardingModuleId, permission: { feature: 'Trainee Details Tab', action: 'view' }
     },
     {
       label: 'No Due Clearance Requests',
       route: '/time-off/pending-approvals/nodue-request',
-      moduleId: environment.nodueModuleId, permission: { feature: 'No Due Clearance Tab', action: 'view' }
+      moduleId: environment.nodueModuleId, permission: { feature: 'No Due Clearence Requests Tab', action: 'view' }
     },
     {
       label: 'Claims and Expenses',
       route: '/time-off/pending-approvals/claimsandexpenses-request',
-      moduleId: environment.expensesModuleId, permission: { feature: 'Expenses Tab', action: 'view' }
+      moduleId: environment.expensesModuleId, permission: { feature: 'Claims and Expenses Tab', action: 'view' }
     },
     {
       label: 'Desk Request',
       route: '/time-off/pending-approvals/desk-approval',
-      moduleId: environment.deskAllocationModuleId, permission: { feature: 'Desk Tab', action: 'view' }
+      moduleId: environment.deskAllocationModuleId, permission: { feature: 'Desk Requests Tab', action: 'view' }
     },
     
     {
@@ -138,6 +138,15 @@ export class PendingApprovalsTabsComponent {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovalsCount();
     this.getAllPendingApprovalsNoDue();
+    this.navLinks = this.navLinks.filter(
+  (tab) =>
+    tab.permission &&
+    tab.permission.feature &&
+    tab.permission.action &&
+    this.rbac.allowedToAccess(
+      `${tab.permission.feature}.${tab.permission.action}`
+    )
+);
   }
 
   getAllPendingApprovalsNoDue() {

@@ -61,7 +61,13 @@ export class TimeOffTabsComponent implements OnInit {
     }
   }
 
-   isActiveRoute(link: string): boolean {
-    return this.router.url.includes(link);
-  }
+isActiveRoute(link: string): boolean {
+  const currentUrl = this.router.url;
+
+  // Exact match or starts with followed by `/` to avoid partial matches
+  return currentUrl === link || currentUrl.startsWith(link + '/');
+}
+
+
+
 }

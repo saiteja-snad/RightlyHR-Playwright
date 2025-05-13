@@ -1144,7 +1144,7 @@
                         <tr class="text-align-center"
                             *ngIf="per.fields === 'Time Off Tab' || per.fields === 'WFH Tab' || per.fields === 'Comp Off Tab' 
                                             || per.fields === 'Permissions Tab' || per.fields === 'Regularization Tab' 
-                                            || per.fields === 'Seperation Request Tab' || per.fields === 'Recall Request Tab' 
+                                            || per.fields === 'Separation Request Tab' || per.fields === 'Recall Request Tab' 
                                             || per.fields === 'Trainee Details Tab' || per.fields === 'No Due Clearence Requests Tab'
                                             || per.fields === 'Claims and Expenses Tab'  || per.fields === 'Desk Requests Tab' || per.fields === 'Probation Details Tab' ">
                             <td class="text-align-center">{{ per.fields }}</td>
@@ -1304,11 +1304,11 @@
                     
                     <!-- Seperation Request Pending Approvals Module Tabs -->
                     <tr>
-                        <th colspan="5" class="custom-header">Pending Approval Seperation Request</th>
+                        <th colspan="5" class="custom-header">Pending Approval Separation Request</th>
                     </tr>
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center"
-                            *ngIf="per.fields === 'For You (Seperation Request)' || per.fields === 'For Role (Seperation Request)' ">
+                            *ngIf="per.fields === 'For You (Separation Request)' || per.fields === 'For Role (Separation Request)' ">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

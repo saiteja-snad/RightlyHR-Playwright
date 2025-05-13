@@ -861,7 +861,7 @@ export class AccessNavigationService {
         break;
 
       case '/time-off/pending-approvals/separation-request':
-        if (this.rbac.allowedToAccess('Seperation Request Tab.view')) {
+        if (this.rbac.allowedToAccess('Separation Request Tab.view')) {
           for (const item of SEPARATION_REQUEST_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;

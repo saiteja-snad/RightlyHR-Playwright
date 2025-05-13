@@ -243,8 +243,8 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const PENDING_APPROVALS_PERMISSIONS_SUB_TABS = [
-    {route: '/time-off/pending-approvals/permissions/for-you', permission: 'For You (Permissions).view'},
-    {route: '/time-off/pending-approvals/permissions/for-your-role', permission: 'For Role (Permissions).view'},  
+    {route: '/time-off/pending-approvals/permissions/for-you', permission: 'For You (Permission).view'},
+    {route: '/time-off/pending-approvals/permissions/for-your-role', permission: 'For Role (Permission).view'},  
   ]
   
   export const PENDING_APPROVALS_REGULARIZATION_SUB_TABS =[
@@ -258,8 +258,8 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const RECALL_REQUEST_SUB_TABS =[
-    {route: '/time-off/pending-approvals/recall-request/recall-for-you', permission: 'For You (Recall Request).view'},
-    {route: '/time-off/pending-approvals/recall-request/recall-for-role', permission: 'For Role (Recall Request).view'},
+    {route: '/time-off/pending-approvals/recall-request/recall-for-you', permission: 'For You (Recall Requests).view'},
+    {route: '/time-off/pending-approvals/recall-request/recall-for-role', permission: 'For Role (Recall Requests).view'},
   ]
   
   export const EXPENSES_REQUEST_SUB_TABS =[

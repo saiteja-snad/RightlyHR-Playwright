@@ -1,4 +1,4 @@
-<div class="custom-main-component-container" *ngIf="rbac.allowedToAccess('Separation Requests Tab.view')">
+<div class="custom-main-component-container">
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -23,7 +23,7 @@
                     <th>{{'Early Relieving Reason' | translate}}</th>
                     <th>{{'Request Type' | translate}}</th>
                     <th>{{'Approver History' | translate}}</th>
-                    @if(rbac.allowedToAccess('For You (Seperation Request).update') || rbac.allowedToAccess('For You(Seperation Request).delete')) {
+                    @if(rbac.allowedToAccess('For You (Seperation Request).update') || rbac.allowedToAccess('For You (Seperation Request).delete')) {
                     <th>Action<span class="text-lowercase">(s)</span></th>
                     }
                 </tr>
@@ -97,7 +97,7 @@
                             }
                             @else{-}
                         </td>
-                        @if(rbac.allowedToAccess('For You (Seperation Request).update') || rbac.allowedToAccess('ForYou(Seperation Request).delete')) {
+                        @if(rbac.allowedToAccess('For You (Seperation Request).update') || rbac.allowedToAccess('For You (Seperation Request).delete')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">

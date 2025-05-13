@@ -16,7 +16,6 @@ import { CalendarHeaderTabsComponent } from "../calendar-tabs/calendar-header-ta
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
 import { RbacService } from '../../services/rbac.service';
 import { AccessNavigationService } from '../../services/access-navigation.service';
-import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-header',

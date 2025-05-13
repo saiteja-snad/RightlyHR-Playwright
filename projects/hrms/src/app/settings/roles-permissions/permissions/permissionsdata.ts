@@ -566,9 +566,9 @@ export const permissionsData = [
     { fields: 'Employee Info Documents(Upload File)', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Team Members Sub Tabs Section
-    { fields: 'Employee Info Reporting Manager', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Reporting Manager Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Change RM Button', View: false, Update: false, Create: false, Delete: false }, 
-    { fields: 'Employee Info Team Manager', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Team Manager Tab', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Change TM Button', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Onboard Request Sub Tabs Section

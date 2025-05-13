@@ -1378,7 +1378,8 @@ export class AccessNavigationService {
           return (route = '/time-off/pending-approvals/probation-request');
         }
         break;
-        case '/personalinfo/personal':
+        
+      case '/personalinfo/personal':
       if (this.rbac.allowedToAccess('Employee Info Personal Tab.view')) {
         for (const item of EMPLOYEE_INFO_PERSONAL_ROUTES) {
           if (this.rbac.allowedToAccess(item.permission)) {
@@ -1400,13 +1401,13 @@ export class AccessNavigationService {
 
     case '/personalinfo/documents':
       if (this.rbac.allowedToAccess('Employee Info Documents Tab.view')) {
-        return route = '/myinfo/documents';
+        return route = '/personalinfo/documents';
       }
       break;
 
     case '/personalinfo/team-members':
       if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
-        return route = '/myinfo/team-members';
+        return route = '/personalinfo/team-members';
       }
       break;
 

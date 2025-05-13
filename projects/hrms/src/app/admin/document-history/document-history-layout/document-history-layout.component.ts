@@ -16,7 +16,22 @@ import { RbacService } from '../../../services/rbac.service';
 })
 
 export class DocumentHistoryLayoutComponent {
-  active = 1;
+  // active = 1;
   constructor(public rbac: RbacService) {}
+active!: string;
+
+ngOnInit() {
+  if (this.rbac.allowedToAccess('Documents History Offer Letter.view')) {
+    this.active = 'offer';
+  } else if (this.rbac.allowedToAccess('Documents History Appointment Letter.view')) {
+    this.active = 'appointment';
+  } else if (this.rbac.allowedToAccess('Documents History Trainee Offer Letter.view')) {
+    this.active = 'trainee-offer';
+  } else if (this.rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) {
+    this.active = 'trainee-appointment';
+  }
+}
+
+
   
 }

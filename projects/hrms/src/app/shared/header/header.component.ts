@@ -76,7 +76,12 @@ export class HeaderComponent {
   }
 
   navigateSettings() {
-    this.router.navigate(['/settings'])
+    const route =  this.accessNav.navigateToAccessedHeaderRoute('/settings');
+    if (route) {
+      this.router.navigate([route]);
+    }else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 
   isActive(route: string): boolean {

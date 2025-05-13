@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
 import { LeaveApproval } from '../../../../Interfaces/pendingapprovalsmodel';
 import { HttpService } from '../../../../services/http.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-time-off-request-tabs',
@@ -25,12 +26,21 @@ export class TimeOffRequestTabsComponent {
     { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0,permission: { feature: 'For Role (Time Off)', action: 'view' }  },
   ];
 
-  constructor(public readonly router: Router, private http: HttpService) { }
+  constructor(public readonly router: Router, private http: HttpService,private rbac: RbacService,) { }
 
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovalsEMP();
     this.getAllPendingApprovalsROLE();
+     this.navTabs = this.navTabs.filter(
+      (tab) =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(
+          `${tab.permission.feature}.${tab.permission.action}`
+        )
+    );
   }
 
   getAllPendingApprovalsEMP() {
@@ -40,9 +50,18 @@ export class TimeOffRequestTabsComponent {
         this.leavesEmp = response.data as LeaveApproval[];
         this.countEmp = this.leavesEmp.length ?? 0;
         this.navTabs = [
-          { label: 'For You', link: 'for-you', count: this.countEmp ?? 0 },
-          { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0  },
+           { label: 'For You', link: 'for-you', count: this.countEmp ?? 0,permission: { feature: 'For You (Time Off)', action: 'view' } },
+    { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0,permission: { feature: 'For Role (Time Off)', action: 'view' }  },
         ];
+        this.navTabs = this.navTabs.filter(
+      (tab) =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(
+          `${tab.permission.feature}.${tab.permission.action}`
+        )
+    );
       },
       error: (reason) => console.log(reason),
     });
@@ -55,9 +74,18 @@ export class TimeOffRequestTabsComponent {
         this.leavesRole = response.data as LeaveApproval[];
         this.countRole = this.leavesRole.length ?? 0;
         this.navTabs = [
-          { label: 'For You', link: 'for-you', count: this.countEmp ?? 0 },
-          { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0  },
+           { label: 'For You', link: 'for-you', count: this.countEmp ?? 0,permission: { feature: 'For You (Time Off)', action: 'view' } },
+    { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0,permission: { feature: 'For Role (Time Off)', action: 'view' }  },
         ];
+        this.navTabs = this.navTabs.filter(
+      (tab) =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(
+          `${tab.permission.feature}.${tab.permission.action}`
+        )
+    );
       },
       error: (reason) => console.log(reason),
     });

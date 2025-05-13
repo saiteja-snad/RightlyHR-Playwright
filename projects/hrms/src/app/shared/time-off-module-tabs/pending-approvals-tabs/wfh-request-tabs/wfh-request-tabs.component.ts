@@ -7,6 +7,7 @@ import { IJob } from '../../../../Interfaces/letters-model';
 import { AttendanceRequest, ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { SignalsService } from '../../../../services/signals.service';
+import { RbacService } from '../../../../services/rbac.service';
 
 @Component({
   selector: 'app-wfh-request-tabs',
@@ -27,20 +28,28 @@ export class WfhRequestTabsComponent implements OnInit,OnDestroy{
   //     { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0 }
   //   ];
   // });
-  readonly navTabs = computed(() => {
-    const data = this.pendingApprovalCount().find(item => item.moduleId === 2);
-    return [
-      { label: 'For You', link: 'for-you', count: data?.forYou ?? 0,permission: { feature: 'For You (WFH)', action: 'view' } },
-      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0,permission: { feature: 'For Role (WFH)', action: 'view' } }
-    ];
-  });
+navTabs = computed(() => {
+  const data = this.pendingApprovalCount().find(item => item.moduleId === 2);
+  const allTabs = [
+    { label: 'For You', link: 'for-you', count: data?.forYou ?? 0, permission: { feature: 'For You (WFH)', action: 'view' } },
+    { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0, permission: { feature: 'For Role (WFH)', action: 'view' } }
+  ];
+
+  return allTabs.filter(
+    tab =>
+      tab.permission &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+  );
+});
+
   
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllWFHPendingApprovalsCount();
+    
   }
   
-  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService) {
+  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService,private rbac: RbacService,) {
     effect(() => {
       if (this.signalService.wfhForYouTriggerSignal() || this.signalService.wfhForRoleTriggerSignal()) {
         // Call the function to fetch the pending approvals count

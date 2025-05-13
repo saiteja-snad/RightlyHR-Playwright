@@ -233,7 +233,7 @@ export class AccessNavigationService {
           break;
 
       case '/events':
-        if (this.rbac.allowedToAccess('Events Module.view')) {
+        if (this.rbac.allowedToAccess('Events.view')) {
           for (const item of EVENTS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -293,7 +293,8 @@ export class AccessNavigationService {
         }
 
         break;
-      case '/time-off':
+     
+        case '/time-off':
         if (this.rbac.allowedToAccess('Time Off Module.view')) {
           for (const item of TIME_OFF_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -349,17 +350,24 @@ export class AccessNavigationService {
           }
         }
 
+       
+
+        if (this.rbac.allowedToAccess('Attendance Module.view')) {
+          return route = '/time-off/attendance'
+        }
+   
+
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
           return (route = 'time-off/on-behalf-of-approvals/time-off');
         }
 
-        if (this.rbac.allowedToAccess('Global Permissions.view')) {
+        if (this.rbac.allowedToAccess('Global Permissions Module.view')) {
           return (route = 'time-off/global-permissions');
         }
 
         if (this.rbac.allowedToAccess('Pending Approvals Module.view')) {
           for (const item of PENDING_APPROVALS_TABS) {
-            if (this.rbac.allowedToAccess(item.permission)) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Time Off Tab.view') {
               if (
                 item.route === '/time-off/pending-approvals/time-off-request'
               ) {
@@ -370,7 +378,7 @@ export class AccessNavigationService {
                 }
               }
             }
-            if (this.rbac.allowedToAccess(item.permission)) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'WFH Tab.view') {
               if (item.route === '/time-off/pending-approvals/wfh') {
                 for (const item of PENDING_APPROVALS_WFH_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
@@ -379,7 +387,7 @@ export class AccessNavigationService {
                 }
               }
             }
-            if (this.rbac.allowedToAccess(item.permission)) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Comp Off Tab.view') {
               if (item.route === '/time-off/pending-approvals/comp-off') {
                 for (const item of PENDING_APPROVALS_COMP_OFF_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
@@ -388,7 +396,7 @@ export class AccessNavigationService {
                 }
               }
             }
-            if (this.rbac.allowedToAccess(item.permission)) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Permissions Tab.view') {
               if (item.route === '/time-off/pending-approvals/permissions') {
                 for (const item of PENDING_APPROVALS_PERMISSIONS_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
@@ -397,7 +405,7 @@ export class AccessNavigationService {
                 }
               }
             }
-            if (this.rbac.allowedToAccess(item.permission)) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Regularization Tab.view') {
               if (
                 item.route ===
                 '/time-off/pending-approvals/regularization-request'
@@ -409,7 +417,7 @@ export class AccessNavigationService {
                 }
               }
             }
-            if (this.rbac.allowedToAccess(item.permission)) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Seperation Request Tab.view') {
               if (
                 item.route === '/time-off/pending-approvals/separation-request'
               ) {
@@ -420,7 +428,7 @@ export class AccessNavigationService {
                 }
               }
             }
-            if (this.rbac.allowedToAccess(item.permission)) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Recall Request Tab.view') {
               if (item.route === '/time-off/pending-approvals/recall-request') {
                 for (const item of RECALL_REQUEST_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
@@ -429,7 +437,7 @@ export class AccessNavigationService {
                 }
               }
             }
-            if (this.rbac.allowedToAccess(item.permission)) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Claims and Expenses Tab.view') {
               if (
                 item.route ===
                 '/time-off/pending-approvals/claimsandexpenses-request'
@@ -441,7 +449,7 @@ export class AccessNavigationService {
                 }
               }
             }
-            if (this.rbac.allowedToAccess(item.permission)) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Desk Requests Tab.view') {
               if (item.route === '/time-off/pending-approvals/desk-approval') {
                 for (const item of DESK_REQUEST_SUB_TABS) {
                   if (this.rbac.allowedToAccess(item.permission)) {
@@ -451,19 +459,20 @@ export class AccessNavigationService {
               }
             }
           }
-        }
-
-        if (this.rbac.allowedToAccess('Trainee Details.view')) {
+          if (this.rbac.allowedToAccess('Trainee Details Tab.view')) {
           return (route = '/time-off/pending-approvals/trainee-approvals');
         }
 
-        if (this.rbac.allowedToAccess('No Due Clearance Request.view')) {
+        if (this.rbac.allowedToAccess('No Due Clearence Requests Tab.view')) {
           return (route = '/time-off/pending-approvals/nodue-request');
         }
 
-        if (this.rbac.allowedToAccess('Probation Details.view')) {
+        if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
           return (route = '/time-off/pending-approvals/probation-request');
         }
+        }
+
+        
 
         break;
 
@@ -722,8 +731,32 @@ navigateToAccessedRoute(actualRoute: string): string {
       break;
     case '/settings/timeoff-configurations':
       for (const item of SETTINGS_TIMEOFF_TABS) {
-        if (this.rbac.allowedToAccess(item.permission)) {
-          return item.route;
+        if(this.rbac.allowedToAccess('Leave Category Tab.view')){
+          for(const item of SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS){
+            if(this.rbac.allowedToAccess(item.permission)){
+              return item.route;
+            }
+          }
+        }
+
+        if(this.rbac.allowedToAccess('Leave Allocation Tab.view')){
+          return route = '/settings/timeoff-configurations/leave-allocation';
+        }
+
+        if(this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')){
+          return route = '/settings/timeoff-configurations/flexible-leave-allocation';
+        }
+
+        if(this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')){
+          for(const item of ATTENDANCE_ELIGIBILITY_CRITERIA_TABS){
+            if(this.rbac.allowedToAccess(item.permission)){
+              return item.route;
+            }
+          }
+        }
+
+        if(this.rbac.allowedToAccess('Load Entitlements Tab.view')){
+          return route = '/settings/timeoff-configurations/load-entitlements';
         }
       }
 
@@ -777,7 +810,7 @@ navigateToAccessedRoute(actualRoute: string): string {
       }
       break;
 
-      case '/calendar/holiday':
+    case '/calendar/holiday':
 
         if (this.rbac.allowedToAccess('Holidays Tab.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
@@ -788,7 +821,7 @@ navigateToAccessedRoute(actualRoute: string): string {
         }
         break;
 
-        case '/time-off/pending-approvals/separation-request':
+    case '/time-off/pending-approvals/separation-request':
           if(this.rbac.allowedToAccess('Seperation Request Tab.view')){
             for(const item of SEPARATION_REQUEST_SUB_TABS){
               if(this.rbac.allowedToAccess(item.permission)){
@@ -798,7 +831,7 @@ navigateToAccessedRoute(actualRoute: string): string {
           }
           break;
 
-      case '/settings/dynamic-forms':
+    case '/settings/dynamic-forms':
         if(this.rbac.allowedToAccess('Dynamic Forms Module.view')){
           for(const item of SETTINGS_DYNAMIC_FORMS_TABS){
             if(this.rbac.allowedToAccess(item.permission)){
@@ -807,7 +840,7 @@ navigateToAccessedRoute(actualRoute: string): string {
           }
         }
           break;
-      case '/settings/assets-configuration':
+    case '/settings/assets-configuration':
         if(this.rbac.allowedToAccess('Assets Management Configuration Module.view')){
           for(const item of SETTINGS_ASSEST_CONFIGURATION_TABS){
             if(this.rbac.allowedToAccess(item.permission)){
@@ -817,7 +850,7 @@ navigateToAccessedRoute(actualRoute: string): string {
         }
         break;
 
-        case '/settings/timeoff-configurations/eligibility-criterias':
+    case '/settings/timeoff-configurations/eligibility-criterias':
           if(this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')){
             for(const item of ATTENDANCE_ELIGIBILITY_CRITERIA_TABS){
               if(this.rbac.allowedToAccess(item.permission)){
@@ -827,7 +860,7 @@ navigateToAccessedRoute(actualRoute: string): string {
           } 
           break;
 
-        case '/settings/timeoff-configurations/leave-categoery':
+    case '/settings/timeoff-configurations/leave-categoery':
           if(this.rbac.allowedToAccess('Leave Category Tab.view')){
             for(const item of SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS){
               if(this.rbac.allowedToAccess(item.permission)){
@@ -837,145 +870,347 @@ navigateToAccessedRoute(actualRoute: string): string {
           }
           break;
 
-        case '/settings/timeoff-configurations/leave-allocation':
-          if(this.rbac.allowedToAccess('Leave Allocation Tab.view')){
-            return (route = '/settings/timeoff-configurations/leave-allocation');
-          }
-          break;
+  case '/settings/timeoff-configurations/leave-allocation':
+    if(this.rbac.allowedToAccess('Leave Allocation Tab.view')){
+      return (route = '/settings/timeoff-configurations/leave-allocation');
+    }
+    break;
 
-        case '/settings/timeoff-configurations/flexible-leave-allocation':
-          if(this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')){
-            return (route = '/settings/timeoff-configurations/flexible-leave-allocation');
-          }
-          break;
+  case '/settings/timeoff-configurations/flexible-leave-allocation':
+    if(this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')){
+      return (route = '/settings/timeoff-configurations/flexible-leave-allocation');
+    }
+    break;
 
-        case '/settings/timeoff-configurations/load-entitlements':
-          if(this.rbac.allowedToAccess('Load Entitlements Tab.view')){
-            return (route = '/settings/timeoff-configurations/load-entitlements')
-          }
-          break;
+  case '/settings/timeoff-configurations/load-entitlements':
+    if(this.rbac.allowedToAccess('Load Entitlements Tab.view')){
+      return (route = '/settings/timeoff-configurations/load-entitlements')
+    }
+    break;
 
-        case '/settings/employee-fields/personal':
-          if(this.rbac.allowedToAccess('Personal Tab.view')){
-            for(const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS){
+  case '/settings/employee-fields/personal':
+    if(this.rbac.allowedToAccess('Personal Tab.view')){
+      for(const item of SETTINGS_EMPLOYEE_FIELDS_PERSONAL_TABS){
+        if(this.rbac.allowedToAccess(item.permission)){
+          return item.route;
+        }
+      }
+    }
+    break;
+
+  case '/settings/employee-fields/job':
+    if(this.rbac.allowedToAccess('Job Tab.view')){
+      for(const item of SETTINGS_EMPLOYEE_FIELDS_JOB_TABS){
+        if(this.rbac.allowedToAccess(item.permission)){
+          return item.route;
+        }
+      }
+    }
+    break;
+    
+  case '/settings/employee-fields/documents':
+    if(this.rbac.allowedToAccess('Document Tab.view')){
+      return (route = '/settings/employee-fields/documents');
+    }
+    break;
+
+  case '/settings/employee-fields/manage-shifts':
+    if(this.rbac.allowedToAccess('Manage Shifts Tab.view')){
+      for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_SHIFTS_TABS){
+        if(this.rbac.allowedToAccess(item.permission)){
+          return item.route;
+        }
+      }
+    }
+    break;
+  case '/settings/employee-fields/manage-policies':
+    if(this.rbac.allowedToAccess('Manage Policies Tab.view')){
+      for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_POLICIES_TABS){
+        if(this.rbac.allowedToAccess(item.permission)){
+          return item.route;
+        }
+      }
+    }
+    break;
+
+  case '/settings/employee-fields/manage-holidays':
+    if(this.rbac.allowedToAccess('Manage Holidays Tab.view')){
+      for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_HOLIDAYS_TABS){
+        if(this.rbac.allowedToAccess(item.permission)){
+          return item.route;
+        }
+      }
+    }
+    break;
+  case '/settings/employee-fields/manage-weekends':
+    if(this.rbac.allowedToAccess('Manage Weekends Tab.view')){
+      for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_WEEKENDS_TABS){
+        if(this.rbac.allowedToAccess(item.permission)){
+          return item.route;
+        }
+      }
+    }
+    break;
+  case '/settings/employee-fields/expenes':
+    if(this.rbac.allowedToAccess('Expense Tab.view')){
+      for(const item of SETTINGS_EMPLOYEE_FIELDS_EXPENSES_TABS){
+        if(this.rbac.allowedToAccess(item.permission)){
+          return item.route;
+        }
+      }
+    }
+    break;
+
+  case '/settings/employee-fields/manage-dsts':
+    if(this.rbac.allowedToAccess('Manage DST Tab.view')){
+      for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS){
+        if(this.rbac.allowedToAccess(item.permission)){
+          return item.route;
+        }
+      }
+    }
+    break;
+  case '/settings/employee-fields/no-due-clearnce':
+    if(this.rbac.allowedToAccess('NoDue Clearance Tab.view')){
+      return (route = '/settings/employee-fields/no-due-clearnce');
+    }
+    break;
+
+  case '/settings/timeoff-configurations':
+      if(this.rbac.allowedToAccess('Settings Timeoff Module.view')){
+        for(const item of SETTINGS_TIMEOFF_TABS){
+          if(this.rbac.allowedToAccess('Leave Category Tab.view')){
+            for(const item of SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS){
               if(this.rbac.allowedToAccess(item.permission)){
                 return item.route;
               }
             }
-          }
-          break;
 
-        case '/settings/employee-fields/job':
-          if(this.rbac.allowedToAccess('Job Tab.view')){
-            for(const item of SETTINGS_EMPLOYEE_FIELDS_JOB_TABS){
-              if(this.rbac.allowedToAccess(item.permission)){
-                return item.route;
+            if(this.rbac.allowedToAccess('Leave Allocation Tab.view')){
+              return (route = '/settings/timeoff-configurations/leave-allocation');
+            }
+
+            if(this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')){
+              return (route = '/settings/timeoff-configurations/flexible-leave-allocation');
+            }
+
+            if(this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')){
+              for(const item of ATTENDANCE_ELIGIBILITY_CRITERIA_TABS){
+                if(this.rbac.allowedToAccess(item.permission)){
+                  return item.route;
+                }
               }
             }
-          }
-          break;
-          
-        case '/settings/employee-fields/documents':
-          if(this.rbac.allowedToAccess('Document Tab.view')){
-            return (route = '/settings/employee-fields/documents');
-          }
-          break;
-
-        case '/settings/employee-fields/manage-shifts':
-          if(this.rbac.allowedToAccess('Manage Shifts Tab.view')){
-            for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_SHIFTS_TABS){
-              if(this.rbac.allowedToAccess(item.permission)){
-                return item.route;
-              }
+            if(this.rbac.allowedToAccess('Load Entitlements Tab.view')){
+              return (route = '/settings/timeoff-configurations/load-entitlements');
             }
           }
-          break;
-        case '/settings/employee-fields/manage-policies':
-          if(this.rbac.allowedToAccess('Manage Policies Tab.view')){
-            for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_POLICIES_TABS){
-              if(this.rbac.allowedToAccess(item.permission)){
-                return item.route;
-              }
+        }
+      }
+      break;
+
+  case '/time-off/leaves':
+    if (this.rbac.allowedToAccess('Time Off Module.view')) {
+          for (const item of TIME_OFF_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
             }
           }
-          break;
+    }
+    break;
 
-        case '/settings/employee-fields/manage-holidays':
-          if(this.rbac.allowedToAccess('Manage Holidays Tab.view')){
-            for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_HOLIDAYS_TABS){
-              if(this.rbac.allowedToAccess(item.permission)){
-                return item.route;
-              }
+    case '/time-off/wfh':
+    if (this.rbac.allowedToAccess('WFH/On Duty Module.view')) {
+          for (const item of WFH_ONDUTY_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
             }
           }
-          break;
-        case '/settings/employee-fields/manage-weekends':
-          if(this.rbac.allowedToAccess('Manage Weekends Tab.view')){
-            for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_WEEKENDS_TABS){
-              if(this.rbac.allowedToAccess(item.permission)){
-                return item.route;
-              }
+    }
+    break;
+  
+
+    case '/time-off/remote':
+        if (this.rbac.allowedToAccess('Remote Login Module.view')) {
+          for (const item of REMOTE_LOGIN_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
             }
           }
-          break;
-        case '/settings/employee-fields/expenes':
-          if(this.rbac.allowedToAccess('Expense Tab.view')){
-            for(const item of SETTINGS_EMPLOYEE_FIELDS_EXPENSES_TABS){
-              if(this.rbac.allowedToAccess(item.permission)){
-                return item.route;
-              }
+        }
+        break;
+
+    
+    case '/time-off/comp-off':
+        if (this.rbac.allowedToAccess('Comp Off Module.view')) {
+          for (const item of COMP_OFF_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
             }
           }
-          break;
-
-        case '/settings/employee-fields/manage-dsts':
-          if(this.rbac.allowedToAccess('Manage DST Tab.view')){
-            for(const item of SETTINGS_EMPLOYEE_FIELDS_MANAGE_DST_TABS){
-              if(this.rbac.allowedToAccess(item.permission)){
-                return item.route;
-              }
+        }
+        break;
+    case '/time-off/premissions':
+        if (this.rbac.allowedToAccess('Permissions Module.view')) {
+          for (const item of PERMISSIONS_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
             }
           }
-          break;
-        case '/settings/employee-fields/no-due-clearnce':
-          if(this.rbac.allowedToAccess('NoDue Clearance Tab.view')){
-            return (route = '/settings/employee-fields/no-due-clearnce');
+        }
+        break;
+    case '/time-off/regularization':
+
+        if (this.rbac.allowedToAccess('Regularization Module.view')) {
+          for (const item of REGULARIZATION_SUB_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
           }
-          break;
+        }
+        break;
 
-          case '/settings/timeoff-configurations':
-            if(this.rbac.allowedToAccess('Settings Timeoff Module.view')){
-              for(const item of SETTINGS_TIMEOFF_TABS){
-                if(this.rbac.allowedToAccess('Leave Category Tab.view')){
-                  for(const item of SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS){
-                    if(this.rbac.allowedToAccess(item.permission)){
-                      return item.route;
-                    }
-                  }
+    case '/time-off/on-behalf-of':
+    
+        if (this.rbac.allowedToAccess('On Behalf Of Module.view')) {
+          for (const item of ON_BEHALF_OF_TABS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+        }
+        break;
+    case '/time-off/attendance':
 
-                  if(this.rbac.allowedToAccess('Leave Allocation Tab.view')){
-                    return (route = '/settings/timeoff-configurations/leave-allocation');
-                  }
+    if (this.rbac.allowedToAccess('Attendance Module.view')) {
+      return route = '/time-off/attendance'
+    }
+    break;
+    case '/time-off/on-behalf-of-approvals':
 
-                  if(this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')){
-                    return (route = '/settings/timeoff-configurations/flexible-leave-allocation');
-                  }
+        if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
+          return (route = '/time-off/on-behalf-of-approvals/time-off');
+        }
+        break;
+   case '/time-off/global-permissions':
+        if (this.rbac.allowedToAccess('Global Permissions Module.view')) {
+          return (route = '/time-off/global-permissions');
+        }
+        break;
 
-                  if(this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')){
-                    for(const item of ATTENDANCE_ELIGIBILITY_CRITERIA_TABS){
-                      if(this.rbac.allowedToAccess(item.permission)){
-                        return item.route;
-                      }
-                    }
-                  }
-                  if(this.rbac.allowedToAccess('Load Entitlements Tab.view')){
-                    return (route = '/settings/timeoff-configurations/load-entitlements');
+    case '/time-off/pending-approvals':
+        if (this.rbac.allowedToAccess('Pending Approvals Module.view')) {
+          for (const item of PENDING_APPROVALS_TABS) {
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Time Off Tab.view') {
+              if (
+                item.route === '/time-off/pending-approvals/time-off-request'
+              ) {
+                for (const item of PENDING_APPROVALS_TIME_OFF_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
                   }
                 }
               }
             }
-            break;
-  }
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'WFH Tab.view') {
+              if (item.route === '/time-off/pending-approvals/wfh') {
+                for (const item of PENDING_APPROVALS_WFH_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Comp Off Tab.view') {
+              if (item.route === '/time-off/pending-approvals/comp-off') {
+                for (const item of PENDING_APPROVALS_COMP_OFF_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Permissions Tab.view') {
+              if (item.route === '/time-off/pending-approvals/permissions') {
+                for (const item of PENDING_APPROVALS_PERMISSIONS_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Regularization Tab.view') {
+              if (
+                item.route ===
+                '/time-off/pending-approvals/regularization-request'
+              ) {
+                for (const item of PENDING_APPROVALS_REGULARIZATION_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Seperation Request Tab.view') {
+              if (
+                item.route === '/time-off/pending-approvals/separation-request'
+              ) {
+                for (const item of SEPARATION_REQUEST_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Recall Request Tab.view') {
+              if (item.route === '/time-off/pending-approvals/recall-request') {
+                for (const item of RECALL_REQUEST_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Claims and Expenses Tab.view') {
+              if (
+                item.route ===
+                '/time-off/pending-approvals/claimsandexpenses-request'
+              ) {
+                for (const item of EXPENSES_REQUEST_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+            if (this.rbac.allowedToAccess(item.permission) && item.permission === 'Desk Requests Tab.view') {
+              if (item.route === '/time-off/pending-approvals/desk-approval') {
+                for (const item of DESK_REQUEST_SUB_TABS) {
+                  if (this.rbac.allowedToAccess(item.permission)) {
+                    return item.route;
+                  }
+                }
+              }
+            }
+          }
+            if (this.rbac.allowedToAccess('Trainee Details Tab.view')) {
+              return (route = '/time-off/pending-approvals/trainee-approvals');
+            }
+
+            if (this.rbac.allowedToAccess('No Due Clearence Requests Tab.view')) {
+              return (route = '/time-off/pending-approvals/nodue-request');
+            }
+
+            if (this.rbac.allowedToAccess('Probation Details Tab.view')) {
+              return (route = '/time-off/pending-approvals/probation-request');
+            }
+
+        }
+        break;
+      }
+   
   return route;
 }
+
+    
 }

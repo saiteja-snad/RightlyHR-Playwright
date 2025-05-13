@@ -644,6 +644,38 @@ navigateToAccessedRoute(actualRoute: string): string {
       }
       break;
 
+    case '/personalinfo/personal':
+      if (this.rbac.allowedToAccess('Employee Info Personal Tab.view')) {
+        for (const item of EMPLOYEE_INFO_PERSONAL_ROUTES) {
+          if (this.rbac.allowedToAccess(item.permission)) {
+            return item.route;
+          }
+        }
+      }
+      break;
+
+    case '/personalinfo/job':
+      if (this.rbac.allowedToAccess('Employee Info Job Tab.view')) {
+        for (const item of EMPLOYEE_INFO_JOB_ROUTES) {
+          if (this.rbac.allowedToAccess(item.permission)) {
+            return item.route;
+          }
+        }
+      }
+      break;
+
+    case '/personalinfo/documents':
+      if (this.rbac.allowedToAccess('Employee Info Documents Tab.view')) {
+        return route = '/myinfo/documents';
+      }
+      break;
+
+    case '/personalinfo/team-members':
+      if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
+        return route = '/myinfo/team-members';
+      }
+      break;
+
     case '/settings/employee-fields':
       if (this.rbac.allowedToAccess('Employee Fields Module.view')) {
         for (const item of SETTINGS_EMPLOYEE_FIELDS_TABS){

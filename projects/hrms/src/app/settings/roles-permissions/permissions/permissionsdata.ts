@@ -497,8 +497,6 @@ export const permissionsData = [
     { fields: 'Employee Info Team Members Tab', View: false, Update: false, Create: false, Delete: false },
     // { fields: 'Employee Info Onboard Request Tab', View: false, Update: false, Create: false, Delete: false },
 
-
-
     //Employee Info Personal Sub Tabs Section
     { fields: 'Employee Info Basic Information', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Employee Info Documents Verification', View: false, Update: false, Create: false, Delete: false },

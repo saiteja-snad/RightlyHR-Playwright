@@ -178,11 +178,11 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ];
   
   export const ASSEST_ALLOCATION_TABS = [
-      { route: '/assets-management/all-assets', permission:  'Asset Allocation - All.view'} ,
-      { route: '/assets-management/available-assets',permission:  'Asset Allocation - Available.view'} ,
-      { route: '/assets-management/allocated-assets', permission:  'Asset Allocation - Allocated.view'} ,
-      { route: '/assets-management/under-maintenance-assets',permission:  'Asset Allocation - Under Maintenance.view'} ,
-      { route: '/assets-management/inactive-assets',permission:  'Asset Allocation - Inactive.view'} ,
+      { route: '/assets-management/all-assets', permission:  'Asset Management - All.view'} ,
+      { route: '/assets-management/available-assets',permission:  'Asset Management - Available.view'} ,
+      { route: '/assets-management/allocated-assets', permission:  'Asset Management - Allocated.view'} ,
+      { route: '/assets-management/under-maintenance-assets',permission:  'Asset Management - Under Maintenance.view'} ,
+      { route: '/assets-management/inactive-assets',permission:  'Asset Management - Inactive.view'} ,
   ];
   
   

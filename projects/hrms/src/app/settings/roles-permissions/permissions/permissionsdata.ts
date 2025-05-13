@@ -464,7 +464,7 @@ export const permissionsData = [
     //Asset Management Under Maintenance Tab Actions
     { fields: 'Under Maintenance Mark as Available Asset', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Under Maintenance View Asset Details', View: false, Update: false, Create: false, Delete: false },
-	{ fields:   'Under Maintenance Update', View: false, Update: false, Create: false, Delete: false },
+	{ fields:  'Under Maintenance Update Asset Details', View: false, Update: false, Create: false, Delete: false },
 	
     //Asset Management Inactive Tab Actions
     { fields: 'Inactive Mark as Active Asset', View: false, Update: false, Create: false, Delete: false },

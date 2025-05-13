@@ -292,7 +292,8 @@ export class AccessNavigationService {
         }
 
         break;
-      case '/time-off':
+     
+        case '/time-off':
         if (this.rbac.allowedToAccess('Time Off Module.view')) {
           for (const item of TIME_OFF_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {

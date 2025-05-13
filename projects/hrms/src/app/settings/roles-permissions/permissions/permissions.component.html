@@ -2159,89 +2159,14 @@
 
                 <!--Dashboard Document Offer Letter Actions -->
                 <tr>
-                    <th colspan="5" class="custom-header">Dashboard Document Offer Letter Actions</th>
+                    <th colspan="5" class="custom-header">Dashboard Document History Actions</th>
                 </tr>
                 <ng-container *ngFor="let per of permissions">
                     <tr class="text-align-center"
-                        *ngIf="per.fields === 'Offer Letter Download' ||  per.fields === 'Offer Letter Release Offer' || 
-                        per.fields === 'Offer Letter Approve' || per.fields === 'Offer Letter Reject'" >
-
-                        <td class="text-align-center">{{ per.fields }}</td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
-                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
-                        </td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
-                        </td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
-                        </td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
-                        </td>
-                    </tr>
-                </ng-container>
-
-                <!--Dashboard Document Appointment Letter Actions -->
-                <tr>
-                    <th colspan="5" class="custom-header">Dashboard Document Appointment Letter Actions</th>
-                </tr>
-                <ng-container *ngFor="let per of permissions">
-                    <tr class="text-align-center"
-                        *ngIf="per.fields === 'Appointment Letter Download'" >
-
-                        <td class="text-align-center">{{ per.fields }}</td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
-                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
-                        </td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
-                        </td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
-                        </td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
-                        </td>
-                    </tr>
-                </ng-container>
-
-                <!--Dashboard Document Intern Offer Letter Actions -->
-                <tr>
-                    <th colspan="5" class="custom-header">Dashboard Document Trainee Offer Letter Actions</th>
-                </tr>
-                <ng-container *ngFor="let per of permissions">
-                    <tr class="text-align-center"
-                        *ngIf="per.fields === 'Trainee Offer Letter Download' ||  per.fields === 'Trainee Offer Letter Release Offer' || 
-                        per.fields === 'Trainee Offer Letter Approve' || per.fields === 'Trainee Offer Letter Reject'" >
-
-                        <td class="text-align-center">{{ per.fields }}</td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
-                                (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
-                        </td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
-                        </td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
-                        </td>
-                        <td scope="row">
-                            <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
-                        </td>
-                    </tr>
-                </ng-container>
-
-                 <!--Dashboard Document Trainee Appointment Letter Actions -->
-                 <tr>
-                    <th colspan="5" class="custom-header">Dashboard Document Trainee Appointment Letter Actions</th>
-                </tr>
-                <ng-container *ngFor="let per of permissions">
-                    <tr class="text-align-center"
-                        *ngIf="per.fields === 'Trainee Appointment Letter Download'" >
-
+                        *ngIf="per.fields === 'Offer Letter Download' ||  per.fields === 'Offer Letter Release Offer' ||  per.fields === 'Offer Letter Approve' 
+                        || per.fields === 'Offer Letter Reject'||per.fields === 'Appointment Letter Download' 
+                        ||per.fields === 'Trainee Offer Letter Download' ||  per.fields === 'Trainee Offer Letter Release Offer'
+                        || per.fields === 'Trainee Offer Letter Approve' || per.fields === 'Trainee Offer Letter Reject'|| per.fields === 'Trainee Appointment Letter Download'" >
                         <td class="text-align-center">{{ per.fields }}</td>
                         <td scope="row">
                             <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

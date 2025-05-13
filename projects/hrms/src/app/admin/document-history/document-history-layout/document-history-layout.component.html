@@ -1,5 +1,5 @@
-@if(rbac.allowedToAccess('Documents History Offer Letter.view') || rbac.allowedToAccess('Documents History Appointment Letter.view') ||
-    rbac.allowedToAccess('Documents History Trainee Offer Letter.view') || rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) {
+<!-- @if(rbac.allowedToAccess('Documents History Offer Letter.view') || rbac.allowedToAccess('Documents History AppointmentLetter.view') 
+|| rbac.allowedToAccess('Documents History Trainee Offer Letter.view') || rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) { -->
 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
     @if(rbac.allowedToAccess('Documents History Offer Letter.view')) {
     <li [ngbNavItem]="1">
@@ -15,8 +15,8 @@
             <app-document-history-appointment-letter />
         </ng-template>
     </li>
-}
- @if(rbac.allowedToAccess('Documents History Trainee Offer Letter.view')) {
+    }
+    @if(rbac.allowedToAccess('Documents History Trainee Offer Letter.view')) {
     <li [ngbNavItem]="3">
         <button class="custom-nav-btn" ngbNavLink>Trainee Offer Letter</button>
         <ng-template ngbNavContent>
@@ -30,7 +30,7 @@
             <app-document-history-intern-appointment />
         </ng-template>
     </li>
-}
+    }
 </ul>
 <div [ngbNavOutlet]="nav" class="pt-3"></div>
-}
+<!-- } -->

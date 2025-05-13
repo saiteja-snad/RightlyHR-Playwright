@@ -36,6 +36,15 @@ export class DashboardComponent {
 
   ngOnInit(): void {
     this.fetchData();
+    this.cardItems = this.cardItems.filter(
+      (tab) =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(
+          `${tab.permission.feature}.${tab.permission.action}`
+        )
+    );
   }
 
   fetchData() {
@@ -160,9 +169,22 @@ export class DashboardComponent {
     });
   }
 
-  generateDocument() {
+  // generateDocument() {
+  //   this.router.navigate(['/admin/letters/offer-letter']);
+  // }
+generateDocument() {
+  if (this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view')) {
+    this.router.navigate(['/admin/letters/welcome-letter']);
+  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view')) {
+    this.router.navigate(['/admin/letters/trainee-appointment-letter']);
+  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view')) {
+    this.router.navigate(['/admin/letters/trainee-offer-letter']);
+  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view')) {
+    this.router.navigate(['/admin/letters/appointment-letter']);
+  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view')) {
     this.router.navigate(['/admin/letters/offer-letter']);
   }
+}
 
   updateCardItems() {
     this.cardItems = [

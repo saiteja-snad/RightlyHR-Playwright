@@ -15,7 +15,7 @@ import { TraineeOfferLetterComponent } from "./trainee-offer-letter/trainee-offe
 import { PermissionsGuard } from "../guards/permissions.guard";
 
 export default [
-    { path: '', redirectTo: '/letters/offer-letter', pathMatch: 'full' },
+    // { path: '', redirectTo: '/letters/offer-letter', pathMatch: 'full' },
     { path: 'offer-letter', component: OfferLetterComponent,canActivate: [PermissionsGuard], data: { permission: 'Dashboard Generate Documents Offer Letter.view' } },
     { path: 'appointment-letter', component: AppointmentLetterComponent,canActivate: [PermissionsGuard], data: { permission: 'Dashboard Generate Documents Appointment Letter.view' } },
     { path: 'trainee-offer-letter', component: TraineeOfferLetterComponent,canActivate: [PermissionsGuard], data: { permission: 'Dashboard Generate Documents Trainee Offer Letter.view' } },

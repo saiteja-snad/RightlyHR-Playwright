@@ -12,7 +12,6 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { SettingsRolePermissionsModuleTabsComponent } from '../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component';
-
 @Component({
   selector: 'app-roles',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, DataLoaderContentComponent, NoDataFoundComponent,
@@ -22,6 +21,7 @@ import { SettingsRolePermissionsModuleTabsComponent } from '../../../shared/sett
   styleUrl: './roles.component.scss',
   encapsulation:ViewEncapsulation.None
 })
+
 export class RolesComponent implements OnInit, OnDestroy {
   updateForm!: FormGroup;
   model: any;
@@ -122,12 +122,14 @@ export class RolesComponent implements OnInit, OnDestroy {
   }
 
   openupdate(roles: any) {
+    this.roleForm.reset();
     this.rolesDeletedata = roles;
     this.updateForm?.patchValue({ firstName: roles.name });
     this.modalService.open(this.updatepopup, { centered: true, backdrop: 'static' });
   }
 
   opendelete(roles: any) {
+    this.roleForm.reset();
     this.rolesDeletedata = roles;
     this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
   }

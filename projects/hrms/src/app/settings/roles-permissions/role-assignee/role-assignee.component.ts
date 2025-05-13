@@ -75,10 +75,10 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   }
 
   getUsers() {
-    const payload = {
-      status: 'Active'
-    };
-    this.http.getData(`Employeedata/getAll?status=${payload.status}`).pipe(takeUntil(this.destroy$)).subscribe({
+    // const payload = {
+    //   status: 'Active'
+    // };
+    this.http.getData(`Employeedata/ActiveEmployees`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.usersList = res.map((employee: any) => {
           return {

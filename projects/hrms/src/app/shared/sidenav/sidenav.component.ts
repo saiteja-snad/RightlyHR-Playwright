@@ -47,4 +47,14 @@ export class SidenavComponent {
     return this.router.url.includes(link);
   }
 
+  isActiveRoutePms(): boolean {
+    const currentUrl = this.router.url;
+    return (
+      currentUrl === '/pms/review-cycle' ||
+      currentUrl === '/pms/apprisal' || currentUrl === '/pms/myPerformance/pending-review' ||
+      currentUrl === '/pms/myPerformance/completed-review' || currentUrl === '/pms/team-performance/pending-review' ||
+      currentUrl === '/pms/team-performance/completed-review' || currentUrl === '/pms/assessment-form'
+    );
+  }
+
 }

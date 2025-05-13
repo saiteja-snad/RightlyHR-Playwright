@@ -10,7 +10,7 @@
     <ng-template #loadingSpinner>
       <div class="loader-placeholder-content text-center">
         <div>
-          <app-data-loader-content/>
+          <app-data-loader-content />
         </div>
       </div>
     </ng-template>
@@ -30,8 +30,10 @@
             <th>Sub Location</th>
             <th>Desk Status</th>
             <th>Approver</th>
-            @if(rbac.allowedToAccess('Request for Allocation.view') || rbac.allowedToAccess('Inactive desk.view') || rbac.allowedToAccess('Schedule for Maintenance.view') || 
-            rbac.allowedToAccess('Reallocate desk.view') || rbac.allowedToAccess('Release Desk.view') || rbac.allowedToAccess('Release Desk.view') || rbac.allowedToAccess('Mark as Active.view') || 
+            @if(rbac.allowedToAccess('Request for Allocation.view') || rbac.allowedToAccess('Inactive desk.view') ||
+            rbac.allowedToAccess('Schedule for Maintenance.view') ||
+            rbac.allowedToAccess('Reallocate desk.view') || rbac.allowedToAccess('Release Desk.view') ||
+            rbac.allowedToAccess('Release Desk.view') || rbac.allowedToAccess('Mark as Active.view') ||
             rbac.allowedToAccess('Mark as Available.view') || rbac.allowedToAccess('View Desk Details.view')){
             <th class="text-center">Action(s)</th>
             }
@@ -49,88 +51,94 @@
 
               <td>{{ desk.deskStatus }}</td>
               <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
-             
-                <td class="text-center">
-                  @if(canPerformActionsOnDesk(desk)){
-                  <div class="dropdown">
-                    <a data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="bi bi-three-dots-vertical"></i>
-                    </a>
+              @if(rbac.allowedToAccess('Request for Allocation.view') || rbac.allowedToAccess('Inactive desk.view') ||
+              rbac.allowedToAccess('Schedule for Maintenance.view') ||
+              rbac.allowedToAccess('Reallocate desk.view') || rbac.allowedToAccess('Release Desk.view') ||
+              rbac.allowedToAccess('Release Desk.view') || rbac.allowedToAccess('Mark as Active.view') ||
+              rbac.allowedToAccess('Mark as Available.view') || rbac.allowedToAccess('View Desk Details.view')){
+              <td class="text-center">
+                @if(canPerformActionsOnDesk(desk)){
+                <div class="dropdown">
+                  <a data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-three-dots-vertical"></i>
+                  </a>
 
-                    <ul class="dropdown-menu custom-dropdown-menu">
-                      <ng-container *ngIf="desk.deskStatus==='Available'">
-                        @if(rbac.allowedToAccess('Request for Allocation.view')){
-                        <li>
-                          <a class="dropdown-item"
-                            (click)="openModal(assigindesk); viewdata(desk); selectedAsset=desk;viewasetsdata(desk)">
-                            Request for Allocation
-                          </a>
-                        </li>
+                  <ul class="dropdown-menu custom-dropdown-menu">
+                    <ng-container *ngIf="desk.deskStatus==='Available'">
+                      @if(rbac.allowedToAccess('Request for Allocation.view')){
+                      <li>
+                        <a class="dropdown-item"
+                          (click)="openModal(assigindesk); viewdata(desk); selectedAsset=desk;viewasetsdata(desk)">
+                          Request for Allocation
+                        </a>
+                      </li>
                       }
                       @if(rbac.allowedToAccess('Inactive desk.view')){
-                        <li>
-                          <a class="dropdown-item" (click)="openModal(deleteasstes); viewdata(desk); selectedAsset=desk">
-                            Inactive desk
-                          </a>
-                        </li>
+                      <li>
+                        <a class="dropdown-item" (click)="openModal(deleteasstes); viewdata(desk); selectedAsset=desk">
+                          Inactive desk
+                        </a>
+                      </li>
                       }
                       @if(rbac.allowedToAccess('Schedule for Maintenance.view')){
-                        <li>
-                          <a class="dropdown-item"
-                            (click)="openModal(undermaintance); viewdata(desk); selectedAsset=desk">
-                            Schedule for Maintenance
-                          </a>
-                        </li>
+                      <li>
+                        <a class="dropdown-item"
+                          (click)="openModal(undermaintance); viewdata(desk); selectedAsset=desk">
+                          Schedule for Maintenance
+                        </a>
+                      </li>
                       }
 
-                      </ng-container>
+                    </ng-container>
 
-                      <ng-container *ngIf="desk.deskStatus==='Allocated'">
-                        @if(rbac.allowedToAccess('Reallocate desk.view')){
-                        <li>
-                          <a class="dropdown-item"
-                            (click)="openModal(reallcatedeskmodal);viewdata(desk);viewasetsdata(desk);selectedAsset=desk">
-                            Reallocate desk
-                          </a>
-                        </li>
+                    <ng-container *ngIf="desk.deskStatus==='Allocated'">
+                      @if(rbac.allowedToAccess('Reallocate desk.view')){
+                      <li>
+                        <a class="dropdown-item"
+                          (click)="openModal(reallcatedeskmodal);viewdata(desk);viewasetsdata(desk);selectedAsset=desk">
+                          Reallocate desk
+                        </a>
+                      </li>
                       }
                       @if(rbac.allowedToAccess('Release Desk.view')){
-                        <li>
-                          <a class="dropdown-item" (click)="openModal(relasedesk); viewdata(desk); selectedAsset=desk">
-                            Release Desk
-                          </a>
-                        </li>
-                      }
-                      </ng-container>
-
-                      @if(rbac.allowedToAccess('Mark as Active.view')){
-                      <li *ngIf="desk.deskStatus === 'Inactive'">
-                        <a class="dropdown-item" (click)="openModal(avitive);selectedAsset=desk;viewdata(desk)">
-                          Mark as Active
-                        </a>
-                      </li>
-                    }
-                      <ng-container *ngIf="desk.deskStatus === 'Under Maintenance'">
-                        @if(rbac.allowedToAccess('Mark as Available.view')){
-                        <li>
-                          <a class="dropdown-item" (click)="openModal(Availabledest);selectedAsset=desk;viewdata(desk) ">
-                            Mark as Available
-                          </a>
-                        </li>
-                      }
-                      </ng-container>
-                      @if(rbac.allowedToAccess('View Desk Details.view')){
                       <li>
-                        <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
-                          View Desk Details
+                        <a class="dropdown-item" (click)="openModal(relasedesk); viewdata(desk); selectedAsset=desk">
+                          Release Desk
                         </a>
                       </li>
-                    }
-                    </ul>
-                  </div>
                       }
-                </td>
-          
+                    </ng-container>
+
+                    @if(rbac.allowedToAccess('Mark as Active.view')){
+                    <li *ngIf="desk.deskStatus === 'Inactive'">
+                      <a class="dropdown-item" (click)="openModal(avitive);selectedAsset=desk;viewdata(desk)">
+                        Mark as Active
+                      </a>
+                    </li>
+                    }
+                    <ng-container *ngIf="desk.deskStatus === 'Under Maintenance'">
+                      @if(rbac.allowedToAccess('Mark as Available.view')){
+                      <li>
+                        <a class="dropdown-item" (click)="openModal(Availabledest);selectedAsset=desk;viewdata(desk) ">
+                          Mark as Available
+                        </a>
+                      </li>
+                      }
+                    </ng-container>
+                    @if(rbac.allowedToAccess('View Desk Details.view')){
+                    <li>
+                      <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
+                        View Desk Details
+                      </a>
+                    </li>
+                    }
+                  </ul>
+                </div>
+                }
+              </td>
+              }
+
+
             </tr>
           </ng-container>
           <!-- No Data Found Template -->
@@ -146,23 +154,23 @@
     </div>
     <div class="pagination-content pt-2 w-100" *ngIf="totalRecords > 0">
       <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-          
-          <div class="d-flex align-items-center gap-3 p-2">
-              
-              <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                  (ngModelChange)="onRowsChange()">
-                  <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                  </option>
-              </select>
-              <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                  totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-          </div>
 
-          <!-- Pagination -->
-          <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-              (onPageChange)="onPageChange($event)"></p-paginator>
+        <div class="d-flex align-items-center gap-3 p-2">
+
+          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+            (ngModelChange)="onRowsChange()">
+            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+            </option>
+          </select>
+          <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
+            totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
+        </div>
+
+        <!-- Pagination -->
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
+          (onPageChange)="onPageChange($event)"></p-paginator>
       </div>
-  </div>
+    </div>
   </ng-template>
 </div>
 
@@ -197,8 +205,7 @@
             </div>
           </div>
           <div class="col-md-6 mb-3">
-            <label for="desk" class="form-label custom-label mb-2 ">Desk ID<span
-                class="text-danger">*</span></label>
+            <label for="desk" class="form-label custom-label mb-2 ">Desk ID<span class="text-danger">*</span></label>
             <input type="text" formControlName="deskid" class="form-control custom-input" />
           </div>
 
@@ -233,7 +240,8 @@
         </div>
 
         <div class="d-flex justify-content-end gap-3">
-          <button type="button" class="custom-btn btn-secondary"  (click)="openConfirmationModal(confirmationpopup)">Close</button>
+          <button type="button" class="custom-btn btn-secondary"
+            (click)="openConfirmationModal(confirmationpopup)">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="reassiginForm.invalid">Submit</button>
         </div>
 
@@ -323,7 +331,8 @@
         </div>
 
         <div class="d-flex justify-content-end gap-3">
-          <button type="button" class="custom-btn btn-secondary" (click)="openallocationModal(confirmationpopupallocation)">Close</button>
+          <button type="button" class="custom-btn btn-secondary"
+            (click)="openallocationModal(confirmationpopupallocation)">Close</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="assiginForm.invalid">Submit</button>
         </div>
       </form>
@@ -332,7 +341,7 @@
 </ng-template>
 
 <!-- Allocate an Desk -->
- <ng-template #confirmationpopupallocation let-model>
+<ng-template #confirmationpopupallocation let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
@@ -384,8 +393,9 @@
               Additional Comments
             </label>
             <div class="textarea-container">
-              <textarea class="form-control custom-input" formControlName="reason" (keypress)="formValidation.blockLeadingSpace($event)"
-                placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+              <textarea class="form-control custom-input" formControlName="reason"
+                (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
+                maxlength="250" rows="3"></textarea>
               <!-- Error messages -->
               <div>
                 <div class="error-msg" *ngIf="realseForm.get('reason')?.invalid && realseForm.get('reason')?.touched">
@@ -421,7 +431,7 @@
 <ng-template #realseconforamation let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-       <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
       <p class="confirmation-text mb-4">Are you sure you want to close?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
@@ -464,8 +474,9 @@
               Additional Comments
             </label>
             <div class="textarea-container">
-              <textarea class="form-control custom-input" formControlName="reason" (keypress)="formValidation.blockLeadingSpace($event)"
-                placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+              <textarea class="form-control custom-input" formControlName="reason"
+                (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
+                maxlength="250" rows="3"></textarea>
               <!-- Error messages -->
               <div>
                 <div class="error-msg"
@@ -486,12 +497,12 @@
           </div>
         </div>
 
-          <div class="d-flex justify-content-end gap-3">
-            <button type="button" class="custom-btn btn-secondary"
-              (click)="openModal(inativeconfromation);model.dismiss()">Close</button>
-            <button type="submit" class="custom-btn btn-primary" [disabled]="inactiveForm.invalid">Submit</button>
-          </div>
-        
+        <div class="d-flex justify-content-end gap-3">
+          <button type="button" class="custom-btn btn-secondary"
+            (click)="openModal(inativeconfromation);model.dismiss()">Close</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="inactiveForm.invalid">Submit</button>
+        </div>
+
       </form>
 
     </div>
@@ -503,7 +514,7 @@
 <ng-template #inativeconfromation let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-       <img src="icons/reject.png"  alt="failure icon" class="confirmation-icon mb-4">
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
       <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
@@ -527,8 +538,8 @@
       <h5 class="confirmation-text mb-2"> Are you sure you want to Mark as Maintenance?</h5>
     </div>
     <div class="custom-main-popup-content  p-4">
-      
-      <form autocomplete="off" [formGroup]="undermaintancedata"  (ngSubmit)="undermaintancedesk(undermaintancedata)">
+
+      <form autocomplete="off" [formGroup]="undermaintancedata" (ngSubmit)="undermaintancedesk(undermaintancedata)">
 
         <div class="row ">
           <div class="col-md-12 mb-3">
@@ -546,14 +557,15 @@
                 Reason is required</div>
             </div>
           </div>
-        
+
           <div class="col-12 ">
             <label class="form-label custom-label mb-2">
               Additional Comments
             </label>
             <div class="textarea-container">
-              <textarea class="form-control custom-input" formControlName="reason" (keypress)="formValidation.blockLeadingSpace($event)"
-                placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
+              <textarea class="form-control custom-input" formControlName="reason"
+                (keypress)="formValidation.blockLeadingSpace($event)" placeholder="Please enter additional comments"
+                maxlength="250" rows="3"></textarea>
               <!-- Error messages -->
               <div>
                 <div class="error-msg"
@@ -576,8 +588,8 @@
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="startdate" class="form-label custom-label mb-2">Start Date</label>
-            <input id="startdate"  class="form-control custom-input" type="date" [min]="getToday()" formControlName="startdate"
-              class="form-control custom-input">
+            <input id="startdate" class="form-control custom-input" type="date" [min]="getToday()"
+              formControlName="startdate" class="form-control custom-input">
             <div *ngIf="undermaintancedata.get('startdate')?.invalid && undermaintancedata.get('startdate')?.touched">
               <div class="error-msg">Start date is required</div>
             </div>
@@ -585,8 +597,8 @@
 
           <div class="col-md-6 mb-3">
             <label for="endate" class="form-label custom-label mb-2">End Date</label>
-            <input id="enddate" type="date"  class="form-control custom-input" formControlName="enddate" [min]="undermaintancedata.get('startdate')?.value"
-              class="form-control custom-input">
+            <input id="enddate" type="date" class="form-control custom-input" formControlName="enddate"
+              [min]="undermaintancedata.get('startdate')?.value" class="form-control custom-input">
             <div *ngIf="undermaintancedata.get('enddate')?.invalid && undermaintancedata.get('enddate')?.touched">
               <div class="error-msg">End date is required</div>
             </div>
@@ -595,13 +607,12 @@
             </div>
           </div>
         </div>
-          <div class="d-flex justify-content-end gap-3">
-            <button type="button" class="custom-btn btn-secondary"
-              (click)="openModal(conformationpopup);model.dismiss()">Close</button>
-            <button type="submit" class="custom-btn btn-primary"
-              [disabled]="undermaintancedata.invalid">Submit</button>
-          </div>
-      
+        <div class="d-flex justify-content-end gap-3">
+          <button type="button" class="custom-btn btn-secondary"
+            (click)="openModal(conformationpopup);model.dismiss()">Close</button>
+          <button type="submit" class="custom-btn btn-primary" [disabled]="undermaintancedata.invalid">Submit</button>
+        </div>
+
       </form>
 
     </div>
@@ -613,7 +624,7 @@
 <ng-template #conformationpopup let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-     <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+      <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
       <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">

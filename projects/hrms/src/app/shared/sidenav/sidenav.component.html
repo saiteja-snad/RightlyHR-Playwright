@@ -41,7 +41,7 @@
             </li>
             }
             @if(this.rbac.allowedToAccess('PMS.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/pms')"  [class.active-nav-link]="isActiveRoute('/pms')">
+            <li class="nav-item" (click)="goToAccessibleRoute('/pms')"  [class.active-nav-link]="isActiveRoutePms()">
                 <i class="bi bi-graph-up-arrow custom-icon"></i>PMS
             </li>
             }

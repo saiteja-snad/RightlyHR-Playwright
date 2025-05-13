@@ -46,7 +46,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
     this.getAllasessors();
     this.getAllActiveEmpList();
     const today = new Date();
-  this.currentDate = this.formatDate(today);
+    this.currentDate = this.formatDate(today);
   }
 
   formatDate(date: Date): string {

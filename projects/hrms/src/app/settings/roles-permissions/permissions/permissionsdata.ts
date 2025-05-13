@@ -621,7 +621,7 @@ export const permissionsData = [
    { fields: 'Generate Promotion Letters', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Send Promotion Letters', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Employee List Hold', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Assign Review Template(Review on Hold)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Assign Review Template(Employee)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Update Review Template', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Employee List Resume', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Promotion Letter Download', View: false, Update: false, Create: false, Delete: false },
@@ -630,14 +630,14 @@ export const permissionsData = [
    { fields: 'Send Appraisal Letter(Appraisal Letter Generated)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Re-Generate Appraisal Letter', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Re-Send Appraisal Letter', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Re-Generate Appraisal Letter(Promotion Letter Generated)', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Re-Send Appraisal Letter(Promotion Letter Sent)', View: false, Update: false, Create: false, Delete: false },
+  //  { fields: 'Re-Generate Appraisal Letter(Promotion Letter Generated)', View: false, Update: false, Create: false, Delete: false },
+  //  { fields: 'Re-Send Appraisal Letter(Promotion Letter Sent)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Generate Promotion Letter(Status - Completed)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Re-Generate Promotion Letter', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Send Promotion Letter', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Re-Send Promotion Letter', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Re-Generate Promotion Letter(Appraisal Letter Generated)', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Re-Send Promotion Letter(Appraisal Letter Sent)', View: false, Update: false, Create: false, Delete: false },
+  //  { fields: 'Re-Generate Promotion Letter(Appraisal Letter Generated)', View: false, Update: false, Create: false, Delete: false },
+  //  { fields: 'Re-Send Promotion Letter(Appraisal Letter Sent)', View: false, Update: false, Create: false, Delete: false },
 
    //My Performance Review Tabs Section
    { fields: 'Pending Reviews', View: false, Update: false, Create: false, Delete: false },
@@ -671,14 +671,14 @@ export const permissionsData = [
    { fields: 'Increment Create', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Increment Update(Status - Created)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Increment Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Increment View(Status - Initialted)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Increment View(Status - Initiated)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Increment Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
    
    //Assessor Configuration Actions
    { fields: 'Assessor Create', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Assessor Update(Status - Created)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Assessor Delete(Status - Created)', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Assessor Update(Status - Initialted)', View: false, Update: false, Create: false, Delete: false },
+   { fields: 'Assessor Update(Status - Initiated)', View: false, Update: false, Create: false, Delete: false },
    { fields: 'Assessor Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
 
   //Events sub tabs

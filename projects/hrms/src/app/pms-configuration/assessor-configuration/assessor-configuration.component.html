@@ -39,7 +39,7 @@
                             <th>Sub Location</th>
                             @if(rbac.allowedToAccess('Assessor Update(Status - Created).view') || 
                             rbac.allowedToAccess('Assessor Delete(Status - Created).view') ||
-                            rbac.allowedToAccess('Assessor Update(Status - Initialted).view') ||
+                            rbac.allowedToAccess('Assessor Update(Status - Initiated).view') ||
                             rbac.allowedToAccess('Assessor Update(Status - Review On Hold).view')) {
                             <th>Action(s)</th>
                             }
@@ -56,10 +56,11 @@
                                 <td>{{ getNamesAsString(item?.subLocationNames, 'subLocationName') }}</td>
                                 @if(rbac.allowedToAccess('Assessor Update(Status - Created).view') || 
                                 rbac.allowedToAccess('Assessor Delete(Status - Created).view') ||
-                                rbac.allowedToAccess('Assessor Update(Status - Initialted).view') ||
+                                rbac.allowedToAccess('Assessor Update(Status - Initiated).view') ||
                                 rbac.allowedToAccess('Assessor Update(Status - Review On Hold).view')) {
                                 <td class="text-center">
-                                    <div class="dropdown">
+                                    @if(showAssessorActionDropdown(item)){
+                                        <div class="dropdown">
                                         <span type="button" data-bs-toggle="dropdown">
                                             <i class="bi bi-three-dots-vertical"></i>
                                         </span>
@@ -72,7 +73,7 @@
                                             <li *ngIf="item?.reviewCycleHeaderStatus==='Created'">
                                                 <a class="dropdown-item" (click)="openDelete(confirmation, item)">Delete</a></li>
                                             }
-                                            @if(rbac.allowedToAccess('Assessor Update(Status - Initialted).view')){
+                                            @if(rbac.allowedToAccess('Assessor Update(Status - Initiated).view')){
                                             <li *ngIf="item?.reviewCycleHeaderStatus==='Initiated'">
                                                 <a class="dropdown-item" (click)="editDetails(item)">Update</a>
                                             </li>
@@ -86,6 +87,7 @@
                                             }
                                         </ul>
                                     </div>
+                                    }
                                 </td>
                                 }
                             </tr>

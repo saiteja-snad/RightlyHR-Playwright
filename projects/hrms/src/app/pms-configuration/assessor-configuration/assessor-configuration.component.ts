@@ -423,6 +423,15 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
     }
   }
 
+  showAssessorActionDropdown(item: any): boolean {
+    return (
+      (this.rbac.allowedToAccess('Assessor Update(Status - Created).view') && item?.reviewCycleHeaderStatus === 'Created') ||
+      (this.rbac.allowedToAccess('Assessor Delete(Status - Created).view') && item?.reviewCycleHeaderStatus === 'Created') ||
+      (this.rbac.allowedToAccess('Assessor Update(Status - Initiated).view') && item?.reviewCycleHeaderStatus === 'Initiated') ||
+      (this.rbac.allowedToAccess('Assessor Update(Status - Review On Hold).view') && item?.reviewCycleHeaderStatus === 'Review on Hold')
+    );
+  }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

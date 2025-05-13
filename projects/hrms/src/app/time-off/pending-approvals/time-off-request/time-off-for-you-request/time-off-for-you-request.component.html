@@ -39,10 +39,9 @@
                         @if(!multiSelect){
                         <th class="text-center">Action(S)</th>
                         }
-                        
                     </tr>
                 </ng-template>
-                <ng-template #body let-item>
+                <ng-template #body let-item appendTo="body">
                     @if (rbac.allowedToAccess('Timeoff Tab.view')) {
                     @if ((((leaves | async) ?? []) | timeoffsearch: searchValue).length > 0) {
                     <!-- @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track

@@ -11,7 +11,7 @@
                     <th>End Date</th>
                     <th>Reason</th>
                     <th>Status</th>
-                    <th>Action</th>
+                    <th class="text-center">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -66,14 +66,14 @@
 <ng-template #cancelModal let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to Cancel?' | translate}}</p>
+      <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to cancel this leave request?' | translate}}</p>
     </div>
     <form autocomplete="off" [formGroup]="cancelForm" (ngSubmit)="cancelLeaveSubmit()">
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Reason for Cancellation' | translate}}<span
             class="text-danger">*</span></label>
-        <textarea id="exampleFormControlTextarea1" class="form-control" formControlName="cancelReason" maxlength="250"
+        <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="cancelReason" maxlength="250"
           placeholder="Please enter leave cancellation reason....." rows="3"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>

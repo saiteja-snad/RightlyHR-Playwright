@@ -59,7 +59,6 @@ export class TimeOffForYouRequestComponent implements OnInit,OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-
   onRowsChange() {
     this.first = 0;
   }
@@ -79,6 +78,7 @@ export class TimeOffForYouRequestComponent implements OnInit,OnDestroy {
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovals();
+    
   }
   selectCheck(Value:any){
     console.log(Value)
@@ -242,6 +242,7 @@ bulkProcess(){
       status: 'Approved',
       comments: comments,
       approvedBy: approvedBy,
+      currentStage:item.approvalHeader.currentapprovalStage
     }));
     this.subscription = this.http
       .putData(`PendingApproval/multiapprovereject`, requestBody)
@@ -278,6 +279,7 @@ bulkProcess(){
       status: 'Rejected',
       comments: comments,
       approvedBy: approvedBy,
+      currentStage:item.approvalHeader.currentapprovalStage
     }));
     this.subscription = this.http
       .putData(`PendingApproval/multiapprovereject`, requestBody)
@@ -312,6 +314,7 @@ bulkProcess(){
       id: item.approvalHeader.id,
       status: 'Processed',
       approvedBy: approvedBy,
+      currentStage:item.approvalHeader.currentapprovalStage
     }));
     // let requestBody = {
     //   status: 'Processed',

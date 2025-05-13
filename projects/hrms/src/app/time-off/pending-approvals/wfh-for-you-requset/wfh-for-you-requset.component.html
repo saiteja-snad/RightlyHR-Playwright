@@ -69,7 +69,7 @@
                     <td>
                         <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
                             <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
-                                <i class="bi bi-info-circle-fill"></i>
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </div>
                         </div>
                         <ng-template #compoffcomments>-</ng-template>

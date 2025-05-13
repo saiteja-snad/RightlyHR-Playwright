@@ -129,10 +129,10 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const WFH_ONDUTY_SUB_TABS =[
-    {route: '/time-off/wfh/waiting-for-approval',permission:'Waiting For Approval (WFH On Duty).view'},
-    {route: '/time-off/wfh/approved',permission: 'Approved (WFH On Duty).view'},
-    {route: '/time-off/wfh/processed',permission: 'Processed (WFH On Duty).view'},
-    {route: '/time-off/wfh/rejected',permission: 'Rejected (WFH On Duty).view',},
+    {route: '/time-off/wfh/waiting-for-approval',permission:'Waiting For Approval (WFH).view'},
+    {route: '/time-off/wfh/approved',permission: 'Approved (WFH).view'},
+    {route: '/time-off/wfh/processed',permission: 'Processed (WFH).view'},
+    {route: '/time-off/wfh/rejected',permission: 'Rejected (WFH).view',},
   ]
   
   export const PERMISSIONS_SUB_TABS =[
@@ -418,6 +418,12 @@ export const MY_INFO_PERSONAL_ROUTES = [
     { permission: 'Employee Info Compensation Details.view', route: '/personalinfo/job/compensation-details' },
     { permission: 'Employee Info Desk Details.view', route: '/personalinfo/job/desk-details' },
     { permission: 'Employee Info Asset Details.view', route: '/personalinfo/job/assets-details' }
+  ];
+
+
+  export const INVITE_NEW_USER_TABS = [
+    {  route: '/admin/active-new-user', permission:  'Dashboard Active Invite New User.view' },
+    {  route: '/admin/prospective-new-user', permission:'Dashboard Trainee Active Invite New User.view' },
   ];
 
   

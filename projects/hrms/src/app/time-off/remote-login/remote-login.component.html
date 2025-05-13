@@ -4,7 +4,7 @@
             <p class="component-header mb-0">Remote Login</p>
         </div>
         <div>
-            @if(rbac.allowedToAccess('Remote Login Module.create')) {
+            @if(rbac.allowedToAccess('Remote Login.view')) {
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addremote)" 
            ><i class="bi bi-plus me-2"></i>Request Remote Login</button>
         }

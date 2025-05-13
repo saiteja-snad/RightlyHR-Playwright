@@ -8,7 +8,7 @@
         <div class="d-flex gap-3">
             <!-- <button type="button" class="custom-btn btn-secondary" *ngIf="rbac.allowedToAccess('Timeoff Tab.create')" 
             (click)="navigateOrLeavebalance()">Org Leave Balance</button> -->
-            @if (rbac.allowedToAccess('Request Leave Button.create')) {
+            @if (rbac.allowedToAccess('Request Leave Button.view')) {
             <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary"
                 ><i class="bi bi-plus"></i>Request Leave</button>
             }
@@ -75,7 +75,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-            @if(rbac.allowedToAccess('Time Off Module.create')) {
+          
             <form autocomplete="off" [formGroup]="leaveForm" (ngSubmit)="onSubmit()" >
                 <div class="row">
                     <div class="col-md-12 mb-3">
@@ -240,7 +240,7 @@
                     </button>
                 </div>
             </form>
-        }
+        
         </div>
     </div>
 </ng-template>

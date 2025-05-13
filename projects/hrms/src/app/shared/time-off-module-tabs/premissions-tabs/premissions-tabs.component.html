@@ -1,17 +1,22 @@
 <div class="component-side-nav-tabs-container py-3">
   <ul class="nav flex-column gap-2">
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/premissions/waiting-for-approval']"
-        routerLinkActive="active-nav-link">Waiting For Approval ({{waitingForApprovalPermissionsCount}})</a>
-    </li>
+    @if(rbac.allowedToAccess('Waiting For Approval (Permissions).view')){
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="['/time-off/premissions/waiting-for-approval']"
+          routerLinkActive="active-nav-link">Waiting For Approval ({{waitingForApprovalPermissionsCount}})</a>
+      </li>
+    }
+    @if(rbac.allowedToAccess('Approved (Permissions).view')){
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['/time-off/premissions/approved']" routerLinkActive="active-nav-link">Approved
         ({{approvalPermissionsRequestsCount}})</a>
     </li>
-
+  }
+  @if(rbac.allowedToAccess('Rejected (Permissions).view')){
     <li class="nav-item">
       <a class="nav-link" [routerLink]="['/time-off/premissions/rejected']" routerLinkActive="active-nav-link">Rejected
         ({{rejectedPermissionsRequestsCount}})</a>
     </li>
+  }
   </ul>
 </div>

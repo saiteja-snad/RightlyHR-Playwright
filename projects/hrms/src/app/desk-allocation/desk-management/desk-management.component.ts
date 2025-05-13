@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
@@ -44,7 +44,7 @@ export class DeskManagementComponent {
   desklist = new BehaviorSubject<any[]>([])
   constructor(
     private readonly fb: FormBuilder,
-    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,) { }
+    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,private  router: Router) { }
 
   ngOnInit() {
 
@@ -391,8 +391,12 @@ export class DeskManagementComponent {
           next: (data: any) => {
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal('Desk Registered Successfully ');
+             this.getAllDesks(this.page, this.pageSize, null, null,'All');            
+            this.getcount(null,null);          
+           this.navigateToAsset();
             this.deskForm.reset()
             this.http.setnewdeskDetails()
+
           },
           error: (error: any) => {
             console.error('Error fetching locations', error);
@@ -513,8 +517,17 @@ export class DeskManagementComponent {
     console.log(loctionid)
 
   }
-
-  
+  navigateToAsset() {
+    this.router.navigate(['/desk/management/all-desks']);
+  }
+        //close dailog open
+  openConfirmationModal(content: any) {
+    this.modalService.open(content, {centered: true,backdrop: 'static'});
+  }
+  cleardata(){
+    this.deskForm.reset();
+      this.modalService.dismissAll();
+    }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

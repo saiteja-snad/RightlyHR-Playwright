@@ -19,13 +19,13 @@
     <app-leaves-approvaltabs />
   </div>
 
-      <div class="input-group custom-search mb-3">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1">
-            <i class="bi bi-search"></i>
-        </span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
-            (ngModelChange)="filterTeamLeaveSummary()" aria-label="Search" aria-describedby="basic-addon1" />
-    </div>
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1">
+      <i class="bi bi-search"></i>
+    </span>
+    <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
+      (ngModelChange)="filterTeamLeaveSummary()" aria-label="Search" aria-describedby="basic-addon1" />
+  </div>
 
   <ng-container *ngIf="dataload; else maincontent">
     <ng-template #loadingSpinner>
@@ -59,9 +59,9 @@
                 <tbody>
                   @for (category of employee.categories; track $index) {
                   <tr>
-                    <td class="text-start cursor clickable-text" (click)="onClickCategory(employee, category)">
-                      <ng-container *ngIf="category.category?.name; else noCategory">
-                        <u>{{ category.category.name }}</u>
+                    <td class="text-start cursor">
+                     <ng-container *ngIf="category.category?.name?.trim(); else noCategory">
+                        <u class="clickable-text" (click)="onClickCategory(employee, category)">{{ category.category.name }}</u>
                       </ng-container>
                       <ng-template #noCategory>-</ng-template>
                     </td>
@@ -79,6 +79,8 @@
           </p-accordion-content>
         </p-accordion-panel>
         }
+        }@else {
+        <app-no-data-found></app-no-data-found>
         }
       </p-accordion>
     </div>

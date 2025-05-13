@@ -43,7 +43,8 @@ export class AssetsManagmentComponent {
   page = 1;
   pageSize = 10;
   collectionSize = 100;
-  purchesdate:any;
+  minpurchesDate: any;
+  maxpurchesDate: any;
   constructor(
     private readonly fb: FormBuilder,
     private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,public formValidation: FormValidationService) { }
@@ -56,8 +57,12 @@ export class AssetsManagmentComponent {
     this.intiallocationandsublocation()
     this.getcount(null, null)
     this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
-   const currentYear = new Date().getFullYear();
-  this.purchesdate = `${currentYear}-12-31`; 
+    const today = new Date();
+  // Set max to today's date
+  this.maxpurchesDate = today.toISOString().split('T')[0];
+  // Set min to Jan 1st of the current year
+  const startOfYear = new Date(today.getFullYear(), 0, 1); 
+  this.minpurchesDate = startOfYear.toISOString().split('T')[0];
     this.navTabs = [
       { label: 'All', route: '/assets-management/all-assets', count$: this.http.assetCountSubject },
       { label: 'Available', route: '/assets-management/available-assets', count$: this.http.avilableassetCountSubject },
@@ -136,7 +141,6 @@ export class AssetsManagmentComponent {
 
   onToggleChangeamc(event: Event) {
     this.isToggledamc = (event.target as HTMLInputElement).checked;
-    console.log(this.isToggledamc)
     this.toggleAmcFields(this.isToggledamc, true); // Reset values only when explicitly toggled by the user
 
     this.isToggledamc === (event.target as HTMLInputElement).checked;
@@ -262,7 +266,6 @@ allZeroesIfMaxLength(): ValidatorFn {
         if (amcStartDateObj < warrantyExpiryDateObj || amcEndDateObj > warrantyExpiryDateObj) {
 
           this.amcDateMismatch = true;
-          console.log(this.amcDateMismatch)
           return { amcDateMismatch: true };
         } else {
           this.amcDateMismatch = false;
@@ -294,7 +297,6 @@ allZeroesIfMaxLength(): ValidatorFn {
       .subscribe({
         next: (data: any) => {
           this.assetCategorys = data;
-          console.log(this.assetCategorys)
         },
         error: (reason: any) => {
           console.log(reason);
@@ -332,7 +334,6 @@ allZeroesIfMaxLength(): ValidatorFn {
     const locationId = this.locationfromdata.get('locationId')?.value;
     this.getSubLocationByidfliters(locationId);
     localStorage.setItem('assetlocationId', JSON.stringify(locationId))
-    console.log(locationId)
     this.locationfromdata.get('subLocationId')?.reset()
     localStorage.setItem('assetsublocationId', JSON.stringify(null))
     this.http.assetsUpdateLocationId(locationId);
@@ -347,7 +348,6 @@ allZeroesIfMaxLength(): ValidatorFn {
       const loctionid = this.locationfromdata.get('locationId')?.value
       localStorage.setItem('assetsublocationId', JSON.stringify(subLocationId))
       this.http.assetsUpdateLocationId(loctionid);
-      console.log(loctionid)
       this.getassetsdata(this.page, this.pageSize, loctionid, subLocationId, null);
       this.getcount(loctionid, subLocationId)
 
@@ -477,30 +477,23 @@ allZeroesIfMaxLength(): ValidatorFn {
       if (this.isToggledWarranty !== true) {
         payload.assetWarrantyVM = null
       }
-      console.log('Payload:', payload);
       this.http.postdata('AssetMaster', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           console.log(res);
-          this.modalService.dismissAll()
-          this.http.setnewassetsDetails()
+          this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset Registered Successfully ');
           this.getassetsdata(this.page, this.pageSize,null,null,this.Status);
+           this.getcount(null, null)
           this.assetForm.reset();
+           this.http.setnewassetsDetails();
         },
         error: (error) => {
-
-          console.log(error);
           if (error.status !== 500) {
             this.conformationPopup.openErrorModal(error.error?.message);
           }
           else {
             this.conformationPopup.openErrorModal("There was a problem on our side. Please try again later, or contact the administrator if the issue persists.")
           }
-        },
-        complete: () => {
-          setTimeout(() => {
-            window.location.reload()
-          }, 2000);
         },
       });
     } else {

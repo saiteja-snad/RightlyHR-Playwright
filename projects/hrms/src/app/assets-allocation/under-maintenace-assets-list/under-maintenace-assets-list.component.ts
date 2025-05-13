@@ -60,7 +60,8 @@ export class UnderMaintenaceAssetsListComponent {
   assetSubCategory: any = [];
   assetCategorys: ICategory[] = [];
   vendor: IVendor[] = [];
-
+  minpurchesDate: any;
+  maxpurchesDate: any;
  
   constructor(
     private readonly fb: FormBuilder,
@@ -81,7 +82,13 @@ export class UnderMaintenaceAssetsListComponent {
     this.getassetsCategory()
     this.getjobLocationList()
     this.getvendor()
-    this.initialform()
+    this.initialform();
+    const today = new Date();
+  // Set max to today's date
+  this.maxpurchesDate = today.toISOString().split('T')[0];
+  // Set min to Jan 1st of the current year
+  const startOfYear = new Date(today.getFullYear(), 0, 1); 
+  this.minpurchesDate = startOfYear.toISOString().split('T')[0];
 
   }
 
@@ -628,7 +635,7 @@ allZeroesIfMaxLength(): ValidatorFn {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset marked as Available Successfully ');
           this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-
+         this.getcount(null, null,this.Status);
         },
         error: (err) => {
           console.error('Error deleting asset:', err);

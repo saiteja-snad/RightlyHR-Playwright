@@ -81,7 +81,7 @@
         <div class="custom-main-popup-content p-4">
             <form autocomplete="off" [formGroup]="identityForm" (ngSubmit)="submitIdentityForm(identityForm)">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Identity.view')){
+                    @if(this.rbac.allowedToAccess('My Info Identity Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Type<span
                                 class="text-danger">*</span></label>
@@ -96,7 +96,7 @@
                         </div>
                       
                     </div>
-                    } @if(this.rbac.allowedToAccess('Identity.view')){
+                    } @if(this.rbac.allowedToAccess('My Info Identity Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
@@ -125,7 +125,7 @@
                             </div>
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Identity.view')){
+                    @if(this.rbac.allowedToAccess('My Info Identity Details.view')){
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>
@@ -173,7 +173,7 @@
         <div class="custom-main-popup-content p-4">
             <form autocomplete="off" [formGroup]="identityupdateForm" (ngSubmit)="updateIdentity(identityupdateForm)">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Identity.view')){
+                    @if(this.rbac.allowedToAccess('My Info Identity Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="identityType" class="form-label custom-label mb-2">Identity Type<span
                                 class="text-danger">*</span></label>
@@ -187,7 +187,7 @@
                             Identity Type is required
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Identity.view')){
+                    @if(this.rbac.allowedToAccess('My Info Identity Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="identityNumber" class="form-label custom-label mb-2">Identity Number<span
                                 class="text-danger">*</span></label>
@@ -211,7 +211,7 @@
                             </div>
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Identity.view')){
+                    @if(this.rbac.allowedToAccess('My Info Identity Details.view')){
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                                 class="text-danger">*</span></label>

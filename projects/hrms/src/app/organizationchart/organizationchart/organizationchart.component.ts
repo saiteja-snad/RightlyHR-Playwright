@@ -162,7 +162,16 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
         }
       });
   }
-  
+  onSelectprofilePicDownload(employee: any): Observable<any> {
+    return this.http.DownloadDataWithQuery('FileSystem/Downloadfile', employee).pipe(
+      map((res: any) => {
+        const blob = new Blob([res['body']], { type: 'image/png' });
+        const objectURL = URL.createObjectURL(blob);
+        return this.sanitizer.bypassSecurityTrustUrl(objectURL);
+      }),
+      catchError(() => of('images/alternate.png')) // Use default image on error
+    );
+  }
 
   getOrghierarchy(employeeId?: any) {
     this.dataload = true;
@@ -176,6 +185,16 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
           this.dataload=false
           this.data = response || [];
           this.isDataPresent = false;
+          this.data.forEach((employee: any) => {
+            this.onSelectprofilePicDownload(employee.data.image).subscribe((imageUrl: any) => {
+              employee.data.imageUrl = imageUrl;
+            });
+            employee.children?.forEach((child: any) => {
+              this.onSelectprofilePicDownload(child.data.image).subscribe((imageUrl: any) => {
+                child.data.imageUrl = imageUrl;
+              });
+            });
+          });
         } else {
           this.data = []
           this.isDataPresent = true;

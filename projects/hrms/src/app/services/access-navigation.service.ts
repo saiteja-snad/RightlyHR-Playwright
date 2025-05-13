@@ -707,8 +707,32 @@ navigateToAccessedRoute(actualRoute: string): string {
       break;
     case '/settings/timeoff-configurations':
       for (const item of SETTINGS_TIMEOFF_TABS) {
-        if (this.rbac.allowedToAccess(item.permission)) {
-          return item.route;
+        if(this.rbac.allowedToAccess('Leave Category Tab.view')){
+          for(const item of SETTINGS_TIMEOFF_LEAVE_CATEGORY_TABS){
+            if(this.rbac.allowedToAccess(item.permission)){
+              return item.route;
+            }
+          }
+        }
+
+        if(this.rbac.allowedToAccess('Leave Allocation Tab.view')){
+          return route = '/settings/timeoff-configurations/leave-allocation';
+        }
+
+        if(this.rbac.allowedToAccess('Flexible Leave Allocation Tab.view')){
+          return route = '/settings/timeoff-configurations/flexible-leave-allocation';
+        }
+
+        if(this.rbac.allowedToAccess('Attendance Eligibility Criteria Tab.view')){
+          for(const item of ATTENDANCE_ELIGIBILITY_CRITERIA_TABS){
+            if(this.rbac.allowedToAccess(item.permission)){
+              return item.route;
+            }
+          }
+        }
+
+        if(this.rbac.allowedToAccess('Load Entitlements Tab.view')){
+          return route = '/settings/timeoff-configurations/load-entitlements';
         }
       }
 

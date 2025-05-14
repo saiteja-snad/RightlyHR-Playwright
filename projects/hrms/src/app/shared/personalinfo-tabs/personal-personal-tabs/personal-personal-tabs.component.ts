@@ -27,7 +27,16 @@ export class PersonalPersonalTabsComponent {
   constructor(public rbac: RbacService) { }
   
     ngOnInit(): void {
-      this.filterTabsByRbac();
+      // this.filterTabsByRbac();
+      this.navTabs = this.navTabs.filter(
+      (tab) =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(
+          `${tab.permission.feature}.${tab.permission.action}`
+        )
+    );
     }
   
     filterTabsByRbac(): void {

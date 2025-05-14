@@ -232,10 +232,10 @@ export const permissionsData = [
     { fields: 'Processed (Time Off)', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Rejected (Time Off)', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Request Leave Button', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Cancelled(Time Off)', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Team Leave Balance(Time Off)', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Team Leave Balance Summary(Time Off)', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Org Leave Balance(Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Cancelled (Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Team Leave Balance (Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Team Leave Balance Summary (Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Org Leave Balance (Time Off)', View: false, Update: false, Create: false, Delete: false },
     { fields:'Org Leave Balance', View: false, Update: false, Create: false, Delete: false},
     
     //Work From Home Sub Tabs Section
@@ -563,7 +563,7 @@ export const permissionsData = [
     { fields: 'No Due Form', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Documents Sub Tabs Section
-    { fields: 'Employee Info Documents(Upload File)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Documents (Upload File)', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Team Members Sub Tabs Section
     { fields: 'Employee Info Reporting Manager Tab', View: false, Update: false, Create: false, Delete: false },

@@ -7,27 +7,38 @@
         </div>
 
         <div class="d-flex gap-3 flex-wrap">
-            <div class="d-flex align-items-center gap-3">
+            <div>
+                <label class="form-label custom-label pt-2" for="">Search Employee</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+          filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="Onclick($event)"
+          class="custom-select w-100">
+        </p-select>
+                </div>
+            </div>
+            <!-- <div class="d-flex align-items-center gap-3">
                 <label class="form-label custom-label pt-2" for="">Month</label>
 
                 <div class="custom-p-select-content">
                     <p-select optionValue="value" placeholder="Month" optionLabel="name"
                         class="custom-select"></p-select>
                 </div>
-            </div>
+            </div> -->
             <div class="d-flex align-items-center gap-3">
                 <label class="form-label custom-label pt-2" for="">Year</label>
-
-                <div class="custom-p-select-content">
-                    <p-select optionValue="value" placeholder="year" optionLabel="name"
-                        class="custom-select"></p-select>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-p-select-content">
+                        <p-select [options]="years" optionLabel="label" optionValue="value" [(ngModel)]="selectedYear"
+                            placeholder="Select year" class="form-select custom-select"
+                            (onChange)="onSelectYear($event)">
+                        </p-select>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="team-data-content">
-        <!--Employee Accordian-->
+    <!-- <div class="team-data-content">
         <p-accordion value="0" class="mb-3">
             <p-accordion-panel value="0">
                 <p-accordion-header>John Doe (SD213456)</p-accordion-header>
@@ -56,5 +67,55 @@
                 </p-accordion-content>
             </p-accordion-panel>
         </p-accordion>
+    </div> -->
+
+    <ng-template #maincontent>
+    <div class="team-data-content">
+      <p-accordion>
+        @if(filteredTeamLeaveBalance.length > 0) {
+        @for (employee of filteredTeamLeaveBalance; track employee.employeeBasicDetails.employeeId; let i = $index) {
+        <p-accordion-panel [value]="employee.employeeBasicDetails.employeeId">
+          <p-accordion-header>{{ employee.employeeBasicDetails.employeeName }} ({{
+            employee.employeeBasicDetails.snadEmployeeId }})</p-accordion-header>
+          <p-accordion-content>
+            <div class="employee-data-table">
+              <table class="w-100">
+                <thead>
+                  <tr>
+                    <th class="text-start">Category</th>
+                    <th>Allowed Days</th>
+                    <th>Utilized Days</th>
+                    <th>Booked Days</th>
+                    <th>Available Days</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (category of employee.categories; track $index) {
+                  <tr>
+                    <td class="text-start cursor">
+                     <ng-container *ngIf="category.category?.name?.trim(); else noCategory">
+                        <u class="clickable-text" (click)="onClickCategory(employee, category)">{{ category.category.name }}</u>
+                      </ng-container>
+                      <ng-template #noCategory>-</ng-template>
+                    </td>
+                    <td>{{ category.allowedDays }}</td>
+                    <td>{{ category.utilizedDays }}</td>
+                    <td>{{ category.booked }}</td>
+                    <td class="available-number">
+                      {{ category.allowedDays - category.utilizedDays - category.booked }}
+                    </td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </p-accordion-content>
+        </p-accordion-panel>
+        }
+        }@else {
+        <app-no-data-found></app-no-data-found>
+        }
+      </p-accordion>
     </div>
+  </ng-template>
 </div>

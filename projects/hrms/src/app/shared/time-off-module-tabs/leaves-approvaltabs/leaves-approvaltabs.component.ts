@@ -168,6 +168,12 @@ export class LeavesApprovaltabsComponent {
         count: this.teamLeaveSummaryCount,
          permission: { feature: 'Team Leave Balance Summary (Time Off)', action: 'view' },
       },
+      {
+        label: 'Org Leave Balance',
+        link: '/time-off/leaves/org-leave-balance',
+        count: this.teamLeaveSummaryCount,
+         permission: { feature: 'Org Leave Balance', action: 'view' },
+      },
     ];
 
     this.statusTabs = this.statusTabs.filter(

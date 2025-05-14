@@ -169,17 +169,17 @@ export class AccessNavigationService {
           }
         }
 
-        if (this.rbac.allowedToAccess('Roles Module.view')) {
-          for (const item of SETTINGS_ROLES_TABS) {
-            if ('permission' in item && item.permission) {
-              if (this.rbac.allowedToAccess(item.permission)) {
-                return item.route;
-              }
-            } else {
-              return item.route;
-            }
-          }
-        }
+        // if (this.rbac.allowedToAccess('Roles Module.view')) {
+        //   for (const item of SETTINGS_ROLES_TABS) {
+        //     if ('permission' in item && item.permission) {
+        //       if (this.rbac.allowedToAccess(item.permission)) {
+        //         return item.route;
+        //       }
+        //     } else {
+        //       return item.route;
+        //     }
+        //   }
+        // }
 
         if (this.rbac.allowedToAccess('Settings Timeoff Module.view')) {
           for (const item of SETTINGS_TIMEOFF_TABS) {

@@ -6,17 +6,15 @@
             <p class="component-header cursor mb-0">Leave Balance</p>
         </div>
         <div class="d-flex gap-3">
-            <!-- <button type="button" class="custom-btn btn-secondary" *ngIf="rbac.allowedToAccess('Timeoff Tab.create')" 
-            (click)="navigateOrLeavebalance()">Org Leave Balance</button> -->
-            @if (rbac.allowedToAccess('Request Leave Button.view')) {
+            <button type="button" class="custom-btn btn-secondary"  
+            (click)="navigateOrLeavebalance()">Org Leave Balance</button>
             <button type="button" (click)="openModal(addleave)" class="custom-btn btn-primary"
-                ><i class="bi bi-plus"></i>Request Leave</button>
-            }
+                *ngIf="rbac.allowedToAccess('Timeoff Tab.create')"><i class="bi bi-plus"></i>Request Leave</button>
         </div>
     </div>
 
     <div>
-        @if (rbac.allowedToAccess('Time Off Module.view')) {
+        @if (rbac.allowedToAccess('Timeoff Tab.view')) {
         <div class="leave-cards-grid-container">
             @for (item of categoryDetails; track $index) {
             <div class="card leaves-card">
@@ -75,8 +73,7 @@
             </div>
         </div>
         <div class="custom-main-popup-content">
-          
-            <form autocomplete="off" [formGroup]="leaveForm" (ngSubmit)="onSubmit()" >
+            <form autocomplete="off" [formGroup]="leaveForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Timeoff Tab.create')">
                 <div class="row">
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Leave Type'| translate}}<span
@@ -240,7 +237,6 @@
                     </button>
                 </div>
             </form>
-        
         </div>
     </div>
 </ng-template>

@@ -7,6 +7,15 @@
         </div>
 
         <div class="d-flex gap-3 flex-wrap">
+            <div>
+                <label class="form-label custom-label pt-2" for="">Search Employee</label>
+                <div class="custom-p-select-content">
+                    <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+          filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="Onclick($event)"
+          class="custom-select w-100">
+        </p-select>
+                </div>
+            </div>
             <div class="d-flex align-items-center gap-3">
                 <label class="form-label custom-label pt-2" for="">Month</label>
 
@@ -17,10 +26,13 @@
             </div>
             <div class="d-flex align-items-center gap-3">
                 <label class="form-label custom-label pt-2" for="">Year</label>
-
-                <div class="custom-p-select-content">
-                    <p-select optionValue="value" placeholder="year" optionLabel="name"
-                        class="custom-select"></p-select>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="custom-p-select-content">
+                        <p-select [options]="years" optionLabel="label" optionValue="value" [(ngModel)]="selectedYear"
+                            placeholder="Select year" class="form-select custom-select"
+                            (onChange)="onSelectYear($event)">
+                        </p-select>
+                    </div>
                 </div>
             </div>
         </div>

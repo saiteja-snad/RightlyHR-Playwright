@@ -156,7 +156,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   isCheckboxDisabled(field: string, action: string): boolean {
     const disabledOptions = ['Employee Basic Information', 'Employee Current Address', 'Employee Permanent Address', 'Employee Contact Details',
                              'Employee Emergency Contact Details', 'Employee Onboarding Documents', 'Basic Information', 'Current Address', 'Permanent Address', 'Contact Details',
-                             'Emergency Contact Details', 'Onboarding Documents','Employee Team Members','Team Members','Employee Onboarding Request','Separation Request','Employee Separation Request'
+                             'Emergency Contact Details', 'Onboarding Documents','Employee Team Members','Team Members','Employee Onboarding Request','Separation Request',
+                             'Employee Separation Request','Employee Info Desk Details','Employee Info Asset Details'
                             ];
 
     return disabledOptions.includes(field) && (action === 'delete' || action === 'create');

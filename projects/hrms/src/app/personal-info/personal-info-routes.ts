@@ -9,8 +9,8 @@ export default [
     {
         path: 'personal', children: [
             // { path: '', redirectTo: 'basic-info', pathMatch: 'full' },
-            { path: 'basic-info', component: BasicInfoComponent, data: { permission: 'Employee Info Basic Information.view' }},
-            { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then(m => m.AddressInfoComponent),  },
+            { path: 'basic-info', component: BasicInfoComponent, },
+            { path: 'address-info', loadComponent: () => import('./personal/address-info/address-info.component').then(m => m.AddressInfoComponent), },
             { path: 'family-details', loadComponent: () => import('./personal/family-details/family-details.component').then(m => m.FamilyDetailsComponent),  },
             { path: 'identity-details', loadComponent: () => import('./personal/identity-details/identity-details.component').then(m => m.IdentityDetailsComponent),  },
             { path: 'education-details', loadComponent: () => import('./personal/education-details/education-details.component').then(m => m.EducationDetailsComponent),  },
@@ -18,7 +18,7 @@ export default [
             { path: 'visa-details', loadComponent: () => import('./personal/visa-details/visa-details.component').then(m => m.VisaDetailsComponent),  },
             { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent), },
             { path: 'onboarding-documents', loadComponent: () => import('./personal/onboarding-documents/onboarding-documents.component').then(m => m.OnboardingDocumentsComponent) , },
-            { path: 'onboarding-verification', loadComponent: () => import('./personal/onboarding-request/onboarding-request.component').then(m => m.OnboardingRequestComponent),  },
+            { path: 'onboarding-verification', loadComponent: () => import('./personal/onboarding-request/onboarding-request.component').then(m => m.OnboardingRequestComponent), },
             { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent),  }
         ]
     },
@@ -38,7 +38,7 @@ export default [
             { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent ) , data: { permission: 'Employee Info Probation Details.view' }},
             { path: 'separation-details', loadComponent: () => import('./job/separation-request/separation-request.component').then((m) => m.SeparationRequestComponent ), data: { permission: 'Employee Info Separation Request Details.view' } },
             { path: 'employee-off-boarding', loadComponent: () => import('./job/employe-off-boarding/employe-off-boarding.component').then((m) => m.EmployeOffBoardingComponent ), data: { permission: 'Employee Info Offboarding Details.view' } },
-            { path: 'onboarding-requests', loadComponent: () => import('./job/onboarding-requests/onboarding-requests.component').then((m) => m.OnboardingRequestsComponent ), data: { permission: 'Employee Info Onboarding Details.view' } },
+            { path: 'onboarding-requests', loadComponent: () => import('./job/onboarding-requests/onboarding-requests.component').then((m) => m.OnboardingRequestsComponent ), data: { permission: 'Employee Info Onboarding Request Details.view' } },
 
 
         ]   
@@ -49,7 +49,7 @@ export default [
     {
         path: 'team',
         children: [
-            { path: '', redirectTo: 'team-members', pathMatch: 'full' },
+            // { path: '', redirectTo: 'team-members', pathMatch: 'full' },
             { path: 'team-members', loadComponent: () => import('./team-numbers/team-numbers.component').then((m) => m.TeamNumbersComponent), data: { permission: 'Employee Info Reporting Manager Tab.view' } },
             {
                 path: 'team-manger-members', loadComponent: () => import('./team-numbers/team-manger-members/team-manger-members.component').then((m) => m.TeamMangerMembersComponent), data: { permission: 'Employee Info Team Managers Tab.view' },

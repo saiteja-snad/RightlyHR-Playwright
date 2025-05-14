@@ -3,7 +3,7 @@
         <div>
             <app-team-members-tabs />
         </div>
-         @if(rbac.allowedToAccess('Employee Info Change TM Button.update')) {
+         @if(rbac.allowedToAccess('Employee Info Change TM Button.view')) {
         <div>
             <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change TM</button>
         </div>}
@@ -24,7 +24,8 @@
                     <th>Work Email</th>
                     <th>Phone Number</th>
                     <!-- <th>Employee Job Details</th> -->
-                    <th class="text-center">Action</th>
+                      @if(rbac.allowedToAccess('Employee Info Change TM Button.view')) {
+                    <th class="text-center">Action</th>}
                 </tr>
             </thead>
             <tbody *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
@@ -42,14 +43,14 @@
                         N/A
                       </ng-template>
                     </td> -->
-                     @if(rbac.allowedToAccess('Employee Info Change TM Button.update')) {
+                     @if(rbac.allowedToAccess('Employee Info Change TM Button.view')) {
                     <td class="text-center">
                       <div class="dropdown">
                         <a type="button" data-bs-toggle="dropdown">
                           <i class="bi bi-three-dots-vertical"></i>
                         </a>
                         <ul class="dropdown-menu py-0">
-                             @if(rbac.allowedToAccess('Employee Info Change TM Button.update')) {
+                             @if(rbac.allowedToAccess('Employee Info Change TM Button.view')) {
                           <li (click)="assigintm(changetmmodalforsingle, details)">
                             <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change TM</a>
                           </li>

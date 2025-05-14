@@ -2456,7 +2456,7 @@
                     </tr>
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center"
-                            *ngIf="per.fields === 'Employee Info Reporting Manager Tab'|| per.fields === 'Employee Info Change RM Button'|| per.fields === 'Employee Info Team Members Tab' || per.fields === 'Employee Info Change TM Button'" >
+                            *ngIf="per.fields === 'Employee Info Reporting Manager Tab'|| per.fields === 'Employee Info Change RM Button'|| per.fields === 'Employee Info Team Managers Tab' || per.fields === 'Employee Info Change TM Button'" >
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"

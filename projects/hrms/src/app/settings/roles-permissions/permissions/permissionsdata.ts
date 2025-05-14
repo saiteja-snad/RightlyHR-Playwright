@@ -572,7 +572,7 @@ export const permissionsData = [
     { fields: 'Employee Info Change TM Button', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Onboard Request Sub Tabs Section
-    { fields: 'Employee Info Onboard Request', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Request for Onboard Button', View: false, Update: false, Create: false, Delete: false },
 
    //Employee Info Separation Request Details
    { fields: 'Employee Raise No Due', View: false, Update: false, Create: false, Delete: false },

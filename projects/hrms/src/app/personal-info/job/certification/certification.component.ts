@@ -24,7 +24,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
   selectedCertification: any;
   empcertsdata = new BehaviorSubject<any>([]);
   empinfo: any
-  loading=false
+  loading = false
   certificationForm!: FormGroup;
   updateCertificationForm!: FormGroup;
   certificationDocument: any;
@@ -82,7 +82,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
-      attachment: ['',attachmentValidators],
+      attachment: ['', attachmentValidators],
     });
 
     // Disable "expiryDate" field if "isExpired" is checked
@@ -271,18 +271,18 @@ export class CertificationComponent implements OnInit, OnDestroy {
   getEmpcertdata() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     console.log(EmployeeId);
-    this.loading=true
+    this.loading = true
     this.subscription = this.http
       .getData(`Certification/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
-        
-          this.loading=false
+
+          this.loading = false
           this.empcertsdata.next(data);
         },
         error: (err: any) => {
           console.log(err);
-          this.loading=false
+          this.loading = false
         },
       });
   }
@@ -316,6 +316,10 @@ export class CertificationComponent implements OnInit, OnDestroy {
     this.certificationDocument = data.attachment; // Set the selected document for the update form
 
     this.displaycertification = data?.attachment?.split('/')?.pop()
+    // Dynamically update validators for the attachment field
+    const attachmentValidators = this.displaycertification ? [] : [Validators.required];
+    this.updateCertificationForm.get('attachment')?.setValidators(attachmentValidators);
+    this.updateCertificationForm.get('attachment')?.updateValueAndValidity();
 
     // Reset the document for the update form
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });

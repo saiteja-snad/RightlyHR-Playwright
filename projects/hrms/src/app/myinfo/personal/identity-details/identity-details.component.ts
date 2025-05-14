@@ -287,6 +287,10 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       ? identityDetails.attachment.split('/').pop()
       : null;
     this.IdentityAttachment = identityDetails.attachment
+    // Dynamically update validators for the attachment field
+    const attachmentValidators = this.displayidentiydocument ? [] : [Validators.required];
+    this.identityupdateForm.get('identityupdateAttachment')?.setValidators(attachmentValidators);
+    this.identityupdateForm.get('identityupdateAttachment')?.updateValueAndValidity();
 
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }

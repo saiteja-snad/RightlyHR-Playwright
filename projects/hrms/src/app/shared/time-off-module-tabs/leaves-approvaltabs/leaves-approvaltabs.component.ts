@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -6,6 +6,7 @@ import { TabsModule } from 'primeng/tabs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
+import { SignalsService } from '../../../services/signals.service';
 
 @Component({
   selector: 'app-leaves-approvaltabs',
@@ -23,20 +24,35 @@ export class LeavesApprovaltabsComponent {
   waitingForApprovalCount: number = 0;
   approvedCount: number = 0;
   rejectedCount: number = 0;
+  cancelCount:number=0;
   teamLeaveBalanceCount: number = 0;
   teamLeaveSummaryCount: number = 0;
+  statusTabs: any[]=[];
+  // statusTabs: any[] = [
+  //   { label: 'Waiting For Approval', link: 'waiting-for-approval', },
+  //   { label: 'Approved', link: 'approved', },
+  //   { label: 'Processed', link: 'processed', },
+  //   { label: 'Rejected', link: 'rejected', },
+  //   { label: 'Cancelled', link: 'cancelled', },
+  //   { label: 'Team Leave balance', link: 'team-leave-balance', },
+  //   { label: 'Team Leave Summary', link: 'team-leave-summary', }
+  // ];
 
-  statusTabs: any[] = [
-    { label: 'Waiting For Approval', link: 'waiting-for-approval', },
-    { label: 'Approved', link: 'approved', },
-    { label: 'Processed', link: 'processed', },
-    { label: 'Rejected', link: 'rejected', },
-    { label: 'Cancelled', link: 'cancelled', },
-    { label: 'Team Leave balance', link: 'team-leave-balance'},
-    { label: 'Team Leave Summary', link: 'team-leave-summary'}
-  ];
+  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService,private signalService:SignalsService) { 
+     effect(() => {
+      if (this.signalService.timecountTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
+         this.getDataByLPID();
+         this.getAllTeamLeaveBalance();
+         this.getAllTeamLeaveSummary();
 
-  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService) { }
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.timecountTriggerSignal()) {
+          this.signalService.timecountTriggerSignal.set(false);
+        }
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -55,11 +71,13 @@ export class LeavesApprovaltabsComponent {
           const approved = response.filter(item => item.status === 'Approved');
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
+          const cancelled = response.filter(item => item.status === 'Cancelled');
 
           this.waitingForApprovalCount = waiting.length;
           this.approvedCount = approved.length;
           this.rejectedCount = rejected.length;
           this.processedCount = processed.length;
+          this.cancelCount=cancelled.length
 
           this.updateStatusTabs();
         } else {
@@ -106,13 +124,13 @@ export class LeavesApprovaltabsComponent {
 
   private updateStatusTabs() {
     this.statusTabs = [
-      { label: 'Waiting For Approval', link: '/time-off/leaves/waiting-for-approval', count: this.waitingForApprovalCount },
-      { label: 'Approved', link: '/time-off/leaves/approved', count: this.approvedCount },
-      { label: 'Processed', link: '/time-off/leaves/processed', count: this.processedCount },
-      { label: 'Rejected', link: '/time-off/leaves/rejected', count: this.rejectedCount },
-      { label: 'Cancelled', link: '/time-off/leaves/cancelled' },
-      { label: 'Team Leave balance', link: '/time-off/leaves/team-leave-balance', count: this.teamLeaveBalanceCount },
-      { label: 'Team Leave Summary', link: '/time-off/leaves/team-leave-summary', count: this.teamLeaveSummaryCount }
+      { label: 'Waiting For Approval', link: 'waiting-for-approval', count: this.waitingForApprovalCount },
+      { label: 'Approved', link: 'approved', count: this.approvedCount },
+      { label: 'Processed', link: 'processed', count: this.processedCount },
+      { label: 'Rejected', link: 'rejected', count: this.rejectedCount },
+      { label: 'Cancelled', link: 'cancelled',count:this.cancelCount },
+      { label: 'Team Leave balance', link: 'team-leave-balance', count: this.teamLeaveBalanceCount },
+      { label: 'Team Leave Summary', link: 'team-leave-summary', count: this.teamLeaveSummaryCount }
     ];
   }
 

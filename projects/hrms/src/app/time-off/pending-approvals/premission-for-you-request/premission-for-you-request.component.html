@@ -1,16 +1,32 @@
 <div class="custom-main-component-container">
+        @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
+    <div class="d-flex justify-content-end gap-3 mb-3">
+    
+        @if (canBulkApprove()) {
+        <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+        }
+        @if (canBulkProcess()) {
+        <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+        }
+       
+    </div>
+     }
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search"
             #search="ngModel" [(ngModel)]="searchValue" autocomplete="off">
     </div>
-    
-    <div class="custom-table-content">
+
+    <div class="custom-p-multi-select-table">
         @if(!dataload){
-        <table class="w-100">
-            <thead>
+        <p-table [value]="permissionsselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts"
+            dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template #header>
                 <tr>
+                    <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
                     <th>{{'Employee ID' | translate}} </th>
                     <th>{{'Employee Name' | translate}}</th>
                     <th>{{'Requested Date' | translate}}</th>
@@ -19,15 +35,21 @@
                     <th>{{'Permission Type' | translate}}</th>
                     <th>{{'Reason' | translate}}</th>
                     <th>{{'Approver Comments' | translate}}</th>
-                    <th>{{'Action(s)' | translate}}</th>
+                    @if(!multiSelect){
+                    <th class="text-center">{{'Action(s)' | translate}}</th>
+                    }
+
                 </tr>
-            </thead>
-            <tbody>
+            </ng-template>
+            <ng-template #body let-leave>
                 @if (rbac.allowedToAccess('Permissions.view')) {
                 @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
-                @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
-                leave.approvalHeader.id){
+                <!-- @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
+                leave.approvalHeader.id){ -->
                 <tr>
+                    <td>
+                        <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
+                    </td>
                     <td>{{leave.entity.fusionempId}}</td>
                     <td>{{leave.entity.raisedForName}}</td>
                     <td>{{leave.entity.createdDate| dateformat}}</td>
@@ -46,14 +68,16 @@
                     </td>
                     <td>
                         <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
-                            <a type="button" (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
+                            <a type="button"
+                                (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
                                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </a>
                         </div>
-                    
-                    
+
+
                         <ng-template #permissionComments>-</ng-template>
                     </td>
+                    @if(!multiSelect){
                     <td>
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
@@ -83,8 +107,10 @@
                             </ul>
                         </div>
                     </td>
+                    }
+
                 </tr>
-                }
+                <!-- } -->
                 }
                 @else{
                 <tr>
@@ -94,11 +120,11 @@
                 </tr>
                 }
                 }
-            </tbody>
-        </table>
-    }@else{<app-data-loader-content />}
+            </ng-template>
+        </p-table>
+        }@else{<app-data-loader-content />}
     </div>
-    
+
 </div>
 
 <ng-template #approval let-modal>
@@ -118,7 +144,8 @@
                 <div class="error-msg"
                     *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
                     <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
-                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250
+                        characters.</div>
                 </div>
             </div>
             <div class="custom-modal-footer">
@@ -126,10 +153,10 @@
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
                     @if(spinnerLoader){
-                        <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading...'}}</span>
-                        </div>
+                    <div class="button-loader-content">
+                        <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                    </div>
                     }@else {
                     <span>{{'Approve'| translate }}</span>
                     }
@@ -149,18 +176,22 @@
             <div class="custom-main-popup-content">
                 <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
                     <span class="text-danger">*</span></label>
-                <textarea class="form-control custom-input" id="comments" placeholder="Please provide reason for rejection" 
-                  formControlName="comments" maxlength="250"></textarea>
+                <textarea class="form-control custom-input" id="comments"
+                    placeholder="Please provide reason for rejection" formControlName="comments"
+                    maxlength="250"></textarea>
                 <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                     <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Rejected Reason is required.</div>
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reason cannot exceed 250 characters.</div>
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reason cannot exceed 250 characters.
+                    </div>
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close' | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid"> @if(spinnerLoader){
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close' |
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">
+                    @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
                         <span>{{'Loading...'}}</span>
@@ -182,13 +213,14 @@
                 <p class="popup-heading mb-0">{{'Approver Comments' | translate}}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
 
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content" *ngFor="let comment of approverComments">
             <div class="card p-3">
-                <div *ngFor="let comment of approverComments">
+                <div >
                     <div class="mb-0">
                         <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
                         <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>

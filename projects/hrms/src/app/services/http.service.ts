@@ -31,9 +31,9 @@ export class HttpService {
     permission: boolean;
     separation: boolean;
     recall: boolean;
-    expenses: boolean;
-    nodue: boolean,
-
+    expenses:boolean;
+    nodue:boolean,
+    timeoff:boolean,
   }>({
     compOff: false,
     wfh: false,
@@ -41,8 +41,9 @@ export class HttpService {
     separation: false,
     recall: false,
     expenses: false,
-    nodue: false,
-
+    nodue:false,
+    timeoff:false
+   
   });
   desklocationIdSubject = new BehaviorSubject<string | null>(null);
   desksublocationIdSubject = new BehaviorSubject<string | null>(null);

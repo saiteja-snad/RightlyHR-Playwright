@@ -1642,3 +1642,44 @@ input[type=number]::-webkit-outer-spin-button {
 .low {
     color: #43A047;
 }
+
+// primeng multi slect table stylings
+.custom-p-multi-select-table {
+    .p-datatable-table-container {
+        width: 100%;
+        height: 60dvh;
+        overflow: auto;
+        background-color: #FFFFFF;
+        border: 1px solid #E7E7ED;
+        border-radius: 0.5rem;
+        position: relative;
+    }
+
+    .p-datatable-thead>tr>th {
+        background-color: var(--table-header-bg-color) !important;
+        color: var(--table-header-color) !important;
+        text-wrap: nowrap !important;
+        text-transform: capitalize !important;
+        font-weight: 400 !important;
+        font-size: var(--fontsize14) !important;
+        line-height: 100% !important;
+        letter-spacing: 0% !important;
+        vertical-align: middle !important;
+        padding: 1rem !important;
+    }
+
+    .p-datatable-tbody>tr>td {
+        font-weight: 400 !important;
+        font-size: var(--fontsize14) !important;
+        line-height: 100% !important;
+        letter-spacing: 0% !important;
+        vertical-align: middle !important;
+        padding: 1rem !important;
+        border: 0rem !important
+    }
+
+    .p-checkbox-checked .p-checkbox-box {
+        background: #06274F !important;
+        border-color: #06274F !important;
+    }
+}

@@ -28,7 +28,8 @@ export class OnBeHalfOfApprovalTabsComponent {
     { label: 'Waiting For Approval', route: 'waiting-for-approval', },
     { label: 'Approved', route: 'approved', },
     { label: 'Processed', route: 'processed', },
-    { label: 'Rejected', route: 'rejected', }
+    { label: 'Rejected', route: 'rejected', },
+    { label: 'Cancelled', route: 'cancel', }
   ];
 
   constructor(

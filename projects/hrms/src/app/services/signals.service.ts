@@ -26,12 +26,12 @@ export class SignalsService {
   separationForYouTriggerSignal = signal<boolean>(false);
   separationForRoleTriggerSignal = signal<boolean>(false);
   separationSidNavCountTriggerSignal = signal<boolean>(false);
-
+  
   //Recall request
   recallSeparationForYouTriggerSignal = signal<boolean>(false);
   recallSeparationForRoleTriggerSignal = signal<boolean>(false);
   recallSeparationSidNavCountTriggerSignal = signal<boolean>(false);
-
+  
   // Regularization PendingApprovals Signals
   regularizationForYouTriggerSignal = signal<boolean>(false);
   regularizationForRoleTriggerSignal = signal<boolean>(false);
@@ -39,6 +39,9 @@ export class SignalsService {
 
   noDueTriggerSignal = signal<boolean>(false);
   noDueSideNavCountTriggerSignal = signal<boolean>(false);
-
+  //Time off request
+  timecountTriggerSignal = signal<boolean>(false);
+  timeoffForYouTriggerSignal = signal<boolean>(false);
+  timeoffForRoleTriggerSignal = signal<boolean>(false);
   constructor() {}
 }

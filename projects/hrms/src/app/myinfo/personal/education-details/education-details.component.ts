@@ -277,6 +277,10 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
     });
     this.educationAttachment = educationDetails.attachment
     this.displalyeducationattachment = educationDetails.attachment ? educationDetails.attachment.split('/').pop() : null;
+     // Dynamically update validators for the attachment field
+     const attachmentValidators = this.displalyeducationattachment ? [] : [Validators.required];
+     this.educationupdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
+     this.educationupdateForm.get('attachmentupdate')?.updateValueAndValidity();
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 

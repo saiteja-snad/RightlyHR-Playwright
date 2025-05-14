@@ -424,6 +424,11 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       this.displaypreviousexperincedocument = experienceDetail.attachment
         ? experienceDetail.attachment.split('/').pop()
         : null;
+
+         // Dynamically update validators for the attachment field
+    const attachmentValidators = this.displaypreviousexperincedocument ? [] : [Validators.required];
+    this.employeeExperienceupdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
+    this.employeeExperienceupdateForm.get('attachmentupdate')?.updateValueAndValidity();
       // Handle "toDateupdate" field based on "isPresent" or absence of "toDate"
       const toDateControl = this.employeeExperienceupdateForm.get('toDateupdate');
       if (experienceDetail.isPresent || !experienceDetail.toDate) {

@@ -44,12 +44,15 @@ export default [
         ]   
     },
     {
+            path: 'team-members', component: TeamNumbersComponent,canActivate: [PermissionsGuard], data: { permission: 'Employee Info Reporting Managers Tab.view' }
+        },
+    {
         path: 'team',
         children: [
-            // { path: '', redirectTo: 'team-members', pathMatch: 'full' },
+            { path: '', redirectTo: 'team-members', pathMatch: 'full' },
             { path: 'team-members', loadComponent: () => import('./team-numbers/team-numbers.component').then((m) => m.TeamNumbersComponent), data: { permission: 'Employee Info Reporting Manager Tab.view' } },
             {
-                path: 'team-manger-members', loadComponent: () => import('./team-numbers/team-manger-members/team-manger-members.component').then((m) => m.TeamMangerMembersComponent), data: { permission: 'Employee Info Team Manager Tab.view' },
+                path: 'team-manger-members', loadComponent: () => import('./team-numbers/team-manger-members/team-manger-members.component').then((m) => m.TeamMangerMembersComponent), data: { permission: 'Employee Info Team Managers Tab.view' },
             }
         ]
     },

@@ -24,7 +24,7 @@
                     <th>Work Email</th>
                     <th>Phone Number</th>
                     <th>Designation</th>
-                     @if(rbac.allowedToAccess('Employee Info Reporting Manager.update')) {
+                     @if(rbac.allowedToAccess('Employee Info Change RM Button.view')) {
                     <th class="text-center">Action</th>
                     }
                 </tr>
@@ -38,14 +38,14 @@
                         <td>{{details.workEmail}}</td>
                         <td>{{details.contactnumber}}</td>
                         <td>{{details.jobRole}}</td>
-                        @if(rbac.allowedToAccess('Employee Info Reporting Manager.update')) {
+                        @if(rbac.allowedToAccess('Employee Info Change RM Button.view')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu py-0">
-                                    @if(rbac.allowedToAccess('Employee Info Reporting Manager.update')) {
+                                    @if(rbac.allowedToAccess('Employee Info Change RM Button.view')) {
                                     <li (click)="openModal(changermmodal,details)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change RM</a>
                                     </li>

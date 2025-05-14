@@ -218,12 +218,13 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
   }
 
   onChangeEducation(event: any): void {
-    this.displalyeducationattachment=null
+    this.displalyeducationattachment=''
     const file = event.target.files[0];
     if (file) {
       const fileSizeInMB = file.size / (1024 * 1024);
       if (fileSizeInMB > 25) {
-        this.educationAttachment = null;
+        this.educationAttachment = '';
+        this.displalyeducationattachment=''
         this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
         this.educationForm.get('attachment')?.reset();
         this.educationForm.get('attachment')?.markAsUntouched();

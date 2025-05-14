@@ -30,8 +30,12 @@
               <th>Asset ID</th>
               <th>Location </th>
               <th>Sub Location </th>
-              <th class="text-center">Action(s)</th>
-  
+               @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') || 
+                            rbac.allowedToAccess('Available Mark as Maintenance Asset.view') || rbac.allowedToAccess('Available Transfer Asset.view')||
+                            rbac.allowedToAccess('Available View Asset Details.view') || rbac.allowedToAccess('Available Update Asset Details.view')){    
+                        <th class="text-center">Action(s)</th>
+                        
+                            }
             </tr>
           </thead>
           <tbody>
@@ -55,6 +59,9 @@
                 <td>{{ asset.assignedTo?.assetIdName|| 'N/A' }}</td>
                 <td>{{ asset.locationName }}</td>
                 <td>{{ asset?.sublocationName || 'N/A' }}</td>
+                  @if(rbac.allowedToAccess('Available Allocate Asset.view') || rbac.allowedToAccess('Available Inactive Asset.view') || 
+                            rbac.allowedToAccess('Available Mark as Maintenance Asset.view') || rbac.allowedToAccess('Available Transfer Asset.view')||
+                            rbac.allowedToAccess('Available View Asset Details.view') || rbac.allowedToAccess('Available Update Asset Details.view')){    
                 <td class="text-center">
                   <div class="dropdown">
                     <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -62,48 +69,58 @@
                     </a>
                     <ul class="dropdown-menu custom-dropdown-menu">
                       <ng-container *ngIf="asset.status === 'Available'">
+                        @if(rbac.allowedToAccess('Available Allocate Asset.view')) {
                         <li>
                           <a class="dropdown-item"
                             (click)="openModal(allocateAnasset); storeassetid = asset.id; selectedAsset = asset;viewasetsdata(asset)">
                             Allocate Asset
                           </a>
                         </li>
+                        }
+                      @if( rbac.allowedToAccess('Available Inactive Asset.view')) {
                         <li>
                           <a class="dropdown-item"
                             (click)="openModal(deleteasstes); storeassetid = asset.id; selectedAsset = asset ">
                             Inactive
                           </a>
                         </li>
-  
+                      }
+                      @if(rbac.allowedToAccess('Available Mark as Maintenance Asset.view')) {
                         <li>
                           <a class="dropdown-item"
                             (click)="openModal(underMaintenance); storeassetid = asset.id; selectedAsset = asset">
                             Mark as Maintenance
                           </a>
                         </li>
+                      }
+                      @if(rbac.allowedToAccess('Available Transfer Asset.view')) {
                         <li>
                           <a class="dropdown-item"
                             (click)="openModal(tranferaerasset); storeassetid = asset.id; selectedAsset = asset;viewdatatrasfer(asset) ">
                             Transfer Asset
                           </a>
                         </li>
-  
+                      }
                       </ng-container>
-                   
+                     @if(rbac.allowedToAccess('Available View Asset Details.view')) {
                       <li>
                         <a class="dropdown-item" (click)="navigateToAsset(asset.id)">
                           View Asset Details
                         </a>
                       </li>
+                    }
+                      @if(rbac.allowedToAccess('Available Update Asset Details.view')) {
                       <li>
                         <a class="dropdown-item"
                           (click)="openModal(addassetes); storeassetid = asset.id;  viewupdate(asset);selectedAsset = asset">
                           Update
                         </a>
                       </li>
+                    }
                     </ul>
                   </div>
                 </td>
+              }
               </tr>
             </ng-container>
   

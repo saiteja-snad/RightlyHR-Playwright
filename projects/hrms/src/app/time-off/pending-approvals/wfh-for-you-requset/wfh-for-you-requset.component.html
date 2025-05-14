@@ -34,7 +34,7 @@
                     <th>{{'Reason' | translate}}</th>
                     <th>{{'Approver Comments' | translate}}</th>
                     <th>{{'Applied Date' | translate}}</th>
-                        @if(!multiSelect){
+                        @if(!multiSelect &&(rbac.allowedToAccess('For You (WFH).update') || rbac.allowedToAccess('For You (WFH).delete'))){
                         <th class="text-center">{{'Action(s)' | translate}}</th>
                         }
                         
@@ -77,29 +77,39 @@
                         <ng-template #compoffcomments>-</ng-template>
                     </td>
                     <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
-                    @if(!multiSelect){
+                    @if(!multiSelect &&(rbac.allowedToAccess('For You (WFH).update') || rbac.allowedToAccess('For You (WFH).delete'))){
                     <td>
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(rbac.allowedToAccess('For You (WFH).update')){
                                 @if( leave.approvalHeader.currentapprovalStage !=
                                 leave.approvalHeader.finalapprovalStage){
-                                <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')">
+                                <li (click)="openApproveModal(approval,leave)"
+                                    >
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
                                         translate}}</a>
                                 </li>
                                 }
-                                @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
+                                }
+                                @if(rbac.allowedToAccess('For You (WFH).update')){
+                                @if( leave.approvalHeader.currentapprovalStage ==
+                                leave.approvalHeader.finalapprovalStage){
                                 <li (click)="handleProcess(leave)">
-                                    <a class="dropdown-item" *ngIf="rbac.allowedToAccess('Workfromhome Tab.update')">
+                                    <a class="dropdown-item" >
                                         <i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
                                 </li>
                                 }
-                                <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Workfromhome Tab.delete')">
-                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
+                                }
+                                @if(rbac.allowedToAccess('For You (WFH).delete')){
+                                <li (click)="openRejectModal(rejectmodal,leave)"
+                                    >
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                        translate}}</a>
                                 </li>
+                                }
                             </ul>
                         </div>
                     </td>
@@ -119,7 +129,7 @@
                 </ng-template>
             </p-table>
         }@else{
-            <app-data-loader-content />
+        <app-data-loader-content />
         }
     </div>
 </div>
@@ -140,7 +150,8 @@
                         formControlName="comments" maxlength="250"></textarea>
                     <!-- Character counter -->
                     <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
-                    <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+                    <div class="error-msg"
+                        *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
                         <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
                         <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">
                             Comment cannot exceed 250 characters.
@@ -149,13 +160,14 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'| translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|
+                    translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
                     @if(spinnerLoader){
-                        <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading...'}}</span>
-                        </div>
+                    <div class="button-loader-content">
+                        <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                    </div>
                     }@else {
                     <span>{{'Approve'| translate}}</span>
                     }
@@ -181,7 +193,8 @@
                         placeholder="Please provide reason for rejection" formControlName="comments"
                         maxlength="250"></textarea>
                     <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
-                    <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
+                    <div class="error-msg"
+                        *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                         <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
                             Rejected Reason is required.
                         </div>

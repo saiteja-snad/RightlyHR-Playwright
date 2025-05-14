@@ -37,7 +37,7 @@
                         <th>End Date</th>
                         <th>Reason</th>
                         <th>Approver Comments</th>
-                        @if(!multiSelect){
+                        @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') || rbac.allowedToAccess('For Role (Time Off).delete'))){
                         <th class="text-center">Action(S)</th>
                         }
                         

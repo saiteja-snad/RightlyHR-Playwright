@@ -6,15 +6,15 @@ import { TabsModule } from 'primeng/tabs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
 import { SignalsService } from '../../../services/signals.service';
 
 @Component({
   selector: 'app-leaves-approvaltabs',
   imports: [RouterModule, CommonModule, TabsModule],
   templateUrl: './leaves-approvaltabs.component.html',
-  styleUrl: './leaves-approvaltabs.component.scss'
+  styleUrl: './leaves-approvaltabs.component.scss',
 })
-
 export class LeavesApprovaltabsComponent {
   loggedinuser = {} as any;
   empdata = {} as any;
@@ -38,7 +38,7 @@ export class LeavesApprovaltabsComponent {
   //   { label: 'Team Leave Summary', link: 'team-leave-summary', }
   // ];
 
-  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService,private signalService:SignalsService) { 
+  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService,private signalService:SignalsService, private rbac: RbacService) { 
      effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
@@ -81,10 +81,10 @@ export class LeavesApprovaltabsComponent {
 
           this.updateStatusTabs();
         } else {
-          console.error("Invalid response format");
+          console.error('Invalid response format');
         }
       },
-      error: (reason: any) => console.log(reason)
+      error: (reason: any) => console.log(reason),
     });
   }
 
@@ -102,7 +102,7 @@ export class LeavesApprovaltabsComponent {
       error: (err) => {
         this.teamLeaveBalanceCount = 0;
         this.updateStatusTabs();
-      }
+      },
     });
   }
 
@@ -118,20 +118,67 @@ export class LeavesApprovaltabsComponent {
       error: (err) => {
         this.teamLeaveSummaryCount = 0;
         this.updateStatusTabs();
-      }
+      },
     });
   }
 
   private updateStatusTabs() {
     this.statusTabs = [
-      { label: 'Waiting For Approval', link: 'waiting-for-approval', count: this.waitingForApprovalCount },
-      { label: 'Approved', link: 'approved', count: this.approvedCount },
-      { label: 'Processed', link: 'processed', count: this.processedCount },
-      { label: 'Rejected', link: 'rejected', count: this.rejectedCount },
-      { label: 'Cancelled', link: 'cancelled',count:this.cancelCount },
-      { label: 'Team Leave balance', link: 'team-leave-balance', count: this.teamLeaveBalanceCount },
-      { label: 'Team Leave Summary', link: 'team-leave-summary', count: this.teamLeaveSummaryCount }
+      {
+        label: 'Waiting For Approval',
+        link: '/time-off/leaves/waiting-for-approval',
+        count: this.waitingForApprovalCount,
+        permission: {
+          feature: 'Waiting For Approval (Time Off)',
+          action: 'view',
+        },
+      },
+      {
+        label: 'Approved',
+        link: '/time-off/leaves/approved',
+        count: this.approvedCount,
+        permission: { feature: 'Approved (Time Off)', action: 'view' },
+      },
+      {
+        label: 'Processed',
+        link: '/time-off/leaves/processed',
+        count: this.processedCount,
+        permission: { feature: 'Processed (Time Off)', action: 'view' },
+      },
+      {
+        label: 'Rejected',
+        link: '/time-off/leaves/rejected',
+        count: this.rejectedCount,
+        permission: { feature: 'Rejected (Time Off)', action: 'view' },
+      },
+      {
+        label: 'Cancelled',
+        link: '/time-off/leaves/cancelled',count:this.cancelCount,
+        permission: { feature: 'Cancelled (Time Off)', action: 'view' },
+      },
+      {
+        label: 'Team Leave balance',
+        link: '/time-off/leaves/team-leave-balance',
+        count: this.teamLeaveBalanceCount,
+         permission: { feature: 'Team Leave Balance (Time Off)', action: 'view' },
+      },
+      {
+        label: 'Team Leave Summary',
+        link: '/time-off/leaves/team-leave-summary',
+        count: this.teamLeaveSummaryCount,
+         permission: { feature: 'Team Leave Balance Summary (Time Off)', action: 'view' },
+      },
     ];
+
+    this.statusTabs = this.statusTabs.filter(
+      (tab) =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(
+          `${tab.permission.feature}.${tab.permission.action}`
+        )
+    );
   }
 
   ngOnDestroy() {
@@ -139,5 +186,4 @@ export class LeavesApprovaltabsComponent {
       this.subscription.unsubscribe();
     }
   }
-
 }

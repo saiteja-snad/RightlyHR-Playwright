@@ -11,27 +11,28 @@ import { TeamCompleteReviewsComponent } from "./team-performance-review/team-com
 import { UpdateComponent } from "./review-cycle-list/update/update.component";
 import { CreateComponent } from "./review-cycle-list/create/create.component";
 import { ViewComponent } from "./review-cycle-list/view/view.component";
+import { PermissionsGuard } from "../guards/permissions.guard";
 
 export default [
     { path: '', redirectTo: '/pms/review-cycle', pathMatch: 'full' },
-    { path: 'review-cycle', component: ReviewCycleListComponent },
-    { path: 'review-cycle/create', component: CreateComponent }, 
-    { path: 'review-cycle/update', component: UpdateComponent }, 
-    { path: 'review-cycle/view', component: ViewComponent }, 
-    { path: 'apprisal', component: ApprisalListComponent,},
+    { path: 'review-cycle', component: ReviewCycleListComponent, canActivate: [PermissionsGuard], data: { permission: 'Review Cycle List.view' }  },
+    { path: 'review-cycle/create', component: CreateComponent, canActivate: [PermissionsGuard], data: { permission: 'Create Review Cycle.view' }  }, 
+    { path: 'review-cycle/update', component: UpdateComponent, canActivate: [PermissionsGuard], data: { permission: 'Update.view' }  }, 
+    { path: 'review-cycle/view', component: ViewComponent, canActivate: [PermissionsGuard], data: { permission: 'View.view' }  }, 
+    { path: 'apprisal', component: ApprisalListComponent, canActivate: [PermissionsGuard], data: { permission: 'Review Cycle Employee List.view' } },
     { path: 'assessment-form', component: AssessmentFormComponent},
     { path: 'myPerformance', component: MyPerformanceReviewComponent,
         children: [
               { path: '', redirectTo: 'pending-review', pathMatch: 'full' },
-              { path: 'pending-review', component: PendingReviewsComponent },
-              { path: 'completed-review', component: CompleteReviewsComponent },
+              { path: 'pending-review', component: PendingReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Pending Reviews.view' }  },
+              { path: 'completed-review', component: CompleteReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Completed Reviews.view' }  },
         ]
     },
     { path: 'team-performance', component: TeamPerformanceReviewComponent,
         children: [
             { path: '', redirectTo: 'pending-review', pathMatch: 'full' },
-            { path: 'pending-review', component: TeamPendingReviewsComponent },
-            { path: 'completed-review', component: TeamCompleteReviewsComponent },
+            { path: 'pending-review', component: TeamPendingReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Team Pending Reviews.view' }  },
+            { path: 'completed-review', component: TeamCompleteReviewsComponent, canActivate: [PermissionsGuard], data: { permission: 'Team Completed Reviews.view' }  },
       ]
     },
 ] as Route[];

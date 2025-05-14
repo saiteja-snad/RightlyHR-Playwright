@@ -1,9 +1,11 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Certification Details</span></div>
+         @if(rbac.allowedToAccess('Employee Info Certification Details.create')){
         <div class="custom-add-btn" (click)="openModal(addCertificationmodal)"><i
                 class="bi bi-plus plus-icon me-1"></i>Add
             New</div>
+        }
     </div>
 
     <div class="custom-table-content">
@@ -16,7 +18,9 @@
                         <th>Issued Date</th>
                         <th>Expiry Date</th>
                         <th class="text-center">Document</th>
-                        <th class="text-center">Action(S)</th>
+                          @if(rbac.allowedToAccess('Employee Info Certification Details.update') || rbac.allowedToAccess('Employee Info Certification Details.delete')){
+                    <th class="text-center">Action(S)</th>
+                    }
                     </tr>
                 </thead>
                 <tbody>
@@ -36,25 +40,29 @@
                                     <i class="bi bi-download clip-icon px-2"></i>Download</span>
                                 <ng-template #noData><span class="text-center">-</span></ng-template>
                             </td>
+                             @if(rbac.allowedToAccess('Employee Info Certification Details.update') || rbac.allowedToAccess('Employee Info Certification Details.delete')){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <span type="button" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                     <ul class="dropdown-menu custom-dropdown-menu">
+                                         @if(rbac.allowedToAccess('Employee Info Certification Details.update')){
                                         <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-pencil me-2"></i>Update
                                             </a>
-                                        </li>
+                                        </li>}
+                                         @if(rbac.allowedToAccess('Employee Info Certification Details.delete')){
                                         <li (click)="opendeletModal(deleteconformation,empcreficition)">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-trash3 me-2"></i>Delete
                                             </a>
-                                        </li>
+                                        </li>}
                                     </ul>
                                 </div>
                             </td>
+                        }
                         </tr>
                     </ng-container>
                     <ng-template #noDataTemplate>

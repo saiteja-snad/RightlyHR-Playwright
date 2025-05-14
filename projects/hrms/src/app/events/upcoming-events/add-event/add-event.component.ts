@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidatorFn, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -17,7 +17,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrl: './add-event.component.scss'
 })
 
-export class AddEventComponent implements OnInit {
+export class AddEventComponent implements OnInit,OnDestroy {
 
   subscription!: Subscription
   customEventForm!: FormGroup
@@ -199,6 +199,12 @@ export class AddEventComponent implements OnInit {
         this.customEventForm.reset()
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 
 }

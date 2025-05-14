@@ -12,10 +12,27 @@ import { RbacService } from '../../../services/rbac.service';
 })
 
 export class CalendarHeaderTabsComponent {
-  constructor(public rbac: RbacService,) { }
+
+   filteredTabs: any[] = [];
+  constructor(public rbac: RbacService) { }
 
   navTabs: any[] = [
-    { label: 'Calendar', link: '/calendar/calendarview', permission: { feature: 'Calendar', action: 'view' } },
-    { label: 'Holidays', link: '/calendar/holiday', permission: { feature: 'Holidays', action: 'view' } },
+    { label: 'Calendar', link: '/calendar/calendarview', permission: { feature: 'Calender Tab', action: 'view' } },
+    { label: 'Holidays', link: '/calendar/holiday', permission: { feature: 'Holidays Tab', action: 'view' } },
   ];
+
+  ngOnInit(): void {
+    this.filterTabsByRbac();
+  }
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navTabs.filter(tab => {
+      if (!tab.permission) return true;
+
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      const value = this.rbac.allowedToAccess(permissionString);
+      console.log(value);
+      return value;
+    });
+  }
 }

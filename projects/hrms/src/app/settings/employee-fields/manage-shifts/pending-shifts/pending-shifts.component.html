@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div><span class="component-sub-header">{{'Shifts Management'|translate}}</span></div>
-      <div class="custom-add-btn" (click)="nagvition()" *ngIf="rbac.allowedToAccess('Manage Shifts Tab.create')">
+      <div class="custom-add-btn" (click)="nagvition()" *ngIf="rbac.allowedToAccess('Shifts Pending Tab.create')">
         <i class="bi bi-plus plus-icon me-1"></i>{{'Add New'|translate}}
       </div>
     </div>
@@ -16,7 +16,9 @@
             <th>{{'Shift Name'|translate}}</th>
             <th>{{'STATUS'|translate}}</th>
             <th>{{'Added By'|translate}}</th>
+            @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
             <th class="text-center">{{'Action(S)'|translate}}</th>
+            }
           </tr>
         </thead>
         <tbody>
@@ -32,6 +34,7 @@
             <!-- <td>{{ shift.shiftName }}</td> -->
             <td>{{ shift.status }}</td>
             <td>{{ shift.addedbyName }}</td>
+            @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
             <td class="text-center">
               <div class="dropdown">
                 <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -46,6 +49,7 @@
                 </ul>
               </div>
             </td>
+          }
           </tr>
           }
           } @else {

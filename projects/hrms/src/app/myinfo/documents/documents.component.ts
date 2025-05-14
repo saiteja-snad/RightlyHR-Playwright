@@ -13,6 +13,7 @@ import { HttpService } from '../../services/http.service';
 import { FileSizePipe } from "../../Pipes/file-size.pipe";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../services/rbac.service';
 
 
 @Component({
@@ -38,7 +39,7 @@ export class DocumentsComponent {
   file: any;
   showUploadIcon: boolean = false;
   subDir = {} as ICreateSubDir;
-  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService) { }
+  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

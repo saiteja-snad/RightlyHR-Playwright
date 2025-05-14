@@ -34,7 +34,7 @@
                     <th>{{'Reason' | translate}}</th>
                     <th>{{'Approver Comments' | translate}}</th>
                     <th>{{'Applied Date' | translate}}</th>
-                        @if(!multiSelect){
+                        @if((!multiSelect) &&(rbac.allowedToAccess('For Role (Comp Off).update') || rbac.allowedToAccess('For Role (Comp Off).delete'))){
                         <th class="text-center">{{'Action(s)' | translate}}</th>
                         }
                         
@@ -76,24 +76,35 @@
                         <ng-template #compoffcomments>-</ng-template>
                     </td>
                     <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
-                    @if(!multiSelect){
+                    @if(!multiSelect &&(rbac.allowedToAccess('For Role (Comp Off).update') || rbac.allowedToAccess('For Role (Comp Off).delete'))){
                     <td>
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                @if( leave.approvalHeader.currentapprovalStage != leave.approvalHeader.finalapprovalStage){
-                                <li (click)="openApproveModal(approval,leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.update')">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' | translate}}</a>
+                                @if(rbac.allowedToAccess('For Role (Comp Off).update')) {
+                                @if( leave.approvalHeader.currentapprovalStage !=
+                                leave.approvalHeader.finalapprovalStage){
+                                <li (click)="openApproveModal(approval,leave)">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve'
+                                        |translate}}</a>
                                 </li>
                                 }
-                                @if( leave.approvalHeader.currentapprovalStage == leave.approvalHeader.finalapprovalStage){
-                                <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.update')">
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
+                                }
+                                @if(rbac.allowedToAccess('For Role (Comp Off).update')) {
+                                @if( leave.approvalHeader.currentapprovalStage ==
+                                leave.approvalHeader.finalapprovalStage){
+                                <li (click)="handleProcess(leave)">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
+                                        translate}}</a>
                                 </li>
                                 }
-                                <li (click)="openRejectModal(rejectmodal,leave)" *ngIf="rbac.allowedToAccess('Compoff Tab.delete')">
-                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' | translate}}</a>
+                                }
+                                @if( rbac.allowedToAccess('For Role (Comp Off).delete')) {
+                                <li (click)="openRejectModal(rejectmodal,leave)">
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                        translate}}</a>
                                 </li>
+                                }
                             </ul>
                         </div>
                     </td>
@@ -141,7 +152,8 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'| translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'|
+                    translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
                     @if(spinnerLoader){
                     <div class="button-loader-content">

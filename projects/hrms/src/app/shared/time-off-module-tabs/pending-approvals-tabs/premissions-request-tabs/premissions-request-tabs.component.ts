@@ -84,8 +84,8 @@ export class PremissionsRequestTabsComponent implements OnInit, OnDestroy {
   
     // Update navTabs with safe access to data
     this.navTabs = [
-      { label: 'For You', link: 'for-you', count: data?.forYou ?? 0 },
-      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0 },
+      { label: 'For You', link: 'for-you', count: data?.forYou ?? 0,permission: { feature: 'For You (Permission)', action: 'view' } },
+      { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0,permission: { feature: 'For Role (Permission)', action: 'view' }  },
     ];
   }
   

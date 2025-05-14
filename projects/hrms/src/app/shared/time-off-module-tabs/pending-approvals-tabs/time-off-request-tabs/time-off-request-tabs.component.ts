@@ -5,6 +5,7 @@ import { Subject, Subscription } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
 import { LeaveApproval } from '../../../../Interfaces/pendingapprovalsmodel';
 import { HttpService } from '../../../../services/http.service';
+import { RbacService } from '../../../../services/rbac.service';
 import { environment } from '../../../../../environments/environment';
 import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { SignalsService } from '../../../../services/signals.service';
@@ -25,8 +26,8 @@ export class TimeOffRequestTabsComponent {
     const moduleId=environment.leavesModuleId
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
     return [
-      { label: 'For You ', link: 'for-you', count:data?.forYou ?? 0 },
-      { label: 'For Your Role', link: 'for-your-role', count:data?.forYourRole ?? 0}
+      { label: 'For You ', link: 'for-you', count:data?.forYou ?? 0, permission: { feature: 'For You (Time Off)', action: 'view' }},
+      { label: 'For Your Role', link: 'for-your-role', count:data?.forYourRole ?? 0,permission: { feature: 'For Role (Time Off)', action: 'view' }}
     ];
   });
 
@@ -35,7 +36,7 @@ export class TimeOffRequestTabsComponent {
     this.getAllLeavesPendingApprovalsCount();
   }
 
-  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService) {
+  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService,private rbac:RbacService) {
     effect(() => {
       if (this.signalService.timeoffForYouTriggerSignal() || this.signalService.timeoffForRoleTriggerSignal()) {
         // Call the function to fetch the pending approvals count
@@ -64,9 +65,9 @@ export class TimeOffRequestTabsComponent {
     const moduleId = environment.leavesModuleId;
     this.http.getAllPendingApprovalsCount(moduleId, employeeId).subscribe({
       next: (data: ApprovalStatusCount[]) => {
-        const filtered = data.filter(item => item.moduleId === moduleId);
-        this.pendingApprovalCount.set(filtered);
-      },
+      const filtered = data.filter(item => item.moduleId === moduleId);
+      this.pendingApprovalCount.set(filtered);
+    },
       error: (err) => console.error('Error fetching approvals:', err),
     });
   }

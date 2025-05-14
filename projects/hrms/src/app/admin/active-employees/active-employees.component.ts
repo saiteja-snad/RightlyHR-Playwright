@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-active-employees',
   imports: [CommonModule, RouterModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
@@ -25,7 +26,7 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
   emp = {} as any;
   loader = false;
 
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal,public rbac:RbacService) { }
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal,public rbac:RbacService,private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empdata();
@@ -45,7 +46,22 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-    this.router.navigate(['/personalinfo']);
+    // this.router.navigate(['/personalinfo']);
+    this.goToAccessibleRoute('/personalinfo');
+    
+  }
+
+    goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    }else {
+      this.router.navigate(['/unauthorized']);
+    }
+  }
+
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
   }
 
   navigateDashboard() {

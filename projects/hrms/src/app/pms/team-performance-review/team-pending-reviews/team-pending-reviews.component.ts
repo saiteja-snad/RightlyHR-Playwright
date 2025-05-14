@@ -10,6 +10,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { PaginatorModule } from 'primeng/paginator';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-team-pending-reviews',
@@ -49,7 +50,9 @@ export class TeamPendingReviewsComponent implements OnInit, OnDestroy {
   constructor(
     private modal: OpenModalService,
     private router: Router,
-    private http: HttpService) { }
+    private http: HttpService,
+    public rbac : RbacService
+  ) { }
 
   ngOnInit(): void {
     const fusionuser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');

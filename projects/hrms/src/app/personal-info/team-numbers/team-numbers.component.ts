@@ -16,6 +16,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { TranslateModule } from '@ngx-translate/core';
 import { TeamMembersTabsComponent } from "../../shared/personalinfo-tabs/team-members-tabs/team-members-tabs.component";
 import { MultiSelectModule } from 'primeng/multiselect';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-team-numbers',
@@ -57,7 +58,8 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
   constructor(
     private http: HttpService,
     private router: Router,
-    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+    private modalService: NgbModal, private fb: FormBuilder,
+     private conformationPopup: OpenModalService,public rbac: RbacService) { }
 
   onRowsChange() {
     this.first = 0;

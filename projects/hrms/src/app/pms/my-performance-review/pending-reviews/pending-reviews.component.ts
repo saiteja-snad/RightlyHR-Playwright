@@ -9,6 +9,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { PaginatorModule } from 'primeng/paginator';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-pending-reviews',
@@ -56,7 +57,8 @@ export class PendingReviewsComponent implements OnInit, OnDestroy{
   constructor(
     private readonly modalService: NgbModal,
     private readonly http: HttpService,
-    private router: Router
+    private router: Router,
+    public rbac : RbacService
   ) { }
   
   fetchReviewCycles(): void {

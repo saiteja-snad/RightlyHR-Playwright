@@ -11,6 +11,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-identity-details',
@@ -35,7 +36,8 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   spinnerLoader=false
   loading=false
   selectedIdentityTypetoUpdate: any;
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private modalService: NgbModal, private http: HttpService,
+     private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -151,10 +153,11 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       const fileSizeInMB = file.size / (1024 * 1024);
       if (fileSizeInMB > 25) {
         this.IdentityAttachment = null;
+          event.target.value = ''
         this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
-        this.identityForm.get('identityAttachment')?.setValue(null);
+        this.identityForm.get('identityAttachment')?.setValue('');
         this.identityForm.get('identityAttachment')?.markAsUntouched();
-        this.identityupdateForm.get('identityupdateAttachment')?.setValue(null);
+        this.identityupdateForm.get('identityupdateAttachment')?.setValue('');
         this.identityupdateForm.get('identityupdateAttachment')?.markAsUntouched();
 
         return;

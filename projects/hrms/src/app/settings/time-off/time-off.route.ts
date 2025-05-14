@@ -4,11 +4,11 @@ import { LeaveAlloctaionComponent } from "./leave-alloctaion/leave-alloctaion.co
 import { LoadEntitlementsComponent } from "./load-entitlements/load-entitlements.component";
 
 export default [
-    { path: '', redirectTo: '/settings/timeoff-configurations/leave-categoery', pathMatch: 'full' },
+    // { path: '', redirectTo: '/settings/timeoff-configurations/leave-categoery', pathMatch: 'full' },
     {
         path: 'leave-categoery',
         children: [
-            { path: '', redirectTo: 'pendingleavecategory', pathMatch: 'full' },
+            // { path: '', redirectTo: 'pendingleavecategory', pathMatch: 'full' },
             { path: 'pendingleavecategory', loadComponent: () => import('./leave-categoery/pending-leavecategory/pending-leavecategory.component').then((m) => m.PendingLeavecategoryComponent) },
             { path: 'publishedleavecategory', loadComponent: () => import('./leave-categoery/published-leavecategory/published-leavecategory.component').then((m) => m.PublishedLeavecategoryComponent) },
         ]
@@ -18,7 +18,7 @@ export default [
     { path: 'flexible-leave-allocation', component: FlexibleLeaveAllocationComponent },
     {
         path: 'eligibility-criterias', children: [
-            { path: '', redirectTo: 'comp-off', pathMatch: 'full' },
+            // { path: '', redirectTo: 'comp-off', pathMatch: 'full' },
             { path: 'comp-off', loadComponent: () => import('./attendance-eligibility-criteria/comp-off-entitlement-criteria/comp-off-entitlement-criteria.component').then((m) => m.CompOffEntitlementCriteriaComponent) },
             { path: 'wfh', loadComponent: () => import('./attendance-eligibility-criteria/wfh-entitlemen-criteria/wfh-entitlemen-criteria.component').then((m) => m.WFHEntitlemenCriteriaComponent) },
             { path: 'permissions', loadComponent: () => import('./attendance-eligibility-criteria/permissions/permissions.component').then((m) => m.PermissionsComponent) },

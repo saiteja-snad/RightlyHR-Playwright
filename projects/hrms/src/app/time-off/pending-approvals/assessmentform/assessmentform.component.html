@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
   <div class="assessment-form-content">
-    @if (rbac.allowedToAccess('Regularization Tab.view')) {
+    @if (rbac.allowedToAccess('Regularization Module.view')) {
     <div *ngIf="dynamicFormHeader.length > 0 , else nodata">
       <div class="card assessment-form-card" id="content">
         <div class="text-center pt-3 pb-5">

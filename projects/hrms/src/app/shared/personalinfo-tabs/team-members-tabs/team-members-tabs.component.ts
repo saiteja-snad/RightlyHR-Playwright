@@ -11,8 +11,8 @@ import { TabsModule } from 'primeng/tabs';
 })
 export class TeamMembersTabsComponent {
   navTabs: any[] = [
-    { label: 'Reporting Manager Change', link: '/personalinfo/team/team-members',permission: { feature: 'Team Members', action: 'view' }},
-   { label: 'Team Manager Change', link: '/personalinfo/team/team-manger-members',permission: { feature: 'Team Members', action: 'view' }},
+    { label: 'Reporting Manager Change', link: '/personalinfo/team/team-members',permission: { feature: 'Employee Info Reporting Manager Tab', action: 'view' }},
+   { label: 'Team Manager Change', link: '/personalinfo/team/team-manger-members',permission: { feature: 'Employee Info Team Managers Tab', action: 'view' }},
   
    
   ];

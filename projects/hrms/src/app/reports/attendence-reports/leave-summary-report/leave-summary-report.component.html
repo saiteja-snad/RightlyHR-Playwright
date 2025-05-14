@@ -6,9 +6,11 @@
         <div>
           <form autocomplete="off" [formGroup]="lvSummeryReportForm" (ngSubmit)="leavesummeryReport()">
             <div class="d-flex align-items-center gap-3">
+              @if(rbac.allowedToAccess('Leave Summary Report - Generate.view')){
               <button type="button"  class="clear-all-btn" (click)="clearAllFilters()">
                 Clear All
               </button>
+            
               <!-- Employee -->
               <div class="d-flex align-items-center gap-2">
                 <div class="custom-p-select-content">
@@ -45,9 +47,10 @@
                   </div>
                 </div>
               </div>
-            
+            }
               <!-- Buttons -->
               <div class="d-flex gap-2">
+                @if(rbac.allowedToAccess('Leave Summary Report - Generate.view')){
                 <button type="submit" class="custom-btn btn-secondary" [disabled]="isLeaveGenerateDisabled">
                   @if(spinnerLoader1){
                   <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
@@ -56,6 +59,8 @@
                   <span>{{'Generate'}}</span>
                   }
                 </button>
+              }
+              @if(rbac.allowedToAccess('Leave Summary Report - Generate.view') && rbac.allowedToAccess('Leave Summary Report - Export.view')){
                 <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
                   [disabled]="filterlvsumRecord.length === 0 || disableBtn">
                   @if(spinnerLoader2){
@@ -65,6 +70,7 @@
                   <span>{{'Export'}}</span>
                   }
                 </button>
+              }
               </div>
             </div>
           </form>

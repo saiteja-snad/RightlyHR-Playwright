@@ -1,11 +1,13 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="component-sub-header">Separation Details</div>
+     @if(rbac.allowedToAccess('Employee Raise No Due.view')){
     @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length >= 0)){
       <div class="custom-add-btn" (click)="openModal(raiseNodue)">
         <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
       </div>
       }
+    }
   </div>
 
   <div class="custom-table-content">
@@ -73,6 +75,7 @@
                 }
               </td>
               <td>{{item.status?item.status:'NA'}}</td>
+             @if(rbac.allowedToAccess('Employee Recall.view')|| rbac.allowedToAccess('Employee Early relieving.view')){
               <td>
                 <div class="dropdown">
                   @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' && !recallbuttonConditions && 
@@ -82,19 +85,22 @@
                   </span>
                   }
                   <ul class="dropdown-menu custom-dropdown-menu">
+                     @if(rbac.allowedToAccess('Employee Recall.view')){
                     <li (click)="recallRequest(item,recallrequestpopup)">
                       <a class="dropdown-item">
                         <i class="bi bi-repeat me-2"></i>Recall
                       </a>
-                    </li>
+                    </li>}
+                    @if(rbac.allowedToAccess('Employee Early relieving.view')){
                     @if( item.recallStatus.toLowerCase() != 'earlyrelieving' && !recallandearlyrelievingbuttonConditions){
                     <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
                       <a class="dropdown-item"><img src="icons/sepration.png" alt=""  class="speration-icon me-2">Early Relieving</a>
-                    </li>
+                    </li>}
                     }
                   </ul>
                 </div>
               </td>
+            }
               <!-- </ng-container> -->
             </tr>
             }

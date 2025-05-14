@@ -6,11 +6,12 @@
         translate}}
       </p>
     </div>
-    @if(this.rbac.allowedToAccess('Inactive Generate documents.view')){
+    @if(this.rbac.allowedToAccess('Relieving Letter.view')){
     <div class="dropdown">
+       @if(this.rbac.allowedToAccess('Relieving Letter.view')){
       <button type="button" class="custom-btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
         <i class="bi bi-plus me-2"></i>{{'Generate Documents'| translate}}
-      </button>
+      </button>}
       <ul class="dropdown-menu custom-dropdown-menu">
         <li><a class="dropdown-item" [routerLink]="['/admin/letters/relieving-letter']" routerLinkActive="active">
             <i class="bi bi-file-earmark-text-fill me-2"></i>{{'Relieving Letter'| translate}}</a>

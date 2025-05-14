@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { RbacService } from '../../../services/rbac.service';
 import { count, Subscription } from 'rxjs';
@@ -11,46 +11,89 @@ import { HttpService } from '../../../services/http.service';
   templateUrl: './settings-manage-holidays-tabs.component.html',
   styleUrl: './settings-manage-holidays-tabs.component.scss'
 })
-export class SettingsManageHolidaysTabsComponent {
+export class SettingsManageHolidaysTabsComponent implements OnInit, OnDestroy {
 
-  navLinks = [
-    { label: 'Pending For Submission',route: '/settings/employee-fields/manage-holidays/pending-for-submit', count: 0 },
-    { label: 'Published',route: '/settings/employee-fields/manage-holidays/published-holidays', count: 0 },
-  ];
-
-  subscription!: Subscription
-  allHolidaysPending = [] as any;
-  allHolidaysPublished = [] as any;
+  subscription!: Subscription;
+  allHolidaysPending: any[] = [];
+  allHolidaysPublished: any[] = [];
   pendingcount = 0;
   publishedcount = 0;
 
+  public navLinks: any[] = [];
 
-  constructor(public router: Router, private http: HttpService, public rbac: RbacService) { }
+  // All possible tabs with permissions
+  allLinks = [
+    { label: 'Pending For Submission', route: '/settings/employee-fields/manage-holidays/pending-for-submit', permission: { feature: 'Holidays Pending Tab', action: 'view' } },
+    { label: 'Published', route: '/settings/employee-fields/manage-holidays/published-holidays', permission: { feature: 'Holidays Published Tab', action: 'view' } }
+  ];
+
+  constructor(
+    public router: Router,
+    private http: HttpService,
+    public rbac: RbacService
+  ) {}
 
   ngOnInit() {
     this.getAllHolidays();
+    this.filterbyRbac();
+  }
+
+  filterbyRbac() : void{
+    // Filter links based on permission
+    this.navLinks = this.allLinks.filter(
+      (link) =>
+        link.permission &&
+        link.permission.feature &&
+        link.permission.action &&
+        this.rbac.allowedToAccess(
+          `${link.permission.feature}.${link.permission.action}`
+        )
+    );
+    // Redirect to first allowed tab if at base or unauthorized route
+    const currentUrl = this.router.url;
+    const baseUrl = '/settings/employee-fields/manage-holidays';
+
+    if (currentUrl === baseUrl && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+      return;
+    }
+    // Check if current URL is allowed
+    const isAllowed = this.navLinks.some((link) =>
+      currentUrl.startsWith(link.route)
+    );
+    // If not allowed, redirect to first allowed tab
+    if (!isAllowed && this.navLinks.length > 0) {
+      this.router.navigateByUrl(this.navLinks[0].route);
+    }
   }
 
   getAllHolidays() {
     this.subscription = this.http.getData('orgHolidays').subscribe({
       next: (data: any) => {
-        console.log(data);
         this.allHolidaysPending = data.filter(
-          (status: { status: string; }) => status.status === 'Pending for submission'
+          (status: { status: string }) => status.status === 'Pending for submission'
         ).reverse();
         this.pendingcount = this.allHolidaysPending.length;
+
         this.allHolidaysPublished = data.filter(
-          (status: { status: string; }) => status.status === 'Published'
+          (status: { status: string }) => status.status === 'Published'
         ).reverse();
         this.publishedcount = this.allHolidaysPublished.length;
-        this.navLinks = [
-          { label: 'Pending For Submission',route: '/settings/employee-fields/manage-holidays/pending-for-submit', count: this.pendingcount},
-          { label: 'Published',route: '/settings/employee-fields/manage-holidays/published-holidays', count: this.publishedcount },
-        ];
-      }, error: (err: any) => {
+
+        // Update count dynamically based on label
+        this.navLinks = this.navLinks.map(link => {
+          if (link.label === 'Pending For Submission') {
+            return { ...link, count: this.pendingcount };
+          } else if (link.label === 'Published') {
+            return { ...link, count: this.publishedcount };
+          }
+          return link;
+        });
+      },
+      error: (err: any) => {
         console.error(err);
       }
-    })
+    });
   }
 
   ngOnDestroy(): void {

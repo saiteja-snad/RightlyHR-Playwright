@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { AccessNavigationService } from '../../services/access-navigation.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -16,7 +17,7 @@ import { TranslateModule } from '@ngx-translate/core';
 export class SidenavComponent {
   @ViewChild('logoutpopup') logoutpopup: any;
   spinnerLoader = false;
-  constructor(private authService: AuthService, private modalservie: NgbModal, public rbac: RbacService,) {
+  constructor(private authService: AuthService, private modalservie: NgbModal, public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService) {
   }
 
   onLogout() {
@@ -31,6 +32,29 @@ export class SidenavComponent {
 
   openlogoutModal() {
     this.modalservie.open(this.logoutpopup, { centered: true });
+  }
+
+  goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    }else {
+      this.router.navigate(['/unauthorized']);
+    }
+  }
+
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
+  }
+
+  isActiveRoutePms(): boolean {
+    const currentUrl = this.router.url;
+    return (
+      currentUrl === '/pms/review-cycle' ||
+      currentUrl === '/pms/apprisal' || currentUrl === '/pms/myPerformance/pending-review' ||
+      currentUrl === '/pms/myPerformance/completed-review' || currentUrl === '/pms/team-performance/pending-review' ||
+      currentUrl === '/pms/team-performance/completed-review' || currentUrl === '/pms/assessment-form'
+    );
   }
 
 }

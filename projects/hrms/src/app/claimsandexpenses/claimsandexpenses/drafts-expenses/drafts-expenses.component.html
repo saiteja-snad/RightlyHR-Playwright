@@ -26,7 +26,9 @@
                         <th>{{'Expense Date'  | translate}}</th>
                         <th>{{'Total Amount'  | translate}}</th>
                         <th>{{'Status'  | translate}}</th>
+                        @if(rbac.allowedToAccess('Draft Tab.update')){
                         <th class="text-center">{{'Action(S)'  | translate}}</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -37,6 +39,7 @@
                             <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
                             <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
                             </td>
+                            @if(rbac.allowedToAccess('Draft Tab.update')){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -50,6 +53,7 @@
                                     </ul>
                                 </div>
                             </td>
+                            }
                         </tr>
                     </ng-container>
                     <!-- No Data Found Template -->

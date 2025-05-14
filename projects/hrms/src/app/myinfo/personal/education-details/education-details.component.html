@@ -306,7 +306,7 @@
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
             <input type="file" formControlName="attachmentupdate" accept="image/*, application/pdf"
-              (change)="onChangeEducation($event)" class="form-control custom-input px-0" />
+              (change)="onChangeEducation($event)" formControlName="attachmentupdate" class="form-control custom-input px-0" />
             <div class="error-msg"
               *ngIf="educationupdateForm.get('attachmentupdate')?.invalid && educationupdateForm.get('attachmentupdate')?.touched">
               File is required

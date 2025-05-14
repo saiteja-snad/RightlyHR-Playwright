@@ -37,38 +37,23 @@
             </div>
         </div>
     </div>
+<div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1">
+      <i class="bi bi-search"></i>
+    </span>
+    <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
+      (ngModelChange)="filterTeamLeaveSummary()" aria-label="Search" aria-describedby="basic-addon1" />
+  </div>
 
-    <!-- <div class="team-data-content">
-        <p-accordion value="0" class="mb-3">
-            <p-accordion-panel value="0">
-                <p-accordion-header>John Doe (SD213456)</p-accordion-header>
-                <p-accordion-content>
-                    <div class="employee-data-table">
-                        <table class="w-100">
-                            <thead>
-                                <th class="text-start">Category</th>
-                                <th>Entitled</th>
-                                <th>Booked</th>
-                                <th>Processed</th>
-                                <th>Available</th>
-                                <th></th>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="text-start">Sick Leaves</td>
-                                    <td>1</td>
-                                    <td>0</td>
-                                    <td>1</td>
-                                    <td class="avaliable-number">2</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </p-accordion-content>
-            </p-accordion-panel>
-        </p-accordion>
-    </div> -->
-
+  <ng-container *ngIf="dataload; else maincontent">
+    <ng-template #loadingSpinner>
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
+    </ng-template>
+    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+  </ng-container>
+  
     <ng-template #maincontent>
     <div class="team-data-content">
       <p-accordion>

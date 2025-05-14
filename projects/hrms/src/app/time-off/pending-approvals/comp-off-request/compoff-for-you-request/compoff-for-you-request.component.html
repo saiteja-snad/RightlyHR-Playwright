@@ -34,14 +34,14 @@
                     <th>{{'Reason' | translate}}</th>
                     <th>{{'Approver Comments' | translate}}</th>
                     <th>{{'Applied Date' | translate}}</th>
-                        @if(!multiSelect){
+                        @if(!multiSelect &&(rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For You (Comp Off).delete'))){
                         <th class="text-center">{{'Action(s)' | translate}}</th>
                         }
                         
                     </tr>
                 </ng-template>
                 <ng-template #body let-leave>
-                @if (rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For You (Comp Off).delete')) {
+                @if (rbac.allowedToAccess('Comp Off Tab.view')) {
                 @if ((((leaves | async) ?? []) | wfhsearchfilter: searchValue).length > 0) {
                 <!-- @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ; track leave.approvalHeader.id){ -->
                 <tr>

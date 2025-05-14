@@ -563,7 +563,7 @@ export const permissionsData = [
     { fields: 'No Due Form', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Documents Sub Tabs Section
-    { fields: 'Employee Info Documents(Upload File)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Employee Info Documents (Upload File)', View: false, Update: false, Create: false, Delete: false },
 
     //Employee Info Team Members Sub Tabs Section
     { fields: 'Employee Info Reporting Manager Tab', View: false, Update: false, Create: false, Delete: false },

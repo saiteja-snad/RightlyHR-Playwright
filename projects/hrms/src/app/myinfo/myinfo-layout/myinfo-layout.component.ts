@@ -46,97 +46,12 @@ export class MyinfoLayoutComponent implements OnInit, OnDestroy {
     private fb: FormBuilder, private conformationPopup: OpenModalService, private signalService: SignalsService,public rbac: RbacService) { }
 
   ngOnInit(): void {
-    this.formsubmit();
+  
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    this.getAllTeammembersList();
-    this.getEmployee();
+
   }
 
-  onSelectManager(event: any, field: string) {
-    console.log("Selected Value for", field, event.value);
-    if (field === 'teamMembers') {
-      this.selectedEmployees = Array.isArray(event.value) ? event.value : [event.value];
-      this.selectedEmployeeIds = this.selectedEmployees.map(emp => emp.employeeId);
-    }
-    if (field === 'reportingManager') {
-      this.teamForm.patchValue({
-        reportingManager: event.value
-      });
-    }
-  }
 
-  getEmployee() {
-    this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
-      next: (data: any) => {
-        this.managers = data
-          .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: { fusionEmpId: string; firstName: any; middleName?: string; lastName: any }) => ({
-            ...emp,
-            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
-          }));
-      },
-      error: (err: any) => console.log(err),
-    });
-  }
-
-  getAllTeammembersList() {
-    let EmployeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/v1/getEmployeesByhierarchy/${EmployeeId}`).subscribe({
-      next: (data: any) => {
-        this.teamMembersdata = data.map((member: any) => ({
-          ...member,
-          name: `${member.fusionEmpId} - ${member.firstName} ${member.middleName ? member.middleName + ' ' : ''}${member.lastName}`
-        }));
-      },
-      error: (err: any) => console.log(err),
-    }
-    );
-  }
-
-  updateTeamRM() {
-    this.spinnerLoader = true;
-    if (!Array.isArray(this.selectedEmployees) || this.selectedEmployees.length === 0) {
-      console.error("selectedEmployees is not a valid array", this.selectedEmployees);
-      return;
-    }
-    let requestBody = this.selectedEmployees.map(employee => ({
-      jobRole: employee.jobRole,
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      middleName: employee.middleName ?? "",
-      workEmail: employee.workEmail,
-      fusionEmpId: employee.fusionEmpId,
-      employeeId: employee.employeeId,
-      contactnumber: employee.contactnumber,
-      id: employee.id
-    }));
-    const ManagerId = this.teamForm.value.reportingManager?.employeeId;
-    if (!ManagerId) {
-      console.error("No valid ManagerId found.");
-      return;
-    }
-    this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody)
-    .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-        },
-        error: (reason: any) => {
-          console.log(reason);
-          if (reason) {
-            this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-            this.spinnerLoader = false;
-            this.teamForm.reset();  // Reset the form
-          }
-        },
-      });
-  }
-
-  openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
-  }
 
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes

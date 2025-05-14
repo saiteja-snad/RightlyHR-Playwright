@@ -19,7 +19,7 @@ export const environment = {
   ApiUrl: 'https://snadapi.rightlyhr.com/api/',
   viewUrl: "https://sasda001.blob.core.windows.net/rightlyhr/",
 
-  dateformat: 'dd-MMM-yyyy',
+  dateformat: 'MMM d, y',
   paidLeaveCategoryId: 109,
   mandatoryLeaveCategoryId: 110,
 };

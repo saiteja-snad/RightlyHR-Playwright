@@ -16,7 +16,7 @@ export const environment = {
   scopeUri: ["api://f9ad74b1-d17f-4175-9097-f543691f6bec/api-access"],
 
 
-  dateformat: 'dd-MMM-yyyy',
+  dateformat: 'MMM d, y',
   paidLeaveCategoryId: 172,
   wfhModuleId:2,
   compoffModuleId:3,

@@ -42,16 +42,16 @@ export default [
     {
         path: 'team-members', component: TeamNumbersComponent,canActivate: [PermissionsGuard], data: { permission: 'My Info Reporting Managers Tab.view' }
     },
-    {
-        path: 'team',
-        children: [
-            { path: '', redirectTo: 'team-members', pathMatch: 'full' },
-            { path: 'team-members', loadComponent: () => import('./team-numbers/team-numbers.component').then((m) => m.TeamNumbersComponent) ,canActivate: [PermissionsGuard], data: { permission: 'My Info Team Managers Tab.view' }},
-            {
-                path: 'team-manger-members', loadComponent: () => import('./team-numbers/team-manger-member/team-manger-member.component').then((m) => m.TeamMangerMemberComponent),canActivate: [PermissionsGuard], data: { permission: 'My Info Team Managers Tab.view' },
-            }
-        ]
-    },
+    // {
+    //     path: 'team',
+    //     children: [
+    //       ///  { path: '', redirectTo: 'team-members', pathMatch: 'full' },
+    //         { path: 'team-members', loadComponent: () => import('./team-numbers/team-numbers.component').then((m) => m.TeamNumbersComponent) ,canActivate: [PermissionsGuard], data: { permission: 'My Info Team Managers Tab.view' }},
+    //         {
+    //             path: 'team-manger-members', loadComponent: () => import('./team-numbers/team-manger-member/team-manger-member.component').then((m) => m.TeamMangerMemberComponent),canActivate: [PermissionsGuard], data: { permission: 'My Info Team Managers Tab.view' },
+    //         }
+    //     ]
+    // },
     {
         path: 'onboarding-request', component: OnboardingRequestComponent,canActivate: [PermissionsGuard], data: { permission: 'My Info Onboard Request Tab.view' }
     },

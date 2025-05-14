@@ -103,8 +103,7 @@
                     }}</p>
                 </div>
               </div>
-              @if(rbac.allowedToAccess('Events(Upcoming Events).update') || rbac.allowedToAccess('Events(Upcoming
-              Events).delete')){
+              @if(rbac.allowedToAccess('Events(Upcoming Events).update') || rbac.allowedToAccess('Events(Upcoming Events).delete')){
               <div class="dropdown">
                 <a class="dropdown-click" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-three-dots-vertical"></i>
@@ -146,6 +145,7 @@
 </div>
 
 <!--update Popup-->
+
 <ng-template #updateevets let-modal>
   <div class="custom-main-popup-container">
     <div class="custom-poup-header-content popup-header-border" ngbAutofocus>
@@ -163,7 +163,7 @@
             <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
                 class="text-danger">*</span></label>
             <input type="datetime-local" class="form-control custom-input" id="eventDate" onkeypress="return false;"
-              [min]="getToday()" formControlName="eventDate">
+              [min]="getToday()" formControlName="eventDate" [max]="getMaxDate()">
             <div
               *ngIf="customEventupdateForm.get('eventDate')?.touched && customEventupdateForm.get('eventDate')?.errors?.['required']"
               class="error-msg">Event date is required.</div>
@@ -176,7 +176,7 @@
             <label for="title" class="form-label custom-label mb-2">Event Title<span
                 class="text-danger">*</span></label>
             <input type="text" class="form-control custom-input" id="title" placeholder="Please enter event title"
-              formControlName="eventTitle">
+              formControlName="eventTitle"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
             <div class="error-msg" *ngIf="customEventupdateForm.get('eventTitle')?.errors?.['required']"> Event Title is
               required.</div>
             <div class="error-msg" *ngIf="customEventupdateForm.get('eventTitle')?.errors?.['maxlength']">
@@ -187,7 +187,7 @@
             <label for="description" class="form-label custom-label mb-2">Event Description<span
                 class="text-danger">*</span></label>
             <textarea class="form-control custom-input" formControlName="eventMessage"
-              placeholder="Please enter description" maxlength="250" id="description"></textarea>
+              placeholder="Please enter description" maxlength="250" id="description"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"></textarea>
             <div *ngIf="customEventupdateForm.get('eventMessage')?.errors?.['required']" class="error-msg">
               Event Description is requied
             </div>

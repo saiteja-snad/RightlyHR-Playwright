@@ -9,26 +9,27 @@ import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { TranslateModule } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-add-event',
-  imports: [CommonModule, ReactiveFormsModule,TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule],
   templateUrl: './add-event.component.html',
   styleUrl: './add-event.component.scss'
 })
 
-export class AddEventComponent implements OnInit,OnDestroy {
+export class AddEventComponent implements OnInit, OnDestroy {
 
   subscription!: Subscription
   customEventForm!: FormGroup
   Employeeinfo = {} as any;
   selectedCustomEventField: any;
-  spinnerLoader=false
-  eventAttachment:any
-  postEventsData:any
+  spinnerLoader = false
+  eventAttachment: any
+  postEventsData: any
   imageUrl: any;
   constructor(public router: Router, private fb: FormBuilder,
-    private http: HttpService, private conformationPopup: OpenModalService,private sanitizer: DomSanitizer, private modalService: NgbModal,) { }
+    private http: HttpService, private conformationPopup: OpenModalService,public formValidation: FormValidationService, private sanitizer: DomSanitizer, private modalService: NgbModal,) { }
 
   ngOnInit(): void {
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
@@ -43,7 +44,7 @@ export class AddEventComponent implements OnInit,OnDestroy {
   initiateForm() {
     this.customEventForm = this.fb.group({
       eventDate: ['', [Validators.required, this.futureDateValidator()]],
-      eventTitle: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/),Validators.maxLength(50)]],
+      eventTitle: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/), Validators.maxLength(50)]],
       eventMessage: ['', [Validators.required, Validators.pattern(/^(?!\s).*$/), Validators.maxLength(250)]],
       imageUrl: ['']
     });
@@ -76,6 +77,18 @@ export class AddEventComponent implements OnInit,OnDestroy {
     );
   }
 
+  getMaxDate(): string {
+    const now = new Date();
+    const pad = (n: number) => (n < 10 ? '0' + n : n);
+
+    const year = now.getFullYear() + 2; // Add 2 years
+    const month = pad(now.getMonth() + 1);
+    const day = pad(now.getDate());
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
 
   private renameFileAttachment(originalFile: File, newName: string): File {
     return new File([originalFile], newName, {
@@ -84,27 +97,27 @@ export class AddEventComponent implements OnInit,OnDestroy {
     });
   }
 
-  
+
   getToday(): string {
     const now = new Date();
     const pad = (n: number) => n < 10 ? '0' + n : n;
-  
+
     const year = now.getFullYear();
     const month = pad(now.getMonth() + 1);
     const day = pad(now.getDate());
     const hours = pad(now.getHours());
     const minutes = pad(now.getMinutes());
-  
+
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
 
-  
+
   postevents(): void {
     if (this.customEventForm.valid) {
       this.spinnerLoader = true;
       const payload = this.createEventPayload();
-  
+
       const file = this.eventAttachment;
       if (file) {
         const filePath = `/Profilepics/${this.Employeeinfo.employeeId}`;
@@ -116,7 +129,7 @@ export class AddEventComponent implements OnInit,OnDestroy {
       this.customEventForm.markAllAsTouched(); // Show validation errors
     }
   }
-  
+
   createEventPayload(attachmentPath: string = ''): any {
     const formdata = this.customEventForm.value;
     return {
@@ -128,7 +141,7 @@ export class AddEventComponent implements OnInit,OnDestroy {
       attachmentUrl: attachmentPath || null
     };
   }
-  
+
   uploadEventAttachment(filePath: string, file: File, payload: any): void {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file)
       .subscribe({
@@ -146,7 +159,7 @@ export class AddEventComponent implements OnInit,OnDestroy {
         }
       });
   }
-  
+
   saveEvent(payload: any): void {
     this.subscription = this.http.postdata('CustomEvents', payload).subscribe({
       next: (response: any) => {
@@ -165,9 +178,9 @@ export class AddEventComponent implements OnInit,OnDestroy {
       }
     });
   }
-  
-  
-  
+
+
+
 
   futureDateValidator(): ValidatorFn {
     return (control: AbstractControl): { [key: string]: any } | null => {

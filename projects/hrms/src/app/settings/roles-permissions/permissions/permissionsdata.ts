@@ -328,8 +328,8 @@ export const permissionsData = [
 
 
     //Pending Approval Seperation Request Tabs Section
-    { fields: 'For You (Separation Request)', View: false, Update: false, Create: false, Delete: false },   
-    { fields: 'For Role (Separation Request)', View: false, Update: false, Create: false, Delete: false }, 
+    { fields: 'For You (Separation Requests)', View: false, Update: false, Create: false, Delete: false },   
+    { fields: 'For Role (Separation Requests)', View: false, Update: false, Create: false, Delete: false }, 
  
 
     //Pending Approval Recall Requests Tabs Section

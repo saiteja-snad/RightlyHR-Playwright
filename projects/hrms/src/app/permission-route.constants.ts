@@ -253,8 +253,8 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
   
   export const SEPARATION_REQUEST_SUB_TABS =[
-    {route: '/time-off/pending-approvals/separation-request/separation-for-you', permission: 'For You (Separation Request).view'},
-    {route: '/time-off/pending-approvals/separation-request/separation-for-role', permission: 'For Role (Separation Request).view'},
+    {route: '/time-off/pending-approvals/separation-request/separation-for-you', permission: 'For You (Separation Requests).view'},
+    {route: '/time-off/pending-approvals/separation-request/separation-for-role', permission: 'For Role (Separation Requests).view'},
   ]
   
   export const RECALL_REQUEST_SUB_TABS =[

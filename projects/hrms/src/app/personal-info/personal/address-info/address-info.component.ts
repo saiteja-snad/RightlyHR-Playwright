@@ -205,7 +205,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       },
       error: (reason: any) => {
         console.log(reason);
-        // this.conformationPopup.openErrorModal('Address Info update failed');
+         this.conformationPopup.openErrorModal(reason.error.message);
       },
     });
   }

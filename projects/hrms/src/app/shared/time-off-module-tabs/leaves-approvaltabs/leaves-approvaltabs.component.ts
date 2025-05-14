@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
@@ -7,6 +7,7 @@ import { Ilpid } from '../../../Interfaces/timoff-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { SignalsService } from '../../../services/signals.service';
 
 @Component({
   selector: 'app-leaves-approvaltabs',
@@ -23,48 +24,35 @@ export class LeavesApprovaltabsComponent {
   waitingForApprovalCount: number = 0;
   approvedCount: number = 0;
   rejectedCount: number = 0;
+  cancelCount:number=0;
   teamLeaveBalanceCount: number = 0;
   teamLeaveSummaryCount: number = 0;
+  statusTabs: any[]=[];
+  // statusTabs: any[] = [
+  //   { label: 'Waiting For Approval', link: 'waiting-for-approval', },
+  //   { label: 'Approved', link: 'approved', },
+  //   { label: 'Processed', link: 'processed', },
+  //   { label: 'Rejected', link: 'rejected', },
+  //   { label: 'Cancelled', link: 'cancelled', },
+  //   { label: 'Team Leave balance', link: 'team-leave-balance', },
+  //   { label: 'Team Leave Summary', link: 'team-leave-summary', }
+  // ];
 
-  statusTabs: any[] = [
-    {
-      label: 'Waiting For Approval',
-      link: 'waiting-for-approval',
-      permission: {
-        feature: 'Waiting For Approval (Time Off)',
-        action: 'view',
-      },
-    },
-    {
-      label: 'Approved',
-      link: 'approved',
-      permission: { feature: 'Approved (Time Off)', action: 'view' },
-    },
-    {
-      label: 'Processed',
-      link: 'processed',
-      permission: { feature: 'Processed (Time Off)', action: 'view' },
-    },
-    {
-      label: 'Rejected',
-      link: 'rejected',
-      permission: { feature: 'Rejected (Time Off)', action: 'view' },
-    },
-    {
-      label: 'Cancelled',
-      link: 'cancelled',
-      permission: { feature: 'Cancelled(Time Off)', action: 'view' },
-    },
-    { label: 'Team Leave balance', link: 'team-leave-balance' },
-    { label: 'Team Leave Summary', link: 'team-leave-summary' },
-  ];
+  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService,private signalService:SignalsService, private rbac: RbacService) { 
+     effect(() => {
+      if (this.signalService.timecountTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
+         this.getDataByLPID();
+         this.getAllTeamLeaveBalance();
+         this.getAllTeamLeaveSummary();
 
-  constructor(
-    public readonly router: Router,
-    private http: HttpService,
-    private authService: AuthService,
-    private rbac: RbacService
-  ) {}
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.timecountTriggerSignal()) {
+          this.signalService.timecountTriggerSignal.set(false);
+        }
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -79,23 +67,17 @@ export class LeavesApprovaltabsComponent {
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
-          const waiting = response.filter(
-            (item) => item.status === 'Waiting for Approval'
-          );
-          const approved = response.filter(
-            (item) => item.status === 'Approved'
-          );
-          const rejected = response.filter(
-            (item) => item.status === 'Rejected'
-          );
-          const processed = response.filter(
-            (item) => item.status === 'Processed'
-          );
+          const waiting = response.filter(item => item.status === 'Waiting for Approval');
+          const approved = response.filter(item => item.status === 'Approved');
+          const rejected = response.filter(item => item.status === 'Rejected');
+          const processed = response.filter(item => item.status === 'Processed');
+          const cancelled = response.filter(item => item.status === 'Cancelled');
 
           this.waitingForApprovalCount = waiting.length;
           this.approvedCount = approved.length;
           this.rejectedCount = rejected.length;
           this.processedCount = processed.length;
+          this.cancelCount=cancelled.length
 
           this.updateStatusTabs();
         } else {
@@ -171,20 +153,20 @@ export class LeavesApprovaltabsComponent {
       },
       {
         label: 'Cancelled',
-        link: '/time-off/leaves/cancelled',
-        permission: { feature: 'Cancelled(Time Off)', action: 'view' },
+        link: '/time-off/leaves/cancelled',count:this.cancelCount,
+        permission: { feature: 'Cancelled (Time Off)', action: 'view' },
       },
       {
         label: 'Team Leave balance',
         link: '/time-off/leaves/team-leave-balance',
         count: this.teamLeaveBalanceCount,
-         permission: { feature: 'Team Leave Balance(Time Off)', action: 'view' },
+         permission: { feature: 'Team Leave Balance (Time Off)', action: 'view' },
       },
       {
         label: 'Team Leave Summary',
         link: '/time-off/leaves/team-leave-summary',
         count: this.teamLeaveSummaryCount,
-         permission: { feature: 'Team Leave Balance Summary(Time Off)', action: 'view' },
+         permission: { feature: 'Team Leave Balance Summary (Time Off)', action: 'view' },
       },
     ];
 

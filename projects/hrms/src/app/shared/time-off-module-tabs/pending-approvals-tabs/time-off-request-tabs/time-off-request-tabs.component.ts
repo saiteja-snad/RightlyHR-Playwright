@@ -1,11 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, computed, effect, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
 import { LeaveApproval } from '../../../../Interfaces/pendingapprovalsmodel';
 import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { environment } from '../../../../../environments/environment';
+import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
+import { SignalsService } from '../../../../services/signals.service';
+import { IJob } from '../../../../Interfaces/letters-model';
 
 @Component({
   selector: 'app-time-off-request-tabs',
@@ -15,79 +19,61 @@ import { RbacService } from '../../../../services/rbac.service';
 })
 
 export class TimeOffRequestTabsComponent {
-  LOGIN: any;
-  subscription!: Subscription;
-  leavesEmp = [] as LeaveApproval[];
-  leavesRole = [] as LeaveApproval[];
-  countEmp: any = 0;
-  countRole: any = 0;
-  navTabs: any[] = [
-    { label: 'For You', link: 'for-you', count: this.countEmp ?? 0,permission: { feature: 'For You (Time Off)', action: 'view' } },
-    { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0,permission: { feature: 'For Role (Time Off)', action: 'view' }  },
-  ];
-
-  constructor(public readonly router: Router, private http: HttpService,private rbac: RbacService,) { }
+ empinfo = {} as IJob;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+  pendingApprovalCount = signal<ApprovalStatusCount[]>([]);
+  navTabs = computed(() => {
+    const moduleId=environment.leavesModuleId
+    const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
+    return [
+      { label: 'For You ', link: 'for-you', count:data?.forYou ?? 0, permission: { feature: 'For You (Time Off)', action: 'view' }},
+      { label: 'For Your Role', link: 'for-your-role', count:data?.forYourRole ?? 0,permission: { feature: 'For Role (Time Off)', action: 'view' }}
+    ];
+  });
 
   ngOnInit(): void {
-    this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getAllPendingApprovalsEMP();
-    this.getAllPendingApprovalsROLE();
-     this.navTabs = this.navTabs.filter(
-      (tab) =>
-        tab.permission &&
-        tab.permission.feature &&
-        tab.permission.action &&
-        this.rbac.allowedToAccess(
-          `${tab.permission.feature}.${tab.permission.action}`
-        )
-    );
+    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.getAllLeavesPendingApprovalsCount();
   }
 
-  getAllPendingApprovalsEMP() {
-    let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=EMP`).subscribe({
-      next: (response: any) => {
-        this.leavesEmp = response.data as LeaveApproval[];
-        this.countEmp = this.leavesEmp.length ?? 0;
-        this.navTabs = [
-           { label: 'For You', link: 'for-you', count: this.countEmp ?? 0,permission: { feature: 'For You (Time Off)', action: 'view' } },
-    { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0,permission: { feature: 'For Role (Time Off)', action: 'view' }  },
-        ];
-        this.navTabs = this.navTabs.filter(
-      (tab) =>
-        tab.permission &&
-        tab.permission.feature &&
-        tab.permission.action &&
-        this.rbac.allowedToAccess(
-          `${tab.permission.feature}.${tab.permission.action}`
-        )
-    );
-      },
-      error: (reason) => console.log(reason),
+  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService,private rbac:RbacService) {
+    effect(() => {
+      if (this.signalService.timeoffForYouTriggerSignal() || this.signalService.timeoffForRoleTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
+        this.getAllLeavesPendingApprovalsCount();
+
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.timeoffForRoleTriggerSignal()) {
+          this.signalService.timeoffForRoleTriggerSignal.set(false);
+        }
+
+        if (this.signalService.timeoffForYouTriggerSignal()) {
+          this.signalService.timeoffForYouTriggerSignal.set(false);
+        }
+      }
+    });
+    // effect(() => {
+    //   if (this.http.tirggerPendingApprovalCountSignal().separation) {
+    //     this.getAllSeparationPendingApprovalsCount();
+    //     this.http.tirggerPendingApprovalCountSignal.update((status) => ({ ...status, separation: false }));
+    //   }
+    // });
+  }
+
+  getAllLeavesPendingApprovalsCount() {
+    const employeeId = parseInt(this.empinfo.employeeId);
+    const moduleId = environment.leavesModuleId;
+    this.http.getAllPendingApprovalsCount(moduleId, employeeId).subscribe({
+      next: (data: ApprovalStatusCount[]) => {
+      const filtered = data.filter(item => item.moduleId === moduleId);
+      this.pendingApprovalCount.set(filtered);
+    },
+      error: (err) => console.error('Error fetching approvals:', err),
     });
   }
 
-  getAllPendingApprovalsROLE() {
-    let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=ROLE`).subscribe({
-      next: (response: any) => {
-        this.leavesRole = response.data as LeaveApproval[];
-        this.countRole = this.leavesRole.length ?? 0;
-        this.navTabs = [
-           { label: 'For You', link: 'for-you', count: this.countEmp ?? 0,permission: { feature: 'For You (Time Off)', action: 'view' } },
-    { label: 'For Your Role', link: 'for-your-role', count:this.countRole ?? 0,permission: { feature: 'For Role (Time Off)', action: 'view' }  },
-        ];
-        this.navTabs = this.navTabs.filter(
-      (tab) =>
-        tab.permission &&
-        tab.permission.feature &&
-        tab.permission.action &&
-        this.rbac.allowedToAccess(
-          `${tab.permission.feature}.${tab.permission.action}`
-        )
-    );
-      },
-      error: (reason) => console.log(reason),
-    });
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
   }
 }

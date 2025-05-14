@@ -1,35 +1,54 @@
 <div class="custom-main-component-container">
+     @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
+      <div class="d-flex justify-content-end gap-3 mb-3">
+       
+        @if (canBulkApprove()) {
+        <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+        }
+        @if (canBulkProcess()) {
+        <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+        }
+    </div>
+      }
     <!--Input search-->
     <div class="input-group custom-search mb-3">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search"
-            #search="ngModel" [(ngModel)]="searchValue">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+            <i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
+            aria-describedby="basic-addon1" #search="ngModel" [(ngModel)]="searchValue" autocomplete="off">
     </div>
 
-    <div class="custom-table-content">
+    <div class="custom-p-multi-select-table">
         @if(!dataLoad){
-        <table class="w-100">
-
-            <thead>
+             <p-table [value]="regularizationselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts"
+            dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template #header>
                 <tr>
-                    <th>Employee ID</th>
-                    <th>Employee Name</th>
-                    <th>Requested Date</th>
-                    <th>Regularization Date</th>
-                    <th>Duration(InHours)</th>
-                    <th>Regularization Type</th>
-                    <th>Reason</th>
-                    <th>Approver Comments</th>
-                    @if(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete')) {
-                    <th>Action(s)</th>
+                    <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+                    <th>{{'Employee ID' | translate}} </th>
+                    <th>{{'Employee Name' | translate}}</th>
+                    <th>{{'Requested Date' | translate}}</th>
+                    <th>{{'Regularization Date' | translate}}</th>
+                    <th>{{'Duration(InHours)' | translate}}</th>
+                    <th>{{'Regularization Type' | translate}}</th>
+                    <th>{{'Reason' | translate}}</th>
+                    <th>{{'Approver Comments' | translate}}</th>
+                    @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete'))){
+                    <th class="text-center">{{'Action(s)' | translate}}</th>
                     }
+
                 </tr>
-            </thead>
-            <tbody>
-                @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
-                @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
-                leave.approvalHeader.id){
+            </ng-template>
+            <ng-template #body let-leave>
+                 @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
+                <!-- @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
+                leave.approvalHeader.id){ -->
                 <tr>
+                        <td>
+                        <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
+                    </td>
                     <td>{{leave.entity.fusionempId}}</td>
                     <td>{{leave.entity.raisedForName}}</td>
                     <td>{{leave.entity.createdDate| dateformat}}</td>
@@ -57,7 +76,7 @@
 
                         <ng-template #permissionComments>-</ng-template>
                     </td>
-                    @if(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete')) {
+                    @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete'))){
                     <td>
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
@@ -91,23 +110,18 @@
                         </div>
                     </td>
                     }
+                   
                 </tr>
+                <!-- } -->
                 }
-                }
-                @else{
-                <tr>
-                    <td colospan="8">
-                        <app-no-data-found />
-                    </td>
-                </tr>
-                }
-            </tbody>
-        </table>
-        }@else{
+            </ng-template>
+        </p-table>
+    }@else{
         <app-data-loader-content />
         }
     </div>
 </div>
+
 
 <ng-template #approval let-modal>
     <div class="result-popup-content" ngbAutofocus>
@@ -131,10 +145,8 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
-                    translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'|
-                    translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'| translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'| translate}}</button>
             </div>
         </form>
     </div>
@@ -163,10 +175,8 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
-                    translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
-                    translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' | translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' | translate}}</button>
             </div>
         </form>
     </div>

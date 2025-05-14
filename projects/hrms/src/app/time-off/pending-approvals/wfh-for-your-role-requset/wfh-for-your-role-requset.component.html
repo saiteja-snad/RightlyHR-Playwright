@@ -1,63 +1,83 @@
 <div class="custom-main-component-container">
-    <!--Input search-->
+      @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
+      <div class="d-flex justify-content-end gap-3 mb-3">
+          
+            @if (canBulkApprove()) {
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
+            @if (canBulkProcess()) {
+            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
+           
+        </div>
+         }
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
             placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
     </div>
 
-    <div class="custom-table-content">
+    <div class="custom-p-multi-select-table">
+
         @if(!dataload){
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>{{'Employee ID' | translate}} </th>
+               <p-table [value]="wfhsselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts" 
+             dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+                <ng-template #header>
+                    <tr>
+                        <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+                        <th>{{'Employee ID' | translate}} </th>
                     <th>{{'Employee Name' | translate}}</th>
                     <th>{{'Worked Date' | translate}}</th>
                     <th>{{'Availed' | translate}}</th>
                     <th>{{'Reason' | translate}}</th>
                     <th>{{'Approver Comments' | translate}}</th>
                     <th>{{'Applied Date' | translate}}</th>
-                    @if(rbac.allowedToAccess('For Role (WFH).update') || rbac.allowedToAccess('For Role (WFH).delete'))
-                    {
-                    <th>{{'Action(s)' | translate}}</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
-               
-                @if ((((leaves | async) ?? [])| wfhsearchfilter: searchValue).length > 0) {
-                @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ; track leave.approvalHeader.id){
+                        @if(!multiSelect &&(rbac.allowedToAccess('For Role (WFH).update') || rbac.allowedToAccess('For Role (WFH).delete'))){
+                        <th class="text-center">{{'Action(s)' | translate}}</th>
+                        }
+                        
+                    </tr>
+                </ng-template>
+                <ng-template #body let-leave>
+                      @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
+                @if ((((leaves | async) ?? []) | wfhsearchfilter: searchValue).length > 0) {
+                <!-- @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ; track
+                leave.approvalHeader.id){ -->
                 <tr>
+                    <td>
+                        <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
+                    </td>
                     <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
                     <td>{{leave.entity.attendanceRequesterName}}</td>
                     <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
                     <td>{{leave.entity.attendanceRequestDurationType}}</td>
                     <td>
+                        @if(leave.entity.attendanceRequestDescription != null &&
+                        leave.entity.attendanceRequestDescription != '') {
                         <div>
                             <a type="button" [ngbPopover]="reason">
                                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </a>
                             <ng-template #reason>
-                                <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
+                                <p class="mb-0">{{leave.entity.attendanceRequestDescription }} </p>
                             </ng-template>
                         </div>
+                        }@else {
+                        <div>-</div>
+                        }
                     </td>
                     <td>
-                        <div>
-                            <a type="button">
-                                <img src="images\info-fill.png" alt="info icon"
-                                    (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)"
-                                    class="info-icon">
-                            </a>
-                            <ng-template #reason>
-                                <p class="mb-0">{{leave.entity.attendanceApprovalcomments}} </p>
-                            </ng-template>
+                        <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
+                            <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
+                               <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </div>
                         </div>
+                        <ng-template #compoffcomments>-</ng-template>
                     </td>
                     <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
-                    @if(rbac.allowedToAccess('For Role (WFH).update') || rbac.allowedToAccess('For Role (WFH).delete'))
-                    {
+                    @if(!multiSelect &&(rbac.allowedToAccess('For Role (WFH).update') || rbac.allowedToAccess('For Role (WFH).delete'))){
                     <td>
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
@@ -93,20 +113,22 @@
                         </div>
                     </td>
                     }
+                   
                 </tr>
+                <!-- } -->
                 }
-                }@else {
+                @else{
                 <tr>
-                    <td colspan="8">
-                        <app-no-data-found></app-no-data-found>
+                    <td colospan="8">
+                        <app-no-data-found />
                     </td>
                 </tr>
                 }
-                
-            </tbody>
-        </table>
+                }
+                </ng-template>
+            </p-table>
         }@else{
-        <app-data-loader-content />
+            <app-data-loader-content />
         }
     </div>
 </div>
@@ -127,8 +149,7 @@
                         formControlName="comments" maxlength="250"></textarea>
                     <!-- Character counter -->
                     <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
-                    <div class="error-msg"
-                        *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+                    <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
                         <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
                         <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">
                             Comment cannot exceed 250 characters.
@@ -137,14 +158,13 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|
-                    translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'| translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">
                     @if(spinnerLoader){
-                    <div class="button-loader-content">
-                        <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                        <span>{{'Loading...'}}</span>
-                    </div>
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
                     }@else {
                     <span>{{'Approve'| translate}}</span>
                     }
@@ -170,8 +190,7 @@
                         placeholder="Please provide reason for rejection" formControlName="comments"
                         maxlength="250"></textarea>
                     <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
-                    <div class="error-msg"
-                        *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
+                    <div class="error-msg" *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                         <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
                             Rejected Reason is required.
                         </div>
@@ -199,22 +218,22 @@
     </div>
 </ng-template>
 
-<!-- comments popup -->
+<!-- commentspopup -->
 <ng-template #commentspopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{'Approver Comments'}}</p>
+                <p class="popup-heading mb-0">{{"Approver Comments" | translate}}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content" *ngFor="let comment of approverComments">
             <div class="card p-3">
-                <div *ngFor="let comment of approverComments">
+                <div >
                     <div class="mb-0">
                         <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
                         <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>

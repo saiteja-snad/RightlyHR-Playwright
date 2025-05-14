@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
@@ -18,6 +18,8 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
 import { PermissionsearchPipe } from '../../../Pipes/permissionsearch.pipe';
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-regularization-for-you-request',
   imports: [
@@ -31,10 +33,12 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
     ReactiveFormsModule,
     TranslateModule,
     PermissionsearchPipe,
-    DataLoaderContentComponent
-],
+    DataLoaderContentComponent,
+    TableModule,
+  ],
   templateUrl: './regularization-for-you-request.component.html',
   styleUrl: './regularization-for-you-request.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
@@ -58,20 +62,57 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   leaves = new BehaviorSubject<PermissionRequestResponse[]>([]);
   searchValue: any;
   dataLoad = false;
+  regularizationselect!: LeaveApproval[];
+  selectedProducts!: LeaveApproval[];
+  multiSelect = false;
+  requestBody = {} as any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    private signalService:SignalsService
+    private signalService: SignalsService
   ) {}
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
-
+ selectCheck(Value: any) {
+    this.multiSelect = Array.isArray(Value) && Value.length > 0;
+    console.log(this.multiSelect);
+  }
+  bulkapprove(approverPopup: any) {
+    this.intializeApproveForm();
+    this.modalService.open(approverPopup, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+  bulkReject(rejectPopup: any) {
+    this.intializeRejectForm();
+    this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
+  }
+  bulkProcess() {
+    this.handleProcess(this.regularizationselect);
+  }
+  canBulkApprove(): boolean {
+    return this.selectedProducts?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage !==
+          item.approvalHeader.finalapprovalStage &&
+        this.rbac.allowedToAccess('Timeoff Tab.update')
+    );
+  }
+  canBulkProcess(): boolean {
+    return this.selectedProducts?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage ===
+          item.approvalHeader.finalapprovalStage &&
+        this.rbac.allowedToAccess('Timeoff Tab.update')
+    );
+  }
   intializeApproveForm() {
     this.approveForm = this.fb.group({
       comments: [
@@ -102,7 +143,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           response.data as PermissionRequestResponse[];
           this.leaves.next(response.data);
-          console.log(this.leaves.value);
+          this.regularizationselect = response.data;
           this.dataLoad = false;
         },
         error: (reason) => {
@@ -140,21 +181,35 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   handleAccept(approveForm: FormGroup): void {
     if (approveForm.valid) {
       const formData = approveForm.value;
-      const requestBody = {
-        status: 'Approved',
-        comments: formData.comments,
-        approvedBy: this.empinfo.employeeId.toString(),
-      };
+        if (this.selectedProducts && this.selectedProducts.length > 0) {
+        let approvedBy = this.empinfo.employeeId.toString();
+        let comments = formData.comments;
+        this.requestBody = this.selectedProducts.map((item) => ({
+          id: item.approvalHeader.id,
+          status: 'Approved',
+          comments: comments,
+          approvedBy: approvedBy,
+        }));
+      } else {
+        this.requestBody = [
+          {
+            id: this.selectedLeaveData.approvalHeader.id,
+            status: 'Approved',
+            comments: formData.comments,
+            approvedBy: this.empinfo.employeeId.toString(),
+          },
+        ];
+      }
       this.sharedModalService.openLoaderModal(
         'Approving Request, Please wait...'
       );
       this.http
         .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
+         `PendingApproval/multiapprovereject`, this.requestBody
         )
         .subscribe({
           next: (response: any) => {
+            this.selectedProducts = [];
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Approved Successfully'
@@ -174,21 +229,34 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleProcess(request: PermissionRequestResponse) {
-    let requestBody = {
-      status: 'Processed',
-      approvedBy: this.empinfo.employeeId.toString(),
-    };
+  handleProcess(request: any) {
+    this.selectedLeaveData=request;
+     if (this.selectedProducts && this.selectedProducts.length > 0) {
+      let approvedBy = this.empinfo.employeeId.toString();
+      this.requestBody = this.selectedProducts.map((item) => ({
+        id: item.approvalHeader.id,
+        status: 'Processed',
+        approvedBy: approvedBy,
+      }));
+    } else {
+      this.requestBody = [
+        {
+          id: this.selectedLeaveData.approvalHeader.id,
+          status: 'Processed',
+          approvedBy: this.empinfo.employeeId.toString(),
+        },
+      ];
+    }
     this.sharedModalService.openLoaderModal(
       'Processing Request, Please wait...'
     );
     this.http
       .putData(
-        `PendingApproval/process/${request.approvalHeader.id}`,
-        requestBody
+        `PendingApproval/multiprocess`, this.requestBody
       )
       .subscribe({
         next: (respone: any) => {
+          this.selectedProducts = [];
           this.modalService.dismissAll();
           this.sharedModalService.openSuccessModal(
             'Request Processed Successfully'
@@ -209,21 +277,35 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   handleReject(rejectForm: FormGroup): void {
     if (rejectForm.valid) {
       const formData = rejectForm.value;
-      const requestBody = {
-        status: 'Rejected',
-        comments: formData.comments,
-        approvedBy: this.empinfo.employeeId.toString(),
-      };
+         if (this.selectedProducts && this.selectedProducts.length > 0) {
+        let approvedBy = this.empinfo.employeeId.toString();
+        let comments = formData.comments;
+        this.requestBody = this.selectedProducts.map((item) => ({
+          id: item.approvalHeader.id,
+          status: 'Rejected',
+          comments: comments,
+          approvedBy: approvedBy,
+        }));
+      } else {
+        this.requestBody = [
+          {
+            id: this.selectedLeaveData.approvalHeader.id,
+            status: 'Rejected',
+            comments: formData.comments,
+            approvedBy: this.empinfo.employeeId.toString(),
+          },
+        ];
+      }
       this.sharedModalService.openLoaderModal(
         'Rejecting Request, Please wait...'
       );
       this.http
         .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
+          `PendingApproval/multiapprovereject`, this.requestBody
         )
         .subscribe({
           next: (response: any) => {
+             this.selectedProducts = [];
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Rejected Successfully'

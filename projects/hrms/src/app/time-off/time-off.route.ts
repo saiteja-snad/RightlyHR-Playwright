@@ -77,6 +77,7 @@ import { TeamLeaveSummaryComponent } from './leaves/team-leave-summary/team-leav
 import { CancelledComponent } from './leaves/cancelled/cancelled.component';
 import { OrgLeaveBalanceComponent } from './leaves/org-leave-balance/org-leave-balance.component';
 import { PermissionsGuard } from "../guards/permissions.guard";
+import { OnBeHalfOfCancelComponent } from './on-be-half-of/on-be-half-of-cancel/on-be-half-of-cancel.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
@@ -156,10 +157,11 @@ export default [
         path: 'waiting-for-approval',
         component: OnBeHalfOfWaitingForApprovalComponent, data: { permission: 'Waiting For Approval (Regularization).view' }
       },
-      { path: 'approved', component: OnBeHalfOfApprovalComponent , data: { permission: 'Approved (Regularization).view' }},
-      { path: 'processed', component: OnBeHalfOfProcessComponent, data: { permission: 'Processed (Regularization).view' } },
-      { path: 'rejected', component: OnBeHalfOfRejectComponent, data: { permission: 'Rejected (Regularization).view' } },
-      // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+      { path: 'approved', component: OnBeHalfOfApprovalComponent },
+      { path: 'processed', component: OnBeHalfOfProcessComponent },
+      { path: 'rejected', component: OnBeHalfOfRejectComponent },
+       { path: 'cancel', component: OnBeHalfOfCancelComponent },
+      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
   { path: 'attendance', component: AttendanceComponent, data: { permission: 'Attendance Module.view' } },

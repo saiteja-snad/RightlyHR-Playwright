@@ -1,0 +1,22 @@
+<div class="result-popup-content">
+    <div>
+        
+          @if(status.failed.length>0 &&status.success.length<=0){
+              <img src="icons\error-icon.png" alt="failure icon" class="confirmation-icon mb-4">
+              @for (item of status.failed; track $index) {
+               <p class="confirmation-text mb-4">{{item.comment}}</p>
+              }
+          }
+          <!-- @else if(status.success.length>0 && status.failed.length<=0){
+            <img src="icons\succes-icon.png" alt="failure icon" class="confirmation-icon mb-4">
+             @for (item of status.success; track $index) {
+               <p class="confirmation-text mb-4">{{item.comment}}</p>
+              }
+          } -->
+          @else if(status.success.length>0 && status.failed.length>0){
+           <img src="icons\succes-icon.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"><strong>Success:</strong> {{status.success.totalCount}} operations completed successfully</p>
+            <p class="confirmation-text mb-4"><strong>Failed:</strong> {{status.failed.totalCount}} operations could not be completed</p>
+          }
+        </div>
+</div>

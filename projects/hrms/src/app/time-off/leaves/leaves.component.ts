@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, effect, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,6 +16,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { LeavesApprovaltabsComponent } from "../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component";
+import { SignalsService } from '../../services/signals.service';
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,
@@ -88,8 +89,21 @@ export class LeavesComponent {
     private authService: AuthService,
     private fb: FormBuilder,
     public rbac: RbacService,
-    public router:Router
-  ) { }
+    public router:Router,
+    private signalService:SignalsService
+  ) { 
+     effect(() => {
+      if (this.signalService.timecountTriggerSignal()) {
+        // Call the function to fetch the pending approvals count
+        this.getCategoryDetails();
+
+        // Conditionally reset the signals based on their current state
+        if (this.signalService.timecountTriggerSignal()) {
+          this.signalService.timecountTriggerSignal.set(false);
+        }
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
@@ -1012,7 +1026,7 @@ export class LeavesComponent {
             setTimeout(() => {
               this.modalService.dismissAll();
               this.leaveForm.reset();
-              window.location.reload();
+             window.location.reload();
             }, 2000);
             this.isLoading = false;
           }

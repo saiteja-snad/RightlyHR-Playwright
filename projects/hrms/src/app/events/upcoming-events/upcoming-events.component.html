@@ -99,7 +99,7 @@
                   <p class="date mb-0">{{ event.eventDate | date: 'shortDate' }}  {{ event.eventDate  | date: 'shortTime' }}</p>
                 </div>
               </div>
-              @if(rbac.allowedToAccess('Events(Upcoming Events).delete') || rbac.allowedToAccess('Events(Upcoming Events).update')){
+              @if(rbac.allowedToAccess('Events(Upcoming Events).update') || rbac.allowedToAccess('Events(Upcoming Events).delete')){
               <div class="dropdown">
                 <a class="dropdown-click" data-bs-toggle="dropdown" aria-expanded="false">
                   <i class="bi bi-three-dots-vertical"></i>

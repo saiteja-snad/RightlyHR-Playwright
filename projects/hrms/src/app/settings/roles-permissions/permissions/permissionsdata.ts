@@ -742,7 +742,7 @@ export const permissionsData = [
 
    //Events sub tabs
    { fields: 'Events(Upcoming Events)', View: false, Update: false, Create: false, Delete: false },
-   { fields: 'Events(Past Events)', View: false, Update: false, Create: false, Delete: false },
+//    { fields: 'Events(Past Events)', View: false, Update: false, Create: false, Delete: false },
 
   //Settings Header Icon
    { fields: 'Settings Icon', View: false, Update: false, Create: false, Delete: false },

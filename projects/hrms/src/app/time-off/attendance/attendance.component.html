@@ -120,8 +120,8 @@
                                     }
                                     @if(rbac.allowedToAccess('Request Regularization.view')){
                                     @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) && (item.duration.totalDuration|tohours) <
-                                        shiftDetails.fullDayMinHrs && item.status!=='Weekend' && currentMonth==selectedMonth &&
-                                        this.rbac.allowedToAccess('Attendance Regularization Button.view') && item.employeeId==empdata.employeeId){ <a
+                                        shiftDetails.fullDayMinHrs && item.status!=='Weekend' && currentMonth==selectedMonth 
+                                        && item.employeeId==empdata.employeeId){ <a
                                         class="regulazie-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
                                         <u>Regularization</u></a>
                                         }

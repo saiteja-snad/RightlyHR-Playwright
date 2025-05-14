@@ -123,28 +123,44 @@ export class OrgLeaveBalanceComponent {
       }
     });
   }
-   Onclick($event: any) {
-    console.log($event);
+  //  Onclick($event: any) {
+  //   console.log($event);
     
-    if ($event.value) {
-       this.employeedata = this.employeeiddetails.find((e:any)=>e.employeeId == $event.value);
-       localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
-      this.http.triggerActionSignal();
-    }
-    else {
-      this.employeedata = {};
-      this.leaves = [];
-      this.compOff = [];
-      this.wfh = [];
-      this.permissions = [];
-      this.timeOffCount = 0;
-      this.compOffCount = 0;
-      this.wfhCount = 0;
-      this.permissionsCount = 0;
-      localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
-      this.http.triggerActionSignal();
-    }
+  //   if ($event.value) {
+  //      this.employeedata = this.employeeiddetails.find((e:any)=>e.employeeId == $event.value);
+  //      localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
+  //     this.http.triggerActionSignal();
+  //   }
+  //   else {
+  //     this.employeedata = {};
+  //     this.leaves = [];
+  //     this.compOff = [];
+  //     this.wfh = [];
+  //     this.permissions = [];
+  //     this.timeOffCount = 0;
+  //     this.compOffCount = 0;
+  //     this.wfhCount = 0;
+  //     this.permissionsCount = 0;
+  //     localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
+  //     this.http.triggerActionSignal();
+  //   }
+  // }
+  Onclick($event: any) {
+  if ($event.value) {
+    this.employeedata = this.employeeiddetails.find((e: any) => e.employeeId == $event.value);
+    localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
+    this.filteredTeamLeaveBalance = this.teamLeaveBalance.filter(
+      emp => emp.employeeBasicDetails.employeeId == $event.value
+    );
+  } else {
+    this.employeedata = {};
+    localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
+    this.filteredTeamLeaveBalance = this.teamLeaveBalance;
   }
+
+  this.http.triggerActionSignal();
+}
+
    onClickCategory(employee: any, category: any) {
     const employeeId = employee.employeeBasicDetails.employeeId;
     const categoryId = category.category?.id;
@@ -167,4 +183,22 @@ export class OrgLeaveBalanceComponent {
       }
     });
   }
+   filterTeamLeaveSummary() {
+    const term = this.searchText.trim().toLowerCase();
+    if (!term) {
+      this.filteredTeamLeaveBalance = this.teamLeaveBalance;
+      return;
+    }
+    this.filteredTeamLeaveBalance = this.teamLeaveBalance.filter(item => {
+      const name = item.employeeBasicDetails.employeeName?.toLowerCase() || '';
+      const fusionId = item.employeeBasicDetails.snadEmployeeId?.toLowerCase() || '';
+      return name.includes(term) || fusionId.includes(term);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+  
 }

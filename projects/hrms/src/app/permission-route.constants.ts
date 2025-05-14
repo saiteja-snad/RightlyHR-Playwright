@@ -59,9 +59,9 @@ export const MY_INFO_PERSONAL_ROUTES = [
   
   export const SETTINGS_ROLES_TABS: SettingsRolesTab[] = [
    
-      { route: '/settings/roles-permissions/roles', permission: 'Role Tab.view' } ,
+      { route: '/settings/roles-permissions/roles'} ,
       { route: '/settings/roles-permissions/permissions'},
-      { route: '/settings/roles-permissions/role-assignee', permission: 'Assignee Tab.view' } ,
+      { route: '/settings/roles-permissions/role-assignee'} ,
    
   ]
   

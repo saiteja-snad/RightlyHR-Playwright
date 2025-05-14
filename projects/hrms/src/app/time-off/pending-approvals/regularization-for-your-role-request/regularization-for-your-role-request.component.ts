@@ -191,6 +191,7 @@ export class RegularizationForYourRoleRequestComponent
           status: 'Approved',
           comments: comments,
           approvedBy: approvedBy,
+             currentapprovalStage:item.approvalHeader.currentapprovalStage
         }));
       } else {
         this.requestBody = [
@@ -199,6 +200,7 @@ export class RegularizationForYourRoleRequestComponent
             status: 'Approved',
             comments: formData.comments,
             approvedBy: this.empinfo.employeeId.toString(),
+            currentapprovalStage:this.selectedLeaveData.approvalHeader.currentapprovalStage
           },
         ];
       }
@@ -239,6 +241,7 @@ export class RegularizationForYourRoleRequestComponent
         id: item.approvalHeader.id,
         status: 'Processed',
         approvedBy: approvedBy,
+           currentapprovalStage:item.approvalHeader.currentapprovalStage
       }));
     } else {
       this.requestBody = [
@@ -246,6 +249,7 @@ export class RegularizationForYourRoleRequestComponent
           id: this.selectedLeaveData.approvalHeader.id,
           status: 'Processed',
           approvedBy: this.empinfo.employeeId.toString(),
+          currentapprovalStage:this.selectedLeaveData.approvalHeader.currentapprovalStage
         },
       ];
     }
@@ -287,6 +291,7 @@ export class RegularizationForYourRoleRequestComponent
           status: 'Rejected',
           comments: comments,
           approvedBy: approvedBy,
+             currentapprovalStage:item.approvalHeader.currentapprovalStage
         }));
       } else {
         this.requestBody = [
@@ -295,6 +300,7 @@ export class RegularizationForYourRoleRequestComponent
             status: 'Rejected',
             comments: formData.comments,
             approvedBy: this.empinfo.employeeId.toString(),
+            currentapprovalStage:this.selectedLeaveData.approvalHeader.currentapprovalStage
           },
         ];
       }

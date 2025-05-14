@@ -175,12 +175,14 @@ bulkProcess(){
          id: item.approvalHeader.id,
         status: 'Processed',
         approvedBy: approvedBy,
+           currentapprovalStage:item.approvalHeader.currentapprovalStage
         }));
       }else{
          this.requestBody =[ {
         id: this.selectedLeaveData.approvalHeader.id,
         status: 'Processed',
         approvedBy: this.empinfo.employeeId.toString(),
+        currentapprovalStage:this.selectedLeaveData.approvalHeader.currentapprovalStage
       }];
       }
     this.sharedModalService.openLoaderModal(
@@ -224,6 +226,7 @@ bulkProcess(){
         status: 'Approved',
         comments: comments,
         approvedBy: approvedBy,
+           currentapprovalStage:item.approvalHeader.currentapprovalStage
         }));
       }else{
          this.requestBody = [{
@@ -231,6 +234,7 @@ bulkProcess(){
         status: 'Approved',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
+        currentapprovalStage:this.selectedLeaveData.approvalHeader.currentapprovalStage
       }];
       }
       this.sharedModalService.openLoaderModal(
@@ -277,6 +281,7 @@ bulkProcess(){
         status: 'Rejected',
         comments: comments,
         approvedBy: approvedBy,
+           currentapprovalStage:item.approvalHeader.currentapprovalStage
         }));
       }else{
          this.requestBody = [{
@@ -284,6 +289,7 @@ bulkProcess(){
          status: 'Rejected',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
+        currentapprovalStage:this.selectedLeaveData.approvalHeader.currentapprovalStage
       }];
       }
       this.sharedModalService.openLoaderModal(

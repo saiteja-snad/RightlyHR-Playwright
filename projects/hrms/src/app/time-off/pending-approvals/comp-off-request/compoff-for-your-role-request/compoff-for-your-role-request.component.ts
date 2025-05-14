@@ -184,12 +184,14 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           id: item.approvalHeader.id,
          status: 'Processed',
          approvedBy: approvedBy,
+            currentapprovalStage:item.approvalHeader.currentapprovalStage
          }));
        }else{
           this.requestBody =[ {
          id: this.selectedLeaveData.approvalHeader.id,
          status: 'Processed',
          approvedBy: this.empinfo.employeeId.toString(),
+         currentapprovalStage:this.selectedLeaveData.approvalHeader.currentapprovalStage
        }];
        }
      this.sharedModalService.openLoaderModal(
@@ -233,6 +235,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
          status: 'Approved',
          comments: comments,
          approvedBy: approvedBy,
+            currentapprovalStage:item.approvalHeader.currentapprovalStage
          }));
        }else{
           this.requestBody = [{
@@ -240,6 +243,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
          status: 'Approved',
          comments: formData.comments,
          approvedBy: this.empinfo.employeeId.toString(),
+         currentapprovalStage:this.selectedLeaveData.approvalHeader.currentapprovalStage
        }];
        }
        this.sharedModalService.openLoaderModal(
@@ -286,6 +290,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
          status: 'Rejected',
          comments: comments,
          approvedBy: approvedBy,
+            currentapprovalStage:item.approvalHeader.currentapprovalStage
          }));
        }else{
           this.requestBody = [{
@@ -293,6 +298,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           status: 'Rejected',
          comments: formData.comments,
          approvedBy: this.empinfo.employeeId.toString(),
+         currentapprovalStage:this.selectedLeaveData.approvalHeader.currentapprovalStage
        }];
        }
        this.sharedModalService.openLoaderModal(

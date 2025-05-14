@@ -232,10 +232,10 @@ export const permissionsData = [
     { fields: 'Processed (Time Off)', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Rejected (Time Off)', View: false, Update: false, Create: false, Delete: false },
     { fields: 'Request Leave Button', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Cancelled(Time Off)', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Team Leave Balance(Time Off)', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Team Leave Balance Summary(Time Off)', View: false, Update: false, Create: false, Delete: false },
-    { fields: 'Org Leave Balance(Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Cancelled (Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Team Leave Balance (Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Team Leave Balance Summary (Time Off)', View: false, Update: false, Create: false, Delete: false },
+    { fields: 'Org Leave Balance (Time Off)', View: false, Update: false, Create: false, Delete: false },
     { fields:'Org Leave Balance', View: false, Update: false, Create: false, Delete: false},
     
     //Work From Home Sub Tabs Section

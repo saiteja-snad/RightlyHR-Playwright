@@ -145,4 +145,26 @@ export class OrgLeaveBalanceComponent {
       this.http.triggerActionSignal();
     }
   }
+   onClickCategory(employee: any, category: any) {
+    const employeeId = employee.employeeBasicDetails.employeeId;
+    const categoryId = category.category?.id;
+    const yearToFilter = this.selectedYear || new Date().getFullYear();
+    const url = `Timeoff?EmployeeId=${employeeId}`;
+
+    this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (res: any) => {
+        console.log('Leave data:', res);
+        const filteredData = (res as any[]).filter(item => {
+          const leaveYear = new Date(item.startdate).getFullYear();
+          return item.categoryId === categoryId && leaveYear === yearToFilter;
+        });
+        this.popupData = filteredData;
+        this.popupType = category.category?.name;
+        this.modal.open(this.leavesModal, { centered: true, backdrop: 'static', size: 'lg' });
+      },
+      error: (err) => {
+        console.error('Error fetching leave data:', err);
+      }
+    });
+  }
 }

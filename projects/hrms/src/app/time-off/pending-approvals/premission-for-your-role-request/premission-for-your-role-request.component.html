@@ -42,7 +42,7 @@
                 </tr>
             </ng-template>
             <ng-template #body let-leave>
-                @if (rbac.allowedToAccess('Permissions.view')) {
+                @if (rbac.allowedToAccess('Permissions Tab.view')) {
                 @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
                 <!-- @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
                 leave.approvalHeader.id){ -->

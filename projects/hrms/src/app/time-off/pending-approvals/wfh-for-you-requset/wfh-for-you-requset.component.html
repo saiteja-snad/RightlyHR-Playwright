@@ -41,7 +41,7 @@
                     </tr>
                 </ng-template>
                 <ng-template #body let-leave>
-                      @if (rbac.allowedToAccess('Workfromhome Tab.view')) {
+                      @if (rbac.allowedToAccess('WFH Tab.view')) {
                 @if ((((leaves | async) ?? []) | wfhsearchfilter: searchValue).length > 0) {
                 <!-- @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ; track
                 leave.approvalHeader.id){ -->

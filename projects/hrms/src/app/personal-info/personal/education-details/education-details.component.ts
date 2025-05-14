@@ -13,6 +13,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-education-details',
@@ -43,7 +44,8 @@ export class EducationDetailsComponent implements OnInit,OnDestroy{
   spinnerLoader=false
   loading=false
   dateofbirth: any;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,   public formValidation: FormValidationService,) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, 
+      public formValidation: FormValidationService,public rbac: RbacService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();

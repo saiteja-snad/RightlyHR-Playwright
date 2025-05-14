@@ -17,6 +17,7 @@ import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-wfh-report',
@@ -77,6 +78,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
+    public rbac: RbacService
   ) {}
 
   ngOnInit(): void {

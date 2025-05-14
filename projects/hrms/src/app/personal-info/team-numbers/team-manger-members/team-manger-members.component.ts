@@ -14,6 +14,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 import { Select } from 'primeng/select';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-team-manger-members',
@@ -41,7 +42,7 @@ export class TeamMangerMembersComponent {
   selectedemployeid: any
   constructor(
     private http: HttpService,
-    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');

@@ -20,7 +20,9 @@
                     <th>Allocated Date</th>
                     <th class="text-center">View Desk</th>
                     <th>Desk Status</th>
-                    <th class="text-center">Action(s)</th>
+                    @if(rbac.allowedToAccess('For You (Desk Requests).update') || rbac.allowedToAccess('For You (Desk Requests).delete')) {
+                    <th class="text-center">Action(S)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -51,16 +53,20 @@
                         </div>
                     </td>
                     <td>{{exp.entity?.approvalStatus}}</td>
+                    @if(rbac.allowedToAccess('For You (Desk Requests).update') || rbac.allowedToAccess('For You (Desk Requests).delete')) {
                     <td class="text-center">
                         <div class="dropdown">
                             <a data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
+                                 @if(rbac.allowedToAccess('For You (Desk Requests).update')) {
                                 <li
                                     *ngIf="exp.approvalHeader.currentapprovalStage !== exp.approvalHeader.finalapprovalStage">
                                     <a class="dropdown-item" type="button">Approve</a>
                                 </li>
+                            }
+                            @if(rbac.allowedToAccess('For You (Desk Requests).update')) {
                                 <li
                                     *ngIf="exp.approvalHeader?.currentapprovalStage === exp?.approvalHeader?.finalapprovalStage">
                                     <a class="dropdown-item"
@@ -68,15 +74,19 @@
                                         Process
                                     </a>
                                 </li>
+                            }
+                            @if(rbac.allowedToAccess('For You (Desk Requests).delete')) {
                                 <li>
                                     <a class="dropdown-item" type="button"
                                         (click)="selectedexpenesid=exp.approvalHeader.id;openModal(rejectmodal)">
                                         Reject
                                     </a>
                                 </li>
+                            }
                             </ul>
                         </div>
                     </td>
+                }
                 </tr>
             </ng-container>
              

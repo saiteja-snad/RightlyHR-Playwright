@@ -80,9 +80,11 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllAssesorConfigurationdata(this.page, this.pageSize);
-    this.getAllasessors(),
-    this.getReviewCycledata(),
-    this.getAllActiveEmpList()
+    this.getAllasessors();
+    this.getReviewCycledata();
+    this.getAllActiveEmpList();
+    const today = new Date();
+    this.currentDate = this.formatDate(today);
   }
 
   openAdd() {
@@ -217,8 +219,11 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
     this.modalService.open(this.updateAssessor, { size: 'xl', centered: true, backdrop: 'static' });
   }
 
-  formatDate(date: any) {
-    return date?.split('T')[0];
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
   }
 
   getAllasessors() {
@@ -421,6 +426,15 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
           },
         });
     }
+  }
+
+  showAssessorActionDropdown(item: any): boolean {
+    return (
+      (this.rbac.allowedToAccess('Assessor Update(Status - Created).view') && item?.reviewCycleHeaderStatus === 'Created') ||
+      (this.rbac.allowedToAccess('Assessor Delete(Status - Created).view') && item?.reviewCycleHeaderStatus === 'Created') ||
+      (this.rbac.allowedToAccess('Assessor Update(Status - Initiated).view') && item?.reviewCycleHeaderStatus === 'Initiated') ||
+      (this.rbac.allowedToAccess('Assessor Update(Status - Review On Hold).view') && item?.reviewCycleHeaderStatus === 'Review on Hold')
+    );
   }
 
   ngOnDestroy(): void {

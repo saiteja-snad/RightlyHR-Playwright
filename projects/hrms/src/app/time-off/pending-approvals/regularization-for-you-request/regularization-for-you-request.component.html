@@ -20,7 +20,9 @@
                     <th>Regularization Type</th>
                     <th>Reason</th>
                     <th>Approver Comments</th>
+                    @if(rbac.allowedToAccess('For You (Regularization).update') || rbac.allowedToAccess('For You (Regularization).delete')) {
                     <th>Action(s)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -46,43 +48,50 @@
                     </td>
                     <td>
                         <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
-                            <a type="button" (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
+                            <a type="button"
+                                (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
                                 <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </a>
                         </div>
-                    
-                    
+
+
                         <ng-template #permissionComments>-</ng-template>
                     </td>
+                    @if(rbac.allowedToAccess('For You (Regularization).update') || rbac.allowedToAccess('For You (Regularization).delete')) {
                     <td>
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(rbac.allowedToAccess('For You (Regularization).update')) {
                                 @if( leave.approvalHeader.currentapprovalStage !=
                                 leave.approvalHeader.finalapprovalStage){
-                                <li (click)="openApproveModal(approval,leave)"
-                                    *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                <li (click)="openApproveModal(approval,leave)">
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
                                         translate}}</a>
                                 </li>
                                 }
+                                }
+                                @if(rbac.allowedToAccess('For You (Regularization).update')) {
                                 @if( leave.approvalHeader.currentapprovalStage ==
                                 leave.approvalHeader.finalapprovalStage){
-                                <li (click)="handleProcess(leave)" *ngIf="rbac.allowedToAccess('Permissions.update')">
+                                <li (click)="handleProcess(leave)">
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
                                         translate}}</a>
                                 </li>
                                 }
-                                <li (click)="openRejectModal(rejectmodal,leave)"
-                                    *ngIf="rbac.allowedToAccess('Permissions.delete')">
+                                }
+                                @if(rbac.allowedToAccess('For You (Regularization).delete')) {
+                                <li (click)="openRejectModal(rejectmodal,leave)">
                                     <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
                                         translate}}</a>
                                 </li>
+                                }
                             </ul>
                         </div>
                     </td>
+                    }
                 </tr>
                 }
                 }
@@ -95,9 +104,9 @@
                 }
             </tbody>
         </table>
-    }@else{
+        }@else{
         <app-data-loader-content />
-    }
+        }
     </div>
 </div>
 
@@ -110,19 +119,24 @@
         </div>
         <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
             <div class="custom-main-popup-content">
-                <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span class="text-danger">*</span></label>
+                <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
+                        class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
                     formControlName="comments" maxlength="250"></textarea>
                 <!-- Character counter -->
                 <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
-                <div class="error-msg" *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
+                <div class="error-msg"
+                    *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
                     <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
-                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters.</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250
+                        characters.</div>
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'| translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'| translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'|
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'|
+                    translate}}</button>
             </div>
         </form>
     </div>
@@ -151,8 +165,10 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close' | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' | translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close' |
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
+                    translate}}</button>
             </div>
         </form>
     </div>
@@ -167,7 +183,8 @@
                 <p class="popup-heading mb-0">{{'Approver Comments' | translate}}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
 

@@ -10,6 +10,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-inactive-desk-list',
@@ -48,6 +49,7 @@ export class InactiveDeskListComponent {
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private readonly router: Router,
+    public rbac: RbacService,
 
     public conformationPopup: OpenModalService,
 

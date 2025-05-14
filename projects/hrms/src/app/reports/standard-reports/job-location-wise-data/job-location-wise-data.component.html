@@ -7,6 +7,7 @@
             <form autocomplete="off" [formGroup]="locationReportsForm"  (ngSubmit)="onSubmit(locationReportsForm)">
                 <div class="d-flex align-items-center gap-3">
                     <!-- Date of Joining -->
+                    @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view')){
                     <div class="d-flex align-items-center gap-2">
                         <label class="custom-label text-nowrap">{{"Date of Joining" | translate}}</label>
                         <div>
@@ -42,8 +43,9 @@
                             </p-select>
                         </div>
                     </div>
-        
+                }
                     <div class="d-flex gap-2">
+                        @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view')){
                         <button type="submit" class="custom-btn btn-secondary"
                             [disabled]="!locationReportsForm.get('dateOfJoining')?.value && !locationReportsForm.get('location')?.value && !locationReportsForm.get('subLocation')?.value">
                             @if(spinnerLoader1){
@@ -53,6 +55,8 @@
                             <span>{{'Generate'}}</span>
                             }
                         </button>
+                    }
+                    @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view') && rbac.allowedToAccess('Job Location Wise Data - Export.view')){
                         <button type="button" class="custom-btn btn-primary" [disabled]="locationReportList.length === 0 || disableBtn"
                             (click)="onClickJobLocationExport() ">
                             @if(spinnerLoader){
@@ -62,6 +66,7 @@
                             <span>{{'Export'}}</span>
                             }
                         </button>
+                    }
                     </div>
                 </div>
             </form>

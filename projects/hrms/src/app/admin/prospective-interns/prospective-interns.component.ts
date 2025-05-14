@@ -13,6 +13,7 @@ import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { IServe } from '../../Interfaces/letters-model';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-prospective-interns',
   imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
@@ -37,7 +38,8 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
   filteredTabs: any[] = [];
   loader = false;
 
-  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, public rbac: RbacService) { }
+  constructor(private router: Router, private http: HttpService, 
+    private modalService: NgbModal, public rbac: RbacService,private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empdata();
@@ -78,9 +80,21 @@ export class ProspectiveInternsComponent implements OnInit, OnDestroy {
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-    this.router.navigate(['/personalinfo']);
+    // this.router.navigate(['/personalinfo']);
+     this.goToAccessibleRoute('/personalinfo');
+  }
+ goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    }else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
+  }
   filterByDuration(duration: string) {
     this.serveDetails = this.serveDetails.filter((item: any) => item.servingPeriodType === 'Trainee Duration Period');
   }

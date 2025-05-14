@@ -6,6 +6,7 @@ import { TabsModule } from 'primeng/tabs';
 import { Ilpid } from '../../../Interfaces/timoff-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-on-be-half-of-approval-tabs',
@@ -25,16 +26,18 @@ export class OnBeHalfOfApprovalTabsComponent {
   approvedCount: any;
   rejectedCount: any;
   navLinks: any[] = [
-    { label: 'Waiting For Approval', route: 'waiting-for-approval', },
-    { label: 'Approved', route: 'approved', },
-    { label: 'Processed', route: 'processed', },
-    { label: 'Rejected', route: 'rejected', }
+    { label: 'Waiting For Approval', route: 'waiting-for-approval',permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' } },
+    { label: 'Approved', route: 'approved',permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
+    { label: 'Processed', route: 'processed',permission: { feature: 'Processed (On Behalf Of)', action: 'view' } },
+    { label: 'Rejected', route: 'rejected',permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } }
   ];
+  filteredTabs: any[] = [];
 
   constructor(
     public readonly router: Router, 
     private http: HttpService, 
     private authService: AuthService,
+    private rbac: RbacService
 
   ) { 
 
@@ -59,7 +62,7 @@ export class OnBeHalfOfApprovalTabsComponent {
     this.loggedinuser = this.authService.getToken();
     // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
    
-   
+    this.filterTabsByRbac()
   }
 
   getDataByLPID() {
@@ -74,16 +77,28 @@ export class OnBeHalfOfApprovalTabsComponent {
           const processed = response.filter(item => item.status === 'Processed');
           // Set counts
           this.navLinks = [
-            { label: 'Waiting For Approval', route: 'waiting-for-approval', count: waiting.length },
-            { label: 'Approved', route: 'approved', count: approved.length },
-            { label: 'Processed', route: 'processed', count: processed.length },
-            { label: 'Rejected', route: 'rejected', count: rejected.length }
+            { label: 'Waiting For Approval', route: 'waiting-for-approval', count: waiting.length ,permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' }},
+            { label: 'Approved', route: 'approved', count: approved.length,permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
+            { label: 'Processed', route: 'processed', count: processed.length,permission: { feature: 'Processed (On Behalf Of)', action: 'view' } },
+            { label: 'Rejected', route: 'rejected', count: rejected.length,permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } }
           ];
+          this.filterTabsByRbac()
         } else {
           console.error("Invalid response format");
         }
       },
       error: (reason: any) => console.log(reason)
+    });
+  }
+
+
+
+  filterTabsByRbac(): void {
+    this.filteredTabs = this.navLinks.filter(tab => {
+      if (!tab.permission) return true;
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
     });
   }
 }

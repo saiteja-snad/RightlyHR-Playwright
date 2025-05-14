@@ -11,6 +11,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
@@ -83,6 +84,8 @@ export class AvailableDeskListComponent {
     private readonly modalService: NgbModal,
     private readonly router: Router,
     public conformationPopup: OpenModalService,
+    public rbac: RbacService,
+
    public formValidation: FormValidationService,
     config: NgbModalConfig) {
     config.backdrop = 'static';

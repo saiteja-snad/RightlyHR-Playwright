@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { MsalService } from '@azure/msal-angular';
+import { AccessNavigationService } from '../../services/access-navigation.service';
 
 
 @Component({
@@ -20,7 +21,8 @@ export class UserValidationComponent {
   constructor(
     private _msalService: MsalService,
     private router: Router,
-    private http: HttpService
+    private http: HttpService,
+    private accessNav: AccessNavigationService
   ) { }
 
   async ngOnInit() {
@@ -63,17 +65,35 @@ export class UserValidationComponent {
             } else if (response.roles.includes('ADMIN') || response.roles.includes('HR MANAGER')) {
               this.router.navigate(['/admin/dashboard']);
             } else {
-              this.router.navigate(['/myinfo']);
+              const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
+              if (route) {
+                this.router.navigate([route]);
+              }
+              else {
+                this.router.navigate(['/unauthorized']);
+              }
             }
           }, 2000);
 
         } else {
-          this.router.navigate(['/myinfo']);
+          const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
+              if (route) {
+                this.router.navigate([route]);
+              }
+              else {
+                this.router.navigate(['/unauthorized']);
+              }
         }
       },
       error: (err) => {
         console.log(err);
-        this.router.navigate(['/myinfo']);
+        const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
+              if (route) {
+                this.router.navigate([route]);
+              }
+              else {
+                this.router.navigate(['/unauthorized']);
+              }
       },
     });
   }

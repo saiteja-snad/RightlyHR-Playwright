@@ -12,6 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { IDepartment } from '../../Interfaces/letters-model';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { RbacService } from '../../services/rbac.service';
 
 
 @Component({
@@ -60,7 +61,8 @@ export class MyTicketsComponent {
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private fb: FormBuilder,
-    private confirmation: OpenModalService
+    private confirmation: OpenModalService,
+    public rbac: RbacService
   ) {}
 
   

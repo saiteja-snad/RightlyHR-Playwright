@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-waiting-for-approval-desk-list',
@@ -44,6 +45,7 @@ export class WaitingForApprovalDeskListComponent {
     private readonly http: HttpService,
     private readonly router: Router,
     public conformationPopup: OpenModalService,
+    public rbac: RbacService
    ) {
   
   }

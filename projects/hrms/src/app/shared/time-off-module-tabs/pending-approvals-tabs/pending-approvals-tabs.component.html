@@ -1,14 +1,14 @@
 <div class="component-side-nav-tabs-container py-3">
   <ul class="nav flex-column">
-    <li class="nav-item" *ngFor="let link of navLinks">
-      <a class="nav-link d-flex justify-content-between align-items-center" [routerLink]="[link.route]"
-        routerLinkActive="active-nav-link">
+    <li class="nav-item" *ngFor="let tab of navLinks">
+      <a class="nav-link d-flex justify-content-between align-items-center" 
+        (click)="navigateToAccessedRoute(tab.route)" [class.active-nav-link]="isActiveRoute(tab.route)" class="nav-link">
         <span>
-          {{ link.label }}
-          @if(link.count && link.count > 0) {
-          <span>({{ link.count }})</span>
+          {{ tab.label }}
+          @if(tab.count && tab.count > 0) {
+          <span>({{ tab.count }})</span>
           }
-          @else if(link.label=='No Due Clearance Requests'){
+          @else if(tab.label=='No Due Clearance Requests'){
           <span>({{nodue_Request_data.length}})</span>
           }
           @else {

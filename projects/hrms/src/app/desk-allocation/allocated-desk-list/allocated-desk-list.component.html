@@ -31,7 +31,10 @@
   
               <th>Desk Status</th>
               <th>Approver</th>
+              @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') || 
+                rbac.allowedToAccess('Allocated View Desk Details.view')){
               <th class="text-center">Action(s)</th>
+                }
   
             </tr>
           </thead>
@@ -47,7 +50,8 @@
   
                 <td>{{ desk.deskStatus }}</td>
                 <td>{{desk.allocatedToDetails?.approverIdName || 'N/A' }}</td>
-  
+                @if(rbac.allowedToAccess('Allocated Reallocate desk.view') || rbac.allowedToAccess('Allocated Release Desk.view') || 
+                rbac.allowedToAccess('Allocated View Desk Details.view')){
                 <td class="text-center">
                   <div class="dropdown">
                     <a data-bs-toggle="dropdown" aria-expanded="false">
@@ -56,28 +60,33 @@
   
                     <ul class="dropdown-menu custom-dropdown-menu">
                 
-                
+                      @if(rbac.allowedToAccess('Allocated Reallocate desk.view')){
                         <li>
                           <a class="dropdown-item"
                             (click)="openModal(reallcatedeskmodal);viewdata(desk);viewasetsdata(desk);selectedAsset=desk">
                             Reallocate desk
                           </a>
                         </li>
+                        }
+                        @if(rbac.allowedToAccess('Allocated Release Desk.view')){
                         <li>
                           <a class="dropdown-item" (click)="openModal(relasedesk); viewdata(desk); selectedAsset=desk">
                             Release Desk
                           </a>
                         </li>
-  
+                      }
+                      @if(rbac.allowedToAccess('Allocated View Desk Details.view')){
                       <li>
                         <a class="dropdown-item" (click)="viewdata(desk);navigateToAsset(desk.deskId)">
                           View Desk Details
                         </a>
                       </li>
+                    }
   
                     </ul>
                   </div>
                 </td>
+              }
               </tr>
             </ng-container>
             <!-- No Data Found Template -->

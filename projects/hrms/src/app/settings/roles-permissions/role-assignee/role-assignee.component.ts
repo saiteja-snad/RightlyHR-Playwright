@@ -75,10 +75,10 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
   }
 
   getUsers() {
-    const payload = {
-      status: 'Active'
-    };
-    this.http.getData(`Employeedata/getAll?status=${payload.status}`).pipe(takeUntil(this.destroy$)).subscribe({
+    // const payload = {
+    //   status: 'Active'
+    // };
+    this.http.getData(`Employeedata/ActiveEmployees`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
         this.usersList = res.map((employee: any) => {
           return {
@@ -139,10 +139,10 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     };
     this.http.postdata('FusionRole/roleAssignees', payload).subscribe({
       next: (data: any) => {
-        this.modal.openSuccessModal('Role Assigned Successfully');
+        this.modal.openSuccessModal('Assignee Added Successfully');
       },
       error: (err) => {
-        this.modal.openErrorModal('Role Assignment Failed');
+        this.modal.openErrorModal('Assignee Assignment Failed');
       },
       complete: () => {
         this.createAssigneeForm.reset();
@@ -164,11 +164,11 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     this.http.postdata('FusionUser/deleteFusionUserRolesByEmployeeId&RoleId', payload).subscribe({
       next: (res: any) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Role Removed Successfully');
+        this.modal.openSuccessModal('Assignee Removed Successfully');
       },
       error: (err: any) => {
         this.modalService.dismissAll();
-        this.modal.openErrorModal('Role Removal Failed');
+        this.modal.openErrorModal('Assignee Removal Failed');
       },
       complete: () => {
         this.getUsersByRoleId(this.roleId);

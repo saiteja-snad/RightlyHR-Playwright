@@ -24,10 +24,12 @@
         <div class="custom-setting-right-content p-3">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <div><span class="component-sub-header">Folders</span></div>
+                @if(rbac.allowedToAccess('Document Tab.create')){
                 @if(isMainfolderTouched){
                 <div class="custom-add-btn" (click)="openmodel(addSubDirModal)">
                     <i class="bi bi-plus plus-icon me-1"></i>Add Sub-Folders
                 </div>
+                }
                 }
             </div>
 
@@ -38,7 +40,9 @@
                     <thead>
                         <th>FILE NAME</th>
                         <th>CREATED DATE</th>
+                        @if(rbac.allowedToAccess('Document Tab.delete')){
                         <th>ACTION</th>
+                        }
                     </thead>
                     <tbody>
                         @if(selectedFolder?.length && selectedFolder.length > 0){
@@ -52,8 +56,10 @@
                                 </div>
                             </td>
                             <td>{{ subFolder.createdOn | dateformat }}</td>
+                            @if(rbac.allowedToAccess('Document Tab.delete')){
                             <td><button class="custom-btn btn-primary" (click)="openmodel(deletefile);datafile=subFolder">Delete</button>
                             </td>
+                            }
                             }
                         </tr>
                         }

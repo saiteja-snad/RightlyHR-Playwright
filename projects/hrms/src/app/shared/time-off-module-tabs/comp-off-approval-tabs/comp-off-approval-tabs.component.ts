@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-comp-off-approval-tabs',
@@ -21,7 +22,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(public readonly router: Router, private http: HttpService) {
+  constructor(public readonly router: Router, private http: HttpService,public rbac: RbacService) {
     effect(() =>{
         if (this.http.tirggerCountSignal().compOff) {
           this.getCompOffRequest();
@@ -71,8 +72,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
           this.compOff = []; // Set to empty array on error
         },
       });
-  }
-
+  } 
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

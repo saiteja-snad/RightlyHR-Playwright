@@ -6,6 +6,7 @@ import { HttpService } from '../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RbacService } from '../../services/rbac.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { WfhComponent } from './wfh/wfh.component';
 import { PermissionsComponent } from "./permissions/permissions.component";
@@ -46,7 +47,7 @@ export class OnbehalfOfApprovalsComponent {
   permissionsCount = 0;
   employeeiddetails = [] as any;
 
-  constructor(private http: HttpService, private authService: AuthService) {
+  constructor(private http: HttpService, private authService: AuthService,public rbac: RbacService) {
     // Signal reaction for employee switch
     effect(() => {
       if (this.http.trigger()) {   

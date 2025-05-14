@@ -18,6 +18,7 @@ import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-employee-master-data',
   imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent, 
@@ -72,7 +73,8 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService, 
     private fb: FormBuilder, 
     private http: HttpService,
-    private modal: OpenModalService
+    private modal: OpenModalService,
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {

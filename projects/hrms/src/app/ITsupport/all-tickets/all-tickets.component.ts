@@ -14,6 +14,7 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { Assignee, Ticket } from '../../Interfaces/hierachy.modal';
 import { ItsupportPipe } from "../../Pipes/itsupport.pipe";
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-all-tickets',
@@ -49,6 +50,7 @@ export class AllTicketsComponent {
     private readonly modalService: NgbModal,
     private confirmation: OpenModalService,
     private fb: FormBuilder,
+    public rbac: RbacService
   ) { }
 
   ngOnInit() {

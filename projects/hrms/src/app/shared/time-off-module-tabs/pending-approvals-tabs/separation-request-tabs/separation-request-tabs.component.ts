@@ -8,7 +8,7 @@ import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
 import { SignalsService } from '../../../../services/signals.service';
-
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
   selector: 'app-separation-request-tabs',
   imports: [CommonModule,RouterModule,TabsModule],
@@ -23,10 +23,15 @@ export class SeparationRequestTabsComponent {
   navTabs = computed(() => {
     const moduleId=environment.SeparationrequestmoduleId
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
-    return [
-      { label: 'For You ', link: 'separation-for-you', count:data?.forYou ?? 0,permission: { feature: 'For You (Seperation Request)', action: 'view' } },
-      { label: 'For Your Role', link: 'separation-for-role', count:data?.forYourRole ?? 0,permission: { feature: 'For Role (Seperation Request)', action: 'view' }}
+    const allTabs =  [
+      { label: 'For You ', link: 'separation-for-you', count:data?.forYou ?? 0,permission: { feature: 'For You (Separation Requests)', action: 'view' } },
+      { label: 'For Your Role', link: 'separation-for-role', count:data?.forYourRole ?? 0,permission: { feature: 'For Role (Separation Requests)', action: 'view' }}
     ];
+     return allTabs.filter(
+    tab =>
+      tab.permission &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+  );
   });
 
   ngOnInit(): void {
@@ -34,7 +39,7 @@ export class SeparationRequestTabsComponent {
     this.getAllSeparationPendingApprovalsCount();
   }
 
-  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService) {
+  constructor(public readonly router: Router, private http: HttpService,private signalService:SignalsService,private rbac: RbacService) {
     effect(() => {
       if (this.signalService.separationForYouTriggerSignal() || this.signalService.separationForRoleTriggerSignal()) {
         // Call the function to fetch the pending approvals count

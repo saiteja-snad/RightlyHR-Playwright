@@ -7,7 +7,7 @@ import { environment } from '../../../../../environments/environment';
 import { IJob } from '../../../../Interfaces/letters-model';
 import { ApprovalStatusCount } from '../../../../Interfaces/timoff-model';
 import { HttpService } from '../../../../services/http.service';
-
+import { RbacService } from '../../../../services/rbac.service';
 @Component({
   selector: 'app-desk-request-tabs',
   imports: [TabsModule, RouterModule, CommonModule],
@@ -23,10 +23,16 @@ export class DeskRequestTabsComponent {
   navTabs = computed(() => {
     const moduleId = environment.deskAllocationModuleId;
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
-    return [
+   const allTabs =  [
       { label: 'For You ', link: 'for-you', count: data?.forYou ?? 0,permission: { feature: 'For You (Desk Requests)', action: 'view' } },
       { label: 'For Your Role', link: 'for-your-role', count: data?.forYourRole ?? 0,permission: { feature: 'For Role (Desk Requests)', action: 'view' } }
     ];
+
+     return allTabs.filter(
+    tab =>
+      tab.permission &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+  );
   });
 
   ngOnInit(): void {
@@ -34,7 +40,7 @@ export class DeskRequestTabsComponent {
     this.getAllDeskPendingApprovalsCount();
   }
 
-  constructor(public readonly router: Router, private http: HttpService,) {
+  constructor(public readonly router: Router, private http: HttpService,private rbac: RbacService) {
     effect(() => {
       if (this.http.tirggerPendingApprovalCountSignal().separation) {
         this.getAllDeskPendingApprovalsCount();

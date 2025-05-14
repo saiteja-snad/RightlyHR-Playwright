@@ -23,7 +23,7 @@
                     <th>{{'Early Relieving Reason' | translate}}</th>
                     <th>{{'Request Type' | translate}}</th>
                     <th>{{'Approver History' | translate}}</th>
-                    @if(rbac.allowedToAccess('For You (Seperation Request).update') || rbac.allowedToAccess('For You (Seperation Request).delete')) {
+                    @if(rbac.allowedToAccess('For You (Separation Requests).update') || rbac.allowedToAccess('For You (Separation Requests).delete')) {
                     <th>Action<span class="text-lowercase">(s)</span></th>
                     }
                 </tr>
@@ -97,14 +97,14 @@
                             }
                             @else{-}
                         </td>
-                        @if(rbac.allowedToAccess('For You (Seperation Request).update') || rbac.allowedToAccess('For You (Seperation Request).delete')) {
+                        @if(rbac.allowedToAccess('For You (Separation Requests).update') || rbac.allowedToAccess('For You (Separation Requests).delete')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if(rbac.allowedToAccess('For You (Seperation Request).update') ) {
+                                    @if(rbac.allowedToAccess('For You (Separation Requests).update') ) {
                                     @if(item.approvalHeader?.currentapprovalStage !=
                                     item.approvalHeader?.finalapprovalStage){
                                     <li (click)="openModal(approval);handleRequest(item)">
@@ -113,7 +113,7 @@
                                     </li>
                                     }
                                     }
-                                    @if(rbac.allowedToAccess('For You (Seperation Request).delete') ) {
+                                    @if(rbac.allowedToAccess('For You (Separation Requests).delete') ) {
                                     @if((item.approvalHeader?.currentapprovalStage !=
                                     item.approvalHeader?.finalapprovalStage) ||
                                     (item.approvalHeader?.currentapprovalStage ==
@@ -124,7 +124,7 @@
                                     </li>
                                     }
                                     }
-                                    @if(rbac.allowedToAccess('For You (Seperation Request).update') ) {
+                                    @if(rbac.allowedToAccess('For You (Separation Requests).update') ) {
                                     @if(item?.approvalHeader?.currentapprovalStage ==
                                     item?.approvalHeader?.finalapprovalStage){
                                     <li (click)="openModalLarge(processmodal);handleRequest(item)">

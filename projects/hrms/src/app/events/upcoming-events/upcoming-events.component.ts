@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AddEventComponent } from './add-event/add-event.component';
@@ -23,7 +23,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   styleUrl: './upcoming-events.component.scss'
 })
 
-export class UpcomingEventsComponent {
+export class UpcomingEventsComponent implements OnInit,OnDestroy {
   subscription!: Subscription
   postEventsData: any
   customEventupdateForm!: FormGroup;
@@ -289,6 +289,12 @@ export class UpcomingEventsComponent {
         this.customEventupdateForm.reset()
       }
     })
+  }
+  ngOnDestroy(): void {
+   
+    if (this.subscription) {
+      this.subscription.unsubscribe()
+    }
   }
 }
 

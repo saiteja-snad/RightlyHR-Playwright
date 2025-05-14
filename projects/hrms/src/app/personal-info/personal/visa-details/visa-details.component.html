@@ -1,7 +1,10 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Visa Details</span></div>
+    @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'&& employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
+    'trainee inactive')){
     <div class="custom-add-btn" (click)="openModal(addvisamodal)"><i class="bi bi-plus plus-icon me-1"></i>Add New</div>
+    }
   </div>
 
   <div class="custom-table-content">

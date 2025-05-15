@@ -6,7 +6,7 @@
             <p class="component-header cursor mb-0">Leave Balance</p>
         </div>
         <div class="d-flex gap-3">
-            @if(rbac.allowedToAccess('Org Leave Balance')){
+            @if(rbac.allowedToAccess('Org Leave Balance.view')){
             <button type="button" class="custom-btn btn-secondary"  
             (click)="navigateOrLeavebalance()">Org Leave Balance</button>
             }

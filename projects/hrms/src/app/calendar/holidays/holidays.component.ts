@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpService } from '../../services/http.service';
@@ -11,7 +11,7 @@ import { Select } from 'primeng/select';
   styleUrl: './holidays.component.scss'
 })
 
-export class HolidaysComponent {
+export class HolidaysComponent implements OnInit,OnDestroy {
   optionalholidaysform!: FormGroup;
   years: number[] = [];
   empinfo: any;
@@ -45,7 +45,6 @@ export class HolidaysComponent {
   }
 
 
-
   onYearChange() {
      const selectedYear = this.optionalholidaysform.get('selectedYear')?.value;
      this.http.setSelectedYear(selectedYear);
@@ -53,6 +52,10 @@ export class HolidaysComponent {
   }
 
 
+  ngOnDestroy(): void {
+   this.optionalholidaysform.reset()
+   this.http.setSelectedYear(this.currentYear);
+  }
 
 
 }

@@ -41,6 +41,8 @@ export class PublicholidaysComponent {
       if (year) {
         this.selectedYear = year;
         this.getHoliday(this.jobshiftdetails);
+      }else{
+        this.getHoliday(this.jobshiftdetails);
       }
     });
   }

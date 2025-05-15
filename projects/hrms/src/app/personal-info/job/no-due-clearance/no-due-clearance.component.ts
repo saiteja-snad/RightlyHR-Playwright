@@ -41,12 +41,12 @@ export class NoDueClearanceComponent {
   lineOrder = false;
   loading=false
   constructor(
-    private authService: AuthService,
-    private fb: FormBuilder,
+ 
+   
     private http: HttpService,
     private router: Router,
     private conformationPopup: OpenModalService,
-    private modalService: NgbModal,public rbac: RbacService
+public rbac: RbacService
   ) {
     // Initialize any required services or dependencies here
   }
@@ -101,6 +101,8 @@ export class NoDueClearanceComponent {
             
           }
         }
+      },error:(err)=>{
+        this.loading=false
       }
     })
   }

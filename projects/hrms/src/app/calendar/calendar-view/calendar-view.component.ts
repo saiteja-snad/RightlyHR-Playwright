@@ -262,7 +262,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
                 start: formattedHolidayDate,
                 color: '#28692b4d',
                 textColor: 'black',
-                display: 'calendar/birthday.png',
+                //display: 'calendar/birthday.png',
               });
             }
           }

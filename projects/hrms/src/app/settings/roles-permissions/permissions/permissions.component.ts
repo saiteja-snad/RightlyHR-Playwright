@@ -157,7 +157,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     const disabledOptions = ['Employee Basic Information', 'Employee Current Address', 'Employee Permanent Address', 'Employee Contact Details',
                              'Employee Emergency Contact Details', 'Employee Onboarding Documents', 'Basic Information', 'Current Address', 'Permanent Address', 'Contact Details',
                              'Emergency Contact Details', 'Onboarding Documents','Employee Team Members','Team Members','Employee Onboarding Request','Separation Request',
-                             'Employee Separation Request','Employee Info Desk Details','Employee Info Asset Details'
+                             'Employee Separation Request','Employee Info Desk Details','Employee Info Asset Details','Change RM Button'
                             ];
 
     return disabledOptions.includes(field) && (action === 'delete' || action === 'create');

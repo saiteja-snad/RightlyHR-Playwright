@@ -61,7 +61,7 @@
                             <th>First In</th>
                             <th>Last Out</th>
                             <th>Duration</th>
-                            <th>Logs</th>
+                            <th>Info</th>
                             <th class="text-end pe-5">Status</th>
                         </tr>
                     </thead>
@@ -77,7 +77,7 @@
                                 
                             </td>
                             <td>
-                                @if((item?.biometricLogs??[]).length>0){
+                                @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0)){
                                 <div>
                                     <a type="button" (click)="openModalLarge(punchintimes);dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,
                                         item.permissions,item.regularizations)">
@@ -115,12 +115,12 @@
                                     @if(rbac.allowedToAccess('Request Leave.view')){
                                     @if(item.status == 'Absent' && item.duration.totalDuration >= '00:00:00' &&
                                     currentMonth==selectedMonth && item.employeeId == empdata.employeeId){
-                                    <a class="leave-btn" (click)="navigateToLeave()"><u>Apply Leave</u> </a>
+                                    <a class="leave-btn" (click)="navigateToLeave(item)"><u>Apply Leave</u> </a>
                                     }
                                     }
                                     @if(rbac.allowedToAccess('Request Regularization.view')){
                                     @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) && (item.duration.totalDuration|tohours) <
-                                        shiftDetails.fullDayMinHrs && item.status!=='Weekend' && currentMonth==selectedMonth 
+                                        shiftDetails.fullDayMinHrs && item.status!=='Weekend' && currentMonth==selectedMonth &&item.regularizations.length<=0
                                         && item.employeeId==empdata.employeeId){ <a
                                         class="regulazie-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
                                         <u>Regularization</u></a>
@@ -147,7 +147,7 @@
             <div class="attendance-summary-table">
                 <table class="w-100">
                     <thead>
-                        <th colspan="2">Attendance summary</th>
+                        <th colspan="2">Attendance Summary</th>
                     </thead>
                     <tbody>
                         @if(!dataLoader){
@@ -155,7 +155,7 @@
                         <ng-container *ngIf="statusCounts$ | async as statusCounts">
                             @for (status of statusCounts | keyvalue; track $index) {
                                 <tr *ngIf="status.value !== 0">
-                                    <td>{{ status.key.toUpperCase() }}</td>
+                                    <td class="text-capitalize">{{ status.key }}</td>
                                     <td>{{ status.value }}</td>
                                   </tr>
                             }
@@ -224,7 +224,7 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="leaveType" class="form-label custom-label pt-2 mb-2">Regularization Type<span
+                        <label for="leaveType" class="form-label custom-label pt-2 mb-2">Regularization Category<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="regularizationTypes" optionLabel="name" formControlName="leaveType"
@@ -290,6 +290,7 @@
         </div>
 
         <div class="custom-main-popup-content">
+            @if(punchPairs.length>0){
             <div class="popup-table-wrapper">
                 <div class="popup-table-content">
                     <table>
@@ -316,24 +317,26 @@
                     </table>
                 </div>
             </div>
-
+            }
             @if(permissions_list.length>0){
             <div class="popup-table-wrapper">
                 <div class="popup-table-content">
                     <table>
                         <thead>
                             <tr>
-                                <th colspan="3" class="custom-popup-header">Permissions</th>
+                                <th colspan="3" class="custom-popup-header">Permission(s)</th>
                             </tr>
                             <tr>
                                 <th>Type</th>
                                 <th>Duration</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let log of permissions_list">
                                 <td class="log-time">{{ log.type?log.type:'-' }}</td>
                                 <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
+                                <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -347,17 +350,19 @@
                     <table>
                         <thead>
                             <tr>
-                                <th colspan="3" class="custom-popup-header">Regularizations</th>
+                                <th colspan="3" class="custom-popup-header">Regularization(s)</th>
                             </tr>
                             <tr>
                                 <th>Type</th>
                                 <th>Duration</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr *ngFor="let log of regularization_list">
                                 <td class="log-time">{{ log.type?log.type:'-' }}</td>
                                 <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
+                                <td class="text-capitalize">{{ log.status ? log.status : '-' }}</td>
                             </tr>
                         </tbody>
                     </table>

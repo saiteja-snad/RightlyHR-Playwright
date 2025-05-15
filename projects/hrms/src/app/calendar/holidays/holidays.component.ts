@@ -18,9 +18,6 @@ export class HolidaysComponent {
   
   constructor(public router: Router, private http: HttpService) { }
 
-  
-  orgHolidayItemsArrayTrue: any = [];
-  orgHolidayItemsArrayFalse: any = [];
   orgHolidayItemsArray: any[] = [];
   length: number = 0;
   optional: number = 0;

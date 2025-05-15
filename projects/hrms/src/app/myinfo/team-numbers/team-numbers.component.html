@@ -4,7 +4,7 @@
     <div>
       <app-team-member-tabs></app-team-member-tabs>
     </div>
-     @if(rbac.allowedToAccess('Change RM Button.update')) {
+     @if(rbac.allowedToAccess('Change RM Button.view')) {
     <div>
         <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change RM</button>
     </div>
@@ -25,7 +25,7 @@
                     <th>Work Email</th>
                     <th>Phone Number</th>
                     <th>Designation</th>
-                     @if(rbac.allowedToAccess('Change RM Button.update')) {
+                     @if(rbac.allowedToAccess('My Info Reporting Managers Tab.update')) {
                     <th class="text-center">Action</th>
                      }
                 </tr>
@@ -42,7 +42,7 @@
                         <td>{{details.workEmail}}</td>
                         <td>{{details.contactnumber}}</td>
                         <td>{{details.jobRole}}</td>
-                        @if(rbac.allowedToAccess('Change RM Button.update')) {
+                        @if(rbac.allowedToAccess('My Info Reporting Managers Tab.update')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">

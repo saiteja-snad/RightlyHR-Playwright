@@ -159,7 +159,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
                              'Emergency Contact Details', 'Onboarding Documents','Employee Team Members','Team Members','Request for Onboard Button','Separation Request',
                              'Employee Separation Request','Employee Info Desk Details','Employee Info Asset Details','Employee Info Onboarding Details','Employee Info Asset Details','Employee Info Desk Details',
                                             'Employee Info Pre-Onboarding Details','Employee Info Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details',
-                                            'Employee Info No Due Clearance Details','Employee Info Probation Details','Employee Info Onboarding Request Details',
+                                            'Employee Info No Due Clearance Details','Employee Info Probation Details','Change RM Button','Employee Info Onboarding Request Details',
                             ];
 
     return disabledOptions.includes(field) && (action === 'delete' || action === 'create');

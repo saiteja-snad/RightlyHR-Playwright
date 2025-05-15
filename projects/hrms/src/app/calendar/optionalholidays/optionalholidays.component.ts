@@ -78,10 +78,7 @@ export class OptionalholidaysComponent {
           if (item.isOptional) {
             this.orgHolidayItemsArrayTrue.push(item);
             this.length = this.orgHolidayItemsArrayTrue.length
-          } else {
-            this.orgHolidayItemsArrayFalse.push(item);
-            this.optional = this.orgHolidayItemsArrayFalse.length
-          }
+          } 
         });
       },
       error: (reason: any) =>{

@@ -4,11 +4,11 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-             @if(!buttons && (empdata?.empstatus?.toLowerCase() === 'active'||empdata.substatus === 'Offer Letter Accepted'|| empdata?.empstatus?.toLowerCase() !== 'prospective' &&
-        empdata?.empstatus?.toLowerCase() !== 'trainee prospective'
-        && empdata?.empstatus?.toLowerCase() !== 'inactive' && empdata?.empstatus?.toLowerCase() !==
+            @if(this.rbac.allowedToAccess('Employee Trainee Details.view')){
+            @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+        empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !==
         'trainee inactive' )){
-            <!-- Show edit icon if employee status is 'Active' and buttons are not visible -->
             <div >
                @if(rbac.allowedToAccess('Employee Info Onboarding Details.update')){
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
@@ -20,7 +20,9 @@
                 <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="onSubmit()">Save</button>
             </div>
+        }
         </div>
+        
 
         <!--input content-->
         <form autocomplete="off" [formGroup]="onboardingForm">

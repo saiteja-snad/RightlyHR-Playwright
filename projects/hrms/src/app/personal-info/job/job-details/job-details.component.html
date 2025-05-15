@@ -28,7 +28,7 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
-                     @if(rbac.allowedToAccess('Employee Info Job Details.update') || rbac.allowedToAccess('Employee Info Separation Request.view') || rbac.allowedToAccess('Employee Info Job Details.update')){
+                     @if(rbac.allowedToAccess('Employee Info Job Details.update') || rbac.allowedToAccess('Employee Info Separation Request.view') || rbac.allowedToAccess('Employee Info Job Details.delete')){
                     <th class="text-center">Actions</th>
                     }
                 </tr>
@@ -106,7 +106,7 @@
                             </ng-template>
                         </td>
                         @if(rbac.allowedToAccess('Employee Info Job Details.update') || rbac.allowedToAccess('Employee Info Separation Request.view') || 
-                        rbac.allowedToAccess('Employee Info Job Details.update')){
+                        rbac.allowedToAccess('Employee Info Job Details.delete')){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()

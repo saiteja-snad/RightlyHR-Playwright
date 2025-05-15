@@ -119,7 +119,6 @@ export class OrgLeaveBalanceComponent {
       },
       error: (err) => {
         this.displaytable=false;
-        console.error('Error fetching leave balance:', err);
         this.dataload = false
         this.teamLeaveBalance = [];
         this.filteredTeamLeaveBalance = [];
@@ -130,23 +129,6 @@ export class OrgLeaveBalanceComponent {
       }
     });
   }
-
-  // Onclick($event: any) {
-  //   this.displaytable=true;
-  //   this.selectedEmployeeId = $event?.value || null;
-
-  //   if (this.selectedEmployeeId) {
-  //     this.employeedata = this.employeeiddetails.find((e: any) => e.employeeId == this.selectedEmployeeId);
-  //     localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
-  //     this.getAllTeamLeaveBalance(this.selectedEmployeeId);
-  //   } else {
-  //     this.employeedata = {};
-  //     localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
-  //     this.filteredTeamLeaveBalance = [];
-  //   }
-
-  //   this.http.triggerActionSignal();
-  // }
 
   Onclick($event: any) {
   const selectedId = $event?.value;
@@ -178,7 +160,6 @@ export class OrgLeaveBalanceComponent {
     return index;
   }
 
-
   onClickCategory(employee: any, category: any) {
     const employeeId = employee.employeeBasicDetails.employeeId;
     const categoryId = category.category?.id;
@@ -201,6 +182,7 @@ export class OrgLeaveBalanceComponent {
       }
     });
   }
+  
   filterTeamLeaveSummary() {
     const term = this.searchText.trim().toLowerCase();
     if (!term) {

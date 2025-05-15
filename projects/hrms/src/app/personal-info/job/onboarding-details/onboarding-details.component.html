@@ -4,14 +4,17 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-
+             @if(!buttons && (empdata?.empstatus?.toLowerCase() === 'active'||empdata.substatus === 'Offer Letter Accepted'|| empdata?.empstatus?.toLowerCase() !== 'prospective' &&
+        empdata?.empstatus?.toLowerCase() !== 'trainee prospective'
+        && empdata?.empstatus?.toLowerCase() !== 'inactive' && empdata?.empstatus?.toLowerCase() !==
+        'trainee inactive' )){
             <!-- Show edit icon if employee status is 'Active' and buttons are not visible -->
-            <div *ngIf="!buttons && (empdata?.empstatus?.toLowerCase() === 'active'||empdata.substatus === 'Offer Letter Accepted')">
+            <div >
                @if(rbac.allowedToAccess('Employee Info Onboarding Details.update')){
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
-               }
+            }
             </div>
-
+        }
             <!-- Show buttons if 'buttons' is true -->
             <div *ngIf="buttons" class="d-flex justify-content-end gap-2">
                 <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>

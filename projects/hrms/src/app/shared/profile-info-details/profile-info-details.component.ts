@@ -110,7 +110,7 @@ export class ProfileInfoDetailsComponent {
               }
             },
             error: (reason: any) => {
-              this.conformationPopup.openErrorModal('Profile picture update failed')
+              this.conformationPopup.openErrorModal( reason.error.message || 'Profile picture update failed')
 
             },
           });

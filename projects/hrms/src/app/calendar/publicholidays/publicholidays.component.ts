@@ -64,9 +64,9 @@ export class PublicholidaysComponent {
     this.optional = 0;
 
     let holiday = {
-      locationId: jobshiftdetails[0].locationid,
-      subLocationId: jobshiftdetails[0].sublocationid,
-      shiftId: jobshiftdetails[0].shiftId,
+      locationId: jobshiftdetails[0]?.locationid,
+      subLocationId: jobshiftdetails[0]?.sublocationid,
+      shiftId: jobshiftdetails[0]?.shiftId,
       Applicableyear: this.selectedYear
     };
     this.subscription = this.http.getDataWithQueryParams(`orgHolidays/getHolidaysbylocation`, holiday).subscribe({
@@ -75,13 +75,14 @@ export class PublicholidaysComponent {
         this.Policies = response;
         this.orgHolidayItemsArray = response[0]?.orgHolidaysItems;
         this.orgHolidayItemsArray?.forEach(item => {
-          if (item.isOptional) {
-            this.orgHolidayItemsArrayTrue.push(item);
-            this.length = this.orgHolidayItemsArrayTrue.length;
-          } else {
-            this.orgHolidayItemsArrayFalse.push(item);
-            this.optional = this.orgHolidayItemsArrayFalse.length;
-          }
+       
+            if (item.isOptional) {
+                this.orgHolidayItemsArrayTrue.push(item);
+                this.length = this.orgHolidayItemsArrayTrue.length
+            } else {
+               this.orgHolidayItemsArrayFalse.push(item);
+               this.optional = this.orgHolidayItemsArrayFalse.length
+            }
         });
       },
       error: (reason: any) =>{

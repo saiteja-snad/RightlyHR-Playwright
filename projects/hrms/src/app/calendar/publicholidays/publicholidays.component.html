@@ -16,7 +16,7 @@
   </ng-container>
   <ng-template #maincontent>
     <div>
-      <ng-container *ngIf="orgHolidayItemsArrayTrue.length > 0 ; else noDataTemplate">
+      <ng-container *ngIf="orgHolidayItemsArrayFalse.length > 0 ; else noDataTemplate">
         <div *ngFor="let item of orgHolidayItemsArrayFalse" class="card holiday-card mb-3">
           <div class="d-flex gap-3 align-items-center">
             <div class="card holiday-icon-card">

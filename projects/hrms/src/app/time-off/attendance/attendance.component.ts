@@ -129,7 +129,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   }
   //function to check the date
  isPastOrToday(date: any): boolean {
-  return moment(date).isSameOrBefore(moment(), 'day');
+  return moment(date).isBefore(moment(), 'day');
 }
   //function to inialize form
   initializeForm() {

@@ -420,7 +420,10 @@ export const MY_INFO_PERSONAL_ROUTES = [
     { permission: 'Employee Info Asset Details.view', route: '/personalinfo/job/assets-details' }
   ];
 
-
+export const EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES = [
+  { route: '/personalinfo/team/team-members', permission: 'Employee Info Reporting Manager Tab.view' },
+  { route: '/personalinfo/team/team-manger-members', permission: 'Employee Info Team Managers Tab.view' },
+]
   export const INVITE_NEW_USER_TABS = [
     {  route: '/admin/active-new-user', permission:  'Dashboard Active Invite New User.view' },
     {  route: '/admin/prospective-new-user', permission:'Dashboard Trainee Active Invite New User.view' },

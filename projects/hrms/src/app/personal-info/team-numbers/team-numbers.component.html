@@ -69,10 +69,11 @@
 
 <ng-template #changermmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
-            <div class="pt-2">
+        <div class="d-flex justify-content-between popup-header-border p-3"> 
+            @if(rbac.allowedToAccess('Employee Info Team Manager Tab.view')){<div class="pt-2">
                 <p class="popup-heading mb-0">Change RM</p>
             </div>
+        }
             <div>
                 <a (click)="resetAndClose(modal)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>

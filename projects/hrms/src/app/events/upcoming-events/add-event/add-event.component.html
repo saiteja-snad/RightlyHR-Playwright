@@ -14,7 +14,7 @@
                     <label for="eventDate" class="form-label custom-label mb-2">Event Date<span
                             class="text-danger">*</span></label>
                     <input type="datetime-local" class="form-control custom-input" id="eventDate"
-                        onkeypress="return false;" [min]="getToday()" formControlName="eventDate">
+                        onkeypress="return false;" [min]="getToday()"  [max]="getMaxDate()" formControlName="eventDate">
                     <div *ngIf="customEventForm.get('eventDate')?.errors?.['required'] &&  customEventForm.get('eventDate')?.touched" class="error-msg">Event date is required.
                     </div>
                     <div *ngIf="customEventForm.get('eventDate')?.touched && customEventForm.get('eventDate')?.hasError('pastDate')"
@@ -26,7 +26,7 @@
                     <label for="title" class="form-label custom-label mb-2">Event Title<span
                             class="text-danger">*</span></label>
                     <input type="text" class="form-control custom-input" id="title"
-                        placeholder="Please enter event title" formControlName="eventTitle">
+                        placeholder="Please enter event title" formControlName="eventTitle"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)">
                     <div *ngIf="customEventForm.get('eventTitle')?.errors?.['required'] && customEventForm.get('eventTitle')?.touched"
                         class="error-msg">
                         Event Title is required
@@ -40,7 +40,7 @@
                     <label for="description" class="form-label custom-label mb-2">Event Description<span
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" formControlName="eventMessage"
-                        placeholder="Please enter description" id="description" maxlength="250" ></textarea>
+                        placeholder="Please enter description" id="description" maxlength="250"   (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" ></textarea>
                     <div *ngIf=" customEventForm.get('eventMessage')?.touched && customEventForm.get('eventMessage')?.invalid "
                         class="error-msg">
                         Event Description is requied

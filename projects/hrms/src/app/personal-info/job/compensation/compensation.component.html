@@ -1,7 +1,8 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        @if(rbac.allowedToAccess('Employee Info Compensation Details.view')){
+        
         <div><span class="component-sub-header">Compensation Details</span></div>
+        @if(rbac.allowedToAccess('Employee Info Compensation Details.create')){
         <div class="custom-add-btn" (click)="openModal(addcomfDetailes)"><i class="bi bi-plus plus-icon me-1"></i>Add
             New</div>}
     </div>

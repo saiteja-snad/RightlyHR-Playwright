@@ -51,6 +51,7 @@ import {
   EMPLOYEE_INFO_PERSONAL_ROUTES,
   EMPLOYEE_INFO_JOB_ROUTES,
   INVITE_NEW_USER_TABS,
+  EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -603,8 +604,16 @@ export class AccessNavigationService {
           return (route = '/personalinfo/documents');
         }
 
+        // if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
+        //   return (route = '/personalinfo/team-members');
+        // }
+
         if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
-          return (route = '/personalinfo/team-members');
+          for (const item of EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
 
         if (
@@ -1405,9 +1414,13 @@ export class AccessNavigationService {
       }
       break;
 
-    case '/personalinfo/team-members':
+    case '/personalinfo/team':
       if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
-        return route = '/personalinfo/team-members';
+        for (const item of EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES) {
+          if (this.rbac.allowedToAccess(item.permission)) {
+            return item.route;
+          }
+        }
       }
       break;
 

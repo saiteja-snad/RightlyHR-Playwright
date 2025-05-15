@@ -281,6 +281,10 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     });
     this.displayblankdocument = bankDetail.docUrl ? bankDetail.docUrl.split('/').pop() : null;
     this.bankdocument = bankDetail.docUrl
+      // Dynamically update validators for the attachment field
+      const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
+      this.bankDetailsUpdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
+      this.bankDetailsUpdateForm.get('attachmentupdate')?.updateValueAndValidity();
     // Open the modal
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }

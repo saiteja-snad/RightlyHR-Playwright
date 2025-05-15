@@ -19,7 +19,7 @@ export const environment = {
 
 
 
-  dateformat: 'dd-MMM-yyyy',
+  dateformat: 'MMM d, y',
   paidLeaveCategoryId: 172,
   wfhModuleId:2,
   compoffModuleId:3,

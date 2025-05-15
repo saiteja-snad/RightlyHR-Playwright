@@ -44,7 +44,7 @@
                     </tr>
                 </ng-template>
                 <ng-template #body let-item appendTo="body">
-                    @if (rbac.allowedToAccess('Timeoff Tab.view')) {
+                    @if (rbac.allowedToAccess('Time Off Tab.view')) {
                     @if ((((leaves | async) ?? []) | timeoffsearch: searchValue).length > 0) {
                     <!-- @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track
                             item.approvalHeader.id){ -->

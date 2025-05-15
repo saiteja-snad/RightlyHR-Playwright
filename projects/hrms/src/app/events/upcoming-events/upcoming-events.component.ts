@@ -15,6 +15,7 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { EventsTabsComponent } from "../../shared/events-tabs/events-tabs.component";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { DomSanitizer } from '@angular/platform-browser';
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-upcoming-events',
@@ -42,7 +43,7 @@ export class UpcomingEventsComponent implements OnInit,OnDestroy {
   imageUrl: any;
   eventAttachment: any;
   constructor(private router: Router, private sanitizer: DomSanitizer, private modalService: NgbModal, private http: HttpService,
-    private conformationPopup: OpenModalService, private fb: FormBuilder, public rbac: RbacService,) { }
+    private conformationPopup: OpenModalService, private fb: FormBuilder, public rbac: RbacService,public formValidation: FormValidationService) { }
   ngOnInit(): void {
     this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") ?? '{}');
     this.getCustomEvents()
@@ -289,6 +290,19 @@ export class UpcomingEventsComponent implements OnInit,OnDestroy {
         this.customEventupdateForm.reset()
       }
     })
+  }
+
+  getMaxDate(): string {
+    const now = new Date();
+    const pad = (n: number) => (n < 10 ? '0' + n : n);
+
+    const year = now.getFullYear() + 2; // Add 2 years
+    const month = pad(now.getMonth() + 1);
+    const day = pad(now.getDate());
+    const hours = pad(now.getHours());
+    const minutes = pad(now.getMinutes());
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
   ngOnDestroy(): void {
    

@@ -143,7 +143,7 @@ export class MyinfoDetailsComponent {
               },
               error: (reason: any) => {
                // console.log(reason);
-                this.conformationPopup.openErrorModal('Profile picture Info update failed')
+                this.conformationPopup.openErrorModal(reason.error.message ||'Profile picture Info update failed')
 
               },
             });

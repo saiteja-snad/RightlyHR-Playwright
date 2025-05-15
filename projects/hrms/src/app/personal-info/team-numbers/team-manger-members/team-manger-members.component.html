@@ -3,7 +3,7 @@
         <div>
             <app-team-members-tabs />
         </div>
-         @if(rbac.allowedToAccess('Employee Info Change TM Button.view')) {
+         @if(rbac.allowedToAccess('Employee Info Team Managers Tab.view')) {
         <div>
             <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change TM</button>
         </div>}
@@ -80,6 +80,7 @@
 <ng-template #changermmodals let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
+            @if(rbac.allowedToAccess('Employee Info Reporting Manager Tab.view')){
             <div class="pt-2">
                 <p class="popup-heading mb-0"> {{'Change TM'|translate}}</p>
             </div>
@@ -87,6 +88,7 @@
                 <a (click)="modal.dismiss();requestForm.reset()"><img src="icons/close.png" alt="Close Icon"
                         class="close-icon"></a>
             </div>
+        }
         </div>
         <div class="custom-main-popup-content p-4">
             <form [formGroup]="requestForm" (ngSubmit)="updateTM()">

@@ -24,7 +24,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
   empcertsdata = new BehaviorSubject<any>([]);
   empinfo: any
   spinnerLoader = false;
-  loading=false;
+  loading = false;
   certificationForm!: FormGroup;
   updateCertificationForm!: FormGroup;
   certificationDocument: any;
@@ -51,7 +51,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.certificationForm = this.fb.group({
       certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(100)]],
-      certificationId: ['', [Validators.required,Validators.pattern(/^(?=.*[A-Za-z0-9])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]+$/), Validators.maxLength(50)]],
+      certificationId: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z0-9])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]+$/), Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
@@ -78,11 +78,11 @@ export class CertificationComponent implements OnInit, OnDestroy {
     const attachmentValidators = this.displaycertification ? [] : [Validators.required];
     this.updateCertificationForm = this.fb.group({
       certificationName: ['', [Validators.required, Validators.pattern(/^[^\s].*$/), Validators.maxLength(100)]],
-      certificationId: ['', [Validators.required,Validators.pattern(/^(?=.*[A-Za-z0-9])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]+$/), Validators.maxLength(50)]],
+      certificationId: ['', [Validators.required, Validators.pattern(/^(?=.*[A-Za-z0-9])[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?`~ ]+$/), Validators.maxLength(50)]],
       issuedDate: ['', Validators.required],
       expiryDate: [null, Validators.required],
       isExpired: [false],
-      attachment: ['',attachmentValidators],
+      attachment: ['', attachmentValidators],
     });
 
     // Disable "expiryDate" field if "isExpired" is checked
@@ -118,7 +118,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.dateofbirth =this.formatDateToLocal(data.dob)
+        this.dateofbirth = this.formatDateToLocal(data.dob)
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
@@ -156,7 +156,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
         this.certificationForm.get('attachment')?.markAsUntouched();
         this.updateCertificationForm.get('attachment')?.reset();
         this.updateCertificationForm.get('attachment')?.markAsUntouched();
-       
+
         return;
       }
     }
@@ -167,7 +167,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
       `${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
   }
-  
+
 
   private renameFileAttachment(originalFile: File, newName: string): File {
     return new File([originalFile], newName, {
@@ -217,7 +217,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
       .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.certificationDocument)
       .subscribe({
         next: (data: any) => {
-          this.spinnerLoader=false
+          this.spinnerLoader = false
           if (data) {
             payload.attachment = data.path; // Add the uploaded file path to the payload
             console.log('Uploaded file path:', data.path); // Debugging log
@@ -227,7 +227,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
           }
         },
         error: () => {
-          this.spinnerLoader=false
+          this.spinnerLoader = false
           console.error('File upload failed');
           this.conformationPopup.openErrorModal('Failed to upload the file. Please try again.');
         }
@@ -271,14 +271,14 @@ export class CertificationComponent implements OnInit, OnDestroy {
     };
   }
   getEmpcertdata() {
-    this.loading=true
+    this.loading = true
     let EmployeeId = parseInt(this.empinfo.employeeId);
     console.log(EmployeeId);
     this.subscription = this.http
       .getData(`Certification/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
-          this.loading=false
+          this.loading = false
           this.empcertsdata.next(data);
         },
         error: (err: any) => {
@@ -316,11 +316,15 @@ export class CertificationComponent implements OnInit, OnDestroy {
       isExpired: data.isExpired,
     });
 
-   
+
     this.certificationDocument = data.attachment;
     this.displaycertification = data?.attachment?.split('/')?.pop()
-     
-      console.log(this.displaycertification)
+    // Dynamically update validators for the attachment field
+    const attachmentValidators = this.displaycertification ? [] : [Validators.required];
+    this.updateCertificationForm.get('attachment')?.setValidators(attachmentValidators);
+    this.updateCertificationForm.get('attachment')?.updateValueAndValidity();
+
+    console.log(this.displaycertification)
     // Reset the document for the update form
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
@@ -330,7 +334,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
     if (this.updateCertificationForm.valid) {
       this.spinnerLoader = true
       const payload = this.createUpdateCertificationPayload();
-    
+
       if (this.certificationDocument instanceof File) {
         this.uploadUpdatedCertificationAttachment(payload);
       } else {
@@ -347,7 +351,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
       .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.certificationDocument)
       .subscribe({
         next: (data: any) => {
-          this.spinnerLoader=false
+          this.spinnerLoader = false
           if (data) {
             payload.attachment = data.path; // Add the uploaded file path to the payload
             console.log('Uploaded file path:', data.path); // Debugging log
@@ -357,7 +361,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
           }
         },
         error: () => {
-          this.spinnerLoader=false
+          this.spinnerLoader = false
           console.error('File upload failed');
           this.conformationPopup.openErrorModal('Failed to upload the file. Please try again.');
         }
@@ -399,7 +403,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
       isExpired: this.updateCertificationForm.get('isExpired')?.value || false,
       isDeleted: false,
       isdeleted: false,
-      attachment: this.certificationDocument ,
+      attachment: this.certificationDocument,
       createdAt: currentDate,
       updatedAt: currentDate,
 

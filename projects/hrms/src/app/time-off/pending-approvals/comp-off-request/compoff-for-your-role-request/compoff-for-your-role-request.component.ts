@@ -108,16 +108,14 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
      return this.selectedProducts?.every(
        (item) =>
          item.approvalHeader.currentapprovalStage !==
-           item.approvalHeader.finalapprovalStage &&
-         this.rbac.allowedToAccess('Timeoff Tab.update')
+           item.approvalHeader.finalapprovalStage
      );
    }
    canBulkProcess(): boolean {
      return this.selectedProducts?.every(
        (item) =>
          item.approvalHeader.currentapprovalStage ===
-           item.approvalHeader.finalapprovalStage &&
-         this.rbac.allowedToAccess('Timeoff Tab.update')
+           item.approvalHeader.finalapprovalStage 
      );
    }
    intializeApproveForm() {

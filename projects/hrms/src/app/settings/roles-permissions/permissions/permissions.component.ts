@@ -157,9 +157,10 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     const disabledOptions = ['Employee Basic Information', 'Employee Current Address', 'Employee Permanent Address', 'Employee Contact Details',
                              'Employee Emergency Contact Details', 'Employee Onboarding Documents', 'Basic Information', 'Current Address', 'Permanent Address', 'Contact Details',
                              'Emergency Contact Details', 'Onboarding Documents','Employee Team Members','Team Members','Request for Onboard Button','Separation Request',
-                             'Employee Separation Request','Employee Info Desk Details','Employee Info Asset Details','Employee Info Onboarding Details','Employee Info Asset Details','Employee Info Desk Details',
-                                            'Employee Info Pre-Onboarding Details','Employee Info Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details',
-                                            'Employee Info No Due Clearance Details','Employee Info Probation Details','Change RM Button','Employee Info Onboarding Request Details',
+                             'Employee Separation Request','Employee Info Desk Details','Employee Info Asset Details','Employee Info Asset Details','Employee Info Desk Details',
+                             'Employee Info Pre-Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details',
+                             'Employee Info No Due Clearance Details','Employee Info Probation Details','Change RM Button','Employee Info Onboarding Request Details',
+                             'No Due Form','Employee Info Separation Request','Employee Info Change RM Button','Employee Info Change TM Button'
                             ];
 
     return disabledOptions.includes(field) && (action === 'delete' || action === 'create');
@@ -176,39 +177,6 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       this.isSaveButtonEnabled = false;
     }
   }
-
-  // preparePayload(roleTypeId: string): any[] {
-  //   return this.permissions
-  //     .filter(p => p.View || p.Update || p.Create || p.Delete)
-  //     .map(p => ({
-  //       roleTypeId: roleTypeId,
-  //       section: p.section,
-  //       permission: p.fields,
-  //       view: p.View,
-  //       update: p.Update,
-  //       create: p.Create,
-  //       delete: p.Delete
-  //     }));
-  // }
-
-  // permissionsCreate() {
-  //   this.modalService.open(this.stagingLoadingModal, { centered: true });
-  //   const payload = this.preparePayload(this.roleId);
-
-  //   this.http.postdata('FusionRoleClaims', payload).subscribe({
-  //     next: (data) => {
-  //       this.modalService.dismissAll();
-  //       this.modal.openSuccessModal('Permissions updated successfully!');
-  //     },
-  //     error: (err) => {
-  //       console.error('Error posting permissions:', err);
-  //       this.modalService.dismissAll();
-  //       this.modal.openErrorModal('Failed to update permissions!');
-  //     },
-  //     complete: () => {
-  //     }
-  //   });
-  // }
 
   permissionsCreate() {
     this.modalService.open(this.stagingLoadingModal, { centered: true });
@@ -263,7 +231,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   }
   
   isActionEnabled(field: string, action: string): boolean {
-    const enabledTabs = ['Document Tab', 'NoDue Clearance Tab', 'Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Dynamic Forms Module', 'Desk Allocation - All', 'Manage Weekends Tab', 'Manage DST Tab', 'My Info Job Details', 'My Info Previous Experience Details', 'My Info Certification Details', 
+    const enabledTabs = ['Document Tab', 'NoDue Clearance Tab', 'Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Dynamic Forms Module', 'Desk Allocation - All', 
+      'Manage Weekends Tab', 'Manage DST Tab', 'My Info Job Details', 'My Info Previous Experience Details', 'My Info Certification Details', 
       'Employee Info Onboarding Details', 'Employee Info Job Details', 'Employee Info Previous Experience Details', 'Employee Info Certification Details', 'Employee Info Compensation Details',
     'Draft Tab'];
     return enabledTabs.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');

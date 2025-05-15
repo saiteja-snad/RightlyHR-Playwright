@@ -226,7 +226,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         error: (reason: any) => {
 
           console.log(reason);
-          this.conformationPopup.openErrorModal('Basic Info update failed')
+          this.conformationPopup.openErrorModal( reason.error.message ||'Basic Info update failed')
         },
       });
   }

@@ -38,17 +38,20 @@
                     </td>
                     <td>{{item.status}}</td>
                     <td class="text-center">
-              <div class="dropdown">
-                <a type="button" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots-vertical"></i>
-                </a>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                
-                  <li (click)="onClick(item,cancelModal)">
-                    <a class="dropdown-item">Cancel Leave</a>
-                  </li>
-                </ul>
-              </div>
+                      @if(isBeforeToday(item.startdate)){
+                      <div class="dropdown">
+                        <a type="button" data-bs-toggle="dropdown">
+                          <i class="bi bi-three-dots-vertical"></i>
+                        </a>
+                        <ul class="dropdown-menu custom-dropdown-menu">
+                      
+                          <li (click)="onClick(item,cancelModal)">
+                            <a class="dropdown-item">Cancel Leave</a>
+                          </li>
+                        </ul>
+                      </div>
+                      }
+                  
             </td>
                 </tr>
                 }

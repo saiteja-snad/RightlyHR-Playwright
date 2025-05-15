@@ -62,6 +62,9 @@ isLoading=false;
       ]
     });
   }
+  isBeforeToday(date: string | Date): boolean {
+  return moment().isSameOrBefore(moment(date), 'day');
+}
     onClick(data: any,content:any) {
     this.selectedFields = data
     console.log(this.selectedFields);

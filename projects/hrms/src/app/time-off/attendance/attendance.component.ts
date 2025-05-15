@@ -22,6 +22,7 @@ import { environment } from '../../../environments/environment';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../services/form-validations.service';
 import { TohoursPipe } from "../../Pipes/tohours.pipe";
+import { AddLeaveComponent } from '../leaves/add-leave/add-leave.component';
 
 @Component({
   selector: 'app-attendance',
@@ -129,7 +130,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   }
   //function to check the date
  isPastOrToday(date: any): boolean {
-  return moment(date).isSameOrBefore(moment(), 'day');
+  return moment(date).isBefore(moment(), 'day');
 }
   //function to inialize form
   initializeForm() {
@@ -238,8 +239,9 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     }
   }
 
-  navigateToLeave(){
-    this.router.navigate(['/time-off/leaves/waiting-for-approval'])
+  navigateToLeave(data:any){
+   const modalRef = this.modalService.open(AddLeaveComponent, {centered: true, backdrop: 'static'});
+   modalRef.componentInstance.updateData = data;
   }
 
   onclickDuration(

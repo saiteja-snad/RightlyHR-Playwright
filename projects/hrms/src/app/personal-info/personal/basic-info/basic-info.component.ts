@@ -45,7 +45,12 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    if(this.rbac.allowedToAccess('My Info.view')){
+      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    }else{
+      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    }
+ 
     this.initializeForm();
     this.getEmployeeId();
     this.getGender()

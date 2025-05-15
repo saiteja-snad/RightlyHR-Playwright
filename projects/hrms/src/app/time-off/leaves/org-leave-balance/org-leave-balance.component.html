@@ -1,43 +1,40 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0">
-                <i class="bi bi-arrow-90deg-left cursor me-2"></i>Org Leave Balance
-            </p>
-        </div>
-
-        <div class="d-flex gap-3 flex-wrap">
-            <div>
-                <label class="form-label custom-label pt-2" for="">Search Employee</label>
-                <div class="custom-p-select-content">
-                    <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
-          filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="Onclick($event)"
-          class="custom-select w-100">
-        </p-select>
-                </div>
-            </div>
-            <!-- <div class="d-flex align-items-center gap-3">
-                <label class="form-label custom-label pt-2" for="">Month</label>
-
-                <div class="custom-p-select-content">
-                    <p-select optionValue="value" placeholder="Month" optionLabel="name"
-                        class="custom-select"></p-select>
-                </div>
-            </div> -->
-            <div class="d-flex align-items-center gap-3">
-                <label class="form-label custom-label pt-2" for="">Year</label>
-                <div class="d-flex align-items-center gap-2">
-                    <div class="custom-p-select-content">
-                        <p-select [options]="years" optionLabel="label" optionValue="value" [(ngModel)]="selectedYear"
-                            placeholder="Select year" class="form-select custom-select"
-                            (onChange)="onSelectYear($event)">
-                        </p-select>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <p class="component-header mb-0">
+        <i class="bi bi-arrow-90deg-left cursor me-2"(click)="navigateTimeoff()"></i>Org Leave Balance
+      </p>
     </div>
-<div class="input-group custom-search mb-3">
+
+    <div class="d-flex gap-3 flex-wrap">
+      <div class="d-flex align-items-center gap-3">
+        <label class="form-label custom-label pt-2" for="">Search Employee</label>
+        <div class="custom-p-select-content">
+          <!-- <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
+            filterBy="fullName" [showClear]="true" placeholder="Please select employee" (onChange)="Onclick($event)"
+            class="custom-select w-100">
+          </p-select> -->
+          <p-select [options]="employeeiddetails" [(ngModel)]="selectedEmployeeId" optionValue="employeeId" optionLabel="fullName"
+            [filter]="true" filterBy="fullName" [showClear]="true" placeholder="Please select employee"
+            (onChange)="Onclick($event)" class="custom-select w-100">
+          </p-select>
+
+        </div>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <label class="form-label custom-label pt-2" for="">Year</label>
+        <div class="d-flex align-items-center gap-2">
+          <div class="custom-p-select-content">
+            <p-select [options]="years" optionLabel="label" optionValue="value" [(ngModel)]="selectedYear"
+              placeholder="Select year" class="form-select custom-select" (onChange)="onSelectYear($event)">
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  @if(displaytable){
+  <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1">
       <i class="bi bi-search"></i>
     </span>
@@ -53,8 +50,8 @@
     </ng-template>
     <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
   </ng-container>
-  
-    <ng-template #maincontent>
+
+  <ng-template #maincontent>
     <div class="team-data-content">
       <p-accordion>
         @if(filteredTeamLeaveBalance.length > 0) {
@@ -78,8 +75,9 @@
                   @for (category of employee.categories; track $index) {
                   <tr>
                     <td class="text-start cursor">
-                     <ng-container *ngIf="category.category?.name?.trim(); else noCategory">
-                        <u class="clickable-text" (click)="onClickCategory(employee, category)">{{ category.category.name }}</u>
+                      <ng-container *ngIf="category.category?.name?.trim(); else noCategory">
+                        <u class="clickable-text" (click)="onClickCategory(employee, category)">{{
+                          category.category.name }}</u>
                       </ng-container>
                       <ng-template #noCategory>-</ng-template>
                     </td>
@@ -97,10 +95,17 @@
           </p-accordion-content>
         </p-accordion-panel>
         }
-        }@else {
+        }
+        @else {
         <app-no-data-found></app-no-data-found>
         }
       </p-accordion>
     </div>
   </ng-template>
+  }
+  @else {
+    <div class="custom-compoent-data-loader">
+        <app-no-data-found></app-no-data-found>
+    </div>
+  }
 </div>

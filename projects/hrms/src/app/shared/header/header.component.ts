@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { MyExpensesTabComponent } from "../claimsandexpenses-tabs/my-expenses-tab/my-expenses-tab.component";
 import { MyinfoHeaderTabsComponent } from '../myinfo-tabs/myinfo-header-tabs/myinfo-header-tabs.component';
 import { PersonalinfoHeaderTabsComponent } from "../personalinfo-tabs/personalinfo-header-tabs/personalinfo-header-tabs.component";
 import { Subscription } from 'rxjs';
@@ -19,7 +18,7 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent,
+  imports: [CommonModule, RouterModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent,
     ReportsMainTabsComponent, PmsTabsComponent, PmsSettingsTabsComponent, ItsuporrtHeaderTabsComponent, CalendarHeaderTabsComponent, TimeOffTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'

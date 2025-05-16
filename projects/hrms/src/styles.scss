@@ -1,9 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-
+// Font styles
 @font-face {
     font-family: "autographsignatureFont";
     src: url("/fonts/Autography-DOLnW.otf");
+}
+
+@font-face {
+    font-family: "Roboto-flex";
+    src: url("/fonts/RobotoFlex-VariableFont_GRAD,XOPQ,XTRA,YOPQ,YTAS,YTDE,YTFI,YTLC,YTUC,opsz,slnt,wdth,wght.ttf");
+}
+
+@font-face {
+    font-family: "DM-SANS";
+    src: url("/fonts/DMSans-VariableFont_opsz,wght.ttf");
+}
+
+@font-face {
+    font-family: "DM-SANS-italics";
+    src: url("/fonts/DMSans-Italic-VariableFont_opsz,wght.ttf");
+}
+
+
+@font-face {
+    font-family: "LEXEND";
+    src: url("/fonts/Lexend-VariableFont_wght.ttf");
 }
 
 /* You can add global styles to this file, and also import other style files */
@@ -78,10 +98,10 @@
     --fontsize10: 0.625rem;
 
     // font family
-    --font-family: "Roboto", sans-serif;
+    --font-family: 'Roboto-flex';
 
     //scroller colors
-    --Scroller-bar-color:#cecece;
+    --Scroller-bar-color: #cecece;
     --scroller-bg-color: #FFF;
 
     //error msg
@@ -184,6 +204,7 @@ body {
         border-radius: 50%;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -319,7 +340,7 @@ body {
         font-weight: 700;
     }
 
-    .active-nav-link{
+    .active-nav-link {
         border-bottom: 0.25rem solid rgba(6, 39, 79, 1);
         font-weight: 700;
     }
@@ -485,16 +506,17 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--Scroller-bar-color); 
+    // width: 0.375rem;
+    // height: 0.375rem;
+    border-radius: 0rem !important;
+    background: var(--Scroller-bar-color);
 }
 
 /* Track */
-::-webkit-scrollbar-track {
-  background: var(--scroller-bg-color);
-  
-}
+// ::-webkit-scrollbar-track {
+//   background: var(--scroller-bg-color);
+// }
 // scroll bar stylings ends
-
 
 // button stylings
 .custom-btn {
@@ -563,8 +585,8 @@ a {
     font-size: var(--fontsize14);
     vertical-align: middle;
 
-    .text-danger{
-        color: var(--error-msg-color) !important; 
+    .text-danger {
+        color: var(--error-msg-color) !important;
     }
 }
 
@@ -587,7 +609,7 @@ a {
     color: #A1A1A1;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,textarea:focus,select:focus {
     outline: none !important;
     box-shadow: none !important;
 }
@@ -742,6 +764,7 @@ input:focus, textarea:focus, select:focus {
         background-color: #F0F4F8;
     }
 }
+
 // Select Styling 
 
 // table stylings
@@ -760,7 +783,8 @@ input:focus, textarea:focus, select:focus {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1020,6 +1044,7 @@ input:focus, textarea:focus, select:focus {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
+
 // letter stylings
 
 // note text stylings
@@ -1033,6 +1058,7 @@ input:focus, textarea:focus, select:focus {
         font-weight: 700;
     }
 }
+
 // note text stylings
 
 // events component stylings
@@ -1169,8 +1195,10 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first, .p-paginator-prev,
-        .p-paginator-next, .p-paginator-last {
+        .p-paginator-first,
+        .p-paginator-prev,
+        .p-paginator-next,
+        .p-paginator-last {
             border-radius: 50%;
             width: 1.25rem;
             height: 1.25rem;
@@ -1179,14 +1207,17 @@ input[type="file"] {
             color: #333;
         }
 
-        .p-paginator-first.p-disabled, .p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled, .p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,
+        .p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,
+        .p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 
 }
+
 //pagenation stylings
 
 // login components stylings
@@ -1208,6 +1239,7 @@ input[type="file"] {
         font-weight: 500;
     }
 }
+
 // login components stylings
 
 // custom phone number input with country code stylings
@@ -1262,6 +1294,7 @@ input[type="file"] {
         min-width: 350px !important;
     }
 }
+
 // custom phone number input with country code stylings
 
 //ERROR MESSAGE
@@ -1388,12 +1421,13 @@ input[type="file"] {
     color: #06274F;
 }
 
-.popup-image-view-container{
+.popup-image-view-container {
     width: 100%;
     height: calc(100dvh - 20rem);
     padding: 1rem;
     overflow: auto;
 }
+
 // popup stylings ends
 
 // download text
@@ -1428,6 +1462,7 @@ input[type="file"] {
         text-align: right;
     }
 }
+
 //styles for popup table
 
 // styles for expenses
@@ -1444,7 +1479,8 @@ input[type="file"] {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1535,6 +1571,7 @@ input[type="file"] {
         }
     }
 }
+
 // Settings Stylings Ends
 
 // red trash icon
@@ -1612,6 +1649,7 @@ input[type="checkbox"] {
         }
     }
 }
+
 // leaves cards stylings Ends
 
 // Action buttons stylings
@@ -1630,6 +1668,7 @@ input[type="checkbox"] {
         box-shadow: none !important;
     }
 }
+
 // Action buttons stylings Ends
 
 // component loader
@@ -1646,12 +1685,15 @@ input[type="checkbox"] {
 }
 
 // custom number input did get arrow
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-    -webkit-appearance: none;    -moz-appearance: none;    appearance: none;
-    margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    margin: 0;
 }
- .custom-file-name{
+
+.custom-file-name {
     color: #303030;
     font-weight: 400;
     font-size: var(--fontsize12);
@@ -1659,7 +1701,7 @@ input[type=number]::-webkit-outer-spin-button {
     word-break: break-all;
 }
 
- .modal-image{
+.modal-image {
     width: inherit !important;
     max-height: 60vh;
 }

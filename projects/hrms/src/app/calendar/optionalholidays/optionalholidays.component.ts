@@ -43,6 +43,10 @@ export class OptionalholidaysComponent {
         this.selectedYear = year;
         this.getHoliday(this.jobshiftdetails);
       }
+      else{
+      
+        this.getHoliday(this.jobshiftdetails);
+      }
     });
 
   }

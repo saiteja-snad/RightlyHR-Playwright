@@ -28,7 +28,7 @@ export class SidenavComponent {
 
   clearPersonalInfoStorage() {
     if (localStorage.getItem('personaldata')) {
-      this.refreshRoute('/personalinfo/personal/basic-info');
+      window.location.reload();
       localStorage.removeItem('personaldata');
     }
    

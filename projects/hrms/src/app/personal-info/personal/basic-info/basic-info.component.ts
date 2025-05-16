@@ -40,19 +40,17 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   dateofbirth: any
   changeingdob: any;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, 
-    public formValidation: FormValidationService, 
-    private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder,
+    public formValidation: FormValidationService,
+    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
-    if (
-      this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&  localStorage.getItem('personaldata') &&   this.rbac.allowedToAccess('My Info Personal Tab.view')  ) {
+    if (this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&
+     localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
       this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') &&  localStorage.getItem('rightlyHrUser') ) {
+    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
       this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     }
-    
- 
     this.initializeForm();
     this.getEmployeeId();
     this.getGender()
@@ -60,13 +58,13 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.getTitle()
     this.basicInfoForm.disable();
     this.basicInfoForm.get('salutation')?.valueChanges.subscribe((data) => {
-      if(data){
+      if (data) {
         this.onsalutationvalidation();
       }
     });
 
     this.basicInfoForm.get('gender')?.valueChanges.subscribe((data) => {
-      if(data){
+      if (data) {
         this.onsalutationvalidation();
       }
     });
@@ -143,7 +141,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         this.patchForm(data);
         this.dateofbirth = this.formatDateToLocal(this.empyployeedata.dob)
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
-        this.changemaritalstatus(); 
+        this.changemaritalstatus();
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
@@ -233,7 +231,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         error: (reason: any) => {
 
           console.log(reason);
-          this.conformationPopup.openErrorModal( reason.error.message ||'Basic Info update failed')
+          this.conformationPopup.openErrorModal(reason.error.message || 'Basic Info update failed')
         },
       });
   }
@@ -263,10 +261,10 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
   changemaritalstatus(): void {
-    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 || this.basicInfoForm.get('maritalStatus')?.value ||this.empyployeedata.maritalStatus;
-  
+    const maritalStatus = this.basicInfoForm.get('maritalStatus')?.value?.maritalstatus1 || this.basicInfoForm.get('maritalStatus')?.value || this.empyployeedata.maritalStatus;
+
     console.log('Marital Status:', maritalStatus);
-  
+
     if (maritalStatus === 'Married') {
       // Add the required validator to the marriageDate field
       this.basicInfoForm.get('marriageDate')?.setValidators([Validators.required]);
@@ -275,7 +273,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.basicInfoForm.get('marriageDate')?.clearValidators();
       this.basicInfoForm.get('marriageDate')?.setValue(null); // Reset the marriage date field
     }
-  
+
     // Update the validation state of the marriageDate field
     this.basicInfoForm.get('marriageDate')?.updateValueAndValidity();
   }

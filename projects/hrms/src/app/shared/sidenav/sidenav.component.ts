@@ -9,7 +9,7 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule,TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
@@ -26,6 +26,29 @@ export class SidenavComponent {
     window.location.href = "https://login.microsoftonline.com/common/oauth2/v2.0/logout"
   }
 
+  clearPersonalInfoStorage() {
+    if (localStorage.getItem('personaldata')) {
+      this.refreshRoute('/personalinfo/personal/basic-info');
+      localStorage.removeItem('personaldata');
+    }
+   
+    this.goToAccessibleRoute('/personalinfo');
+    localStorage.getItem('rightlyHrUser')
+
+  }
+
+  refreshRoute(route: string) {
+    // Navigate to a dummy route and then back to the desired route
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigate([route]);
+    });
+  }
+
+  hasPersonalData(): boolean {
+    const data = localStorage.getItem('personaldata');
+    return data !== null && data.trim() !== '';
+  }
+
   close() {
     this.modalservie.dismissAll();
   }
@@ -38,7 +61,7 @@ export class SidenavComponent {
     const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
     if (route) {
       this.router.navigate([route]);
-    }else {
+    } else {
       this.router.navigate(['/unauthorized']);
     }
   }

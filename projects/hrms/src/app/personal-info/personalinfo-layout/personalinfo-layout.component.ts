@@ -45,6 +45,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   jobPostData: any;
   headerName!: string;
   isLoading: boolean = false;
+  showBackIcon: boolean = true;
   spinnerLoader = false;
   loginEmployee = {} as any;
   constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
@@ -149,42 +150,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     );
   }
 
-  updateTeamRM() {
-    this.spinnerLoader = true;
-    if (!Array.isArray(this.selectedEmployees) || this.selectedEmployees.length === 0) {
-      console.error("selectedEmployees is not a valid array", this.selectedEmployees);
-      return;
-    }
-    let requestBody = this.selectedEmployees.map(employee => ({
-      jobRole: employee.jobRole,
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      middleName: employee.middleName ?? "",
-      workEmail: employee.workEmail,
-      fusionEmpId: employee.fusionEmpId,
-      employeeId: employee.employeeId,
-      contactnumber: employee.contactnumber,
-      id: employee.id
-    }));
-    const ManagerId = this.teamForm.value.reportingManager?.employeeId;
-    if (!ManagerId) {
-      console.error("No valid ManagerId found.");
-      return;
-    }
-    this.subscription = this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody).subscribe({
-      next: (data: any) => {
-        this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-      },
-      error: (reason: any) => {
-        if (reason) {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-          this.spinnerLoader = false;
-        }
-      }
-    });
-  }
+ 
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' , size: 'lg' });
@@ -538,48 +504,62 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
   }
 
-  assignHeading() {
+ assignHeading() {
+  const currentPath = this.router.url;
+
+  if (currentPath.startsWith('/personalinfo')) {
+    this.headerName = "Employee Information";
+    this.showBackIcon = false;  // Hide back icon for personalinfo
+    return; // Important: stop here so admin logic does NOT run
+  }
+
+  // Now we know route is NOT personalinfo, so we check admin logic
+  if (currentPath.startsWith('/admin')) {
+    this.showBackIcon = true; // Show back icon for admin
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
+
     if (routestatus.empType === 'Probation') {
-      this.headerName = "Probation Employees"
+      this.headerName = "Probation Employees";
     } else {
       switch (routestatus.empstatus) {
         case 'Prospective':
-          this.headerName = "Prospective Employees"
+          this.headerName = "Prospective Employees";
           break;
         case 'Active':
-          this.headerName = "Active Employees"
+          this.headerName = "Active Employees";
           break;
         case 'Probation':
-          this.headerName = "Probation Employees"
+          this.headerName = "Probation Employees";
           break;
         case 'Inactive':
-          this.headerName = "Inactive Employees"
+          this.headerName = "Inactive Employees";
           break;
         case 'Trainee Prospective':
-          this.headerName = "Prospective Trainee"
+          this.headerName = "Prospective Trainee";
           break;
         case 'Trainee Active':
-          this.headerName = "Active Trainee"
+          this.headerName = "Active Trainee";
           break;
         case 'Trainee Inactive':
-          this.headerName = "Inactive Trainee"
+          this.headerName = "Inactive Trainee";
           break;
         case 'External Prospective':
-          this.headerName = "External Prospective "
+          this.headerName = "External Prospective";
           break;
         case 'External Active':
-          this.headerName = "External Active "
+          this.headerName = "External Active";
           break;
         case 'External Inactive':
-          this.headerName = "External Inactive"
+          this.headerName = "External Inactive";
           break;
         default:
-          this.headerName = "Employees"
+          this.headerName = "Employees";
       }
     }
-
   }
+}
+
+  
 
   navigation() {
     localStorage.setItem("offBoardingemplist", JSON.stringify(this.emppersonalinfo));
@@ -592,6 +572,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    localStorage.removeItem('personaldata')
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

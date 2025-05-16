@@ -222,9 +222,8 @@ body {
     }
 
     .logo-img {
-        width: 4rem;
-        height: 2.25rem;
-        border-radius: 0.2rem;
+        width: 3.25rem;
+        height: 2rem;
     }
 
     .sidnav-main-content {
@@ -236,14 +235,15 @@ body {
     .nav-item {
         display: flex;
         flex-direction: column;
-        font-size: var(--fontsize12);
+        align-items: center;
+        font-size: var(--fontsize10);
         font-weight: 700;
         line-height: 20px;
         letter-spacing: -2%;
-        border-radius: 0.5rem;
+        border-radius: 0.3rem;
         color: var(--side-nav-item-color);
         cursor: pointer;
-        padding: 0.5rem 0rem;
+        padding: 0.3rem;
         margin-bottom: 0.75rem;
     }
 

@@ -1,12 +1,13 @@
 .custom-events-main-content {
     width: 100%;
-    height: calc(100dvh - 10rem);
-    overflow-y: auto;
 }
 
 .events-section-card {
+    width: 100%;
+    height: calc(100dvh - 11.5rem);
     padding: 1.5rem;
     border-radius: 0.5rem;
+    overflow-y: auto;
 }
 
 .no-data-wrapper {

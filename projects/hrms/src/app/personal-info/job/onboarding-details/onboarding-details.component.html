@@ -4,7 +4,7 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-            @if(this.rbac.allowedToAccess('Employee Trainee Details.view')){
+            @if(this.rbac.allowedToAccess('Employee Info Onboarding Details.view')){
             @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
         empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
         && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !==

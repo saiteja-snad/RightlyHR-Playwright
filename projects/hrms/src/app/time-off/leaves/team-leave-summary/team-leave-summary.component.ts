@@ -29,6 +29,7 @@ export class TeamLeaveSummaryComponent {
   selectedMonth: any;
   searchText: string = '';
   filteredTeamLeaveSummary: any[] = [];
+  selectedEmployee: any;
 
   destroy$: Subject<boolean> = new Subject<boolean>();
   // year
@@ -53,11 +54,11 @@ export class TeamLeaveSummaryComponent {
     { name: 'December', value: 12 },
   ];
 
-  readonly TYPE_MAP: Record<string, string> = {
-    'Leaves': 'leaves',
-    'WFH': 'wfh',
-    'Permission': 'permissions',
-    'Regularization': 'regularization'
+  readonly DISPLAY_LABEL_MAP: Record<string, string> = {
+    'leaves': 'Leave(s)',
+    'wfh': 'WFH',
+    'permissions': 'Permission(s)',
+    'regularization': 'Regularization'
   };
 
   constructor(
@@ -121,10 +122,11 @@ export class TeamLeaveSummaryComponent {
     this.getAllTeamLeaveSummary();
   }
 
-  openPopup(content: any, employee: any, type: 'Leaves' | 'WFH' | 'Permission' | 'Regularization') {
-    const actualKey = this.TYPE_MAP[type];
-    this.popupData = employee[actualKey] || [];
-    this.popupType = type;
+  openPopup(content: any, employee: any, type: 'leaves' | 'wfh' | 'permissions' | 'regularization') {
+    this.selectedEmployee = employee;
+    const actualKey = this.DISPLAY_LABEL_MAP[type];
+    this.popupData = employee[type] || [];
+    this.popupType = actualKey; 
     this.openModal(content);
   }
 

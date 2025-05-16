@@ -1,59 +1,58 @@
-.team-data-content {
+
+
+.popup-table {
+  &-wrapper {
     width: 100%;
-    height: calc(100dvh - 12rem);
-    overflow-y: auto;
+    height: max-content;
+    border: 1px solid #767676;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
 
-
-    .p-accordionpanel {
-        margin-bottom: 1rem !important;
-    }
-
-    .p-accordionheader {
-        padding: 0.75rem 1rem !important;
-        background-color: #184066 !important;
-        font-weight: 700;
-        font-size: 14px;
-        line-height: 100%;
-        letter-spacing: 0%;
-        vertical-align: middle;
-        color: #FFFFFF !important;
-    }
-
-    .p-accordioncontent-content {
-        padding: 0rem !important;
-        border-bottom-left-radius: 0.5rem !important;
-        border-bottom-right-radius: 0.5rem !important;
-    }
-
-    .employee-data-table {
-        th {
-            background-color: #DDE6F0;
-            color: #444444;
-            font-weight: 600;
-        }
+    .popup-table-content {
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #767676;
+        border-radius: 0.5rem;
+        overflow: hidden;
 
         th,
         td {
-            padding: 0.75rem 1rem;
-            text-align: center;
-            line-height: 100%;
-            letter-spacing: 0%;
-            vertical-align: middle;
-            font-size: var(--fontsize14);
-            color: #444444;
+          text-align: center;
+          padding: 0.5rem;
+          border: 1px solid #767676;
+          font-size: var(--fontsize15);
         }
 
-        tr {
-            border-bottom: 1px solid #DDE6F0;
+        th {
+          color: #141414;
+          font-weight: 500;
+          background-color: #E0E6ED !important;
         }
 
-        td {
-            font-weight: 400;
+        .custom-popup-header {
+          background-color: #305889 !important;
+          color: #fff !important;
+          font-weight: 600;
+          border-top-left-radius: 0.5rem;
+          border-top-right-radius: 0.5rem;
         }
-
-        .avaliable-number {
-            font-weight: 600;
-            color: #184066 !important;
-        }
+      }
     }
+
+    .log-time {
+      color: #585858 !important;
+    }
+
+    .duration-time {
+      color: #232222 !important;
+    }
+  }
+}
+
+.clickable-text {
+  text-decoration: underline;
+  color: #305889 !important;
+  font-weight: 600;
+  cursor: pointer;
 }

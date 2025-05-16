@@ -57,7 +57,12 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
  
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    if (this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&
+     localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
+      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
+      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    }
     this.getEmployeeId();
     this.getFamilyRelations();
     this.initializeForm();

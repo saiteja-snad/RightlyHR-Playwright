@@ -80,8 +80,12 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
     private http: HttpService, public formValidations: FormValidationsService,public rbac: RbacService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-
+      if (this.rbac.allowedToAccess('Employee Info Job Tab.view') &&
+      localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Job Tab.view')) {
+      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    } else if (this.rbac.allowedToAccess('My Info Job Tab.view') && localStorage.getItem('rightlyHrUser')) {
+      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    }
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
@@ -559,6 +563,9 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         console.log(this.jobdetails.value);
 
       },
+      error:(data:any)=>{
+        this.loading=false
+      }
     });
   }
   formatDateToLocal(dateString: string): string {

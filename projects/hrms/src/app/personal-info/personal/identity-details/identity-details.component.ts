@@ -40,8 +40,12 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    console.log('Employee info:', this.empinfo);
+    if (this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&
+     localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
+      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
+      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    }
     this.getIdentityDropDown();
     this.initializeForm();
     this.initializeupdateForm();

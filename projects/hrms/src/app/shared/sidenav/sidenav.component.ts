@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { HttpService } from '../../services/http.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -17,7 +18,7 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 export class SidenavComponent {
   @ViewChild('logoutpopup') logoutpopup: any;
   spinnerLoader = false;
-  constructor(private authService: AuthService, private modalservie: NgbModal, public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService) {
+  constructor(private authService: AuthService,private http: HttpService, private modalservie: NgbModal, public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService) {
   }
 
   onLogout() {
@@ -28,22 +29,17 @@ export class SidenavComponent {
 
   clearPersonalInfoStorage() {
     if (localStorage.getItem('personaldata')) {
-      window.location.reload();
       localStorage.removeItem('personaldata');
+      this.http.setBasicDetails();
+      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+        this.router.navigate(['/personalinfo/personal/basic-info']);
+      });
+    } else { 
+      this.goToAccessibleRoute('/personalinfo');
     }
-   
-    this.goToAccessibleRoute('/personalinfo');
-    localStorage.getItem('rightlyHrUser')
-
+ 
   }
-
-  refreshRoute(route: string) {
-    // Navigate to a dummy route and then back to the desired route
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate([route]);
-    });
-  }
-
+  
   hasPersonalData(): boolean {
     const data = localStorage.getItem('personaldata');
     return data !== null && data.trim() !== '';

@@ -10,6 +10,7 @@ import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { IJob } from '../../../Interfaces/letters-model';
 import { RbacService } from '../../../services/rbac.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-basic-info',
@@ -42,13 +43,20 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   constructor(private modalService: NgbModal, private fb: FormBuilder,
     public formValidation: FormValidationService,
-    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService) { }
+    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService,private router: Router) { }
 
   ngOnInit(): void {
     if (this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&
      localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
       this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
+      this.router.navigate(['/personalinfo/personal/basic-info'])
+      this.http.basicDetailesadded$.subscribe(() => {
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+  
+        this.getEmployeeId();
+        
+      });
       this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     }
     this.initializeForm();

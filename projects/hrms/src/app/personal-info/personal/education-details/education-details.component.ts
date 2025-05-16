@@ -47,7 +47,12 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,
     public formValidation: FormValidationService, public rbac: RbacService) { }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    if (this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&
+     localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
+      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
+      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    }
     this.initializeForm();
     this.initializeupdateForm()
     this.getDegree()

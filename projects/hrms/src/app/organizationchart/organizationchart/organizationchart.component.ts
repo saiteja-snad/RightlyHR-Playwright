@@ -13,6 +13,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import * as XLSX from 'xlsx';
 @Component({
   selector: 'app-organizationchart',
   imports: [CommonModule, Select, FormsModule, OrganizationChartModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
@@ -84,6 +85,46 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
     this.selectedEmployeeId = event.value.value;
     this.getOrghierarchy(this.selectedEmployeeId)
   }
+
+  downloadToExcel(): void {
+    if (!this.data || this.data.length === 0) {
+        console.error('No data available to export!');
+        return;
+    }
+
+    // Flatten the hierarchical data into a simple array
+    const flattenedData: any[] = [];
+    this.flattenHierarchy(this.data, flattenedData);
+
+    // Create a worksheet from the flattened data
+    const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+
+    // Create a workbook and append the worksheet
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Organization Chart');
+
+    // Export the workbook to an Excel file
+    XLSX.writeFile(workbook, 'organization-chart.xlsx');
+}
+
+// Helper function to flatten the hierarchical data
+private flattenHierarchy(nodes: TreeNode[], flattenedData: any[], parentName: string = ''): void {
+    nodes.forEach((node) => {
+        const { name, doj, title, compensationamount, department } = node.data;
+        flattenedData.push({
+            Name: name,
+            DOJ: doj,
+            Title: title,
+            Compensation: compensationamount,
+            Department: department,
+            Parent: parentName,
+        });
+
+        if (node.children) {
+            this.flattenHierarchy(node.children, flattenedData, name);
+        }
+    });
+}
 
 
 

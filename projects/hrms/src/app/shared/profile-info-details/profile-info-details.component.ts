@@ -4,6 +4,7 @@ import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-profile-info-details',
   imports: [CommonModule],
@@ -27,10 +28,16 @@ export class ProfileInfoDetailsComponent {
   empdata = {} as any;
   profilePic: any;
 
-  constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService,) { }
+  constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public rbac: RbacService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    if (
+      this.rbac.allowedToAccess('Employee Info Personal Tab.view') && localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
+      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
+      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    }
+
     this.getJobDetails();
     this.getEmployeeId();
     this.http.basicDetailesadded$.subscribe(() => {
@@ -110,7 +117,7 @@ export class ProfileInfoDetailsComponent {
               }
             },
             error: (reason: any) => {
-              this.conformationPopup.openErrorModal( reason.error.message || 'Profile picture update failed')
+              this.conformationPopup.openErrorModal(reason.error.message || 'Profile picture update failed')
 
             },
           });

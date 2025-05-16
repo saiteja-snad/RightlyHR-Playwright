@@ -203,7 +203,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
-      empStatus: 'Active',
+    
       marriedDate: formValue.marriageDate,
     };
 

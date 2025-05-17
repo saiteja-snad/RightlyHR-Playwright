@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">{{'Job Details' |translate }}</span></div>
-        @if(this.rbac.allowedToAccess('Employee Info Job Details.create') ){
+        @if(this.rbac.allowedToAccess('Employee Info Job Details.create') && ! this.rbac.allowedToAccess('My Info Job Details.create') ){
        <!-- @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==

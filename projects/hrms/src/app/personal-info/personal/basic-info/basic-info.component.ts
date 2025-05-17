@@ -46,19 +46,21 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService,private router: Router) { }
 
   ngOnInit(): void {
-    if (this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&
-     localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
-      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
-      this.router.navigate(['/personalinfo/personal/basic-info'])
-      this.http.basicDetailesadded$.subscribe(() => {
-        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    // if (this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&
+    //  localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
+      
+    // } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
+    //   this.router.navigate(['/personalinfo/personal/basic-info'])
+    //   this.http.basicDetailesadded$.subscribe(() => {
+    //     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
   
-        this.getEmployeeId();
+    //     this.getEmployeeId();
         
-      });
-      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    }
+    //   });
+    //   this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    // }
+
+    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
     this.getEmployeeId();
     this.getGender()

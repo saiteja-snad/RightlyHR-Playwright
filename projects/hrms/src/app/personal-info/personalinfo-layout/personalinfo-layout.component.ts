@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
-import { Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
@@ -48,13 +48,15 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   showBackIcon: boolean = true;
   spinnerLoader = false;
   loginEmployee = {} as any;
-  constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route:ActivatedRoute) { }
 
   ngOnInit(): void {
     this.teamForm = this.fb.group({
       teamMembers: [null, Validators.required],
       reportingManager: [null, Validators.required]
     });
+   console.log('current Route: ',this.route.snapshot.routeConfig?.path || '');
+    
     this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
     this.loginEmployee = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.initializeForm();

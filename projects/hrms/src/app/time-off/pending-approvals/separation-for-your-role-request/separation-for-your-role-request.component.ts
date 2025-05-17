@@ -280,6 +280,7 @@ export class SeparationForYourRoleRequestComponent {
       extendedDate: this.selectedSpRequestData.extenddate,
       meta: this.jsonData,
       approvedBy: loggedInUser.employeeId.toString(),
+      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
     };
     this.subscription = this.http
       .putData(
@@ -335,6 +336,7 @@ export class SeparationForYourRoleRequestComponent {
       comments: this.selectedSpRequestData.rejectedReason,
       approvedBy: loginuserdata.employeeId.toString(),
       meta: this.jsonData,
+      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
     };
     this.subscription = this.http
       .putData(
@@ -412,6 +414,7 @@ export class SeparationForYourRoleRequestComponent {
       salaryhold: this.selectedSpRequestData.spsalaryhold,
       meta: this.jsonData,
       approvedBy: loggedInUser.employeeId.toString(),
+      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
     };
     if (this.selectedSpRequestData.requestSelectedType == 'Regular') {
       requestBody.lastWorkingDate =

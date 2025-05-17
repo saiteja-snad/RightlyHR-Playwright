@@ -121,6 +121,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         status: 'Approved',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
+        currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
       };
       this.sharedModalService.openLoaderModal('Approving Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -152,6 +153,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
         status: 'Rejected',
         comments: formData.comments,
         approvedBy: this.empinfo.employeeId.toString(),
+        currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
       };
       this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
@@ -180,6 +182,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     let requestBody = {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
+      currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
     };
     this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
     this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({

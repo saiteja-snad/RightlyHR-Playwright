@@ -31,7 +31,7 @@ export class RbacService {
       }
     }
   
-    // ✅ NEW: Support array of permissions
+  
     if (Array.isArray(permission)) {
       return permission.some(p => this.cachedPermissions?.includes(p.toLowerCase()));
     }

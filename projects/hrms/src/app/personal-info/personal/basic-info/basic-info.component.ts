@@ -10,7 +10,8 @@ import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { IJob } from '../../../Interfaces/letters-model';
 import { RbacService } from '../../../services/rbac.service';
-import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-basic-info',
@@ -43,26 +44,15 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   constructor(private modalService: NgbModal, private fb: FormBuilder,
     public formValidation: FormValidationService,
-    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService,private router: Router) { }
+    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router,) { }
 
   ngOnInit(): void {
-    // if (this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&
-    //  localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
-      
-    // } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
-    //   this.router.navigate(['/personalinfo/personal/basic-info'])
-    //   this.http.basicDetailesadded$.subscribe(() => {
-    //     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-  
-    //     this.getEmployeeId();
-        
-    //   });
-    //   this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    // }
 
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+
+    this.getEmpInfoFromRoute();
+
     this.initializeForm();
-    this.getEmployeeId();
+
     this.getGender()
     this.getMaritaldetails()
     this.getTitle()
@@ -86,6 +76,24 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       this.changeingdob = data
     });
 
+  }
+
+   canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
+    const permission = this.permissionRouteService.getPermissionForCurrentRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+    
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+    }
   }
 
   initializeForm(): void {
@@ -213,7 +221,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
-    
+
       marriedDate: formValue.marriageDate,
     };
 

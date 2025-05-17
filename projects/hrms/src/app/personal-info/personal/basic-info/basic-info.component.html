@@ -5,7 +5,7 @@
       @if(!buttons && ( empyployeedata?.empstatus?.toLowerCase() !== 'inactive' && empyployeedata?.empstatus?.toLowerCase() !==
       'trainee inactive' )){
 
-      @if(rbac.allowedToAccess('Employee Info Basic Information.update')){
+      @if(canAccess('update')){
       <div>
         <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
       </div>
@@ -22,8 +22,8 @@
 
     <!--input content-->
     <form autocomplete="off" [formGroup]="basicInfoForm">
-      <div class="row">
-        <div class="col-md-6 col-lg-4 mb-3">
+      <div class="row" >
+        <div class="col-md-6 col-lg-4 mb-3" *ngIf="canAccess('view')" >
           <label for="employeeId" class="form-label custom-label mb-2">Employee ID<span
               class="text-danger">*</span></label>
           <input type="text" autocomplete="off" class="form-control custom-input" id="employeeId"
@@ -34,7 +34,7 @@
           </div>
         </div>
 
-        <div class="col-md-6 col-lg-4 mb-3">
+        <div class="col-md-6 col-lg-4 mb-3" *ngIf="canAccess('view')" >
           <label for="salutation" class="form-label custom-label mb-2">Salutation<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">

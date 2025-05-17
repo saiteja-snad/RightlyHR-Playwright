@@ -54,7 +54,6 @@ export class SidenavComponent {
   }
 
   goToAccessibleRoute(actualRoute: string) {
-    debugger
     const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
     if (route) {
       this.router.navigate([route]);

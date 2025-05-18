@@ -46,8 +46,8 @@ export class OrgLeaveBalanceComponent {
   wfhCount = 0;
   permissionsCount = 0;
   @ViewChild('leavesModal') leavesModal!: TemplateRef<any>;
-  selectedEmployeeId: string | null = null;
-  displaytable=false;
+  selectedEmployeeId!: number | undefined;
+  displaytable = false;
 
   years = [
     { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
@@ -57,21 +57,20 @@ export class OrgLeaveBalanceComponent {
 
   constructor(
     private http: HttpService,
-    private modal: NgbModal, private authService: AuthService,private router: Router,
+    private modal: NgbModal, private authService: AuthService, private router: Router,
   ) { }
 
   ngOnInit(): void {
     this.loggedInUser = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    localStorage.removeItem("onbehalfofaproverData");
+    // localStorage.removeItem("onbehalfofaproverData");
     const currentDate = new Date();
     this.selectedYear = currentDate.getFullYear();
     this.getEmployeeId();
-    this.getAllTeamLeaveBalance();
   }
 
   onSelectYear(event: any) {
     this.selectedYear = event.value;
-    this.getAllTeamLeaveBalance();
+    this.getAllTeamLeaveBalance(this.selectedEmployeeId);
   }
 
   getEmployeeId() {
@@ -96,10 +95,11 @@ export class OrgLeaveBalanceComponent {
     });
   }
 
-  getAllTeamLeaveBalance(employeeId?: string) {
+  getAllTeamLeaveBalance(employeeId?: number) {
     const id = employeeId || this.loggedInUser.employeeId;
 
-    let url = `LeaveEntitlements/team-leave-entitlements/${id}`;
+    let url = `LeaveEntitlements/team-leave-entitlements/${employeeId}`;
+
     if (this.selectedYear) {
       url += `?year=${this.selectedYear}`;
     }
@@ -109,20 +109,17 @@ export class OrgLeaveBalanceComponent {
         if (res.success && res.data) {
           this.teamLeaveBalance = res.data;
           this.filteredTeamLeaveBalance = res.data;
-          this.activeIndex = 0;
         } else {
           this.dataload = false
           this.teamLeaveBalance = [];
           this.filteredTeamLeaveBalance = [];
-          this.activeIndex = -1;
         }
       },
       error: (err) => {
-        this.displaytable=false;
+        this.displaytable = false;
         this.dataload = false
         this.teamLeaveBalance = [];
         this.filteredTeamLeaveBalance = [];
-        this.activeIndex = -1;
       },
       complete: () => {
         this.dataload = false;
@@ -131,26 +128,22 @@ export class OrgLeaveBalanceComponent {
   }
 
   Onclick($event: any) {
-  const selectedId = $event?.value;
+    console.log(this.filteredTeamLeaveBalance)
+    const selectedId = $event?.value;
 
-  if (selectedId) {
-    this.displaytable = true;
-    this.selectedEmployeeId = selectedId;
-    this.employeedata = this.employeeiddetails.find((e: any) => e.employeeId == selectedId);
-    localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
-    this.getAllTeamLeaveBalance(selectedId);
-  } else {
-    // If cleared
-    this.selectedEmployeeId = null;
-    this.employeedata = {};
-    this.displaytable = false;
-    this.teamLeaveBalance = [];
-    this.filteredTeamLeaveBalance = [];
-    localStorage.setItem("onbehalfofaproverData", JSON.stringify(null));
+    if (selectedId) {
+      this.displaytable = true;
+      this.selectedEmployeeId = selectedId;
+      this.getAllTeamLeaveBalance(selectedId);
+    } else {
+      // If cleared
+      this.selectedEmployeeId = undefined;
+      this.employeedata = {};
+      this.displaytable = false;
+      this.teamLeaveBalance = [];
+      this.filteredTeamLeaveBalance = [];
+    }
   }
-
-  this.http.triggerActionSignal();
-}
 
   trackByEmployeeId(index: number, employee: any): string {
     return employee?.employeeBasicDetails?.employeeId;
@@ -164,7 +157,7 @@ export class OrgLeaveBalanceComponent {
     const employeeId = employee.employeeBasicDetails.employeeId;
     const categoryId = category.category?.id;
     const yearToFilter = this.selectedYear || new Date().getFullYear();
-    const url = `Timeoff?EmployeeId=${employeeId}`;
+    const url = `Timeoff/${employeeId}`;
 
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {
@@ -182,7 +175,7 @@ export class OrgLeaveBalanceComponent {
       }
     });
   }
-  
+
   filterTeamLeaveSummary() {
     const term = this.searchText.trim().toLowerCase();
     if (!term) {
@@ -194,10 +187,6 @@ export class OrgLeaveBalanceComponent {
       const fusionId = item.employeeBasicDetails.snadEmployeeId?.toLowerCase() || '';
       return name.includes(term) || fusionId.includes(term);
     });
-  }
-
-  navigateTimeoff() {
-    this.router.navigate(['/time-off/leaves/waiting-for-approval'])
   }
 
   ngOnDestroy(): void {

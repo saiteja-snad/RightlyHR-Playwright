@@ -1,17 +1,17 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">{{'Job Details' |translate }}</span></div>
-        @if(this.rbac.allowedToAccess('Employee Info Job Details.create') && ! this.rbac.allowedToAccess('My Info Job Details.create') ){
-       <!-- @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
+
+        <!-- @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
         'trainee inactive' )){ -->
-        <div class="custom-add-btn" (click)="openModal(addEducationmodal)">
+        <div class="custom-add-btn" (click)="openModal(addEducationmodal)" *ngIf="canAccess('create')">
             <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
         </div>
-       
-    
-    }
+
+
+
     </div>
     <div class="custom-table-content">
         @if(!loading){
@@ -29,9 +29,9 @@
                     <th>Sub location</th>
                     <th>Shift</th>
                     <th>Job type</th>
-                     @if(rbac.allowedToAccess('Employee Info Job Details.update') || rbac.allowedToAccess('Employee Info Separation Request.view') || rbac.allowedToAccess('Employee Info Job Details.delete')){
-                    <th class="text-center">Actions</th>
-                    }
+
+                    <th class="text-center" *ngIf="canAccessAnyPermissions(['update', 'delete'])">Actions</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -106,8 +106,11 @@
                                 <div>-</div>
                             </ng-template>
                         </td>
-                        @if(rbac.allowedToAccess('Employee Info Job Details.update') || rbac.allowedToAccess('Employee Info Separation Request.view') || 
-                        rbac.allowedToAccess('Employee Info Job Details.delete')){
+                        @if(canAccessAnyPermissions([
+                        'update',
+                        'view',
+                        'delete'
+                        ])){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
@@ -118,15 +121,15 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if(rbac.allowedToAccess('Employee Info Job Details.update')){
+                                    @if(canAccess('update')){
                                     <li (click)="openModalupdate(updatejobmodal, item)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Update</a>
                                     </li>}
-                                    @if(rbac.allowedToAccess('Employee Info Job Details.delete')){
+                                    @if(canAccess('delete')){
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a>
                                     </li>}
-                                     @if(rbac.allowedToAccess('Employee Info Separation Request.view')){
+                                    @if(canAccess('view')){
                                     @if (first && showSaperationDots ) {
                                     <li (click)="openModalforSeparationupdate(seprationModal, item)">
                                         <a class="dropdown-item"> <img src="icons/sepration.png" alt=""
@@ -137,7 +140,7 @@
                             </div>
                         </td>
                         }
-                    }
+                        }
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
@@ -164,7 +167,8 @@
                 <p class="popup-heading mb-0">Add Job Details</p>
             </div>
             <div>
-                <a (click)="modal.dismiss();jobDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();jobDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">
@@ -175,7 +179,8 @@
                             <span class="text-danger">*</span></label>
                         <input type="date" class="form-control custom-input" id="effectiveDate" [min]="joiningDate"
                             onkeypress="return false" formControlName="effectiveDate">
-                        <div class="error-msg" *ngIf="jobDetailsForm.get('effectiveDate')?.invalid && jobDetailsForm.get('effectiveDate')?.touched">
+                        <div class="error-msg"
+                            *ngIf="jobDetailsForm.get('effectiveDate')?.invalid && jobDetailsForm.get('effectiveDate')?.touched">
                             Effective Date is required
                         </div>
                     </div>
@@ -184,12 +189,14 @@
                         <label for="jobRole" class="form-label custom-label mb-2">Job Role
                             <span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"  [resetFilterOnHide]="true"
-                                filterBy="designationName" formControlName="jobRole" placeholder="Please select job role" 
-                                class="form-select custom-select" (onChange)="onDesignationChange($event.value)">
+                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
+                                [resetFilterOnHide]="true" filterBy="designationName" formControlName="jobRole"
+                                placeholder="Please select job role" class="form-select custom-select"
+                                (onChange)="onDesignationChange($event.value)">
                             </p-select>
                         </div>
-                        <div class="error-msg" *ngIf="jobDetailsForm.get('jobRole')?.invalid && jobDetailsForm.get('jobRole')?.touched">
+                        <div class="error-msg"
+                            *ngIf="jobDetailsForm.get('jobRole')?.invalid && jobDetailsForm.get('jobRole')?.touched">
                             Job Role is required
                         </div>
                     </div>
@@ -211,7 +218,8 @@
                         <div class="custom-p-select-content">
                             <p-select [options]="departmentDetails" optionLabel="departmentName"
                                 formControlName="department" placeholder="Please select department"
-                                (onChange)="onDepartmentChange($event.value)" class="form-select custom-select"></p-select>
+                                (onChange)="onDepartmentChange($event.value)"
+                                class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsForm.get('department')?.invalid && jobDetailsForm.get('department')?.touched">
@@ -251,8 +259,8 @@
                         <label for="team" class="form-label custom-label mb-2">Reporting Manager<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"  [resetFilterOnHide]="true"
-                                filterBy="employee" formControlName="reportingManager"
+                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"
+                                [resetFilterOnHide]="true" filterBy="employee" formControlName="reportingManager"
                                 placeholder="Please select Reporting Manager"
                                 (onChange)="onReportingManagerChange($event.value)"
                                 class="form-select custom-select"></p-select>
@@ -358,8 +366,8 @@
                         <label for="jobRole" class="form-label custom-label mb-2">Job Role<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"  [resetFilterOnHide]="true"
-                                filterBy="designationName" formControlName="jobRole"
+                            <p-select [options]="JobroleDesignation" optionLabel="designationName" [filter]="true"
+                                [resetFilterOnHide]="true" filterBy="designationName" formControlName="jobRole"
                                 placeholder="Please select job role" class="form-select custom-select"
                                 (onChange)="onDesignationChangeforupdate($event.value)"></p-select>
                         </div>
@@ -399,10 +407,9 @@
                         <label for="team" class="form-label custom-label mb-2">Team<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="teamDropdownValues" optionLabel="subdepartmentName" optionValue="subdepartmentId"
-                                formControlName="team" placeholder="Please select team"
-                                class="form-select custom-select"
-                                ></p-select>
+                            <p-select [options]="teamDropdownValues" optionLabel="subdepartmentName"
+                                optionValue="subdepartmentId" formControlName="team" placeholder="Please select team"
+                                class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsupdateForm.get('team')?.invalid && jobDetailsupdateForm.get('team')?.touched">
@@ -427,8 +434,8 @@
                         <label for="team" class="form-label custom-label mb-2">Reporting Manager<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"  [resetFilterOnHide]="true"
-                                filterBy="employee" formControlName="reportingManager"
+                            <p-select [options]="allReportees" optionLabel="employee" [filter]="true"
+                                [resetFilterOnHide]="true" filterBy="employee" formControlName="reportingManager"
                                 placeholder="Please select Reporting Manager"
                                 (onChange)="onReportingManagerChange($event.value)"
                                 class="form-select custom-select"></p-select>
@@ -458,7 +465,7 @@
                         <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName"  
+                            <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName"
                                 formControlName="subLocation" placeholder="Please select sub location"
                                 class="form-select custom-select" (onChange)="getShiftBYid($event.value)">
                             </p-select>
@@ -473,9 +480,8 @@
                         <label for="shift" class="form-label custom-label mb-2">Shift<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="shiftDropdown" optionLabel="shiftName" 
-                                formControlName="shiftName" placeholder="Please select shift"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="shiftDropdown" optionLabel="shiftName" formControlName="shiftName"
+                                placeholder="Please select shift" class="form-select custom-select"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="jobDetailsupdateForm.get('shiftName')?.invalid && jobDetailsupdateForm.get('shiftName')?.touched">
@@ -522,8 +528,10 @@
             <form autocomplete="off" [formGroup]="separationRequestForm" (ngSubmit)="postSeparationRequestForm()">
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label for="applieddate" class="form-label custom-label mb-2">Raised Date<span class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input" id="applieddate" formControlName="appliedDate" />
+                        <label for="applieddate" class="form-label custom-label mb-2">Raised Date<span
+                                class="text-danger">*</span></label>
+                        <input type="date" class="form-control custom-input" id="applieddate"
+                            formControlName="appliedDate" />
                         <div class="error-msg"
                             *ngIf="separationRequestForm.get('appliedDate')?.invalid && separationRequestForm.get('appliedDate')?.touched">
                             Raised Date is required
@@ -531,28 +539,34 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="jobrole" class="form-label custom-label mb-2">Job Role<span class="text-danger"></span></label>
+                        <label for="jobrole" class="form-label custom-label mb-2">Job Role<span
+                                class="text-danger"></span></label>
                         <input class="form-control custom-input" id="jobrole" formControlName="jobRole" />
                     </div>
-                
+
                     <div class="col-md-6 mb-3">
-                        <label for="department" class="form-label custom-label mb-2">Department<span class="text-danger"></span></label>
+                        <label for="department" class="form-label custom-label mb-2">Department<span
+                                class="text-danger"></span></label>
                         <input class="form-control custom-input" id="department" formControlName="departmentName" />
                     </div>
-                    
+
                     <div class="col-md-6 mb-3">
-                        <label for="subDepartmentUpdate" class="form-label custom-label mb-2">Team<span class="text-danger"></span></label>
+                        <label for="subDepartmentUpdate" class="form-label custom-label mb-2">Team<span
+                                class="text-danger"></span></label>
                         <input class="form-control custom-input" id="team" formControlName="team" />
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="teamManager" class="form-label custom-label mb-2">Team Manager<span class="text-danger"></span></label>
+                        <label for="teamManager" class="form-label custom-label mb-2">Team Manager<span
+                                class="text-danger"></span></label>
                         <input class="form-control custom-input" id="teamManager" formControlName="teamManager" />
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="reportingManager" class="form-label custom-label mb-2">Reporting Manager<span  class="text-danger"></span></label>
-                        <input class="form-control custom-input" id="reportingManager" formControlName="reportingManager" />
+                        <label for="reportingManager" class="form-label custom-label mb-2">Reporting Manager<span
+                                class="text-danger"></span></label>
+                        <input class="form-control custom-input" id="reportingManager"
+                            formControlName="reportingManager" />
                     </div>
 
                     <div class="col-md-12">
@@ -562,7 +576,8 @@
                             <textarea class="form-control custom-input" id="description" formControlName="description"
                                 rows="3" maxlength="400" placeholder="Please provide separation reason..."
                                 (keydown)="formValidations.restrictInput($event)"></textarea>
-                            <div class="textarea-count-text">{{ separationRequestForm.get('description')?.value?.length || 0 }}/400</div>
+                            <div class="textarea-count-text">{{ separationRequestForm.get('description')?.value?.length
+                                || 0 }}/400</div>
                             <div class="error-msg"
                                 *ngIf="separationRequestForm.get('description')?.touched && separationRequestForm.get('description')?.invalid">
                                 <ng-container *ngIf="separationRequestForm.get('description')?.errors?.['required']">
@@ -590,7 +605,8 @@
                         <div class="mb-3">
                             <label for="earlyRelievingDate" class="form-label custom-label mb-2">Expected Relieving Date
                                 <span class="text-danger">*</span></label>
-                            <input type="date" class="form-control custom-input" id="earlyRelievingDate" [min]="separationRequestForm.get('appliedDate')?.value" onkeypress="return false"
+                            <input type="date" class="form-control custom-input" id="earlyRelievingDate"
+                                [min]="separationRequestForm.get('appliedDate')?.value" onkeypress="return false"
                                 formControlName="earlyRelievingDate" />
                             <div class="error-msg"
                                 *ngIf="separationRequestForm.get('earlyRelievingDate')?.invalid && separationRequestForm.get('earlyRelievingDate')?.touched">
@@ -603,11 +619,16 @@
                         <div class="mb-3">
                             <label for="reasonForEarlyRelieving" class="form-label custom-label mb-2">Reason for Early
                                 Relieving<span class="text-danger">*</span></label>
-                            <textarea class="form-control custom-input" id="reasonForEarlyRelieving" formControlName="reasonForEarlyRelieving"
-                             rows="3" placeholder="Please provide early relieving reason..." [maxlength]="400"  (keydown)="formValidations.restrictInput($event)"></textarea>
-                            <div class="textarea-count-text">{{ separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }}/400</div>
-                            <div class="error-msg" *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
-                                <ng-container *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">
+                            <textarea class="form-control custom-input" id="reasonForEarlyRelieving"
+                                formControlName="reasonForEarlyRelieving" rows="3"
+                                placeholder="Please provide early relieving reason..." [maxlength]="400"
+                                (keydown)="formValidations.restrictInput($event)"></textarea>
+                            <div class="textarea-count-text">{{
+                                separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }}/400</div>
+                            <div class="error-msg"
+                                *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.touched && separationRequestForm.get('reasonForEarlyRelieving')?.invalid">
+                                <ng-container
+                                    *ngIf="separationRequestForm.get('reasonForEarlyRelieving')?.errors?.['required']">
                                     Reason for Early Relieving is required
                                 </ng-container>
                                 <ng-container
@@ -624,14 +645,17 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
-                    <button type="button" class="custom-btn btn-secondary" (click)="confirmationopenModal(closeconformation)">{{'Close'|translate}}</button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="separationRequestForm.invalid||isLoading">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="confirmationopenModal(closeconformation)">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="separationRequestForm.invalid||isLoading">
                         @if(!isLoading){
                         {{'Submit'|translate}}
                         }
                         @else {
                         <div class="button-loader-content">
-                            <div *ngIf="isLoading" class="spinner-border spinner-border button-spinner text-light" role="status"></div>
+                            <div *ngIf="isLoading" class="spinner-border spinner-border button-spinner text-light"
+                                role="status"></div>
                             <div>{{'Submitting'|translate}}</div>
                         </div>
                         }

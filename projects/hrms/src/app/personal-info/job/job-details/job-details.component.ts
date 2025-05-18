@@ -9,6 +9,9 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import moment from 'moment';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import {Router } from '@angular/router';
+
 import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
@@ -77,22 +80,18 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   selectedlocationid: any;
 
   constructor(private modalService: NgbModal, private authService: AuthService, private fb: FormBuilder, private conformationPopup: OpenModalService,
-    private http: HttpService, public formValidations: FormValidationsService,public rbac: RbacService) { }
+    private http: HttpService, public formValidations: FormValidationsService,public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService,private router: Router) { }
 
   ngOnInit(): void {
-      if (this.rbac.allowedToAccess('Employee Info Job Tab.view') &&
-      localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Job Tab.view')) {
-      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    } else if (this.rbac.allowedToAccess('My Info Job Tab.view') && localStorage.getItem('rightlyHrUser')) {
-      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    }
+    
+    this.getEmpInfoFromRoute();
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
     this.getDepartment();
     this.getJobtype();
     this.getReportingTo();
-    this.getEmployeeId();
+    
     this.getjobLocationList();
     this.getJobDetails();
     this.getJobDesignation();
@@ -104,6 +103,34 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         console.log("dataid" + subdepartmentId)
         this.onSubDepartmentNameChangeupdate(subdepartmentId);
       });
+  }
+    canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
+    const permission = this.permissionRouteService.getPermissionForCurrentJobRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+    
+  }
+
+ canAccessAnyPermissions(actions: ('view' | 'create' | 'update' | 'delete')[], extraPermissions: string[] = []): boolean {
+  // Check route-based permissions
+  const routeBased = actions.some(action => {
+    const permission = this.permissionRouteService.getPermissionForCurrentJobRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+  });
+  // Check explicit permissions
+  const explicit = extraPermissions.some(permission => this.rbac.allowedToAccess(permission));
+  return routeBased || explicit;
+}
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+    }
   }
 
   initializejobForm(): void {
@@ -117,7 +144,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       reportingManager: [null, Validators.required],
       location: [null, Validators.required],
       subLocation: [null, Validators.required],
-      shift: [, Validators.required],
+      shift: ['', Validators.required],
       jobType: [null, Validators.required],
     });
   }

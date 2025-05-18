@@ -14,6 +14,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-previous-experince',
@@ -45,15 +47,15 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
   spinnerLoader = false;
 
-  constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeForm();
     this.getJobtypes();
-    this.getexperiencedetailsbyemployeid();
+
     this.initializeupdateForm();
-    this.getEmployeeId()
+  
     this.employeeExperienceForm.get('fromDate')?.valueChanges.subscribe(() => {
       this.employeeExperienceForm.get('toDate')?.reset();
     });
@@ -62,6 +64,27 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
     });
   }
 
+  canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
+    const permission = this.permissionRouteService.getPermissionForCurrentJobRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+    
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+         this.getexperiencedetailsbyemployeid();
+      this.getEmployeeId();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+         this.getexperiencedetailsbyemployeid();
+      this.getEmployeeId();
+    }
+  }
 
   initializeForm(): void {
     this.employeeExperienceForm = this.fb.group({

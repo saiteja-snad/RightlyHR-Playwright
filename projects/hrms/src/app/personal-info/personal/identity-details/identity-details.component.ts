@@ -12,6 +12,8 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 
 @Component({
   selector: 'app-identity-details',
@@ -37,20 +39,35 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   loading = false
   selectedIdentityTypetoUpdate: any;
   constructor(private modalService: NgbModal, private http: HttpService,
-    private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService) { }
+    private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
-    if (this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&
-     localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
-      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
-      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    }
+    this.getEmpInfoFromRoute();
     this.getIdentityDropDown();
     this.initializeForm();
     this.initializeupdateForm();
-    this.getIdentityByEmpid();
-    this.getEmployeeId();
+    
+  
+  }
+
+    canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
+    const permission = this.permissionRouteService.getPermissionForCurrentRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+    
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+      this.getIdentityByEmpid();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+      this.getIdentityByEmpid();
+    }
   }
 
   initializeForm(): void {

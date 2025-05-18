@@ -11,6 +11,8 @@ import { environment } from '../../../../environments/environment';
 import { ProbationformViewComponent } from '../../../shared/probationform-view/probationform-view.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../../services/rbac.service';
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 @Component({
   selector: 'app-probation-details',
   standalone: true,
@@ -30,14 +32,33 @@ export class ProbationDetailsComponent implements OnInit {
   loggedinuser = {} as any;
 
   constructor(private http: HttpService, private authService: AuthService, private openModalService: OpenModalService,
-     private modalService: NgbModal,public rbac: RbacService) { }
+     private modalService: NgbModal,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private readonly router: Router) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.loggedinuser = this.authService.getToken();
-    this.getEmployeeId();
     this.getProbationRequest();
     this.getProbationExtendDays();
+  }
+  canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
+    const permission = this.permissionRouteService.getPermissionForCurrentJobRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+    
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+    this.getEmployeeId();
+    this.getProbationRequest();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+   this.getEmployeeId();
+    this.getProbationRequest();
+    }
   }
 
   getEmployeeId(): void {

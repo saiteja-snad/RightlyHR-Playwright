@@ -4,7 +4,7 @@
       <div>
         <span class="component-sub-header">Contact Details</span>
       </div>
-      @if(rbac.allowedToAccess('Employee Info Contact Details.update')){
+      @if(canAccess('update') && !loading){
       @if(!buttons &&( employedata?.empstatus?.toLowerCase() !== 'inactive' &&
       employedata?.empstatus?.toLowerCase()
       !== 'trainee inactive')){

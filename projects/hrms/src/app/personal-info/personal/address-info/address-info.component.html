@@ -4,7 +4,7 @@
       <div>
         <span class="component-sub-header">Current Address</span>
       </div>
-        @if(rbac.allowedToAccess('Employee Info Address Details.update')){
+        @if(canAccess('update')){
       @if(!buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
       && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
       

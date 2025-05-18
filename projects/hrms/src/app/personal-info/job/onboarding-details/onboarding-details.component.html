@@ -4,10 +4,10 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-            @if(this.rbac.allowedToAccess('Employee Info Onboarding Details.view')){
+            @if(canAccess('view')){
             @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
             <div >
-               @if(rbac.allowedToAccess('Employee Info Onboarding Details.update')){
+               @if(canAccess('update')){
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
             }
             </div>

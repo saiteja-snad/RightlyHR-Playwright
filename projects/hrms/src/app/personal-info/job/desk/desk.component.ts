@@ -5,6 +5,7 @@ import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-desk',
@@ -17,13 +18,28 @@ export class DeskComponent implements OnInit, OnDestroy {
   subscription!: Subscription
   loading = false
   deskdata = new BehaviorSubject<any>([]);
-  constructor(private http: HttpService,) { }
+  constructor(private http: HttpService,
+    private router: Router,
+
+  ) { }
   ngOnInit() {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    this.getdesk();
+    this.getEmpInfoFromRoute();
 
   }
 
+
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getdesk();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getdesk();
+    }
+  }
   getdesk() {
     this.loading = true
     let EmpId = parseInt(this.empinfo.employeeId);

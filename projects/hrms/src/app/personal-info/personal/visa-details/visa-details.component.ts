@@ -13,6 +13,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 
 @Component({
   selector: 'app-visa-details',
@@ -37,14 +39,13 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   selectedvisaDetails: any;
   loading=false
   employedata: any;
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+   this.getEmpInfoFromRoute();
     this.getCountry();
     this.getvisatype();
-    this.getVisaEmpId()
+   
     this.intitionfrom()
-    this.getEmployeeId()
     this.intitionupdatefrom()
     this.visaForm.get('issueddate')?.valueChanges.subscribe(() => {
       this.visaForm.get('expirydate')?.reset();
@@ -53,6 +54,26 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
       this.visaupdateForm.get('expirydate')?.reset();
     });
     
+  }
+
+    canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
+    const permission = this.permissionRouteService.getPermissionForCurrentRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+    
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+       this.getVisaEmpId()
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+       this.getVisaEmpId()
+    }
   }
 
   intitionfrom(){

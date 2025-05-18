@@ -13,6 +13,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 @Component({
   selector: 'app-bank-details',
   imports: [Select, CommonModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
@@ -32,25 +34,44 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   bankdocument: any
   displayblankdocument: any
   employedata = {} as IProbationEmployees;
-  spinnerLoader=false;
-  loading=false
-  constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService,public formValidation: FormValidationService,public rbac: RbacService) { }
+  spinnerLoader = false;
+  loading = false
+  constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
+    this.getEmpInfoFromRoute();
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeBankDetailsForm();
     this.initializeBankDetailsupdateForm()
     this.getbanknames()
-    this.getbankempid()
-    this.getEmployeeId();
+
   }
-  
+
+  canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
+    const permission = this.permissionRouteService.getPermissionForCurrentRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getbankempid()
+      this.getEmployeeId();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getbankempid()
+      this.getEmployeeId();
+    }
+  }
   initializeBankDetailsForm(): void {
     this.bankDetailsForm = this.fb.group({
       bankName: ['', Validators.required],
       accountName: ['', [Validators.required,]],
-      accountNo: ['', [Validators.required,Validators.pattern('^[0-9]{12,20}$'),]],
-      ifscCode: ['',[Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'),this.invalidIfscCodeValidator(),]],
+      accountNo: ['', [Validators.required, Validators.pattern('^[0-9]{12,20}$'),]],
+      ifscCode: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'), this.invalidIfscCodeValidator(),]],
       isPrimary: [false],
       attachment: [null, Validators.required]
     });
@@ -61,10 +82,10 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.bankDetailsUpdateForm = this.fb.group({
       bankNameupdate: ['', Validators.required],
       accountNameupdate: ['', [Validators.required,]],
-      accountNoupdate: ['', [Validators.required,Validators.pattern('^[0-9]{12,20}$'),]],
+      accountNoupdate: ['', [Validators.required, Validators.pattern('^[0-9]{12,20}$'),]],
       ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[^\s].*$')]],
       isPrimaryupdate: [false],
-      attachmentupdate: [null,attachmentValidators]
+      attachmentupdate: [null, attachmentValidators]
     });
   }
 
@@ -132,15 +153,15 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
 
   //Bank Details
   getbankempid() {
-    this.loading=true
+    this.loading = true
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`BankDetail/${EmpId}`).subscribe({
       next: (data: any) => {
-        this.loading=false
+        this.loading = false
         this.bankDetails.next(data);
       },
-      error:(err)=> {
-        this.loading=false
+      error: (err) => {
+        this.loading = false
       },
     });
   }
@@ -159,13 +180,13 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         this.bankDetailsForm.get('attachment')?.markAsUntouched();
         this.bankDetailsUpdateForm.get('attachmentupdate')?.reset();
         this.bankDetailsUpdateForm.get('attachmentupdate')?.markAsUntouched();
-       
+
         return;
       }
-     
+
     }
     const timestamp = new Date().getTime();
-    this.bankdocument = this.renameFileAttachment(file,`${this.empinfo.employeeId}_${timestamp}_${file.name}`);
+    this.bankdocument = this.renameFileAttachment(file, `${this.empinfo.employeeId}_${timestamp}_${file.name}`);
   }
 
   private renameFileAttachment(originalFile: File, newName: string): File {
@@ -177,7 +198,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
 
   postBankDetails(): void {
     if (this.bankDetailsForm.valid) {
-      this.spinnerLoader=true
+      this.spinnerLoader = true
       const payload = this.createBankDetailsPayload();
       if (this.bankdocument) {
         this.uploadBankProof(payload);
@@ -194,13 +215,13 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.bankdocument).subscribe({
       next: (data: any) => {
         if (data) {
-          this.spinnerLoader=false
+          this.spinnerLoader = false
           payload.docUrl = data.path;
           this.saveBankDetails(payload);
         }
       },
       error: () => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         console.error('File upload failed');
       }
     });
@@ -209,15 +230,15 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   saveBankDetails(payload: any): void {
     this.subscription = this.http.postdata('BankDetail', payload).subscribe({
       next: () => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         this.getbankempid()
         this.bankDetailsForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank details added successfully')
       },
       error: (err: any) => {
-        this.spinnerLoader=false
-        this.conformationPopup.openErrorModal( err.error.Message ||'Bank details added failed')
+        this.spinnerLoader = false
+        this.conformationPopup.openErrorModal(err.error.Message || 'Bank details added failed')
       }
     });
   }
@@ -281,17 +302,17 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     });
     this.displayblankdocument = bankDetail.docUrl ? bankDetail.docUrl.split('/').pop() : null;
     this.bankdocument = bankDetail.docUrl
-      // Dynamically update validators for the attachment field
-      const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
-      this.bankDetailsUpdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
-      this.bankDetailsUpdateForm.get('attachmentupdate')?.updateValueAndValidity();
+    // Dynamically update validators for the attachment field
+    const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
+    this.bankDetailsUpdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
+    this.bankDetailsUpdateForm.get('attachmentupdate')?.updateValueAndValidity();
     // Open the modal
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
 
   updateBankDetails(): void {
     if (this.bankDetailsUpdateForm.valid) {
-      this.spinnerLoader=true
+      this.spinnerLoader = true
       const formData = this.bankDetailsUpdateForm.value;
       // Prepare the payload
       const payload = {
@@ -321,13 +342,13 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.bankdocument).subscribe({
       next: (data: any) => {
         if (data) {
-          this.spinnerLoader=false
+          this.spinnerLoader = false
           payload.docUrl = data.path; // Update the payload with the uploaded file path
           this.saveUpdatedBankDetails(payload);
         }
       },
       error: () => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         this.conformationPopup.openErrorModal('Failed to upload bank proof. Please try again.');
       }
     });
@@ -336,14 +357,14 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
   saveUpdatedBankDetails(payload: any): void {
     this.subscription = this.http.postdata(`BankDetail/Update`, payload).subscribe({
       next: (data: any) => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         this.bankDetailsUpdateForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank details updated successfully');
         this.getbankempid(); // Refresh the bank details list
       },
       error: (reason: any) => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         console.error('Error updating bank details:', reason);
         this.conformationPopup.openErrorModal('Failed to update bank details. Please check all fields.');
       }

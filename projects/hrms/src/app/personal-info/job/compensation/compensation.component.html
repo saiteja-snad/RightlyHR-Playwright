@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
 
         <div><span class="component-sub-header">Compensation Details</span></div>
-        @if(rbac.allowedToAccess('Employee Info Compensation Details.create')){
+        @if(canAccess('create')){
         @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
         empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
         && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
@@ -24,8 +24,8 @@
                     <th>Frequency</th>
                     <th>Pay Type</th>
                     <th>Amount (Yearly CTC)</th>
-                    @if(rbac.allowedToAccess('Employee Info Compensation Details.update') ||
-                    rbac.allowedToAccess('Employee Info Compensation Details.delete')){
+                    @if(canAccess('update') ||
+                    canAccess('delete')){
                     @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
                     empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                     && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
@@ -44,8 +44,8 @@
                         <td>{{item.frequency}}</td>
                         <td>{{item.paytype}}</td>
                         <td>{{item.compensationamount}}</td>
-                        @if(rbac.allowedToAccess('Employee Info Compensation Details.update') ||
-                        rbac.allowedToAccess('Employee Info Compensation Details.delete')){
+                        @if(canAccess('update') ||
+                        canAccess('delete')){
                         @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
                         empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                         && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
@@ -57,7 +57,7 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if(rbac.allowedToAccess('Employee Info Compensation Details.update')){
+                                    @if(canAccess('update')){
                                     @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                                     && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
@@ -71,7 +71,7 @@
                                     </li>
                                     }
                                     }
-                                    @if(rbac.allowedToAccess('Employee Info Compensation Details.delete')){
+                                    @if(canAccess('delete')){
                                     @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
                                     empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
                                     && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&

@@ -14,6 +14,9 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import {Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-education-details',
@@ -45,19 +48,13 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   loading = false
   dateofbirth: any;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,
-    public formValidation: FormValidationService, public rbac: RbacService) { }
+    public formValidation: FormValidationService, public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
   ngOnInit(): void {
-    if (this.rbac.allowedToAccess('Employee Info Personal Tab.view') &&
-     localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
-      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
-      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    }
+    this.getEmpInfoFromRoute();
     this.initializeForm();
     this.initializeupdateForm()
     this.getDegree()
-    this.getEducationEmpid();
-    this.getEmployeeId();
+   
     this.educationForm.get('degreeStartDate')?.valueChanges.subscribe(() => {
       this.educationForm.get('degreeEndDate')?.reset();
     });
@@ -65,7 +62,26 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       this.educationupdateForm.get('degreeEndDateupdate')?.reset();
     });
   }
+  canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
+    const permission = this.permissionRouteService.getPermissionForCurrentRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+    
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
 
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+      this.getEducationEmpid();
+
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+      this.getEducationEmpid();
+    }
+  }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }

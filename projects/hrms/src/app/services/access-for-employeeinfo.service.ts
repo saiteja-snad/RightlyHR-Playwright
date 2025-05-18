@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import {
   EMPLOYEE_INFO_PERSONAL_ROUTES,
   MY_INFO_PERSONAL_ROUTES,
+EMPLOYEE_INFO_JOB_ROUTES,
+  MY_INFO_JOB_ROUTES
 } from '../permission-route.constants';
 @Injectable({
   providedIn: 'root'
@@ -24,4 +26,23 @@ getPermissionForCurrentRouteAction(action: 'view' | 'create' | 'update' | 'delet
 
   return undefined;
 }
+
+getPermissionForCurrentJobRouteAction(
+    action: 'view' | 'create' | 'update' | 'delete',
+    url?: string
+  ): string | undefined {
+    const currentUrl = url ?? this.router.url;
+
+    // Check EMPLOYEE_INFO_JOB_ROUTES first
+    const empJob = EMPLOYEE_INFO_JOB_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
+   if (empJob) return empJob.permission.replace('.view', `.${action}`);
+    
+
+    // Then check MY_INFO_JOB_ROUTES
+    const myJob = MY_INFO_JOB_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
+     if (myJob) return myJob.permission.replace('.view', `.${action}`);
+
+
+    return undefined;
+  }
 }

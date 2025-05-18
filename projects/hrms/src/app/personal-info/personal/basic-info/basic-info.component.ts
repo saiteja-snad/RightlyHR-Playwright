@@ -11,7 +11,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { IJob } from '../../../Interfaces/letters-model';
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import {Router } from '@angular/router';
 
 @Component({
   selector: 'app-basic-info',

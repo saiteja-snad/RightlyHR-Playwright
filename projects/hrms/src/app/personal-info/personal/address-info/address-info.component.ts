@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 
 
 @Component({
@@ -37,7 +38,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   employedata={} as any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
-     private http: HttpService,public formValidation: FormValidationService,public rbac: RbacService,private router: Router) { }
+     private http: HttpService,public formValidation: FormValidationService,public rbac: RbacService,private router: Router,public permissionRouteService: AccessForEmployeeinfoService, ) { }
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
@@ -62,6 +63,12 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       this.getEmployeeId();
     }
   }
+    canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
+    const permission = this.permissionRouteService.getPermissionForCurrentRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+    
+  }
+ 
   initializeForm(): void {
     this.addressForm = this.fb.group({
       sameAsPermanent: [{value:false}], // Checkbox for "Same as Current Address"

@@ -601,8 +601,8 @@ export class AccessNavigationService {
           this.rbac.allowedToAccess('Employee Info Job Tab.view') ||
           this.rbac.allowedToAccess('My Info Job Tab.view')
         ) {
-          for (const item of EMPLOYEE_INFO_JOB_ROUTES) {
-            if (item.permission.some(p => this.rbac.allowedToAccess(p))) {
+          for (const item of EMPLOYEE_INFO_PERSONAL_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
           }

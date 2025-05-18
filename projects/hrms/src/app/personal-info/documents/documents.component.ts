@@ -14,6 +14,8 @@ import { FileSizePipe } from "../../Pipes/file-size.pipe";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 
 
 @Component({
@@ -39,10 +41,10 @@ export class DocumentsComponent {
   file: any;
   showUploadIcon: boolean = false;
   subDir = {} as ICreateSubDir;
-  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService,public rbac: RbacService) { }
+  constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService, private fb: FormBuilder, private http: HttpService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
-    this.empdata = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.getEmpInfoFromRoute();  
     this.getMainFolders()
     this.initializejobForm();
 
@@ -54,7 +56,23 @@ export class DocumentsComponent {
     });
   }
 
+canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
+    const permission = this.permissionRouteService.getPermissionForCurrentDocumentsRouteAction(action);
+    return permission ? this.rbac.allowedToAccess(permission) : false;
+    
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
 
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empdata = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empdata = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      
+    }
+  }
 
   getMainFolders(dirPath?: string) {
     dirPath = dirPath ? dirPath : '/FusionDocuments';

@@ -26,8 +26,10 @@ export const MY_INFO_PERSONAL_ROUTES = [
     { permission: 'My Info Asset Details.view', route: '/myinfo/job/assets-details' }
   ];
   
-  export const MY_INFO_DOCUMENTS = [
+  export const MY_INFO_DOCUMENTS_ROUTES = [
     { permission: 'My Info Documents Tab.view', route: '/myinfo/documents' },
+      { permission: 'My Info Documents Tab.create', route: '/myinfo/documents' }
+
   ];
   
   export const MY_INFO_TEAM_MEMBERS = [
@@ -405,6 +407,9 @@ export const MY_INFO_PERSONAL_ROUTES = [
     { permission: 'Employee Info Visa Details.view', route: '/personalinfo/personal/visa-details' }
   ];
   
+  export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
+  { permission: 'Employee Info Documents Tab.view', route: '/personalinfo/documents' }
+];
   export const EMPLOYEE_INFO_JOB_ROUTES = [
     { permission: 'Employee Info Pre-Onboarding Details.view', route: '/personalinfo/job/pre-onboarding-details' },
     { permission: 'Employee Info Onboarding Details.view', route: '/personalinfo/job/onboarding-details' },

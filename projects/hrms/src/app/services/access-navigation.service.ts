@@ -53,6 +53,8 @@ import {
   EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES,
   MY_INFO_JOB_ROUTES,
   MY_INFO_PERSONAL_ROUTES,
+  EMPLOYEE_INFO_DOCUMENTS_ROUTES,
+  MY_INFO_DOCUMENTS_ROUTES,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -87,7 +89,11 @@ export class AccessNavigationService {
         }
 
         if (this.rbac.allowedToAccess('My Info Documents Tab.view')) {
-          return (route = '/myinfo/documents');
+          for (const item of MY_INFO_DOCUMENTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
 
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
@@ -609,7 +615,11 @@ export class AccessNavigationService {
         }
 
         if (this.rbac.allowedToAccess('Employee Info Documents Tab.view') || this.rbac.allowedToAccess('My Info Documents Tab.view')) {
-          return (route = '/personalinfo/documents');
+          for (const item of EMPLOYEE_INFO_DOCUMENTS_ROUTES) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
 
         // if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
@@ -674,9 +684,13 @@ export class AccessNavigationService {
         }
         break;
       case '/myinfo/documents':
-        if (this.rbac.allowedToAccess('My Info Documents Tab.view')) {
-          return (route = '/myinfo/documents');
+      if( this.rbac.allowedToAccess('My Info Documents Tab.view')) {
+        for (const item of MY_INFO_DOCUMENTS_ROUTES) {
+          if (this.rbac.allowedToAccess(item.permission)) {
+            return item.route;
+          }
         }
+      }
         break;
       case '/myinfo/team-members':
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
@@ -1417,8 +1431,12 @@ export class AccessNavigationService {
       break;
 
     case '/personalinfo/documents':
-      if (this.rbac.allowedToAccess('Employee Info Documents Tab.view')) {
-        return route = '/personalinfo/documents';
+      if (this.rbac.allowedToAccess('Employee Info Documents Tab.view') || this.rbac.allowedToAccess('My Info Documents Tab.view')) {
+        for (const item of EMPLOYEE_INFO_DOCUMENTS_ROUTES) {
+          if (this.rbac.allowedToAccess(item.permission)) {
+            return item.route;
+          }
+        }
       }
       break;
 

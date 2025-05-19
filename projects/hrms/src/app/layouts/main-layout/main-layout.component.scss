@@ -12,14 +12,24 @@
 .main-layout-content {
     display: flex;
     flex-direction: column;
-    width: calc(100% - 5.75rem);
+    width: calc(100% - 6.5rem);
     overflow: hidden;
 }
 
 .display-area {
     width: 100%;
-    height: calc(100dvh - 4.25rem);
+    height: calc(100dvh - 6.75rem);
     padding: 1rem;
     overflow-x: hidden;
     overflow-y: auto;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .powered-by-image {
+        height: 1.5rem;
+    }
 }

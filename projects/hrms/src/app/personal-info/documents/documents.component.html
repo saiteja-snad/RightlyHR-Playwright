@@ -44,7 +44,7 @@
                  empdata?.empstatus?.toLowerCase() !== 'trainee prospective'
                 && empdata?.empstatus?.toLowerCase() !== 'inactive' && empdata?.empstatus?.toLowerCase() !==
                  'trainee inactive' )){
-                @if(canAccess('view','documents')) {
+                @if(canAccess('view','upload')) {
                <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
                      class="bi bi-upload me-2"></i>Upload File</button>
                }

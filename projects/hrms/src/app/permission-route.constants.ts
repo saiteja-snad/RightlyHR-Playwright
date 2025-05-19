@@ -33,8 +33,8 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ];
   
   export const MY_INFO_TEAM_MEMBERS = [
-    { permission: 'My Info Team Members Tab.view', route: '/myinfo/team-members' },
-    { permission: 'My Info Team Managers Tab.view', route: '/myinfo/team/team-manger-members' },
+    { permission: 'My Info Team Members Tab.view', route: '/myinfo/team/team-members' },
+  
 
   ];
   

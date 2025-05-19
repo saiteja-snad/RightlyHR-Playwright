@@ -98,12 +98,7 @@ export class AccessNavigationService {
         }
 
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-          for (const item of MY_INFO_TEAM_MEMBERS) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
-         
+          return (route = '/myinfo/team/team-members');
         }
 
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
@@ -633,6 +628,7 @@ export class AccessNavigationService {
         // }
 
         if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view') || this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
+     
           for (const item of EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -698,13 +694,9 @@ export class AccessNavigationService {
         }
       }
         break;
-      case '/myinfo/team-members':
-        if( this.rbac.allowedToAccess('My Info Documents Tab.view')) {
-          for (const item of MY_INFO_TEAM_MEMBERS) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
+      case '/myinfo/team/team-members':
+        if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
+          return (route = '/myinfo/team/team-members');
         }
         break;
 

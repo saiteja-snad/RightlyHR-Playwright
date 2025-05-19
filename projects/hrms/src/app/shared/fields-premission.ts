@@ -86,6 +86,7 @@ export const EMPLOYEE_INFO_CLAIMS = [
   },
 
   { permission: 'documents', claim: 'Employee Info Documents Tab' },
+  {permission: 'upload', claim: 'My Info Documents(Upload File)' }
 
   // Team Members
   { permission: 'team-members', claim: 'Employee Info Team Members Tab' },

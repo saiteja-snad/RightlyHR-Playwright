@@ -18,10 +18,11 @@ import { TeamMembersTabsComponent } from "../../shared/personalinfo-tabs/team-me
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RbacService } from '../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
+import { TeamMemberTabsComponent } from "../../shared/myinfo-tabs/team-member-tabs/team-member-tabs.component";
 
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent, TeamMembersTabsComponent, MultiSelectModule],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent, TeamMembersTabsComponent, MultiSelectModule, TeamMemberTabsComponent],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })
@@ -79,6 +80,10 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
    
   }
 
+  isActive(route: string): boolean {
+    return this.router.url.includes(route); //based on the route, header tab will be changes
+  }
+  
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permissionRouteService.canAccessField(action, permission);
   }

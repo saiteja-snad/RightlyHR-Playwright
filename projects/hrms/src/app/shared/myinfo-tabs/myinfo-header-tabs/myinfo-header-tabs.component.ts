@@ -18,7 +18,7 @@ export class MyinfoHeaderTabsComponent {
     { label: 'Personal', link: '/myinfo/personal',permission: { feature: 'My Info Personal Tab', action: 'view' }, },
     { label: 'Job', link: '/myinfo/job',permission: { feature: 'My Info Job Tab', action: 'view' }, },
     { label: 'Documents', link: '/myinfo/documents',permission: { feature: 'My Info Documents Tab', action: 'view' }, },
-    { label: 'Team Members', link: '/myinfo/team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' }},
+    { label: 'Team Members', link: '/myinfo/team/team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' }},
     // { label: 'Onboard Request', link: '/myinfo/onboarding-request', permission: { feature: 'My Info Onboard Request Tab', action: 'view' }},
   ];
 
@@ -29,6 +29,7 @@ export class MyinfoHeaderTabsComponent {
   ) {}
 
   ngOnInit(): void {
+    
     this.navTabs = this.navTabs.filter(
       (tab) =>
         tab.permission &&

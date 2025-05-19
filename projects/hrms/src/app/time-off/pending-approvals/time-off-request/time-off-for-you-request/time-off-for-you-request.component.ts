@@ -179,6 +179,7 @@ export class TimeOffForYouRequestComponent implements OnInit,OnDestroy {
       this.issubmitdiable = false;
     }
   }
+  
  canBulkApprove(): boolean {
     return this.selectedProducts?.every(
       (item) =>
@@ -236,25 +237,36 @@ bulkProcess(){
     let approvedBy = this.LOGIN.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
 
-    let requestBody = this.selectedProducts.map((item) => ({
-      id: item.approvalHeader.id,
-      status: 'Approved',
-      comments: comments,
-      approvedBy: approvedBy,
-      currentapprovalStage:item.approvalHeader.currentapprovalStage
-    }));
+    let requestBody = {
+  requestProcessedBy:approvedBy,
+  status: "Approved",
+  comments: comments,
+  moduleId: environment.leavesModuleId,
+  isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
+  headerRequests: this.selectedProducts.map((item) => ({
+      headerID: item.approvalHeader.id,
+      currentStage:item.approvalHeader.currentapprovalStage
+      // id: item.approvalHeader.id,
+      // status: 'Approved',
+      // comments: comments,
+      // approvedBy: approvedBy,
+      // currentapprovalStage:item.approvalHeader.currentapprovalStage
+    }))
+  }
     this.subscription = this.http
-      .putData(`PendingApproval/multiapprovereject`, requestBody)
+      .putData(`v2/PendingApproval/multiapprovals`, requestBody)
       .subscribe({
         next: (respone: any) => {
             this.selectedProducts=[];
-             if(respone.data.success.length>0&&respone.data.failed.length<=0){
+            console.log(respone)
+             if(respone&&respone.data.failureRecords.length<=0){
              this.conformationPopup.openSuccessModal(
             'Request Approved Successfully'
           );
           }
-          else if(respone.data.failed.length>0){
-            this.conformationPopup.multiapprovalsModal(respone.data)
+          else if(respone.data.failureRecords.length>0){
+            this.conformationPopup.openSuccessModal(`Toatal Records Approved: ${respone.data.totalRecordCount}
+               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message?respone.data.failureRecords[0].message:''} Successed:${respone.data.successRecordsCount}`)
           }
           setTimeout(() => {
             this.modalService.dismissAll();
@@ -262,7 +274,15 @@ bulkProcess(){
           }, 2000);
         },
         error: (reason: any) => {
+              if(reason.error.statusCode==400){
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else if(reason.error.statusCode==400){
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else{
           this.conformationPopup.openErrorModal('Request Approval Failed');
+          }
           this.spinnerLoader = false;
         },
         complete: () => {
@@ -277,27 +297,36 @@ bulkProcess(){
     this.spinnerLoader = true;
     let approvedBy = this.LOGIN.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
+  let requestBody = {
+    requestProcessedBy: approvedBy,
+     status: 'Rejected',
+     comments: comments,
+     isPlannedLeave: false,
+      moduleId: environment.leavesModuleId,
+      headerRequests: this.selectedProducts.map((item) => ({
+      headerID: item.approvalHeader.id,
+      currentStage:item.approvalHeader.currentapprovalStage
+    }))
+  }
 
-    let requestBody = this.selectedProducts.map((item) => ({
-      id: item.approvalHeader.id,
-      status: 'Rejected',
-      comments: comments,
-      approvedBy: approvedBy,
-      currentapprovalStage:item.approvalHeader.currentapprovalStage
-    }));
+      // id: item.approvalHeader.id,
+      // status: 'Rejected',
+      // comments: comments,
+      // approvedBy: approvedBy,
+      // currentapprovalStage:item.approvalHeader.currentapprovalStage
     this.subscription = this.http
-      .putData(`PendingApproval/multiapprovereject`, requestBody)
+      .putData(`v2/PendingApproval/multiapprovals`, requestBody)
       .subscribe({
         next: (respone: any) => {
             this.selectedProducts=[];
-        console.log(respone.data)
-           if(respone.data.success.length>0&&respone.data.failed.length<=0){
+           if(respone &&respone.data.failureRecords.length<=0){
              this.conformationPopup.openSuccessModal(
             'Request Rejected Successfully'
-          );
+          )
           }
-          else if(respone.data.failed.length>0){
-            this.conformationPopup.multiapprovalsModal(respone.data)
+           else if(respone.data.failureRecords.length>0){
+            this.conformationPopup.openSuccessModal(`Toatal Records Rejected: ${respone.data.totalRecordCount}
+               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message?respone.data.failureRecords[0].message:''} Successed:${respone.data.successRecordsCount}`)
           }
           setTimeout(() => {
             this.modalService.dismissAll();
@@ -305,7 +334,15 @@ bulkProcess(){
           }, 2000);
         },
         error: (reason: any) => {
+            if(reason.error.statusCode==400){
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else if(reason.error.statusCode==400){
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else{
           this.conformationPopup.openErrorModal('Request Rejected Failed');
+          }
           this.spinnerLoader = false;
         },
         complete: () => {
@@ -318,32 +355,35 @@ bulkProcess(){
 
   handleProcess() { 
     let approvedBy = this.LOGIN.employeeId.toString();
-    let comments = this.selectedLeaveData?.comments || '';
+    let requestBody = {
+    requestProcessedBy: approvedBy,
+     status: 'Processed',
+      moduleId: environment.leavesModuleId,
+      headerRequests: this.selectedProducts.map((item) => ({
+      headerID: item.approvalHeader.id,
+      currentStage:item.approvalHeader.currentapprovalStage
+    }))
+  }
 
-    let requestBody = this.selectedProducts.map((item) => ({
-      id: item.approvalHeader.id,
-      status: 'Processed',
-      approvedBy: approvedBy,
-      currentapprovalStage:item.approvalHeader.currentapprovalStage
-    }));
     // let requestBody = {
     //   status: 'Processed',
     //   approvedBy: this.LOGIN.employeeId.toString(),
     // };
     console.log(requestBody);
     this.subscription = this.http
-      .putData(`PendingApproval/multiprocess`, requestBody)
+      .putData(`v2/PendingApproval/multiapprovals`, requestBody)
       .subscribe({
         next: (respone: any) => {
          // console.log(respone);
           this.selectedProducts=[];
-             if(respone.data.success.length>0 &&respone.data.failed.length<=0){
+             if(respone&&respone.data.failureRecords.length<=0){
               this.conformationPopup.openSuccessModal(
             'Request Processed Successfully'
           );
           }
-          else if(respone.data.failed.length>0){
-            this.conformationPopup.multiapprovalsModal(respone.data)
+           else if(respone.data.failureRecords.length>0){
+            this.conformationPopup.openSuccessModal(`Toatal Records Processed: ${respone.data.totalRecordCount}
+               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message?respone.data.failureRecords[0].message:''} Successed:${respone.data.successRecordsCount}`)
           }
           setTimeout(() => {
             this.modalService.dismissAll();
@@ -352,7 +392,16 @@ bulkProcess(){
         },
         error: (reason: any) => {
           console.log(reason);
-          this.conformationPopup.openSuccessModal('Request Processed Failed');
+          if(reason.error.statusCode==400){
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else if(reason.error.statusCode==400){
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else{
+          this.conformationPopup.openErrorModal('Request Processed Failed');
+          }
+
         },
         complete: () => {
         this.signalService.timeoffForYouTriggerSignal.set(true);

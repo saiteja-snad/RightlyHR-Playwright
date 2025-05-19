@@ -84,7 +84,7 @@
                                 </ng-template>
                             </div>
                         </td>
-                            @if(!multiSelect){
+                            @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') || rbac.allowedToAccess('For Role (Time Off).delete'))){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <span type="button" data-bs-toggle="dropdown">
@@ -100,22 +100,22 @@
                             
                                         <li>
                                             <a class="dropdown-item" (click)="approveleave(approverPopup,item)"
-                                                *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.update')">
+                                                *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage ">
                                                 <i class="bi bi-check-circle me-2"></i>Approve</a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
-                                                *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.delete')">
+                                                *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage ">
                                                 <i class="bi bi-x-circle me-2"></i>Reject</a>
                                         </li>
                                         <li>
                                             <a class="dropdown-item" (click)="processleave(item)"
-                                                *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.update')">
+                                                *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage ">
                                                 <i class="bi bi-check-circle me-2"></i>Process</a>
                                         </li>
                                             <li>
                                             <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
-                                                *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.delete')">
+                                                *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage">
                                                 <i class="bi bi-x-circle me-2"></i>Reject</a>
                                         </li>
                                     </ul>

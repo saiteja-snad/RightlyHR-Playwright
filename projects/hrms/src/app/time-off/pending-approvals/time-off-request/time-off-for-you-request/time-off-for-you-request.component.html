@@ -119,7 +119,7 @@
                                     </li>
                                     <li>
                                         <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
-                                            *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.delete')">
+                                            *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage">
                                             <i class="bi bi-x-circle me-2"></i>Reject</a>
                                     </li>
                                 }

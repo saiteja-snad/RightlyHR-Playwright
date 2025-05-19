@@ -72,20 +72,34 @@ export class ProfileInfoDetailsComponent {
     })
   }
 
+
+
   chooseNewProfile(event: any) {
     const input = event.target as HTMLInputElement;
+  
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      this.img = input.files[0];
-      const maxSize = 1024 * 1024; // 1 MB
-      if (file.size < maxSize) {
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      const maxSize = 1024 * 1024; // 1MB
+  
+      if (!allowedTypes.includes(file.type)) {
+        this.conformationPopup.openErrorModal('Invalid file type. Only PNG, JPG, and JPEG are allowed.');
         input.value = '';
-        this.onProfilepicSelected(this.img)
-      } else {
-        this.conformationPopup.openErrorModal('Please Choose File Size Below 1024 KB')
+        return;
       }
+  
+      if (file.size > maxSize) {
+        this.conformationPopup.openErrorModal('Please choose a file smaller than 1MB.');
+        input.value = '';
+        return;
+      }
+  
+      this.img = file;
+      input.value = ''; // clear input if needed to allow same file re-selection
+      this.onProfilepicSelected(this.img);
     }
   }
+  
 
   onProfilepicSelected(img: any) {
     let file = img;

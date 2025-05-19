@@ -239,36 +239,56 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   }
 
   onChangeEducation(event: any): void {
-    this.displalyeducationattachment = ''
-    const file = event.target.files[0];
-    if (file) {
-      const fileSizeInMB = file.size / (1024 * 1024);
-      if (fileSizeInMB > 25) {
-        this.educationAttachment = '';
-        this.displalyeducationattachment = ''
-        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
-        this.educationForm.get('attachment')?.reset();
-        this.educationForm.get('attachment')?.markAsUntouched();
-        this.educationupdateForm.get('attachmentupdate')?.reset();
-        this.educationupdateForm.get('attachmentupdate')?.markAsUntouched();
+    this.displalyeducationattachment = '';
+    const file: File = event.target.files[0];
+  
+    if (!file) return;
+  
+    const allowedTypes = ['image/jpeg',
+        'image/*',
+        'application/pdf',
+        'image/png',];
+    const maxSizeInMB = 25;
+    const fileSizeInMB = file.size / (1024 * 1024);
 
-        return;
-      }
+    if (!allowedTypes.includes(file.type)) {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
+      this.educationAttachment = '';
+      this.resetEducationForms();
+      return;
     }
+  
+    if (fileSizeInMB > maxSizeInMB) {
+      this.educationAttachment = '';
+      this.displalyeducationattachment = '';
+      this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+      this.resetEducationForms();
+      return;
+    }
+  
     const timestamp = new Date().getTime();
     this.educationAttachment = this.renameFileAttachment(
       file,
       `${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
-    console.log('Identity attachment:', this.educationAttachment);
+  
+    console.log('Education attachment:', this.educationAttachment);
   }
-
-
+  
   private renameFileAttachment(originalFile: File, newName: string): File {
     return new File([originalFile], newName, {
       type: originalFile.type,
       lastModified: originalFile.lastModified
     });
+  }
+  resetEducationForms(){
+    this.educationForm.get('attachment')?.reset();
+    this.educationForm.get('attachment')?.markAsUntouched();
+    this.educationupdateForm.get('attachmentupdate')?.reset();
+    this.educationupdateForm.get('attachmentupdate')?.markAsUntouched();
+    const attachmentValidators = this.displalyeducationattachment ? [] : [Validators.required];
+    this.educationupdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
+    this.educationupdateForm.get('attachmentupdate')?.updateValueAndValidity();
   }
 
   onSelectIdentityAttachmentDownload(file: any) {

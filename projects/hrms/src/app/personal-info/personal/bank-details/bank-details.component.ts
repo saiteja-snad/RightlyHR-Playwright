@@ -40,7 +40,6 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
     this.initializeBankDetailsForm();
     this.initializeBankDetailsupdateForm()
     this.getbanknames()
@@ -166,27 +165,51 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
     });
   }
 
+
   onBankProofSelected(event: any): void {
     this.displayblankdocument = null;
-    const file = event.target.files[0];
-    if (file) {
-      const fileSizeInMB = file.size / (1024 * 1024);
-      // const allowedExtensions = ['pdf', 'png', 'jpg', 'jpeg'];
-      // const fileExtension = file.name.split('.').pop()?.toLowerCase();
-      if (fileSizeInMB > 25) {
-        this.bankdocument = null;
-        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
-        this.bankDetailsForm.get('attachment')?.reset();
-        this.bankDetailsForm.get('attachment')?.markAsUntouched();
-        this.bankDetailsUpdateForm.get('attachmentupdate')?.reset();
-        this.bankDetailsUpdateForm.get('attachmentupdate')?.markAsUntouched();
+    const file: File = event.target.files[0];
 
-        return;
-      }
+    if (!file) return;
 
+    const allowedTypes = ['image/jpeg',
+      'image/*',
+      'application/pdf',
+      'image/png',];
+    const maxSizeInMB = 25;
+    const fileSizeInMB = file.size / (1024 * 1024);
+
+    if (!allowedTypes.includes(file.type)) {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
+      this.displayblankdocument = '';
+      this.resetForms();
+      return;
     }
+
+    if (fileSizeInMB > maxSizeInMB) {
+      this.bankdocument = '';
+      this.displayblankdocument = '';
+      this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+      this.resetForms();
+      return;
+    }
+
     const timestamp = new Date().getTime();
-    this.bankdocument = this.renameFileAttachment(file, `${this.empinfo.employeeId}_${timestamp}_${file.name}`);
+    this.bankdocument = this.renameFileAttachment(
+      file,
+      `${this.empinfo.employeeId}_${timestamp}_${file.name}`
+    );
+
+
+  }
+  resetForms() {
+    this.bankDetailsForm.get('attachment')?.reset();
+    this.bankDetailsForm.get('attachment')?.markAsUntouched();
+    this.bankDetailsUpdateForm.get('attachmentupdate')?.reset();
+    this.bankDetailsUpdateForm.get('attachmentupdate')?.markAsUntouched();
+    const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
+    this.bankDetailsUpdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
+    this.bankDetailsUpdateForm.get('attachmentupdate')?.updateValueAndValidity();
   }
 
   private renameFileAttachment(originalFile: File, newName: string): File {

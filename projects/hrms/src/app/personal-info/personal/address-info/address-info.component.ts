@@ -271,11 +271,11 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
         this.getEmployeeId();
         this.buttons = false;
         this.buttons2 = false;
-        this.conformationPopup.openSuccessModal('Address Info updated successfully');
+        this.conformationPopup.openSuccessModal('Address details updated successfully');
       },
       error: (reason) => {
         console.log(reason);
-        this.conformationPopup.openErrorModal('Address Info update failed');
+        this.conformationPopup.openErrorModal('Address details update failed');
       },
     });
   }

@@ -183,7 +183,7 @@
           <div class="col-md-12 mb-3">
             <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF only)<span
                 class="text-danger">*</span></label>
-            <input type="file" formControlName="attachment" accept=".pdf, .png, .jpg,"
+            <input type="file" formControlName="attachment" accept=".pdf, .png, .jpg"
               (change)="onChangeEducation($event)" class="form-control custom-input px-0" />
             <div class="error-msg"
               *ngIf="educationForm.get('attachment')?.invalid && educationForm.get('attachment')?.touched">

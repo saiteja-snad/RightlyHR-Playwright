@@ -270,7 +270,7 @@
                         </label>
                         <input class="form-control custom-input px-0" type="file" id="attachment"
                             formControlName="attachment" (change)="onChangeExperience($event)"
-                            accept=".pdf,image/*,.png" />
+                            accept=".pdf,image/*,.png,.jpg" />
                         <div *ngIf="employeeExperienceForm.get('attachment')?.invalid && employeeExperienceForm.get('attachment')?.touched"
                             class="error-msg">
                             File is required

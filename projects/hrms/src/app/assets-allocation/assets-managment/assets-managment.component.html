@@ -5,13 +5,11 @@
     </div>
     <div>
       @if(rbac.allowedToAccess('Asset Management - Create.view')){
-      <button type="button"  (click)="openModal(addassetes)" class="custom-btn btn-primary"><i class="bi bi-plus me-2"
-         ></i>Register an Asset</button>
+      <button type="button" (click)="openModal(addassetes)" class="custom-btn btn-primary"><i
+          class="bi bi-plus me-2"></i>Register an Asset</button>
       }
     </div>
   </div>
-
-
   <div>
     <form autocomplete="off" [formGroup]="locationfromdata">
       <div class="row mb-3 ps-2 ">
@@ -39,27 +37,22 @@
     </form>
   </div>
   <!-- tabs -->
-  <div class="component-nav-tabs-container card px-2">
-    <p-tabs value="0" scrollable>
-      <p-tablist>
-        <ng-container *ngFor="let tab of navTabs;">
-          <p-tab [value]="tab.route">
-            <a [routerLink]="tab.route" routerLinkActive="nav-tab-active" class="nav-link">
-              {{ tab.label }} ({{ tab.count$ | async }})
+  <div class="d-flex gap-3 w-100">
+    <div class="custom-component-left-content">
+      <div class="component-side-nav-tabs-container py-3">
+        <ul class="nav flex-column">
+          <li class="nav-item" *ngFor="let link of navTabs">
+            <a class="nav-link" [routerLink]="[link.route]" routerLinkActive="active-nav-link">
+              {{ link.label }} ({{ link.count$ | async }})
             </a>
-          </p-tab>
-        </ng-container>
-      </p-tablist>
-    </p-tabs>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="card custom-component-right-content px-3">
+      <router-outlet></router-outlet>
+    </div>
   </div>
-
-
-  <div>
-    <router-outlet></router-outlet>
-  </div>
-
-</div>
-
 
 <ng-template #addassetes let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
@@ -181,13 +174,13 @@
               <div class="error-msg">Vendor name is required</div>
             </div>
           </div>
-          
+
           <div class="col-md-6 mb-2">
             <label for="purchasedate" class="form-label custom-label mb-2">
               Purchase Date<span class="text-danger">*</span>
             </label>
             <input id="purchasedate" type="date" formControlName="purchasedate" onkeypress="return false;"
-              class="form-control custom-input"  [min]="minpurchesDate"[max]="maxpurchesDate" />
+              class="form-control custom-input" [min]="minpurchesDate" [max]="maxpurchesDate" />
             <div *ngIf="assetForm.get('purchasedate')?.invalid && assetForm.get('purchasedate')?.touched">
               <div class="error-msg">Purchase date is required</div>
             </div>

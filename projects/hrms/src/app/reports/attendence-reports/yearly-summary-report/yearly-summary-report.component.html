@@ -10,7 +10,7 @@
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
             Clear All
           </button>
-        
+
           <!-- Employee -->
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
@@ -26,8 +26,9 @@
           <!-- Team Manager -->
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="teamdetails" optionLabel="fullName"  filterBy="fullName" [filter]="true" [showClear]="true"
-                formControlName="manager" placeholder="Please select manager" class="form-select custom-select" filterPlaceholder="Search manager">
+              <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+                [showClear]="true" formControlName="manager" placeholder="Please select manager"
+                class="form-select custom-select" filterPlaceholder="Search manager">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                 <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
               </p-select>
@@ -37,10 +38,9 @@
           <!-- Leave Category -->
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="uniqueLeaveCategory" optionLabel="label"
-                [showClear]="true" formControlName="leaveCategory"
-                placeholder="Please select leave category" class="form-select custom-select" [filter]="true"
-                filterPlaceholder="Search leave type">
+              <p-select [options]="uniqueLeaveCategory" optionLabel="label" [showClear]="true"
+                formControlName="leaveCategory" placeholder="Please select leave category"
+                class="form-select custom-select" [filter]="true" filterPlaceholder="Search leave type">
               </p-select>
             </div>
           </div>
@@ -48,12 +48,12 @@
           <!-- Year -->
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year" placeholder="Select year"
-                class="form-select custom-select" [showClear]="true">
+              <p-select [options]="years" optionLabel="label" optionValue="value" formControlName="year"
+                placeholder="Select year" class="form-select custom-select" [showClear]="true">
               </p-select>
             </div>
           </div>
-        }
+          }
           <!-- Buttons -->
           <div class="d-flex gap-2">
             @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view')){
@@ -65,8 +65,8 @@
               <span>{{'Generate'}}</span>
               }
             </button>
-          }
-          @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view') && rbac.allowedToAccess('Yearly Summary Report - Export.view')){
+            }
+            @if(rbac.allowedToAccess('Yearly Summary Report - Generate.view') && rbac.allowedToAccess('Yearly Summary Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
               [disabled]="filteredYearlyRecord.length == 0 || disableBtn">
               @if(spinnerLoader2){
@@ -76,7 +76,7 @@
               <span>{{'Export'}}</span>
               }
             </button>
-          }
+            }
           </div>
         </div>
       </form>
@@ -84,60 +84,64 @@
   </div>
 
 
-  <div class="mb-3">
-    <app-attandace-report-tabs />
-  </div>
+  <div class="d-flex gap-3 w-100">
+    <div class="custom-component-left-content">
+      <app-attandace-report-tabs />
+    </div>
+    <div class="custom-component-right-content">
 
-  @if (isLoading) {
-  <div class="custom-compoent-data-loader">
-    <app-data-loader-content />
+      @if (isLoading) {
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
+      }@else {
+      <div class="custom-table-content">
+        <table id="wfhReportTable" class="content w-100">
+          <thead>
+            <tr>
+              <th>Employee ID</th>
+              <th>Employee Name</th>
+              <th>Department</th>
+              <th>Team Manager</th>
+              <th>Location</th>
+              <th>Sub Location</th>
+              <th>Shift</th>
+              <th>Year</th>
+              <th>Leave Type</th>
+              <th>Entitled</th>
+              <th>Avail</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredYearlyRecord && filteredYearlyRecord.length > 0) {
+            @for (record of filteredYearlyRecord; track record) {
+            <tr>
+              <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+              <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+              <td class="td-center">{{ record.department ?? '-' }}</td>
+              <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+              <td class="td-center">{{ record.location ?? '-' }}</td>
+              <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+              <td class="td-center">{{ record.shift ?? '-' }}</td>
+              <td class="td-center">{{ record.entitlementYear ? record.entitlementYear : '-' }}</td>
+              <td class="td-center">{{ record.leaveType ?? '-' }}</td>
+              <td class="td-center">{{ record.entitled ?? '-' }}</td>
+              <td class="td-center">{{ record.availed ?? '-' }}</td>
+              <td class="td-center">{{ record.balanced ?? '-' }}</td>
+            </tr>
+            }
+            } @else {
+            <tr>
+              <td colspan="12" class="text-center">
+                <app-no-data-found></app-no-data-found>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
   </div>
-  }@else {
-  <div class="custom-table-content">
-    <table id="wfhReportTable" class="content w-100">
-      <thead>
-        <tr>
-          <th>Employee ID</th>
-          <th>Employee Name</th>
-          <th>Department</th>
-          <th>Team Manager</th>
-          <th>Location</th>
-          <th>Sub Location</th>
-          <th>Shift</th>
-          <th>Year</th>
-          <th>Leave Type</th>
-          <th>Entitled</th>
-          <th>Avail</th>
-          <th>Balance</th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (filteredYearlyRecord && filteredYearlyRecord.length > 0) {
-        @for (record of filteredYearlyRecord; track record) {
-        <tr>
-          <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-          <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-          <td class="td-center">{{ record.department ?? '-' }}</td>
-          <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-          <td class="td-center">{{ record.location ?? '-' }}</td>
-          <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-          <td class="td-center">{{ record.shift ?? '-' }}</td>
-          <td class="td-center">{{ record.entitlementYear ? record.entitlementYear : '-' }}</td>
-          <td class="td-center">{{ record.leaveType ?? '-' }}</td>
-          <td class="td-center">{{ record.entitled ?? '-' }}</td>
-          <td class="td-center">{{ record.availed ?? '-' }}</td>
-          <td class="td-center">{{ record.balanced ?? '-' }}</td>
-        </tr>
-        }
-        } @else {
-        <tr>
-          <td colspan="12" class="text-center">
-            <app-no-data-found></app-no-data-found>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-  }
 </div>

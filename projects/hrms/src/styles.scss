@@ -1223,11 +1223,11 @@ input[type="file"] {
 // login components stylings
 .login-main-container {
     width: 100%;
-    height: 100dvh;
+    height: calc(100dvh - 2rem);
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #FFFFFF;
+    color: var(--white-color);
 
     .welcome-text {
         font-size: 2rem;
@@ -1239,7 +1239,6 @@ input[type="file"] {
         font-weight: 500;
     }
 }
-
 // login components stylings
 
 // custom phone number input with country code stylings

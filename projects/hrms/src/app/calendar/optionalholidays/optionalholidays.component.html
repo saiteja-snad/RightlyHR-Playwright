@@ -1,8 +1,8 @@
 <div class="custom-main-component-container">
-
   <div class="mb-3">
     <app-holiday-tabs />
   </div>
+  
   <ng-container *ngIf="loading; else maincontent">
     <ng-template #loadingSpinner>
       <div class="loader-placeholder-content text-center">

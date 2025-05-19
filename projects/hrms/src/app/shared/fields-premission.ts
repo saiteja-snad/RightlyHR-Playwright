@@ -52,17 +52,45 @@ export const EMPLOYEE_INFO_CLAIMS = [
     permission: 'job',
     claim: 'Employee Info Job Details'
   },
+
   {
     permission: 'separation',
     claim: 'Employee Info Separation Request Details'
+  },
+  {
+    permission: 'earlyrelieving',
+    claim: 'Employee Early relieving'
+  },
+  {
+    permission: 'recall',
+    claim: 'Employee Recall'
+  },  {
+    permission: 'raisenodue',
+    claim: 'Employee Raise No Due'
   },
   {
     permission: 'nodue',
     claim: 'Employee Info No Due Clearance Details'
   },
   {
+    permission: 'rerequest',
+    claim: 'Employee Re-request for no due'
+  },
+  {
+    permission: 'submissionnodue',
+    claim: 'Employee Submission Of No Due Clearance'
+  },
+  {
     permission: 'probation',
     claim: 'Employee Info Probation Details'
+  },
+  {
+    permission: 're-request',
+    claim: 'Employee Re-Request for Probation Confirmation'
+  },
+  {
+    permission: 'request',
+    claim: 'Employee Request for Probation Confirmation'
   },
   {
     permission: 'experience',
@@ -86,7 +114,7 @@ export const EMPLOYEE_INFO_CLAIMS = [
   },
 
   { permission: 'documents', claim: 'Employee Info Documents Tab' },
-  {permission: 'upload', claim: 'My Info Documents(Upload File)' }
+  {permission: 'upload', claim: 'Employee Info Documents Upload File' },
 
   // Team Members
   { permission: 'team-members', claim: 'Employee Info Team Members Tab' },
@@ -160,10 +188,32 @@ export const MY_INFO_CLAIMS = [
     permission: 'separation',
     claim: 'My Info Separation Request Details'
   },
+  
+  {
+    permission: 'earlyrelieving',
+    claim: 'Early relieving'
+  },
+  {
+    permission: 'recall',
+    claim: 'Recall'
+  },  {
+    permission: 'raisenodue',
+    claim: 'Raise No Due'
+  },
   {
     permission: 'nodue',
     claim: 'My Info No Due Clearance Details'
   },
+  {
+    permission: 'rerequest',
+    claim: 'Re-request for no due'
+  },
+  {
+    permission: 'submissionnodue',
+    claim: 'Submission Of No Due Clearance'
+  },
+
+
   {
     permission: 'probation',
     claim: 'My Info Probation Details'
@@ -189,6 +239,7 @@ export const MY_INFO_CLAIMS = [
     claim: 'My Info Asset Details'
   },
   { permission: 'documents', claim: 'My Info Documents Tab' },
+  {permission: 'upload', claim: 'My Info Documents Upload File' },
 
 
   { permission: 'team-members', claim: 'My Info Team Members Tab' },

@@ -30,7 +30,7 @@
                     <th>Shift</th>
                     <th>Job type</th>
                     @if(canAccess('update','job') ||
-                    canAccess('delete','job')){
+                    canAccess('delete','job'|| canAccess('view','separation'))){
                     <th class="text-center">Actions</th>
                     }
                 </tr>
@@ -110,7 +110,7 @@
                       
 
                         @if(canAccess('update','job') ||
-                        canAccess('delete','job') ||  canAccess('view','job')  ){
+                        canAccess('delete','job') ||  canAccess('view','separation')   ){
                       
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
@@ -130,7 +130,7 @@
                                     <li (click)="opendeletModal(deleteconformation,item)">
                                         <a class="dropdown-item"><i class="bi bi-trash3 me-2"></i>Delete</a>
                                     </li>}
-                                    @if(canAccess('view','job')){
+                                    @if(canAccess('view','separation')){
                                     @if (first && showSaperationDots ) {
                                     <li (click)="openModalforSeparationupdate(seprationModal, item)">
                                         <a class="dropdown-item"> <img src="icons/sepration.png" alt=""

@@ -34,7 +34,7 @@ export class AccessForEmployeeinfoService {
 
     const fullPermission = `${claim}.${action}`;
     const allowed = this.rbacService.allowedToAccess(fullPermission);
-  
+    console.log(allowed)
     return allowed;
 
 

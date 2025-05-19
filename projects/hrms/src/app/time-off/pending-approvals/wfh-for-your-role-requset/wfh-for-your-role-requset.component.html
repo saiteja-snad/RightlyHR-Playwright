@@ -77,7 +77,7 @@
                     </td>
                     <td >
                         <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
-                            <div (click)="comments(leave.entity.attendanceApprovalcomments,failureRecordModal)">
+                            <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
                             </div>
                         </div>
@@ -252,41 +252,4 @@
             </div>
         </div>
     </div>
-</ng-template>
-
-
-<ng-template #failureRecordModal let-modal>
-  <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
-        <p class="popup-heading mb-0">Failure Records</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-      </div>
-    </div>
-    <div class="custom-table-content p-3">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>Employee ID</th>
-            <th>Employee Name</th>
-            <th>Duration</th>
-            <th>Message</th>
-            <th>Start Date</th>
-          </tr>
-        </thead>
-        <tbody>
-         <tr>
-            <td>Pavan Kumar Chennakesavula</td>
-            <td>SD302130</td>
-            <td> 0.5</td>
-            <td>This record is in stage 2</td>
-            <td>03-06-2025</td>
-          </tr>
-        </tbody>
-      </table>
-      
-    </div>
-  </div>
 </ng-template>

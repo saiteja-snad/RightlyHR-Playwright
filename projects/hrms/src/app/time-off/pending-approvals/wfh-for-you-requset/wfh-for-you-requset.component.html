@@ -255,36 +255,3 @@
 </ng-template>
 
 
-
-
-<ng-template #failureRecordModal let-modal>
-  <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-3">
-      <div class="pt-2">
-        <p class="popup-heading mb-0">Failure Record</p>
-      </div>
-      <div>
-        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-      </div>
-    </div>
-    <div class="custom-table p-3">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>Expense Type</th>
-            <th>Expense Name</th>
-            <th>Expense Date</th>
-            <th>Expense Amount</th>
-            <th>Status</th>
-            <th>Receipt Number</th>
-            <th class="text-center">Action(S)</th>
-          </tr>
-        </thead>
-        <tbody>
-         
-        </tbody>
-      </table>
-      
-    </div>
-  </div>
-</ng-template>

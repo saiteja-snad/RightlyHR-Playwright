@@ -305,22 +305,14 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     if (this.buttons) {
       this.basicInfoForm.enable();
       this.basicInfoForm.get('employeeId')?.disable();
-  
-      // Fields to enforce field-level permissions
-      const fieldsToControl = ['salutation', 'firstName', 'lastName', 'dob', 'maritalStatus', 'middleName', 'bloodGroup', 'marriageDate', 'gender'];
-  
-      for (const field of fieldsToControl) {
-        if (!this.canAccessfield('update', field)) {
-          this.basicInfoForm.get(field)?.disable();
-        }
-      }
+
     } else {
+      this.basicInfoForm.get('employeeId')?.disable();
       this.basicInfoForm.disable();
       this.basicInfoForm.reset();
       this.getEmployeeId();
     }
   }
-  
   
 
   ngOnDestroy() {

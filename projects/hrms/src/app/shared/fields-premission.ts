@@ -120,6 +120,11 @@ export const EMPLOYEE_INFO_CLAIMS = [
   { permission: 'team-members', claim: 'Employee Info Team Members Tab' },
   { permission: 'team-managers', claim: 'Employee Info Team Managers Tab' },
 
+  { permission: 'changesrm', claim: 'Employee Info Change RM Button' },
+  { permission: 'chtm', claim: 'Employee Info Change TM Button' },
+  
+
+
   // Onboard Request
   { permission: 'onboarding-request', claim: 'Employee Info Onboard Request Tab' }
 
@@ -244,6 +249,8 @@ export const MY_INFO_CLAIMS = [
 
   { permission: 'team-members', claim: 'My Info Team Members Tab' },
   { permission: 'team-managers', claim: 'My Info Team Managers Tab' },
+  { permission: 'changesrm', claim: 'Change RM Button' },
+  { permission: 'rmtab', claim: 'My Info Reporting Managers Tab' },
 
 
   { permission: 'onboarding-request', claim: 'My Info Onboard Request Tab' }

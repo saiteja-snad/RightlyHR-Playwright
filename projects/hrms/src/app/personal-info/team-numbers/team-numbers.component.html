@@ -9,7 +9,7 @@
             
         </div>
 
-        @if(canAccess('view','team-members')){
+        @if(canAccess('view','changesrm')){
         <div>
             <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change RM</button>
         </div>
@@ -31,7 +31,7 @@
                     <th>Work Email</th>
                     <th>Phone Number</th>
                     <th>Designation</th>
-                     @if(canAccess('update','team-members')) {
+                     @if(canAccess('update','rmtab')) {
                     <th class="text-center">Action</th>
                     }
                 </tr>
@@ -45,14 +45,14 @@
                         <td>{{details.workEmail}}</td>
                         <td>{{details.contactnumber}}</td>
                         <td>{{details.jobRole}}</td>
-                        @if(canAccess('update','team-members')) {
+                        @if(canAccess('update','rmtab')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu py-0">
-                                    @if(canAccess('update','team-members')) {
+                                    @if(canAccess('update','rmtab')) {
                                     <li (click)="openModal(changermmodal,details)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change RM</a>
                                     </li>

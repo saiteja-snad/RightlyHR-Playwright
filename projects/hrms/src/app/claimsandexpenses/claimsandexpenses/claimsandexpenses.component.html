@@ -11,7 +11,14 @@
         </div>
         }
     </div>
-    <div class="mb-3">
-        <app-expenes-header-tabs></app-expenes-header-tabs>
+
+    <div class="d-flex gap-3 w-100">
+        <div class="custom-component-left-content">
+            <app-expenes-header-tabs></app-expenes-header-tabs>
+        </div>
+
+        <div class="card custom-component-right-content p-3">
+            <router-outlet></router-outlet>
+        </div>
     </div>
 </div>

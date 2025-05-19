@@ -1,16 +1,9 @@
-<div class="d-flex gap-3 w-100">
-    <div class="custom-component-left-content">
-        <div class="component-side-nav-tabs-container py-3">
-            <ul class="nav flex-column">
-                <li class="nav-item" *ngFor="let link of navTabs">
-                    <a class="nav-link" [routerLink]="[link.link]" routerLinkActive="active-nav-link">
-                        {{ link.label }} ({{ link.count}})
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="card custom-component-right-content px-3">
-        <router-outlet></router-outlet>
-    </div>
+<div class="component-side-nav-tabs-container py-3">
+    <ul class="nav flex-column">
+        <li class="nav-item" *ngFor="let link of navTabs">
+            <a class="nav-link" [routerLink]="[link.link]" routerLinkActive="active-nav-link">
+                {{ link.label }} ({{ link.count}})
+            </a>
+        </li>
+    </ul>
 </div>

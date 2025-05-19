@@ -65,7 +65,7 @@
                             <td>
                                 <span [ngClass]="{ 'clickable-text': (employee.leaves.length || 0) > 0 }"
                                     *ngIf="(employee.leaves?.length || 0) > 0; else noLeaves"
-                                    (click)="openPopup(leavesModal, employee, 'Leaves')">
+                                    (click)="openPopup(leavesModal, employee, 'leaves')">
                                     {{ employee.leaves.length || 0 }}
                                 </span>
                                 <ng-template #noLeaves>{{ employee.leaves.length || 0 }}</ng-template>
@@ -73,7 +73,7 @@
                             <td>
                                 <span [ngClass]="{ 'clickable-text': (employee.wfh.length || 0) > 0 }"
                                     *ngIf="(employee.wfh?.length || 0) > 0; else noWfh"
-                                    (click)="openPopup(wfhModal, employee, 'WFH')">
+                                    (click)="openPopup(wfhModal, employee, 'wfh')">
                                     {{ employee.wfh.length || 0 }}
                                 </span>
                                 <ng-template #noWfh>{{ employee.wfh.length || 0 }}</ng-template>
@@ -81,7 +81,7 @@
                             <td>
                                 <span [ngClass]="{ 'clickable-text': calculateDuration(employee.permissions) > 0 }"
                                     *ngIf="calculateDuration(employee.permissions) > 0; else noPermission"
-                                    (click)="openPopup(permissionModal, employee, 'Permission')">
+                                    (click)="openPopup(permissionModal, employee, 'permissions')">
                                     {{ calculateDuration(employee.permissions)}} Hr(s)
                                 </span>
                                 <ng-template #noPermission>{{ calculateDuration(employee.permissions)}} Hr(s)</ng-template>
@@ -89,7 +89,7 @@
                             <td>
                                 <span [ngClass]="{ 'clickable-text': calculateDuration(employee.regularization) > 0 }"
                                     *ngIf="calculateDuration(employee.regularization) > 0; else noRegularization"
-                                    (click)="openPopup(permissionModal, employee, 'Regularization')">
+                                    (click)="openPopup(permissionModal, employee, 'regularization')">
                                     {{ calculateDuration(employee.regularization)}} Hr(s)
                                 </span>
                                 <ng-template #noRegularization>{{ calculateDuration(employee.regularization)}}
@@ -117,7 +117,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th colspan="6" class="custom-popup-header">{{ popupType | titlecase }} Details</th>
+                                <th colspan="6" class="custom-popup-header">{{ selectedEmployee.employeeName }} ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
                             </tr>
                             <tr>
                                 <th>Category</th>
@@ -157,7 +157,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th colspan="5" class="custom-popup-header">{{ popupType }} Details</th>
+                                <th colspan="5" class="custom-popup-header">{{ selectedEmployee.employeeName }} ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
                             </tr>
                             <tr>
                                 <th>Start Date</th>
@@ -196,11 +196,11 @@
                     <table>
                         <thead>
                             <tr>
-                                <th colspan="4" class="custom-popup-header">{{ popupType | titlecase }} Details</th>
+                                <th colspan="4" class="custom-popup-header">{{ selectedEmployee.employeeName }} ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
                             </tr>
                             <tr>
                                 <th>Requested Date</th>
-                                @if(popupType === 'Permission') {
+                                @if(popupType === 'Permission(s)') {
                                     <th>Permission Type</th>
                                 }@else {
                                     <th>Regularization Type</th>

@@ -94,7 +94,7 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
     const employeeId = employee.employeeBasicDetails.employeeId;
     const categoryId = category.category?.id;
     const yearToFilter = this.selectedYear || new Date().getFullYear();
-    const url = `Timeoff?EmployeeId=${employeeId}`;
+    const url = `Timeoff/${employeeId}`;
 
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res: any) => {

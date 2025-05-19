@@ -16,6 +16,8 @@ import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { MyInfoPersonalTabsComponent } from "../../shared/myinfo-tabs/my-info-personal-tabs/my-info-personal-tabs.component";
 import { MyinfoJobTabsComponent } from "../../shared/myinfo-tabs/myinfo-job-tabs/myinfo-job-tabs.component";
+
+import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 @Component({
   selector: 'app-personalinfo-layout',
   imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, PersonalPersonalTabsComponent, PersonalJobTabsComponent,
@@ -50,13 +52,14 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   showBackIcon: boolean = true;
   spinnerLoader = false;
   loginEmployee = {} as any;
-  constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute) { }
+  constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute,public fieldpremission:AccessForEmployeeinfoService) { }
 
   ngOnInit(): void {
     this.teamForm = this.fb.group({
       teamMembers: [null, Validators.required],
       reportingManager: [null, Validators.required]
     });
+    this.fieldpremission.checkrouters.next( this.route.snapshot.routeConfig?.path || '')
     console.log('current Route: ', this.route.snapshot.routeConfig?.path || '');
     if (this.route.snapshot.routeConfig?.path === 'personalinfo') {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');

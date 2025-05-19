@@ -56,10 +56,9 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
     
   }
 
-    canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
-    const permission = this.permissionRouteService.getPermissionForCurrentRouteAction(action);
-    return permission ? this.rbac.allowedToAccess(permission) : false;
-    
+ 
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;

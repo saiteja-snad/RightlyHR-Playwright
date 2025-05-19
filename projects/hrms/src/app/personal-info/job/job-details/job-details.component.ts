@@ -104,22 +104,12 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         this.onSubDepartmentNameChangeupdate(subdepartmentId);
       });
   }
-    canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
-    const permission = this.permissionRouteService.getPermissionForCurrentJobRouteAction(action);
-    return permission ? this.rbac.allowedToAccess(permission) : false;
-    
+
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
   }
 
- canAccessAnyPermissions(actions: ('view' | 'create' | 'update' | 'delete')[], extraPermissions: string[] = []): boolean {
-  // Check route-based permissions
-  const routeBased = actions.some(action => {
-    const permission = this.permissionRouteService.getPermissionForCurrentJobRouteAction(action);
-    return permission ? this.rbac.allowedToAccess(permission) : false;
-  });
-  // Check explicit permissions
-  const explicit = extraPermissions.some(permission => this.rbac.allowedToAccess(permission));
-  return routeBased || explicit;
-}
+
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
     console.log('Full path:', fullPath);

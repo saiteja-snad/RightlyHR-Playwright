@@ -63,11 +63,11 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       this.getEmployeeId();
     }
   }
-    canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
-    const permission = this.permissionRouteService.getPermissionForCurrentRouteAction(action);
-    return permission ? this.rbac.allowedToAccess(permission) : false;
-    
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
   }
+
+
  
   initializeForm(): void {
     this.addressForm = this.fb.group({

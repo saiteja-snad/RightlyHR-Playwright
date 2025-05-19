@@ -13,6 +13,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-contact-details',
   imports: [CommonModule, ReactiveFormsModule, NgxCountriesDropdownModule],
@@ -47,7 +48,8 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
    selectedworkcoutrycode = signal<any>('');
    selectedpersonalnumbercode = signal<any>('');
 
-  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService ,private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
+  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService , 
+    private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
     effect(() => {
       this.selectedworkcoutrycode.set(this.selectedDialCode);
       this.selectedpersonalnumbercode.set(this.selectedDialphoneCode);
@@ -62,11 +64,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   
   }
 
-    canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
-    const permission = this.permissionRouteService.getPermissionForCurrentRouteAction(action);
-    return permission ? this.rbac.allowedToAccess(permission) : false;
-    
-  }
+
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
     console.log('Full path:', fullPath);
@@ -93,7 +91,9 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
   }
 
-
+  canAccessfield(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
   enableForm(): void {
     this.buttons = true;
     this.contactForm.enable();

@@ -59,10 +59,9 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     this.formInitialization();
    this.getEmpInfoFromRoute();
   }
-  canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
-    const permission = this.permissionRouteService.getPermissionForCurrentJobRouteAction(action);
-    return permission ? this.rbac.allowedToAccess(permission) : false;
-    
+
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;

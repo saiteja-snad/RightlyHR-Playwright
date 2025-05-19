@@ -3,7 +3,7 @@
         <div>
             <app-team-members-tabs />
         </div>
-         @if(rbac.allowedToAccess('Employee Info Change TM Button.view')) {
+         @if(canAccess('view','team-managers')) {
         <div>
             <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change TM</button>
         </div>}
@@ -24,7 +24,7 @@
                     <th>Work Email</th>
                     <th>Phone Number</th>
                     <!-- <th>Employee Job Details</th> -->
-                      @if(rbac.allowedToAccess('Employee Info Team Managers Tab.update')) {
+                      @if(canAccess('update','team-managers')) {
                     <th class="text-center">Action</th>}
                 </tr>
             </thead>
@@ -43,14 +43,14 @@
                         N/A
                       </ng-template>
                     </td> -->
-                     @if(rbac.allowedToAccess('Employee Info Team Managers Tab.update')) {
+                     @if(canAccess('update','team-managers')) {
                     <td class="text-center">
                       <div class="dropdown">
                         <a type="button" data-bs-toggle="dropdown">
                           <i class="bi bi-three-dots-vertical"></i>
                         </a>
                         <ul class="dropdown-menu py-0">
-                             @if(rbac.allowedToAccess('Employee Info Team Managers Tab.update')) {
+                             @if(canAccess('update','team-managers')) {
                           <li (click)="assigintm(changetmmodalforsingle, details)">
                             <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change TM</a>
                           </li>
@@ -80,7 +80,7 @@
 <ng-template #changermmodals let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
-            @if(rbac.allowedToAccess('Employee Info Team Managers Tab.view')){
+            @if(canAccess('view','team-managers')){
             <div class="pt-2">
                 <p class="popup-heading mb-0"> {{'Change TM'|translate}}</p>
             </div>

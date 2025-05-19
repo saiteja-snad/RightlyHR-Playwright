@@ -13,7 +13,7 @@
                     <th>probation extended date</th>
                     <th>approved status</th>
                     <th>status</th>
-                    @if(canAccess('view') || canAccess('view')){
+                    @if(canAccess('view','probation') || canAccess('view','probation')){
                     <th class="text-center">Action(s)</th>
                     }
                 </tr>
@@ -36,14 +36,14 @@
                         }
                     </td>
                     <td>{{probation.status}}</td>
-                    @if(canAccess('view') || canAccess('view')){
+                    @if(canAccess('view','probation') || canAccess('view','probation')){
                     <td class="text-center">
                         @if (probation.status === 'Pending' || probation.status === 'Rejected' || probation.status === 'Extended') {
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 <!--status pending-->
-                                 @if(canAccess('view')){
+                                 @if(canAccess('view','probation')){
                                 @if(probation.status === 'Pending' && shouldprobationShowButton(empdata.probationEndDate) && probation.status!='Extended'){
                                 <li>
                                     <a (click)="requestForProbation(probation)" class="dropdown-item">
@@ -51,7 +51,7 @@
                                 </li>
                                 }}
                                 <!--status Rejected-->
-                                @if(canAccess('view')){
+                                @if(canAccess('view','probation')){
                                 @if(probation.status === 'Rejected' && shouldprobationShowButton(empdata.probationEndDate)){
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
@@ -59,7 +59,7 @@
                                 </li>
                                 }}
                                 <!--status extended-->
-                                 @if(canAccess('view')){
+                                 @if(canAccess('view','probation')){
                                 @if(probation.status === 'Extended' && shouldprobationShowButton(empdata.probationEndDate)
                                 && probation.probationExtendCount < probationExtendTimes){ 
                                 <li>

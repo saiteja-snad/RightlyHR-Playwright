@@ -4,10 +4,10 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-            @if(canAccess('view')){
+            @if(canAccess('view','onboarding')){
             @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
             <div >
-               @if(canAccess('update')){
+               @if(canAccess('update','onboarding')){
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
             }
             </div>

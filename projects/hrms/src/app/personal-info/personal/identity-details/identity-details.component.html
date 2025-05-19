@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">{{'Identity Details' | translate}}</span></div>
-         @if(canAccess('create')){
+         @if(canAccess('create','identity')){
         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !==
         'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
@@ -17,7 +17,7 @@
                         <th>Identity Type</th>
                         <th>Identity Number</th>
                         <th>Attachment</th>
-                         @if(canAccess('update') || canAccess('delete')){
+                         @if(canAccess('update','identity') || canAccess('delete','identity')){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase()
                         !== 'trainee prospective')){
@@ -35,7 +35,7 @@
                                     <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template
                                     #noData>-</ng-template>
                             </td>
-                            @if(canAccess('update') || canAccess('delete')){
+                            @if(canAccess('update','identity') || canAccess('delete','identity')){
                             @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                             employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
                             && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
@@ -46,13 +46,13 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                     <ul class="dropdown-menu custom-dropdown-menu">
-                                        @if(canAccess('update')){   
+                                        @if(canAccess('update','identity')){   
                                         <li (click)="openModalupdate(updateidentityModal, identityDetails)">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-pencil me-2"></i>Update
                                             </a>
                                         </li>}
-                                         @if(canAccess('delete')){ 
+                                         @if(canAccess('delete','identity')){ 
                                         <li (click)="opendeletModal(deleteconformation,identityDetails)">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-trash3 me-2"></i>Delete

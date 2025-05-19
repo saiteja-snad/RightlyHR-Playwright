@@ -55,6 +55,7 @@ import {
   MY_INFO_PERSONAL_ROUTES,
   EMPLOYEE_INFO_DOCUMENTS_ROUTES,
   MY_INFO_DOCUMENTS_ROUTES,
+  MY_INFO_TEAM_MEMBERS,
 } from '../permission-route.constants';
 
 @Injectable({
@@ -97,7 +98,12 @@ export class AccessNavigationService {
         }
 
         if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-          return (route = '/myinfo/team-members');
+          for (const item of MY_INFO_TEAM_MEMBERS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
+         
         }
 
         if (this.rbac.allowedToAccess('My Info Onboard Request Tab.view')) {
@@ -693,8 +699,12 @@ export class AccessNavigationService {
       }
         break;
       case '/myinfo/team-members':
-        if (this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-          return (route = '/myinfo/team-members');
+        if( this.rbac.allowedToAccess('My Info Documents Tab.view')) {
+          for (const item of MY_INFO_TEAM_MEMBERS) {
+            if (this.rbac.allowedToAccess(item.permission)) {
+              return item.route;
+            }
+          }
         }
         break;
 
@@ -1441,7 +1451,7 @@ export class AccessNavigationService {
       break;
 
     case '/personalinfo/team':
-      if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view')) {
+      if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view') || this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
         for (const item of EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES) {
           if (this.rbac.allowedToAccess(item.permission)) {
             return item.route;

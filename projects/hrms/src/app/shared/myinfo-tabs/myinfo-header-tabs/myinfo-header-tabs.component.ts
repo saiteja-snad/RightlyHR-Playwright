@@ -19,7 +19,7 @@ export class MyinfoHeaderTabsComponent {
     { label: 'Job', link: '/myinfo/job',permission: { feature: 'My Info Job Tab', action: 'view' }, },
     { label: 'Documents', link: '/myinfo/documents',permission: { feature: 'My Info Documents Tab', action: 'view' }, },
     { label: 'Team Members', link: '/myinfo/team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' }},
-    { label: 'Onboard Request', link: '/myinfo/onboarding-request', permission: { feature: 'My Info Onboard Request Tab', action: 'view' }},
+    // { label: 'Onboard Request', link: '/myinfo/onboarding-request', permission: { feature: 'My Info Onboard Request Tab', action: 'view' }},
   ];
 
   constructor(

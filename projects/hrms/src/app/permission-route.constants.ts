@@ -1,6 +1,6 @@
 // permission-route.constants.ts
 export const MY_INFO_PERSONAL_ROUTES = [
-    { permission: 'My Info Basic Information.view', route: '/myinfo/personal/basic-info' },
+    { permission: 'My Info Basic Information.view', route: '/myinfo/personal/basic-info' ,},
     { permission: 'My Info Address Details.view', route: '/myinfo/personal/address-info' },
     { permission: 'My Info Contact Details.view', route: '/myinfo/personal/contact-details' },
     { permission: 'My Info Emergency Contact Details.view', route: '/myinfo/personal/emergency-contact-details' },
@@ -33,7 +33,9 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ];
   
   export const MY_INFO_TEAM_MEMBERS = [
-    { permission: 'My Info Team Members Tab.view', route: '/myinfo/team-members' }
+    { permission: 'My Info Team Members Tab.view', route: '/myinfo/team-members' },
+    { permission: 'My Info Team Managers Tab.view', route: '/myinfo/team/team-manger-members' },
+
   ];
   
   export const MY_INFO_ONBOARD_REQUEST = [
@@ -396,7 +398,7 @@ export const MY_INFO_PERSONAL_ROUTES = [
   ]
 
   export const EMPLOYEE_INFO_PERSONAL_ROUTES = [
-    { permission: 'Employee Info Basic Information.view', route: '/personalinfo/personal/basic-info' },
+    { permission: 'Employee Info Basic Information.view', route: '/personalinfo/personal/basic-info', },
     { permission: 'Employee Info Address Details.view', route: '/personalinfo/personal/address-info' },
     { permission: 'Employee Info Contact Details.view', route: '/personalinfo/personal/contact-details' },
     { permission: 'Employee Info Emergency Contact Details.view', route: '/personalinfo/personal/emergency-contact-details' },

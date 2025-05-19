@@ -1,67 +1,112 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  EMPLOYEE_INFO_PERSONAL_ROUTES,
-  MY_INFO_PERSONAL_ROUTES,
-  EMPLOYEE_INFO_JOB_ROUTES,
-  MY_INFO_JOB_ROUTES,
-  EMPLOYEE_INFO_DOCUMENTS_ROUTES,
-  MY_INFO_DOCUMENTS_ROUTES
-} from '../permission-route.constants';
+
+import { BehaviorSubject } from 'rxjs';
+import { RbacService } from './rbac.service';
+import { EMPLOYEE_INFO_CLAIMS, MY_INFO_CLAIMS } from '../shared/fields-premission';
 @Injectable({
   providedIn: 'root'
 })
 export class AccessForEmployeeinfoService {
 
-  constructor(public router: Router) { }
 
-  getPermissionForCurrentRouteAction(action: 'view' | 'create' | 'update' | 'delete', url?: string): string | undefined {
-    const currentUrl = url ?? this.router.url;
+  constructor(private router: Router, private rbacService: RbacService) { }
 
-    // Check EMPLOYEE_INFO_PERSONAL_ROUTES first (more specific)
-    const empInfo = EMPLOYEE_INFO_PERSONAL_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
-    if (empInfo) return empInfo.permission.replace('.view', `.${action}`);
+  checkrouters = new BehaviorSubject('')
 
-    // Then check MY_INFO_PERSONAL_ROUTES
-    const myInfo = MY_INFO_PERSONAL_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
-    if (myInfo) return myInfo.permission.replace('.view', `.${action}`);
-
-    return undefined;
-  }
-
-  getPermissionForCurrentJobRouteAction(
+  canAccessField(
     action: 'view' | 'create' | 'update' | 'delete',
-    url?: string
-  ): string | undefined {
-    const currentUrl = url ?? this.router.url;
+    permission: string
+  ): boolean {
+    const currentUrl = this.checkrouters.value.toLowerCase();
+    console.log("Current Route:", currentUrl);
 
-    // Check EMPLOYEE_INFO_JOB_ROUTES first
-    const empJob = EMPLOYEE_INFO_JOB_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
-    if (empJob) return empJob.permission.replace('.view', `.${action}`);
+    let claim: string | undefined;
+
+    switch (currentUrl) {
+      case 'personalinfo':
+        claim = EMPLOYEE_INFO_CLAIMS.find(r => r.permission === permission)?.claim;
+        break;
+      case 'myinfo':
+        claim = MY_INFO_CLAIMS.find(r => r.permission === permission)?.claim;
+        break;
+    }
+
+    const fullPermission = `${claim}.${action}`;
+    const allowed = this.rbacService.allowedToAccess(fullPermission);
+  
+    return allowed;
 
 
-    // Then check MY_INFO_JOB_ROUTES
-    const myJob = MY_INFO_JOB_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
-    if (myJob) return myJob.permission.replace('.view', `.${action}`);
+}
 
 
-    return undefined;
-  }
+  // getPermissionForCurrentRouteAction(action: 'view' | 'create' | 'update' | 'delete', url?: string): string | undefined {
+  //   const currentUrl = url ?? this.router.url;
+
+  //   // Check EMPLOYEE_INFO_PERSONAL_ROUTES first (more specific)
+  //   const empInfo = EMPLOYEE_INFO_PERSONAL_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
+  //   if (empInfo) return empInfo.permission.replace('.view', `.${action}`);
+
+  //   // Then check MY_INFO_PERSONAL_ROUTES
+  //   const myInfo = MY_INFO_PERSONAL_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
+  //   if (myInfo) return myInfo.permission.replace('.view', `.${action}`);
+
+  //   return undefined;
+  // }
+
+  // getPermissionForCurrentJobRouteAction(
+  //   action: 'view' | 'create' | 'update' | 'delete',
+  //   url?: string
+  // ): string | undefined {
+  //   const currentUrl = url ?? this.router.url;
+
+  //   // Check EMPLOYEE_INFO_JOB_ROUTES first
+  //   const empJob = EMPLOYEE_INFO_JOB_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
+  //   if (empJob) return empJob.permission.replace('.view', `.${action}`);
 
 
-  getPermissionForCurrentDocumentsRouteAction(
-    action: 'view' | 'create' | 'update' | 'delete',
-    url?: string ): string | undefined {
-    const currentUrl = url ?? this.router.url;
+  //   // Then check MY_INFO_JOB_ROUTES
+  //   const myJob = MY_INFO_JOB_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
+  //   if (myJob) return myJob.permission.replace('.view', `.${action}`);
 
-    // Check EMPLOYEE_INFO_DOCUMENTS_ROUTES first
-    const empDoc = EMPLOYEE_INFO_DOCUMENTS_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
-    if (empDoc) return empDoc.permission.replace('.view', `.${action}`);
 
-    // Then check MY_INFO_DOCUMENTS_ROUTES
-    const myDoc = MY_INFO_DOCUMENTS_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
-    if (myDoc) return myDoc.permission.replace('.view', `.${action}`);
+  //   return undefined;
+  // }
 
-    return undefined;
-  }
+
+  // getPermissionForCurrentDocumentsRouteAction(
+  //   action: 'view' | 'create' | 'update' | 'delete',
+  //   url?: string ): string | undefined {
+  //   const currentUrl = url ?? this.router.url;
+
+  //   // Check EMPLOYEE_INFO_DOCUMENTS_ROUTES first
+  //   const empDoc = EMPLOYEE_INFO_DOCUMENTS_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
+  //   if (empDoc) return empDoc.permission.replace('.view', `.${action}`);
+
+  //   // Then check MY_INFO_DOCUMENTS_ROUTES
+  //   const myDoc = MY_INFO_DOCUMENTS_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
+  //   if (myDoc) return myDoc.permission.replace('.view', `.${action}`);
+
+  //   return undefined;
+  // }
+
+  // getPermissionForCurrentteamRouteAction(
+  //   action: 'view' | 'create' | 'update' | 'delete',
+  //   url?: string ): string | undefined {
+  //   const currentUrl = url ?? this.router.url;
+
+  //   // Check EMPLOYEE_INFO_DOCUMENTS_ROUTES first
+  //   const empDoc = EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES.find((r: any) => currentUrl.startsWith(r.route));
+  //   if (empDoc) return empDoc.permission.replace('.view', `.${action}`);
+
+  //   // Then check MY_INFO_DOCUMENTS_ROUTES
+  //   const myDoc = MY_INFO_TEAM_MEMBERS.find((r: any) => currentUrl.startsWith(r.route));
+  //   if (myDoc) return myDoc.permission.replace('.view', `.${action}`);
+
+  //   return undefined;
+  // }
+
+
+
 }

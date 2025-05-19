@@ -4,7 +4,7 @@
       <div>
         <span class="component-sub-header">Contact Details</span>
       </div>
-      @if(canAccess('update') && !loading){
+      @if(canAccessfield('update','contact')){
       @if(!buttons &&( employedata?.empstatus?.toLowerCase() !== 'inactive' &&
       employedata?.empstatus?.toLowerCase()
       !== 'trainee inactive')){

@@ -13,6 +13,10 @@ import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 import {Router } from '@angular/router';
 
+
+
+
+
 @Component({
   selector: 'app-basic-info',
   imports: [CommonModule, ReactiveFormsModule, Select],
@@ -44,10 +48,10 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   constructor(private modalService: NgbModal, private fb: FormBuilder,
     public formValidation: FormValidationService,
-    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router,) { }
+   
+    private conformationPopup: OpenModalService, private http: HttpService, public rbac: RbacService, public permission: AccessForEmployeeinfoService, private router: Router,) { }
 
   ngOnInit(): void {
-
 
     this.getEmpInfoFromRoute();
 
@@ -78,10 +82,8 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   }
 
-   canAccess(action: 'view' | 'create' | 'update' | 'delete'): boolean {
-    const permission = this.permissionRouteService.getPermissionForCurrentRouteAction(action);
-    return permission ? this.rbac.allowedToAccess(permission) : false;
-    
+  canAccessfield(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permission.canAccessField(action, permission);
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
@@ -99,7 +101,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   initializeForm(): void {
     this.basicInfoForm = this.fb.group({
       employeeId: [{ value: null, disabled: true }, Validators.required],
-      salutation: [null, Validators.required],
+      salutation: [   null, Validators.required],
       firstName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       middleName: [null, [Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
       lastName: [null, [Validators.required, Validators.pattern('^[a-zA-Z][a-zA-Z\\s]{0,29}$')]],
@@ -109,6 +111,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       maritalStatus: [null, Validators.required],
       marriageDate: [null],
     });
+ 
   }
 
   validateAge(control: AbstractControl): { [key: string]: boolean } | null {
@@ -298,18 +301,27 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
 
   showButtons(): void {
     this.buttons = !this.buttons;
+  
     if (this.buttons) {
-
       this.basicInfoForm.enable();
-      this.basicInfoForm.get('employeeId')?.disable()
-
-
+      this.basicInfoForm.get('employeeId')?.disable();
+  
+      // Fields to enforce field-level permissions
+      const fieldsToControl = ['salutation', 'firstName', 'lastName', 'dob', 'maritalStatus', 'middleName', 'bloodGroup', 'marriageDate', 'gender'];
+  
+      for (const field of fieldsToControl) {
+        if (!this.canAccessfield('update', field)) {
+          this.basicInfoForm.get(field)?.disable();
+        }
+      }
     } else {
       this.basicInfoForm.disable();
       this.basicInfoForm.reset();
       this.getEmployeeId();
     }
   }
+  
+  
 
   ngOnDestroy() {
     if (this.subscription) {

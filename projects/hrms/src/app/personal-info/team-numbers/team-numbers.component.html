@@ -4,7 +4,7 @@
             <app-team-members-tabs />
             
         </div>
-        @if(rbac.allowedToAccess('Employee Info Change RM Button.view')){
+        @if(canAccess('view','team-members')){
         <div>
             <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change RM</button>
         </div>
@@ -26,7 +26,7 @@
                     <th>Work Email</th>
                     <th>Phone Number</th>
                     <th>Designation</th>
-                     @if(rbac.allowedToAccess('Employee Info Reporting Manager Tab.update')) {
+                     @if(canAccess('update','team-members')) {
                     <th class="text-center">Action</th>
                     }
                 </tr>
@@ -40,14 +40,14 @@
                         <td>{{details.workEmail}}</td>
                         <td>{{details.contactnumber}}</td>
                         <td>{{details.jobRole}}</td>
-                        @if(rbac.allowedToAccess('Employee Info Reporting Manager Tab.update')) {
+                        @if(canAccess('update','team-members')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu py-0">
-                                    @if(rbac.allowedToAccess('Employee Info Reporting Manager Tab.update')) {
+                                    @if(canAccess('update','team-members')) {
                                     <li (click)="openModal(changermmodal,details)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change RM</a>
                                     </li>
@@ -72,7 +72,7 @@
 <ng-template #changermmodal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3"> 
-            @if(rbac.allowedToAccess('Employee Info Reporting Manager Tab.view')){<div class="pt-2">
+            @if(canAccess('view','team-members')){<div class="pt-2">
                 <p class="popup-heading mb-0">Change RM</p>
             </div>
         }

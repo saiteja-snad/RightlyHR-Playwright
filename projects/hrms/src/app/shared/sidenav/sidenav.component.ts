@@ -16,17 +16,32 @@ import { AccessNavigationService } from '../../services/access-navigation.servic
 
 export class SidenavComponent implements OnInit {
   modules = [
+    //expenses
     {
-      label: 'Expenses', icon: '/main-menu-icons/finance.png', activeIcon: '/main-menu-icons/dollar-square-color.png',
+      label: 'Expenses', icon: '/main-menu-icons/expenses-icon.png', activeIcon: '/main-menu-icons/expenses-color.png',
       route: '/claimsandexpenses', permission: { feature: 'Expenses', action: 'view' }
     },
-    { label: 'Reports', icon: '/main-menu-icons/analysis.png', route: '/reports', permission: { feature: 'Reports', action: 'view' } },
-    { label: 'PMS', icon: '/main-menu-icons/performance.png', route: '/pms', permission: { feature: 'PMS', action: 'view' } },
-    { label: 'PMS Configuration', icon: '/main-menu-icons/productivity.png', route: '/pmsconfiguration', permission: { feature: 'PMS Configurations', action: 'view' } },
-    { label: 'Desk', icon: '/main-menu-icons/desk.png', route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' } },
-    { label: 'Assets', icon: '/main-menu-icons/listening.png', route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' } },
-    { label: 'IT Support', icon: '/main-menu-icons/technical-support.png', route: '/it-support', permission: { feature: 'IT Support', action: 'view' } },
-    { label: 'Org Hierarchy', icon: '/main-menu-icons/social-network.png', route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' } }
+    //Reports
+    { label: 'Reports', icon: '/main-menu-icons/reports-icon.png', activeIcon: '/main-menu-icons/reports-color.png', 
+      route: '/reports', permission: { feature: 'Reports', action: 'view' } },
+    //pms
+    { label: 'PMS', icon: '/main-menu-icons/pms-icon.png', route: '/pms', activeIcon: '/main-menu-icons/pms-color.png',
+       permission: { feature: 'PMS', action: 'view' } },
+    //pms configuration
+    { label: 'PMS Configuration', icon: '/main-menu-icons/pms-configuration-icon.png', activeIcon: '/main-menu-icons/pms-configuration-color.png',
+       route: '/pmsconfiguration', permission: { feature: 'PMS Configurations', action: 'view' } },
+    //Desk
+    { label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/desk-color.png', 
+      route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' } },
+    //Assets
+    { label: 'Assets', icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets-color.png',
+       route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' } },
+    //IT Supports
+    { label: 'IT Support', icon: '/main-menu-icons/it-support-icon.png', activeIcon: '/main-menu-icons/it-support-color.png', 
+      route: '/it-support', permission: { feature: 'IT Support', action: 'view' } },
+    //org Hierarcy
+    { label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-color.png',
+       route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' } }
   ];
   columnsPerRow = 3;
   dropdownOpen = false; // controls the icon
@@ -39,12 +54,8 @@ export class SidenavComponent implements OnInit {
     private router: Router, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
-    this.modules = this.modules.filter(
-      (tab) =>
-        tab.permission &&
-        tab.permission.feature &&
-        tab.permission.action &&
-        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+    this.modules = this.modules.filter((tab) => tab.permission && tab.permission.feature && tab.permission.action &&
+      this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
     this.setSelectedModuleFromRoute();
   }
@@ -73,7 +84,8 @@ export class SidenavComponent implements OnInit {
   }
 
   isActiveRoute(link: string): boolean {
-    return this.router.url.includes(link);
+    const currentUrl = this.router.url;
+    return currentUrl === link || currentUrl.startsWith(link + '/');
   }
 
   isActiveRoutePms(): boolean {
@@ -142,7 +154,12 @@ export class SidenavComponent implements OnInit {
 
   setSelectedModuleFromRoute(): void {
     const currentRoute = this.router.url;
-    this.selectedDropdownModule = this.modules.find(mod => currentRoute.startsWith(mod.route));
+    // Find all matches
+    const matchedModules = this.modules.filter(mod =>
+      currentRoute === mod.route || currentRoute.startsWith(mod.route + '/')
+    );
+    // Pick the one with the longest matching route (most specific)
+    this.selectedDropdownModule = matchedModules.sort((a, b) => b.route.length - a.route.length)[0];
     this.updateFilteredModules();
   }
 

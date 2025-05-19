@@ -1,82 +1,92 @@
 @if(rbac.allowedToAccess('Documents History Offer Letter.view')){
-<div class="custom-table-content">
-    <!--search input-->
-    <div class="p-3">
-        <div class="input-group custom-search">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-                placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
-        </div>
+<div class="custom-main-component-container">
+    <div class="input-group custom-search mb-2">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
-    <table class="w-100">
-        <thead>
-            <tr>
-                <th>{{'DATE'|translate}}</th>
-                <th>{{'NAME'|translate}}</th>
-                <th>{{'LOCATION'|translate}}</th>
-                <th>{{'SUB LOCATION'|translate}}</th>
-                <th>{{'DESIGNATION'|translate}}</th>
-                <th>{{'STATUS'|translate}}</th>
-                <th>{{'SUB STATUS'|translate}}</th>
-                @if(rbac.allowedToAccess('Offer Letter Download.view') || rbac.allowedToAccess('Offer Letter Release Offer.view') || 
-                rbac.allowedToAccess('Offer Letter Approve.view') || rbac.allowedToAccess('Offer Letter Reject.view')){
-                <th class="text-center">{{'ACTION'|translate}}</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @if(offerLetters.length > 0){
-            @for (offerLetter of offerLetters | offerletterdashboardpipe : searchValue; track offerLetter.id){
-            <tr>
-                <td class="text-nowrap">{{offerLetter.offerSentDate | dateformat }}</td>
-                <td>{{offerLetter.employeeName ?offerLetter.employeeName:'-'}}</td>
-                <td>{{offerLetter.workLocation?offerLetter.workLocation:'-' }}</td>
-                <td>{{offerLetter.subLocation?offerLetter.subLocation:'-' }} </td>
-                <td>{{offerLetter.jobRole?offerLetter.jobRole:'-'}}</td>
-                <td>{{offerLetter.status?offerLetter.status:'-'}} </td>
-                <td>{{offerLetter.empSubstatus?offerLetter.empSubstatus:'-'}} </td>
-                @if(rbac.allowedToAccess('Offer Letter Download.view') || rbac.allowedToAccess('Offer Letter Release Offer.view') || 
-                rbac.allowedToAccess('Offer Letter Approve.view') || rbac.allowedToAccess('Offer Letter Reject.view')){
-                <td class="text-center">
-                    <div class="d-flex gap-2 justify-content-center">
-                         @if(rbac.allowedToAccess('Offer Letter Download.view')) {
-                        <button class="custom-btn btn-primary" (click)="onSelectDownload(offerLetter)">Download</button>
-                         }
-                          @if(rbac.allowedToAccess('Offer Letter Release Offer.view')) {
-                        @if(offerLetter.status=='Approved'){
-                        <button class="custom-btn btn-primary" (click)="releaseOfferletter(offerLetter)">Release Offer</button>
-                        }
+    <div class="custom-table-content">
+        <!--search input-->
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>{{'DATE'|translate}}</th>
+                    <th>{{'NAME'|translate}}</th>
+                    <th>{{'LOCATION'|translate}}</th>
+                    <th>{{'SUB LOCATION'|translate}}</th>
+                    <th>{{'DESIGNATION'|translate}}</th>
+                    <th>{{'STATUS'|translate}}</th>
+                    <th>{{'SUB STATUS'|translate}}</th>
+                    @if(rbac.allowedToAccess('Offer Letter Download.view') || 
+                    rbac.allowedToAccess('Offer Letter Release Offer.view') ||
+                    rbac.allowedToAccess('Offer Letter Approve.view') || 
+                    rbac.allowedToAccess('Offer Letter Reject.view')){
+                    <th class="text-center">{{'ACTION'|translate}}</th>
                     }
-                    @if(rbac.allowedToAccess('Offer Letter Approve.view')) {
-                        @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' && offerLetter?.status !== 'Released') {
-                        <button class="custom-btn btn-primary-approve" (click)="updateOfferDetails(offerLetter)">Approve</button>
-                        }
-                    }
-                        <!-- *ngIf="((loginuserdata.employeeId==offerLetter.approver|| _userAcessService.checkAccess('Offer Letter Approval.view')) && 
+                </tr>
+            </thead>
+            <tbody>
+                @if(offerLetters.length > 0){
+                @for (offerLetter of offerLetters | offerletterdashboardpipe : searchValue; track offerLetter.id){
+                <tr>
+                    <td class="text-nowrap">{{offerLetter.offerSentDate | dateformat }}</td>
+                    <td>{{offerLetter.employeeName ?offerLetter.employeeName:'-'}}</td>
+                    <td>{{offerLetter.workLocation?offerLetter.workLocation:'-' }}</td>
+                    <td>{{offerLetter.subLocation?offerLetter.subLocation:'-' }} </td>
+                    <td>{{offerLetter.jobRole?offerLetter.jobRole:'-'}}</td>
+                    <td>{{offerLetter.status?offerLetter.status:'-'}} </td>
+                    <td>{{offerLetter.empSubstatus?offerLetter.empSubstatus:'-'}} </td>
+                    @if(rbac.allowedToAccess('Offer Letter Download.view') || 
+                    rbac.allowedToAccess('Offer Letter Release Offer.view') || rbac.allowedToAccess('Offer Letter Approve.view') 
+                    || rbac.allowedToAccess('Offer Letter Reject.view')){
+                    <td class="text-center">
+                        <div class="d-flex gap-2 justify-content-center">
+                            @if(rbac.allowedToAccess('Offer Letter Download.view')) {
+                            <button class="custom-btn btn-primary"
+                                (click)="onSelectDownload(offerLetter)">Download</button>
+                            }
+                            @if(rbac.allowedToAccess('Offer Letter Release Offer.view')) {
+                            @if(offerLetter.status=='Approved'){
+                            <button class="custom-btn btn-primary" (click)="releaseOfferletter(offerLetter)">Release
+                                Offer</button>
+                            }
+                            }
+                            @if(rbac.allowedToAccess('Offer Letter Approve.view')) {
+                            @if (offerLetter?.status !== 'Approved' && offerLetter?.status !== 'Rejected' &&
+                            offerLetter?.status !== 'Released') {
+                            <button class="custom-btn btn-primary-approve"
+                                (click)="updateOfferDetails(offerLetter)">Approve</button>
+                            }
+                            }
+                            <!-- *ngIf="((loginuserdata.employeeId==offerLetter.approver|| _userAcessService.checkAccess('Offer Letter Approval.view')) && 
                            (offerLetter.status!='Approved'&& offerLetter.status!='Rejected' &&offerLetter.status!='Released' ) )" -->
-                      @if(rbac.allowedToAccess('Offer Letter Reject.view')) {
-                           @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' && offerLetter.status!='Released')){
-                        <button class="custom-btn btn-primary-reject" (click)="SelectData(offerLetter);openModal(rejectpopup)">Reject</button>
-                        }
-                    }
-                        <!-- *ngIf="((loginuserdata.employeeId==offerLetter.approver || _userAcessService.checkAccess('Offer Letter Approval.view'))
+                            @if(rbac.allowedToAccess('Offer Letter Reject.view')) {
+                            @if((offerLetter.status!='Approved' && offerLetter.status!='Rejected' &&
+                            offerLetter.status!='Released')){
+                            <button class="custom-btn btn-primary-reject"
+                                (click)="SelectData(offerLetter);openModal(rejectpopup)">Reject</button>
+                            }
+                            }
+                            <!-- *ngIf="((loginuserdata.employeeId==offerLetter.approver || _userAcessService.checkAccess('Offer Letter Approval.view'))
                           && (offerLetter.status!='Approved'&& offerLetter.status!='Rejected'&&offerLetter.status!='Released' ) )" -->
-                    </div>
-                </td>
-            }
-            </tr>
-            }
-            }
-            @else {
-            <tr>
-                <td colspan="8">No Data Found</td>
-            </tr>
-            }
-        </tbody>
-    </table>
+                        </div>
+                    </td>
+                    }
+                </tr>
+                }
+                }
+                @else {
+                <tr>
+                    <td colspan="8">No Data Found</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
 }
+
 <ng-template #rejectpopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">

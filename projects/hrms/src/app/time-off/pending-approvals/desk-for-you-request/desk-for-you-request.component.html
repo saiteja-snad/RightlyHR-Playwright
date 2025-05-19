@@ -78,7 +78,7 @@
                             @if(rbac.allowedToAccess('For You (Desk Requests).delete')) {
                                 <li>
                                     <a class="dropdown-item" type="button"
-                                        (click)="selectedexpenesid=exp.approvalHeader.id;openModal(rejectmodal)">
+                                        (click)="selectedexpenesid=exp.approvalHeader.id;openModal(rejectmodal, exp)">
                                         Reject
                                     </a>
                                 </li>

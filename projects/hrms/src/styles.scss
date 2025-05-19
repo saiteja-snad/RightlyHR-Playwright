@@ -213,6 +213,7 @@ body {
         border-radius: 50%;
     }
 }
+
 //header stylings Ends
 
 //Side Bar Stylings
@@ -236,8 +237,9 @@ body {
 
     .sidnav-main-content {
         width: 100%;
-        height: calc(100dvh - 9rem);
+        height: calc(100dvh - 7.5rem);
         overflow-y: auto;
+        padding: 1rem 0.25rem;
     }
 
     .nav-item {
@@ -260,16 +262,19 @@ body {
         color: var(--side-nav-item-active-color);
     }
 
-    .custom-icon {
-        font-size: var(--fontsize14);
-    }
-
     .bi-person-vcard {
         font-size: var(--fontsize18);
     }
 
     .sidenav-footer-content {
         border-top: 1px solid var(--white-color);
+        padding-top: 0.5rem;
+    }
+
+    .logout-text {
+        font-weight: 500;
+        font-size: var(--fontsize13);
+        color: var(--side-nav-item-color);
     }
 
     .white-line {
@@ -394,13 +399,6 @@ body {
             width: 40px;
             height: 40px;
         }
-    }
-
-    .logout-text {
-        font-weight: 700;
-        font-size: var(--fontsize16);
-        line-height: 20px;
-        color: var(--side-nav-item-color);
     }
 }
 
@@ -641,6 +639,7 @@ a {
     background: var(--Scroller-bar-color);
     min-height: 4rem !important;
 }
+
 // scroll bar stylings ends
 
 // button stylings

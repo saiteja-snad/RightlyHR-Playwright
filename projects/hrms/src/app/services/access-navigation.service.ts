@@ -561,19 +561,11 @@ export class AccessNavigationService {
 
       case '/calendar':
         if (this.rbac.allowedToAccess('Calender Tab.view')) {
-          return (route = '/calendar/calendarview');
-        }
-
-        if (this.rbac.allowedToAccess('Holidays Tab.view')) {
-          for (const item of HOLIDAYS_SUB_TABS) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
+          return (route = '/calendar');
         }
         break;
 
-      case '/calendar/holiday':
+      case '/holidays':
         if (this.rbac.allowedToAccess('Holidays Tab.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
@@ -853,7 +845,7 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/calendar/holiday':
+      case '/holidays':
         if (this.rbac.allowedToAccess('Holidays Tab.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {

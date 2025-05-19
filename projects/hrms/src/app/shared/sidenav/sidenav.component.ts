@@ -41,7 +41,10 @@ export class SidenavComponent implements OnInit {
       route: '/it-support', permission: { feature: 'IT Support', action: 'view' } },
     //org Hierarcy
     { label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-color.png',
-       route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' } }
+       route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' } },
+    //Holidays
+    { label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holiday-color.png',
+       route: '/holidays', permission: { feature: 'Holidays Tab', action: 'view' } }
   ];
   columnsPerRow = 3;
   dropdownOpen = false; // controls the icon

@@ -1,21 +1,21 @@
-<div class="custom-main-component-container">
-  <div class="mb-3">
+<div class="custom-main-component-container d-flex w-100 gap-3">
+  <div class="custom-component-left-content">
     <app-holiday-tabs />
   </div>
-  
-  <ng-container *ngIf="loading; else maincontent">
-    <ng-template #loadingSpinner>
-      <div class="loader-placeholder-content text-center">
-        <div>
-          <app-data-loader-content />
-        </div>
-      </div>
-    </ng-template>
-    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-  </ng-container>
 
-  <ng-template #maincontent>
-    <div>
+  <div class="card custom-component-right-content p-3">
+    <ng-container *ngIf="loading; else maincontent">
+      <ng-template #loadingSpinner>
+        <div class="loader-placeholder-content text-center">
+          <div>
+            <app-data-loader-content />
+          </div>
+        </div>
+      </ng-template>
+      <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+    </ng-container>
+
+    <ng-template #maincontent>
       <ng-container *ngIf="orgHolidayItemsArrayTrue.length > 0 ; else noDataTemplate">
         <div *ngFor="let item of orgHolidayItemsArrayTrue" class="card holiday-card mb-3">
           <div class="d-flex gap-3 align-items-center">
@@ -35,6 +35,6 @@
           <app-no-data-found></app-no-data-found>
         </div>
       </ng-template>
-    </div>
-  </ng-template>
+    </ng-template>
+  </div>
 </div>

@@ -16,9 +16,6 @@
                     <i class="bi bi-person-vcard custom-icon"></i> My Info
                 </li>
 
-            <!-- <li class="nav-item" (click)="clearPersonalInfoStorage()" [class.active-nav-link]="isActiveRoute('/personalinfo')">
-                <i class="bi bi-person-vcard custom-icon"></i>My Info
-            </li> -->
             }
             @if(this.rbac.allowedToAccess('Events.view')){
             <li class="nav-item" (click)="goToAccessibleRoute('/events')" [class.active-nav-link]="isActiveRoute('/events')">

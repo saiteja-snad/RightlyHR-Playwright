@@ -1969,7 +1969,7 @@
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" 
-                                (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                (change)="onCheckboxChange(per, 'Update')"  [disabled]="(per.fields === 'My Info Compensation Details' || per.fields === 'My Info Job Details') || !roleToFilter?.id">
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" 

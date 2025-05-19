@@ -39,11 +39,7 @@ export class SidenavComponent {
     }
  
   }
-  
-  hasPersonalData(): boolean {
-    const data = localStorage.getItem('personaldata');
-    return data !== null && data.trim() !== '';
-  }
+
 
   close() {
     this.modalservie.dismissAll();

@@ -55,7 +55,7 @@ export const EMPLOYEE_INFO_CLAIMS = [
 
   {
     permission: 'separation',
-    claim: 'Employee Info Separation Request Button'
+    claim: 'Employee Info Separation Request'
   },
   {
     permission: 'earlyrelieving',

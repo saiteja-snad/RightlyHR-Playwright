@@ -16,7 +16,7 @@ import { PmsConfigurationLayoutComponent } from "../../pms-configuration/pms-con
 import { OrganizationchartComponent } from "../../organizationchart/organizationchart/organizationchart.component";
 import { CalendarViewComponent } from "../../calendar/calendar-view/calendar-view.component";
 import { HolidaysLayoutComponent } from "../../holidays/holidays-layout/holidays-layout.component";
-import { ThemingComponent } from "../../theme-customization/theming/theming.component";
+import { ThemeLayoutComponent } from "../../theme-customization/theme-layout/theme-layout.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -37,5 +37,5 @@ export default [
     { path: 'pmsconfiguration', component: PmsConfigurationLayoutComponent, canActivate: [MsalGuard],loadChildren: () => import('../../pms-configuration/pms-configuration.route')},
     { path: 'organization-chart', component: OrganizationchartComponent, canActivate: [MsalGuard]},
     { path: 'holidays', component: HolidaysLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../holidays/holidays.route')},
-    { path: 'theme', component: ThemingComponent},
+    { path: 'theme', component: ThemeLayoutComponent, loadChildren: () => import('../../theme-customization/theme.route')},
 ] as Route[];

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ThemingComponent } from './theming.component';
+import { ThemeLayoutComponent } from './theme-layout.component';
 
-describe('ThemingComponent', () => {
-  let component: ThemingComponent;
-  let fixture: ComponentFixture<ThemingComponent>;
+describe('ThemeLayoutComponent', () => {
+  let component: ThemeLayoutComponent;
+  let fixture: ComponentFixture<ThemeLayoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ThemingComponent]
+      imports: [ThemeLayoutComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(ThemingComponent);
+    fixture = TestBed.createComponent(ThemeLayoutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

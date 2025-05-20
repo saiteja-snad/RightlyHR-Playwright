@@ -50,10 +50,9 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.getEmpInfoFromRoute()
     this.initializeForm();
     this.getJobtypes();
-
     this.initializeupdateForm();
 
     this.employeeExperienceForm.get('fromDate')?.valueChanges.subscribe(() => {

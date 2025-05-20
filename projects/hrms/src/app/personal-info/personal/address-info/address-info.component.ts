@@ -43,8 +43,6 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
     this.initializeForm();
-    
-  
     this.addressForm.disable();
     this.addressForm.get('permanentAddress')?.valueChanges.subscribe(() => {
       this.checkIfAddressesAreSame();
@@ -279,6 +277,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       },
     });
   }
+  
   copyCurrentAddress(event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
   

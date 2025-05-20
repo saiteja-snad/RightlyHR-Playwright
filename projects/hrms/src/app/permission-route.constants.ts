@@ -431,6 +431,9 @@ export const MY_INFO_PERSONAL_ROUTES = [
 export const EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES = [
   { route: '/personalinfo/team/team-members', permission: 'Employee Info Reporting Manager Tab.view' },
   { route: '/personalinfo/team/team-manger-members', permission: 'Employee Info Team Managers Tab.view' },
+  { route: '/personalinfo/team/team-members', permission: 'My Info Reporting Managers Tab.view' },
+
+
 ]
   export const INVITE_NEW_USER_TABS = [
     {  route: '/admin/active-new-user', permission:  'Dashboard Active Invite New User.view' },

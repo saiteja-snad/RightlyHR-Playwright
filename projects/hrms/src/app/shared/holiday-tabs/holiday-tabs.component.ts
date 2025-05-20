@@ -14,8 +14,8 @@ import { RbacService } from '../../services/rbac.service';
 export class HolidayTabsComponent {
   filteredTabs: any[] = [];
   navTabs: any[] = [
-    { label: 'Public Holidays', link: '/holidays/public-holidays', permission: { feature: 'Holidays(Public)', action: 'view' } },
-    { label: 'Optional Holidays', link: '/holidays/optional-holidays', permission: { feature: 'Holidays(Optional)', action: 'view' } },
+    { label: 'Public Holidays', link: '/holidays/public-holidays', permission: { feature: 'Public Holidays Tab', action: 'view' } },
+    { label: 'Optional Holidays', link: '/holidays/optional-holidays', permission: { feature: 'Optional Holidays Tab', action: 'view' } },
   ];
 
   constructor(public rbac: RbacService) { }

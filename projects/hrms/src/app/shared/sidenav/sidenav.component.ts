@@ -44,7 +44,7 @@ export class SidenavComponent implements OnInit {
        route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' } },
     //Holidays
     { label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holiday-color.png',
-       route: '/holidays', permission: { feature: 'Holidays Tab', action: 'view' } }
+       route: '/holidays', permission: { feature: 'Holidays', action: 'view' } }
   ];
   columnsPerRow = 3;
   dropdownOpen = false; // controls the icon

@@ -15,7 +15,8 @@
           <input type="checkbox" class="form-check-input" id="showBirthdays" [(ngModel)]="showBirthdays"
             (change)="filterEventsByTitle()">
           <label class="form-check-label" for="showBirthdays">
-            <img src="calendar/birthday.png" alt="Birthday Image" class="custom-event-icon me-1">{{ 'Birthdays' | translate}}
+            <img src="calendar/birthday.png" alt="Birthday Image" class="custom-event-icon me-1">{{ 'Birthdays' |
+            translate}}
           </label>
         </div>
       </div>
@@ -25,7 +26,8 @@
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="showAnniversaries" [(ngModel)]="showAnniversaries"
             (change)="filterEventsByTitle()">
-          <label class="form-check-label" for="showAnniversaries"><img src="calendar/milestone.png" alt="Mile Stone Icon" class="custom-event-icon me-1">{{ 'Anniversaries' | translate}}</label>
+          <label class="form-check-label" for="showAnniversaries"><img src="calendar/milestone.png"
+              alt="Mile Stone Icon" class="custom-event-icon me-1">{{ 'Anniversaries' | translate}}</label>
         </div>
       </div>
 
@@ -34,7 +36,8 @@
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="showJoinees" [(ngModel)]="showJoinees"
             (change)="filterEventsByTitle()">
-          <label class="form-check-label" for="showJoinees"><img src="calendar/new-joinees.png" alt="New Joinee icon" class="    ">{{ 'New Joinees' | translate }}</label>
+          <label class="form-check-label" for="showJoinees"><img src="calendar/new-joinees.png" alt="New Joinee icon"
+              class="    ">{{ 'New Joinees' | translate }}</label>
         </div>
       </div>
 
@@ -54,7 +57,8 @@
           <ng-template #eventContent let-arg>
             <!-- <b *ngIf="arg.timeText" >{{ arg.timeText }}</b> -->
             <div>
-              <span class="event-title m-0">{{ arg.event.title }}<img [src]="arg.event.display" alt="arg" class="ms-2"></span>
+              <span class="event-title m-0">{{ arg.event.title }}<img [src]="arg.event.display" alt="arg"
+                  class="ms-2"></span>
             </div>
           </ng-template>
         </full-calendar>

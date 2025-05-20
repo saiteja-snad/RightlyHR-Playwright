@@ -1,12 +1,12 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="component-header-content">
     <div>
       <p class="component-header mb-0">Events</p>
     </div>
     @if(this.rbac.allowedToAccess('Events(Upcoming Events).create')){
     <div>
-      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"><i
-          class="bi bi-plus me-2"></i>Add Event</button>
+      <a type="button" class="custom-add-btn" (click)="openAddProspective()">
+        <i class="bi bi-plus me-1"></i>Add Event</a>
     </div>
     }
   </div>

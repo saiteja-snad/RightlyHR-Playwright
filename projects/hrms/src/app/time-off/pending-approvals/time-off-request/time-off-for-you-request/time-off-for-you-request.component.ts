@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { LeaveApproval, LeaveApproverComment } from '../../../../Interfaces/pendingapprovalsmodel';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
@@ -15,35 +15,53 @@ import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-f
 import { RbacService } from '../../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { TimeoffsearchPipe } from "../../../../Pipes/timeoffsearch.pipe";
+import { TableModule } from 'primeng/table';
+import { environment } from '../../../../../environments/environment';
+import { SignalsService } from '../../../../services/signals.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-time-off-for-you-request',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, TranslateModule, DropdownModule, 
-    DateformatPipe, NoDataFoundComponent, TimeoffsearchPipe],
+  imports: [
+    CommonModule,
+    NgbPopoverModule,
+    FormsModule,
+    PaginatorModule,
+    TranslateModule,
+    DropdownModule,
+    DateformatPipe,
+    NoDataFoundComponent,
+    TimeoffsearchPipe,
+    TableModule,
+    DataLoaderContentComponent
+],
   templateUrl: './time-off-for-you-request.component.html',
-  styleUrl: './time-off-for-you-request.component.scss'
+  styleUrl: './time-off-for-you-request.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
-
-export class TimeOffForYouRequestComponent {
-  totalRecords = 100
+export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
+  totalRecords = 100;
   first: any = 0;
   rows: any = 10;
   LOGIN: any;
-  subscription!: Subscription;
   searchValue: any;
+  spinnerLoader = false;
+  multiSelect = false;
+  issubmitdiable = false;
+  dataLoad = false;
   leaves = new BehaviorSubject<LeaveApproval[]>([]);
   approverComments = [] as LeaveApproverComment[];
   leaveEntitlementsList = {} as ICategoryDetails;
   selectedLeaveData = {} as any;
+  leavesselect!: LeaveApproval[];
+  selectedProducts!: LeaveApproval[];
   @ViewChild('commentspopup') modalContent: any;
-  spinnerLoader = false;
   destroy$: Subject<boolean> = new Subject<boolean>();
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 25, value: 25 },
   ];
-
   onRowsChange() {
     this.first = 0;
   }
@@ -57,43 +75,64 @@ export class TimeOffForYouRequestComponent {
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
-    public rbac: RbacService, ) {
-  }
+    public rbac: RbacService, private signalService: SignalsService
+  ) { }
 
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovals();
   }
+  
+  selectCheck(Value: any) {
+    this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  }
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
-    this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=1&approvedType=EMP`).subscribe({
-      next: (response: any) => {
-        this.leaves.next(response.data);
-      },
-      error: (reason) => console.log(reason),
-    });
+    let moduleId = environment.leavesModuleId;
+    this.dataLoad = true;
+    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=EMP`).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.leaves.next(response.data);
+          this.leavesselect = response.data;
+        },
+        error: (reason) => {
+           this.dataLoad = false;
+        },
+        complete: () => {
+          this.dataLoad = false;
+        },
+      });
   }
 
   checkLeaveBalance(Value: any, checkbalancepopup: any) {
-    this.modalService.open(checkbalancepopup, { centered: true, backdrop: 'static' });
-    let employeeId = Value.entity.leaveempId;
-    this.subscription = this.http.getData(`LeaveEntitlements/employee/${employeeId}`).subscribe({
-      next: (res: any) => {
-        // Find the category based on leaveCategoryId
-        this.leaveEntitlementsList = res.data.find((ele: any) => ele.category.id === Value.entity.leaveCategoryId);
-        // Check if isProbationAllowed is explicitly true or null
-        const isProbationAllowed = this.leaveEntitlementsList?.category?.isProbationAllowed;
-        if (isProbationAllowed) {
-          this.calculateProbationLeaves();
-        } else {
-          // Optionally, handle the case where probation is not allowed
-        }
-      },
-      error: (err: any) => {
-        console.log(err);
-      }
+    this.modalService.open(checkbalancepopup, {
+      centered: true,
+      backdrop: 'static',
     });
+    let employeeId = Value.entity.leaveempId;
+    this.http
+      .getData(`LeaveEntitlements/employee/${employeeId}`).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (res: any) => {
+          // Find the category based on leaveCategoryId
+          this.leaveEntitlementsList = res.data.find(
+            (ele: any) => ele.category.id === Value.entity.leaveCategoryId
+          );
+          // Check if isProbationAllowed is explicitly true or null
+          const isProbationAllowed =
+            this.leaveEntitlementsList?.category?.isProbationAllowed;
+          if (isProbationAllowed) {
+            this.calculateProbationLeaves();
+          } else {
+            // Optionally, handle the case where probation is not allowed
+          }
+        },
+        error: (err: any) => {
+          console.log(err);
+        },
+      });
   }
 
   calculateProbationLeaves() {
@@ -112,9 +151,14 @@ export class TimeOffForYouRequestComponent {
         let probationDays = currentDate.diff(dateOfJoining, 'days');
         // Divide by 30 and round down to the nearest 0.5 or whole number
         let months = Math.floor(probationDays / 30);
-        this.leaveEntitlementsList.probationLeaves = months * this.leaveEntitlementsList.category.probationDays;
-        if (this.leaveEntitlementsList.probationLeaves >= this.leaveEntitlementsList.allowedDays) {
-          this.leaveEntitlementsList.probationLeaves = this.leaveEntitlementsList.allowedDays
+        this.leaveEntitlementsList.probationLeaves =
+          months * this.leaveEntitlementsList.category.probationDays;
+        if (
+          this.leaveEntitlementsList.probationLeaves >=
+          this.leaveEntitlementsList.allowedDays
+        ) {
+          this.leaveEntitlementsList.probationLeaves =
+            this.leaveEntitlementsList.allowedDays;
         }
       } else {
         console.log('Employee is no longer on probation.');
@@ -125,11 +169,13 @@ export class TimeOffForYouRequestComponent {
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, { centered: true, backdrop: 'static' });
+    this.modalService.open(commentspopup, {
+      centered: true,
+      backdrop: 'static',
+    });
     this.approverComments = value;
   }
 
-  issubmitdiable: boolean = false;
   ifreasonnull(Value: any) {
     if (!Value || !Value.trim()) {
       this.issubmitdiable = true;
@@ -138,112 +184,217 @@ export class TimeOffForYouRequestComponent {
     }
   }
 
+  canBulkApprove(): boolean {
+    return this.selectedProducts?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage !==
+        item.approvalHeader.finalapprovalStage
+
+    );
+  }
+
+  canBulkProcess(): boolean {
+    return this.selectedProducts?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage ===
+        item.approvalHeader.finalapprovalStage
+    );
+  }
+
   rejectleave(rejectPopup: any, selecteddata: any) {
     this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
-    this.approveRequest(selecteddata);
+    this.selectedProducts = [selecteddata];
+  }
+
+  bulkapprove(approverPopup: any) {
+    this.modalService.open(approverPopup, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+
+  bulkReject(rejectPopup: any) {
+    this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
+  }
+
+  bulkProcess() {
+    this.handleProcess();
   }
 
   approveleave(approverPopup: any, selecteddata: any) {
-    this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
-    this.approveRequest(selecteddata);
+    this.modalService.open(approverPopup, {
+      centered: true,
+      backdrop: 'static',
+    });
+    this.selectedProducts = [selecteddata];
   }
 
   processleave(selecteddata: any) {
-    this.approveRequest(selecteddata);
-    this.handleProcess(selecteddata);
+    this.selectedProducts = [selecteddata];
+
+    setTimeout(() => {
+      this.handleProcess();
+    }, 500);
   }
 
-  approveRequest(leaveRequest: LeaveApproval) {
-    if (leaveRequest) {
-      this.subscription = this.http.getData(`Timeoff/getById/${leaveRequest.approvalHeader.referenceEntityId}`).subscribe({
-        next: (response: any) => {
-          this.selectedLeaveData = response
-          this.selectedLeaveData.request = leaveRequest
+  handleAccept(form: any) {
+    this.spinnerLoader = true;
+    let approvedBy = this.LOGIN.employeeId.toString();
+    let comments = this.selectedLeaveData?.comments || '';
+
+    let requestBody = {
+      requestProcessedBy: approvedBy,
+      status: "Approved",
+      comments: comments,
+      moduleId: environment.leavesModuleId,
+      isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
+      headerRequests: this.selectedProducts.map((item) => ({
+        headerID: item.approvalHeader.id,
+        currentStage: item.approvalHeader.currentapprovalStage
+      }))
+    }
+    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respone: any) => {
+          this.selectedProducts = [];
+          console.log(respone)
+          if (respone && respone.data.failureRecords.length <= 0) {
+            this.conformationPopup.openSuccessModal(
+              'Request Approved Successfully'
+            );
+          }
+          else if (respone.data.failureRecords.length > 0) {
+            this.conformationPopup.openSuccessModal(`Total Records Approved: ${respone.data.totalRecordCount}
+               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
+          }
+          setTimeout(() => {
+            this.modalService.dismissAll();
+            this.getAllPendingApprovals();
+          }, 2000);
         },
-        error: (err) => {
+        error: (reason: any) => {
+          if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else {
+            this.conformationPopup.openErrorModal('Request Approval Failed');
+          }
+          this.spinnerLoader = false;
         },
         complete: () => {
-        }
-      })
-    }
+          form.resetForm();
+          this.spinnerLoader = false;
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+          this.signalService.timeoffForRoleTriggerSignal.set(true);
+        },
+      });
   }
 
-  handleAccept(data: LeaveApproval) {
+  handleReject(form: any) {
     this.spinnerLoader = true;
+    let approvedBy = this.LOGIN.employeeId.toString();
+    let comments = this.selectedLeaveData?.comments || '';
     let requestBody = {
-      status: "Approved",
-      comments: this.selectedLeaveData.comments,
-      approvedBy: this.LOGIN.employeeId.toString()
+      requestProcessedBy: approvedBy,
+      status: 'Rejected',
+      comments: comments,
+      isPlannedLeave: false,
+      moduleId: environment.leavesModuleId,
+      headerRequests: this.selectedProducts.map((item) => ({
+        headerID: item.approvalHeader.id,
+        currentStage: item.approvalHeader.currentapprovalStage
+      }))
     }
-    this.subscription = this.http.putData(`PendingApproval/${data.request.approvalHeader.id}`, requestBody).subscribe({
-      next: (respone: any) => {
-        this.conformationPopup.openSuccessModal('Request Approved Successfully');
-        setTimeout(() => {
-          this.modalService.dismissAll();
-          window.location.reload();
-        }, 2000);
-      },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Request Approval Failed');
-        this.spinnerLoader = false;
-      },
-      complete: () => {
-        this.spinnerLoader = false;
-      },
-    })
+    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respone: any) => {
+          this.selectedProducts = [];
+          if (respone && respone.data.failureRecords.length <= 0) {
+            this.conformationPopup.openSuccessModal(
+              'Request Rejected Successfully'
+            )
+          }
+          else if (respone.data.failureRecords.length > 0) {
+            this.conformationPopup.openSuccessModal(`Total Records Rejected: ${respone.data.totalRecordCount}
+               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
+          }
+          setTimeout(() => {
+            this.modalService.dismissAll();
+            this.getAllPendingApprovals();
+          }, 2000);
+        },
+        error: (reason: any) => {
+          if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else {
+            this.conformationPopup.openErrorModal('Request Rejected Failed');
+          }
+          this.spinnerLoader = false;
+        },
+        complete: () => {
+          form.resetForm();
+          this.spinnerLoader = false;
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+          this.signalService.timeoffForRoleTriggerSignal.set(true);
+        },
+      });
   }
 
-  handleReject(data: LeaveApproval) {
-    this.spinnerLoader = true;
+  handleProcess() {
+    let approvedBy = this.LOGIN.employeeId.toString();
     let requestBody = {
-      status: "Rejected",
-      comments: this.selectedLeaveData.comments,
-      approvedBy: this.LOGIN.employeeId.toString()
+      requestProcessedBy: approvedBy,
+      status: 'Processed',
+      moduleId: environment.leavesModuleId,
+      headerRequests: this.selectedProducts.map((item) => ({
+        headerID: item.approvalHeader.id,
+        currentStage: item.approvalHeader.currentapprovalStage
+      }))
     }
-    this.subscription = this.http.putData(`PendingApproval/${data.request.approvalHeader.id}`, requestBody).subscribe({
-      next: (respone: any) => {
-        this.conformationPopup.openSuccessModal('Request Rejected Successfully');
-        setTimeout(() => {
-          this.modalService.dismissAll();
-          window.location.reload();
-        }, 2000);
-      },
-      error: (reason: any) => {
-        this.conformationPopup.openErrorModal('Request Rejected Failed');
-        this.spinnerLoader = false;
-      },
-      complete: () => {
-        this.spinnerLoader = false;
-      },
-    })
-  }
+    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (respone: any) => {
+          // console.log(respone);
+          this.selectedProducts = [];
+          if (respone && respone.data.failureRecords.length <= 0) {
+            this.conformationPopup.openSuccessModal(
+              'Request Processed Successfully'
+            );
+          }
+          else if (respone.data.failureRecords.length > 0) {
+            this.conformationPopup.openSuccessModal(`Total Records Processed: ${respone.data.totalRecordCount}
+               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
+          }
+          setTimeout(() => {
+            this.modalService.dismissAll();
+            this.getAllPendingApprovals();
+          }, 2000);
+        },
+        error: (reason: any) => {
+          console.log(reason);
+          if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else {
+            this.conformationPopup.openErrorModal('Request Processed Failed');
+          }
 
-  handleProcess(data: LeaveApproval) {
-    let requestBody = {
-      status: "Processed",
-      approvedBy: this.LOGIN.employeeId.toString()
-    }
-    console.log(data);
-    console.log(data.approvalHeader.id);
-    console.log(requestBody)
-    this.subscription = this.http.putData(`PendingApproval/process/${data.approvalHeader.id}`, requestBody).subscribe({
-      next: (respone: any) => {
-        console.log(respone);
-        this.conformationPopup.openSuccessModal(
-          'Request Processed Successfully');
-        setTimeout(() => {
-          this.modalService.dismissAll();
-          window.location.reload();
-        }, 2000);
-      },
-      error: (reason: any) => {
-        console.log(reason);
-        this.conformationPopup.openSuccessModal(
-          'Request Processed Failed');
-      },
-      complete: () => {
-      },
-    })
+        },
+        complete: () => {
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+          this.signalService.timeoffForRoleTriggerSignal.set(true);
+        },
+      });
   }
 
   ngOnDestroy(): void {

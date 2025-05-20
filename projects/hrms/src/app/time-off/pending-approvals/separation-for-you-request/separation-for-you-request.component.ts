@@ -285,6 +285,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       extendedDate: this.selectedSpRequestData.extenddate,
       meta: this.jsonData,
       approvedBy: loggedInUser.employeeId.toString(),
+      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
     };
     this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
@@ -341,6 +342,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       comments: this.selectedSpRequestData.rejectedReason,
       approvedBy: loginuserdata.employeeId.toString(),
       meta: this.jsonData,
+      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
     };
     this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (response: any) => {
@@ -414,6 +416,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       salaryhold: this.selectedSpRequestData.spsalaryhold,
       meta: this.jsonData,
       approvedBy: loggedInUser.employeeId.toString(),
+      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
     };
     if (this.selectedSpRequestData.requestSelectedType == 'Regular') {
       requestBody.lastWorkingDate =

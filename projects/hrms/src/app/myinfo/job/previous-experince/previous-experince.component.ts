@@ -12,6 +12,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-previous-experince',
@@ -31,7 +32,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   isCurrentdateDisable = false;
   isDisabletoDate = false;
   disableFromandtovalidationbutton = false;
-  loading=false
+  loading = false
   spinnerLoader = false;
   empinfo: any
   previousexperincedocument: any
@@ -40,7 +41,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
 
 
-  constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -70,7 +71,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       previousContactName: ['', [Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50)]],
       previousContactNumber: [
         '',
-        [ Validators.minLength(10), Validators.maxLength(10),  Validators.pattern(/^(?!0{10})\d{10}$/)],
+        [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(/^(?!0{10})\d{10}$/)],
       ],
       previousContactEmail: [
         '',
@@ -108,13 +109,13 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       previousContactNameupdate: ['', [Validators.pattern(/^[^\s].*$/), Validators.maxLength(50)]],
       previousContactNumberupdate: [
         '',
-        [  Validators.pattern(/^(?!0{10})\d{10}$/), Validators.minLength(10), Validators.maxLength(10)],
+        [Validators.pattern(/^(?!0{10})\d{10}$/), Validators.minLength(10), Validators.maxLength(10)],
       ],
       previousContactEmailupdate: [
         '',
-        [ Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
+        [Validators.pattern('[A-Za-z0-9._+-]+@[a-z0-9.-]+\\.[a-z]{2,3}$')],
       ],
-      attachmentupdate: [null,attachmentValidators],
+      attachmentupdate: [null, attachmentValidators],
     });
 
     // Disable "toDate" field if "isPresent" is checked
@@ -291,12 +292,12 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
   //function to get all experiences 
   getexperiencedetailsbyemployeid() {
-    this.loading=true
+    this.loading = true
     let EmployeeId = parseInt(this.empinfo.employeeId)
     console.log(EmployeeId);
     this.subscription = this.http.getData(`ExperienceDetail/${EmployeeId}`).subscribe({
       next: (data: any) => {
-        this.loading=false
+        this.loading = false
         this.getempexpdata.next(data);
       }
     })
@@ -420,6 +421,10 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       this.displaypreviousexperincedocument = experienceDetail.attachment
         ? experienceDetail.attachment.split('/').pop()
         : null;
+      // Dynamically update validators for the attachment field
+      const attachmentValidators = this.displaypreviousexperincedocument ? [] : [Validators.required];
+      this.employeeExperienceupdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
+      this.employeeExperienceupdateForm.get('attachmentupdate')?.updateValueAndValidity();
 
       this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     });
@@ -427,7 +432,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
 
 
   saveUpdatedExperienceDetails(): void {
-   
+
     const currentDate = new Date().toISOString().split('T')[0];
     if (this.employeeExperienceupdateForm.valid) {
       const formData = this.employeeExperienceupdateForm.value;
@@ -438,7 +443,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
         empId: parseInt(this.empinfo.employeeId),
         jobTitle: formData.jobTitleupdate,
         companyName: formData.companyNameupdate,
-        employmentType: formData.employmentTypeudate?.jobType1 ,
+        employmentType: formData.employmentTypeudate?.jobType1,
         fromDate: formData.fromDateupdate,
         toDate: formData.isPresentupdate ? null : formData.toDateupdate,
         previousContactName: formData.previousContactNameupdate || null,

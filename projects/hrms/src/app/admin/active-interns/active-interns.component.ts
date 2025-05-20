@@ -9,6 +9,7 @@ import { ActiveEmployeePipe } from "../../Pipes/active-employee.pipe";
 import { FormsModule } from '@angular/forms';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
+import { AccessNavigationService } from '../../services/access-navigation.service';
 @Component({
   selector: 'app-active-interns',
   imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
@@ -24,7 +25,7 @@ export class ActiveInternsComponent implements OnInit,OnDestroy {
   TraineeActive = [] as any;
   loader = false;
 
-  constructor(private router: Router, private http: HttpService) { }
+  constructor(private router: Router, private http: HttpService,private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empdata('Trainee Active');
@@ -44,9 +45,21 @@ export class ActiveInternsComponent implements OnInit,OnDestroy {
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
-    this.router.navigate(['/personalinfo']);
+    // this.router.navigate(['/personalinfo']);
+     this.goToAccessibleRoute('/personalinfo');
+  }
+ goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    }else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 
+  isActiveRoute(link: string): boolean {
+    return this.router.url.includes(link);
+  }
   navigateDashboard() {
     this.router.navigate(['/admin/dashboard'])
   }

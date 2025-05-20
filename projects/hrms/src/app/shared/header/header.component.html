@@ -5,14 +5,8 @@
                 <div *ngIf="isActive('time-off')">
                     <app-time-off-tabs />
                 </div>
-                <div *ngIf="isActive('claimsandexpenses/expenses')">
-                    <app-my-expenses-tab />
-                </div>
                 <div *ngIf="isActive('myinfo')">
                     <app-myinfo-header-tabs />
-                </div>
-                <div *ngIf="isActive('calendar')">
-                   <app-calendar-header-tabs />
                 </div>
                 <div *ngIf="isActive('personalinfo')">
                     <app-personalinfo-header-tabs />
@@ -72,19 +66,23 @@
                 </ul>
             </div>
 
+            @if(rbac.allowedToAccess('Settings Icon.view')){
             <div>
                 <a class="cursor" (click)="navigateSettings()"><i class="bi bi-gear header-icon"></i></a>
             </div>
+            }
 
             <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image" class="profile-img cursor">
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
+                   @if(rbac.allowedToAccess('Invite New User.view')){
                     <li>
-                        <a class="dropdown-item" [routerLink]="['/admin/active-new-user']">
+                        <a class="dropdown-item" (click)="navigateToAccessedRoute('/admin/active-new-user')">
                             <i class="bi bi-envelope-plus me-2"></i>Invite New User</a>
                     </li>
+                   }
                     <li><a class="dropdown-item" [routerLink]="['/myinfo/personal/basic-info']">
                         <i class="bi bi-file-earmark-text-fill me-2"></i>View Profile</a>
                     </li>

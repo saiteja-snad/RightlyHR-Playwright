@@ -4,18 +4,23 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-
-            <!-- Show edit icon if employee status is 'Active' and buttons are not visible -->
-            <div *ngIf="!buttons && (empdata?.empstatus?.toLowerCase() === 'active'||empdata.substatus === 'Offer Letter Accepted')">
+            @if(this.rbac.allowedToAccess('Employee Info Onboarding Details.view')){
+            @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !==
+        'trainee inactive' )){
+            <div >
+               @if(rbac.allowedToAccess('Employee Info Onboarding Details.update')){
                 <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
+            }
             </div>
-
+        }
             <!-- Show buttons if 'buttons' is true -->
             <div *ngIf="buttons" class="d-flex justify-content-end gap-2">
                 <button type="button" class="custom-btn btn-secondary" (click)="showButtons()">Close</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="onSubmit()">Save</button>
             </div>
+        }
         </div>
+        
 
         <!--input content-->
         <form autocomplete="off" [formGroup]="onboardingForm">

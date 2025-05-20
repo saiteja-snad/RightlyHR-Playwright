@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { RbacService } from '../../../services/rbac.service';
 import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 @Component({
   selector: 'app-desk-for-your-role-request',
@@ -27,7 +28,7 @@ export class DeskForYourRoleRequestComponent {
   subscription!: Subscription;
   rejectForm!: FormGroup;
   searchValue:any
-  constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService,
+  constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService,public rbac: RbacService,
      private fb: FormBuilder) { }
 
 
@@ -53,8 +54,10 @@ export class DeskForYourRoleRequestComponent {
       },
     });
   }
-
-  openModal(content: any) {
+ 
+  expapprovalsdata: any;
+  openModal(content: any, data: any) {
+    this.expapprovalsdata = data;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -64,7 +67,8 @@ export class DeskForYourRoleRequestComponent {
     const userStatus: any = {
       id: this.deskid,
       status: 'Processed',
-      approvedBy: this.employdata.employeeId.toString()
+      approvedBy: this.employdata.employeeId.toString(),
+      currentStage: parseInt(exp.approvalHeader.currentStage),
     };
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
@@ -120,7 +124,8 @@ export class DeskForYourRoleRequestComponent {
       id: this.selectedexpenesid,
       status: 'Rejected',
       comments: this.rejectForm.get('comments')?.value,
-      approvedBy: this.employdata.employeeId.toString()
+      approvedBy: this.employdata.employeeId.toString(),
+      currentStage: parseInt(this.expapprovalsdata.approvalHeader.currentStage),
     };
     this.http.putData(`PendingApproval/${this.selectedexpenesid}`, userStatus).subscribe({
       next: (res: any) => {

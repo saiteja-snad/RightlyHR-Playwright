@@ -1,11 +1,19 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="component-sub-header">Separation Details</div>
+    @if(rbac.allowedToAccess('Employee Raise No Due.view')){
     @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length >= 0)){
-      <div class="custom-add-btn" (click)="openModal(raiseNodue)">
-        <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
-      </div>
-      }
+    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+    empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+    && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
+    !==
+    'trainee inactive' )){
+    <div class="custom-add-btn" (click)="openModal(raiseNodue)">
+      <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
+    </div>
+    }
+    }
+    }
   </div>
 
   <div class="custom-table-content">
@@ -19,97 +27,115 @@
           <th>{{'Approver Status'|translate}}</th>
           <th>{{'Request Type'|translate}}</th>
           <th>{{'Status'|translate}}</th>
+          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
+          !==
+          'trainee inactive' )){
           <th>Action<span class="text-lowercase">(s)</span></th>
+          }
         </tr>
       </thead>
       <tbody>
         @if (!isDataLoaded) {
-          @if(((getSeparationDetails | async) ?? []).length > 0) {
-            @for (item of (getSeparationDetails|async); track item.id) {
-            <tr>
-              <td>{{ item.appliedDate?(item.appliedDate | date):'-' }}
-              </td>
-              <td>
-                @if(item.recallStatus == 'Recalled'){
-                  <div>NA</div>
-                }
-                @else{
-                {{ item.noticePeriodDuration?item.noticePeriodDuration:'NA' }}
-                }
-              </td>
-              <td>
-                {{ item.lastWorkingDate ? (item.lastWorkingDate | date) : 'NA' }}
-              </td>
-              <td>
-                @if(item.description){
-                  <div (click)="decription(item.description,openDiscriotionviewpopup)" class="cursor">
-                    <i class="bi bi-info-circle-fill info-icon"></i>
-                  </div>
-                }
-                @else {
-                <div>NA</div>
-                }
-                <div>
-                </div>
-              </td>
-              <td>
-                @if(item.approvers && item.approvers.length > 0;){
-                <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)" class="cursor">
-                  <i class="bi bi-info-circle-fill info-icon"></i>
-                </div>
-                }
-                @else{
-                  <div>NA</div>
-                }
-              </td>
-              <td>
-                @if (item.recallStatus) {
-                  @if (item.recallStatus.toLowerCase() == 'recalled') {
-                    {{ item.requestType }}
-                  }
-                  {{ item.recallStatus }}
-                } @else {
-                  <div >NA</div>
-                }
-              </td>
-              <td>{{item.status?item.status:'NA'}}</td>
-              <td>
-                <div class="dropdown">
-                  @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' && !recallbuttonConditions && 
-                  item.status != 'Recalled Processed'){
-                  <span type="button" data-bs-toggle="dropdown">
-                    <i class="bi bi-three-dots-vertical"></i>
-                  </span>
-                  }
-                  <ul class="dropdown-menu custom-dropdown-menu">
-                    <li (click)="recallRequest(item,recallrequestpopup)">
-                      <a class="dropdown-item">
-                        <i class="bi bi-repeat me-2"></i>Recall
-                      </a>
-                    </li>
-                    @if( item.recallStatus.toLowerCase() != 'earlyrelieving' && !recallandearlyrelievingbuttonConditions){
-                    <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
-                      <a class="dropdown-item"><img src="icons/sepration.png" alt=""  class="speration-icon me-2">Early Relieving</a>
-                    </li>
-                    }
-                  </ul>
-                </div>
-              </td>
-              <!-- </ng-container> -->
-            </tr>
-            }
+        @if(((getSeparationDetails | async) ?? []).length > 0) {
+        @for (item of (getSeparationDetails|async); track item.id) {
+        <tr>
+          <td>{{ item.appliedDate?(item.appliedDate | date):'-' }}
+          </td>
+          <td>
+            @if(item.recallStatus == 'Recalled'){
+            <div>NA</div>
             }
             @else{
-            <tr>
-              <td>
-                <app-no-data-found />
-              </td>
-            </tr>
+            {{ item.noticePeriodDuration?item.noticePeriodDuration:'NA' }}
             }
+          </td>
+          <td>
+            {{ item.lastWorkingDate ? (item.lastWorkingDate | date) : 'NA' }}
+          </td>
+          <td>
+            @if(item.description){
+            <div (click)="decription(item.description,openDiscriotionviewpopup)" class="cursor">
+              <i class="bi bi-info-circle-fill info-icon"></i>
+            </div>
+            }
+            @else {
+            <div>NA</div>
+            }
+            <div>
+            </div>
+          </td>
+          <td>
+            @if(item.approvers && item.approvers.length > 0;){
+            <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)" class="cursor">
+              <i class="bi bi-info-circle-fill info-icon"></i>
+            </div>
+            }
+            @else{
+            <div>NA</div>
+            }
+          </td>
+          <td>
+            @if (item.recallStatus) {
+            @if (item.recallStatus.toLowerCase() == 'recalled') {
+            {{ item.requestType }}
+            }
+            {{ item.recallStatus }}
+            } @else {
+            <div>NA</div>
+            }
+          </td>
+          <td>{{item.status?item.status:'NA'}}</td>
+          @if(rbac.allowedToAccess('Employee Recall.view')|| rbac.allowedToAccess('Employee Early relieving.view')){
+          @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+          empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+          && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
+          !==
+          'trainee inactive' )){
+          <td>
+            <div class="dropdown">
+              @if(item.status != 'Rejected' && item.status != 'Recalled' &&item.status != 'Withdrawn' &&
+              !recallbuttonConditions &&
+              item.status != 'Recalled Processed'){
+              <span type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-three-dots-vertical"></i>
+              </span>
+              }
+              <ul class="dropdown-menu custom-dropdown-menu">
+                @if(rbac.allowedToAccess('Employee Recall.view')){
+                <li (click)="recallRequest(item,recallrequestpopup)">
+                  <a class="dropdown-item">
+                    <i class="bi bi-repeat me-2"></i>Recall
+                  </a>
+                </li>}
+                @if(rbac.allowedToAccess('Employee Early relieving.view')){
+                @if( item.recallStatus.toLowerCase() != 'earlyrelieving' && !recallandearlyrelievingbuttonConditions){
+                <li (click)="earlyReleivingdata(item,earlyrequestpopup)">
+                  <a class="dropdown-item"><img src="icons/sepration.png" alt="" class="speration-icon me-2">Early
+                    Relieving</a>
+                </li>}
+                }
+              </ul>
+            </div>
+          </td>
+          }
+          }
+          <!-- </ng-container> -->
+        </tr>
         }
-       @else {
-        <app-data-loader-content/>
-      }
+        }
+        @else{
+        <tr>
+          <td>
+            <app-no-data-found />
+          </td>
+        </tr>
+        }
+        }
+        @else {
+        <app-data-loader-content />
+        }
       </tbody>
     </table>
   </div>
@@ -224,7 +250,8 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early Relieving'}} Request?</p>
+      <p class="confirmation-text">Are you sure you want to recall the {{this.selectRecallrequest?.requestType?? 'Early
+        Relieving'}} Request?</p>
     </div>
     <div class="custom-main-popup-content p-0 pt-3">
       <form autocomplete="off" [formGroup]="recallreason" (ngSubmit)="postRecallRequest()">
@@ -233,7 +260,8 @@
           <textarea class="form-control custom-input" id="recallreason" maxlength="250" pattern="^(?!\s).*"
             placeholder="Please enter recall reason" name="recallReason" formControlName="recallReason"></textarea>
           <div class="textarea-count-text">{{ recallreason.get('recallReason')?.value?.length || 0 }} / 250</div>
-          <div class="error-msg" *ngIf="recallreason.get('recallReason')?.touched && recallreason.get('recallReason')?.invalid">
+          <div class="error-msg"
+            *ngIf="recallreason.get('recallReason')?.touched && recallreason.get('recallReason')?.invalid">
             <ng-container *ngIf="recallreason.get('recallReason')?.errors?.['required']">
               Recall Reason is required
             </ng-container>
@@ -246,7 +274,8 @@
           </div>
         </div>
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopup)">{{'Close'|translate}}</button>
+          <button type="button" class="custom-btn btn-secondary"
+            (click)="closepopup(confirmationpopup)">{{'Close'|translate}}</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="recallreason.invalid||isLoading">
             @if(!isLoading){
             {{'Submit'|translate}}
@@ -276,7 +305,8 @@
         <div class="mb-4">
           <label class="form-label custom-label mb-2">Early Relieving Date<span class="error-msg">*</span></label>
           <input type="date" class="form-control custom-input" placeholder="" formControlName="earlyReleivingDate"
-            id="Effective Date" [min]="formattedAppliedDate" (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
+            id="Effective Date" [min]="formattedAppliedDate"
+            (change)="getBlockedFutureDate(postEarlyRelievingRequest.lastWorkingDate)" />
           <div class="error-msg"
             *ngIf="earlyReleivingform.get('earlyReleivingDate')?.invalid && earlyReleivingform.get('earlyReleivingDate')?.touched">
             Early relieving Date is required</div>
@@ -366,9 +396,10 @@
               </div>
             </div>
           </div>
-          
+
           <div class="d-flex justify-content-end mb-3">
-            <button type="button" class="custom-btn btn-primary text-nowrap w-25 px-2" (click)="addAlias()">+ Add</button>
+            <button type="button" class="custom-btn btn-primary text-nowrap w-25 px-2" (click)="addAlias()">+
+              Add</button>
           </div>
         </div>
         <div class="custom-modal-footer">

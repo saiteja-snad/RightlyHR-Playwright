@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { HttpService } from '../../../services/http.service';
@@ -11,14 +11,19 @@ import { Ilpid } from '../../../Interfaces/timoff-model';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
+import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { OpenModalService } from '../../../services/open-modal.service';
+import moment from 'moment';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-leaves-waiting-for-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule,TranslateModule,ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './leaves-waiting-for-approval.component.html',
   styleUrl: './leaves-waiting-for-approval.component.scss'
 })
 
-export class LeavesWaitingForApprovalComponent {
+export class LeavesWaitingForApprovalComponent implements OnInit,OnDestroy{
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
@@ -26,6 +31,8 @@ export class LeavesWaitingForApprovalComponent {
   empdata = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
+  cancelForm!:FormGroup;
+  selectedFields = {} as any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -39,15 +46,68 @@ export class LeavesWaitingForApprovalComponent {
     this.first = event.first;
     this.rows = event.rows;
   }
-
-  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService,) { }
+isLoading=false;
+  constructor(private http: HttpService, private signalService:SignalsService, private modalService: NgbModal,private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService,private fb:FormBuilder) { }
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getDataByLPID();
+    this.formInializer();
   }
+ formInializer() {
+    this.cancelForm = this.fb.group({
+      cancelReason: [null,
+        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/), noWhitespaceValidator]
+      ]
+    });
+  }
+  isBeforeToday(date: string | Date): boolean {
+  return moment().isSameOrBefore(moment(date), 'day');
+}
+    onClick(data: any,content:any) {
+    this.selectedFields = data
+    console.log(this.selectedFields);
+    this.modalService.open(content, { centered: true});
+  }
+  //function to cancle the leave
+  cancelLeaveSubmit(){
+    this.isLoading=true;
+    const currentDate=moment()
+ const payload={
+       "updatedDate": currentDate,
+        "rejectedReason": this.cancelForm.get('cancelReason')?.value,
+        "rejectedBy": this.empdata.employeeId
+    }
+    this.subscription=this.http.putData(`Timeoff/cancel?id=${this.selectedFields.id}`,payload).subscribe({
+      next:(res:any)=>{
+        console.log(res);
+        if(res){
+          this.cancelForm.reset();
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Leave cancelled successfully')
+            this.getDataByLPID();
+          
+        }
+       this.signalService.timecountTriggerSignal.set(true);
+      
+      },
+      error:(err:any)=>{
+        console.log(err)
+        this.isLoading=false;
+         this.cancelForm.reset();
+          this.modalService.dismissAll();
+            this.getDataByLPID();
+            this.signalService.timecountTriggerSignal.set(true);
+        this.conformationPopup.openErrorModal(err.error.message);
+      },
+      complete:()=> {
+        this.isLoading=false;
+         this.getDataByLPID();
+      },
 
+    })
+  }
   getDataByLPID() {
     let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
@@ -60,5 +120,11 @@ export class LeavesWaitingForApprovalComponent {
       },
       error: (reason: any) => console.log(reason)
     });
+  }
+    ngOnDestroy(): void {
+    // Clean up any subscriptions or resources
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

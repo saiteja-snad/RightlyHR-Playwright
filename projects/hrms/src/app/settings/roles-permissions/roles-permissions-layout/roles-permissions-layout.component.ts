@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { SettingsRolePermissionsModuleTabsComponent } from "../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
 
 @Component({
   selector: 'app-roles-permissions-layout',
-  imports: [CommonModule, RouterModule, SettingsRolePermissionsModuleTabsComponent],
+  imports: [CommonModule, RouterModule,],
   templateUrl: './roles-permissions-layout.component.html',
   styleUrl: './roles-permissions-layout.component.scss'
 })

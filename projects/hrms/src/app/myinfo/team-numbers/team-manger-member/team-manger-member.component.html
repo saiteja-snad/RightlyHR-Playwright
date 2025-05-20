@@ -5,9 +5,11 @@
             <app-team-member-tabs/>
 
         </div>
+         @if(rbac.allowedToAccess('Change RM Button.update')) {
         <div>
             <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change TM</button>
         </div>
+    }
     </div>
 
     <!--Input search-->
@@ -25,7 +27,9 @@
                     <th>Work Email</th>
                     <th>Phone Number</th>
                     <th>Employee Job Details</th>
+                     @if(rbac.allowedToAccess('Change TM Button.update')) {
                     <th class="text-center">Action</th>
+                     }
                 </tr>
             </thead>
             <tbody
@@ -43,18 +47,22 @@
                               N/A
                             </ng-template>
                           </td>
+                           @if(rbac.allowedToAccess('Change TM Button.update')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu py-0">
+                                     @if(rbac.allowedToAccess('Change TM Button.update')) {
                                     <li (click)="assigintm(changetmmodalforsingle,details)">
                                         <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change TM</a>
                                     </li>
+                                }
                                 </ul>
                             </div>
                         </td>
+                    }
                     </tr>
                 </ng-container>
             </tbody>

@@ -5,9 +5,9 @@
     <div class="d-flex align-items-center justify-content-between mb-3">
         <div class="component-header">Settings</div>
         <div>
-            <!-- @if (rbac.allowedToAccess('Dynamic-form.create')) { -->
+            @if (rbac.allowedToAccess('Dynamic Forms Module.create')) {
             <button class="custom-btn btn-primary" (click)="navigateToCreateFormComponent()">Create a Form</button>
-            <!-- } -->
+            }
         </div>
     </div>
 

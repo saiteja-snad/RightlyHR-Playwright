@@ -3,6 +3,7 @@ import { SuccessContentPopupComponent } from '../shared/success-content-popup/su
 import { ErrorContentPopupComponent } from '../shared/error-content-popup/error-content-popup.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoaderPopupComponent } from '../shared/loader-popup/loader-popup.component';
+import { MultiSucesspopupComponent } from '../shared/multi-sucesspopup/multi-sucesspopup.component';
 @Injectable({
   providedIn: 'root'
 })
@@ -30,5 +31,12 @@ export class OpenModalService {
   openLoaderModal(status: string){
     const errorModal = this.modalService.open(LoaderPopupComponent,{centered:true , backdrop: 'static' });
     errorModal.componentInstance.status = status;
+  }
+    multiapprovalsModal(status: any) {
+    const successModal = this.modalService.open(MultiSucesspopupComponent, { centered:true, backdrop: 'static' });
+    successModal.componentInstance.status = status;
+    setTimeout(() => {
+      successModal.dismiss();
+    }, 3000);
   }
 }

@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { RbacService } from '../../../services/rbac.service';
 
 
 @Component({
@@ -34,7 +35,8 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   ];
   employedata={} as any;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public formValidation: FormValidationService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
+     private http: HttpService,public formValidation: FormValidationService,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -203,7 +205,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
       },
       error: (reason: any) => {
         console.log(reason);
-        // this.conformationPopup.openErrorModal('Address Info update failed');
+         this.conformationPopup.openErrorModal(reason.error.message);
       },
     });
   }

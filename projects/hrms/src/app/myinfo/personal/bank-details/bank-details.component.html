@@ -1,8 +1,10 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Bank Details</span></div>
+        @if(rbac.allowedToAccess('My Info Bank Details.create')){
         <div class="custom-add-btn" (click)="openModal(addBankModal)"><i class="bi bi-plus plus-icon me-1"></i>Add New
         </div>
+    }
     </div>
     <div class="custom-table-content">
        @if(!loading){
@@ -15,7 +17,9 @@
                     <th>IFSC Code</th>
                     <th>Proof</th>
                     <th class="text-center">Primary Bank</th>
+                    @if(rbac.allowedToAccess('My Info Bank Details.update') || rbac.allowedToAccess('My Info Bank Details.delete')) {
                     <th class="text-center">Action(s)</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -32,25 +36,31 @@
                             </div><ng-template #noData>-</ng-template>
                         </td>
                         <td class="text-center">{{bankiteams.isPrimary ? 'Yes' :'No'}}</td>
+                        @if(rbac.allowedToAccess('My Info Bank Details.update') || rbac.allowedToAccess('My Info Bank Details.delete')) {
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('My Info Bank Details.update')) {
                                     <li (click)="openModalupdate(updateBankmodal, bankiteams)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-pencil me-2"></i>Update
                                         </a>
                                     </li>
+                                }
+                                @if(rbac.allowedToAccess('My Info Bank Details.delete')) {
                                     <li (click)="opendeletModal(deleteconformation,bankiteams)">
                                         <a class="dropdown-item">
                                             <i class="bi bi-trash3 me-2"></i>Delete
                                         </a>
                                     </li>
+                                }
                                 </ul>
                             </div>
                         </td>
+                    }
                     </tr>
                 </ng-container>
                 <ng-template #noDataTemplate>
@@ -81,7 +91,7 @@
         <div class="custom-main-popup-content p-4">
             <form autocomplete="off" [formGroup]="bankDetailsForm" (ngSubmit)="postBankDetails()">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="bankName" class="form-label custom-label mb-2">Bank Name<span
                                 class="text-danger">*</span></label>
@@ -96,7 +106,7 @@
                             Bank Name is required
                         </div>
                     </div>
-                    } @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    } @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="accountName" class="form-label custom-label mb-2">Account Holder's Name<span
                                 class="text-danger">*</span></label>
@@ -111,7 +121,7 @@
                                 cannot exceed 50 characters</div>
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="accountNo" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
@@ -128,7 +138,7 @@
                             </div>
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="ifscCode" class="form-label custom-label mb-2">IFSC Code<span
                                 class="text-danger">*</span></label>
@@ -144,7 +154,7 @@
                             </div>
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-12 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF
                             only)<span class="text-danger">*</span></label>
@@ -160,7 +170,7 @@
                                 The file size should be less than 25MB.</p>
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <div class="custom-toggle-btn">
                             <div class="form-check form-switch">
@@ -204,7 +214,7 @@
         <div class="custom-main-popup-content ">
             <form autocomplete="off" [formGroup]="bankDetailsUpdateForm" (ngSubmit)="updateBankDetails()">
                 <div class="row">
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="bankNameupdate" class="form-label custom-label mb-2">Bank Name<span
                                 class="text-danger">*</span></label>
@@ -218,7 +228,7 @@
                             Bank Name is required
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="accountNameupdate" class="form-label custom-label mb-2">Account Holder's Name<span
                                 class="text-danger">*</span></label>
@@ -232,7 +242,7 @@
                                 Holder's Name cannot exceed 50 characters</div>
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="accountNoupdate" class="form-label custom-label mb-2">Account Number<span
                                 class="text-danger">*</span></label>
@@ -252,7 +262,7 @@
                             </div>
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <label for="ifscCode" class="form-label custom-label mb-2">IFSC Code<span
                                 class="text-danger">*</span></label>
@@ -266,7 +276,7 @@
                                 <div *ngIf="bankDetailsUpdateForm.get('ifscCodeupdate')?.errors?.['invalidIfscCode']">IFSC Code cannot be all zeroes</div>
                               </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-12 mb-3">
                         <label for="attachment" class="form-label custom-label mb-2">Attachment (Image and PDF
                             only)<span class="text-danger">*</span></label>
@@ -284,7 +294,7 @@
                                 The file size should be less than 25MB.</p>
                         </div>
                     </div>}
-                    @if(this.rbac.allowedToAccess('Bank Details.view')){
+                    @if(this.rbac.allowedToAccess('My Info Bank Details.view')){
                     <div class="col-md-6 mb-3">
                         <div class="custom-toggle-btn">
                             <div class="form-check form-switch">

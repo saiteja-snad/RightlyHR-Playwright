@@ -1,74 +1,116 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">Certification Details</span></div>
+        @if(rbac.allowedToAccess('Employee Info Certification Details.create')){
+        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+        empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
+        !==
+        'trainee inactive' )){
         <div class="custom-add-btn" (click)="openModal(addCertificationmodal)"><i
                 class="bi bi-plus plus-icon me-1"></i>Add
             New</div>
+        }
+        }
     </div>
 
     <div class="custom-table-content">
         @if(!loading){
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>Certification Name</th>
-                        <th>Certification Id</th>
-                        <th>Issued Date</th>
-                        <th>Expiry Date</th>
-                        <th class="text-center">Document</th>
-                        <th class="text-center">Action(S)</th>
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Certification Name</th>
+                    <th>Certification Id</th>
+                    <th>Issued Date</th>
+                    <th>Expiry Date</th>
+                    <th class="text-center">Document</th>
+                    @if(rbac.allowedToAccess('Employee Info Certification Details.update') ||
+                    rbac.allowedToAccess('Employee Info Certification Details.delete')){
+                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+                    empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
+                    !==
+                    'trainee inactive' )){
+                    <th class="text-center">Action(S)</th>
+                    }
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="((empcertsdata | async) ?? []).length > 0; else noDataTemplate">
+                    <tr *ngFor="let empcreficition of empcertsdata | async">
+                        <td>{{ empcreficition.certificationName }}</td>
+                        <td>{{empcreficition.certificationId}}</td>
+                        <td>{{empcreficition.issuedDate | dateformat}}</td>
+                        <td>
+                            <span *ngIf="empcreficition.expirationDate != null; else NoExpiration"></span><ng-template
+                                #NoExpiration>No Expiration</ng-template>{{ empcreficition.expirationDate | dateformat
+                            }}
+                        </td>
+                        <td class="text-center">
+                            <span *ngIf="empcreficition.attachment;else noData" class="dowload-text cursor"
+                                (click)="onSelectBankProofDownload(empcreficition)">
+                                <i class="bi bi-download clip-icon px-2"></i>Download</span>
+                            <ng-template #noData><span class="text-center">-</span></ng-template>
+                        </td>
+                        @if(rbac.allowedToAccess('Employee Info Certification Details.update') ||
+                        rbac.allowedToAccess('Employee Info Certification Details.delete')){
+                        @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+                        empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                        && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()
+                        !==
+                        'trainee inactive' )){
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    @if(rbac.allowedToAccess('Employee Info Certification Details.update')){
+                                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+                                    empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
+                                    empinfo?.empstatus?.toLowerCase()
+                                    !==
+                                    'trainee inactive' )){
+                                    <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-pencil me-2"></i>Update
+                                        </a>
+                                    </li>}
+                                    }
+                                    @if(rbac.allowedToAccess('Employee Info Certification Details.delete')){
+                                    @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
+                                    empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
+                                    && empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
+                                    empinfo?.empstatus?.toLowerCase()
+                                    !==
+                                    'trainee inactive' )){
+                                    <li (click)="opendeletModal(deleteconformation,empcreficition)">
+                                        <a class="dropdown-item">
+                                            <i class="bi bi-trash3 me-2"></i>Delete
+                                        </a>
+                                    </li>}
+                                    }
+                                </ul>
+                            </div>
+                        </td>
+                        }
+                        }
                     </tr>
-                </thead>
-                <tbody>
-                    <ng-container *ngIf="((empcertsdata | async) ?? []).length > 0; else noDataTemplate">
-                        <tr *ngFor="let empcreficition of empcertsdata | async">
-                            <td>{{ empcreficition.certificationName }}</td>
-                            <td>{{empcreficition.certificationId}}</td>
-                            <td>{{empcreficition.issuedDate | dateformat}}</td>
-                            <td>
-                                <span *ngIf="empcreficition.expirationDate != null; else NoExpiration"></span><ng-template
-                                    #NoExpiration>No Expiration</ng-template>{{ empcreficition.expirationDate | dateformat
-                                }}
-                            </td>
-                            <td class="text-center">
-                                <span *ngIf="empcreficition.attachment;else noData" class="dowload-text cursor"
-                                    (click)="onSelectBankProofDownload(empcreficition)">
-                                    <i class="bi bi-download clip-icon px-2"></i>Download</span>
-                                <ng-template #noData><span class="text-center">-</span></ng-template>
-                            </td>
-                            <td class="text-center">
-                                <div class="dropdown">
-                                    <span type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </span>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li (click)="openModalupdate(updateexperincemodal, empcreficition)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-pencil me-2"></i>Update
-                                            </a>
-                                        </li>
-                                        <li (click)="opendeletModal(deleteconformation,empcreficition)">
-                                            <a class="dropdown-item">
-                                                <i class="bi bi-trash3 me-2"></i>Delete
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </td>
-                        </tr>
-                    </ng-container>
-                    <ng-template #noDataTemplate>
-                        <tr>
-                            <td>
-                                <app-no-data-found />
-                            </td>
-                        </tr>
-                    </ng-template>
-                </tbody>
-            </table>
+                </ng-container>
+                <ng-template #noDataTemplate>
+                    <tr>
+                        <td>
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </ng-template>
+            </tbody>
+        </table>
         }
         @else {
-            <app-data-loader-content/>
+        <app-data-loader-content />
         }
     </div>
 </div>
@@ -82,7 +124,8 @@
                 </p>
             </div>
             <div>
-                <a (click)="modal.dismiss();certificationForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss();certificationForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -293,7 +336,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer d-flex justify-content-end gap-3">
+                <div class="d-flex justify-content-end gap-3">
                     <button type="button" class="custom-btn btn-secondary px-4" (click)="modal.dismiss()">Close</button>
                     <button type="submit" class="custom-btn btn-primary px-4"
                         [disabled]="updateCertificationForm.invalid && !displaycertification && updateCertificationForm.get('attachment')?.invalid ||   spinnerLoader">

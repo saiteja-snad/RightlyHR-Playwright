@@ -11,6 +11,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-certification',
@@ -23,7 +24,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
   selectedCertification: any;
   empcertsdata = new BehaviorSubject<any>([]);
   empinfo: any
-  loading=false
+  loading = false
   certificationForm!: FormGroup;
   updateCertificationForm!: FormGroup;
   certificationDocument: any;
@@ -35,7 +36,9 @@ export class CertificationComponent implements OnInit, OnDestroy {
   dateofbirth: any;
   displaycertification: any
   spinnerLoader = false;
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService,
+    public rbac: RbacService
+  ) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -79,7 +82,7 @@ export class CertificationComponent implements OnInit, OnDestroy {
       issuedDate: ['', Validators.required],
       expiryDate: ['', Validators.required],
       isExpired: [false],
-      attachment: ['',attachmentValidators],
+      attachment: ['', attachmentValidators],
     });
 
     // Disable "expiryDate" field if "isExpired" is checked
@@ -268,18 +271,18 @@ export class CertificationComponent implements OnInit, OnDestroy {
   getEmpcertdata() {
     let EmployeeId = parseInt(this.empinfo.employeeId);
     console.log(EmployeeId);
-    this.loading=true
+    this.loading = true
     this.subscription = this.http
       .getData(`Certification/${EmployeeId}`)
       .subscribe({
         next: (data: any) => {
-        
-          this.loading=false
+
+          this.loading = false
           this.empcertsdata.next(data);
         },
         error: (err: any) => {
           console.log(err);
-          this.loading=false
+          this.loading = false
         },
       });
   }
@@ -313,6 +316,10 @@ export class CertificationComponent implements OnInit, OnDestroy {
     this.certificationDocument = data.attachment; // Set the selected document for the update form
 
     this.displaycertification = data?.attachment?.split('/')?.pop()
+    // Dynamically update validators for the attachment field
+    const attachmentValidators = this.displaycertification ? [] : [Validators.required];
+    this.updateCertificationForm.get('attachment')?.setValidators(attachmentValidators);
+    this.updateCertificationForm.get('attachment')?.updateValueAndValidity();
 
     // Reset the document for the update form
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });

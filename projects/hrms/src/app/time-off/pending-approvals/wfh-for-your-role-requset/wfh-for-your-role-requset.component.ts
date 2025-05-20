@@ -1,21 +1,39 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
-import { AttendanceRequest, ICategoryDetails } from '../../../Interfaces/timoff-model';
+import {
+  AttendanceRequest,
+  ICategoryDetails,
+} from '../../../Interfaces/timoff-model';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { IJob } from '../../../Interfaces/letters-model';
-import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
+import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
-import { WfhsearchfilterPipe } from "../../../Pipes/wfhsearchfilter.pipe";
+import { WfhsearchfilterPipe } from '../../../Pipes/wfhsearchfilter.pipe';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
-import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { SignalsService } from '../../../services/signals.service';
+import { TableModule } from 'primeng/table';
+import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-wfh-for-your-role-requset',
@@ -29,10 +47,12 @@ import { SignalsService } from '../../../services/signals.service';
     TranslateModule,
     ReactiveFormsModule,
     WfhsearchfilterPipe,
-    DataLoaderContentComponent
-],
+    DataLoaderContentComponent,
+    TableModule,
+  ],
   templateUrl: './wfh-for-your-role-requset.component.html',
   styleUrl: './wfh-for-your-role-requset.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   totalRecords = 100;
@@ -48,38 +68,78 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   leaves = new BehaviorSubject<AttendanceRequest[]>([]);
   approverComments = [] as any[];
-  // approverComments = [] as AttendanceRequestC[];
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
+  @ViewChild('failureRecordModal') failureRecordModal: any;
+  selectedLeaveData = {} as AttendanceRequest;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  selectedLeaveData = {} as AttendanceRequest;
-  searchValue: any;
   spinnerLoader = false;
+  searchValue: any;
   dataload = false;
+  wfhsselect!: LeaveApproval[];
+  selectedLeavesItems!: LeaveApproval[];
+  multiSelect = false;
+  requestBody = {} as any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    private signalService:SignalsService
-
+    private signalService: SignalsService
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
-
+  selectCheck(Value: any) {
+    this.multiSelect = Array.isArray(Value) && Value.length > 0;
+    console.log(this.multiSelect);
+  }
+  bulkapprove(approverPopup: any) {
+    this.intializeApproveForm();
+    this.modalService.open(approverPopup, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+  bulkReject(rejectPopup: any) {
+    this.intializeRejectForm();
+    this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
+  }
+  bulkProcess() {
+    this.handleProcess(this.wfhsselect);
+  }
+  canBulkApprove(): boolean {
+    return this.selectedLeavesItems?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage !==
+        item.approvalHeader.finalapprovalStage
+    );
+  }
+  canBulkProcess(): boolean {
+    return this.selectedLeavesItems?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage ===
+        item.approvalHeader.finalapprovalStage
+    );
+  }
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: [
+        '',
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: [
+        '',
+        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
+      ],
     });
   }
 
@@ -89,21 +149,24 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=2&approvedType=ROLE`
-      ).pipe(takeUntil(this.destroy$))
+      )
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
+          console.log(response);
           this.leaves.next(response.data);
+          this.wfhsselect = response.data;
         },
         error: (reason) => console.log(reason),
         complete: () => {
           this.dataload = false;
-        }
+        },
       });
   }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-  
+
   openApproveModal(content: any, request: AttendanceRequest) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.intializeApproveForm();
@@ -117,37 +180,63 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   }
 
   handleAccept(approveForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
-      const requestBody = {
-        status: 'Approved',
-        comments: formData.comments,
-        approvedBy: this.empinfo.employeeId.toString(),
-      };
+      let approvedBy = this.empinfo.employeeId.toString();
+      let comments = formData.comments;
+      if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Approved',
+          comments: comments,
+          moduleId: environment.wfhModuleId,
+          headerRequests: this.selectedLeavesItems.map((item) => ({
+            headerID: item.approvalHeader.id,
+            currentStage: item.approvalHeader.currentapprovalStage,
+          })),
+        };
+      } else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Approved',
+          comments: comments,
+          moduleId: environment.wfhModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader.id,
+              currentStage:
+                this.selectedLeaveData.approvalHeader.currentapprovalStage,
+            },
+          ],
+        };
+      }
       this.sharedModalService.openLoaderModal(
-        'Approving Request, Please wait...');
+        'Approving Request, Please wait...'
+      );
       this.http
-        .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
-        ).pipe(takeUntil(this.destroy$))
+        .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+        .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
+            this.selectedLeavesItems = [];
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Approved Successfully'
             );
             this.approveForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
-            this.signalService.wfhForRoleTriggerSignal.set(true);
+            this.signalService.wfhForYouTriggerSignal.set(true);
             this.signalService.wfhSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
           },
           complete: () => {
             this.getAllPendingApprovals();
+            this.spinnerLoader = false;
           },
         });
     }
@@ -155,28 +244,53 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
 
   handleReject(rejectForm: FormGroup): void {
     this.spinnerLoader = true;
+    this.spinnerLoader = true;
     if (rejectForm.valid) {
-      const formData = rejectForm.value;
-      const requestBody = {
-        status: 'Rejected',
-        comments: formData.comments,
-      };
+     const formData = rejectForm.value;
+      let approvedBy = this.empinfo.employeeId.toString();
+      let comments = formData.comments;
+      if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Rejected',
+          comments: comments,
+          moduleId: environment.wfhModuleId,
+          headerRequests: this.selectedLeavesItems.map((item) => ({
+            headerID: item.approvalHeader.id,
+            currentStage: item.approvalHeader.currentapprovalStage,
+          })),
+        };
+      } else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Rejected',
+          comments: comments,
+          moduleId: environment.wfhModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader.id,
+              currentStage:
+                this.selectedLeaveData.approvalHeader.currentapprovalStage,
+            },
+          ],
+        };
+      }
       this.sharedModalService.openLoaderModal(
-        'Rejecting Request, Please wait...');
+        'Rejecting Request, Please wait...'
+      );
       this.http
-        .putData(
-          `PendingApproval/${this.selectedLeaveData.approvalHeader.id}`,
-          requestBody
-        ).pipe(takeUntil(this.destroy$))
+        .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+        .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
+            this.selectedLeavesItems = [];
             this.modalService.dismissAll();
             this.sharedModalService.openSuccessModal(
               'Request Rejected Successfully'
             );
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
-            this.signalService.wfhForRoleTriggerSignal.set(true);    
+            this.signalService.wfhForYouTriggerSignal.set(true);
             this.signalService.wfhSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
@@ -192,45 +306,58 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     }
   }
 
-  handleProcess(request: AttendanceRequest) {
-    let requestBody = {
-      status: 'Processed',
-      approvedBy: this.empinfo.employeeId.toString(),
-    };
+  handleProcess(request: any) {
+    this.selectedLeaveData = request;
+    let approvedBy = this.empinfo.employeeId.toString();
+    if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.wfhModuleId,
+        headerRequests: this.selectedLeavesItems.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage,
+        })),
+      };
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.wfhModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader.id,
+            currentStage:
+              this.selectedLeaveData.approvalHeader.currentapprovalStage,
+          },
+        ],
+      };
+    }
     this.sharedModalService.openLoaderModal(
-      'Processing Request, Please wait...');
+      'Processing Request, Please wait...'
+    );
     this.http
-      .putData(
-        `PendingApproval/process/${request.approvalHeader.id}`,
-        requestBody
-      ).pipe(takeUntil(this.destroy$))
+      .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
+          this.selectedLeavesItems = [];
           this.modalService.dismissAll();
           this.sharedModalService.openSuccessModal(
             'Request Processed Successfully'
           );
-          this.selectedLeaveData = {} as AttendanceRequest;
-          // this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          //   ...status,
-          //   wfh: true,
-          // }));
-          this.signalService.wfhForRoleTriggerSignal.set(true);
+          this.signalService.wfhForYouTriggerSignal.set(true);
           this.signalService.wfhSidNavCountTriggerSignal.set(true);
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openErrorModal(
-            reason.error.Message
-          );
+          this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
           this.getAllPendingApprovals();
         },
       });
   }
-
-
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
       centered: true,

@@ -22,7 +22,7 @@ export class TraineeApprovalsTabsComponent {
     const moduleId=environment.traineeoffboardingModuleId
     const data = this.pendingApprovalCount().find(item => item.moduleId === moduleId);
     return [
-      { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals', count:data?.forYou ?? 0}
+      { label: 'Trainee Details', link: '/time-off/pending-approvals/trainee-approvals', count:data?.forYou ?? 0,permission: { feature: 'Trainee Details', action: 'view' }}
     ];
   });
   // navTabs: any[] = [

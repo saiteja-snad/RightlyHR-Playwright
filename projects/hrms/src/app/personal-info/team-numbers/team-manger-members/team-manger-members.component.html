@@ -1,13 +1,12 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between mb-3">
         <div>
-       
             <app-team-members-tabs />
-
         </div>
+         @if(rbac.allowedToAccess('Employee Info Change TM Button.view')) {
         <div>
             <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change TM</button>
-        </div>
+        </div>}
     </div>
 
     <!--Input search-->
@@ -25,7 +24,8 @@
                     <th>Work Email</th>
                     <th>Phone Number</th>
                     <!-- <th>Employee Job Details</th> -->
-                    <th class="text-center">Action</th>
+                      @if(rbac.allowedToAccess('Employee Info Team Managers Tab.update')) {
+                    <th class="text-center">Action</th>}
                 </tr>
             </thead>
             <tbody *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
@@ -43,18 +43,22 @@
                         N/A
                       </ng-template>
                     </td> -->
+                     @if(rbac.allowedToAccess('Employee Info Team Managers Tab.update')) {
                     <td class="text-center">
                       <div class="dropdown">
                         <a type="button" data-bs-toggle="dropdown">
                           <i class="bi bi-three-dots-vertical"></i>
                         </a>
                         <ul class="dropdown-menu py-0">
+                             @if(rbac.allowedToAccess('Employee Info Team Managers Tab.update')) {
                           <li (click)="assigintm(changetmmodalforsingle, details)">
                             <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change TM</a>
                           </li>
+                        }
                         </ul>
                       </div>
                     </td>
+                }
                   </tr>
                 </ng-container>
               </tbody>
@@ -76,6 +80,7 @@
 <ng-template #changermmodals let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
+            @if(rbac.allowedToAccess('Employee Info Team Managers Tab.view')){
             <div class="pt-2">
                 <p class="popup-heading mb-0"> {{'Change TM'|translate}}</p>
             </div>
@@ -83,6 +88,7 @@
                 <a (click)="modal.dismiss();requestForm.reset()"><img src="icons/close.png" alt="Close Icon"
                         class="close-icon"></a>
             </div>
+        }
         </div>
         <div class="custom-main-popup-content p-4">
             <form [formGroup]="requestForm" (ngSubmit)="updateTM()">

@@ -10,6 +10,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { RbacService } from '../../../services/rbac.service';
 import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 
 @Component({
@@ -31,7 +32,7 @@ export class DeskForYouRequestComponent {
 searchValue: any;
 
   constructor(private http: HttpService, private readonly modalService: NgbModal, 
-    public conformationPopup: OpenModalService, private fb: FormBuilder) { }
+    public conformationPopup: OpenModalService, private fb: FormBuilder,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.employdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -56,8 +57,9 @@ searchValue: any;
       },
     });
   }
-
-  openModal(content: any) {
+  expapprovalsdata : any;
+  openModal(content: any, data: any) {
+    this.expapprovalsdata = data;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
@@ -67,7 +69,8 @@ searchValue: any;
     const userStatus: any = {
       id: this.deskid,
       status: 'Processed',
-      approvedBy: this.employdata.employeeId.toString()
+      approvedBy: this.employdata.employeeId.toString(),
+      currentStage : parseInt(exp.approvalHeader.currentapprovalStage),
     };
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
@@ -122,7 +125,8 @@ searchValue: any;
       id: this.selectedexpenesid,
       status: 'Rejected',
       comments: this.rejectForm.get('comments')?.value,
-      approvedBy: this.employdata.employeeId.toString()
+      approvedBy: this.employdata.employeeId.toString(),
+      currentStage : parseInt(this.expapprovalsdata.approvalHeader.currentapprovalStage),
     };
     this.http.putData(`PendingApproval/${this.selectedexpenesid}`, userStatus).subscribe({
       next: (res: any) => {

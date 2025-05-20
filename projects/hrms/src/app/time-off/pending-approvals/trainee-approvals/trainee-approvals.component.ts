@@ -159,6 +159,7 @@ export class TraineeApprovalsComponent {
     let requestBody = {
       status: 'Approved',
       comments: this.selectedLeaveData.trcomments,
+      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
     };
 
     this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
@@ -189,6 +190,7 @@ export class TraineeApprovalsComponent {
     let requestBody = {
       status: 'Rejected',
       comments: this.selectedLeaveData.rejectedReason,
+      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
     };
     this.subscription = this.http.putData(`PendingApproval/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
@@ -216,6 +218,7 @@ export class TraineeApprovalsComponent {
   handleProcess(request: Itraineeapproval) {
     let requestBody = {
       status: 'Processed',
+      currentStage: parseInt(request.approvalHeader.currentapprovalStage),
     };
     this.subscription = this.http.putData(`PendingApproval/process/${request.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {
@@ -266,6 +269,7 @@ export class TraineeApprovalsComponent {
       status: 'Processed',
       comments: this.selectedLeaveData.trcomments,
       trainingEndDate: this.selectedLeaveData.extenddate,
+      currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),
     };
     this.subscription = this.http.putData(`PendingApproval/process/${this.requesthandler.approvalHeader?.id}`, requestBody).subscribe({
       next: (respone: any) => {

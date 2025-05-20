@@ -172,7 +172,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
       marriedDate: formValue.marriageDate,
-      empStatus: 'Active',
+      // empStatus: 'Active',
     };
     
 
@@ -195,8 +195,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         },
         error: (reason: any) => {
         
-          this.conformationPopup.openErrorModal('Basic Info update failed')
-
+          this.conformationPopup.openErrorModal( reason.error.message || 'Basic Info update failed')
 
         },
       });

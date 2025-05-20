@@ -13,6 +13,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-previous-experince',
@@ -44,7 +45,7 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
   currentDate: string = new Date().toISOString().split('T')[0]; // Current date in 'yyyy-MM-dd' format
   spinnerLoader = false;
 
-  constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private modalService: NgbModal, private http: HttpService, public formValidation: FormValidationService, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -423,6 +424,11 @@ export class PreviousExperinceComponent implements OnInit, OnDestroy {
       this.displaypreviousexperincedocument = experienceDetail.attachment
         ? experienceDetail.attachment.split('/').pop()
         : null;
+
+         // Dynamically update validators for the attachment field
+    const attachmentValidators = this.displaypreviousexperincedocument ? [] : [Validators.required];
+    this.employeeExperienceupdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
+    this.employeeExperienceupdateForm.get('attachmentupdate')?.updateValueAndValidity();
       // Handle "toDateupdate" field based on "isPresent" or absence of "toDate"
       const toDateControl = this.employeeExperienceupdateForm.get('toDateupdate');
       if (experienceDetail.isPresent || !experienceDetail.toDate) {

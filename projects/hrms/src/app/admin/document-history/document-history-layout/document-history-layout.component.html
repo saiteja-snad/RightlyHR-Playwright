@@ -1,28 +1,36 @@
 <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-    <li [ngbNavItem]="1">
-        <button class="custom-nav-btn" ngbNavLink>Offer Letter</button>
-        <ng-template ngbNavContent>
-            <app-document-history-offer-letter />
-        </ng-template>
-    </li>
-    <li [ngbNavItem]="2">
-        <button class="custom-nav-btn" ngbNavLink>Appointment Letter</button>
-        <ng-template ngbNavContent>
-            <app-document-history-appointment-letter />
-        </ng-template>
-    </li>
-    <li [ngbNavItem]="3">
-        <button class="custom-nav-btn" ngbNavLink>Trainee Offer Letter</button>
-        <ng-template ngbNavContent>
-            <app-document-history-intern-offer-letter />
-        </ng-template>
-    </li>
-    <li [ngbNavItem]="4">
-        <button class="custom-nav-btn" ngbNavLink>Trainee Appointment Letter</button>
-        <ng-template ngbNavContent>
-            <app-document-history-intern-appointment />
-        </ng-template>
-    </li>
+  @if(rbac.allowedToAccess('Documents History Offer Letter.view')) {
+    <li [ngbNavItem]="'offer'">
+      <button class="custom-nav-btn" ngbNavLink>Offer Letter</button>
+      <ng-template ngbNavContent>
+        <app-document-history-offer-letter />
+      </ng-template>
+    </li>}
+  
+  @if(rbac.allowedToAccess('Documents History Appointment Letter.view')) {
+    <li [ngbNavItem]="'appointment'">
+      <button class="custom-nav-btn" ngbNavLink>Appointment Letter</button>
+      <ng-template ngbNavContent>
+        <app-document-history-appointment-letter />
+      </ng-template>
+    </li>}
+
+  @if(rbac.allowedToAccess('Documents History Trainee Offer Letter.view')) {
+    <li [ngbNavItem]="'trainee-offer'">
+      <button class="custom-nav-btn" ngbNavLink>Trainee Offer Letter</button>
+      <ng-template ngbNavContent>
+        <app-document-history-intern-offer-letter />
+      </ng-template>
+    </li>}
+
+  @if(rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) {
+    <li [ngbNavItem]="'trainee-appointment'">
+      <button class="custom-nav-btn" ngbNavLink>Trainee Appointment Letter</button>
+      <ng-template ngbNavContent>
+        <app-document-history-intern-appointment />
+      </ng-template>
+    </li>}
 </ul>
 
-<div [ngbNavOutlet]="nav" class="pt-3"></div>
+<!-- Outlet to show content of selected tab -->
+<div [ngbNavOutlet]="nav" class="pt-2"></div>

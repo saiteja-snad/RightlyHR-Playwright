@@ -37,13 +37,15 @@
   </ng-container>
 
   <ng-template #maincontent>
-    <div class="team-data-content">
-      <p-accordion>
+    <div class="custom-accordian-data-content">
+      <p-accordion [value]="filteredTeamLeaveBalance[0].employeeBasicDetails.employeeId">
         @if(filteredTeamLeaveBalance.length > 0) {
         @for (employee of filteredTeamLeaveBalance; track employee.employeeBasicDetails.employeeId; let i = $index) {
         <p-accordion-panel [value]="employee.employeeBasicDetails.employeeId">
-          <p-accordion-header>{{ employee.employeeBasicDetails.employeeName }} ({{
-            employee.employeeBasicDetails.snadEmployeeId }})</p-accordion-header>
+          <p-accordion-header><span>
+            <span class="text-capitalize">{{ employee.employeeBasicDetails.employeeName }}</span>
+            ({{ employee.employeeBasicDetails.snadEmployeeId }})</span>
+          </p-accordion-header>
           <p-accordion-content>
             <div class="employee-data-table">
               <table class="w-100">
@@ -96,7 +98,7 @@
           <table>
             <thead>
               <tr>
-                <th colspan="4" class="custom-popup-header">{{popupType}}</th>
+                <th colspan="4" class="custom-popup-header">{{popupType}}(s) Details</th>
               </tr>
               <tr>
                 <th>Start Date</th>

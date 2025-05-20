@@ -1,0 +1,34 @@
+.succes-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+}
+.custom-table-content {
+    .p-datatable-thead>tr>th {
+        background-color: var(--table-header-bg-color) !important;
+        color: var(--table-header-color) !important;
+        text-wrap: nowrap !important;
+        text-transform: capitalize !important;
+        font-weight: 400 !important;
+        font-size: var(--fontsize14) !important;
+        line-height: 100% !important;
+        letter-spacing: 0% !important;
+        vertical-align: middle !important;
+        padding: 1rem !important;
+    }
+
+    .p-datatable-tbody>tr>td {
+        font-weight: 400 !important;
+        font-size: var(--fontsize14) !important;
+        line-height: 100% !important;
+        letter-spacing: 0% !important;
+        vertical-align: middle !important;
+        padding: 1rem !important;
+        border: 0rem !important
+    }
+
+    .p-checkbox-checked .p-checkbox-box {
+        background: #06274F !important;
+        border-color: #06274F !important;
+    }
+}

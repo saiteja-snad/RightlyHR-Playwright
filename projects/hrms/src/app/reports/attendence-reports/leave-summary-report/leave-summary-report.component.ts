@@ -17,6 +17,7 @@ import { environment } from '../../../../environments/environment';
 import { ILeavesummery } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../../services/rbac.service';
 @Component({
   selector: 'app-leave-summary-report',
   imports: [
@@ -77,6 +78,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {

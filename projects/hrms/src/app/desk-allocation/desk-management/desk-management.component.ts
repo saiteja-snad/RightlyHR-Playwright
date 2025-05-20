@@ -9,6 +9,7 @@ import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 
 import { OpenModalService } from '../../services/open-modal.service';
 import { Select } from 'primeng/select';
+import { RbacService } from '../../services/rbac.service';
 
 @Component({
   selector: 'app-desk-management',
@@ -34,6 +35,7 @@ export class DeskManagementComponent {
   empinfo: any
   desktype: any[] = []
   deskdataid: any[] = []
+  allNavTabs: any[] = [];
   navTabs: any[] = [];
   page = 1;
   pageSize = 10;
@@ -44,7 +46,7 @@ export class DeskManagementComponent {
   desklist = new BehaviorSubject<any[]>([])
   constructor(
     private readonly fb: FormBuilder,
-    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,private  router: Router) { }
+    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,private  router: Router,public rbac: RbacService) { }
 
   ngOnInit() {
 
@@ -55,16 +57,30 @@ export class DeskManagementComponent {
     this.getapproval()
     this.getdatabyentriy()
     this.getcount(null, null)
-    this.navTabs = [
-      { label: 'All', route: '/desk/management/all-desks', count$: this.http.deskTotalCountSubject },
-      { label: 'Available', route: '/desk/management/available-desks', count$: this.http.deskAvailableCountSubject },
-      { label: 'Allocated', route: '/desk/management/allocated-desk', count$: this.http.deskAllocatedCountSubject },
-      { label: 'Under Maintenance', route: '/desk/management/under-maintenance-desk', count$: this.http.deskUndermaindanaenceCountSubject },
-      { label: 'Inactive', route: '/desk/management/inactive-desk', count$: this.http.deskinactiveCountSubject },
-      { label: 'Waiting For Approval', route: '/desk/management/waiting-for-approval-desks', count$: this.http.deskWiatingforapprovalCountsubject }
-    ];
+    this.initializeNavTabs();
 
   }
+
+  initializeNavTabs(): void {
+
+    // Populate allNavTabs with permission checks
+    this.allNavTabs = [
+     { label: 'All', route: '/desk/management/all-desks', permission: { feature: 'Desk Allocation - All', action: 'view' }, count$: this.http.deskTotalCountSubject },
+     { label: 'Available', route: '/desk/management/available-desks', permission: { feature: 'Desk Allocation - Available', action: 'view' }, count$: this.http.deskAvailableCountSubject },
+     { label: 'Allocated', route: '/desk/management/allocated-desk', permission: { feature: 'Desk Allocation - Allocated', action: 'view' }, count$: this.http.deskAllocatedCountSubject },
+     { label: 'Under Maintenance', route: '/desk/management/under-maintenance-desk', permission: { feature: 'Desk Allocation - Under Maintenance', action: 'view' }, count$: this.http.deskUndermaindanaenceCountSubject },
+     { label: 'Inactive', route: '/desk/management/inactive-desk', permission: { feature: 'Desk Allocation - Inactive', action: 'view' }, count$: this.http.deskinactiveCountSubject },
+     { label: 'Waiting For Approval', route: '/desk/management/waiting-for-approval-desks', permission: { feature: 'Desk Allocation - Waiting For Approval', action: 'view' }, count$: this.http.deskWiatingforapprovalCountsubject }
+   ];
+   
+   // Filter navTabs based on permissions
+   this.navTabs = this.allNavTabs.filter(tab =>
+     tab.permission && tab.permission.feature && tab.permission.action &&
+     this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
+   );
+
+
+ }
 
   intiallocationandsublocation() {
     this.locationfromdata = this.fb.group({

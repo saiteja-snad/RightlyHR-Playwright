@@ -1,22 +1,28 @@
-
-
 <div class="component-side-nav-tabs-container py-3">
-    <ul class="nav flex-column gap-2" >
-      <li class="nav-item ">
-        <a class="nav-link" [routerLink]="['/time-off/comp-off/waiting-for-approval']" routerLinkActive="active-nav-link" aria-current="page">Waiting For Approval ({{waitingForApprovalCompOffCount}})</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/comp-off/approved']" routerLinkActive="active-nav-link" >Approved ({{approvalCompOffRequestsCount}})</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/comp-off/processed']" routerLinkActive="active-nav-link" >Processed ({{processedCompOffRequestsCount}})</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/comp-off/rejected']"  routerLinkActive="active-nav-link">Rejected ({{rejectedCompOffRequestsCount}})</a>
-      </li>
-      
-    </ul>
-
-  </div>
-
-
+  <ul class="nav flex-column gap-2">
+    @if(rbac.allowedToAccess('Waiting For Approval (Comp Off).view')){
+    <li class="nav-item ">
+      <a class="nav-link" [routerLink]="['/time-off/comp-off/waiting-for-approval']" routerLinkActive="active-nav-link"
+        aria-current="page">Waiting For Approval ({{waitingForApprovalCompOffCount}})</a>
+    </li>
+    }
+    @if(rbac.allowedToAccess('Approved (Comp Off).view')){
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/comp-off/approved']" routerLinkActive="active-nav-link">Approved
+        ({{approvalCompOffRequestsCount}})</a>
+    </li>
+    }
+    @if(rbac.allowedToAccess('Processed (Comp Off).view')){
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/comp-off/processed']" routerLinkActive="active-nav-link">Processed
+        ({{processedCompOffRequestsCount}})</a>
+    </li>
+    }
+    @if(rbac.allowedToAccess('Rejected (Comp Off).view')){
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/comp-off/rejected']" routerLinkActive="active-nav-link">Rejected
+        ({{rejectedCompOffRequestsCount}})</a>
+    </li>
+    }
+  </ul>
+</div>

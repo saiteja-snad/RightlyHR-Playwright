@@ -5,7 +5,7 @@
 
     <!--Dropdown Content-->
     <div class="d-flex align-items-center gap-3">
-      @if(this.rbac.allowedToAccess('HR Hierarchy select Tab.view')){
+      @if(this.rbac.allowedToAccess('Organization Hierarchy - HR.view')){
       <div class="d-flex align-items-center gap-2">
         <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Employee</b><span class="text-danger"></span></label>
         <div class="custom-p-select-content ">
@@ -17,7 +17,7 @@
       </div>
       }
 
-      @if(this.rbac.allowedToAccess('Maganger Hierarchy select Tab.view')){
+      @if(this.rbac.allowedToAccess('Organization Hierarchy - TM.view')){
       <div class="d-flex align-items-center gap-2">
         <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Employee</b><span class="text-danger"></span></label>
         <div class="custom-p-select-content">
@@ -29,7 +29,7 @@
       </div>
       }
 
-      @if(this.rbac.allowedToAccess('Hierarchy Compensation select Tab.view')){
+      @if(this.rbac.allowedToAccess('Organization Hierarchy - Compensation.view')){
       <div class="d-flex align-items-center gap-2">
         <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Compensation</b><span class="text-danger"></span></label>
         <div class="custom-p-select-content">
@@ -40,12 +40,14 @@
       </div>
       }
 
-      @if(this.rbac.allowedToAccess('Hierarchy Download Tab.view')){
       <div>
+        @if(this.rbac.allowedToAccess('Organization Hierarchy - Download PDF.view')){
         <button class="custom-btn btn-primary me-3"   [disabled]="!data || data.length === 0" (click)="downloadChart('pdf')">Download as PDF</button>
+        }
+        @if(this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view')){
         <button class="custom-btn btn-primary" [disabled]="!data || data.length === 0" (click)="downloadChart('jpg')">Download as JPG</button>
+        }
       </div>
-      }
     </div>
   </div>
 

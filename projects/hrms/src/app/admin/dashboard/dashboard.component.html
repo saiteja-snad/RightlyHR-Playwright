@@ -1,12 +1,27 @@
+@if(rbac.allowedToAccess('Dashboard.view')){
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
+    @if(this.rbac.allowedToAccess('Dashboard Current Openings.view')
+    || this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view' ) 
+    || this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view' )
+       || this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view' ) 
+       ||  this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view' ) 
+       || this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view' )
+       || this.rbac.allowedToAccess('Dashboard Probation Employees Card.view' )
+       ||this.rbac.allowedToAccess('Dashboard Inactive Trainees Card.view' ) 
+       || this.rbac.allowedToAccess('Dashboard Prospective Trainee Card.view' )
+       || this.rbac.allowedToAccess('Dashboard Inactive Employees Card.view' )
+       ||this.rbac.allowedToAccess('Dashboard Prospective Employees Card.view' )){
     <div>
       <p class="component-header mb-0">{{'Dashboard'| translate}}</p>
-    </div>
+    </div>}
     <div class="d-flex gap-3">
-      @if(this.rbac.allowedToAccess('Current Openings.view')){
+      @if(this.rbac.allowedToAccess('Dashboard Current Openings.view')){
       <button type="button" class="custom-btn btn-secondary">Current Openings</button>
-       } @if(this.rbac.allowedToAccess('Generate Documents.view')){
+       }
+        @if(this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view' ) || this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view' )
+       || this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view' ) ||  this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view' ) 
+       || this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view' )){  
         <button type="button" class="custom-btn btn-primary" (click)="generateDocument()">Generate Documents</button>
       } 
     </div>
@@ -31,12 +46,15 @@
   </div>
 
   <!--Document History-->
+  @if(rbac.allowedToAccess('Documents History Offer Letter.view') || rbac.allowedToAccess('Documents History AppointmentLetter.view') 
+|| rbac.allowedToAccess('Documents History Trainee Offer Letter.view') || rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) {
   <div class="mb-3">
     <p class="component-header mb-0">{{'Document History' | translate}}</p>
   </div>
-  
+}
   <!--Document History Content-->
   <div class="Document-history-content">
     <app-document-history-layout />
   </div>
 </div>
+}

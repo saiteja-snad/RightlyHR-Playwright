@@ -4,9 +4,11 @@
             <p class="component-header mb-0">Desk Management</p>
         </div>
         <div>
+            @if(rbac.allowedToAccess('Desk Allocation - Create.view')){
             <button type="button" class="custom-btn btn-primary" (click)="openModal(createDeskModal)"><i
                     class="bi bi-plus me-2"></i>Register a
                 Desk</button>
+            }
         </div>
     </div>
 

@@ -17,6 +17,7 @@ import * as XLSX from 'xlsx';
 import { StandardReportTabsComponent } from '../../../shared/reports-tabs/standard-report-tabs/standard-report-tabs.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-family-members-data',
@@ -46,7 +47,8 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private http: HttpService,
-    private modal: OpenModalService
+    private modal: OpenModalService,
+    public rbac: RbacService
   ) { }
 
   ngOnInit(): void {

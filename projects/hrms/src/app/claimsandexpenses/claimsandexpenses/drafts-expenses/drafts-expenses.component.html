@@ -26,7 +26,9 @@
                         <th>{{'Expense Date'  | translate}}</th>
                         <th>{{'Total Amount'  | translate}}</th>
                         <th>{{'Status'  | translate}}</th>
+                        @if(rbac.allowedToAccess('Draft Tab.update')){
                         <th class="text-center">{{'Action(S)'  | translate}}</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -37,19 +39,20 @@
                             <td>{{ exp.totalExpenseAmount | number : "1.0-0" }}</td>
                             <td> <span class="me-2 status-colour">● {{ exp.status }}</span>
                             </td>
+                            @if(rbac.allowedToAccess('Draft Tab.update')){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
                                     <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li><a class="dropdown-item"
-                                                (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
-                                                <i class="bi bi-pencil me-2"></i>{{'Update'  | translate}}</a>
+                                        <li><a class="dropdown-item" (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
+                                            <i class="bi bi-pencil me-2"></i>{{'Update'  | translate}}</a>
                                         </li>
                                     </ul>
                                 </div>
                             </td>
+                            }
                         </tr>
                     </ng-container>
                     <!-- No Data Found Template -->
@@ -82,21 +85,20 @@
                 <div class="d-flex gap-3 mb-3">
                     <!-- Expense Type  -->
                     <div class="w-25">
-                        <label class="form-label custom-label mb-2">{{'Expense Title' | translate}}<span
-                                class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Expense Title' | translate}}
+                            <span class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="expensesTitle"
                             placeholder="Please enter expense title" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                        <div class="error-msg" *ngIf="newExpenseForm.controls['expensesTitle'].invalid && 
-                                        (newExpenseForm.controls['expensesTitle'].touched || 
-                                         newExpenseForm.controls['expensesTitle'].dirty)">
+                        <div class="error-msg" *ngIf="newExpenseForm.controls['expensesTitle'].invalid && (newExpenseForm.controls['expensesTitle'].touched
+                         ||  newExpenseForm.controls['expensesTitle'].dirty)">
                             <div *ngIf="newExpenseForm.controls['expensesTitle'].errors?.['required']">
                                 Expense title is required</div>
-        
                             <div *ngIf="newExpenseForm.controls['expensesTitle'].errors?.['maxlength']">
                                 Expense title must be less than 50 characters
                             </div>
                         </div>
                     </div>
+
                     <div class="w-25">
                         <label class="form-label custom-label mb-2">{{'Approver Emai' | translate}}l<span
                                 class="text-danger">*</span></label>
@@ -110,6 +112,7 @@
                                 Approver email is required</div>
                         </div>
                     </div>
+
                     <!-- Add New Expense Button -->
                     <div class="pt-4 mt-1">
                         <button type="button" class="custom-btn btn-primary" (click)="addExpenseItem()">
@@ -134,7 +137,6 @@
                                         {{ item.expenseType }}
                                     </option>
                                 </select>
-        
                                 <div *ngIf="item.get('expenseId')?.invalid && item.get('expenseId')?.touched" class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('expenseId')?.errors?.['required']">
                                         Expense Type is required</div>
@@ -195,25 +197,19 @@
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" formControlName="receipt_Number"
                                     placeholder="Please enter receipt number" />
-                                <div *ngIf="item.get('receipt_Number')?.invalid && 
-                                                (item.get('receipt_Number')?.touched || 
-                                                 item.get('receipt_Number')?.dirty)" class="error-msg">
+                                <div *ngIf="item.get('receipt_Number')?.invalid && (item.get('receipt_Number')?.touched || 
+                                    item.get('receipt_Number')?.dirty)" class="error-msg">
                                     <div *ngIf="item.get('receipt_Number')?.hasError('required')">
                                         Receipt number is required
                                     </div>
                                     <div *ngIf="item.get('receipt_Number')?.hasError('maxlength')">
                                         Receipt number should be allow up to 18 characters also
                                     </div>
-        
                                 </div>
-                                <div *ngIf="item.get('receipt_Number')?.hasError('duplicate') && 
-                                            (item.get('receipt_Number')?.touched || 
-                                             item.get('receipt_Number')?.dirty)" class="error-msg">
-                                    <div>
+                                <div *ngIf="item.get('receipt_Number')?.hasError('duplicate') && (item.get('receipt_Number')?.touched ||
+                                 item.get('receipt_Number')?.dirty)" class="error-msg">
                                         Receipt number should be unique
-                                    </div>
                                 </div>
-        
                             </div>
         
                             <!-- Delete Icon -->
@@ -231,9 +227,7 @@
                                     <textarea class="form-control custom-input" type="text" maxlength="250"
                                         formControlName="item_Description" [maxlength]="250"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" placeholder="Please enter description "
                                         rows="1"></textarea>
-                                    <div class="character-count mt-2">
-                                        {{ item.get("item_Description")?.value?.length || 0 }}/250
-                                    </div>
+                                    <div class="textarea-count-text">{{ item.get("item_Description")?.value?.length || 0 }}/250</div>
                                 </div>
                             </div>
         
@@ -302,8 +296,7 @@
         </div>
         <div class="modal-body" style="text-align: center">
             <p *ngIf="!ExpenseImageUrl; else imageView">
-                <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google"
-                    style="width: 100%; height: 100vh"></ngx-doc-viewer>
+                <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
             </p>
             <ng-template #imageView>
                 <img [src]="ExpenseImageUrl" alt="My Image" class="modal-image" />

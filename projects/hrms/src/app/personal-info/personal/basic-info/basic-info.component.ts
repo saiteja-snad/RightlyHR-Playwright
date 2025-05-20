@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { IGender, IMarital, ITitle } from '../../../Interfaces/personal-modal';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { IJob } from '../../../Interfaces/letters-model';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-basic-info',
@@ -39,7 +40,9 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   dateofbirth: any
   changeingdob: any;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private modalService: NgbModal, private fb: FormBuilder, 
+    public formValidation: FormValidationService, 
+    private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
@@ -195,7 +198,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       dob: formValue.dob,
       bloodGroup: formValue.bloodGroup?.name,
       maritalStatus: formValue.maritalStatus?.maritalstatus1,
-      empStatus: 'Active',
+    
       marriedDate: formValue.marriageDate,
     };
 
@@ -223,7 +226,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         error: (reason: any) => {
 
           console.log(reason);
-          this.conformationPopup.openErrorModal('Basic Info update failed')
+          this.conformationPopup.openErrorModal( reason.error.message ||'Basic Info update failed')
         },
       });
   }

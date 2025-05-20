@@ -36,6 +36,15 @@ export class DashboardComponent {
 
   ngOnInit(): void {
     this.fetchData();
+    this.cardItems = this.cardItems.filter(
+      (tab) =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(
+          `${tab.permission.feature}.${tab.permission.action}`
+        )
+    );
   }
 
   fetchData() {
@@ -160,9 +169,19 @@ export class DashboardComponent {
     });
   }
 
-  generateDocument() {
+generateDocument() {
+  if (this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view')) {
     this.router.navigate(['/admin/letters/offer-letter']);
+  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view')) {
+    this.router.navigate(['/admin/letters/trainee-appointment-letter']);
+  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view')) {
+    this.router.navigate(['/admin/letters/trainee-offer-letter']);
+  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view')) {
+    this.router.navigate(['/admin/letters/appointment-letter']);
+  }else if (this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view')) {
+    this.router.navigate(['/admin/letters/welcome-letter']);
   }
+}
 
   updateCardItems() {
     this.cardItems = [
@@ -171,58 +190,71 @@ export class DashboardComponent {
         link: '/admin/prospective-employees',
         count: this.ACTDATA,
         backgroundColor: '#E1E8FE',
-        profileColor: '#06274F', permission: { feature: 'Prospective Employee', action: 'view' }
+        profileColor: '#06274F', permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
       },
       {
         label: 'Active Employees',
         link: '/admin/active-employees',
         count: this.Active,
         backgroundColor: '#FEEFE1',
-        profileColor: '#A95200', permission: { feature: 'Active Employee', action: 'view' }
+        profileColor: '#A95200', permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
         label: 'Inactive Employees',
         link: '/admin/inactive-employees',
         count: this.Inactive,
         backgroundColor: '#E1FEF4',
-        profileColor: '#2B8D6B', permission: { feature: 'Inactive Employee', action: 'view' }
+        profileColor: '#2B8D6B', permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
       },
       {
         label: 'Prospective Trainees',
         link: '/admin/prospective-interns',
         count: this.Trainee,
         backgroundColor: '#FEE1F7',
-        profileColor: '#95267A', permission: { feature: 'Add Trainee', action: 'view' }
+        profileColor: '#95267A', permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
       },
       {
         label: 'Active Trainees',
         link: '/admin/active-interns',
         count: this.traineeactive,
         backgroundColor: '#FEE7E1',
-        profileColor: '#994530', permission: { feature: 'Trainee Active', action: 'view' }
+        profileColor: '#994530', permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
       },
       {
         label: 'Inactive Trainees',
         link: '/admin/inactive-interns',
         count: this.traineeInactive,
         backgroundColor: '#FEE1F1',
-        profileColor: '#760C46', permission: { feature: 'Trainee Inactive', action: 'view' }
+        profileColor: '#760C46', permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
       },
       {
         label: 'Current Openings',
         link: '/admin/timeoff',
         count: this.activeCount,
         backgroundColor: '#FEEFE1',
-        profileColor: '#A95200', permission: { feature: 'Current Openings', action: 'view' }
+        profileColor: '#A95200', permission: { feature: 'Dashboard Current Openings Card', action: 'view' }
       },
       {
         label: 'Probation Employees',
         link: '/admin/probation-employees',
         count: this.PROBDATA,
         backgroundColor: '#E1FEE1',
-        profileColor: '#0A850A', permission: { feature: 'Probation Employees', action: 'view' }
+        profileColor: '#0A850A', permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
       },
     ];
-    this.cdr.detectChanges();
+    this.filterTabsByRbac();
+
+    // this.cdr.detectChanges();
+  }
+
+
+  filterTabsByRbac(): void {
+    this.cardItems = this.cardItems.filter(tab => {
+      if (!tab.permission) return true;
+
+      const { feature, action } = tab.permission;
+      const permissionString = `${feature}.${action}`;
+      return this.rbac.allowedToAccess(permissionString);
+    });
   }
 }

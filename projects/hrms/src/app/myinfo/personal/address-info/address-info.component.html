@@ -4,9 +4,13 @@
       <div>
         <span class="component-sub-header">Current Address</span>
       </div>
+
+      @if(rbac.allowedToAccess('My Info Address Details.update')){
       <div *ngIf="!buttons">
         <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
       </div>
+      }
+
       <div class="d-flex justify-content-end gap-3" *ngIf="buttons">
         <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="addressForm.invalid"

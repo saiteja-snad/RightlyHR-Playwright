@@ -23,7 +23,9 @@
                     <th>{{'Due Date' | translate}}</th>
                     <th>{{'Review Template' | translate}}</th>
                     <th>{{'Status' | translate}}</th>
+                    @if(rbac.allowedToAccess('My Performance Assessment.view')){
                     <th class="text-center">{{'Action(S)' | translate}}</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -41,18 +43,20 @@
                     <td>{{ item.formName }}</td>
                     <td>{{ item.rcItemStatus }}</td>
                     <td class="text-center">
-                        <div class="dropdown">
-                            <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </a>
-                            <ul class="dropdown-menu text-center">
-                                <li class="dropdown-item"
-                                    (click)="selfAssessment(item.reviewCycleItemId, item.currentStage, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
-                                    <a class="dropdown-custom-btn">{{item.assessorType}}
-                                        {{'Assessment' | translate}}</a>
-                                </li>
-                            </ul>
-                        </div>
+                        @if(rbac.allowedToAccess('My Performance Assessment.view')){
+                            <div class="dropdown">
+                                <a data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-custom-btn">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu text-center">
+                                    <li class="dropdown-item"
+                                        (click)="selfAssessment(item.reviewCycleItemId, item.currentStage, item.assessorItemId,item.reviewEmployeeId,item.reviewcycleitemformresponseid,item.formresponseid)">
+                                        <a class="dropdown-custom-btn">{{item.assessorType}}
+                                            {{'Assessment' | translate}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
                     </td>
                 </tr>
                 }

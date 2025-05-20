@@ -331,6 +331,7 @@ export class ProbationPendingApprovalsComponent {
       meta: this.jsonData,
       responseId: this.selectedData.responseId,
       approvedBy: this.LOGIN.employeeId.toString(),
+      currentStage: parseInt(this.requesthandler?.approvalHeader?.currentapprovalStage),
     };
     if (this.selectedData.requestSelectedType == 'Approve') {
       requestBody.status = 'Processed';

@@ -20,7 +20,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
   templateUrl: './bank-details.component.html',
   styleUrl: './bank-details.component.scss'
 })
-export class BankDetailsComponent implements OnInit,OnDestroy {
+export class BankDetailsComponent implements OnInit, OnDestroy {
   banknames: Ibank[] = [];
   bankDetailsForm!: FormGroup;
   bankid: any
@@ -30,10 +30,10 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   subscription!: Subscription
   proofValid: boolean = true;
   bankdocument: any
-  spinnerLoader=false;
-  loading=false
-  displayblankdocument:any
-  constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService,public rbac: RbacService) { }
+  spinnerLoader = false;
+  loading = false
+  displayblankdocument: any
+  constructor(private readonly modalService: NgbModal, private http: HttpService, private fb: FormBuilder, public formValidation: FormValidationService, private conformationPopup: OpenModalService, public rbac: RbacService) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initializeBankDetailsForm();
@@ -45,9 +45,9 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   initializeBankDetailsForm(): void {
     this.bankDetailsForm = this.fb.group({
       bankName: ['', Validators.required],
-      accountName: ['', [Validators.required,Validators.maxLength(50)]],
-      accountNo: ['', [Validators.required,   Validators.pattern('^[0-9]{12,20}$'),this.invalidBankNumberValidator()]],
-      ifscCode: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'),this.invalidIfscCodeValidator(),]],
+      accountName: ['', [Validators.required, Validators.maxLength(50)]],
+      accountNo: ['', [Validators.required, Validators.pattern('^[0-9]{12,20}$'), this.invalidBankNumberValidator()]],
+      ifscCode: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'), this.invalidIfscCodeValidator(),]],
       isPrimary: [false],
       attachment: [null, Validators.required]
     });
@@ -55,12 +55,12 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   initializeBankDetailsupdateForm(): void {
     const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
     this.bankDetailsUpdateForm = this.fb.group({
-      bankNameupdate: ['',[ Validators.required,]],
-      accountNameupdate: ['', [Validators.required,Validators.maxLength(50)]],
-      accountNoupdate: ['', [Validators.required,this.invalidBankNumberValidator(), Validators.pattern('^[0-9]{12,20}$')]],
-      ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'),this.invalidIfscCodeValidator()]],
+      bankNameupdate: ['', [Validators.required,]],
+      accountNameupdate: ['', [Validators.required, Validators.maxLength(50)]],
+      accountNoupdate: ['', [Validators.required, this.invalidBankNumberValidator(), Validators.pattern('^[0-9]{12,20}$')]],
+      ifscCodeupdate: ['', [Validators.required, Validators.pattern('^[A-Za-z0-9]{11}$'), this.invalidIfscCodeValidator()]],
       isPrimaryupdate: [false],
-      attachmentupdate: [null,attachmentValidators]
+      attachmentupdate: [null, attachmentValidators]
     });
   }
 
@@ -109,11 +109,11 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   }
   //Bank Details
   getbankempid() {
-    this.loading=true
+    this.loading = true
     let EmpId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`BankDetail/${EmpId}`).subscribe({
       next: (data: any) => {
-        this.loading=false
+        this.loading = false
         this.bankDetails.next(data);
       },
     });
@@ -122,7 +122,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
 
 
   onBankProofSelected(event: any): void {
-    this.displayblankdocument=null
+    this.displayblankdocument = null
     const file = event.target.files[0];
     if (file) {
       const fileSizeInMB = file.size / (1024 * 1024);
@@ -135,10 +135,10 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
         this.bankDetailsForm.get('attachment')?.markAsUntouched();
         this.bankDetailsUpdateForm.get('attachmentupdate')?.reset();
         this.bankDetailsUpdateForm.get('attachmentupdate')?.markAsUntouched();
-       
+
         return;
       }
-     
+
     }
     const timestamp = new Date().getTime();
     this.bankdocument = this.renameFileAttachment(
@@ -157,7 +157,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
 
   postBankDetails(): void {
     if (this.bankDetailsForm.valid) {
-      this.spinnerLoader=true
+      this.spinnerLoader = true
       const payload = this.createBankDetailsPayload();
 
       if (this.bankdocument) {
@@ -177,7 +177,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
       .subscribe({
         next: (data: any) => {
           if (data) {
-            payload.docUrl= data.path;
+            payload.docUrl = data.path;
             this.saveBankDetails(payload);
           }
         },
@@ -191,15 +191,15 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
     this.subscription = this.http.postdata('BankDetail', payload).subscribe({
       next: () => {
         this.getbankempid()
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         this.bankDetailsForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank details added successfully')
       },
       error: (err: any) => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         console.error('Error saving bank details:', err);
-        this.conformationPopup.openErrorModal(err.error.Message ||'Bank details added failed')
+        this.conformationPopup.openErrorModal(err.error.Message || 'Bank details added failed')
       }
     });
   }
@@ -212,7 +212,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
       accountNo: this.bankDetailsForm.get('accountNo')?.value,
       ifscCode: this.bankDetailsForm.get('ifscCode')?.value,
       isPrimary: this.bankDetailsForm.get('isPrimary')?.value || false,
-     
+
     };
   }
   //download Functionality
@@ -276,12 +276,16 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
       isPrimaryupdate: bankDetail.isPrimary,
 
     });
-    this.displayblankdocument= bankDetail.docUrl
-    ? bankDetail.docUrl.split('/').pop()
-    : null;
-   
+    this.displayblankdocument = bankDetail.docUrl
+      ? bankDetail.docUrl.split('/').pop()
+      : null;
+
     this.bankdocument = bankDetail.docUrl
-   
+    // Dynamically update validators for the attachment field
+    const attachmentValidators = this.displayblankdocument ? [] : [Validators.required];
+    this.bankDetailsUpdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
+    this.bankDetailsUpdateForm.get('attachmentupdate')?.updateValueAndValidity();
+
 
     // Open the modal
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -290,12 +294,12 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   updateBankDetails(): void {
     if (this.bankDetailsUpdateForm.valid) {
       const formData = this.bankDetailsUpdateForm.value;
-      this.spinnerLoader=true
+      this.spinnerLoader = true
       // Prepare the payload
       const payload = {
         bankId: this.bankid,
         empId: parseInt(this.empinfo.employeeId),
-        docUrl:this.bankdocument,
+        docUrl: this.bankdocument,
         bankName: formData.bankNameupdate?.bankName1 || formData.bankNameupdate, // Extract bank name
         accountName: formData.accountNameupdate, // Account holder's name
         accountNo: formData.accountNoupdate, // Account number
@@ -339,21 +343,21 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
   saveUpdatedBankDetails(payload: any): void {
     this.subscription = this.http.postdata(`BankDetail/Update`, payload).subscribe({
       next: (data: any) => {
-       this.spinnerLoader=false;
+        this.spinnerLoader = false;
         this.bankDetailsUpdateForm.reset();
         this.modalService.dismissAll();
         this.conformationPopup.openSuccessModal('Bank details updated successfully');
         this.getbankempid(); // Refresh the bank details list
       },
       error: (reason: any) => {
-        this.spinnerLoader=false
+        this.spinnerLoader = false
         console.error('Error updating bank details:', reason);
-        this.conformationPopup.openErrorModal( reason.error.Message ||'Failed to update bank details. Please check all fields.');
+        this.conformationPopup.openErrorModal(reason.error.Message || 'Failed to update bank details. Please check all fields.');
       }
     });
   }
   opendeletModal(content: any, bankDetail: any): void {
-    this.bankid = bankDetail.bankId; 
+    this.bankid = bankDetail.bankId;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
   bankDelete(): void {
@@ -361,7 +365,7 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
       console.error('Bank ID is not set. Cannot delete bank details.');
       return;
     }
-  
+
     this.subscription = this.http
       .getData(`BankDetail/deletebyid/${this.bankid}`)
       .subscribe({
@@ -369,8 +373,8 @@ export class BankDetailsComponent implements OnInit,OnDestroy {
           console.log('Bank details deleted successfully:', data);
           this.getbankempid(); // Refresh the bank details list
           this.modalService.dismissAll(); // Close the modal
-        this.conformationPopup.openSuccessModal('Bank details deleted successfully')
-       
+          this.conformationPopup.openSuccessModal('Bank details deleted successfully')
+
         },
         error: (reason: any) => {
           console.error('Error deleting bank details:', reason);

@@ -12,6 +12,8 @@ import { Select } from 'primeng/select';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { RbacService } from '../../services/rbac.service';
+
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-all-assets-list',
@@ -82,7 +84,7 @@ export class AllAssetsListComponent {
     private readonly http: HttpService,
     private readonly modalService: NgbModal,
     private readonly router: Router,
-    public conformationPopup: OpenModalService, public formValidation: FormValidationService,
+    public conformationPopup: OpenModalService, public formValidation: FormValidationService,public rbac: RbacService,
     private readonly datepipe: DatePipe,
    
     config: NgbModalConfig) {
@@ -192,6 +194,7 @@ export class AllAssetsListComponent {
       reason: [null, [Validators.maxLength(250)]]
     })
   }
+
 
   purchaseDateEqualWarrantyDateValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -1508,10 +1511,42 @@ allZeroesIfMaxLength(): ValidatorFn {
     openConfirmationModal(content: any) {
       this.modalService.open(content, {centered: true,backdrop: 'static'});
     }
+
     cleardata(){
       this.assetForm.reset();
         this.modalService.dismissAll();
       }
+       canPerformActionsOnDesk(asset: any): boolean {
+    const status = asset?.status;
+
+    return (
+      (status === 'Available' && (
+        this.rbac.allowedToAccess('All Allocate Asset.view') ||
+        this.rbac.allowedToAccess('All Inactive Asset.view') ||
+        this.rbac.allowedToAccess('All Mark as Maintenance.view') ||
+        this.rbac.allowedToAccess('All Transfer Asset.view') ||
+        this.rbac.allowedToAccess('All View Asset Details.view') ||
+        this.rbac.allowedToAccess('All Update Asset Details.view')
+      ))
+       ||
+      (status === 'Allocated' && (
+        this.rbac.allowedToAccess('All Reallocate Asset.view') ||
+        this.rbac.allowedToAccess('All Release Asset.view') ||
+         this.rbac.allowedToAccess('All View Asset Details.view') ||
+        this.rbac.allowedToAccess('All Update Asset Details.view')
+      )) ||
+      (status === 'Inactive' &&(
+         this.rbac.allowedToAccess('All Mark as Active Asset.view')||
+        this.rbac.allowedToAccess('All View Asset Details.view')||
+       this.rbac.allowedToAccess('All Update Asset Details.view')
+      ))||
+      (status === 'Under Maintenance' &&(
+        this.rbac.allowedToAccess('All Mark as Available Asset.view')||
+         this.rbac.allowedToAccess('All View Asset Details.view')||
+         this.rbac.allowedToAccess('All Update Asset Details.view')
+        )) 
+    );
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

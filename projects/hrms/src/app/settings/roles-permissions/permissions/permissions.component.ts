@@ -10,9 +10,10 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SettingsRolePermissionsModuleTabsComponent } from "../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
+import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 @Component({
   selector: 'app-permissions',
-  imports: [CommonModule, FormsModule, AutoCompleteModule, SettingsRolePermissionsModuleTabsComponent],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, SettingsRolePermissionsModuleTabsComponent, DataLoaderContentComponent],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -28,6 +29,7 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   filteredRole: any | undefined;
   destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('stagingLoadingModal') stagingLoadingModal: any;
+  dataLoad: boolean = false;
 
   constructor(
     private http: HttpService, 
@@ -37,10 +39,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    if (this.roleToFilter === null) {
-      this.permissions = JSON.parse(JSON.stringify(permissionsData));
-    }
-    this.getAllroles();
+    this.dataLoad = true;
+    setTimeout(() => {
+      if (this.roleToFilter === null) {
+        this.permissions = JSON.parse(JSON.stringify(permissionsData));
+      }
+      this.getAllroles();
+      this.dataLoad = false;
+    });
   }
 
   getAllroles(): void {
@@ -150,17 +156,14 @@ export class PermissionsComponent implements OnInit, OnDestroy {
   isCheckboxDisabled(field: string, action: string): boolean {
     const disabledOptions = ['Employee Basic Information', 'Employee Current Address', 'Employee Permanent Address', 'Employee Contact Details',
                              'Employee Emergency Contact Details', 'Employee Onboarding Documents', 'Basic Information', 'Current Address', 'Permanent Address', 'Contact Details',
-                             'Emergency Contact Details', 'Onboarding Documents','Employee Team Members','Team Members','Employee Onboarding Request','Separation Request','Employee Separation Request'
+                             'Emergency Contact Details', 'Onboarding Documents','Employee Team Members','Team Members','Request for Onboard Button','Separation Request',
+                             'Employee Separation Request','Employee Info Desk Details','Employee Info Asset Details','Employee Info Asset Details','Employee Info Desk Details',
+                             'Employee Info Pre-Onboarding Details','Employee Info Offboarding Details','Employee Info Separation Request Details',
+                             'Employee Info No Due Clearance Details','Employee Info Probation Details','Change RM Button','Employee Info Onboarding Request Details',
+                             'No Due Form','Employee Info Separation Request','Employee Info Change RM Button','Employee Info Change TM Button'
                             ];
 
     return disabledOptions.includes(field) && (action === 'delete' || action === 'create');
-}
-
-isDisabled(field: string, action: string): boolean {
-  const viewOnlyFields = ['Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Load Entitlements Tab', 'Attendance Eligibility Criteria Tab', 'Comp Off Entitlement Tab',
-    'WFH Entitlement Tab', 'Permission Elgibility Tab', 'Attendance Regularization Eligibility Tab'
-  ];
-  return viewOnlyFields.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
 }
 
   changePermissions() {
@@ -175,46 +178,13 @@ isDisabled(field: string, action: string): boolean {
     }
   }
 
-  // preparePayload(roleTypeId: string): any[] {
-  //   return this.permissions
-  //     .filter(p => p.View || p.Update || p.Create || p.Delete)
-  //     .map(p => ({
-  //       roleTypeId: roleTypeId,
-  //       section: p.section,
-  //       permission: p.fields,
-  //       view: p.View,
-  //       update: p.Update,
-  //       create: p.Create,
-  //       delete: p.Delete
-  //     }));
-  // }
-
-  // permissionsCreate() {
-  //   this.modalService.open(this.stagingLoadingModal, { centered: true });
-  //   const payload = this.preparePayload(this.roleId);
-
-  //   this.http.postdata('FusionRoleClaims', payload).subscribe({
-  //     next: (data) => {
-  //       this.modalService.dismissAll();
-  //       this.modal.openSuccessModal('Permissions updated successfully!');
-  //     },
-  //     error: (err) => {
-  //       console.error('Error posting permissions:', err);
-  //       this.modalService.dismissAll();
-  //       this.modal.openErrorModal('Failed to update permissions!');
-  //     },
-  //     complete: () => {
-  //     }
-  //   });
-  // }
-
   permissionsCreate() {
     this.modalService.open(this.stagingLoadingModal, { centered: true });
     const payload = this.preparePayload(this.roleId);
     this.http.postdata("FusionRoleClaims/rolePermissions", payload).subscribe({
       next: (data) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal("Permissions updated successfully!");
+        this.modal.openSuccessModal("Permissions updated successfully");
       },
       error: (err) => {
         console.error("Error posting permissions:", err);
@@ -249,6 +219,41 @@ isDisabled(field: string, action: string): boolean {
       }
     }
     return claims;
+  }
+
+  isDisabled(field: string, action: string): boolean {
+    const viewOnlyFields = ['Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Load Entitlements Tab', 'Attendance Eligibility Criteria Tab', 'Comp Off Entitlement Tab',
+      'WFH Entitlement Tab', 'Permission Elgibility Tab', 'Attendance Regularization Eligibility Tab', 'Shifts Published Tab', 'Policies Published Tab', 'Holidays Published Tab',
+      'Weekends Published Tab', 'Expense Allowed Days', 'DST Published Tab', 'Leave Category Published Tab','Active Forms','Inactive Forms','Draft Forms', 'Desk Allocation - Inactive',
+      'Desk Allocation - Create', 'Team Tickets Tab'
+    ];
+    return viewOnlyFields.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
+  }
+  
+  isActionEnabled(field: string, action: string): boolean {
+    const enabledTabs = ['Document Tab', 'NoDue Clearance Tab', 'Leave Allocation Tab', 'Flexible Leave Allocation Tab', 'Dynamic Forms Module', 'Desk Allocation - All', 
+      'Manage Weekends Tab', 'Manage DST Tab', 'My Info Job Details', 'My Info Previous Experience Details', 'My Info Certification Details', 
+      'Employee Info Onboarding Details', 'Employee Info Job Details', 'Employee Info Previous Experience Details', 'Employee Info Certification Details', 'Employee Info Compensation Details',
+    'Draft Tab'];
+    return enabledTabs.includes(field) && (action === 'Create' || action === 'Update' || action === 'Delete');
+  }
+
+  isFieldDisabled(field: string, permission: string): boolean {
+    if (field === 'Asset Management - Create') {
+      return permission !== 'View'; // Only 'View' is enabled
+    }
+  
+    if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
+      return permission !== 'View'; // Disable only 'Create'
+    }
+  //  if (['Asset Management - All', 'Asset Management - Available'].includes(field)) {
+  //     return permission === 'Update'; // Disable only 'Create'
+  //   }
+    if (['Asset Management - Under Maintenance', 'Asset Management - Inactive','Asset Management - Allocated'].includes(field)) {
+      return !['View'].includes(permission); // Enable only 'View' and 'Update'
+    }
+  
+    return false; // Default: all enabled
   }
 
   ngOnDestroy(): void {

@@ -5,6 +5,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { TabsModule } from 'primeng/tabs';
 import { IJob } from '../../../Interfaces/letters-model';
 import { HttpService } from '../../../services/http.service';
+import { RbacService } from '../../../services/rbac.service';
 
 @Component({
   selector: 'app-wfh-approvaltabs',
@@ -20,15 +21,15 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
   approvedWFHRequestsCount = 0;
   processedWFHRequestsCount = 0;
   navTabs: any[] = [
-    { label: 'Waiting For Approval', link: 'waiting-for-approval', count:this.waitingForApprovalWFHCount },
-    { label: 'Approved', link: 'approved', count: this.approvedWFHRequestsCount },
-    { label: 'Processed', link: 'processed', count: this.processedWFHRequestsCount },
-    { label: 'Rejected', link: 'rejected', count: this.rejectedWFHRequestsCount },
+    { label: 'Waiting For Approval', link: 'waiting-for-approval', count:this.waitingForApprovalWFHCount,permission: { feature: 'Waiting For Approval (WFH)', action: 'view' } },
+    { label: 'Approved', link: 'approved', count: this.approvedWFHRequestsCount,permission: { feature: 'Approved (WFH)', action: 'view' } },
+    { label: 'Processed', link: 'processed', count: this.processedWFHRequestsCount,permission: { feature: 'Processed (WFH)', action: 'view' } },
+    { label: 'Rejected', link: 'rejected', count: this.rejectedWFHRequestsCount,permission: { feature: 'Rejected (WFH)', action: 'view' } },
   ];
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(public readonly router: Router, private http: HttpService) {
+  constructor(public readonly router: Router, private http: HttpService,public rbac: RbacService) {
     effect(() => {
       if (this.http.tirggerCountSignal().wfh) {
         this.getCompOffRequest();

@@ -53,8 +53,8 @@ export class AttendanceRegularizationRequestTabsComponent implements OnInit, OnD
       next: (data: ApprovalStatusCount[]) => {
         this.pendingApprovalCount = data.find(item => item.moduleId === moduleId) ? [data.find(item => item.moduleId === moduleId)!] : [];
         this.navTabs = [
-          { label: 'For You ', link: 'for-you', count: this.pendingApprovalCount.at(0)?.forYou ?? 0,permission: { feature: 'For You (Desk Requests)', action: 'view' } },
-          { label: 'For Your Role', link: 'for-your-role', count: this.pendingApprovalCount.at(0)?.forYourRole ?? 0 ,permission: { feature: 'For Role (Desk Requests)', action: 'view' }},
+          { label: 'For You ', link: 'for-you', count: this.pendingApprovalCount.at(0)?.forYou ?? 0,permission: { feature: 'For You (Regularization)', action: 'view' } },
+          { label: 'For Your Role', link: 'for-your-role', count: this.pendingApprovalCount.at(0)?.forYourRole ?? 0 ,permission: { feature: 'For Role (Regularization)', action: 'view' }},
         ];
         this.navTabs = this.navTabs.filter(
       (tab) =>

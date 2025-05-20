@@ -117,7 +117,7 @@ export class RelievingLetterComponent {
   }
 
   getAuthorityDetails() {
-    let offertype = 'Releving Letter';
+    let offertype = 'Relieving Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         this.signatureAuthorityDetails = data.map((authority: any) => ({

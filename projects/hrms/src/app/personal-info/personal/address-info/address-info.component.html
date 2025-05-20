@@ -104,9 +104,10 @@
         </div>
         <!-- Same as Current Address Checkbox -->
         <div class="form-check custom-label mb-3 mx-3">
-          <input class="form-check-input custom-check" type="checkbox" id="sameAddress"
-            formControlName="sameAsPermanent" (change)="copyCurrentAddress($event)" />
-          <label class="form-check-label" for="sameAddress">Same as Current Address</label>
+          <!-- <input class="form-check-input custom-check" type="checkbox" id="sameAddress"
+            formControlName="sameAsPermanent" (change)="copyCurrentAddress($event)" /> -->
+            <input type="checkbox" formControlName="sameAsPermanent" class="form-check-input custom-check" (change)="copyCurrentAddress($event)">
+          <label class="form-check-label custom-label mt-1" for="sameAddress">Same as Current Address</label>
         </div>
 
         <!-- Permanent Address Fields -->

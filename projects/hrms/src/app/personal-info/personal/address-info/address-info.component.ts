@@ -25,16 +25,7 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   permanentAddress: any;
   subscription!: Subscription
   empinfo: any
-  bloodGroups = [
-    { name: 'A+' },
-    { name: 'A-' },
-    { name: 'B+' },
-    { name: 'B-' },
-    { name: 'AB+' },
-    { name: 'AB-' },
-    { name: 'O+' },
-    { name: 'O-' }
-  ];
+
   employedata={} as any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
@@ -282,10 +273,6 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     const isChecked = (event.target as HTMLInputElement).checked;
   
     if (isChecked) {
-      // Set the checkbox value to true
-      this.addressForm.get('sameAsPermanent')?.setValue(true, { emitEvent: false });
-  
-      // Copy currentAddress fields to permanentAddress
       this.addressForm.get('permanentAddress')?.patchValue({
         addressLine1: this.addressForm.get('currentAddress.addressLine1')?.value,
         addressLine2: this.addressForm.get('currentAddress.addressLine2')?.value,
@@ -295,10 +282,6 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
         zipCode: this.addressForm.get('currentAddress.zipCode')?.value,
       });
     } else {
-      // Set the checkbox value to false
-      this.addressForm.get('sameAsPermanent')?.setValue(false, { emitEvent: false });
-  
-      // Restore original permanentAddress fields
       this.addressForm.get('permanentAddress')?.patchValue({
         addressLine1: this.permanentAddress?.addressLine1 || '',
         addressLine2: this.permanentAddress?.addressLine2 || '',
@@ -308,8 +291,10 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
         zipCode: this.permanentAddress?.zipCode || '',
       });
     }
+  
     this.checkIfAddressesAreSame();
   }
+  
 
 
   ngOnDestroy(): void {

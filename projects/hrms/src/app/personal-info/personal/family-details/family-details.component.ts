@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { IRelation } from '../../../Interfaces/personal-modal';
+import { Ipersonal, IRelation } from '../../../Interfaces/personal-modal';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -35,7 +35,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   selectedFamilyMemberid:any
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
   loading=false
-    employedata={} as IProbationEmployees;
+   employedata={} as  Ipersonal;
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, 
     private http: HttpService, private fb: FormBuilder,
     public formValidation: FormValidationService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
@@ -44,7 +44,6 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
     this.initializeFamilyDetailsForm();
     this.initializeFamilyDetailsupdateForm();
     this.getFamilyRelations();
-  
     this.getEmpInfoFromRoute();
   }
  
@@ -53,8 +52,6 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
-
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
@@ -150,7 +147,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.employedata = data as IProbationEmployees;;
+        this.employedata = data ;
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
       },

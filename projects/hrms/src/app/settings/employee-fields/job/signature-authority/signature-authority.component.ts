@@ -203,7 +203,7 @@ export class SignatureAuthorityComponent implements OnInit {
     };
   
     this.subscription = this.http
-      .employeeSignatureAuthority('SignaturesList/update', [payload])
+      .employeeSignatureAuthority('SignaturesList/update', payload)
       .subscribe({
         next: () => {
           modalRef.dismiss();
@@ -230,15 +230,13 @@ export class SignatureAuthorityComponent implements OnInit {
   deleteSignatureAuthority(modal: any) {
     if (!this.selectedDeleteserving?.id) return;
   
-    const idToDelete = this.selectedDeleteserving.id;
-  
     this.subscription = this.http
-      .deleteSignatureEmployee('SignaturesList/delete', idToDelete)
+      .deleteSignatureEmployee(`SignaturesList/delete/${this.selectedDeleteserving.id}`,this.selectedDeleteserving.id)
       .subscribe({
         next: () => {
           modal.dismiss();
-          this.getAllSignatureEmployees();
           this.conformationPopup.openSuccessModal('Signature Authority deleted successfully');
+          this.getAllSignatureEmployees();
         },
         error: () => {
           modal.dismiss();

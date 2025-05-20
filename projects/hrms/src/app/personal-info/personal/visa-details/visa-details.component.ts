@@ -44,7 +44,6 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
    this.getEmpInfoFromRoute();
     this.getCountry();
     this.getvisatype();
-   
     this.intitionfrom()
     this.intitionupdatefrom()
     this.visaForm.get('issueddate')?.valueChanges.subscribe(() => {
@@ -62,7 +61,6 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
 
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');

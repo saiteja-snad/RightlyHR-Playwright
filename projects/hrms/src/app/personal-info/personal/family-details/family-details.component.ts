@@ -44,7 +44,6 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
     this.initializeFamilyDetailsForm();
     this.initializeFamilyDetailsupdateForm();
     this.getFamilyRelations();
-  
     this.getEmpInfoFromRoute();
   }
  
@@ -53,8 +52,6 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
-
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();

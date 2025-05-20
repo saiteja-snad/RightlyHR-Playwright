@@ -52,9 +52,6 @@ export class SidenavComponent implements OnInit {
   selectedDropdownModule: any = null;
   filteredModules: any[] = [];
   spinnerLoader = false;
-<<<<<<< HEAD
-  constructor(private authService: AuthService,private http: HttpService, private modalservie: NgbModal, public rbac: RbacService, private router: Router, private accessNav: AccessNavigationService) {
-=======
   @ViewChild('logoutpopup') logoutpopup: any;
 
   constructor(private authService: AuthService, private modalservie: NgbModal, public rbac: RbacService,
@@ -65,7 +62,6 @@ export class SidenavComponent implements OnInit {
       this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
     this.setSelectedModuleFromRoute();
->>>>>>> 4c97012562c01f68f6dba12f2fc990740ffc0083
   }
 
   onLogout() {
@@ -74,18 +70,7 @@ export class SidenavComponent implements OnInit {
     window.location.href = "https://login.microsoftonline.com/common/oauth2/v2.0/logout";
   }
 
-  clearPersonalInfoStorage() {
-    if (localStorage.getItem('personaldata')) {
-      localStorage.removeItem('personaldata');
-      this.http.setBasicDetails();
-      this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-        this.router.navigate(['/personalinfo/personal/basic-info']);
-      });
-    } else { 
-      this.goToAccessibleRoute('/personalinfo');
-    }
- 
-  }
+
 
 
   close() {

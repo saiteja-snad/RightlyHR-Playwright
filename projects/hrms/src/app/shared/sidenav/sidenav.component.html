@@ -14,19 +14,11 @@
             }
             <!--My Info-->
             @if(this.rbac.allowedToAccess('My Info.view')){
-<<<<<<< HEAD
-                <li class="nav-item" (click)="goToAccessibleRoute('/myinfo');"
-                    [class.active-nav-link]="isActiveRoute('/myinfo')">
-                    <i class="bi bi-person-vcard custom-icon"></i> My Info
-                </li>
-
-=======
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/myinfo')">
                 <img [src]="isActiveRoute('/myinfo') ? 'main-menu-icons/user-account-color.png' : 'main-menu-icons/user-account.png'"
                     alt="Icon" class="main-menu-icon">My Info
             </li>
->>>>>>> 4c97012562c01f68f6dba12f2fc990740ffc0083
             }
             <!--Events-->
             @if(this.rbac.allowedToAccess('Events.view')){

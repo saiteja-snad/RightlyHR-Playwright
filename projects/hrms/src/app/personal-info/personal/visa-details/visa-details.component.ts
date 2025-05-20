@@ -81,7 +81,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
       countryname:[null,Validators.required],
       issueddate: [null, Validators.required],
       expirydate: [null, Validators.required],
-      notes: [''],
+      notes: [null],
     });
   }
 
@@ -92,7 +92,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
       countryname:[null,Validators.required],
       issueddate: [null, Validators.required],
       expirydate: [null, Validators.required],
-      notes: [''],
+      notes: [null],
     });
   }
 
@@ -191,7 +191,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
       employeeId: this.empinfo.employeeId, // set or get dynamically
       issuedcountry: formValue.countryname,
       vstatus: 'Active',
-      note:formValue.note
+      note:formValue.notes
     };
   
     this.http.postdata('Visa',payload).subscribe({
@@ -248,13 +248,13 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   }
   openModalupdate(content: any, visaDetails: any): void {
     this.selecteVisaId=visaDetails.id
-
+console.log(visaDetails)
     this.visaupdateForm.patchValue({
       visatype: visaDetails.visatype,         // assuming value is "B1", "H1B", etc.
       countryname: visaDetails.issuedcountry, // make sure the value matches the `optionValue`
       issueddate: this.formatDateToLocal(visaDetails.issueddate),
       expirydate: this.formatDateToLocal(visaDetails.expirydate),
-      notes: visaDetails.notes || ''          // default to empty if notes are null/undefined
+      notes: visaDetails.note || null          // default to empty if notes are null/undefined
     });
    
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -274,7 +274,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
       employeeId: this.empinfo.employeeId,
       issuedcountry: formValue.countryname,
       vstatus: 'Active',
-      note:formValue.note
+      notes:formValue.note
     };
   
     this.http.postdata('Visa/UPDATER',payload).subscribe({

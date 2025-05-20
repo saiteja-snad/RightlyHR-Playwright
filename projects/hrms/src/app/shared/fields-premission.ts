@@ -64,7 +64,7 @@ export const EMPLOYEE_INFO_CLAIMS = [
   {
     permission: 'recall',
     claim: 'Employee Recall'
-  },  {
+  }, {
     permission: 'raisenodue',
     claim: 'Employee Raise No Due'
   },
@@ -114,7 +114,7 @@ export const EMPLOYEE_INFO_CLAIMS = [
   },
 
   { permission: 'documents', claim: 'Employee Info Documents Tab' },
-  {permission: 'upload', claim: 'Employee Info Documents Upload File' },
+  { permission: 'upload', claim: 'Employee Info Documents Upload File' },
 
   // Team Members
   { permission: 'team-members', claim: 'Employee Info Team Members Tab' },
@@ -122,7 +122,7 @@ export const EMPLOYEE_INFO_CLAIMS = [
 
   { permission: 'changesrm', claim: 'Employee Info Change RM Button' },
   { permission: 'chtm', claim: 'Employee Info Change TM Button' },
-  
+
 
 
   // Onboard Request
@@ -193,7 +193,7 @@ export const MY_INFO_CLAIMS = [
     permission: 'separation',
     claim: 'My Info Separation Request Button'
   },
-  
+
   {
     permission: 'earlyrelieving',
     claim: 'Early relieving'
@@ -201,7 +201,8 @@ export const MY_INFO_CLAIMS = [
   {
     permission: 'recall',
     claim: 'Recall'
-  },  {
+  }, 
+  {
     permission: 'raisenodue',
     claim: 'Raise No Due'
   },
@@ -244,7 +245,7 @@ export const MY_INFO_CLAIMS = [
     claim: 'My Info Asset Details'
   },
   { permission: 'documents', claim: 'My Info Documents Tab' },
-  {permission: 'upload', claim: 'My Info Documents Upload File' },
+  { permission: 'upload', claim: 'My Info Documents Upload File' },
 
 
   { permission: 'team-members', claim: 'My Info Team Members Tab' },

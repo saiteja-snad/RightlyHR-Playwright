@@ -526,7 +526,8 @@
                             || per.fields === 'Reports' || per.fields === 'Policies' 
                             || per.fields === 'Calendar'  || per.fields === 'IT Support' 
                             || per.fields === 'Org Hierarchy' || per.fields === 'PMS' 
-                            || per.fields === 'PMS Configurations' || per.fields === 'Desk Allocation' || per.fields === 'Asset Management'">
+                            || per.fields === 'PMS Configurations' || per.fields === 'Desk Allocation' || per.fields === 'Asset Management'
+                            || per.fields === 'Holidays'">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -648,11 +649,11 @@
 
                     <!-- Calendar Module Tabs -->
                     <tr>
-                        <th colspan="5" class="custom-header">Calender Module</th>
+                        <th colspan="5" class="custom-header">Holidays Module</th>
                     </tr>
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center"
-                            *ngIf="per.fields === 'Calender Tab' || per.fields === 'Holidays Tab'">
+                            *ngIf="per.fields === 'Optional Holidays Tab' || per.fields === 'Public Holidays Tab'">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -2809,31 +2810,6 @@
                         <tr class="text-align-center"
                             *ngIf="per.fields === 'Assessor Create' || per.fields === 'Assessor Update(Status - Created)' ||  per.fields === 'Assessor Delete(Status - Created)' || 
                             per.fields === 'Assessor Update(Status - Initialted)' || per.fields === 'Assessor Update(Status - Review On Hold)'" >
-
-                            <td class="text-align-center">{{ per.fields }}</td>
-                            <td scope="row">
-                                <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
-                                    (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
-                            </td>
-                            <td scope="row">
-                                <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
-                            </td>
-                            <td scope="row">
-                                <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
-                            </td>
-                            <td scope="row">
-                                <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
-                            </td>
-                        </tr>
-                    </ng-container>
-
-                    <!--Holidays Sub-Tabs-->
-                    <tr>
-                        <th colspan="5" class="custom-header">Holiday SubTabs</th>
-                    </tr>
-                    <ng-container *ngFor="let per of permissions">
-                        <tr class="text-align-center"
-                            *ngIf="per.fields === 'Holidays(Optional)' || per.fields === 'Holidays(Public)'" >
 
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">

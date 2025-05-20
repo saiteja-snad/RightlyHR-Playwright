@@ -39,8 +39,8 @@
                     <i class="bi bi-three-dots-vertical"></i>
                   </a>
                   <ul class="dropdown-menu custom-dropdown-menu">
-                    <li><a class="dropdown-item"  (click)="openupdateModal(viewDetailsModal);viewItem(exp.expenses_ID)"><i
-                          class="bi bi-paperclip me-2"></i>View</a></li>
+                    <li><a class="dropdown-item"  (click)="openupdateModal(viewDetailsModal);viewItem(exp.expenses_ID)">
+                      <i class="bi bi-paperclip me-2"></i>View</a></li>
                   </ul>
                 </div>
               </td>
@@ -97,7 +97,6 @@
             <td>{{ item?.item_Name }}</td>
             <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
             <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
-
             <td>{{ item?.status }}</td>
             <td>{{ item?.receipt_Number }}</td>
             <td class="text-center">

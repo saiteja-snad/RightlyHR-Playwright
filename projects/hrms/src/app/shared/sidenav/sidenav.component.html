@@ -2,32 +2,94 @@
     <div class="sidenav-header text-center w-100 px-0">
         <img src="logos/sidenav-logo.png" alt="company logo" class="logo-img">
     </div>
-    <hr class="white-line">
-    <div class="sidnav-main-content px-2">
+    <div class="sidnav-main-content">
         <ul class="nav-items-list text-center ps-0">
+            <!--Dashboard-->
             @if(this.rbac.allowedToAccess('Dashboard.view')){
-            <li class="nav-item"  (click)="goToAccessibleRoute('/admin')" [class.active-nav-link]="isActiveRoute('/admin')">
-                <i class="bi bi-columns-gap custom-icon"></i>Dashboard
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/admin');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/admin')">
+                <img [src]="isActiveRoute('/admin')  ? 'main-menu-icons/dashboard-square-color.png' : 'main-menu-icons/dashboard-square.png'"
+                    alt="Icon" class="main-menu-icon">Dashboard
             </li>
             }
+            <!--My Info-->
             @if(this.rbac.allowedToAccess('My Info.view')){
+<<<<<<< HEAD
                 <li class="nav-item" (click)="goToAccessibleRoute('/myinfo');"
                     [class.active-nav-link]="isActiveRoute('/myinfo')">
                     <i class="bi bi-person-vcard custom-icon"></i> My Info
                 </li>
 
+=======
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/myinfo')">
+                <img [src]="isActiveRoute('/myinfo') ? 'main-menu-icons/user-account-color.png' : 'main-menu-icons/user-account.png'"
+                    alt="Icon" class="main-menu-icon">My Info
+            </li>
+>>>>>>> 4c97012562c01f68f6dba12f2fc990740ffc0083
             }
+            <!--Events-->
             @if(this.rbac.allowedToAccess('Events.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/events')" [class.active-nav-link]="isActiveRoute('/events')">
-                <i class="bi bi-calendar2-heart custom-icon"></i>Events
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/events');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/events')">
+                <img [src]="isActiveRoute('/events') ? 'main-menu-icons/calendar-favorite-color.png' : 'main-menu-icons/calendar-favorite.png'"
+                    alt="Icon" class="main-menu-icon">Events
             </li>
             }
+            <!--Time Off-->
             @if(this.rbac.allowedToAccess('Time-Off.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/time-off')" [class.active-nav-link]="isActiveRoute('/time-off')">
-                <i class="bi bi-clock-history custom-icon"></i>Time-off
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/time-off');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/time-off')">
+                <img [src]="isActiveRoute('/time-off') ? 'main-menu-icons/clock-color.png' : 'main-menu-icons/clock.png'"
+                    alt="Icon" class="main-menu-icon">Time-off
             </li>
             }
-            @if(this.rbac.allowedToAccess('Expenses.view')){
+            <!--Policies-->
+            @if(this.rbac.allowedToAccess('Policies.view')){
+            <li class="nav-item menu-item-clear" [routerLink]="['/policies']" (click)="resetDropdown()"
+                routerLinkActive="active-nav-link" #policies="routerLinkActive">
+                <img [src]="policies.isActive ? 'main-menu-icons/audit-color.png' : 'main-menu-icons/audit.png'"
+                    alt="Icon" class="main-menu-icon">Policies
+            </li>
+            }
+            <!--Calendar-->
+            @if(this.rbac.allowedToAccess('Calendar.view')){
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/calendar');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/calendar')">
+                <img [src]="isActiveRoute('/calendar') ? 'main-menu-icons/Union-color.png' : 'main-menu-icons/Union.png'"
+                    alt="Icon" class="main-menu-icon">Calendar
+            </li>
+            }
+            <!--Selected Item form the dropdown-->
+            <li class="nav-item selected-module-item" *ngIf="selectedDropdownModule"
+                (click)="goToAccessibleRoute(selectedDropdownModule.route)"
+                [class.active-nav-link]="isActiveRoute(selectedDropdownModule.route)">
+                <img [src]="selectedDropdownModule.activeIcon" alt="Icon" class="main-menu-icon">
+                {{ selectedDropdownModule.label }}
+            </li>
+            <!--Drop Menu Items-->
+            <li class="nav-item text-wrap align-items-center">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <a data-bs-toggle="dropdown" aria-expanded="false" class="custom-main-menu-toggle">
+                        <img src="main-menu-icons/white-dots.png" alt="Icons" class="more-menu-icon">
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <div class="grid-container">
+                            <div class="grid-item" *ngFor="let module of filteredModules; let i = index"
+                                (click)="selectDropdownModule(module)" [ngClass]="{'border-right-top': isInTopRow(i) && !isLastColumn(i),
+                            'border-right-middle': isInMiddleRow(i) && !isLastColumn(i),'border-right-bottom': isInLastRow(i) && !isLastColumn(i),
+                            'border-bottom-left': isFirstColumn(i) && !isInLastRow(i),'border-bottom-middle': isMiddleColumn(i) && !isInLastRow(i),
+                            'border-bottom-right': isLastColumn(i) && !isInLastRow(i)}">
+                                <img [src]="module.icon" alt="{{ module.label }}" class="dropdown-menu-icon" />
+                                <p class="dropdown-menu-text m-0 pt-2">{{ module.label }}</p>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
+            </li>
+
+            <!-- @if(this.rbac.allowedToAccess('Expenses.view')){
             <li class="nav-item" (click)="goToAccessibleRoute('/claimsandexpenses')" [class.active-nav-link]="isActiveRoute('/claimsandexpenses')">
                 <i class="bi bi-currency-dollar custom-icon"></i>Expenses
             </li>
@@ -35,11 +97,6 @@
             @if(this.rbac.allowedToAccess('Reports.view')){
             <li class="nav-item" (click)="goToAccessibleRoute('/reports')"  [class.active-nav-link]="isActiveRoute('/reports')">
                 <i class="bi bi-file-earmark-bar-graph-fill custom-icon"></i>Reports
-            </li>
-            }
-            @if(this.rbac.allowedToAccess('Policies.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/policies']" routerLinkActive="active-nav-link">
-                <i class="bi bi-file-earmark-text-fill custom-icon"></i>Policies
             </li>
             }
             @if(this.rbac.allowedToAccess('PMS.view')){
@@ -51,11 +108,6 @@
             <li class="nav-item text-wrap" (click)="goToAccessibleRoute('/pmsconfiguration')"  [class.active-nav-link]="isActiveRoute('/pmsconfiguration')">
                 <i class="bi bi-gear-fill custom-icon"></i>PMS Configurations
             </li>}
-            @if(this.rbac.allowedToAccess('Calendar.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/calendar')" [class.active-nav-link]="isActiveRoute('/calendar')">
-                <i class="bi bi-calendar custom-icon"></i>Calendar
-            </li>
-            }
             @if(this.rbac.allowedToAccess('Desk Allocation.view')){
             <li class="nav-item"  (click)="goToAccessibleRoute('/desk')"  [class.active-nav-link]="isActiveRoute('/desk')">
                 <i class="bi bi-pc-display custom-icon"></i>Desk<br>Allocation
@@ -74,13 +126,17 @@
             @if(this.rbac.allowedToAccess('Org Hierarchy.view')){
             <li class="nav-item p-2 mb-3" [routerLink]="['/organization-chart']" routerLinkActive="active-nav-link">
                 <i class="bi bi-diagram-3  custom-icon"></i>Hierarchy
-            </li>}
+            </li>} -->
         </ul>
     </div>
-    <div class="sidenav-footer-content text-center py-4">
-        <a class="logout-text" (click)="openlogoutModal()">
-            <i class="bi bi-box-arrow-right me-2"></i><span>Logout</span>
-        </a>
+    <div class="sidenav-footer-content">
+        <!-- <img src="logos/powered-by.png" alt="Powered By logo" class="powered-by-image"> -->
+        <div class="d-flex justify-content-center align-items-center cursor w-100 gap-1" (click)="openlogoutModal()">
+            <div>
+                <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon">
+            </div>
+            <div class="logout-text pt-1">Logout</div>
+        </div>
     </div>
 </div>
 

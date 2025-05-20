@@ -45,8 +45,6 @@ import {
   TEAM_PERFORMANCE_TABS,
   MY_PERFORMANCE_TABS,
   HOLIDAYS_SUB_TABS,
-  DASHBOARD_SUB_TABS,
-  SETTINGS_MAIN_HEADER_TABS,
   EMPLOYEE_INFO_PERSONAL_ROUTES,
   EMPLOYEE_INFO_JOB_ROUTES,
   INVITE_NEW_USER_TABS,
@@ -572,21 +570,13 @@ export class AccessNavigationService {
         break;
 
       case '/calendar':
-        if (this.rbac.allowedToAccess('Calender Tab.view')) {
-          return (route = '/calendar/calendarview');
-        }
-
-        if (this.rbac.allowedToAccess('Holidays Tab.view')) {
-          for (const item of HOLIDAYS_SUB_TABS) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
+        if (this.rbac.allowedToAccess('Calendar.view')) {
+          return (route = '/calendar');
         }
         break;
 
-      case '/calendar/holiday':
-        if (this.rbac.allowedToAccess('Holidays Tab.view')) {
+      case '/holidays':
+        if (this.rbac.allowedToAccess('Holidays.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
@@ -877,8 +867,8 @@ export class AccessNavigationService {
         }
         break;
 
-      case '/calendar/holiday':
-        if (this.rbac.allowedToAccess('Holidays Tab.view')) {
+      case '/holidays':
+        if (this.rbac.allowedToAccess('Holidays.view')) {
           for (const item of HOLIDAYS_SUB_TABS) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;

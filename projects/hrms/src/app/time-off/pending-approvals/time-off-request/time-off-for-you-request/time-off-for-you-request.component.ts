@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { LeaveApproval, LeaveApproverComment } from '../../../../Interfaces/pendingapprovalsmodel';
 import { DateformatPipe } from "../../../../Pipes/dateformat.pipe";
@@ -18,6 +18,7 @@ import { TimeoffsearchPipe } from "../../../../Pipes/timeoffsearch.pipe";
 import { TableModule } from 'primeng/table';
 import { environment } from '../../../../../environments/environment';
 import { SignalsService } from '../../../../services/signals.service';
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-time-off-for-you-request',
   imports: [
@@ -31,18 +32,22 @@ import { SignalsService } from '../../../../services/signals.service';
     NoDataFoundComponent,
     TimeoffsearchPipe,
     TableModule,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './time-off-for-you-request.component.html',
   styleUrl: './time-off-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
-export class TimeOffForYouRequestComponent implements OnInit,OnDestroy {
+export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   totalRecords = 100;
   first: any = 0;
   rows: any = 10;
   LOGIN: any;
-  subscription!: Subscription;
   searchValue: any;
+  spinnerLoader = false;
+  multiSelect = false;
+  issubmitdiable = false;
+  dataLoad = false;
   leaves = new BehaviorSubject<LeaveApproval[]>([]);
   approverComments = [] as LeaveApproverComment[];
   leaveEntitlementsList = {} as ICategoryDetails;
@@ -50,8 +55,6 @@ export class TimeOffForYouRequestComponent implements OnInit,OnDestroy {
   leavesselect!: LeaveApproval[];
   selectedProducts!: LeaveApproval[];
   @ViewChild('commentspopup') modalContent: any;
-  spinnerLoader = false;
-  multiSelect=false;
   destroy$: Subject<boolean> = new Subject<boolean>();
   options = [
     { label: 10, value: 10 },
@@ -72,32 +75,34 @@ export class TimeOffForYouRequestComponent implements OnInit,OnDestroy {
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
-    public rbac: RbacService,private signalService:SignalsService
-  ) {}
+    public rbac: RbacService, private signalService: SignalsService
+  ) { }
 
   ngOnInit(): void {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovals();
-    
   }
-  selectCheck(Value:any){
-    console.log(Value)
-  this.multiSelect = Array.isArray(Value) && Value.length > 0;
-  console.log(this.multiSelect)
+  
+  selectCheck(Value: any) {
+    this.multiSelect = Array.isArray(Value) && Value.length > 0;
   }
+
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
-    let moduleId=environment.leavesModuleId;
-    this.subscription = this.http
-      .getData(
-        `PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=EMP`
-      )
+    let moduleId = environment.leavesModuleId;
+    this.dataLoad = true;
+    this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${moduleId}&approvedType=EMP`).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.leaves.next(response.data);
           this.leavesselect = response.data;
         },
-        error: (reason) => console.log(reason),
+        error: (reason) => {
+           this.dataLoad = false;
+        },
+        complete: () => {
+          this.dataLoad = false;
+        },
       });
   }
 
@@ -107,8 +112,8 @@ export class TimeOffForYouRequestComponent implements OnInit,OnDestroy {
       backdrop: 'static',
     });
     let employeeId = Value.entity.leaveempId;
-    this.subscription = this.http
-      .getData(`LeaveEntitlements/employee/${employeeId}`)
+    this.http
+      .getData(`LeaveEntitlements/employee/${employeeId}`).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
           // Find the category based on leaveCategoryId
@@ -171,7 +176,6 @@ export class TimeOffForYouRequestComponent implements OnInit,OnDestroy {
     this.approverComments = value;
   }
 
-  issubmitdiable: boolean = false;
   ifreasonnull(Value: any) {
     if (!Value || !Value.trim()) {
       this.issubmitdiable = true;
@@ -179,82 +183,89 @@ export class TimeOffForYouRequestComponent implements OnInit,OnDestroy {
       this.issubmitdiable = false;
     }
   }
- canBulkApprove(): boolean {
+
+  canBulkApprove(): boolean {
     return this.selectedProducts?.every(
       (item) =>
         item.approvalHeader.currentapprovalStage !==
-          item.approvalHeader.finalapprovalStage 
-        
+        item.approvalHeader.finalapprovalStage
+
     );
   }
+
   canBulkProcess(): boolean {
     return this.selectedProducts?.every(
       (item) =>
         item.approvalHeader.currentapprovalStage ===
-          item.approvalHeader.finalapprovalStage
+        item.approvalHeader.finalapprovalStage
     );
   }
+
   rejectleave(rejectPopup: any, selecteddata: any) {
     this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
-    this.selectedProducts=[selecteddata];
+    this.selectedProducts = [selecteddata];
   }
-bulkapprove(approverPopup: any){
- this.modalService.open(approverPopup, {
+
+  bulkapprove(approverPopup: any) {
+    this.modalService.open(approverPopup, {
       centered: true,
       backdrop: 'static',
     });
-}
-bulkReject(rejectPopup: any){
- this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
-}
-bulkProcess(){
- this.handleProcess();
-}
+  }
+
+  bulkReject(rejectPopup: any) {
+    this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
+  }
+
+  bulkProcess() {
+    this.handleProcess();
+  }
+
   approveleave(approverPopup: any, selecteddata: any) {
     this.modalService.open(approverPopup, {
       centered: true,
       backdrop: 'static',
     });
-    this.selectedProducts=[selecteddata];
+    this.selectedProducts = [selecteddata];
   }
 
   processleave(selecteddata: any) {
-    this.selectedProducts=[selecteddata];
+    this.selectedProducts = [selecteddata];
 
-     setTimeout(() => {
-    this.handleProcess();
-       }, 500);
+    setTimeout(() => {
+      this.handleProcess();
+    }, 500);
   }
 
-  handleAccept(data: LeaveApproval) {
+  handleAccept(form: any) {
     this.spinnerLoader = true;
-    // let requestBody = {
-    //   status: "Approved",
-    //   comments: this.selectedLeaveData.comments,
-    //   approvedBy: this.LOGIN.employeeId.toString()
-    // }
     let approvedBy = this.LOGIN.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
 
-    let requestBody = this.selectedProducts.map((item) => ({
-      id: item.approvalHeader.id,
-      status: 'Approved',
+    let requestBody = {
+      requestProcessedBy: approvedBy,
+      status: "Approved",
       comments: comments,
-      approvedBy: approvedBy,
-      currentapprovalStage:item.approvalHeader.currentapprovalStage
-    }));
-    this.subscription = this.http
-      .putData(`PendingApproval/multiapprovereject`, requestBody)
+      moduleId: environment.leavesModuleId,
+      isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
+      headerRequests: this.selectedProducts.map((item) => ({
+        headerID: item.approvalHeader.id,
+        currentStage: item.approvalHeader.currentapprovalStage
+      }))
+    }
+    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
-            this.selectedProducts=[];
-             if(respone.data.success.length>0&&respone.data.failed.length<=0){
-             this.conformationPopup.openSuccessModal(
-            'Request Approved Successfully'
-          );
+          this.selectedProducts = [];
+          console.log(respone)
+          if (respone && respone.data.failureRecords.length <= 0) {
+            this.conformationPopup.openSuccessModal(
+              'Request Approved Successfully'
+            );
           }
-          else if(respone.data.failed.length>0){
-            this.conformationPopup.multiapprovalsModal(respone.data)
+          else if (respone.data.failureRecords.length > 0) {
+            this.conformationPopup.openSuccessModal(`Total Records Approved: ${respone.data.totalRecordCount}
+               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
           }
           setTimeout(() => {
             this.modalService.dismissAll();
@@ -262,42 +273,53 @@ bulkProcess(){
           }, 2000);
         },
         error: (reason: any) => {
-          this.conformationPopup.openErrorModal('Request Approval Failed');
+          if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else {
+            this.conformationPopup.openErrorModal('Request Approval Failed');
+          }
           this.spinnerLoader = false;
         },
         complete: () => {
+          form.resetForm();
           this.spinnerLoader = false;
-         this.signalService.timeoffForYouTriggerSignal.set(true);
-        this.signalService.timeoffForRoleTriggerSignal.set(true);
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+          this.signalService.timeoffForRoleTriggerSignal.set(true);
         },
       });
   }
 
-  handleReject() {
+  handleReject(form: any) {
     this.spinnerLoader = true;
     let approvedBy = this.LOGIN.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
-
-    let requestBody = this.selectedProducts.map((item) => ({
-      id: item.approvalHeader.id,
+    let requestBody = {
+      requestProcessedBy: approvedBy,
       status: 'Rejected',
       comments: comments,
-      approvedBy: approvedBy,
-      currentapprovalStage:item.approvalHeader.currentapprovalStage
-    }));
-    this.subscription = this.http
-      .putData(`PendingApproval/multiapprovereject`, requestBody)
+      isPlannedLeave: false,
+      moduleId: environment.leavesModuleId,
+      headerRequests: this.selectedProducts.map((item) => ({
+        headerID: item.approvalHeader.id,
+        currentStage: item.approvalHeader.currentapprovalStage
+      }))
+    }
+    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
-            this.selectedProducts=[];
-        console.log(respone.data)
-           if(respone.data.success.length>0&&respone.data.failed.length<=0){
-             this.conformationPopup.openSuccessModal(
-            'Request Rejected Successfully'
-          );
+          this.selectedProducts = [];
+          if (respone && respone.data.failureRecords.length <= 0) {
+            this.conformationPopup.openSuccessModal(
+              'Request Rejected Successfully'
+            )
           }
-          else if(respone.data.failed.length>0){
-            this.conformationPopup.multiapprovalsModal(respone.data)
+          else if (respone.data.failureRecords.length > 0) {
+            this.conformationPopup.openSuccessModal(`Total Records Rejected: ${respone.data.totalRecordCount}
+               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
           }
           setTimeout(() => {
             this.modalService.dismissAll();
@@ -305,45 +327,50 @@ bulkProcess(){
           }, 2000);
         },
         error: (reason: any) => {
-          this.conformationPopup.openErrorModal('Request Rejected Failed');
+          if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else {
+            this.conformationPopup.openErrorModal('Request Rejected Failed');
+          }
           this.spinnerLoader = false;
         },
         complete: () => {
+          form.resetForm();
           this.spinnerLoader = false;
-         this.signalService.timeoffForYouTriggerSignal.set(true);
-        this.signalService.timeoffForRoleTriggerSignal.set(true);
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+          this.signalService.timeoffForRoleTriggerSignal.set(true);
         },
       });
   }
 
-  handleProcess() { 
+  handleProcess() {
     let approvedBy = this.LOGIN.employeeId.toString();
-    let comments = this.selectedLeaveData?.comments || '';
-
-    let requestBody = this.selectedProducts.map((item) => ({
-      id: item.approvalHeader.id,
+    let requestBody = {
+      requestProcessedBy: approvedBy,
       status: 'Processed',
-      approvedBy: approvedBy,
-      currentapprovalStage:item.approvalHeader.currentapprovalStage
-    }));
-    // let requestBody = {
-    //   status: 'Processed',
-    //   approvedBy: this.LOGIN.employeeId.toString(),
-    // };
-    console.log(requestBody);
-    this.subscription = this.http
-      .putData(`PendingApproval/multiprocess`, requestBody)
+      moduleId: environment.leavesModuleId,
+      headerRequests: this.selectedProducts.map((item) => ({
+        headerID: item.approvalHeader.id,
+        currentStage: item.approvalHeader.currentapprovalStage
+      }))
+    }
+    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
-         // console.log(respone);
-          this.selectedProducts=[];
-             if(respone.data.success.length>0 &&respone.data.failed.length<=0){
-              this.conformationPopup.openSuccessModal(
-            'Request Processed Successfully'
-          );
+          // console.log(respone);
+          this.selectedProducts = [];
+          if (respone && respone.data.failureRecords.length <= 0) {
+            this.conformationPopup.openSuccessModal(
+              'Request Processed Successfully'
+            );
           }
-          else if(respone.data.failed.length>0){
-            this.conformationPopup.multiapprovalsModal(respone.data)
+          else if (respone.data.failureRecords.length > 0) {
+            this.conformationPopup.openSuccessModal(`Total Records Processed: ${respone.data.totalRecordCount}
+               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
           }
           setTimeout(() => {
             this.modalService.dismissAll();
@@ -352,11 +379,20 @@ bulkProcess(){
         },
         error: (reason: any) => {
           console.log(reason);
-          this.conformationPopup.openSuccessModal('Request Processed Failed');
+          if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else if (reason.error.statusCode == 400) {
+            this.conformationPopup.openErrorModal(reason.error.message)
+          }
+          else {
+            this.conformationPopup.openErrorModal('Request Processed Failed');
+          }
+
         },
         complete: () => {
-        this.signalService.timeoffForYouTriggerSignal.set(true);
-        this.signalService.timeoffForRoleTriggerSignal.set(true);
+          this.signalService.timeoffForYouTriggerSignal.set(true);
+          this.signalService.timeoffForRoleTriggerSignal.set(true);
         },
       });
   }

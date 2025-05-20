@@ -1,86 +1,91 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <!--header-->
-        <div class="component-header">Reports</div>
-      
-        <div>
-          <form autocomplete="off" [formGroup]="wfhReportForm" (ngSubmit)="generateWfhReport()">
-            <div class="d-flex align-items-center gap-3">
-              @if(rbac.allowedToAccess('WFH Report - Generate.view')){
-              <button type="button"  class="clear-all-btn" (click)="clearAllFilters()">
-                Clear All
-              </button>
-           
-              
-              <!-- Date Range -->
-              <div class="d-flex align-items-center gap-2">
-                <div>
-                  <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges" [alwaysShowCalendars]="true"
-                         [locale]="localeOptions" [showClearButton]="true" placeholder="Please select date" formControlName="dateRange"
-                         [startKey]="'startDate'" [endKey]="'endDate'" readonly />
-                </div>
-              </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <!--header-->
+    <div class="component-header">Reports</div>
 
-              <!-- Employee -->
-              <div class="d-flex align-items-center gap-2">
-                <div class="custom-p-select-content">
-                  <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="true"
-                            formControlName="employee" placeholder="Please select employee" class="form-select custom-select" filterPlaceholder="Search employee">
-                    <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                    <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-                  </p-select>
-                </div>
-              </div>
-      
-              <!-- Team Manager -->
-              <div class="d-flex align-items-center gap-2">
-                <div class="custom-p-select-content">
-                  <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName" filterBy="fullName" formControlName="manager"
-                            placeholder="Please select manager" class="form-select custom-select" filterPlaceholder="Search manager">
-                            <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
-                            <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
-                  </p-select>
-                </div>
-              </div>
-            }
-              <!-- Buttons -->
-              <div class="d-flex gap-2">
-                @if(rbac.allowedToAccess('WFH Report - Generate.view')){
-                <button type="submit" class="custom-btn btn-secondary" [disabled]="isWFHGenerateDisabled">
-                  @if(spinnerLoader1){
-                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                    <span>{{'Loading...'}}</span>
-                    }@else {
-                    <span>{{'Generate'}}</span>
-                    }
-                </button>
-              }
-              @if(rbac.allowedToAccess('WFH Report - Generate.view') && rbac.allowedToAccess('WFH Report - Export.view')){
-                <button type="button" class="custom-btn btn-primary" (click)="exportToExcelWfh()" 
-                [disabled]="filteredWfhRecord.length === 0 || disableBtn">
-                @if(spinnerLoader2){
-                  <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                  <span>{{'Loading...'}}</span>
-                  }@else {
-                  <span>{{'Export'}}</span>
-                  }
-                </button>
-              }
-              </div>
+    <div>
+      <form autocomplete="off" [formGroup]="wfhReportForm" (ngSubmit)="generateWfhReport()">
+        <div class="d-flex align-items-center gap-3">
+          @if(rbac.allowedToAccess('WFH Report - Generate.view')){
+          <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+            Clear All
+          </button>
+
+
+          <!-- Date Range -->
+          <div class="d-flex align-items-center gap-2">
+            <div>
+              <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
+                [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
+                placeholder="Please select date" formControlName="dateRange" [startKey]="'startDate'"
+                [endKey]="'endDate'" readonly />
             </div>
-          </form>
+          </div>
+
+          <!-- Employee -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="custom-p-select-content">
+              <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
+                [showClear]="true" formControlName="employee" placeholder="Please select employee"
+                class="form-select custom-select" filterPlaceholder="Search employee">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+              </p-select>
+            </div>
+          </div>
+
+          <!-- Team Manager -->
+          <div class="d-flex align-items-center gap-2">
+            <div class="custom-p-select-content">
+              <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName"
+                filterBy="fullName" formControlName="manager" placeholder="Please select manager"
+                class="form-select custom-select" filterPlaceholder="Search manager">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+              </p-select>
+            </div>
+          </div>
+          }
+          <!-- Buttons -->
+          <div class="d-flex gap-2">
+            @if(rbac.allowedToAccess('WFH Report - Generate.view')){
+            <button type="submit" class="custom-btn btn-secondary" [disabled]="isWFHGenerateDisabled">
+              @if(spinnerLoader1){
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading...'}}</span>
+              }@else {
+              <span>{{'Generate'}}</span>
+              }
+            </button>
+            }
+            @if(rbac.allowedToAccess('WFH Report - Generate.view') && rbac.allowedToAccess('WFH Report - Export.view')){
+            <button type="button" class="custom-btn btn-primary" (click)="exportToExcelWfh()"
+              [disabled]="filteredWfhRecord.length === 0 || disableBtn">
+              @if(spinnerLoader2){
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              <span>{{'Loading...'}}</span>
+              }@else {
+              <span>{{'Export'}}</span>
+              }
+            </button>
+            }
+          </div>
         </div>
-      </div>
-  
-    <div class="mb-3">
+      </form>
+    </div>
+  </div>
+
+  <div class="d-flex gap-3 w-100">
+    <div class="custom-component-left-content">
       <app-attandace-report-tabs />
     </div>
-  
-    @if(isLoading){
+    <div class="custom-component-right-content">
+
+      @if(isLoading){
       <div class="custom-compoent-data-loader">
         <app-data-loader-content />
       </div>
-    }@else {
+      }@else {
       <div class="custom-table-content">
         <table id="wfhReportTable" class="content w-100">
           <thead>
@@ -98,33 +103,32 @@
           </thead>
           <tbody>
             @if (filteredWfhRecord && filteredWfhRecord.length > 0) {
-              @for (record of filteredWfhRecord; track record) {
-                <tr>
-                  <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-                  <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-                  <td class="td-center">{{ record.department ?? '-' }}</td>
-                  <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-                  <td class="td-center">{{ record.location ?? '-' }}</td>
-                  <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-                  <td class="td-center">{{ record.shift ?? '-' }}</td>
-                  <td class="td-center">
-                    {{ record.worked_Date ? (record.worked_Date | date: 'dd-MMM-yyyy') : '-' }}
-                  </td>
-                  <td class="td-center">{{ record.duration ?? '-' }}</td>
-                </tr>
-              }
+            @for (record of filteredWfhRecord; track record) {
+            <tr>
+              <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+              <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+              <td class="td-center">{{ record.department ?? '-' }}</td>
+              <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+              <td class="td-center">{{ record.location ?? '-' }}</td>
+              <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+              <td class="td-center">{{ record.shift ?? '-' }}</td>
+              <td class="td-center">
+                {{ record.worked_Date ? (record.worked_Date | date: 'dd-MMM-yyyy') : '-' }}
+              </td>
+              <td class="td-center">{{ record.duration ?? '-' }}</td>
+            </tr>
+            }
             } @else {
-              <tr>
-                <td colspan="9" class="text-center">
-                  <app-no-data-found></app-no-data-found>
-                </td>
-              </tr>
+            <tr>
+              <td colspan="9" class="text-center">
+                <app-no-data-found></app-no-data-found>
+              </td>
+            </tr>
             }
           </tbody>
         </table>
       </div>
-    }
-      
+      }
+    </div>
   </div>
-
-  
+</div>

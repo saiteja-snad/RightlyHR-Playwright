@@ -43,7 +43,8 @@ export default [
             { path: 'probation-details', loadComponent: () => import('./job/probation-details/probation-details.component').then((m) => m.ProbationDetailsComponent), canActivate: [PermissionsGuard],data: { permission: 'Probation Details.view' } },
             { path: 'interview-round', loadComponent: () => import('./job/interview-round/interview-round.component').then((m) => m.InterviewRoundComponent) },
             { path: 'team', loadComponent: () => import('./job/team/team.component').then((m) => m.TeamComponent), canActivate: [PermissionsGuard],data: { permission: 'Team.view' } },
-            { path: 'pre-on-boarding-documents', loadComponent: () => import('./job/pre-on-boarding-documents/pre-on-boarding-documents.component').then((m) => m.PreOnBoardingDocumentsComponent), canActivate: [PermissionsGuard],data: { permission: 'Pre Onboard Documents.view' } }
+            { path: 'pre-on-boarding-documents', loadComponent: () => import('./job/pre-on-boarding-documents/pre-on-boarding-documents.component').then((m) => m.PreOnBoardingDocumentsComponent), canActivate: [PermissionsGuard],data: { permission: 'Pre Onboard Documents.view' } },
+            { path: 'signature-authority', loadComponent: () => import('./job/signature-authority/signature-authority.component').then((m) => m.SignatureAuthorityComponent)}
         ]
     },
     { path: 'documents', loadComponent: () => import('./documents-creation/documents-creation.component').then((m) => m.DocumentsCreationComponent), canActivate: [PermissionsGuard],data: { permission: 'Document Tab.view' } },

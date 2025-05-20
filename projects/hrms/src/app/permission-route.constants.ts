@@ -305,7 +305,8 @@ export const SETTINGS_EMPLOYEE_FIELDS_JOB_TABS = [
   { route: '/settings/employee-fields/job/pre-on-boarding-documents', permission: 'Pre Onboard Documents.view' },
   { route: '/settings/employee-fields/job/serving-period', permission: 'Serving Period.view' },
   { route: '/settings/employee-fields/job/probation-details', permission: 'Job Tab Probation Details.view' },
-  { route: '/settings/employee-fields/job/interview-round', permission: 'Interview Round.view' }
+  { route: '/settings/employee-fields/job/signature-authority', permission: 'Signature Authority.view' },
+  { route: '/settings/employee-fields/job/interview-round', permission: 'Interview Round.view' },
 ]
 
 export const SETTINGS_EMPLOYEE_FIELDS_MANAGE_SHIFTS_TABS = [

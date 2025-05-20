@@ -86,45 +86,51 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
     this.getOrghierarchy(this.selectedEmployeeId)
   }
 
-  downloadToExcel(): void {
-    if (!this.data || this.data.length === 0) {
-        console.error('No data available to export!');
-        return;
-    }
-
-    // Flatten the hierarchical data into a simple array
-    const flattenedData: any[] = [];
-    this.flattenHierarchy(this.data, flattenedData);
-
-    // Create a worksheet from the flattened data
-    const worksheet = XLSX.utils.json_to_sheet(flattenedData);
-
-    // Create a workbook and append the worksheet
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Organization Chart');
-
-    // Export the workbook to an Excel file
-    XLSX.writeFile(workbook, 'organization-chart.xlsx');
-}
 
 // Helper function to flatten the hierarchical data
-private flattenHierarchy(nodes: TreeNode[], flattenedData: any[], parentName: string = ''): void {
-    nodes.forEach((node) => {
-        const { name, doj, title, compensationamount, department } = node.data;
-        flattenedData.push({
-            Name: name,
-            DOJ: doj,
-            Title: title,
-            Compensation: compensationamount,
-            Department: department,
-            Parent: parentName,
-        });
+downloadToExcel(): void {
+  if (!this.data || this.data.length === 0) {
+      console.error('No data available to export!');
+      return;
+  }
 
-        if (node.children) {
-            this.flattenHierarchy(node.children, flattenedData, name);
-        }
-    });
+  const flattenedData: any[] = [];
+  const seenNames = new Set<string>(); // Track unique names
+  this.flattenHierarchy(this.data, flattenedData, seenNames);
+
+  const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Organization Chart');
+  XLSX.writeFile(workbook, 'organization-chart.xlsx');
 }
+
+private flattenHierarchy(
+  nodes: TreeNode[],
+  flattenedData: any[],
+  seenNames: Set<string>,
+  parentName: string = ''
+): void {
+  nodes.forEach((node) => {
+      const { name, doj, title, compensationamount, department } = node.data;
+
+      if (!seenNames.has(name)) {
+          flattenedData.push({
+              Name: name,
+              DOJ: doj,
+              Title: title,
+              Compensation: compensationamount,
+              Department: department,
+              Parent: parentName,
+          });
+          seenNames.add(name);
+      }
+
+      if (node.children) {
+          this.flattenHierarchy(node.children, flattenedData, seenNames, name);
+      }
+  });
+}
+
 
 
 

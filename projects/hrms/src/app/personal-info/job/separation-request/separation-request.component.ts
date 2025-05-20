@@ -17,6 +17,8 @@ import { ISeparation } from './separation-request';
 import { environment } from '../../../../environments/environment';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 @Component({
   selector: 'app-separation-request',
   imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, 
@@ -47,20 +49,36 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   profileForm!: FormGroup;
   isDataLoaded = false;
   constructor(private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService,
-     private modalService: NgbModal,public rbac: RbacService) {
+     private modalService: NgbModal,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
     // Initialize any required services or dependencies here
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
-    this.getEmployeeId();
-    this.formInitialization();
-    // Simulate fetching separation details
-    this.fetchSeparationDetails();
+      
     this.getonboardPeriodData() ;
-    this.getNodueClearance();
+    this.formInitialization();
+   this.getEmpInfoFromRoute();
   }
 
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+      this.getNodueClearance();
+      this.fetchSeparationDetails();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+      this.fetchSeparationDetails();
+      this.getNodueClearance();
+    }
+  }
   formInitialization() {
     this.recallreason = this.fb.group({
       recallReason: [null, [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],

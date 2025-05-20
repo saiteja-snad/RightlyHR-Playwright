@@ -13,15 +13,15 @@ import { SettingsManagePoliciesTabsComponent } from "../../../shared/settings-ta
 
 @Component({
   selector: 'app-employee-fields-layout',
-  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent, 
-    SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent, ManageDstTabsComponent, SettingsManageShitsTabsComponent, 
+  imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent,
+    SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent, ManageDstTabsComponent, SettingsManageShitsTabsComponent,
     SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent],
   templateUrl: './employee-fields-layout.component.html',
   styleUrl: './employee-fields-layout.component.scss'
 })
 
 export class EmployeeFieldsLayoutComponent {
-  
+
   constructor(public readonly router: Router) { }
 
   isActive(route: string): boolean {
@@ -30,7 +30,7 @@ export class EmployeeFieldsLayoutComponent {
 
   shouldShowSection(): boolean {
     const cloningPolicyId = localStorage.getItem('cloningPolicyId');
-    const excludedRoutes: (string | RegExp)[] =[
+    const excludedRoutes: (string | RegExp)[] = [
       '/settings/employee-fields/addholidays',
       '/settings/employee-fields/updateholidays',
       '/settings/employee-fields/viewholidays',

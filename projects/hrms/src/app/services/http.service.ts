@@ -179,8 +179,8 @@ export class HttpService {
     return this.http.post(`${this.ApiUrl}${url}`,data);
   }
 
-  deleteSignatureEmployee(url:string, id:any){
-    return this.http.post(`${this.ApiUrl}${url}`, id);
+  deleteSignatureEmployee(url:string){
+    return this.http.post(`${this.ApiUrl}${url}`, {});
   }
 
   postletters(url: string) {

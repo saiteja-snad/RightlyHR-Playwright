@@ -215,9 +215,9 @@ export class SignatureAuthorityComponent implements OnInit {
         },
         error: (error: any) => {
           modalRef.dismiss();
-          this.UpdateForm.reset();
-          const errorMessage = error.error?.Message
+          const errorMessage = error.error?.message
           this.conformationPopup.openErrorModal(errorMessage);
+          this.UpdateForm.reset();
         }
       });
   }
@@ -231,7 +231,7 @@ export class SignatureAuthorityComponent implements OnInit {
     if (!this.selectedDeleteserving?.id) return;
   
     this.subscription = this.http
-      .deleteSignatureEmployee(`SignaturesList/delete/${this.selectedDeleteserving.id}`,this.selectedDeleteserving.id)
+      .deleteSignatureEmployee(`SignaturesList/delete/${this.selectedDeleteserving.id}`)
       .subscribe({
         next: () => {
           modal.dismiss();

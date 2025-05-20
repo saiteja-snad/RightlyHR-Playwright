@@ -5,48 +5,44 @@
         </div>
         <div class="d-flex align-items-center flex-wrap gap-3">
             <label class="form-label custom-label pt-2" for="">Select</label>
-
-            <div class="custom-p-select-content">
-                <p-select [options]="yearOptions" optionValue="value" [(ngModel)]="selectedYear" placeholder="Year"
-                    optionLabel="name" (onChange)="getAttendnaceData(getSelectedEmployee())" class="custom-select">
-                </p-select>
+        
+            <div class="custom-year-month-picker">
+                <p-datepicker [(ngModel)]="date"placeholder="Select month and year"
+                    (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month" dateFormat="mm/yy" [readonlyInput]="true" />
             </div>
-
-            <div class="custom-p-select-content">
-                <p-select [options]="monthOptions" optionValue="value" [(ngModel)]="selectedMonth" placeholder="Month"
-                    (onChange)="getAttendnaceData(getSelectedEmployee())" optionLabel="name" class="custom-select">
-                </p-select>
-            </div>
+        
             <!-- select all employees drop down for HR code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
-            <label class="form-label custom-label pt-2" for="">All Employees</label>
+            <label class="form-label custom-label pt-2" for="">Select Employee</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getAllEmployeeInfo" [filter]="true" filterBy="fullName" [showClear]="false"
                     [(ngModel)]="selectedEmployee" placeholder="Select Employee"
-                    (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null"
-                    optionLabel="fullName" class="custom-select">
+                    (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null" optionLabel="fullName"
+                    class="custom-select">
                 </p-select>
             </div>
             }
             <!-- select all employees drop down for HR code end -->
             <!-- select all employees drop down for team manager code start -->
             @else if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')){
-            <label class="form-label custom-label pt-2" for="">My Team</label>
+            <label class="form-label custom-label pt-2" for="">Team Member</label>
             <div class="custom-p-select-content">
                 <p-select [options]="get_Employeelist_forTM" [filter]="true" filterBy="fullName" [showClear]="false"
                     [(ngModel)]="selectedEmployeeOfHr" placeholder="Select Employee"
-                    (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null"
-                    optionLabel="fullName" class="custom-select">
+                    (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null" optionLabel="fullName"
+                    class="custom-select">
                 </p-select>
             </div>
             }
-            @if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')||this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
-                <button type="button" class="custom-btn btn-primary"
+            @if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')||
+            this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
+            <button type="button" class="custom-btn btn-primary" 
                 (click)="getAttendnaceData(empdata);this.selectedEmployee=null;this.selectedEmployeeOfHr=null">
-                <i class="bi bi-plus me-2"></i>My Attendance
+                <img src="icons/finger-print.png" alt="" class="finger-icon me-1">
+                My Attendance
             </button>
             }
-           
+        
         </div>
         <!-- select all employees drop down for team manager code end -->
     </div>
@@ -73,8 +69,9 @@
                             <td>{{(item.date|dateformat)??'-'}}</td>
                             <td>{{ item.firstLogin ? (item.firstLogin | date:'HH:mm:ss') : '-' }}</td>
                             <td>{{ item.lastLogout ? (item.lastLogout | date:'HH:mm:ss') : '-' }}</td>
-                            <td>{{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' : item.duration.totalDuration}}
-                                
+                            <td>{{item?.duration?.totalDuration === '00:00:00' || !item?.duration?.totalDuration ? '-' :
+                                item.duration.totalDuration}}
+
                             </td>
                             <td>
                                 @if(((item?.biometricLogs??[]).length>0)||(item.permissions.length>0)||(item.regularizations.length>0)){
@@ -88,21 +85,22 @@
                             </td>
                             <td class="pe-4">
                                 <!--Main status content-->
-                                
-                                    <div class="d-flex justify-content-end">
-                                        @if(item.status !== '-'){
-                                        <ul class="ps-0 mb-2">
-                                            <li [ngClass]="getStatusClass(item.status)">{{item?.status}}</li>
-                                        </ul>
+
+                                <div class="d-flex justify-content-end">
+                                    @if(item.status !== '-'){
+                                    <ul class="ps-0 mb-2">
+                                        <li class="main-status-text" [ngClass]="getStatusClass(item.status)">
+                                            {{item?.status}}</li>
+                                    </ul>
                                     }
                                     @else {
-                                    <div class="pe-4">-</div>
+                                    <div class="pe-4 mb-2">-</div>
                                     }
-                                    </div>
-                               
+                                </div>
+
                                 <!--Sub status content-->
                                 @if((item?.tags ?? []).length > 0 &&item.status){
-                                <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                <div class="d-flex gap-2 justify-content-end flex-wrap mb-2">
                                     @for(item of item.tags; track $index){
                                     <div class="card substatus-card">{{item?.name}}</div>
                                     }
@@ -115,14 +113,16 @@
                                     @if(rbac.allowedToAccess('Request Leave.view')){
                                     @if(item.status == 'Absent' && item.duration.totalDuration >= '00:00:00' &&
                                     currentMonth==selectedMonth && item.employeeId == empdata.employeeId){
-                                    <a class="leave-btn" (click)="navigateToLeave(item)"><u>Apply Leave</u> </a>
+                                    <a class="application-btn" (click)="navigateToLeave(item)"><u>Apply Leave</u> </a>
                                     }
                                     }
                                     @if(rbac.allowedToAccess('Request Regularization.view')){
-                                    @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) && (item.duration.totalDuration|tohours) <
-                                        shiftDetails.fullDayMinHrs && item.status!=='Weekend' && currentMonth==selectedMonth &&item.regularizations.length<=0
-                                        && item.employeeId==empdata.employeeId){ <a
-                                        class="regulazie-btn" (click)="openModal(raiseregularization); onclickRegularization(item.date)">
+                                    @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&
+                                    (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs &&
+                                        item.status!=='Weekend' && currentMonth==selectedMonth
+                                        &&item.regularizations.length<=0 && item.employeeId==empdata.employeeId){ <a
+                                        class="application-btn"
+                                        (click)="openModal(raiseregularization); onclickRegularization(item.date)">
                                         <u>Regularization</u></a>
                                         }
                                         }
@@ -152,14 +152,12 @@
                     <tbody>
                         @if(!dataLoader){
                         @if(statusCounts$.value){
-                        <ng-container *ngIf="statusCounts$ | async as statusCounts">
-                            @for (status of statusCounts | keyvalue; track $index) {
-                                <tr *ngIf="status.value !== 0">
-                                    <td class="text-capitalize">{{ status.key }}</td>
-                                    <td>{{ status.value }}</td>
-                                  </tr>
-                            }
-                        </ng-container>
+                        @for (status of statusCounts$ |async ; track $index) {
+                        <tr *ngIf="status.value !== 0">
+                            <td class="text-capitalize">{{ status.status }}</td>
+                            <td>{{ status.value }}</td>
+                        </tr>
+                        }
                         @if(statusCounts$.value.length<=0){ <tr>
                             <td><app-no-data-found /></td>
                             </tr>
@@ -388,9 +386,8 @@
                 <div class="d-block">
                     <div class="d-flex flex-column">
                         <p class="m-0 p-2 rounded popupcomments">
-                            Total Duration: <span *ngIf="totalDurationHours;else durationtotal"> {{totalDurationHours
-                                === '00:00:00' || !totalDurationHours ? '-' : totalDurationHours}}
-
+                            Total Duration: <span *ngIf="totalDurationHours;else durationtotal">
+                                {{totalDurationHours === '00:00:00' || !totalDurationHours ? '-' : totalDurationHours}}
                             </span>
                             <ng-template #durationtotal>{{logsDuration}}</ng-template>
                         </p>

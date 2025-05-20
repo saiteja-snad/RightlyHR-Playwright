@@ -7,6 +7,8 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { RbacService } from '../../../services/rbac.service';
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 
 
 @Component({
@@ -36,20 +38,35 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
   employedata={} as any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,
-     private http: HttpService,public formValidation: FormValidationService,public rbac: RbacService) { }
+     private http: HttpService,public formValidation: FormValidationService,public rbac: RbacService,private router: Router,public permissionRouteService: AccessForEmployeeinfoService, ) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.getEmpInfoFromRoute();
     this.initializeForm();
-    this.getEmployeeId();
-  
     this.addressForm.disable();
     this.addressForm.get('permanentAddress')?.valueChanges.subscribe(() => {
       this.checkIfAddressesAreSame();
     });
    
   }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
 
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+    }
+  }
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+
+
+ 
   initializeForm(): void {
     this.addressForm = this.fb.group({
       sameAsPermanent: [{value:false}], // Checkbox for "Same as Current Address"
@@ -252,14 +269,15 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
         this.getEmployeeId();
         this.buttons = false;
         this.buttons2 = false;
-        this.conformationPopup.openSuccessModal('Address Info updated successfully');
+        this.conformationPopup.openSuccessModal('Address details updated successfully');
       },
       error: (reason) => {
         console.log(reason);
-        this.conformationPopup.openErrorModal('Address Info update failed');
+        this.conformationPopup.openErrorModal('Address details update failed');
       },
     });
   }
+  
   copyCurrentAddress(event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
   

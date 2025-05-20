@@ -81,6 +81,8 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   selectedLeavesItems!: LeaveApproval[];
   multiSelect = false;
   requestBody = {} as any;
+  @ViewChild('leaveSummary') leaveSummary: any;
+  requestSummary!:any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -168,7 +170,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });
   }
 
   openApproveModal(content: any, request: AttendanceRequest) {
@@ -185,6 +187,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   handleProcess(request: any): void {
     this.selectedLeaveData = request;
     let approvedBy = this.empinfo.employeeId.toString();
+    let message = null;
     if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -195,6 +198,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
+      message =  'Processing Requests, Please wait...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -208,20 +212,30 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           },
         ],
       };
+       message =  'Processing Request, Please wait...';
     }
     this.sharedModalService.openLoaderModal(
-      'Processing Request, Please wait...'
+      message
     );
     this.http
       .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.selectedLeavesItems = [];
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal(
-            'Request Processed Successfully'
-          );
+          if (
+            this.selectedLeavesItems &&
+            this.selectedLeavesItems.length <= 0
+          ) {
+            this.sharedModalService.openSuccessModal(
+              'Request Processed Successfully'
+            );
+          } else {
+            this.requestSummary = response.data;
+            this.openModal(this.leaveSummary);
+          }
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
           this.signalService.compOffForYouTriggerSignal.set(true);
           this.signalService.compOffSidNavCountTriggerSignal.set(true);
         },
@@ -267,19 +281,25 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           ],
         };
       }
-      this.sharedModalService.openLoaderModal(
-        'Approving Request, Please wait...'
-      );
       this.http
         .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.selectedLeavesItems = [];
             this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Request Approved Successfully'
-            );
+            if (
+              this.selectedLeavesItems &&
+              this.selectedLeavesItems.length <= 0
+            ) {
+              this.sharedModalService.openSuccessModal(
+                'Request Approved Successfully'
+              );
+            } else {
+              this.requestSummary = response.data;
+              this.openModal(this.leaveSummary);
+            }
+            this.selectedLeavesItems = [];
+            this.multiSelect = false;
             this.signalService.compOffForYouTriggerSignal.set(true);
             this.signalService.compOffSidNavCountTriggerSignal.set(true);
           },
@@ -328,19 +348,25 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
           ],
         };
       }
-      this.sharedModalService.openLoaderModal(
-        'Rejecting Request, Please wait...'
-      );
       this.http
         .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.selectedLeavesItems = [];
             this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Request Rejected Successfully'
-            );
+            if (
+              this.selectedLeavesItems &&
+              this.selectedLeavesItems.length <= 0
+            ) {
+              this.sharedModalService.openSuccessModal(
+                'Request Rejected Successfully'
+              );
+            } else {
+              this.requestSummary = response.data;
+              this.openModal(this.leaveSummary);
+            }
+            this.selectedLeavesItems = [];
+            this.multiSelect = false;
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
             this.signalService.compOffForYouTriggerSignal.set(true);

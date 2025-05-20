@@ -47,6 +47,8 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   multiSelect = false;
   searchValue: any;
   dataLoad = false;
+  spinnerLoader= false;
+  responseSummary!: any;
   empinfo = {} as IJob;
   regularization = [] as PermissionRequestResponse[];
   approverComments = [] as any[];
@@ -58,6 +60,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   regularizationselect!: LeaveApproval[];
   selectedProducts!: LeaveApproval[];
   @ViewChild('commentspopup') modalContent: any;
+  @ViewChild('leaveSummary') leaveSummary: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   options = [
@@ -190,6 +193,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
 
   handleAccept(approveForm: FormGroup): void {
     if (approveForm.valid) {
+      this.spinnerLoader= true;
       const formData = approveForm.value;
       let approvedBy = this.empinfo.employeeId.toString();
       let comments = formData.comments;
@@ -205,21 +209,24 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
         }))
       }
 
-      this.sharedModalService.openLoaderModal('Approving Request, Please wait...');
+      // this.sharedModalService.openLoaderModal('Approving Request, Please wait...');
       this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.selectedProducts = [];
+            this.responseSummary= response.data;
             this.modalService.dismissAll();
-            if (response && response.data.failureRecords.length <= 0) {
-              this.sharedModalService.openSuccessModal('Request Approved Successfully');
-            }
-            else if (response.data.failureRecords.length > 0) {
-              this.sharedModalService.openSuccessModal(`Total Records Approved: ${response.data.totalRecordCount}
-               Faild:${response.data.failureRecordsCount} ${response.data.failureRecords[0].message ? response.data.failureRecords[0].message : ''} Successed:${response.data.successRecordsCount}`)
-            }
+            this.openModal(this.leaveSummary)
+            // if (response && response.data.failureRecords.length <= 0) {
+            //   this.sharedModalService.openSuccessModal('Request Approved Successfully');
+            // }
+            // else if (response.data.failureRecords.length > 0) {
+            //   this.sharedModalService.openSuccessModal(`Total Records Approved: ${response.data.totalRecordCount}
+            //    Failed:${response.data.failureRecordsCount} ${response.data.failureRecords[0].message ? response.data.failureRecords[0].message : ''} Successed:${response.data.successRecordsCount}`)
+            // }
           },
           error: (reason: any) => {
+            this.spinnerLoader= false;
             this.modalService.dismissAll();
             if (reason.error.statusCode == 400) {
               this.sharedModalService.openErrorModal(reason.error.message)
@@ -232,6 +239,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             }
           },
           complete: () => {
+            this.spinnerLoader= false;
             this.approveForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.regularizationForYouTriggerSignal.set(true);
@@ -260,14 +268,16 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (respone: any) => {
           this.selectedProducts = [];
+          this.responseSummary= respone.data;
           this.modalService.dismissAll();
-          if (respone && respone.data.failureRecords.length <= 0) {
-            this.sharedModalService.openSuccessModal('Request Processed Successfully');
-          }
-          else if (respone.data.failureRecords.length > 0) {
-            this.sharedModalService.openSuccessModal(`Total Records Processed: ${respone.data.totalRecordCount}
-               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
-          }
+          this.openModal(this.leaveSummary)
+          // if (respone && respone.data.failureRecords.length <= 0) {
+          //   this.sharedModalService.openSuccessModal('Request Processed Successfully');
+          // }
+          // else if (respone.data.failureRecords.length > 0) {
+          //   this.sharedModalService.openSuccessModal(`Total Records Processed: ${respone.data.totalRecordCount}
+          //      Failed:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
+          // }
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -291,6 +301,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
 
   handleReject(rejectForm: FormGroup): void {
     if (rejectForm.valid) {
+      this.spinnerLoader= true;
       const formData = rejectForm.value;
       let approvedBy = this.empinfo.employeeId.toString();
       let comments = formData.comments;
@@ -305,22 +316,25 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
         }))
       }
 
-      this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
+      // this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
       this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.selectedProducts = [];
+            this.responseSummary= response.data;
             this.modalService.dismissAll();
-            if (response && response.data.failureRecords.length <= 0) {
-              this.sharedModalService.openSuccessModal('Request Rejected Successfully')
-            }
-            else if (response.data.failureRecords.length > 0) {
-              this.sharedModalService.openSuccessModal(`Total Records Rejected: ${response.data.totalRecordCount}
-               Faild:${response.data.failureRecordsCount} ${response.data.failureRecords[0].message ? response.data.failureRecords[0].message : ''} Successed:${response.data.successRecordsCount}`)
-            }
+            this.openModal(this.leaveSummary)
+            // if (response && response.data.failureRecords.length <= 0) {
+            //   this.sharedModalService.openSuccessModal('Request Rejected Successfully')
+            // }
+            // else if (response.data.failureRecords.length > 0) {
+            //   this.sharedModalService.openSuccessModal(`Total Records Rejected: ${response.data.totalRecordCount}
+            //    Failed:${response.data.failureRecordsCount} ${response.data.failureRecords[0].message ? response.data.failureRecords[0].message : ''} Successed:${response.data.successRecordsCount}`)
+            // }
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
+            this.spinnerLoader= false;
             if (reason.error.statusCode == 400) {
               this.sharedModalService.openErrorModal(reason.error.message)
             }
@@ -332,6 +346,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             }
           },
           complete: () => {
+            this.spinnerLoader= false;
             this.rejectForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.regularizationForYouTriggerSignal.set(true);

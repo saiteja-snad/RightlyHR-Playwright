@@ -1,18 +1,24 @@
 <div class="custom-main-component-container">
-     @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
-      <div class="d-flex justify-content-end gap-3 mb-3">
-       
-        @if (canBulkApprove()) {
-        <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
-        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-        }
-        @if (canBulkProcess()) {
-        <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
-        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-        }
-       
-    </div>
-     }
+    @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
+        <div class="d-flex justify-content-end gap-3 mb-3">
+            @if (canBulkApprove()) {
+                @if(rbac.allowedToAccess('For You (Regularization).update')){
+                    <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+                }
+                @if(rbac.allowedToAccess('For You (Regularization).delete')){
+                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+                }
+            }
+            @if (canBulkProcess()) {
+                @if(rbac.allowedToAccess('For You (Regularization).update')){
+                    <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+                }
+                @if(rbac.allowedToAccess('For You (Regularization).delete')){
+                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+                }
+            }
+        </div>
+    }
 
     <!--Input search-->
     <div class="input-group custom-search mb-3">
@@ -156,8 +162,16 @@
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'|
                     translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid">{{'Approve'|
-                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                    </div>
+                    }@else {
+                    <span>{{'Approve'| translate}}</span>
+                    }
+                </button>
             </div>
         </form>
     </div>
@@ -188,8 +202,16 @@
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close' |
                     translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">{{'Reject' |
-                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">
+                    @if(spinnerLoader){
+                    <div class="button-loader-content">
+                        <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                    </div>
+                    }@else {
+                    <span>{{'Reject'| translate}}</span>
+                    }
+                </button>
             </div>
         </form>
     </div>
@@ -218,6 +240,37 @@
                         <p><b>{{"Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
                         <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #leaveSummary let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div>
+                <p class="popup-heading mb-0">{{"Summary" | translate}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+ 
+        <div class="custom-main-popup-content">
+            <div class="row">
+                <div class="col-sm-4 text-center">
+                    <p><b>{{'Total Records' | translate}}</b></p>
+                    <p>{{ responseSummary.totalRecordCount }}</p>
+                </div>
+                <div class="col-sm-4 text-center">
+                    <p><b>{{'Success Records'|translate}}</b> </p>
+                    <p>{{ responseSummary.successRecordsCount }}</p>
+                </div>
+                <div class="col-sm-4 text-center">
+                    <p><b>{{'Failed Records' | translate}}</b></p>
+                    <p>{{ responseSummary.failureRecordsCount }}</p>
                 </div>
             </div>
         </div>

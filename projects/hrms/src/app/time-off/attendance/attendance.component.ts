@@ -1,11 +1,17 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject,Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
@@ -19,11 +25,11 @@ import moment from 'moment';
 import { IPermissionsvalue, LeaveType } from '../../Interfaces/timoff-model';
 import { Select } from 'primeng/select';
 import { environment } from '../../../environments/environment';
-import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { FormValidationsService } from '../../services/form-validations.service';
-import { TohoursPipe } from "../../Pipes/tohours.pipe";
+import { TohoursPipe } from '../../Pipes/tohours.pipe';
 import { AddLeaveComponent } from '../leaves/add-leave/add-leave.component';
-
+import { DatePicker } from 'primeng/datepicker';
 @Component({
   selector: 'app-attendance',
   imports: [
@@ -40,19 +46,21 @@ import { AddLeaveComponent } from '../leaves/add-leave/add-leave.component';
     Select,
     DataLoaderContentComponent,
     TohoursPipe,
-],
+    DatePicker,
+  ],
   templateUrl: './attendance.component.html',
   styleUrl: './attendance.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
+
 export class AttendanceComponent implements OnInit, OnDestroy {
-  dataLoader=false;
+  dataLoader = false;
   subscription!: Subscription;
   yearOptions = [
     { name: '2024', value: 2024 },
     { name: '2025', value: 2025 },
     { name: '2026', value: 2026 },
   ];
-
   monthOptions = [
     { name: 'January', value: 1 },
     { name: 'February', value: 2 },
@@ -80,47 +88,52 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   regularizationForm!: FormGroup;
   spinnerLoader = false;
   regularizationTypes: LeaveType[] = [] as LeaveType[];
-  punchInData=[] as any;
+  punchInData = [] as any;
   duration = [
     { name: 0.5, value: 0.5 },
     { name: 1, value: 1 },
     { name: 1.5, value: 1.5 },
     { name: 2, value: 2 },
   ];
-  empName!:string | null;
+  empName!: string | null;
   logsDuration!: string;
   totalDurationHours!: string;
   permissionsDuration!: string;
   regularizationAttendDuration!: string;
-  regularizationValues=[] as IPermissionsvalue[];
+  regularizationValues = [] as IPermissionsvalue[];
   punchPairs = [] as IdayLogs[];
-  selectedDate!:Date;
+  selectedDate!: Date;
   getAllEmployeeInfo = [] as any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   get_Employeelist_forTM = [] as any;
-  permissions_list=[] as any;
-  regularization_list=[] as any;
-  currentDate:any;
+  permissions_list = [] as any;
+  regularization_list = [] as any;
+  currentDate: any;
+  date!: Date;
+
   constructor(
     private authService: AuthService,
     private http: HttpService,
-    private router: Router,
     private conformationPopup: OpenModalService,
     public modalService: NgbModal,
     public rbac: RbacService,
     private fb: FormBuilder,
-    public formsValidation:FormValidationsService
-  ) {}
+    public formsValidation: FormValidationsService
+  ) {
+  }
 
   ngOnInit(): void {
+    console.log(this.date);
     // Get current date
+    const now = moment().startOf('month'); // ← important!
+  this.date = now.toDate(); 
     this.currentDate = moment().date();
     // Get current month (1-based)
     this.currentMonth = moment().month() + 1;
-    this.selectedMonth=this.currentMonth;
+    this.selectedMonth = this.currentMonth;
     // Get current year
     this.currentYear = moment().year();
-    this.selectedYear=this.currentYear;
+    this.selectedYear = this.currentYear;
     this.empdata = this.authService.getToken();
     this.getAttendnaceData(this.empdata);
     this.getAttendanceCriteria();
@@ -128,14 +141,25 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     this.getEmployeeDetails();
     this.initializeForm();
   }
+  checkdates(Value: any) {
+    if(Value){
+   console.log(Value);
+    const selectedDate = moment(Value);
+    this.selectedYear = selectedDate.year();
+    this.selectedMonth = selectedDate.month() + 1; // month() is 0-based
+    console.log(this.selectedYear + this.selectedMonth);
+    this.getAttendnaceData(this.getSelectedEmployee());
+    }
+ 
+  }
   //function to check the date
- isPastOrToday(date: any): boolean {
-  return moment(date).isBefore(moment(), 'day');
-}
+  isPastOrToday(date: any): boolean {
+    return moment(date).isBefore(moment(), 'day');
+  }
   //function to inialize form
   initializeForm() {
     this.regularizationForm = this.fb.group({
-      permissionDate: [{value:null,disable:true}, Validators.required],
+      permissionDate: [{ value: null, disable: true }, Validators.required],
       duration: [null, Validators.required],
       leaveType: [null, Validators.required],
       reason: [null, [Validators.required, Validators.maxLength(250)]],
@@ -149,40 +173,59 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   }
 
   openModalLarge(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
-  }
-
-  getAttendanceCriteria() {
-    const params = 'AttendanceRegularization'
-    const param = ["maxRegularizePerDay", 'maxRegularizePerMonth','maxRegularizeHoursPerDay','maxRegularizeHoursPerMonth'];
-    this.subscription = this.http.getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param).subscribe({
-      next: (data: any) => {
-        this.regularizationValues = (data as IPermissionsvalue[]);
-        const maxHoursConfig = this.regularizationValues?.find(
-          (item) => item.attribute === 'maxRegularizeHoursPerDay'
-        );
-        const maxHours = maxHoursConfig ? parseFloat(maxHoursConfig.value) : 2; // default to 2 if not found
-        this.duration = [];
-        for (let i = 0.5; i <= maxHours; i += 0.5) {
-          this.duration.push({ name: i, value: i });
-        }
-      }, error:(err) => {
-        console.log("errors", err)
-      },
+    this.modalService.open(content, {
+      centered: true,
+      size: 'lg',
+      backdrop: 'static',
     });
   }
 
+  getAttendanceCriteria() {
+    const params = 'AttendanceRegularization';
+    const param = [
+      'maxRegularizePerDay',
+      'maxRegularizePerMonth',
+      'maxRegularizeHoursPerDay',
+      'maxRegularizeHoursPerMonth',
+    ];
+    this.subscription = this.http
+      .getDatabyentriyvalue(`entityAttributeValues/getv1`, params, param)
+      .subscribe({
+        next: (data: any) => {
+          this.regularizationValues = data as IPermissionsvalue[];
+          const maxHoursConfig = this.regularizationValues?.find(
+            (item) => item.attribute === 'maxRegularizeHoursPerDay'
+          );
+          const maxHours = maxHoursConfig
+            ? parseFloat(maxHoursConfig.value)
+            : 2; // default to 2 if not found
+          this.duration = [];
+          for (let i = 0.5; i <= maxHours; i += 0.5) {
+            this.duration.push({ name: i, value: i });
+          }
+        },
+        error: (err) => {
+          console.log('errors', err);
+        },
+      });
+  }
+
   //function to get the day logs
-  dayLogsData(Value:any,date:Date,totalduration:any,permissions:any,regularizations:any){
-    this.logsDuration=totalduration;
-    this.selectedDate=date;
-    this.permissions_list=permissions;
-    this.regularization_list=regularizations
-    if(Value){
-      this.punchPairs=Value;
-    }
-    else{
-      this.punchPairs=[];
+  dayLogsData(
+    Value: any,
+    date: Date,
+    totalduration: any,
+    permissions: any,
+    regularizations: any
+  ) {
+    this.logsDuration = totalduration;
+    this.selectedDate = date;
+    this.permissions_list = permissions;
+    this.regularization_list = regularizations;
+    if (Value) {
+      this.punchPairs = Value;
+    } else {
+      this.punchPairs = [];
     }
   }
   //function to get the regularization types
@@ -239,45 +282,46 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     }
   }
 
-  navigateToLeave(data:any){
-   const modalRef = this.modalService.open(AddLeaveComponent, {centered: true, backdrop: 'static'});
-   modalRef.componentInstance.updateData = data;
+  navigateToLeave(data: any) {
+    const modalRef = this.modalService.open(AddLeaveComponent, {
+      centered: true,
+      backdrop: 'static',
+    });
+    modalRef.componentInstance.updateData = data;
   }
 
   onclickDuration(
-    durationPopup:any,
+    durationPopup: any,
     duration: string,
     totalDurationHours: string,
     permissionduration: string,
     regularizationduration: string
   ) {
-   this.openModal(durationPopup) 
-    this.logsDuration = duration,
-    this.totalDurationHours = totalDurationHours,
-    this.permissionsDuration = permissionduration,
-    this.regularizationAttendDuration = regularizationduration;
+    this.openModal(durationPopup);
+    (this.logsDuration = duration),
+      (this.totalDurationHours = totalDurationHours),
+      (this.permissionsDuration = permissionduration),
+      (this.regularizationAttendDuration = regularizationduration);
   }
-
 
   getSelectedEmployee() {
-    return this.selectedEmployee 
-        || this.selectedEmployeeOfHr 
-        || this.empdata;
+    return this.selectedEmployee || this.selectedEmployeeOfHr || this.empdata;
   }
-  
 
   //function to get the attendance data
   getAttendnaceData(employee: any) {
-    this.dataLoader=true;
-    const employeeId = employee.employeeId
-    this.empName = `${employee.fusionEmpId ??''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''}${employee.lastName ? ' ' + employee.lastName : ''}`;
+    this.dataLoader = true;
+    const employeeId = employee.employeeId;
+    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
+      employee.middleName ? ' ' + employee.middleName : ''
+    }${employee.lastName ? ' ' + employee.lastName : ''}`;
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`
       )
       .subscribe({
         next: (response: any) => {
-          this.dataLoader=false;
+          this.dataLoader = false;
           const updatedAttendanceData = response.data.attendanceData.map(
             (item: any) => ({
               ...item,
@@ -290,15 +334,14 @@ export class AttendanceComponent implements OnInit, OnDestroy {
           // this.attendanceData.next(response.data);
         },
         error: (err: any) => {
-          this.dataLoader=false;
+          this.dataLoader = false;
           console.log(err);
           this.attendanceData.next([]);
           this.statusCounts$.next([]);
-          this.shiftDetails={};
-
+          this.shiftDetails = {};
         },
-        complete:()=> {
-          this.dataLoader=false;
+        complete: () => {
+          this.dataLoader = false;
         },
       });
   }
@@ -330,11 +373,13 @@ export class AttendanceComponent implements OnInit, OnDestroy {
         return 'status-wfh';
       case 'compoff':
         return 'status-compoff';
+        case 'holiday':
+        return 'status-holiday';
       case 'weekend':
         return 'status-weekend';
       case 'half day remote':
         return 'status-remote';
-        case 'half day':
+      case 'half day':
         return 'status-halfday';
       case 'norecords':
         return 'status-norecords';

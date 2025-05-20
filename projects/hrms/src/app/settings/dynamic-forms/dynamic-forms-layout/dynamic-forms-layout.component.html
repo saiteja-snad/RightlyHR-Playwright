@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    @if (router.url !== '/settings/dynamic-forms/create-form' && router.url !== '/settings/dynamic-forms/view-form' 
+    @if (router.url !== '/settings/dynamic-forms/create-form' && router.url !== '/settings/dynamic-forms/view-form'
     && router.url !== '/settings/dynamic-forms/update-form') {
     <!--header-->
     <div class="d-flex align-items-center justify-content-between mb-3">
@@ -11,14 +11,14 @@
         </div>
     </div>
 
-    <!--tabs content-->
-    <div class="mb-3">
-        <app-setting-dynamic-forms-tabs />
-    </div>
-
-    <!--Content-->
-    <div class="custom-setting-right-content p-3">
-        <router-outlet />
+    <div class="d-flex gap-3 w-100">
+        <!--tabs content-->
+        <div class="custom-component-left-content">
+            <app-setting-dynamic-forms-tabs />
+        </div>
+        <div class="card custom-component-right-content p-3">
+            <router-outlet></router-outlet>
+        </div>
     </div>
     } @else {
     <router-outlet />

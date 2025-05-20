@@ -5,6 +5,7 @@ import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-assets',
@@ -17,11 +18,26 @@ export class AssetsComponent implements OnInit,OnDestroy {
   subscription!:Subscription
   loading=false
   assestesdata = new BehaviorSubject<any[]>([]);
-  constructor( private http: HttpService, ) { }
+  constructor( private http: HttpService,
+    private router: Router,
+   ) { }
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    this.getassets();
+  
    
+  }
+ 
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+       this.getassets();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+       this.getassets();
+    }
   }
   getassets() {
     this.loading=true

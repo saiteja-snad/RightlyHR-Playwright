@@ -17,10 +17,12 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TeamMembersTabsComponent } from "../../shared/personalinfo-tabs/team-members-tabs/team-members-tabs.component";
 import { MultiSelectModule } from 'primeng/multiselect';
 import { RbacService } from '../../services/rbac.service';
+import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
+import { TeamMemberTabsComponent } from "../../shared/myinfo-tabs/team-member-tabs/team-member-tabs.component";
 
 @Component({
   selector: 'app-team-numbers',
-  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent, TeamMembersTabsComponent, MultiSelectModule],
+  imports: [CommonModule, Select, FormsModule, PaginatorModule, TranslateModule, DropdownModule, SearchfilterPipe, ReactiveFormsModule, NoDataFoundComponent, TeamMembersTabsComponent, MultiSelectModule, TeamMemberTabsComponent],
   templateUrl: './team-numbers.component.html',
   styleUrl: './team-numbers.component.scss'
 })
@@ -59,7 +61,7 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private router: Router,
     private modalService: NgbModal, private fb: FormBuilder,
-     private conformationPopup: OpenModalService,public rbac: RbacService) { }
+     private conformationPopup: OpenModalService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService) { }
 
   onRowsChange() {
     this.first = 0;
@@ -70,14 +72,38 @@ export class TeamNumbersComponent implements OnInit, OnDestroy {
       teamMembers: [null, Validators.required],
       reportingManager: [null, Validators.required]
     });
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
+    
     console.log(this.empinfo);
-    this.getAllTeammembersList();
-    this.getEmployee();
+      this.getEmpInfoFromRoute()
     this.formsubmit();
     this.formsubmits();
-    this.getAllTeammembersLists();
+   
   }
+
+  isActive(route: string): boolean {
+    return this.router.url.includes(route); //based on the route, header tab will be changes
+  }
+  
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getAllTeammembersList();
+      this.getEmployee();
+      this.getAllTeammembersLists();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getAllTeammembersList();
+      this.getEmployee();
+      this.getAllTeammembersLists();
+    }
+  }
+
 
   openModals(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });

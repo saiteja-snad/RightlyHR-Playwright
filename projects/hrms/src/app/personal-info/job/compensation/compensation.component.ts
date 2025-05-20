@@ -5,13 +5,15 @@ import { AbstractControl, AsyncValidatorFn, FormBuilder, FormGroup, ReactiveForm
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { AuthService } from '../../../services/auth.service';
-import { ICompensation, Icompensation, IFrequency, IOvertime, IPayType } from '../../../Interfaces/job-model';
-import { BehaviorSubject, delay, map, of, Subscription } from 'rxjs';
+import { ICompensation,IFrequency, IOvertime, IPayType } from '../../../Interfaces/job-model';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 
 @Component({
   selector: 'app-compensation',
@@ -38,20 +40,38 @@ export class CompensationComponent implements OnInit,OnDestroy {
     private fb: FormBuilder,
     private conformationPopup: OpenModalService,
     private http: HttpService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public permissionRouteService: AccessForEmployeeinfoService, private router: Router
   ) { }
 
   ngOnInit() {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-  
+    this.getEmpInfoFromRoute();
     this.intizationFrom()
     this.intizationupdateFrom()
-  this.getEmployeeId()
-    this.getCompensationempid()
+
     this.getFrequency()
     this.getpaytype()
     this.getOvertime()
     this.getCompensationresondropdown()
+  }
+
+  
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+       this.getEmployeeId();
+    this.getCompensationempid();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+       this.getEmployeeId();
+    this.getCompensationempid();
+    }
   }
   intizationFrom() {
     this.compForm = this.fb.group({

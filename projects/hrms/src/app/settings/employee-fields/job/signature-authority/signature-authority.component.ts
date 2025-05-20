@@ -140,7 +140,7 @@ export class SignatureAuthorityComponent implements OnInit {
     };
 
     this.subscription = this.http
-      .employeeSignatureAuthority('SignaturesList', payload)
+      .employeeSignatureAuthority('SignaturesList', [payload])
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
@@ -148,11 +148,13 @@ export class SignatureAuthorityComponent implements OnInit {
           this.conformationPopup.openSuccessModal(
             'Signature Authority added successfully'
           );
+          this.AddForm.reset();
         },
         error: (error: any) => {
           this.modalService.dismissAll();
           const errorMessage = error?.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
+          this.AddForm.reset();
         },
       });
   }
@@ -196,12 +198,12 @@ export class SignatureAuthorityComponent implements OnInit {
     const payload = {
       id: this.selectedId,
       authorizedSignatureEmployeeId: updateEmployee,
-      isDeleted: false,
+      isdeleted: false,
       letterType: selectedType.value
     };
   
     this.subscription = this.http
-      .employeeSignatureAuthority('SignaturesList/update', payload)
+      .employeeSignatureAuthority('SignaturesList/update', [payload])
       .subscribe({
         next: () => {
           modalRef.dismiss();
@@ -235,12 +237,8 @@ export class SignatureAuthorityComponent implements OnInit {
       .subscribe({
         next: () => {
           modal.dismiss();
+          this.getAllSignatureEmployees();
           this.conformationPopup.openSuccessModal('Signature Authority deleted successfully');
-  
-          // Remove from local list (optimistic update)
-          this.signatureEmployeesList = this.signatureEmployeesList.filter(
-            (employee) => employee.id !== idToDelete
-          );
         },
         error: () => {
           modal.dismiss();
@@ -253,6 +251,15 @@ export class SignatureAuthorityComponent implements OnInit {
     modal.dismiss();
   };
 
+  resetForm() {
+    this.AddForm.reset();
+    this.selectedId = null;
+  }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 
 }

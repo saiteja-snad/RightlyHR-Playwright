@@ -180,7 +180,7 @@ export class HttpService {
   }
 
   deleteSignatureEmployee(url:string, id:any){
-    return this.http.post(`${this.ApiUrl}${url}/${id}`, {});
+    return this.http.post(`${this.ApiUrl}${url}`, id);
   }
 
   postletters(url: string) {

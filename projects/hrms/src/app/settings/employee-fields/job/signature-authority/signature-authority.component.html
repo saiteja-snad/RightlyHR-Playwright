@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="mb-3">
         <button type="button" (click)="openDialog()" class="custom-btn btn-primary"
-            *ngIf="rbac.allowedToAccess('Sub Location.create')">{{'Add' | translate}}</button>
+            *ngIf="rbac.allowedToAccess('Signature Authority.create')">{{'Add' | translate}}</button>
     </div>
 
     <div class="custom-main-component-container">
@@ -9,10 +9,10 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>Location</th>
-                        <th>Sub Location</th>
-                        <th class="text-center" *ngIf="rbac.allowedToAccess('Sub Location.update') || 
-                        rbac.allowedToAccess('Sub Location.delete')">Action(S)</th>
+                        <th>Letter Type</th>
+                        <th>Employees</th>
+                        <th class="text-center" *ngIf="rbac.allowedToAccess('Signature Authority.update') || 
+                        rbac.allowedToAccess('Signature Authority.delete')">Action(S)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -20,19 +20,19 @@
                         <tr *ngFor="let item of signatureEmployeesList">
                             <td>{{item.letterType}}</td>
                             <td>{{ item.firstName }} {{item.middleName}} {{item.lastName}}</td>
-                            <td class="text-center" *ngIf="rbac.allowedToAccess('Sub Location.update') || 
-                                                        rbac.allowedToAccess('Sub Location.delete')">
+                            <td class="text-center" *ngIf="rbac.allowedToAccess('Signature Authority.update') || 
+                                                        rbac.allowedToAccess('Signature Authority.delete')">
                                 <div class="dropdown">
                                     <span type="button" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                     <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li (click)="openupdateDialog(item)" *ngIf="rbac.allowedToAccess('Sub Location.update')">
+                                        <li (click)="openupdateDialog(item)" *ngIf="rbac.allowedToAccess('Signature Authority.update')">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-pencil me-2"></i>Update
                                             </a>
                                         </li>
-                                        <li (click)="opendelete(item)" *ngIf="rbac.allowedToAccess('Sub Location.delete')">
+                                        <li (click)="opendelete(item)" *ngIf="rbac.allowedToAccess('Signature Authority.delete')">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-trash3 me-2"></i>Delete
                                             </a>
@@ -96,7 +96,7 @@
 
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();AddForm.reset()">
+                    <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss(); AddForm.reset()">
                         {{ 'Close' | translate }}
                     </button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="AddForm.invalid">

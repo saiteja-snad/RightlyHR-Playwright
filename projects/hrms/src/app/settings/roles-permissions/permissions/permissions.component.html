@@ -1928,7 +1928,7 @@
                     </ng-container>
 
                     <!-- My Info Team Member tabs -->
-                    <tr>
+                    <!-- <tr>
                         <th colspan="5" class="custom-header">My Info Team Members</th>
                     </tr>
                     <ng-container *ngFor="let per of permissions">
@@ -1950,7 +1950,7 @@
                                 <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
                             </td>
                         </tr>
-                    </ng-container>
+                    </ng-container> -->
     
                     <!-- My Info Job Module -->
                     <tr>
@@ -1970,7 +1970,7 @@
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" 
-                                (change)="onCheckboxChange(per, 'Update')"  [disabled]="(per.fields === 'My Info Compensation Details' || per.fields === 'My Info Job Details' || per.fields === 'My Info Pre-Onboarding Details' || per.fields === 'My Info Offboarding Details' || per.fields === 'My Info Onboarding Details' || per.fields === 'My Info Desk Details' || per.fields === 'My Info Asset Details') || !roleToFilter?.id">
+                                (change)="onCheckboxChange(per, 'Update')"  [disabled]="(per.fields === 'My Info Compensation Details' || per.fields === 'My Info Job Details' || per.fields === 'My Info Pre-Onboarding Details' || per.fields === 'My Info Offboarding Details' || per.fields === 'My Info Onboarding Details' || per.fields === 'My Info Desk Details' || per.fields === 'My Info Asset Details' || per.fields === 'My Info Separation Request Button') || !roleToFilter?.id">
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" 

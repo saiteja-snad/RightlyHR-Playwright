@@ -4,6 +4,7 @@ import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
+import { RbacService } from '../../services/rbac.service';
 @Component({
   selector: 'app-profile-info-details',
   imports: [CommonModule],
@@ -27,10 +28,16 @@ export class ProfileInfoDetailsComponent {
   empdata = {} as any;
   profilePic: any;
 
-  constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService,) { }
+  constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public rbac: RbacService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    if (
+      this.rbac.allowedToAccess('Employee Info Personal Tab.view') && localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
+      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
+      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    }
+
     this.getJobDetails();
     this.getEmployeeId();
     this.http.basicDetailesadded$.subscribe(() => {
@@ -65,20 +72,34 @@ export class ProfileInfoDetailsComponent {
     })
   }
 
+
+
   chooseNewProfile(event: any) {
     const input = event.target as HTMLInputElement;
+  
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      this.img = input.files[0];
-      const maxSize = 1024 * 1024; // 1 MB
-      if (file.size < maxSize) {
+      const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
+      const maxSize = 1024 * 1024; // 1MB
+  
+      if (!allowedTypes.includes(file.type)) {
+        this.conformationPopup.openErrorModal('Invalid file type. Only PNG, JPG, and JPEG are allowed.');
         input.value = '';
-        this.onProfilepicSelected(this.img)
-      } else {
-        this.conformationPopup.openErrorModal('Please Choose File Size Below 1024 KB')
+        return;
       }
+  
+      if (file.size > maxSize) {
+        this.conformationPopup.openErrorModal('Please choose a file smaller than 1MB.');
+        input.value = '';
+        return;
+      }
+  
+      this.img = file;
+      input.value = ''; // clear input if needed to allow same file re-selection
+      this.onProfilepicSelected(this.img);
     }
   }
+  
 
   onProfilepicSelected(img: any) {
     let file = img;
@@ -110,7 +131,7 @@ export class ProfileInfoDetailsComponent {
               }
             },
             error: (reason: any) => {
-              this.conformationPopup.openErrorModal( reason.error.message || 'Profile picture update failed')
+              this.conformationPopup.openErrorModal(reason.error.message || 'Profile picture update failed')
 
             },
           });

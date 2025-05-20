@@ -4,14 +4,15 @@
             <div>
                 <span class="component-sub-header">Onboarding Details</span>
             </div>
-            @if(this.rbac.allowedToAccess('Employee Info Onboarding Details.view')){
-            @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !==
-        'trainee inactive' )){
-            <div >
-               @if(rbac.allowedToAccess('Employee Info Onboarding Details.update')){
-                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
-            }
+            @if(canAccess('view','onboarding')){
+            @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
+           
+               @if(canAccess('update','onboarding')){
+                <div >
+                <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
             </div>
+            }
+          
         }
             <!-- Show buttons if 'buttons' is true -->
             <div *ngIf="buttons" class="d-flex justify-content-end gap-2">

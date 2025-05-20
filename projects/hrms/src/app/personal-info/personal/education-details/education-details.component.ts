@@ -14,6 +14,9 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import {Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-education-details',
@@ -45,14 +48,13 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   loading = false
   dateofbirth: any;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,
-    public formValidation: FormValidationService, public rbac: RbacService) { }
+    public formValidation: FormValidationService, public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.getEmpInfoFromRoute();
     this.initializeForm();
     this.initializeupdateForm()
     this.getDegree()
-    this.getEducationEmpid();
-    this.getEmployeeId();
+   
     this.educationForm.get('degreeStartDate')?.valueChanges.subscribe(() => {
       this.educationForm.get('degreeEndDate')?.reset();
     });
@@ -60,7 +62,26 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
       this.educationupdateForm.get('degreeEndDateupdate')?.reset();
     });
   }
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
 
+ 
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+      this.getEducationEmpid();
+
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+      this.getEducationEmpid();
+    }
+  }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }
@@ -218,36 +239,56 @@ export class EducationDetailsComponent implements OnInit, OnDestroy {
   }
 
   onChangeEducation(event: any): void {
-    this.displalyeducationattachment = ''
-    const file = event.target.files[0];
-    if (file) {
-      const fileSizeInMB = file.size / (1024 * 1024);
-      if (fileSizeInMB > 25) {
-        this.educationAttachment = '';
-        this.displalyeducationattachment = ''
-        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
-        this.educationForm.get('attachment')?.reset();
-        this.educationForm.get('attachment')?.markAsUntouched();
-        this.educationupdateForm.get('attachmentupdate')?.reset();
-        this.educationupdateForm.get('attachmentupdate')?.markAsUntouched();
+    this.displalyeducationattachment = '';
+    const file: File = event.target.files[0];
+  
+    if (!file) return;
+  
+    const allowedTypes = ['image/jpeg',
+        'image/*',
+        'application/pdf',
+        'image/png',];
+    const maxSizeInMB = 25;
+    const fileSizeInMB = file.size / (1024 * 1024);
 
-        return;
-      }
+    if (!allowedTypes.includes(file.type)) {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
+      this.educationAttachment = '';
+      this.resetEducationForms();
+      return;
     }
+  
+    if (fileSizeInMB > maxSizeInMB) {
+      this.educationAttachment = '';
+      this.displalyeducationattachment = '';
+      this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+      this.resetEducationForms();
+      return;
+    }
+  
     const timestamp = new Date().getTime();
     this.educationAttachment = this.renameFileAttachment(
       file,
       `${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
-    console.log('Identity attachment:', this.educationAttachment);
+  
+    console.log('Education attachment:', this.educationAttachment);
   }
-
-
+  
   private renameFileAttachment(originalFile: File, newName: string): File {
     return new File([originalFile], newName, {
       type: originalFile.type,
       lastModified: originalFile.lastModified
     });
+  }
+  resetEducationForms(){
+    this.educationForm.get('attachment')?.reset();
+    this.educationForm.get('attachment')?.markAsUntouched();
+    this.educationupdateForm.get('attachmentupdate')?.reset();
+    this.educationupdateForm.get('attachmentupdate')?.markAsUntouched();
+    const attachmentValidators = this.displalyeducationattachment ? [] : [Validators.required];
+    this.educationupdateForm.get('attachmentupdate')?.setValidators(attachmentValidators);
+    this.educationupdateForm.get('attachmentupdate')?.updateValueAndValidity();
   }
 
   onSelectIdentityAttachmentDownload(file: any) {

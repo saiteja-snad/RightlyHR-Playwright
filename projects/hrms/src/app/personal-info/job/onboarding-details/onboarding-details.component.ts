@@ -12,6 +12,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IBranchLocation, Ipersonal, IStatus } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
 import { RbacService } from '../../../services/rbac.service';
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 
 @Component({
   selector: 'app-onboarding-details',
@@ -77,13 +79,13 @@ export class OnboardingDetailsComponent {
   ];
   filteredWorkLocations: any[] = [];
   selectedWorkLocation: any = null;
-  constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private modalService: NgbModal,public rbac:RbacService) { }
+  constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private modalService: NgbModal,public rbac:RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.getEmpInfoFromRoute();
     this.initializeForm();
     this.remoteLoginChange()
-    this.getEmployeeId();
+  
     this.getBackground();
     this.getBranchLocations();
     this.getprobation();
@@ -93,6 +95,22 @@ export class OnboardingDetailsComponent {
     
   }
 
+
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+    }
+  }
   initializeForm(): void {
     this.onboardingForm = this.fb.group({
       status: [{ value: null, disabled: true }],
@@ -224,10 +242,7 @@ export class OnboardingDetailsComponent {
     });
     console.log(this.onboardingForm.value); // Check values in the onboardingForm
   
-    // Patching values for traineeForm
-   
     
-    console.log(this.traineeForm.value); // Check values in the traineeForm
   }
 
   

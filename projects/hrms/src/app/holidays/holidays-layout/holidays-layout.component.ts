@@ -1,23 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { HttpService } from '../../services/http.service';
+import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { RouterModule, Router } from '@angular/router';
 import { Select } from 'primeng/select';
-@Component({
-  selector: 'app-holidays',
-  imports: [RouterModule, CommonModule,ReactiveFormsModule,Select],
-  templateUrl: './holidays.component.html',
-  styleUrl: './holidays.component.scss'
-})
+import { HttpService } from '../../services/http.service';
 
-export class HolidaysComponent implements OnInit,OnDestroy {
+@Component({
+  selector: 'app-holidays-layout',
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, Select],
+  templateUrl: './holidays-layout.component.html',
+  styleUrl: './holidays-layout.component.scss'
+})
+export class HolidaysLayoutComponent implements OnInit, OnDestroy {
   optionalholidaysform!: FormGroup;
   years: number[] = [];
   empinfo: any;
-  
-  constructor(public router: Router, private http: HttpService) { }
-
   orgHolidayItemsArray: any[] = [];
   length: number = 0;
   optional: number = 0;
@@ -27,7 +24,7 @@ export class HolidaysComponent implements OnInit,OnDestroy {
   Policies: any = [];
   jobshiftdetails: any;
 
-
+  constructor(public router: Router, private http: HttpService) { }
 
   ngOnInit(): void {
     this.currentYear = new Date().getFullYear();
@@ -41,21 +38,15 @@ export class HolidaysComponent implements OnInit,OnDestroy {
       selectedYear: new FormControl(this.selectedYear)
     });
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-   
   }
-
 
   onYearChange() {
-     const selectedYear = this.optionalholidaysform.get('selectedYear')?.value;
-     this.http.setSelectedYear(selectedYear);
-   
+    const selectedYear = this.optionalholidaysform.get('selectedYear')?.value;
+    this.http.setSelectedYear(selectedYear);
   }
-
 
   ngOnDestroy(): void {
-   this.optionalholidaysform.reset()
-   this.http.setSelectedYear(this.currentYear);
+    this.optionalholidaysform.reset()
+    this.http.setSelectedYear(this.currentYear);
   }
-
-
 }

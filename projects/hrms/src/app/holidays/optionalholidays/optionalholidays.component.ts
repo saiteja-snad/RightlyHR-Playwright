@@ -1,22 +1,21 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { CommonModule } from '@angular/common';
-import { HolidayTabsComponent } from "../../shared/calendar-tabs/holiday-tabs/holiday-tabs.component";
-import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { Subscription } from 'rxjs';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { HolidayTabsComponent } from "../../shared/holiday-tabs/holiday-tabs.component";
+
 @Component({
   selector: 'app-optionalholidays',
-  imports: [ReactiveFormsModule, CommonModule, HolidayTabsComponent, Select, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, HolidayTabsComponent],
   templateUrl: './optionalholidays.component.html',
   styleUrl: './optionalholidays.component.scss'
 })
 
 export class OptionalholidaysComponent {
- 
   orgHolidayItemsArrayTrue: any = [];
   orgHolidayItemsArrayFalse: any = [];
   orgHolidayItemsArray: any[] = [];
@@ -29,26 +28,22 @@ export class OptionalholidaysComponent {
   jobshiftdetails: any;
   years: number[] = [];
   empinfo = {} as any;
-  loading=false
+  loading = false;
+
   constructor(public router: Router, private http: HttpService) { }
 
   ngOnInit(): void {
-  
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.getjobDetails();
-  
-
     this.http.selectedYear$.subscribe((year) => {
       if (year) {
         this.selectedYear = year;
         this.getHoliday(this.jobshiftdetails);
       }
-      else{
-      
+      else {
         this.getHoliday(this.jobshiftdetails);
       }
     });
-
   }
 
   getjobDetails() {
@@ -62,7 +57,7 @@ export class OptionalholidaysComponent {
   }
 
   getHoliday(jobshiftdetails: any) {
-    this.loading=true
+    this.loading = true
     this.orgHolidayItemsArrayTrue = [];
     this.orgHolidayItemsArrayFalse = [];
     this.length = 0;
@@ -75,19 +70,18 @@ export class OptionalholidaysComponent {
     }
     this.subscription = this.http.getDataWithQueryParams(`orgHolidays/getHolidaysbylocation`, holiday).subscribe({
       next: (response: any) => {
-        this.loading=false
+        this.loading = false
         this.Policies = response;
         this.orgHolidayItemsArray = response[0]?.orgHolidaysItems;
         this.orgHolidayItemsArray?.forEach(item => {
           if (item.isOptional) {
             this.orgHolidayItemsArrayTrue.push(item);
             this.length = this.orgHolidayItemsArrayTrue.length
-          } 
+          }
         });
       },
-      error: (reason: any) =>{
-        console.log(reason)
-        this.loading=false
+      error: (reason: any) => {
+        this.loading = false;
       }
     });
   }
@@ -97,5 +91,4 @@ export class OptionalholidaysComponent {
       this.subscription.unsubscribe()
     }
   }
-
 }

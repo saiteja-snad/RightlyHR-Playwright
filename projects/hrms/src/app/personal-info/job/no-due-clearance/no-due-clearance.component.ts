@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription, BehaviorSubject } from 'rxjs';
-import { AuthService } from '../../../services/auth.service';
+
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
@@ -13,7 +13,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
-import { INodue } from '../../../myinfo/nodue-details/nodue-details';
+
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
@@ -35,7 +35,7 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 })
 export class NoDueClearanceComponent {
   subscription!: Subscription
-  nodue_Clearance_Details = new BehaviorSubject<INodue[]>([]);
+  nodue_Clearance_Details = new BehaviorSubject<any[]>([]);
   nodueapprovalcount!: any;
   empinfo = {} as Ipersonal;
   empdata = {} as Ipersonal;

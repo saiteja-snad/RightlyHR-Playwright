@@ -6,11 +6,13 @@
             </div>
             @if(canAccess('view','onboarding')){
             @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive' )){
-            <div >
+           
                @if(canAccess('update','onboarding')){
-                <a (click)="showButtons()"><i class="bi bi-pencil-square"></i></a>
-            }
+                <div >
+                <a (click)="showButtons()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
             </div>
+            }
+          
         }
             <!-- Show buttons if 'buttons' is true -->
             <div *ngIf="buttons" class="d-flex justify-content-end gap-2">

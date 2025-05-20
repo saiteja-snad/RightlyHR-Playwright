@@ -12,6 +12,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-certification',
@@ -37,15 +39,36 @@ export class CertificationComponent implements OnInit, OnDestroy {
   displaycertification: any
   spinnerLoader = false;
   constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService, public formValidation: FormValidationService,
-    public rbac: RbacService
+    public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    this.getEmpcertdata();
+
+    this.getEmpInfoFromRoute();
     this.initializeForm();
     this.initializeupdateForm();
-    this.getEmployeeId()
+
+  }
+
+
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+      this.getEmpcertdata();
+
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+      this.getEmpcertdata();
+    }
   }
 
   initializeForm(): void {
@@ -165,21 +188,32 @@ export class CertificationComponent implements OnInit, OnDestroy {
       });
   }
 
-  onFileChange(event: any): void {
-    this.displaycertification = null
-    const file = event.target.files[0];
-    if (file) {
-      const fileSizeInMB = file.size / (1024 * 1024);
-      if (fileSizeInMB > 25) {
-        this.certificationDocument = null;
-        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
-        this.certificationForm.get('attachment')?.reset();
-        this.certificationForm.get('attachment')?.markAsUntouched();
-        this.updateCertificationForm.get('attachment')?.reset();
-        this.updateCertificationForm.get('attachment')?.markAsUntouched();
 
-        return;
-      }
+  onFileChange(event: any): void {
+    this.displaycertification = null;
+    const file: File = event.target.files[0];
+
+    if (!file) return;
+    const allowedTypes = ['image/jpeg',
+      'image/*',
+      'application/pdf',
+      'image/png',];
+    const maxSizeInMB = 25;
+    const fileSizeInMB = file.size / (1024 * 1024);
+
+    if (!allowedTypes.includes(file.type)) {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
+      this.displaycertification = '';
+      this.resetForms();
+      return;
+    }
+
+    if (fileSizeInMB > maxSizeInMB) {
+      this.certificationDocument = '';
+      this.displaycertification = '';
+      this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+      this.resetForms();
+      return;
     }
 
     const timestamp = new Date().getTime();
@@ -187,6 +221,19 @@ export class CertificationComponent implements OnInit, OnDestroy {
       file,
       `${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
+
+
+  }
+ 
+  resetForms() {
+    this.certificationForm.get('attachment')?.reset();
+    this.certificationForm.get('attachment')?.markAsUntouched();
+    this.updateCertificationForm.get('attachment')?.reset();
+    this.updateCertificationForm.get('attachment')?.markAsUntouched();
+    // Dynamically update validators for the attachment field
+    const attachmentValidators = this.displaycertification ? [] : [Validators.required];
+    this.updateCertificationForm.get('attachment')?.setValidators(attachmentValidators);
+    this.updateCertificationForm.get('attachment')?.updateValueAndValidity();
   }
 
   private renameFileAttachment(originalFile: File, newName: string): File {

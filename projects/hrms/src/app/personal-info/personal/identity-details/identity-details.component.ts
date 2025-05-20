@@ -12,6 +12,8 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 
 @Component({
   selector: 'app-identity-details',
@@ -37,16 +39,33 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   loading = false
   selectedIdentityTypetoUpdate: any;
   constructor(private modalService: NgbModal, private http: HttpService,
-    private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService) { }
+    private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    console.log('Employee info:', this.empinfo);
+    this.getEmpInfoFromRoute();
     this.getIdentityDropDown();
     this.initializeForm();
     this.initializeupdateForm();
-    this.getIdentityByEmpid();
-    this.getEmployeeId();
+
+
+  }
+
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+      this.getIdentityByEmpid();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+      this.getIdentityByEmpid();
+    }
   }
 
   initializeForm(): void {
@@ -143,32 +162,52 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   }
 
 
-
   onIdentityAttachmentSelected(event: any): void {
-    this.displayidentiydocument = null; // Reset the displayed document name
-    const file = event.target.files[0];
-    if (file) {
-      this.IdentityAttachment = file; // Store the selected file
-      console.log('Selected file:', file);
-      const fileSizeInMB = file.size / (1024 * 1024);
-      if (fileSizeInMB > 25) {
-        this.IdentityAttachment = null;
-        event.target.value = ''
-        this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
-        this.identityForm.get('identityAttachment')?.setValue('');
-        this.identityForm.get('identityAttachment')?.markAsUntouched();
-        this.identityupdateForm.get('identityupdateAttachment')?.setValue('');
-        this.identityupdateForm.get('identityupdateAttachment')?.markAsUntouched();
+    this.displayidentiydocument = '';
+    const file: File = event.target.files[0];
 
-        return;
-      }
+    if (!file) return;
+
+    const allowedTypes = ['image/jpeg',
+      'image/*',
+      'application/pdf',
+      'image/png',];
+    const maxSizeInMB = 25;
+    const fileSizeInMB = file.size / (1024 * 1024);
+
+    if (!allowedTypes.includes(file.type)) {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
+      this.IdentityAttachment = '';
+      this.displayidentiydocument = '';
+      this.resetForms();
+      return;
     }
+
+    if (fileSizeInMB > maxSizeInMB) {
+      this.IdentityAttachment = '';
+      this.displayidentiydocument = '';
+      this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+      this.resetForms();
+      return;
+    }
+
     const timestamp = new Date().getTime();
     this.IdentityAttachment = this.renameFileAttachment(
       file,
       `${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
-    console.log('Identity attachment:', this.IdentityAttachment);
+
+    console.log('Education attachment:', this.IdentityAttachment);
+  }
+  resetForms() {
+    this.identityForm.get('identityAttachment')?.setValue('');
+    this.identityForm.get('identityAttachment')?.markAsUntouched();
+    this.identityupdateForm.get('identityupdateAttachment')?.setValue('');
+    this.identityupdateForm.get('identityupdateAttachment')?.markAsUntouched();
+    const attachmentValidators = this.displayidentiydocument ? [] : [Validators.required];
+    this.identityupdateForm.get('identityupdateAttachment')?.setValidators(attachmentValidators);
+    this.identityupdateForm.get('identityupdateAttachment')?.updateValueAndValidity();
+
   }
 
   private renameFileAttachment(originalFile: File, newName: string): File {

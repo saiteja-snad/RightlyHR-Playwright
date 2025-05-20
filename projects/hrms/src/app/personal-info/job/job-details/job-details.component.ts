@@ -9,6 +9,9 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import moment from 'moment';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import {Router } from '@angular/router';
+
 import { AuthService } from '../../../services/auth.service';
 import { environment } from '../../../../environments/environment';
 import { TranslateModule } from '@ngx-translate/core';
@@ -77,18 +80,18 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   selectedlocationid: any;
 
   constructor(private modalService: NgbModal, private authService: AuthService, private fb: FormBuilder, private conformationPopup: OpenModalService,
-    private http: HttpService, public formValidations: FormValidationsService,public rbac: RbacService) { }
+    private http: HttpService, public formValidations: FormValidationsService,public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService,private router: Router) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-
+    
+    this.getEmpInfoFromRoute();
     this.initializeForm();
     this.initializejobForm();
     this.initializeupdatejobForm();
     this.getDepartment();
     this.getJobtype();
     this.getReportingTo();
-    this.getEmployeeId();
+    
     this.getjobLocationList();
     this.getJobDetails();
     this.getJobDesignation();
@@ -102,6 +105,24 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       });
   }
 
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+
+
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+    }
+  }
+
   initializejobForm(): void {
     this.jobDetailsForm = this.fb.group({
       effectiveDate: [null, Validators.required],
@@ -113,7 +134,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
       reportingManager: [null, Validators.required],
       location: [null, Validators.required],
       subLocation: [null, Validators.required],
-      shift: [, Validators.required],
+      shift: ['', Validators.required],
       jobType: [null, Validators.required],
     });
   }
@@ -559,6 +580,9 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
         console.log(this.jobdetails.value);
 
       },
+      error:(data:any)=>{
+        this.loading=false
+      }
     });
   }
   formatDateToLocal(dateString: string): string {

@@ -3,361 +3,362 @@
     <div>
       <p class="component-header mb-0">Assets Management</p>
     </div>
-    <div>
-      @if(rbac.allowedToAccess('Asset Management - Create.view')){
-      <button type="button"  (click)="openModal(addassetes)" class="custom-btn btn-primary"><i class="bi bi-plus me-2"
-         ></i>Register an Asset</button>
-      }
+    <div class="d-flex gap-3 align-items-center">
+      <form autocomplete="off" [formGroup]="locationfromdata">
+        <div class="d-flex gap-3 align-items-center">
+          <div class="d-flex gap-2 align-items-center">
+            <label for="location" class="form-label custom-label text-nowrap m-0">Locations</label>
+            <select id="location" formControlName="locationId" class="form-select custom-select"
+              (change)="onLocationChange()">
+              <option [ngValue]="null">All Locations</option>
+              <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{
+                location.jobLocationName }}</option>
+            </select>
+          </div>
+          <div class="d-flex gap-2 align-items-center">
+            <label for="subLocation" class="form-label custom-label text-nowrap m-0">Sub Locations</label>
+            <select id="subLocation" formControlName="subLocationId" class="form-select custom-select"
+              (change)="onSubLocationChange()">
+              <option [ngValue]="null">All Sub Locations</option>
+              <option *ngFor="let subLocation of subLocationsDropdown" [value]="subLocation.id">
+                {{ subLocation.jobSubLocationName }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+      </form>
+
+
+      <div>
+        @if(rbac.allowedToAccess('Asset Management - Create.view')){
+        <button type="button" (click)="openModal(addassetes)" class="custom-btn btn-primary"><i
+            class="bi bi-plus me-2"></i>Register an Asset</button>
+        }
+      </div>
     </div>
   </div>
 
-
   <div>
-    <form autocomplete="off" [formGroup]="locationfromdata">
-      <div class="row mb-3 ps-2 ">
-        <div class="col-md-4 ">
-          <label for="location" class="form-label custom-label mb-2">Locations</label>
-          <select id="location" formControlName="locationId" class="form-select custom-select"
-            (change)="onLocationChange()">
-            <option [ngValue]="null">All Locations</option>
-            <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{
-              location.jobLocationName }}</option>
-          </select>
-        </div>
-        <div class="col-md-4 ">
-          <label for="subLocation" class="form-label custom-label mb-2">Sub Locations</label>
-          <select id="subLocation" formControlName="subLocationId" class="form-select custom-select"
-            (change)="onSubLocationChange()">
-            <option [ngValue]="null">All Sub Locations</option>
-            <option *ngFor="let subLocation of subLocationsDropdown" [value]="subLocation.id">
-              {{ subLocation.jobSubLocationName }}
-            </option>
-          </select>
+    <!-- tabs -->
+    <div class="d-flex gap-3 w-100">
+      <div class="custom-component-left-content">
+        <div class="component-side-nav-tabs-container py-3">
+          <ul class="nav flex-column">
+            <li class="nav-item" *ngFor="let link of navTabs">
+              <a class="nav-link" [routerLink]="[link.route]" routerLinkActive="active-nav-link">
+                {{ link.label }} ({{ link.count$ | async }})
+              </a>
+            </li>
+          </ul>
         </div>
       </div>
-
-    </form>
-  </div>
-  <!-- tabs -->
-  <div class="component-nav-tabs-container card px-2">
-    <p-tabs value="0" scrollable>
-      <p-tablist>
-        <ng-container *ngFor="let tab of navTabs;">
-          <p-tab [value]="tab.route">
-            <a [routerLink]="tab.route" routerLinkActive="nav-tab-active" class="nav-link">
-              {{ tab.label }} ({{ tab.count$ | async }})
-            </a>
-          </p-tab>
-        </ng-container>
-      </p-tablist>
-    </p-tabs>
-  </div>
-
-
-  <div>
-    <router-outlet></router-outlet>
-  </div>
-
-</div>
-
-
-<ng-template #addassetes let-modal>
-  <div class="custom-main-popup-container" ngbAutofocus>
-
-    <div class="custom-poup-header-content popup-header-border">
-      <div>
-        <p class="popup-heading mb-0">Register an Asset</p>
-      </div>
-      <div>
-        <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon"
-            class="close-icon"></a>
+      <div class="card custom-component-right-content px-3">
+        <router-outlet></router-outlet>
       </div>
     </div>
+  </div>
 
-    <div class="custom-main-popup-content">
+  <ng-template #addassetes let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
 
-      <form autocomplete="off" [formGroup]="assetForm" (ngSubmit)="postassets(assetForm)">
+      <div class="custom-poup-header-content popup-header-border">
+        <div>
+          <p class="popup-heading mb-0">Register an Asset</p>
+        </div>
+        <div>
+          <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon"
+              class="close-icon"></a>
+        </div>
+      </div>
 
-        <div class="row ">
-          <!-- Location Field -->
-          <div class=" col-md-6 mb-2">
-            <label for="location" class="form-label custom-label mb-2">Location<span
-                class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="locationId"
-                placeholder="Please select location" class="form-select custom-select"
-                (onChange)="getSubLocationByid($event.value)">
-              </p-select>
-            </div>
-            <div *ngIf="assetForm.get('locationId')?.invalid && assetForm.get('locationId')?.touched" class="error-msg">
-              Location is required.
-            </div>
-          </div>
+      <div class="custom-main-popup-content">
 
-          <!-- Sub Location Field -->
-          <div class="col-md-6 mb-2">
-            <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span
-                class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName"
-                formControlName="subLocationId" placeholder="Please select sub location"
-                class="form-select custom-select"></p-select>
-            </div>
-            <div *ngIf="assetForm.get('subLocationId')?.invalid && assetForm.get('subLocationId')?.touched"
-              class="error-msg">
-              Sub Location is required.
-            </div>
-          </div>
+        <form autocomplete="off" [formGroup]="assetForm" (ngSubmit)="postassets(assetForm)">
 
-
-          <!-- Asset Category -->
-          <div class="col-md-6 mb-2">
-            <label for="assetCategory" class="form-label custom-label mb-2">Asset Category<span
-                class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="assetCategorys" optionLabel="name" formControlName="assetCategory"
-                placeholder="Please select asset category" class="form-select custom-select"
-                (onChange)="onassetsubcategory()"></p-select>
-
-            </div>
-            <div *ngIf="assetForm.get('assetCategory')?.invalid && assetForm.get('assetCategory')?.touched">
-              <div class="error-msg">Asset category is required</div>
-            </div>
-
-          </div>
-
-          <!-- Asset Sub Category -->
-          <div class="col-md-6 mb-2">
-            <label for="assetSubCategorys" class="form-label custom-label mb-2">Asset Sub Category<span
-                class="text-danger">*</span></label>
-
-            <div class="custom-p-select-content">
-              <p-select [options]="assetSubCategory" optionLabel="name" formControlName="assetSubCategory"
-                placeholder="Please select asset sub category" class="form-select custom-select"></p-select>
-            </div>
-            <div *ngIf="assetForm.get('assetSubCategory')?.invalid && assetForm.get('assetSubCategory')?.touched">
-              <div class="error-msg">Asset sub category is required</div>
-            </div>
-          </div>
-
-
-          <!-- ASSET Model  -->
-          <div class="col-md-6 mb-2">
-            <label for="assetModel" class="form-label custom-label mb-2">Asset Model<span
-                class="text-danger">*</span></label>
-            <input id="assetModel" formControlName="assetModel" (keypress)="formValidation.blockLeadingSpace($event)"
-              class="form-control custom-input" placeholder="Enter asset model">
-            <div *ngIf="assetForm.get('assetModel')?.hasError('required') && assetForm.get('assetModel')?.touched">
-              <div class="error-msg">Asset model is required</div>
-            </div>
-            <div *ngIf="assetForm.get('assetModel')?.hasError('maxlength') && assetForm.get('assetModel')?.touched">
-              <div class="error-msg">Asset model cannot be more than 20 characters</div>
-            </div>
-          </div>
-
-          <div class="col-md-6  mb-2">
-            <label for="serialnumber" class="form-label custom-label mb-2">Serial Number<span
-                class="text-danger">*</span></label>
-            <input id="serialnumber" type="text" formControlName="serialnumber"
-              (keypress)="formValidation.blockLeadingSpace($event)" class="form-control custom-input"
-              placeholder="Enter serial number">
-            <div *ngIf="assetForm.get('serialnumber')?.hasError('required') && assetForm.get('serialnumber')?.touched">
-              <div class="error-msg">Serial number is required</div>
-            </div>
-            <div *ngIf="assetForm.get('serialnumber')?.hasError('maxlength') && assetForm.get('serialnumber')?.touched">
-              <div class="error-msg">Serial number cannot be more than 30 characters</div>
-            </div>
-
-          </div>
-
-          <div class="col-md-6 mb-2">
-            <label for="vendordetailes" class="form-label custom-label mb-2">Vendor Name<span
-                class="text-danger">*</span></label>
-            <div class="custom-p-select-content">
-              <p-select [options]="vendor" optionLabel="name" formControlName="vendordetailes"
-                placeholder="Please select vendor name" class="form-select custom-select"></p-select>
-            </div>
-            <div *ngIf="assetForm.get('vendordetailes')?.touched && assetForm.get('vendordetailes')?.invalid">
-              <div class="error-msg">Vendor name is required</div>
-            </div>
-          </div>
-          
-          <div class="col-md-6 mb-2">
-            <label for="purchasedate" class="form-label custom-label mb-2">
-              Purchase Date<span class="text-danger">*</span>
-            </label>
-            <input id="purchasedate" type="date" formControlName="purchasedate" onkeypress="return false;"
-              class="form-control custom-input"  [min]="minpurchesDate"[max]="maxpurchesDate" />
-            <div *ngIf="assetForm.get('purchasedate')?.invalid && assetForm.get('purchasedate')?.touched">
-              <div class="error-msg">Purchase date is required</div>
-            </div>
-          </div>
-
-
-
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <div class="custom-toggle-btn">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
-                    [checked]="isToggledWarranty" (change)="onToggleChangeWarranty($event)" />
-                </div>
-                <label for="isPrimary" class="form-label custom-label mb-0">Warranty Details</label>
+          <div class="row ">
+            <!-- Location Field -->
+            <div class=" col-md-6 mb-2">
+              <label for="location" class="form-label custom-label mb-2">Location<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="jobLocationDropDownData" optionLabel="jobLocationName" formControlName="locationId"
+                  placeholder="Please select location" class="form-select custom-select"
+                  (onChange)="getSubLocationByid($event.value)">
+                </p-select>
+              </div>
+              <div *ngIf="assetForm.get('locationId')?.invalid && assetForm.get('locationId')?.touched"
+                class="error-msg">
+                Location is required.
               </div>
             </div>
-          </div>
 
-          <div class="col-md-6 mb-2">
-            <label for="warrantystartdate" class="form-label custom-label mb-2">Warranty Start Date<span
-                class="text-danger" *ngIf="isToggledWarranty">*</span></label>
-            <input id="warrantystartdate" type="date" onkeypress="return false;" formControlName="warrantystartdate"
-              class="form-control custom-input" [min]="assetForm.get('purchasedate')?.value"
-              (change)="onStartDateChange()">
-            <div *ngIf="assetForm.get('warrantystartdate')?.invalid && assetForm.get('warrantystartdate')?.touched">
-              <div class="error-msg">Warranty start date is required</div>
-            </div>
-            <!-- Custom error message for mismatched dates -->
-            <div *ngIf="dateMismatch">
-              <div class="error-msg">Warranty Start date must be equal to the Purchase date</div>
-            </div>
-          </div>
-          <!-- Warranty date end -->
-          <div class="col-md-6 mb-2">
-            <label for="warrantyenddate" class="form-label custom-label mb-2">Warranty Expiry Date<span
-                class="text-danger" *ngIf="isToggledWarranty">*</span></label>
-            <input id="warrantyenddate" type="date" onkeypress="return false;" formControlName="warrantyenddate"
-              class="form-control custom-input" [min]="assetForm.get('warrantystartdate')?.value"
-              (change)="checkDateMismatch()">
-            <div *ngIf="assetForm.get('warrantyenddate')?.invalid && assetForm.get('warrantyenddate')?.touched">
-              <div class="error-msg">Warranty expiry date is required</div>
-            </div>
-            <div *ngIf="warrantydateMismatch">
-              <div class="error-msg">Warranty expiry date must be greater than warranty start date</div>
-            </div>
-          </div>
-
-          <div class="row">
-
-            <div class="col-md-6 mb-3">
-              <div class="custom-toggle-btn">
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
-                    [checked]="isToggledamc" (change)="onToggleChangeamc($event)" />
-                </div>
-                <label for="isPrimary" class="form-label custom-label mb-0">AMC Details</label>
+            <!-- Sub Location Field -->
+            <div class="col-md-6 mb-2">
+              <label for="subLocation" class="form-label custom-label mb-2">Sub Location<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="subLocationsDropdown" optionLabel="jobSubLocationName"
+                  formControlName="subLocationId" placeholder="Please select sub location"
+                  class="form-select custom-select"></p-select>
+              </div>
+              <div *ngIf="assetForm.get('subLocationId')?.invalid && assetForm.get('subLocationId')?.touched"
+                class="error-msg">
+                Sub Location is required.
               </div>
             </div>
-          </div>
 
 
-          <!-- AMC Start Date -->
-          <div class="col-md-6 mb-2">
-            <label for="amcstartdate" class="form-label custom-label mb-2">
-              AMC Start Date
-              <span class="text-danger" *ngIf="isToggledamc">*</span>
-            </label>
-            <input id="amcstartdate" type="date" onkeypress="return false;" formControlName="amcstartdate"
-              class="form-control custom-input" [min]="assetForm.get('warrantyenddate')?.value"
-              (change)="onStartDateChangeamc()" />
-            <div *ngIf="assetForm.get('amcstartdate')?.invalid && assetForm.get('amcstartdate')?.touched">
-              <div class="error-msg">AMC start date is required</div>
-            </div>
-            <div *ngIf="amcDateMismatch">
-              <div class="error-msg">AMC start date must be equal to or greater than the warranty expiry
-                date</div>
-            </div>
-          </div>
+            <!-- Asset Category -->
+            <div class="col-md-6 mb-2">
+              <label for="assetCategory" class="form-label custom-label mb-2">Asset Category<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="assetCategorys" optionLabel="name" formControlName="assetCategory"
+                  placeholder="Please select asset category" class="form-select custom-select"
+                  (onChange)="onassetsubcategory()"></p-select>
 
-          <!-- AMC Expiry Date -->
-          <div class="col-md-6 mb-2 ">
-            <label for="amcenddate" class="form-label custom-label mb-2">
-              AMC Expiry Date
-              <span class="text-danger" *ngIf="isToggledamc">*</span>
-            </label>
-            <input id="amcenddate" type="date" formControlName="amcenddate" class="form-control custom-input"
-              onkeypress="return false;" [min]="assetForm.get('amcstartdate')?.value"
-              (change)="checkAmcDateMismatch()" />
-            <div *ngIf="assetForm.get('amcenddate')?.invalid && assetForm.get('amcenddate')?.touched">
-              <div class="error-msg">AMC expiry date is required</div>
-            </div>
-            <div *ngIf="amcDateMismatch">
-              <div class="error-msg">AMC expiry date must be greater than AMC start date</div>
-            </div>
-          </div>
+              </div>
+              <div *ngIf="assetForm.get('assetCategory')?.invalid && assetForm.get('assetCategory')?.touched">
+                <div class="error-msg">Asset category is required</div>
+              </div>
 
-          <div class="col-md-6 mb-2">
-            <label for="vendordetailes" class="form-label custom-label mb-2">AMC Vendor Name<span class="text-danger"
-                *ngIf="isToggledamc">*</span></label>
-            <input type="text" formControlName="vendorname"
-              (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
-              class="form-control custom-input" name="vendorname" placeholder="AMC Vendor Name" autocomplete="off" />
-            <div *ngIf="assetForm.get('vendorname')?.invalid && assetForm.get('vendorname')?.touched">
-              <div class="error-msg">AMC Vendor Name is required</div>
             </div>
-            <div class="error-msg" *ngIf="assetForm.get('vendorname')?.errors?.['maxlength'] ">
-              AMC Vendor Name cannot be more than 20 characters
+
+            <!-- Asset Sub Category -->
+            <div class="col-md-6 mb-2">
+              <label for="assetSubCategorys" class="form-label custom-label mb-2">Asset Sub Category<span
+                  class="text-danger">*</span></label>
+
+              <div class="custom-p-select-content">
+                <p-select [options]="assetSubCategory" optionLabel="name" formControlName="assetSubCategory"
+                  placeholder="Please select asset sub category" class="form-select custom-select"></p-select>
+              </div>
+              <div *ngIf="assetForm.get('assetSubCategory')?.invalid && assetForm.get('assetSubCategory')?.touched">
+                <div class="error-msg">Asset sub category is required</div>
+              </div>
             </div>
-          </div>
-          <div class="col-md-6 mb-2">
-            <label for="vendor" class="form-label custom-label mb-2">AMC Vendor Contact<span class="text-danger"
-                *ngIf="isToggledamc">*</span></label>
-            <input type="text" formControlName="contactnumber" class="form-control custom-input" minlength="10"
-              maxlength="15" (paste)="formValidation.validatePaste($event)"
-              (keypress)="formValidation.restrictAlphabets($event)" autocomplete="off"
-              placeholder="AMC Vendor Contact" />
-            <div class="error-msg"
-              *ngIf="assetForm.controls['contactnumber'].invalid && (assetForm.controls['contactnumber'].touched)">
-              <!-- Required error -->
+
+
+            <!-- ASSET Model  -->
+            <div class="col-md-6 mb-2">
+              <label for="assetModel" class="form-label custom-label mb-2">Asset Model<span
+                  class="text-danger">*</span></label>
+              <input id="assetModel" formControlName="assetModel" (keypress)="formValidation.blockLeadingSpace($event)"
+                class="form-control custom-input" placeholder="Enter asset model">
+              <div *ngIf="assetForm.get('assetModel')?.hasError('required') && assetForm.get('assetModel')?.touched">
+                <div class="error-msg">Asset model is required</div>
+              </div>
+              <div *ngIf="assetForm.get('assetModel')?.hasError('maxlength') && assetForm.get('assetModel')?.touched">
+                <div class="error-msg">Asset model cannot be more than 20 characters</div>
+              </div>
+            </div>
+
+            <div class="col-md-6  mb-2">
+              <label for="serialnumber" class="form-label custom-label mb-2">Serial Number<span
+                  class="text-danger">*</span></label>
+              <input id="serialnumber" type="text" formControlName="serialnumber"
+                (keypress)="formValidation.blockLeadingSpace($event)" class="form-control custom-input"
+                placeholder="Enter serial number">
               <div
-                *ngIf="assetForm.controls['contactnumber'].errors?.['required'] && assetForm.controls['contactnumber'].touched">
-                AMC vendor Contact is required
+                *ngIf="assetForm.get('serialnumber')?.hasError('required') && assetForm.get('serialnumber')?.touched">
+                <div class="error-msg">Serial number is required</div>
               </div>
-              <div *ngIf="assetForm.controls['contactnumber'].errors?.['maxlength']">
-                AMC vendor Contact must be 10 to 15 digits
+              <div
+                *ngIf="assetForm.get('serialnumber')?.hasError('maxlength') && assetForm.get('serialnumber')?.touched">
+                <div class="error-msg">Serial number cannot be more than 30 characters</div>
               </div>
-              <div *ngIf="assetForm.controls['contactnumber'].errors?.['minlength']">
-                AMC vendor Contact must be 10 to 15 digits
+
+            </div>
+
+            <div class="col-md-6 mb-2">
+              <label for="vendordetailes" class="form-label custom-label mb-2">Vendor Name<span
+                  class="text-danger">*</span></label>
+              <div class="custom-p-select-content">
+                <p-select [options]="vendor" optionLabel="name" formControlName="vendordetailes"
+                  placeholder="Please select vendor name" class="form-select custom-select"></p-select>
               </div>
-              <!-- Pattern error for Mobile number length -->
-              <div *ngIf="assetForm.controls['contactnumber'].errors?.['allZeroesIfMaxLength']">
-                AMC vendor Contact is not valid
+              <div *ngIf="assetForm.get('vendordetailes')?.touched && assetForm.get('vendordetailes')?.invalid">
+                <div class="error-msg">Vendor name is required</div>
               </div>
             </div>
+
+            <div class="col-md-6 mb-2">
+              <label for="purchasedate" class="form-label custom-label mb-2">
+                Purchase Date<span class="text-danger">*</span>
+              </label>
+              <input id="purchasedate" type="date" formControlName="purchasedate" onkeypress="return false;"
+                class="form-control custom-input" [min]="minpurchesDate" [max]="maxpurchesDate" />
+              <div *ngIf="assetForm.get('purchasedate')?.invalid && assetForm.get('purchasedate')?.touched">
+                <div class="error-msg">Purchase date is required</div>
+              </div>
+            </div>
+
+
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="custom-toggle-btn">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
+                      [checked]="isToggledWarranty" (change)="onToggleChangeWarranty($event)" />
+                  </div>
+                  <label for="isPrimary" class="form-label custom-label mb-0">Warranty Details</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-2">
+              <label for="warrantystartdate" class="form-label custom-label mb-2">Warranty Start Date<span
+                  class="text-danger" *ngIf="isToggledWarranty">*</span></label>
+              <input id="warrantystartdate" type="date" onkeypress="return false;" formControlName="warrantystartdate"
+                class="form-control custom-input" [min]="assetForm.get('purchasedate')?.value"
+                (change)="onStartDateChange()">
+              <div *ngIf="assetForm.get('warrantystartdate')?.invalid && assetForm.get('warrantystartdate')?.touched">
+                <div class="error-msg">Warranty start date is required</div>
+              </div>
+              <!-- Custom error message for mismatched dates -->
+              <div *ngIf="dateMismatch">
+                <div class="error-msg">Warranty Start date must be equal to the Purchase date</div>
+              </div>
+            </div>
+            <!-- Warranty date end -->
+            <div class="col-md-6 mb-2">
+              <label for="warrantyenddate" class="form-label custom-label mb-2">Warranty Expiry Date<span
+                  class="text-danger" *ngIf="isToggledWarranty">*</span></label>
+              <input id="warrantyenddate" type="date" onkeypress="return false;" formControlName="warrantyenddate"
+                class="form-control custom-input" [min]="assetForm.get('warrantystartdate')?.value"
+                (change)="checkDateMismatch()">
+              <div *ngIf="assetForm.get('warrantyenddate')?.invalid && assetForm.get('warrantyenddate')?.touched">
+                <div class="error-msg">Warranty expiry date is required</div>
+              </div>
+              <div *ngIf="warrantydateMismatch">
+                <div class="error-msg">Warranty expiry date must be greater than warranty start date</div>
+              </div>
+            </div>
+
+            <div class="row">
+
+              <div class="col-md-6 mb-3">
+                <div class="custom-toggle-btn">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckCheckedIsPrimary"
+                      [checked]="isToggledamc" (change)="onToggleChangeamc($event)" />
+                  </div>
+                  <label for="isPrimary" class="form-label custom-label mb-0">AMC Details</label>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- AMC Start Date -->
+            <div class="col-md-6 mb-2">
+              <label for="amcstartdate" class="form-label custom-label mb-2">
+                AMC Start Date
+                <span class="text-danger" *ngIf="isToggledamc">*</span>
+              </label>
+              <input id="amcstartdate" type="date" onkeypress="return false;" formControlName="amcstartdate"
+                class="form-control custom-input" [min]="assetForm.get('warrantyenddate')?.value"
+                (change)="onStartDateChangeamc()" />
+              <div *ngIf="assetForm.get('amcstartdate')?.invalid && assetForm.get('amcstartdate')?.touched">
+                <div class="error-msg">AMC start date is required</div>
+              </div>
+              <div *ngIf="amcDateMismatch">
+                <div class="error-msg">AMC start date must be equal to or greater than the warranty expiry
+                  date</div>
+              </div>
+            </div>
+
+            <!-- AMC Expiry Date -->
+            <div class="col-md-6 mb-2 ">
+              <label for="amcenddate" class="form-label custom-label mb-2">
+                AMC Expiry Date
+                <span class="text-danger" *ngIf="isToggledamc">*</span>
+              </label>
+              <input id="amcenddate" type="date" formControlName="amcenddate" class="form-control custom-input"
+                onkeypress="return false;" [min]="assetForm.get('amcstartdate')?.value"
+                (change)="checkAmcDateMismatch()" />
+              <div *ngIf="assetForm.get('amcenddate')?.invalid && assetForm.get('amcenddate')?.touched">
+                <div class="error-msg">AMC expiry date is required</div>
+              </div>
+              <div *ngIf="amcDateMismatch">
+                <div class="error-msg">AMC expiry date must be greater than AMC start date</div>
+              </div>
+            </div>
+
+            <div class="col-md-6 mb-2">
+              <label for="vendordetailes" class="form-label custom-label mb-2">AMC Vendor Name<span class="text-danger"
+                  *ngIf="isToggledamc">*</span></label>
+              <input type="text" formControlName="vendorname"
+                (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
+                class="form-control custom-input" name="vendorname" placeholder="AMC Vendor Name" autocomplete="off" />
+              <div *ngIf="assetForm.get('vendorname')?.invalid && assetForm.get('vendorname')?.touched">
+                <div class="error-msg">AMC Vendor Name is required</div>
+              </div>
+              <div class="error-msg" *ngIf="assetForm.get('vendorname')?.errors?.['maxlength'] ">
+                AMC Vendor Name cannot be more than 20 characters
+              </div>
+            </div>
+            <div class="col-md-6 mb-2">
+              <label for="vendor" class="form-label custom-label mb-2">AMC Vendor Contact<span class="text-danger"
+                  *ngIf="isToggledamc">*</span></label>
+              <input type="text" formControlName="contactnumber" class="form-control custom-input" minlength="10"
+                maxlength="15" (paste)="formValidation.validatePaste($event)"
+                (keypress)="formValidation.restrictAlphabets($event)" autocomplete="off"
+                placeholder="AMC Vendor Contact" />
+              <div class="error-msg"
+                *ngIf="assetForm.controls['contactnumber'].invalid && (assetForm.controls['contactnumber'].touched)">
+                <!-- Required error -->
+                <div
+                  *ngIf="assetForm.controls['contactnumber'].errors?.['required'] && assetForm.controls['contactnumber'].touched">
+                  AMC vendor Contact is required
+                </div>
+                <div *ngIf="assetForm.controls['contactnumber'].errors?.['maxlength']">
+                  AMC vendor Contact must be 10 to 15 digits
+                </div>
+                <div *ngIf="assetForm.controls['contactnumber'].errors?.['minlength']">
+                  AMC vendor Contact must be 10 to 15 digits
+                </div>
+                <!-- Pattern error for Mobile number length -->
+                <div *ngIf="assetForm.controls['contactnumber'].errors?.['allZeroesIfMaxLength']">
+                  AMC vendor Contact is not valid
+                </div>
+              </div>
+            </div>
+
+
           </div>
 
-
-        </div>
-
-        <div class="d-flex justify-content-end gap-3">
-          <button type="button" class="custom-btn btn-secondary "
-            (click)="openConfirmationModal(confirmationpopup)">Close</button>
-          <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
+          <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="custom-btn btn-secondary "
+              (click)="openConfirmationModal(confirmationpopup)">Close</button>
+            <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
                                  ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
                                  (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
-            Submit
-          </button>
+              Submit
+            </button>
 
-        </div>
-      </form>
+          </div>
+        </form>
+      </div>
+
     </div>
+  </ng-template>
 
-  </div>
-</ng-template>
+  <ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+      <div>
+        <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+        <p class="confirmation-text"> Are you sure you want to close?</p>
+      </div>
 
-<ng-template #confirmationpopup let-model>
-  <div class="result-popup-content" ngbAutofocus>
-    <div>
-      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to close?</p>
+      <div class="custom-modal-footer">
+        <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+          No
+        </button>
+        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+          Yes
+        </button>
+      </div>
     </div>
-
-    <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-        No
-      </button>
-      <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
-        Yes
-      </button>
-    </div>
-  </div>
-</ng-template>
+  </ng-template>

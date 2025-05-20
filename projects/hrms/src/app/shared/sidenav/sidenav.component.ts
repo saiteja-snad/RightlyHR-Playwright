@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { HttpService } from '../../services/http.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -68,6 +69,9 @@ export class SidenavComponent implements OnInit {
     localStorage.clear();
     window.location.href = "https://login.microsoftonline.com/common/oauth2/v2.0/logout";
   }
+
+
+
 
   close() {
     this.modalservie.dismissAll();

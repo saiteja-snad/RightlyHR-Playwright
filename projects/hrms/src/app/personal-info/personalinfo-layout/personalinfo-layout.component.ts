@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
-import { Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
@@ -14,10 +14,14 @@ import { PersonalJobTabsComponent } from '../../shared/personalinfo-tabs/persona
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { MyInfoPersonalTabsComponent } from "../../shared/myinfo-tabs/my-info-personal-tabs/my-info-personal-tabs.component";
+import { MyinfoJobTabsComponent } from "../../shared/myinfo-tabs/myinfo-job-tabs/myinfo-job-tabs.component";
+
+import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 @Component({
   selector: 'app-personalinfo-layout',
   imports: [CommonModule, RouterOutlet, Select, ProfileInfoDetailsComponent, PersonalPersonalTabsComponent, PersonalJobTabsComponent,
-    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule],
+    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss'
 })
@@ -45,16 +49,26 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   jobPostData: any;
   headerName!: string;
   isLoading: boolean = false;
+  showBackIcon: boolean = true;
   spinnerLoader = false;
   loginEmployee = {} as any;
-  constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private http: HttpService, private authService: AuthService, private router: Router, private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private route: ActivatedRoute,public fieldpremission:AccessForEmployeeinfoService) { }
 
   ngOnInit(): void {
     this.teamForm = this.fb.group({
       teamMembers: [null, Validators.required],
       reportingManager: [null, Validators.required]
     });
-    this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+    this.fieldpremission.checkrouters.next( this.route.snapshot.routeConfig?.path || '')
+    console.log('current Route: ', this.route.snapshot.routeConfig?.path || '');
+    if (this.route.snapshot.routeConfig?.path === 'personalinfo') {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+    }
+    else if (this.route.snapshot.routeConfig?.path === 'myinfo') {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    }
+
+
     this.loginEmployee = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     this.initializeForm();
     this.initialzerevoke();
@@ -126,7 +140,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
       next: (data: any) => {
         this.managers = data.filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
-          .map((emp: {fusionEmpId:string; firstName: any; middleName?: string; lastName: any }) => ({
+          .map((emp: { fusionEmpId: string; firstName: any; middleName?: string; lastName: any }) => ({
             ...emp,
             name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
           }));
@@ -149,45 +163,10 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     );
   }
 
-  updateTeamRM() {
-    this.spinnerLoader = true;
-    if (!Array.isArray(this.selectedEmployees) || this.selectedEmployees.length === 0) {
-      console.error("selectedEmployees is not a valid array", this.selectedEmployees);
-      return;
-    }
-    let requestBody = this.selectedEmployees.map(employee => ({
-      jobRole: employee.jobRole,
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      middleName: employee.middleName ?? "",
-      workEmail: employee.workEmail,
-      fusionEmpId: employee.fusionEmpId,
-      employeeId: employee.employeeId,
-      contactnumber: employee.contactnumber,
-      id: employee.id
-    }));
-    const ManagerId = this.teamForm.value.reportingManager?.employeeId;
-    if (!ManagerId) {
-      console.error("No valid ManagerId found.");
-      return;
-    }
-    this.subscription = this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody).subscribe({
-      next: (data: any) => {
-        this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-      },
-      error: (reason: any) => {
-        if (reason) {
-          this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
-          this.spinnerLoader = false;
-        }
-      }
-    });
-  }
+
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' , size: 'lg' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   isActive(route: string): boolean {
@@ -539,47 +518,61 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   assignHeading() {
-    let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
-    if (routestatus.empType === 'Probation') {
-      this.headerName = "Probation Employees"
-    } else {
-      switch (routestatus.empstatus) {
-        case 'Prospective':
-          this.headerName = "Prospective Employees"
-          break;
-        case 'Active':
-          this.headerName = "Active Employees"
-          break;
-        case 'Probation':
-          this.headerName = "Probation Employees"
-          break;
-        case 'Inactive':
-          this.headerName = "Inactive Employees"
-          break;
-        case 'Trainee Prospective':
-          this.headerName = "Prospective Trainee"
-          break;
-        case 'Trainee Active':
-          this.headerName = "Active Trainee"
-          break;
-        case 'Trainee Inactive':
-          this.headerName = "Inactive Trainee"
-          break;
-        case 'External Prospective':
-          this.headerName = "External Prospective "
-          break;
-        case 'External Active':
-          this.headerName = "External Active "
-          break;
-        case 'External Inactive':
-          this.headerName = "External Inactive"
-          break;
-        default:
-          this.headerName = "Employees"
-      }
+    const currentPath = this.router.url;
+
+    if (currentPath.startsWith('/myinfo')) {
+      this.headerName = "My Info";
+      this.showBackIcon = false;  // Hide back icon for personalinfo
+      return; // Important: stop here so admin logic does NOT run
     }
 
+    // Now we know route is NOT personalinfo, so we check admin logic
+    if (currentPath.startsWith('/personalinfo')) {
+      this.showBackIcon = true; // Show back icon for admin
+      let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
+
+      if (routestatus.empType === 'Probation') {
+        this.headerName = "Probation Employees";
+      } else {
+        switch (routestatus.empstatus) {
+          case 'Prospective':
+            this.headerName = "Prospective Employees";
+            break;
+          case 'Active':
+            this.headerName = "Active Employees";
+            break;
+          case 'Probation':
+            this.headerName = "Probation Employees";
+            break;
+          case 'Inactive':
+            this.headerName = "Inactive Employees";
+            break;
+          case 'Trainee Prospective':
+            this.headerName = "Prospective Trainee";
+            break;
+          case 'Trainee Active':
+            this.headerName = "Active Trainee";
+            break;
+          case 'Trainee Inactive':
+            this.headerName = "Inactive Trainee";
+            break;
+          case 'External Prospective':
+            this.headerName = "External Prospective";
+            break;
+          case 'External Active':
+            this.headerName = "External Active";
+            break;
+          case 'External Inactive':
+            this.headerName = "External Inactive";
+            break;
+          default:
+            this.headerName = "Employees";
+        }
+      }
+    }
   }
+
+
 
   navigation() {
     localStorage.setItem("offBoardingemplist", JSON.stringify(this.emppersonalinfo));
@@ -592,6 +585,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    localStorage.removeItem('personaldata')
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

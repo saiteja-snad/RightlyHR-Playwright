@@ -15,6 +15,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { Ipersonal } from '../../../Interfaces/personal-modal';
 
 @Component({
   selector: 'app-visa-details',
@@ -25,7 +26,7 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 
 export class VisaDetailsComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
-  empinfo: any;
+ 
   visa = [] as any;
   visaData = [] as any;
   Countrydetails: any;
@@ -39,6 +40,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   selectedvisaDetails: any;
   loading=false
   employedata: any;
+   empinfo = {} as Ipersonal;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
   ngOnInit(): void {
    this.getEmpInfoFromRoute();

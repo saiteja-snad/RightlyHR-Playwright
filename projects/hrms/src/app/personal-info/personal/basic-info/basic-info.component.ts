@@ -54,12 +54,10 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.getEmpInfoFromRoute();
-
     this.initializeForm();
-
-    this.getGender()
-    this.getMaritaldetails()
-    this.getTitle()
+    this.getGender();
+    this.getMaritaldetails();
+    this.getTitle();
     this.basicInfoForm.disable();
     this.basicInfoForm.get('salutation')?.valueChanges.subscribe((data) => {
       if (data) {
@@ -87,7 +85,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
 
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
@@ -202,10 +199,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       bloodGroup: this.bloodGroups.find((item: any) => item.name === data.bloodGroup),
       maritalStatus: this.Maritaldetails.find(((item: any) => item.maritalstatus1 === data.maritalStatus)) || data.maritalStatus,
     });
-    console.log('datapatch', this.basicInfoForm.value);
-
-
-
+   
   }
 
   updateBasicInfo(): void {
@@ -228,7 +222,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
       marriedDate: formValue.marriageDate,
     };
 
-    console.log(updatePayload);
 
     this.subscription = this.http
       .postdata(`Employeedata/UPDATER`, updatePayload)
@@ -251,7 +244,6 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
         },
         error: (reason: any) => {
 
-          console.log(reason);
           this.conformationPopup.openErrorModal(reason.error.message || 'Basic Info update failed')
         },
       });

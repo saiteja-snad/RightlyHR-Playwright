@@ -1,0 +1,237 @@
+<div class="custom-main-component-container">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <p class="component-header mb-0">Theme Customization</p>
+        </div>
+    </div>
+
+    <div class="d-flex gap-3 w-100">
+        <div class="custom-component-left-content">
+            <div class="accordion" id="accordionExample">
+                <!-- Font Family Customizer UI -->
+                <div class="accordion-item">
+                    <div class="accordion-header">
+                        <button class="accordion-button collapsed medium4" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#Fonts" aria-expanded="true" aria-controls="collapseOne">Fonts</button>
+                    </div>
+    
+                    <div id="Fonts" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <div class="form-check" *ngFor="let font of ['Roboto-flex', 'DM-SANS', 'LEXEND']">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" [id]="font"
+                                    [(ngModel)]="selectedFont" [value]="font">
+                                <label class="form-check-label text2" [for]="font">{{font}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Font Family Customizer UI Ends-->
+    
+                <!-- header colors -->
+                <div class="accordion-item mt-1">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed medium4" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#Header" aria-expanded="false" aria-controls="Header">Header</button>
+                    </h2>
+    
+                    <div id="Header" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <ul>
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Background Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="headerBackgroundColor">
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- header colors ends-->
+    
+                <!-- sidenav colors-->
+                <div class="accordion-item mt-1">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed medium4" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#Side" aria-expanded="true" aria-controls="Side">Side Menu</button>
+                    </h2>
+    
+                    <div id="Side" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <ul class="">
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Background Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="sidebarBackgroundColor">
+                                    </div>
+                                </li>
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Nav Item Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="sidebarNavItemColor">
+                                    </div>
+                                </li>
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Nav Item Active Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="sidebarNavItemActiveColor">
+                                    </div>
+                                </li>
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Nav Item Active background Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="sidebarNavItemActiveBackgroundColor">
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- sidenav colors ends-->
+    
+                <!-- Body colors-->
+                <div class="accordion-item mt-1">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed medium4" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#Body" aria-expanded="false" aria-controls="Body">Body</button>
+                    </h2>
+    
+                    <div id="Body" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <ul>
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Background Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="bodyBackgroundColor">
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- Body colors ends-->
+    
+                <!-- button colors -->
+                <div class="accordion-item mt-1">
+    
+                    <h2 class="accordion-header">
+                        <button class="accordion-button collapsed medium4" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#Buttons" aria-expanded="false" aria-controls="Buttons">
+                            Buttons & Links</button>
+                    </h2>
+    
+                    <div id="Buttons" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                            <ul class="">
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Primary Button Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="primaryButtonColor">
+                                    </div>
+                                </li>
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Secondary Button Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="secondaryButtonColor">
+                                    </div>
+                                </li>
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Primary Button Text Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="primaryButtonTextColor">
+                                    </div>
+                                </li>
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Secondary Button Text Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="secondaryButtonTextColor">
+                                    </div>
+                                </li>
+                                <li class="d-flex justify-content-between custom-list py-2">
+                                    <div>Button Norder Color</div>
+                                    <div>
+                                        <input type="color" [(ngModel)]="buttonBorderColor">
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- button colors Ends-->
+            </div>
+        </div>
+    
+        <div class="custom-component-right-content card p-3">
+            <div class="layout-view-content">
+                <div class="layout-header p-1" [style.backgroundColor]="headerBackgroundColor"></div>
+                <div class="d-flex">
+                    <div class="layout-side-menu" [style.backgroundColor]="sidebarBackgroundColor"></div>
+                    <div class="layout-body w-100 p-3" [style.backgroundColor]="bodyBackgroundColor">
+                        <div class="card theme-card">
+                            <div class="buttons-content d-flex gap-3 p-3">
+                                <button class="custom-btn" disabled [style.backgroundColor]="secondaryButtonColor"
+                                    [style.color]="secondaryButtonTextColor">Cancel</button>
+                                <button class="custom-btn" disabled [style.backgroundColor]="primaryButtonColor"
+                                    [style.color]="primaryButtonTextColor">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="d-flex justify-content-end gap-3 pt-3">
+                <button class="custom-btn btn-reject">Delete</button>
+                <button class="custom-btn btn-secondary">Cancel</button>
+                <button class="custom-btn btn-primary" (click)="openSaveModal()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add new theme modal -->
+<ng-template #addTheme let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">Add Theme</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss();">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content">
+            <form (ngSubmit)="saveThemeColors()">
+                <div class="mb-3">
+                    <label for="exampleFormControlInput1" class="form-label custom-label">
+                        Please Enter Layout Name<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control custom-input w-100" name="layoutName"
+                        placeholder="Please provide layout name" required [(ngModel)]="layoutName">
+                </div>
+                <div class="custom-modal-footer">
+                    <button type="reset" class="custom-btn btn-secondary">Cancel</button>
+                    <button type="submit" class="custom-btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+<!-- Add new theme modal -->
+
+<!-- theme Delete modal -->
+<ng-template #deleteConfirmation let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/delete-icon.png" alt="failure icon" class="confirmation-icon">
+            <p class="confirmation-text">Are you sure you want to Delete the Theme?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary">Yes</button>
+        </div>
+    </div>
+</ng-template>
+<!-- theme Delete modal -->

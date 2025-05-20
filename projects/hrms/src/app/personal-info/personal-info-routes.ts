@@ -17,7 +17,7 @@ export default [
             { path: 'bank-details', loadComponent: () => import('./personal/bank-details/bank-details.component').then(m => m.BankDetailsComponent) , },
             { path: 'visa-details', loadComponent: () => import('./personal/visa-details/visa-details.component').then(m => m.VisaDetailsComponent),  },
             { path: 'contact-details', loadComponent: () => import('./personal/contact-details/contact-details.component').then(m => m.ContactDetailsComponent), },
-            { path: 'onboarding-documents', loadComponent: () => import('./personal/onboarding-documents/onboarding-documents.component').then(m => m.OnboardingDocumentsComponent) , },
+           /// { path: 'onboarding-documents', loadComponent: () => import('./personal/onboarding-documents/onboarding-documents.component').then(m => m.OnboardingDocumentsComponent) , },
             { path: 'onboarding-verification', loadComponent: () => import('./personal/onboarding-request/onboarding-request.component').then(m => m.OnboardingRequestComponent), },
             { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent),  }
         ]
@@ -53,7 +53,10 @@ export default [
             { path: 'team-members', loadComponent: () => import('./team-numbers/team-numbers.component').then((m) => m.TeamNumbersComponent), data: { permission: 'Employee Info Reporting Manager Tab.view' } },
             {
                 path: 'team-manger-members', loadComponent: () => import('./team-numbers/team-manger-members/team-manger-members.component').then((m) => m.TeamMangerMembersComponent), data: { permission: 'Employee Info Team Managers Tab.view' },
-            }
+            },
+            {
+                path: 'team-members', loadComponent: () => import('./team-numbers/myteam-members/myteam-members.component').then((m) => m.MyteamMembersComponent)
+            },
         ]
     },
     {

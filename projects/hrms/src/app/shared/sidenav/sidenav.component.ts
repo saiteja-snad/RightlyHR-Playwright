@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { HttpService } from '../../services/http.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -41,7 +42,10 @@ export class SidenavComponent implements OnInit {
       route: '/it-support', permission: { feature: 'IT Support', action: 'view' } },
     //org Hierarcy
     { label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-color.png',
-       route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' } }
+       route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' } },
+    //Holidays
+    { label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holiday-color.png',
+       route: '/holidays', permission: { feature: 'Holidays', action: 'view' } }
   ];
   columnsPerRow = 3;
   dropdownOpen = false; // controls the icon
@@ -65,6 +69,9 @@ export class SidenavComponent implements OnInit {
     localStorage.clear();
     window.location.href = "https://login.microsoftonline.com/common/oauth2/v2.0/logout";
   }
+
+
+
 
   close() {
     this.modalservie.dismissAll();

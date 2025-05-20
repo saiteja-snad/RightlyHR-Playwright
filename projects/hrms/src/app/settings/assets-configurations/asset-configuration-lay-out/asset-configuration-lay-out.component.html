@@ -4,12 +4,14 @@
         <div class="component-header">Settings</div>
     </div>
 
-    <!--sub module tabs-->
-    <div class="mb-3">
-        <app-settings-assets-configurations-tabs></app-settings-assets-configurations-tabs>
-    </div>
+    <div class="d-flex gap-3 w-100">
+        <!--sub module tabs-->
+        <div class="custom-component-left-content">
+            <app-settings-assets-configurations-tabs></app-settings-assets-configurations-tabs>
+        </div>
 
-    <div class="custom-setting-right-content p-3">
-        <router-outlet />
+        <div class="card custom-component-right-content p-3">
+            <router-outlet></router-outlet>
+        </div>
     </div>
 </div>

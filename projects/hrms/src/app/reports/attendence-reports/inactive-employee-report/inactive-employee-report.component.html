@@ -9,7 +9,7 @@
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
             Clear All
           </button>
-        }
+          }
           <!-- Employee -->
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
@@ -26,7 +26,7 @@
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select class="form-select custom-select" [options]="teamdetails" [filter]="true" [showClear]="true"
-              optionLabel="fullName" filterBy="fullName" formControlName="manager" placeholder="Please select manager"
+                optionLabel="fullName" filterBy="fullName" formControlName="manager" placeholder="Please select manager"
                 filterPlaceholder="Search manager">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                 <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
@@ -66,8 +66,8 @@
               <span>{{'Generate'}}</span>
               }
             </button>
-          }
-          @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view') && rbac.allowedToAccess('Inactive Empolyee Report - Export.view')){
+            }
+            @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view') && rbac.allowedToAccess('Inactive Empolyee Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelInactive()"
               [disabled]="filteredInactiveRecord.length == 0 || disableBtn">
               @if(spinnerLoader2){
@@ -77,64 +77,67 @@
               <span>{{'Export'}}</span>
               }
             </button>
-          }
+            }
           </div>
         </div>
       </form>
     </div>
   </div>
 
-  <div class="mb-3">
-    <app-attandace-report-tabs />
-  </div>
+  <div class="d-flex gap-3 w-100">
+    <div class="custom-component-left-content">
+      <app-attandace-report-tabs />
+    </div>
+    <div class="custom-component-right-content">
 
-  @if (isLoading) {
-  <div class="custom-compoent-data-loader">
-    <app-data-loader-content />
+      @if (isLoading) {
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
+      }@else {
+      <div class="custom-table-content">
+        <table id="wfhReportTable" class="content w-100">
+          <thead>
+            <tr>
+              <th>Employee ID</th>
+              <th>Employee Name</th>
+              <th>Department</th>
+              <th>Team Manager</th>
+              <th>Location</th>
+              <th>Sub Location</th>
+              <th>Leave Type</th>
+              <th>Entitled</th>
+              <th>Availed</th>
+              <th>Balance</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (filteredInactiveRecord && filteredInactiveRecord.length > 0) {
+            @for (record of filteredInactiveRecord; track record) {
+            <tr>
+              <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+              <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+              <td class="td-center">{{ record.department ?? '-' }}</td>
+              <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+              <td class="td-center">{{ record.location ?? '-' }}</td>
+              <td class="td-center">{{ record.subLocation ?? '-' }}</td>
+              <td class="td-center">{{ record.leaveType ?? '-' }}</td>
+              <td class="td-center">{{ record.entitled ?? '-' }}</td>
+              <td class="td-center">{{ record.availed ?? '-' }}</td>
+              <td class="td-center">{{ record.balanced ?? '-' }}</td>
+            </tr>
+            }
+            } @else {
+            <tr>
+              <td colspan="10" class="text-center">
+                <app-no-data-found></app-no-data-found>
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
   </div>
-  }@else {
-  <div class="custom-table-content">
-    <table id="wfhReportTable" class="content w-100">
-      <thead>
-        <tr>
-          <th>Employee ID</th>
-          <th>Employee Name</th>
-          <th>Department</th>
-          <th>Team Manager</th>
-          <th>Location</th>
-          <th>Sub Location</th>
-          <th>Leave Type</th>
-          <th>Entitled</th>
-          <th>Availed</th>
-          <th>Balance</th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (filteredInactiveRecord && filteredInactiveRecord.length > 0) {
-        @for (record of filteredInactiveRecord; track record) {
-        <tr>
-          <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-          <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-          <td class="td-center">{{ record.department ?? '-' }}</td>
-          <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-          <td class="td-center">{{ record.location ?? '-' }}</td>
-          <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-          <td class="td-center">{{ record.leaveType ?? '-' }}</td>
-          <td class="td-center">{{ record.entitled ?? '-' }}</td>
-          <td class="td-center">{{ record.availed ?? '-' }}</td>
-          <td class="td-center">{{ record.balanced ?? '-' }}</td>
-        </tr>
-        }
-        } @else {
-        <tr>
-          <td colspan="10" class="text-center">
-            <app-no-data-found></app-no-data-found>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
-  }
-
 </div>

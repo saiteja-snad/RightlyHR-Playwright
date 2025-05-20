@@ -5,9 +5,9 @@ import { Injectable } from '@angular/core';
 })
 
 export class RbacService {
+  
 
-  constructor() { }
-
+  constructor() {}
   allowedToAccess(permission: string): boolean {
     const claimsString = localStorage.getItem('rightlyHrRoleClaims');
     if (!claimsString || claimsString === 'undefined') {
@@ -28,4 +28,5 @@ export class RbacService {
       return false;
     }
   }
+  
 }

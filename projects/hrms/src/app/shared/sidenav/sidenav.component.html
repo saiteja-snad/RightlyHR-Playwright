@@ -3,7 +3,7 @@
         <img src="logos/sidenav-logo.png" alt="company logo" class="logo-img">
     </div>
     <hr class="white-line"> -->
-    <div class="sidnav-main-content px-2">
+    <div class="sidnav-main-content">
         <ul class="nav-items-list text-center ps-0">
             <!--Dashboard-->
             @if(this.rbac.allowedToAccess('Dashboard.view')){
@@ -122,15 +122,13 @@
             </li>} -->
         </ul>
     </div>
-    <div class="sidenav-footer-content text-center pt-2">
+    <div class="sidenav-footer-content">
         <!-- <img src="logos/powered-by.png" alt="Powered By logo" class="powered-by-image"> -->
-        <div class="d-flex justify-content-center align-items-center w-100 gap-1 cursor" (click)="openlogoutModal()">
+        <div class="d-flex justify-content-center align-items-center cursor w-100 gap-1" (click)="openlogoutModal()">
             <div>
                 <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon">
             </div>
-            <div class="logout-text pt-1">
-                Logout
-            </div>
+            <div class="logout-text pt-1">Logout</div>
         </div>
     </div>
 </div>

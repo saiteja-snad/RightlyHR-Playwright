@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div> <span class="component-sub-header">{{'Family Details '| translate}}</span></div>
-        @if(rbac.allowedToAccess('Employee Info Family Details.create')){
+        @if(canAccess('create','family')){
        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
         <div class="custom-add-btn" (click)="openModal(addFamilyModal)"><i class="bi bi-plus plus-icon me-1"></i>{{'Add New'| translate}}</div>
@@ -16,7 +16,7 @@
                         <th>Relationship</th>
                         <th>Date of Birth</th>
                         <th>Dependent</th>
-                         @if(rbac.allowedToAccess('Employee Info Family Details.update')|| rbac.allowedToAccess('Employee Info Family Details.delete') ){
+                         @if(canAccess('update','family') || canAccess('delete','family') ){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
                             <th class="text-center">Action(s)</th>
@@ -32,7 +32,7 @@
                             <td>{{ familyDetail.dateOfBirth | dateformat }}</td>
                             <td>{{ familyDetail.isDependent ? 'Yes' : 'No' }}</td>
                             
-                            @if(rbac.allowedToAccess('Employee Info Family Details.update')|| rbac.allowedToAccess('Employee Info Family Details.delete') ){<td class="text-center">
+                            @if(canAccess('update','family') || canAccess('delete','family') ){<td class="text-center">
                                 @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
                                 && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
                                 <div class="dropdown">
@@ -40,13 +40,13 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </span>
                                     <ul class="dropdown-menu custom-dropdown-menu">
-                                        @if(rbac.allowedToAccess('Employee Info Family Details.update')){
+                                        @if(canAccess('update','family')){
                                         <li (click)="openModalupdate(updateFamilyModal, familyDetail)">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-pencil me-2"></i>Update
                                             </a>
                                         </li>}
-                                        @if( rbac.allowedToAccess('Employee Info Family Details.delete') ){
+                                        @if(canAccess('delete','family')){
                                         <li (click)="opendeletModal(deleteconformation,familyDetail)">
                                             <a class="dropdown-item">
                                                 <i class="bi bi-trash3 me-2"></i>Delete

@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div><span class="component-sub-header">Visa Details</span></div>
-    @if(rbac.allowedToAccess('Employee Info Visa Details.create')){
+    @if(canAccess('create','visa') ){
     @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 
     'trainee prospective'&& employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
     'trainee inactive')){
@@ -20,8 +20,8 @@
           <th>Expiry Date</th>
           <th>Issued Country</th>
           <th>Status</th>
-          @if(rbac.allowedToAccess('Employee Info Visa Details.update') || 
-          rbac.allowedToAccess('Employee Info Visa Details.delete')){
+          @if(canAccess('update','visa') || 
+          canAccess('delete','visa')){
           <th class="text-center">Action(s)</th>
           }
         </tr>
@@ -34,22 +34,21 @@
             <td>{{ visa.expirydate | dateformat }}</td>
             <td>{{ visa.issuedcountry }}</td>
             <td>{{ visa.status }}</td>
-            @if(rbac.allowedToAccess('Employee Info Visa Details.update') || 
-            rbac.allowedToAccess('Employee Info Visa Details.delete')){
+            @if(canAccess('update','visa') || canAccess('delete','visa')){
             <td class="text-center">
               <div class="dropdown">
                 <span type="button" data-bs-toggle="dropdown">
                   <i class="bi bi-three-dots-vertical"></i>
                 </span>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                  @if(rbac.allowedToAccess('Employee Info Visa Details.update')){
+                  @if(canAccess('update','visa')){
                   <li (click)="openModalupdate(updatevisamodal, visa)">
                     <a class="dropdown-item">
                       <i class="bi bi-pencil me-2"></i>Update
                     </a>
                   </li>
                   }
-                  @if(rbac.allowedToAccess('Employee Info Visa Details.delete')){
+                  @if(canAccess('delete','visa')){
                   <li (click)="opendeletModal(deleteconformation,visa)">
                     <a class="dropdown-item">
                       <i class="bi bi-trash3 me-2"></i>Delete

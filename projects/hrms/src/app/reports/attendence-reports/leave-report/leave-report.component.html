@@ -10,7 +10,7 @@
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
             Clear All
           </button>
-        
+
           <!-- Date Range -->
           <div class="d-flex align-items-center gap-2">
             <div>
@@ -56,7 +56,7 @@
               </p-select>
             </div>
           </div>
-        }
+          }
 
           <!-- Buttons -->
           <div class="d-flex gap-2">
@@ -69,8 +69,8 @@
               <span>{{'Generate'}}</span>
               }
             </button>
-          }
-          @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
+            }
+            @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
               [disabled]="filteredleaveRecord.length == 0 || disableBtn">
               @if(spinnerLoader2){
@@ -80,71 +80,73 @@
               <span>{{'Export'}}</span>
               }
             </button>
-          }
+            }
           </div>
         </div>
       </form>
     </div>
   </div>
 
-  <div class="mb-3">
-    <app-attandace-report-tabs />
+  <div class="d-flex gap-3 w-100">
+    <div class="custom-component-left-content">
+      <app-attandace-report-tabs />
+    </div>
+    <div class="custom-component-right-content">
+      @if (isLoading) {
+      <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+      </div>
+      }@else {
+      <div class="custom-table-content">
+        <table id="leaveReportTable" class="content w-100">
+          <thead>
+            <tr>
+              <th>Employee ID</th>
+              <th>Employee Name</th>
+              <th>Department</th>
+              <th>Team Manager</th>
+              <th>Location</th>
+              <th>Sub Location</th>
+              <th>Shift</th>
+              <th>Leave Type</th>
+              <th>Leave Start Date</th>
+              <th>Leave End Date</th>
+              <th>Availed</th>
+              <th>Applied Date</th>
+              <th>Days</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
+            <tr>
+              <td colspan="9" class="text-center">
+                <app-no-data-found></app-no-data-found>
+              </td>
+            </tr>
+            }
+            @else {
+            @for (record of filteredleaveRecord; track $index) {
+            <tr>
+              <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
+              <td class="td-center">{{ record.employeeName ?? '-' }}</td>
+              <td class="td-center">{{ record.department ?? '-' }}</td>
+              <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
+              <td class="td-center">{{ record.location ?? '-' }}</td>
+              <td class="td-center">{{ record.sublocation ?? '-' }}</td>
+              <td class="td-center">{{ record.shift ?? '-' }}</td>
+              <td class="td-center">{{record.leaveType ?? '-' }}</td>
+              <td class="td-center">{{ record.startdate ? (record.startdate | date: 'dd-MMM-yyyy') : '-' }}</td>
+              <td class="td-center">{{ record.enddate ? (record.enddate | date: 'dd-MMM-yyyy') : '-' }}</td>
+              <td class="td-center">{{record.availed ?? '-'}}</td>
+              <td class="td-center">{{record.appliedDate| date: 'dd-MMM-yyyy' : '-'}}</td>
+              <td class="td-center">{{record.days ?? '-' }}</td>
+            </tr>
+            }
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </div>
   </div>
-
-  @if (isLoading) {
-  <div class="custom-compoent-data-loader">
-    <app-data-loader-content />
-  </div>
-  }@else {
-  <div class="custom-table-content">
-    <table id="leaveReportTable" class="content w-100">
-      <thead>
-        <tr>
-          <th>Employee ID</th>
-          <th>Employee Name</th>
-          <th>Department</th>
-          <th>Team Manager</th>
-          <th>Location</th>
-          <th>Sub Location</th>
-          <th>Shift</th>
-          <th>Leave Type</th>
-          <th>Leave Start Date</th>
-          <th>Leave End Date</th>
-          <th>Availed</th>
-          <th>Applied Date</th>
-          <th>Days</th>
-        </tr>
-      </thead>
-      <tbody>
-        @if (!filteredleaveRecord || filteredleaveRecord.length === 0) {
-        <tr>
-          <td colspan="9" class="text-center">
-            <app-no-data-found></app-no-data-found>
-          </td>
-        </tr>
-        }
-        @else {
-        @for (record of filteredleaveRecord; track $index) {
-        <tr>
-          <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-          <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-          <td class="td-center">{{ record.department ?? '-' }}</td>
-          <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-          <td class="td-center">{{ record.location ?? '-' }}</td>
-          <td class="td-center">{{ record.sublocation ?? '-' }}</td>
-          <td class="td-center">{{ record.shift ?? '-' }}</td>
-          <td class="td-center">{{record.leaveType ?? '-' }}</td>
-          <td class="td-center">{{ record.startdate ? (record.startdate | date: 'dd-MMM-yyyy') : '-' }}</td>
-          <td class="td-center">{{ record.enddate ? (record.enddate | date: 'dd-MMM-yyyy') : '-' }}</td>
-          <td class="td-center">{{record.availed ?? '-'}}</td>
-          <td class="td-center">{{record.appliedDate| date: 'dd-MMM-yyyy' : '-'}}</td>
-          <td class="td-center">{{record.days ?? '-' }}</td>
-        </tr>
-        }
-        }
-      </tbody>
-    </table>
-  </div>
-  }
-
 </div>

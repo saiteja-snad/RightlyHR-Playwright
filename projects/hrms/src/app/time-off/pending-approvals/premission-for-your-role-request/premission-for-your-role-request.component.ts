@@ -82,6 +82,8 @@ export class PremissionForYourRoleRequestComponent
   selectedLeavesItems!: LeaveApproval[];
   multiSelect = false;
   requestBody = {} as any;
+  @ViewChild('leaveSummary') leaveSummary: any;
+  requestSummary!:any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -170,8 +172,8 @@ export class PremissionForYourRoleRequestComponent
       });
   }
 
-  openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+   openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });
   }
 
   openApproveModal(content: any, request: PermissionRequestResponse) {
@@ -218,19 +220,25 @@ export class PremissionForYourRoleRequestComponent
           ],
         };
       }
-      this.sharedModalService.openLoaderModal(
-        'Approving Request, Please wait...'
-      );
       this.http
         .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.selectedLeavesItems = [];
             this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Request Approved Successfully'
-            );
+            if (
+              this.selectedLeavesItems &&
+              this.selectedLeavesItems.length <= 0
+            ) {
+              this.sharedModalService.openSuccessModal(
+                'Request Approved Successfully'
+              );
+            } else {
+              this.requestSummary = response.data;
+              this.openModal(this.leaveSummary);
+            }
+            this.selectedLeavesItems = [];
+            this.multiSelect = false;
             this.approveForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.permissionForYouTriggerSignal.set(true);
@@ -253,6 +261,7 @@ export class PremissionForYourRoleRequestComponent
   handleProcess(request: any) {
     this.selectedLeaveData = request;
     let approvedBy = this.empinfo.employeeId.toString();
+    let message = null;
     if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -263,6 +272,7 @@ export class PremissionForYourRoleRequestComponent
           currentStage: item.approvalHeader.currentapprovalStage,
         })),
       };
+      message =  'Processing Requests, Please wait...';
     } else {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -276,20 +286,30 @@ export class PremissionForYourRoleRequestComponent
           },
         ],
       };
+      message =  'Processing Request, Please wait...';
     }
     this.sharedModalService.openLoaderModal(
-      'Processing Request, Please wait...'
+      message
     );
     this.http
       .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (respone: any) => {
-          this.selectedLeavesItems = [];
+        next: (response: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal(
-            'Request Processed Successfully'
-          );
+          if (
+            this.selectedLeavesItems &&
+            this.selectedLeavesItems.length <= 0
+          ) {
+            this.sharedModalService.openSuccessModal(
+              'Request Processed Successfully'
+            );
+          } else {
+            this.requestSummary = response.data;
+            this.openModal(this.leaveSummary);
+          }
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
           this.signalService.permissionForYouTriggerSignal.set(true);
           this.signalService.permissionSidNavCountTriggerSignal.set(true);
         },
@@ -335,19 +355,25 @@ export class PremissionForYourRoleRequestComponent
           ],
         };
       }
-      this.sharedModalService.openLoaderModal(
-        'Rejecting Request, Please wait...'
-      );
       this.http
         .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.selectedLeavesItems = [];
             this.modalService.dismissAll();
-            this.sharedModalService.openSuccessModal(
-              'Request Rejected Successfully'
-            );
+            if (
+              this.selectedLeavesItems &&
+              this.selectedLeavesItems.length <= 0
+            ) {
+              this.sharedModalService.openSuccessModal(
+                'Request Rejected Successfully'
+              );
+            } else {
+              this.requestSummary = response.data;
+              this.openModal(this.leaveSummary);
+            }
+            this.selectedLeavesItems = [];
+            this.multiSelect = false;
             this.rejectForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.permissionForYouTriggerSignal.set(true);

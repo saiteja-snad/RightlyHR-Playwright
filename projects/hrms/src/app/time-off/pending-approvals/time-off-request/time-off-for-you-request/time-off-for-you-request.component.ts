@@ -85,65 +85,80 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     this.getAllPendingApprovals();
   }
 
+  // selectCheck(Value: any) {
+  //   console.log(Value)
+  //   this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  //   console.log(this.multiSelect)
+  // }
+
   selectCheck(Value: any) {
-    console.log(Value)
+    if (!Value || Value.length === 0) {
+      this.selectedProducts = [];
+      return;
+    }
     this.multiSelect = Array.isArray(Value) && Value.length > 0;
-    console.log(this.multiSelect)
+
+    if (this.multiSelect) {
+      const stageMap: { [stage: string]: any[] } = {};
+
+      Value.forEach((item: any) => {
+        const stage = item.approvalHeader?.currentapprovalStage;
+        if (!stageMap[stage]) {
+          stageMap[stage] = [];
+        }
+        stageMap[stage].push(item);
+      });
+
+      const stages = Object.keys(stageMap);
+
+      if (stages.length > 1) {
+        const totalAvailable = this.leavesselect?.length || 0;
+        const totalSelected = Value.length;
+        const isBulkSelect = totalSelected === totalAvailable;
+        if (isBulkSelect) {
+          let maxStage = stages[0];
+          let maxCount = stageMap[maxStage].length;
+
+
+          for (const stage of stages) {
+            const count = stageMap[stage].length;
+            if (count > maxCount) {
+              maxStage = stage;
+              maxCount = count;
+            } else if (count === maxCount && stage === '1') {
+              maxStage = stage;
+            }
+          }
+
+          this.selectedProducts = [];
+          setTimeout(() => {
+            this.selectedProducts = [...stageMap[maxStage]];
+            console.log('Selected Products:', this.selectedProducts);
+          });
+
+        } else {
+          this.conformationPopup.openErrorModal('You cannot select records from different approval stages');
+          if (this.selectedProducts.length > 0) {
+            const lastSelected = Value[Value.length - 1];
+
+            // Remove the specific item from selectedProducts
+            this.selectedProducts = this.selectedProducts.filter(
+              item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+            );
+            // Force update (optional, but helps)
+            setTimeout(() => {
+              this.selectedProducts = [...this.selectedProducts];
+            });
+          }
+          return;
+        }
+      } else {
+        this.selectedProducts = [...Value];
+      }
+    } else {
+      this.selectedProducts = [Value];
+    }
   }
-
-// selectCheck(Value: any) {
-//   debugger
-//   this.multiSelect = Array.isArray(Value) && Value.length > 0;
-
-//   if (this.multiSelect) {
-//     const stageMap: { [stage: string]: any[] } = {};
-
-//     Value.forEach((item: any) => {
-//       const stage = item.approvalHeader?.currentapprovalStage;
-//       if (!stageMap[stage]) {
-//         stageMap[stage] = [];
-//       }
-//       stageMap[stage].push(item);
-//     });
-
-//     const stages = Object.keys(stageMap);
-
-//     if (stages.length > 1) {
-//       const totalAvailable = this.leavesselect?.length || 0;
-//       const totalSelected = Value.length;
-//       const isBulkSelect = totalSelected === totalAvailable;
-
-//       if (isBulkSelect) {
-//         let maxStage = stages[0];
-//         let maxCount = stageMap[maxStage].length;
-
-//         for (const stage of stages) {
-//           if (stageMap[stage].length > maxCount) {
-//             maxStage = stage;
-//             maxCount = stageMap[stage].length;
-//           }
-//         }
-
-//         // ✅ FIX: Force UI to recognize change
-//         this.selectedProducts = []; // Clear first
-//         setTimeout(() => {
-//           this.selectedProducts = [...stageMap[maxStage]];
-//         });
-
-//       } else {
-//         this.conformationPopup.openErrorModal('You cannot select records from different approval stages');
-//         this.selectedProducts = [];
-//       }
-//     } else {
-//       this.selectedProducts = [...Value]; // Safe if single-stage
-//     }
-//   } else {
-//     this.selectedProducts = [Value];
-//   }
-
-//   console.log('Selected Products:', this.selectedProducts);
-// }
-
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
@@ -245,8 +260,8 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   canBulkApprove(): boolean {
     return this.selectedProducts?.every(
       (item) =>
-        item.approvalHeader.currentapprovalStage !==
-        item.approvalHeader.finalapprovalStage
+        item.approvalHeader?.currentapprovalStage !==
+        item.approvalHeader?.finalapprovalStage
 
     );
   }
@@ -254,8 +269,8 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   canBulkProcess(): boolean {
     return this.selectedProducts?.every(
       (item) =>
-        item.approvalHeader.currentapprovalStage ===
-        item.approvalHeader.finalapprovalStage
+        item.approvalHeader?.currentapprovalStage ===
+        item.approvalHeader?.finalapprovalStage
     );
   }
 

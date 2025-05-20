@@ -215,7 +215,6 @@ body {
         border-radius: 50%;
     }
 }
-
 //header stylings Ends
 
 //Side Bar Stylings
@@ -304,7 +303,7 @@ body {
         .dropdown-menu {
             position: fixed !important;
             inset: auto auto auto 0px !important;
-            margin: 0rem 4.25rem !important;
+            margin: 0rem 4.75rem !important;
             transform: translate(18px, -181px) !important;
             width: 325px !important;
             height: 325px !important;
@@ -648,7 +647,6 @@ a {
     background: var(--Scroller-bar-color);
     min-height: 4rem !important;
 }
-
 // scroll bar stylings ends
 
 // button stylings
@@ -742,9 +740,7 @@ a {
     color: #A1A1A1;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+input:focus,textarea:focus,select:focus {
     outline: none !important;
     box-shadow: none !important;
 }
@@ -786,7 +782,6 @@ select:focus {
     vertical-align: middle;
     color: #222222;
 }
-
 // Select Styling 
 
 // p select stylings
@@ -900,7 +895,6 @@ select:focus {
         background-color: #F0F4F8;
     }
 }
-
 // Select Styling 
 
 // table stylings
@@ -925,8 +919,7 @@ select:focus {
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -968,7 +961,6 @@ select:focus {
         padding: 0.75rem;
     }
 }
-
 // My Info Stylings
 
 // User Profile Card Stylings
@@ -1032,14 +1024,13 @@ select:focus {
         color: var(--primary-color);
     }
 }
-
 // My Info Stylings Ends
 
 // letter main content
 .main-letter-content {
     .letter-fields-content {
         width: 27rem;
-        height: calc(100dvh - 12rem);
+        height: calc(100dvh - 14.5rem);
         overflow-x: hidden;
         overflow-y: auto;
     }
@@ -1047,7 +1038,7 @@ select:focus {
     .letter-data-content {
         width: 100%;
         flex: 1;
-        height: calc(100dvh - 12rem);
+        height: calc(100dvh - 14.5rem);
         overflow: auto;
 
         .letter-sub-data-content {
@@ -1125,17 +1116,13 @@ select:focus {
 
 // salary details table
 .salary-details-table {
-
-    table,
-    th,
-    td {
+    table,th, td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,
-    td {
+    th, td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -1145,8 +1132,7 @@ select:focus {
         font-weight: bold;
     }
 
-    tr:nth-child(4),
-    tr:nth-child(9) {
+    tr:nth-child(4), tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -1197,7 +1183,6 @@ select:focus {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
-
 // letter stylings
 
 // note text stylings
@@ -1211,8 +1196,23 @@ select:focus {
         font-weight: 700;
     }
 }
-
 // note text stylings
+
+//My Info Stylings
+.user-profile-content {
+    width: 20rem;
+    height: calc(100dvh - 14.5rem);
+    border: 1px solid #CCDAEC;
+    border-radius: 0.5rem;
+}
+
+.myinfo-main-content {
+    width: calc(100% - 20rem);
+    height: calc(100dvh - 14.5rem);
+    overflow-y: auto;
+    border: 1px solid #CCDAEC;
+    border-radius: 0.5rem;
+}
 
 // events component stylings
 .event-card {
@@ -1391,7 +1391,6 @@ input[type="file"] {
         font-weight: 500;
     }
 }
-
 // login components stylings
 
 // custom phone number input with country code stylings
@@ -1578,7 +1577,6 @@ input[type="file"] {
     padding: 1rem;
     overflow: auto;
 }
-
 // popup stylings ends
 
 // download text
@@ -1821,7 +1819,6 @@ input[type="checkbox"] {
         box-shadow: none !important;
     }
 }
-
 // Action buttons stylings Ends
 
 // component loader
@@ -1978,4 +1975,9 @@ input[type=number]::-webkit-outer-spin-button {
             color: #184066 !important;
         }
     }
+}
+
+// custom height
+.custom-content-height16 {
+    height: calc(100dvh - 16rem);
 }

@@ -1,12 +1,11 @@
 <div class="header-main-container">
-    <!--Logo-->
-    <div>
-        <img src="/logos/SNAD-horizontal-logo.png" alt="Company Logo" class="logo-image">
-    </div>
+    <div class="d-flex justify-content-between align-items-center">
+        <!--Logo-->
+        <div>
+            <img src="/logos/SNAD-horizontal-logo.png" alt="Company Logo" class="logo-image">
+        </div>
 
-
-    <!-- <div class="d-flex justify-content-between align-items-center"> -->
-    <!-- <div class="left-content">
+        <div class="left-content">
             <div>
                 <div *ngIf="isActive('time-off')">
                     <app-time-off-tabs />
@@ -21,29 +20,29 @@
                     <app-itsuporrt-header-tabs />
                 </div>
                 <div *ngIf="isActive('settings')">
-                    <app-settings-main-header-tabs/>
+                    <app-settings-main-header-tabs />
                 </div>
                 <div *ngIf="isActive('/reports')">
-                    <app-reports-main-tabs/>
+                    <app-reports-main-tabs />
                 </div>
                 <div *ngIf="showPmsTabs()">
-                    <app-pms-tabs/>
+                    <app-pms-tabs />
                 </div>
                 <div *ngIf="showPmsConfigurationTabs()">
-                    <app-pms-settings-tabs/>
+                    <app-pms-settings-tabs />
                 </div>
-            </div> 
-        </div> -->
+            </div>
+        </div>
 
-    <!-- <div class="d-flex right-content">
+        <div class="d-flex right-content">
             <div class="dropdown cursor">
                 <a class="custom-notification-btn position-relative" data-bs-toggle="dropdown">
                     <i class="bi bi-bell header-icon"></i>
                     <span class="position-absolute translate-middle badge rounded-pill bg-danger">99+</span>
                 </a>
-                <ul class="dropdown-menu custom-notification-menu p-3"> -->
-    <!--No notification Data-->
-    <!-- <div class="">
+                <ul class="dropdown-menu custom-notification-menu p-3">
+                    <!--No notification Data-->
+                    <div class="">
                         <div class="d-flex justify-content-between notification-details-header mb-4">
                             <div>
                                 <p class="mb-0"><i class="bi bi-dot me-1"></i>All</p>
@@ -52,48 +51,49 @@
                                 <a><u>Clear All</u></a>
                             </div>
                         </div>
-                        <div *ngFor="let event of events" class="d-flex align-items-center gap-3 px-3 mb-3"> -->
-    <!-- Circle Icon with Color -->
-    <!-- <div>
+                        <div *ngFor="let event of events" class="d-flex align-items-center gap-3 px-3 mb-3">
+                            <!-- Circle Icon with Color -->
+                            <div>
                                 <i class="bi bi-circle-fill" [ngClass]="getEventClass(event.type)"></i>
-                            </div> -->
-    <!-- Event Details -->
-    <!-- <div>
+                            </div>
+                            <!-- Event Details -->
+                            <div>
                                 <p class="event-name mb-0">{{ event.name }}</p>
                                 <p class="time mb-0">{{ event.time }}</p>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
 
-    <!--No notification placeholder-->
-    <!-- <div class="no-notifications d-none">
+                    <!--No notification placeholder-->
+                    <div class="no-notifications d-none">
                         <img src="images\no-notifications.png" alt="No notifications image" class="placeholder-img">
                     </div>
                 </ul>
-            </div> -->
-    <!-- 
-            @if(rbac.allowedToAccess('Settings Icon.view')){
+            </div>
+
+            <!-- @if(rbac.allowedToAccess('Settings Icon.view')){ -->
             <div>
                 <a class="cursor" (click)="navigateSettings()"><i class="bi bi-gear header-icon"></i></a>
             </div>
-            } -->
+            <!-- } -->
 
-    <!-- <div class="dropdown">
+            <div class="dropdown">
                 <a type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image" class="profile-img cursor">
+                    <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image"
+                        class="profile-img cursor">
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-                   @if(rbac.allowedToAccess('Invite New User.view')){
+                    @if(rbac.allowedToAccess('Invite New User.view')){
                     <li>
                         <a class="dropdown-item" (click)="navigateToAccessedRoute('/admin/active-new-user')">
                             <i class="bi bi-envelope-plus me-2"></i>Invite New User</a>
                     </li>
-                   }
+                    }
                     <li><a class="dropdown-item" [routerLink]="['/myinfo/personal/basic-info']">
-                        <i class="bi bi-file-earmark-text-fill me-2"></i>View Profile</a>
+                            <i class="bi bi-file-earmark-text-fill me-2"></i>View Profile</a>
                     </li>
                 </ul>
-            </div> -->
-    <!-- </div>
-    </div> -->
+            </div>
+        </div>
+    </div>
 </div>

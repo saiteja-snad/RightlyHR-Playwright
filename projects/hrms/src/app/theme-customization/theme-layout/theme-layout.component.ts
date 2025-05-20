@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './theme-layout.component.html',
   styleUrl: './theme-layout.component.scss'
 })
+
 export class ThemeLayoutComponent {
 
 }

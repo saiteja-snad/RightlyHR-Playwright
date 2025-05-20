@@ -131,10 +131,6 @@ private flattenHierarchy(
   });
 }
 
-
-
-
-
   downloadChart(format: 'pdf' | 'jpg'): void {
     const chartElement = document.querySelector('.organization-chart-container');
   

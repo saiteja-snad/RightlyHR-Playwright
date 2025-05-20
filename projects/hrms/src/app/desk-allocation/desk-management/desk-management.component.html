@@ -3,41 +3,38 @@
         <div>
             <p class="component-header mb-0">Desk Management</p>
         </div>
-        <div>
-            @if(rbac.allowedToAccess('Desk Allocation - Create.view')){
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(createDeskModal)"><i
-                    class="bi bi-plus me-2"></i>Register a
-                Desk</button>
-            }
-        </div>
-    </div>
-
-
-    <div>
-        <form autocomplete="off" [formGroup]="locationfromdata">
-            <div class="row mb-3 ps-2 ">
-                <div class="col-md-4 ">
-                    <label for="location" class="form-label custom-label mb-2">Locations</label>
-                    <select id="location" formControlName="locationId" class="form-select custom-select"
-                        (change)="onLocationChange()">
-                        <option [ngValue]="null">All Locations</option>
-                        <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{
-                            location.jobLocationName }}</option>
-                    </select>
+        <div class="d-flex gap-3 align-items-center">
+            <form autocomplete="off" [formGroup]="locationfromdata">
+                <div class="d-flex gap-3 align-items-center">
+                    <div class="d-flex gap-2 align-items-center">
+                        <label for="location" class="form-label custom-label text-nowrap m-0">Locations</label>
+                        <select id="location" formControlName="locationId" class="form-select custom-select"
+                            (change)="onLocationChange()">
+                            <option [ngValue]="null">All Locations</option>
+                            <option *ngFor="let location of jobLocationDropDownData" [value]="location.id">{{
+                                location.jobLocationName }}</option>
+                        </select>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center">
+                        <label for="subLocation" class="form-label custom-label text-nowrap m-0">Sub Locations</label>
+                        <select id="subLocation" formControlName="subLocationId" class="form-select custom-select"
+                            (change)="onSubLocationChange()">
+                            <option [ngValue]="null">All Sub Locations</option>
+                            <option *ngFor="let subLocation of subLocationsDropdown" [value]="subLocation.id">
+                                {{ subLocation.jobSubLocationName }}
+                            </option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-md-4 ">
-                    <label for="subLocation" class="form-label custom-label mb-2">Sub Locations</label>
-                    <select id="subLocation" formControlName="subLocationId" class="form-select custom-select"
-                        (change)="onSubLocationChange()">
-                        <option [ngValue]="null">All Sub Locations</option>
-                        <option *ngFor="let subLocation of subLocationsDropdown" [value]="subLocation.id">
-                            {{ subLocation.jobSubLocationName }}
-                        </option>
-                    </select>
-                </div>
+            </form>
+    
+            <div>
+                @if(rbac.allowedToAccess('Desk Allocation - Create.view')){
+                <button type="button" class="custom-btn btn-primary" (click)="openModal(createDeskModal)">
+                    <i class="bi bi-plus me-2"></i>Register a Desk</button>
+                }
             </div>
-
-        </form>
+        </div>
     </div>
 
     <div class="d-flex gap-3 w-100">
@@ -52,7 +49,7 @@
                 </ul>
             </div>
         </div>
-        
+
         <div class="card custom-component-right-content px-3">
             <router-outlet></router-outlet>
         </div>
@@ -61,7 +58,6 @@
 
 <ng-template #createDeskModal let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-
         <div class="custom-poup-header-content popup-header-border">
             <div>
                 <p class="popup-heading mb-0">Register a Desk</p>
@@ -72,7 +68,6 @@
             </div>
         </div>
         <div class="custom-main-popup-content p-3">
-
             <form autocomplete="off" [formGroup]="deskForm" (ngSubmit)="postdesk(deskForm)">
                 <div class="row">
 
@@ -134,7 +129,7 @@
                                 desk type is required</span>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="custom-toggle-btn">
@@ -203,6 +198,7 @@
         </div>
     </div>
 </ng-template>
+
 <!-- reallocation desk -->
 <ng-template #confirmationpopup let-model>
     <div class="result-popup-content" ngbAutofocus>

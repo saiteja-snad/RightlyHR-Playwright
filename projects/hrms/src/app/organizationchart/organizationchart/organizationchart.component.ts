@@ -120,7 +120,7 @@ private flattenHierarchy(
               Title: title,
               Compensation: compensationamount,
               Department: department,
-              Parent: parentName,
+              Manager: parentName,
           });
           seenNames.add(name);
       }

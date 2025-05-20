@@ -12,6 +12,8 @@ import { IphoneNumberData } from '../../../../../../preonboarding/src/app/models
 import parsePhoneNumberFromString from 'libphonenumber-js';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { RbacService } from '../../../services/rbac.service';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-emergency-contact-details',
@@ -48,7 +50,7 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   employedata = {} as any;
   constructor(private modalService: NgbModal, 
     private fb: FormBuilder, public formValidation: FormValidationService, 
-    private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService) { 
+    private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { 
     effect(() => {
       this.selectedemergencycoutrycode.set(this.selectedDialCode);
       this.selectedemergency1coutrycode.set(this.selectedDialCode1);
@@ -56,9 +58,8 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
- 
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    this.getEmployeeId();
+    this.getEmpInfoFromRoute();
+   
     this.getFamilyRelations();
     this.initializeForm();
   
@@ -68,6 +69,23 @@ export class EmergencyContactDetailsComponent implements OnInit, OnDestroy {
   }
   showButtons() {
     this.buttons = !this.buttons
+  }
+ 
+
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+    }
   }
 
   initializeForm(): void {

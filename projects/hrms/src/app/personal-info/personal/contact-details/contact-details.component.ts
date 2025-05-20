@@ -10,6 +10,9 @@ import parsePhoneNumberFromString from 'libphonenumber-js';
 import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { RbacService } from '../../../services/rbac.service';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-contact-details',
@@ -45,7 +48,8 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
    selectedworkcoutrycode = signal<any>('');
    selectedpersonalnumbercode = signal<any>('');
 
-  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService ,private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService) {
+  constructor(private modalService: NgbModal, private cd: ChangeDetectorRef, private fb: FormBuilder,public formValidation: FormValidationService , 
+    private conformationPopup: OpenModalService, public http: HttpService, public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
     effect(() => {
       this.selectedworkcoutrycode.set(this.selectedDialCode);
       this.selectedpersonalnumbercode.set(this.selectedDialphoneCode);
@@ -53,13 +57,26 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
   }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    this.getEmployeeId();
+    
+    this.getEmpInfoFromRoute();
     this.initializeForm();
     this.contactForm.disable();
   
   }
 
+
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+    }
+  }
   initializeForm(): void {
     this.contactForm = this.fb.group({
       personalEmail: ['', [Validators.required, Validators.email]],
@@ -74,7 +91,9 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
 
   }
 
-
+  canAccessfield(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
   enableForm(): void {
     this.buttons = true;
     this.contactForm.enable();

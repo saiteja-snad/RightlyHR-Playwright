@@ -1908,7 +1908,7 @@
                     </tr>
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center"
-                            *ngIf="per.fields === 'My Info Documents(Upload File)'" >
+                            *ngIf="per.fields === 'My Info Documents Upload File'" >
 
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
@@ -1970,7 +1970,7 @@
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" 
-                                (change)="onCheckboxChange(per, 'Update')" [disabled]="!roleToFilter?.id">
+                                (change)="onCheckboxChange(per, 'Update')"  [disabled]="(per.fields === 'My Info Compensation Details' || per.fields === 'My Info Job Details' || per.fields === 'My Info Pre-Onboarding Details' || per.fields === 'My Info Offboarding Details' || per.fields === 'My Info Onboarding Details' || per.fields === 'My Info Desk Details' || per.fields === 'My Info Asset Details') || !roleToFilter?.id">
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" 
@@ -2467,7 +2467,7 @@
                     </tr>
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center"
-                            *ngIf="per.fields === 'Employee Info Documents (Upload File)'" >
+                            *ngIf="per.fields === 'Employee Info Documents Upload File'" >
 
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">

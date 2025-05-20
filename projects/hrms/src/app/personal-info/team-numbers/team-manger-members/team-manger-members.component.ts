@@ -15,6 +15,8 @@ import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 import { Select } from 'primeng/select';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { RbacService } from '../../../services/rbac.service';
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 
 @Component({
   selector: 'app-team-manger-members',
@@ -42,17 +44,35 @@ export class TeamMangerMembersComponent {
   selectedemployeid: any
   constructor(
     private http: HttpService,
-    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService) { }
+    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     this.initializeForm()
-    this.getEmployeeId()
     this.initializeFormforeachemploye()
-    this.getAllTeammembersList()
     this.getDepartment()
   }
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
 
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+      this.getAllTeammembersList()
+
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+      this.getAllTeammembersList()
+     
+    }
+  }
+
+  
   initializeForm() {
     this.requestForm = this.fb.group({
       effectiveDate: [null, Validators.required],

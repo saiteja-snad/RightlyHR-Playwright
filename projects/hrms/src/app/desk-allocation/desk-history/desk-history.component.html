@@ -2,81 +2,106 @@
 
     <div>
         <p class="component-header mb-3">
-          <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateassets()"></i>{{'Desk Management'|translate}}
+            <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateassets()"></i>{{'Desk Management'|translate}}
         </p>
-      </div>
-    <div class="component-nav-tabs-container card px-2 mb-3">
-        <p-tabs value="0" scrollable>
-            <p-tablist>
-                <ng-container *ngFor="let tab of navTabs;">
-                    <p-tab [value]="tab.route">
-                        <a [routerLink]="tab.route" [queryParamsHandling]="'preserve'" routerLinkActive="nav-tab-active"
-                            class="nav-link">
-                            {{ tab.label }}
+    </div>
+    <div class="d-flex gap-3 w-100">
+        <div class="custom-component-left-content">
+            <div class="component-side-nav-tabs-container py-3">
+
+                <ul class="nav flex-column">
+                    <li class="nav-item" *ngFor="let link of navTabs">
+                        <a class="nav-link" [routerLink]="[link.route]" [queryParamsHandling]="'preserve'"
+                            routerLinkActive="active-nav-link">
+                            {{ link.label }}
                         </a>
-                    </p-tab>
-                </ng-container>
-            </p-tablist>
-        </p-tabs>
-    </div>
-
-    <div>
-        <ng-container *ngIf="(transtiondesk | async)?.length || (inactivedesk | async)?.length; else noDataTemplate">
-            <div class="d-flex flex-column gap-3 mt-3 ">
-                <!-- Active desks -->
-                <div *ngIf="(transtiondesk | async) as deskData">
-                    <div *ngFor="let desk of deskData" >
-                        <div class="card p-3">
-                            <div class="card-body">
-                                <div class="row mb-3">
-                                    <div class="col-4"><p class="component-sub-header mb-0">Employee Name</p>{{ desk.allocatedName }}</div>
-                                    <div class="col-4"><p class="component-sub-header mb-0">Desk ID</p>{{ deskResponse.deskName }}</div>
-                                    <div class="col-4"><p class="component-sub-header mb-0">Desk Type</p>{{ deskResponse.deskType }}</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="card custom-component-right-content px-3">
+            <ng-container *ngIf="(transtiondesk | async)?.length || (inactivedesk | async)?.length; else noDataTemplate">
+                <div class="d-flex flex-column gap-3 mt-3 ">
+                    <!-- Active desks -->
+                    <div *ngIf="(transtiondesk | async) as deskData">
+                        <div *ngFor="let desk of deskData">
+                            <div class="card p-3">
+                                <div class="card-body">
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <p class="component-sub-header mb-0">Employee Name</p>{{ desk.allocatedName }}
+                                        </div>
+                                        <div class="col-4">
+                                            <p class="component-sub-header mb-0">Desk ID</p>{{ deskResponse.deskName }}
+                                        </div>
+                                        <div class="col-4">
+                                            <p class="component-sub-header mb-0">Desk Type</p>{{ deskResponse.deskType }}
+                                        </div>
     
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-4"><p class="component-sub-header mb-0">Allocation Date</p>{{ desk.allocatedDate |
-                                        dateformat }}</div>
-                                    <div class="col-4"><p class="component-sub-header mb-0">Release Date</p>{{ desk.releavedDate ?
-                                        (desk.releavedDate | dateformat) : 'N/A' }}</div>
-                                    <div class="col-4"><p class="component-sub-header mb-0">Desk Status</p>{{ desk.status }}</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Inactive desks -->
-                <div *ngIf="(inactivedesk | async) as deskinative">
-                    <div class="d-flex flex-column gap-3 mt-3">
-                        <div *ngFor="let desk of deskinative">
-                           <div class="card p-3">
-                            <div class="card-body">
-                                <div class="row mb-3">
-                                    <div class="col-4"><p class="component-sub-header mb-0">Desk ID</p>{{ deskResponse.deskName }}</div>
-                                    <div class="col-4"><p class="component-sub-header mb-0">Desk Type</p>{{ deskResponse.deskType }}</div>
-                                    <div class="col-4"><p class="component-sub-header mb-0">Reason</p>{{ desk.reason }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-4"><p class="component-sub-header mb-0">Desk Status</p>{{ desk.status }}</div>
-                                    <div class="col-4" *ngIf="desk.status !== 'Inactive'"><p>From
-                                            Date</p>{{ desk.fromDate ? (desk.fromDate | dateformat) : 'N/A' }}
                                     </div>
-                                    <div class="col-4" *ngIf="desk.status !== 'Inactive'"><p class="component-sub-header mb-0">To Date</p>{{
-                                        desk.toDate ? (desk.toDate | dateformat) : 'N/A' }}</div>
+                                    <div class="row mb-3">
+                                        <div class="col-4">
+                                            <p class="component-sub-header mb-0">Allocation Date</p>{{ desk.allocatedDate |
+                                            dateformat }}
+                                        </div>
+                                        <div class="col-4">
+                                            <p class="component-sub-header mb-0">Release Date</p>{{ desk.releavedDate ?
+                                            (desk.releavedDate | dateformat) : 'N/A' }}
+                                        </div>
+                                        <div class="col-4">
+                                            <p class="component-sub-header mb-0">Desk Status</p>{{ desk.status }}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                           </div>
+                        </div>
+                    </div>
+    
+                    <!-- Inactive desks -->
+                    <div *ngIf="(inactivedesk | async) as deskinative">
+                        <div class="d-flex flex-column gap-3 mt-3">
+                            <div *ngFor="let desk of deskinative">
+                                <div class="card p-3">
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            <div class="col-4">
+                                                <p class="component-sub-header mb-0">Desk ID</p>{{ deskResponse.deskName }}
+                                            </div>
+                                            <div class="col-4">
+                                                <p class="component-sub-header mb-0">Desk Type</p>{{ deskResponse.deskType
+                                                }}
+                                            </div>
+                                            <div class="col-4">
+                                                <p class="component-sub-header mb-0">Reason</p>{{ desk.reason }}
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-4">
+                                                <p class="component-sub-header mb-0">Desk Status</p>{{ desk.status }}
+                                            </div>
+                                            <div class="col-4" *ngIf="desk.status !== 'Inactive'">
+                                                <p>From
+                                                    Date</p>{{ desk.fromDate ? (desk.fromDate | dateformat) : 'N/A' }}
+                                            </div>
+                                            <div class="col-4" *ngIf="desk.status !== 'Inactive'">
+                                                <p class="component-sub-header mb-0">To Date</p>{{
+                                                desk.toDate ? (desk.toDate | dateformat) : 'N/A' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </ng-container>
-
-        <ng-template #noDataTemplate>
-            <div class="no-data-wrapper">
-                <app-no-data-found></app-no-data-found>
-            </div>
-          </ng-template>
+            </ng-container>
+    
+            <ng-template #noDataTemplate>
+                <div class="no-data-wrapper">
+                    <app-no-data-found></app-no-data-found>
+                </div>
+            </ng-template>
+        </div>
     </div>
+  
 </div>

@@ -15,6 +15,8 @@ import { IJob } from '../../../Interfaces/job-model';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { Router } from '@angular/router';
+import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 
 @Component({
   selector: 'app-family-details',
@@ -36,14 +38,32 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
     employedata={} as IProbationEmployees;
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, 
     private http: HttpService, private fb: FormBuilder,
-    public formValidation: FormValidationService,public rbac: RbacService) { }
+    public formValidation: FormValidationService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+
     this.initializeFamilyDetailsForm();
     this.initializeFamilyDetailsupdateForm();
     this.getFamilyRelations();
-    this.getfamilyDetailsByEmployeid();
-    this.getEmployeeId();
+  
+    this.getEmpInfoFromRoute();
+  }
+ 
+  canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
+    return this.permissionRouteService.canAccessField(action, permission);
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+        this.getfamilyDetailsByEmployeid();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+        this.getfamilyDetailsByEmployeid();
+    }
   }
 
   initializeFamilyDetailsForm(): void {

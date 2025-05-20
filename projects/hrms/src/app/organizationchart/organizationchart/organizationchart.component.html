@@ -45,8 +45,9 @@
         <button class="custom-btn btn-primary me-3"   [disabled]="!data || data.length === 0" (click)="downloadChart('pdf')">Download as PDF</button>
         }
         @if(this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view')){
-        <button class="custom-btn btn-primary" [disabled]="!data || data.length === 0" (click)="downloadChart('jpg')">Download as JPG</button>
+        <button class="custom-btn btn-primary me-3" [disabled]="!data || data.length === 0" (click)="downloadChart('jpg')">Download as JPG</button>
         }
+        <button class="custom-btn btn-primary" (click)="downloadToExcel()">Download as Excel</button>
       </div>
     </div>
   </div>

@@ -5,8 +5,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { HttpService } from '../../../services/http.service';
 import { Subscription } from 'rxjs';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
-import moment from 'moment';
-
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-pre-onboaring-details',
   imports: [CommonModule, ReactiveFormsModule],
@@ -27,16 +26,32 @@ export class PreOnboaringDetailsComponent implements OnInit, OnDestroy {
   imgurl: any;
   traineeofferDetails: any;
 
-  constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
+  constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private router: Router,public http: HttpService) { }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    this.getEmployeeId();
+    this.getEmpInfoFromRoute();
+    this.initializeForm();
+    this.preOnboardingForm.disable(); // Disable the form initially
+  }
+
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") ?? '{}');
+      this.getEmployeeId();
+       
     this.getAppointmentEmployeebyId();
     this.getOfferLetterEmployeebyId();
     this.getTraineeOfferLetterEmployeebyId();
-    this.initializeForm();
-    this.preOnboardingForm.disable(); // Disable the form initially
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+    this.getAppointmentEmployeebyId();
+    this.getOfferLetterEmployeebyId();
+    this.getTraineeOfferLetterEmployeebyId();
+    }
   }
 
   initializeForm(): void {

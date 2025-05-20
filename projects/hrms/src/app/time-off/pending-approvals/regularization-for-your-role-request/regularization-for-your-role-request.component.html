@@ -22,102 +22,111 @@
 
     <div class="custom-p-multi-select-table">
         @if(!dataLoad){
-             <p-table [value]="regularizationselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts"
-            dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
-            <ng-template #header>
-                <tr>
-                    <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-                    <th>{{'Employee ID' | translate}} </th>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th>{{'Requested Date' | translate}}</th>
-                    <th>{{'Regularization Date' | translate}}</th>
-                    <th>{{'Duration(InHours)' | translate}}</th>
-                    <th>{{'Regularization Type' | translate}}</th>
-                    <th>{{'Reason' | translate}}</th>
-                    <th>{{'Approver Comments' | translate}}</th>
-                    @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete'))){
-                    <th class="text-center">{{'Action(s)' | translate}}</th>
-                    }
+            @if(regularizationselect.length > 0){
+                <p-table [value]="regularizationselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts"
+                    dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+                    <ng-template #header>
+                        <tr>
+                            <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+                            <th>{{'Employee ID' | translate}} </th>
+                            <th>{{'Employee Name' | translate}}</th>
+                            <th>{{'Requested Date' | translate}}</th>
+                            <th>{{'Regularization Date' | translate}}</th>
+                            <th>{{'Duration(InHours)' | translate}}</th>
+                            <th>{{'Regularization Type' | translate}}</th>
+                            <th>{{'Reason' | translate}}</th>
+                            <th>{{'Approver Comments' | translate}}</th>
+                            @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete'))){
+                            <th class="text-center">{{'Action(s)' | translate}}</th>
+                            }
 
-                </tr>
-            </ng-template>
-            <ng-template #body let-leave>
-                 @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
-                <!-- @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
-                leave.approvalHeader.id){ -->
-                <tr>
-                        <td>
-                        <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
-                    </td>
-                    <td>{{leave.entity.fusionempId}}</td>
-                    <td>{{leave.entity.raisedForName}}</td>
-                    <td>{{leave.entity.createdDate| dateformat}}</td>
-                    <td>{{leave.entity.requestedDate| dateformat}}</td>
-                    <td>{{leave.entity.duration}}</td>
-                    <td>{{leave.entity.type}}</td>
-                    <td>
-                        <div>
-                            <a type="button" [ngbPopover]="notes">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                            </a>
-                            <ng-template #notes>
-                                <p class="mb-0">{{leave.entity.notes}} </p>
-                            </ng-template>
-                        </div>
-                    </td>
-                    <td>
-                        <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
-                            <a type="button"
-                                (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                            </a>
-                        </div>
+                        </tr>
+                    </ng-template>
+                    <ng-template #body let-leave>
+                        @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
+                        <!-- @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
+                        leave.approvalHeader.id){ -->
+                        <tr>
+                                <td>
+                                <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
+                            </td>
+                            <td>{{leave.entity.fusionempId}}</td>
+                            <td>{{leave.entity.raisedForName}}</td>
+                            <td>{{leave.entity.createdDate| dateformat}}</td>
+                            <td>{{leave.entity.requestedDate| dateformat}}</td>
+                            <td>{{leave.entity.duration}}</td>
+                            <td>{{leave.entity.type}}</td>
+                            <td>
+                                <div>
+                                    <a type="button" [ngbPopover]="notes">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    </a>
+                                    <ng-template #notes>
+                                        <p class="mb-0">{{leave.entity.notes}} </p>
+                                    </ng-template>
+                                </div>
+                            </td>
+                            <td>
+                                <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
+                                    <a type="button"
+                                        (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
+                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    </a>
+                                </div>
 
 
-                        <ng-template #permissionComments>-</ng-template>
-                    </td>
-                    @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete'))){
-                    <td>
-                        <div class="dropdown">
-                            <a type="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-three-dots-vertical"></i>
-                            </a>
-                            <ul class="dropdown-menu custom-dropdown-menu">
-                                @if(rbac.allowedToAccess('For Role (Regularization).update')) {
-                                @if( leave.approvalHeader.currentapprovalStage !=
-                                leave.approvalHeader.finalapprovalStage){
-                                <li (click)="openApproveModal(approval,leave)"
-                                   >
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
-                                        translate}}</a>
-                                </li>}
-                                }
-                                @if(rbac.allowedToAccess('For Role (Regularization).update')) {
-                                @if( leave.approvalHeader.currentapprovalStage ==
-                                leave.approvalHeader.finalapprovalStage){
-                                <li (click)="handleProcess(leave)" >
-                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
-                                        {{'Process' | translate}}</a>
-                                </li>
-                                }}
-                                @if(rbac.allowedToAccess('For Role (Regularization).delete')) {
-                                <li (click)="openRejectModal(rejectmodal,leave)"
-                                    >
-                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
-                                        translate}}</a>
-                                </li>}
-                            </ul>
-                        </div>
-                    </td>
-                    }
-                   
-                </tr>
-                <!-- } -->
-                }
-            </ng-template>
-        </p-table>
+                                <ng-template #permissionComments>-</ng-template>
+                            </td>
+                            @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete'))){
+                            <td>
+                                <div class="dropdown">
+                                    <a type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu custom-dropdown-menu">
+                                        @if(rbac.allowedToAccess('For Role (Regularization).update')) {
+                                        @if( leave.approvalHeader.currentapprovalStage !=
+                                        leave.approvalHeader.finalapprovalStage){
+                                        <li (click)="openApproveModal(approval,leave)"
+                                        >
+                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
+                                                translate}}</a>
+                                        </li>}
+                                        }
+                                        @if(rbac.allowedToAccess('For Role (Regularization).update')) {
+                                        @if( leave.approvalHeader.currentapprovalStage ==
+                                        leave.approvalHeader.finalapprovalStage){
+                                        <li (click)="handleProcess(leave)" >
+                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
+                                                {{'Process' | translate}}</a>
+                                        </li>
+                                        }}
+                                        @if(rbac.allowedToAccess('For Role (Regularization).delete')) {
+                                        <li (click)="openRejectModal(rejectmodal,leave)"
+                                            >
+                                            <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                                translate}}</a>
+                                        </li>}
+                                    </ul>
+                                </div>
+                            </td>
+                            }
+                        
+                        </tr>
+                        <!-- } -->
+                        }
+                    </ng-template>
+                </p-table>
+            }@else {
+                <div class="loader-placeholder-content">
+                    <app-no-data-found />
+                </div>   
+            }
+            
     }@else{
-        <app-data-loader-content />
+            <div class="loader-placeholder-content">
+                <app-data-loader-content />
+            </div>
         }
     </div>
 </div>

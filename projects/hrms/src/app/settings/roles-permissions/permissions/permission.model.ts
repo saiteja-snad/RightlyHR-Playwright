@@ -4,7 +4,6 @@ export interface IPermissions {
     claimValue: string,
     roleId: string;
 }
-
 export interface IRoles {
     id: string,
     concurrencyStamp: string,

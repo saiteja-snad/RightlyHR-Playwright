@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { MyExpensesTabComponent } from "../claimsandexpenses-tabs/my-expenses-tab/my-expenses-tab.component";
 import { MyinfoHeaderTabsComponent } from '../myinfo-tabs/myinfo-header-tabs/myinfo-header-tabs.component';
 import { PersonalinfoHeaderTabsComponent } from "../personalinfo-tabs/personalinfo-header-tabs/personalinfo-header-tabs.component";
 import { Subscription } from 'rxjs';
@@ -12,15 +11,14 @@ import { ReportsMainTabsComponent } from "../reports-tabs/reports-main-tabs/repo
 import { PmsTabsComponent } from "../pms-module-tabs/pms-tabs/pms-tabs.component";
 import { PmsSettingsTabsComponent } from "../pms-module-tabs/pms-settings-tabs/pms-settings-tabs.component";
 import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt-header-tabs.component";
-import { CalendarHeaderTabsComponent } from "../calendar-tabs/calendar-header-tabs/calendar-header-tabs.component";
 import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
 import { RbacService } from '../../services/rbac.service';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule, MyExpensesTabComponent, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent,
-    ReportsMainTabsComponent, PmsTabsComponent, PmsSettingsTabsComponent, ItsuporrtHeaderTabsComponent, CalendarHeaderTabsComponent, TimeOffTabsComponent],
+  imports: [CommonModule, RouterModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, SettingsMainHeaderTabsComponent,
+    ReportsMainTabsComponent, PmsTabsComponent, PmsSettingsTabsComponent, ItsuporrtHeaderTabsComponent, TimeOffTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })
@@ -29,15 +27,15 @@ export class HeaderComponent {
   empinfo: any;
   imageUrl: any;
   subscription!: Subscription;
-
-  constructor(public readonly router: Router, private http: HttpService, private sanitizer: DomSanitizer,public rbac:RbacService, private accessNav: AccessNavigationService) { }
-
   events = [
     { name: "John Doe's (SD153462) Birthday", time: '1 hour ago', type: 'birthday' },
     { name: "Jane's (SD164732) Anniversary", time: '3 hours ago', type: 'anniversary' },
     { name: 'Team Meeting with HR', time: '1 day ago', type: 'meeting' },
     { name: 'Holiday', time: '1 day ago', type: 'holiday' },
   ];
+
+  constructor(public readonly router: Router, private http: HttpService, private sanitizer: DomSanitizer,
+    public rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -46,8 +44,7 @@ export class HeaderComponent {
   }
 
   onSelectprofilePicDownload(employee: any) {
-    if(employee.profileUrl){
-
+    if (employee.profileUrl) {
       this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', employee.profileUrl).subscribe({
         next: (res: any) => {
           let blob = new Blob([res['body']], { type: 'image/png' });
@@ -76,10 +73,10 @@ export class HeaderComponent {
   }
 
   navigateSettings() {
-    const route =  this.accessNav.navigateToAccessedHeaderRoute('/settings');
+    const route = this.accessNav.navigateToAccessedHeaderRoute('/settings');
     if (route) {
       this.router.navigate([route]);
-    }else {
+    } else {
       this.router.navigate(['/unauthorized']);
     }
   }
@@ -111,8 +108,7 @@ export class HeaderComponent {
     return includeRoutes.includes(this.router.url);
   }
 
-
-    navigateToAccessedRoute(route: string) {
+  navigateToAccessedRoute(route: string) {
     const actualRoute = this.accessNav.navigateToAccessedHeaderRoute(route);
     if (actualRoute) {
       this.router.navigate([actualRoute]);
@@ -124,6 +120,4 @@ export class HeaderComponent {
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
   }
-
-  
 }

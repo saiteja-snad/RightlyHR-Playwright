@@ -1,0 +1,9 @@
+<div class="component-side-nav-tabs-container py-3">
+    <ul class="nav flex-column">
+        <li class="nav-item" *ngFor="let tab of filteredTabs;">
+            <a class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link">
+                {{ tab.label }}
+            </a>
+        </li>
+    </ul>
+</div>

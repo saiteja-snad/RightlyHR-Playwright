@@ -1,25 +1,25 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, NgModel, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
-import { IExpense,  IExpenseItem, Iexpensetype, } from '../../Interfaces/claimsandexpenses.model';
-import { BehaviorSubject, Subscription, switchMap } from 'rxjs';
+import { IExpense, Iexpensetype, } from '../../Interfaces/claimsandexpenses.model';
+import { Subscription, switchMap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TabsModule } from 'primeng/tabs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
-
 @Component({
   selector: 'app-add-claimsandexpenses',
-  imports: [RouterModule, Select, ReactiveFormsModule,TranslateModule, CommonModule,TabsModule],
+  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, CommonModule, TabsModule],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
   providers: [DatePipe]
 })
-export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
+
+export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   empinfo: any;
   Myexpense: any;
   totalexpensesamount = 0;
@@ -29,23 +29,24 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   subscription!: Subscription
   minDate!: string;
   maxDate!: string;
-  spinnerLoader=false;
-  saveasDraftloder=false
-  emails =[];
+  spinnerLoader = false;
+  saveasDraftloder = false
+  emails = [];
   timeoffValid = false;
   istimeoffValid = true;
   currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
-  joiningDate:any
-  removeindex:any
+  joiningDate: any
+  removeindex: any
   expensetype = [] as Iexpensetype[];
   expenseemployeedata: IExpense[] = [];
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
   navTabs: any[] = [
     { label: 'Create Expenses', link: '/claimsandexpenses/addexpense' },
-   
   ];
+
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
-    private http: HttpService,private modalService: NgbModal, public formValidation: FormValidationService,) { }
+    private http: HttpService, private modalService: NgbModal, public formValidation: FormValidationService,) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getEmployeeId()
@@ -54,7 +55,6 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     this.getdatabyentriy();
     this.getexpensesheaderbyid(this.empinfo.employeeid)
     this.setDate()
-
     this.newExpenseForm.valueChanges.subscribe(() => {
       this.calculateTotalExpensesAmount();
     });
@@ -71,7 +71,7 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
 
   createExpenseItem(): FormGroup {
     return this.fb.group({
-      item_expense: [null,Validators.required],
+      item_expense: [null, Validators.required],
       item_Name: [null, [Validators.required, Validators.maxLength(50)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
@@ -84,7 +84,6 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   addExpenseItem(): void {
     this.expenseItems.push(this.createExpenseItem());
     this.calculateTotalExpensesAmount();
-
   }
 
   get expenseItems(): FormArray {
@@ -109,15 +108,13 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     this.removeindex = i
     this.modalService.dismissAll();
     this.opendeletModal(this.deleteconformation)
-
   }
 
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.joiningDate =this.formatDateToLocal(data.dateOfJoining)
-       
+        this.joiningDate = this.formatDateToLocal(data.dateOfJoining)
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
@@ -130,12 +127,12 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
+
   removeExpense() {
     this.expenseItems.removeAt(this.removeindex);
     this.calculateTotalExpensesAmount();
     this.modalService.dismissAll()
     this.conformationPopup.openSuccessModal("Expense item deleted successfully")
-   
   }
 
   setDate() {
@@ -143,27 +140,22 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are zero-based
     const dd = String(today.getDate()).padStart(2, '0');
-
     this.maxDate = `${yyyy}-${mm}-${dd}`;
-
     const dateOfJoining = new Date(this.empinfo.dateOfJoining);
     const yyyyMin = dateOfJoining.getFullYear();
     const mmMin = String(dateOfJoining.getMonth() + 1).padStart(2, '0');
     const ddMin = String(dateOfJoining.getDate()).padStart(2, '0');
     this.minDate = `${yyyyMin}-${mmMin}-${ddMin}`;
-    console.log(this.maxDate, this.minDate);
   }
 
   duplicateReceiptValidator(formArray: AbstractControl): ValidationErrors | null {
     const formArrayControls = formArray as FormArray; // Cast to FormArray
     const receiptNumbers = formArrayControls.value.map((item: any) => item.receipt_Number);
     const duplicates = receiptNumbers.filter((number: any, index: any) => receiptNumbers.indexOf(number) !== index);
-
     formArrayControls.controls.forEach((control: AbstractControl) => {
       const receiptNumberControl = control.get('receipt_Number');
       if (receiptNumberControl) {
         const currentNumber = receiptNumberControl.value;
-
         // Check if this control's receipt number is duplicated
         if (duplicates.includes(currentNumber)) {
           receiptNumberControl.setErrors({ duplicate: true });
@@ -175,24 +167,19 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         }
       }
     });
-
     return duplicates.length > 0 ? { duplicateReceipt: true } : null;
   }
 
   noAlphabetsOrZeroValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
-
       if (!value) return null; // Allow empty values (handled by 'required' validator)
-
       if (/[a-zA-Z]/.test(value)) {
         return { noAlphabets: true }; // Rejects alphabets
       }
-
       if (parseFloat(value) === 0) {
         return { nonZero: true }; // Rejects zero
       }
-
       return null; // Valid input
     };
   }
@@ -208,26 +195,23 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   getdatabyentriy() {
     const params = 'Expense';
     const param = 'approverEmails';
-    this.subscription = this.http
-      .getDatabyentriyvalue('entityAttributeValues', params, param)
-      .subscribe({
-        next: (data: any) => {
-          if (data.length > 0) {
-            // Split the string and map into { value: email, label: email } objects
-            const emailArray = data[0].value.split(',');
-            this.emails = emailArray.map((email: string) => ({
-              value: email.trim(), // remove extra spaces
-              label: email.trim()
-            }));
-          }
-        },
-        error: (err) => {
-          console.log("errors", err);
-        },
-      });
+    this.subscription = this.http.getDatabyentriyvalue('entityAttributeValues', params, param).subscribe({
+      next: (data: any) => {
+        if (data.length > 0) {
+          // Split the string and map into { value: email, label: email } objects
+          const emailArray = data[0].value.split(',');
+          this.emails = emailArray.map((email: string) => ({
+            value: email.trim(), // remove extra spaces
+            label: email.trim()
+          }));
+        }
+      },
+      error: (err) => {
+        console.log("errors", err);
+      },
+    });
   }
-  
-   
+
   fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
     if (file) {
@@ -238,10 +222,8 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         filepath,
         file
       );
-
       fileUpload$.subscribe({
         next: (data: any) => {
-
           // Assuming data.path contains the uploaded file path
           const uploadedFilePath = data.path;
           this.expenseItems.at(index)?.get('attachment_url')?.setValue(uploadedFilePath);
@@ -255,12 +237,12 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   }
 
   onchangeexpnes(event: any, index: number) {
-    const selectedId = event.value;  
+    const selectedId = event.value;
     this.onExpenseChanged(selectedId, index);
   }
-  
+
   onExpenseChanged(selectedId: number, index: number) {
-    this.selectedexpensesid = selectedId; 
+    this.selectedexpensesid = selectedId;
     this.http.getData(`Expense/getbyid/${this.selectedexpensesid}`).subscribe({
       next: (data: any) => {
         console.log('Fetched expense data:', data);
@@ -271,11 +253,10 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
       }
     });
   }
-    
 
   fromdata(form: FormGroup): void {
     if (form.valid) {
-      this.spinnerLoader=true
+      this.spinnerLoader = true
       const payload = {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
@@ -296,27 +277,19 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         })),
         attachment_url: undefined
       };
-
       const filepath = `/Expenses/${this.empinfo.employeeId}`;
-
       // Check if there is any file to upload
       if (this.Myexpense) {
-        const fileUpload$ = this.http.uploadFileWithQuery(
-          'FileSystem/uploadfiletodirectory',
-          filepath,
-          this.Myexpense
-        );
-
+        const fileUpload$ = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory',
+         filepath, this.Myexpense);
         fileUpload$.pipe(
           switchMap((data: any) => {
             // Update the payload with the uploaded file path
             payload.expenseItem.forEach((item: { attachment_url: any; }) => {
-
               if (item.attachment_url === this.Myexpense.name) {
                 item.attachment_url = data.path;
               }
             });
-
             // Now post the updated payload
             return this.http.postdata(`Expenses_Header`, payload);
           })
@@ -327,15 +300,13 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal('Expenses submitted successfully');
               this.getexpensesheaderbyid(this.empinfo.employeeId);
-           
             }
           },
           error: (error: any) => {
-            console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
-            this.spinnerLoader=false
-          },  complete:()=> {
-            this.spinnerLoader=false
+            this.spinnerLoader = false;
+          }, complete: () => {
+            this.spinnerLoader = false;
           }
         });
       } else {
@@ -347,17 +318,15 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
-              this.spinnerLoader=false
+              this.spinnerLoader = false;
             }
           },
           error: (error: any) => {
-            console.log("error" + error)
-            this.spinnerLoader=false
-            this.conformationPopup.openErrorModal(error.error.message)
-
+            this.spinnerLoader = false;
+            this.conformationPopup.openErrorModal(error.error.message);
           },
-          complete:()=> {
-            this.spinnerLoader=false
+          complete: () => {
+            this.spinnerLoader = false
           },
         });
       }
@@ -366,11 +335,9 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     }
   }
 
-
-
   saveasDraft(form: FormGroup): void {
     if (form.valid) {
-      this.saveasDraftloder=true
+      this.saveasDraftloder = true
       const payload = {
         applied_date: new Date().toISOString(),
         expenses_Title: form.value.expensesTitle,
@@ -392,7 +359,6 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         attachment_url: undefined
       };
       const filepath = `/Expenses/${this.empinfo.employeeId}`;
-
       // Check if there is any file to upload
       if (this.Myexpense) {
         const fileUpload$ = this.http.uploadFileWithQuery(
@@ -400,7 +366,6 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
           filepath,
           this.Myexpense
         );
-
         fileUpload$.pipe(
           switchMap((data: any) => {
             // Update the payload with the uploaded file path
@@ -410,7 +375,6 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
                 item.attachment_url = data.path;
               }
             });
-
             // Now post the updated payload
             return this.http.postdata(`Expenses_Header`, payload);
           })
@@ -421,7 +385,6 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal(' Expenses saved as draft successfully ');
               // this.filterAllExpenses()
-      
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               // Call the get function after posting
             }
@@ -429,10 +392,10 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
           error: (error: any) => {
             console.log('errror' + error)
             this.conformationPopup.openErrorModal(error.error.message)
-            this.saveasDraftloder=false
+            this.saveasDraftloder = false
           },
-          complete:()=> {
-            this.saveasDraftloder=false
+          complete: () => {
+            this.saveasDraftloder = false
           },
         });
       } else {
@@ -450,11 +413,10 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
           error: (error: any) => {
             console.log("error" + error)
             this.conformationPopup.openErrorModal(error.error.message)
-            this.saveasDraftloder=false
-
+            this.saveasDraftloder = false
           },
-          complete:()=> {
-            this.saveasDraftloder=false
+          complete: () => {
+            this.saveasDraftloder = false
           },
         });
       }
@@ -463,25 +425,20 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
     }
   }
 
-
   onAmountInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
     let sanitizedValue = inputElement.value.replace(/[^0-9.]/g, '');
-
     // Replace multiple decimals with a single one
     const decimalCheck = sanitizedValue.split('.');
     if (decimalCheck.length > 2) {
       sanitizedValue = decimalCheck[0] + '.' + decimalCheck[1];
     }
-
     // Set the sanitized value back to the input
     inputElement.value = sanitizedValue;
-
     // Update the form control value only if the value contains digits or a valid decimal
     if (/^\d*\.?\d*$/.test(sanitizedValue)) {
       this.newExpenseForm.get('expense_Amount')?.setValue(sanitizedValue);
     }
-
     // Calculate total expenses amount if valid
     if (this.newExpenseForm.get('expense_Amount')?.valid) {
       this.calculateTotalExpensesAmount();
@@ -492,7 +449,6 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
   getexpensesheaderbyid(_employeeId: number): void {
     //params
     const params = this.empinfo.employeeId;
-
     this.subscription = this.http
       .getDatabyid(`Expenses_Header/gettotalamount`, params).subscribe({
         next: (data: any) => {
@@ -503,11 +459,10 @@ export class AddClaimsandexpensesComponent implements OnInit,OnDestroy{
         },
       });
   }
-  
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
   }
-
 }

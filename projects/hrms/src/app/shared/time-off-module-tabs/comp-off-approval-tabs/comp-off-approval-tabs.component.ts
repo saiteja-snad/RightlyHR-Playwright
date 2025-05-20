@@ -22,16 +22,15 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
-  constructor(public readonly router: Router, private http: HttpService,public rbac: RbacService) {
-    effect(() =>{
-        if (this.http.tirggerCountSignal().compOff) {
-          this.getCompOffRequest();
-          this.http.tirggerCountSignal.update((status) => ({
-            ...status,
-            compOff: false,
-          }));
-        }
-
+  constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService) {
+    effect(() => {
+      if (this.http.tirggerCountSignal().compOff) {
+        this.getCompOffRequest();
+        this.http.tirggerCountSignal.update((status) => ({
+          ...status,
+          compOff: false,
+        }));
+      }
     })
   }
 
@@ -46,33 +45,21 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
 
   getCompOffRequest() {
     let empId = this.empinfo.employeeId;
-    console.log(empId);
-    this.http
-      .getData(`Timeoff/getCompoffRequests/${empId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: any) => {
-          this.compOff = response;
-          this.waitingForApprovalCompOffCount = this.compOff.filter(
-            (element: { status: string }) =>
-              element.status === 'Waiting for Approval'
-          ).length;
-          this.approvalCompOffRequestsCount = this.compOff.filter(
-            (element: { status: string }) => element.status === 'Approved'
-          ).length;
-          this.rejectedCompOffRequestsCount = this.compOff.filter(
-            (element: { status: string }) => element.status === 'Rejected'
-          ).length;
-          this.processedCompOffRequestsCount = this.compOff.filter(
-            (element: { status: string }) => element.status === 'Processed'
-          ).length;
-        },
-        error: (error) => {
-          console.error('Error fetching data:', error);
-          this.compOff = []; // Set to empty array on error
-        },
-      });
-  } 
+    this.http.getData(`Timeoff/getCompoffRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.compOff = response;
+        this.waitingForApprovalCompOffCount = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval').length;
+        this.approvalCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Approved').length;
+        this.rejectedCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Rejected').length;
+        this.processedCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Processed').length;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.compOff = []; // Set to empty array on error
+      },
+    });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

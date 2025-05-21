@@ -15,78 +15,83 @@
     </div>
   </div>
 
-  <div class="mb-3">
-    <app-leaves-approvaltabs />
-  </div>
-
-  <div class="input-group custom-search mb-3">
-    <span class="input-group-text custom-input-group-search" id="basic-addon1">
-      <i class="bi bi-search"></i>
-    </span>
-    <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
-      (ngModelChange)="filterTeamLeaveSummary()" aria-label="Search" aria-describedby="basic-addon1" />
-  </div>
-
-  <ng-container *ngIf="dataload; else maincontent">
-    <ng-template #loadingSpinner>
-      <div class="custom-compoent-data-loader">
-        <app-data-loader-content />
-      </div>
-    </ng-template>
-    <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-  </ng-container>
-
-  <ng-template #maincontent>
-    <div class="custom-accordian-data-content">
-      <p-accordion [value]="filteredTeamLeaveBalance[0].employeeBasicDetails.employeeId">
-        @if(filteredTeamLeaveBalance.length > 0) {
-        @for (employee of filteredTeamLeaveBalance; track employee.employeeBasicDetails.employeeId; let i = $index) {
-        <p-accordion-panel [value]="employee.employeeBasicDetails.employeeId">
-          <p-accordion-header><span>
-            <span class="text-capitalize">{{ employee.employeeBasicDetails.employeeName }}</span>
-            ({{ employee.employeeBasicDetails.snadEmployeeId }})</span>
-          </p-accordion-header>
-          <p-accordion-content>
-            <div class="employee-data-table">
-              <table class="w-100">
-                <thead>
-                  <tr>
-                    <th class="text-start">Category</th>
-                    <th>Allowed Days</th>
-                    <th>Utilized Days</th>
-                    <th>Booked Days</th>
-                    <th>Available Days</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (category of employee.categories; track $index) {
-                  <tr>
-                    <td class="text-start cursor">
-                     <ng-container *ngIf="category.category?.name?.trim(); else noCategory">
-                        <u class="clickable-text" (click)="onClickCategory(employee, category)">{{ category.category.name }}</u>
-                      </ng-container>
-                      <ng-template #noCategory>-</ng-template>
-                    </td>
-                    <td>{{ category.allowedDays }}</td>
-                    <td>{{ category.utilizedDays }}</td>
-                    <td>{{ category.booked }}</td>
-                    <td class="available-number">
-                      {{ category.allowedDays - category.utilizedDays - category.booked }}
-                    </td>
-                  </tr>
-                  }
-                </tbody>
-              </table>
-            </div>
-          </p-accordion-content>
-        </p-accordion-panel>
-        }
-        }@else {
-        <app-no-data-found></app-no-data-found>
-        }
-      </p-accordion>
+  <div class="d-flex w-100 gap-3">
+    <div class="custom-component-left-content">
+      <app-leaves-approvaltabs />
     </div>
-  </ng-template>
+  
+    <div class="custom-component-right-content p-3">
+      <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1">
+          <i class="bi bi-search"></i>
+        </span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
+          (ngModelChange)="filterTeamLeaveSummary()" aria-label="Search" aria-describedby="basic-addon1" />
+      </div>
+  
+      <ng-container *ngIf="dataload; else maincontent">
+        <ng-template #loadingSpinner>
+          <div class="custom-compoent-data-loader">
+            <app-data-loader-content />
+          </div>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+      </ng-container>
+  
+      <ng-template #maincontent>
+        <div class="custom-accordian-data-content">
+          <p-accordion [value]="filteredTeamLeaveBalance[0].employeeBasicDetails.employeeId">
+            @if(filteredTeamLeaveBalance.length > 0) {
+            @for (employee of filteredTeamLeaveBalance; track employee.employeeBasicDetails.employeeId; let i = $index) {
+            <p-accordion-panel [value]="employee.employeeBasicDetails.employeeId">
+              <p-accordion-header><span>
+                  <span class="text-capitalize">{{ employee.employeeBasicDetails.employeeName }}</span>
+                  ({{ employee.employeeBasicDetails.snadEmployeeId }})</span>
+              </p-accordion-header>
+              <p-accordion-content>
+                <div class="employee-data-table">
+                  <table class="w-100">
+                    <thead>
+                      <tr>
+                        <th class="text-start">Category</th>
+                        <th>Allowed Days</th>
+                        <th>Utilized Days</th>
+                        <th>Booked Days</th>
+                        <th>Available Days</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (category of employee.categories; track $index) {
+                      <tr>
+                        <td class="text-start cursor">
+                          <ng-container *ngIf="category.category?.name?.trim(); else noCategory">
+                            <u class="clickable-text" (click)="onClickCategory(employee, category)">{{
+                              category.category.name }}</u>
+                          </ng-container>
+                          <ng-template #noCategory>-</ng-template>
+                        </td>
+                        <td>{{ category.allowedDays }}</td>
+                        <td>{{ category.utilizedDays }}</td>
+                        <td>{{ category.booked }}</td>
+                        <td class="available-number">
+                          {{ category.allowedDays - category.utilizedDays - category.booked }}
+                        </td>
+                      </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </p-accordion-content>
+            </p-accordion-panel>
+            }
+            }@else {
+            <app-no-data-found></app-no-data-found>
+            }
+          </p-accordion>
+        </div>
+      </ng-template>
+    </div>
+  </div>
 </div>
 
 <!--Attendance Logs popup-->

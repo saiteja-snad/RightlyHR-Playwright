@@ -1,16 +1,13 @@
-<div class="component-nav-tabs-container card px-2">
-  <p-tabs value="0" scrollable>
-    <p-tablist>
-      <ng-container *ngFor="let tab of statusTabs">
-        <p-tab [value]="tab.link">
-          <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
-            {{ tab.label }}
-            <ng-container *ngIf="tab.label !== 'Org Leave Balance'">
-              ({{ tab.count ?? 0 }})
-            </ng-container>
-          </a>
-        </p-tab>
-      </ng-container>
-    </p-tablist>
-  </p-tabs>
+
+<div class="component-side-nav-tabs-container py-3">
+  <ul class="nav flex-column">
+    <li class="nav-item" *ngFor="let tab of statusTabs">
+      <a class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link">
+        {{ tab.label }}
+        <ng-container *ngIf="tab.label !== 'Org Leave Balance'">
+          ({{ tab.count ?? 0 }})
+        </ng-container>
+      </a>
+    </li>
+  </ul>
 </div>

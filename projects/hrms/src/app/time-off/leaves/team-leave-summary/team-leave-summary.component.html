@@ -21,91 +21,96 @@
             </div>
         </div>
     </div>
-
-    <div class="mb-3">
-        <app-leaves-approvaltabs />
-    </div>
-
-    <!--Input search-->
-    <div class="input-group custom-search mb-3">
-        <span class="input-group-text custom-input-group-search" id="basic-addon1">
-            <i class="bi bi-search"></i>
-        </span>
-        <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
-            (ngModelChange)="filterTeamLeaveSummary()" aria-label="Search" aria-describedby="basic-addon1" />
-    </div>
-
-
-    <ng-container *ngIf="dataload; else maincontent">
-        <ng-template #loadingSpinner>
-            <div class="custom-compoent-data-loader">
-                <app-data-loader-content />
-            </div>
-        </ng-template>
-        <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
-    </ng-container>
-
-    <ng-template #maincontent>
-        <div class="custom-table-content">
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>Employee Name</th>
-                        <th>Leaves</th>
-                        <th>WFH</th>
-                        <th>Permissions</th>
-                        <th>Regularization</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if(filteredTeamLeaveSummary.length > 0) {
-                        @for (employee of filteredTeamLeaveSummary; track employee.employeeId) {
-                        <tr>
-                            <td>{{ employee.employeeName }} ({{employee.fusionEmpId}})</td>
-                            <td>
-                                <span [ngClass]="{ 'clickable-text': (employee.leaves.length || 0) > 0 }"
-                                    *ngIf="(employee.leaves?.length || 0) > 0; else noLeaves"
-                                    (click)="openPopup(leavesModal, employee, 'leaves')">
-                                    {{ employee.leaves.length || 0 }}
-                                </span>
-                                <ng-template #noLeaves>{{ employee.leaves.length || 0 }}</ng-template>
-                            </td>
-                            <td>
-                                <span [ngClass]="{ 'clickable-text': (employee.wfh.length || 0) > 0 }"
-                                    *ngIf="(employee.wfh?.length || 0) > 0; else noWfh"
-                                    (click)="openPopup(wfhModal, employee, 'wfh')">
-                                    {{ employee.wfh.length || 0 }}
-                                </span>
-                                <ng-template #noWfh>{{ employee.wfh.length || 0 }}</ng-template>
-                            </td>
-                            <td>
-                                <span [ngClass]="{ 'clickable-text': calculateDuration(employee.permissions) > 0 }"
-                                    *ngIf="calculateDuration(employee.permissions) > 0; else noPermission"
-                                    (click)="openPopup(permissionModal, employee, 'permissions')">
-                                    {{ calculateDuration(employee.permissions)}} Hr(s)
-                                </span>
-                                <ng-template #noPermission>{{ calculateDuration(employee.permissions)}} Hr(s)</ng-template>
-                            </td>
-                            <td>
-                                <span [ngClass]="{ 'clickable-text': calculateDuration(employee.regularization) > 0 }"
-                                    *ngIf="calculateDuration(employee.regularization) > 0; else noRegularization"
-                                    (click)="openPopup(permissionModal, employee, 'regularization')">
-                                    {{ calculateDuration(employee.regularization)}} Hr(s)
-                                </span>
-                                <ng-template #noRegularization>{{ calculateDuration(employee.regularization)}}
-                                    Hr(s)</ng-template>
-                            </td>
-                        </tr>
-                        }
-                    }@else {
-                    <tr>
-                        <app-no-data-found></app-no-data-found>
-                    </tr>
-                    }
-                </tbody>
-            </table>
+    <div class="d-flex w-100 gap-3">
+        <div class="custom-component-left-content">
+            <app-leaves-approvaltabs />
         </div>
-    </ng-template>
+        <div class="custom-component-right-content p-3">
+            <!--Input search-->
+            <div class="input-group custom-search mb-3">
+                <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                    <i class="bi bi-search"></i>
+                </span>
+                <input type="search" class="form-control custom-search-input" placeholder="Search"
+                    [(ngModel)]="searchText" (ngModelChange)="filterTeamLeaveSummary()" aria-label="Search"
+                    aria-describedby="basic-addon1" />
+            </div>
+
+
+            <ng-container *ngIf="dataload; else maincontent">
+                <ng-template #loadingSpinner>
+                    <div class="custom-compoent-data-loader">
+                        <app-data-loader-content />
+                    </div>
+                </ng-template>
+                <ng-container *ngTemplateOutlet="loadingSpinner"></ng-container>
+            </ng-container>
+
+            <ng-template #maincontent>
+                <div class="custom-table-content">
+                    <table class="w-100">
+                        <thead>
+                            <tr>
+                                <th>Employee Name</th>
+                                <th>Leaves</th>
+                                <th>WFH</th>
+                                <th>Permissions</th>
+                                <th>Regularization</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if(filteredTeamLeaveSummary.length > 0) {
+                            @for (employee of filteredTeamLeaveSummary; track employee.employeeId) {
+                            <tr>
+                                <td>{{ employee.employeeName }} ({{employee.fusionEmpId}})</td>
+                                <td>
+                                    <span [ngClass]="{ 'clickable-text': (employee.leaves.length || 0) > 0 }"
+                                        *ngIf="(employee.leaves?.length || 0) > 0; else noLeaves"
+                                        (click)="openPopup(leavesModal, employee, 'leaves')">
+                                        {{ employee.leaves.length || 0 }}
+                                    </span>
+                                    <ng-template #noLeaves>{{ employee.leaves.length || 0 }}</ng-template>
+                                </td>
+                                <td>
+                                    <span [ngClass]="{ 'clickable-text': (employee.wfh.length || 0) > 0 }"
+                                        *ngIf="(employee.wfh?.length || 0) > 0; else noWfh"
+                                        (click)="openPopup(wfhModal, employee, 'wfh')">
+                                        {{ employee.wfh.length || 0 }}
+                                    </span>
+                                    <ng-template #noWfh>{{ employee.wfh.length || 0 }}</ng-template>
+                                </td>
+                                <td>
+                                    <span [ngClass]="{ 'clickable-text': calculateDuration(employee.permissions) > 0 }"
+                                        *ngIf="calculateDuration(employee.permissions) > 0; else noPermission"
+                                        (click)="openPopup(permissionModal, employee, 'permissions')">
+                                        {{ calculateDuration(employee.permissions)}} Hr(s)
+                                    </span>
+                                    <ng-template #noPermission>{{ calculateDuration(employee.permissions)}}
+                                        Hr(s)</ng-template>
+                                </td>
+                                <td>
+                                    <span
+                                        [ngClass]="{ 'clickable-text': calculateDuration(employee.regularization) > 0 }"
+                                        *ngIf="calculateDuration(employee.regularization) > 0; else noRegularization"
+                                        (click)="openPopup(permissionModal, employee, 'regularization')">
+                                        {{ calculateDuration(employee.regularization)}} Hr(s)
+                                    </span>
+                                    <ng-template #noRegularization>{{ calculateDuration(employee.regularization)}}
+                                        Hr(s)</ng-template>
+                                </td>
+                            </tr>
+                            }
+                            }@else {
+                            <tr>
+                                <app-no-data-found></app-no-data-found>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </ng-template>
+        </div>
+    </div>
 </div>
 
 <!--Leaves popup-->
@@ -117,7 +122,8 @@
                     <table>
                         <thead>
                             <tr>
-                                <th colspan="6" class="custom-popup-header">{{ selectedEmployee.employeeName }} ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
+                                <th colspan="6" class="custom-popup-header">{{ selectedEmployee.employeeName }}
+                                    ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
                             </tr>
                             <tr>
                                 <th>Category</th>
@@ -157,7 +163,8 @@
                     <table>
                         <thead>
                             <tr>
-                                <th colspan="5" class="custom-popup-header">{{ selectedEmployee.employeeName }} ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
+                                <th colspan="5" class="custom-popup-header">{{ selectedEmployee.employeeName }}
+                                    ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
                             </tr>
                             <tr>
                                 <th>Start Date</th>
@@ -196,14 +203,15 @@
                     <table>
                         <thead>
                             <tr>
-                                <th colspan="4" class="custom-popup-header">{{ selectedEmployee.employeeName }} ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
+                                <th colspan="4" class="custom-popup-header">{{ selectedEmployee.employeeName }}
+                                    ({{selectedEmployee.fusionEmpId}}) - {{ popupType }} Details</th>
                             </tr>
                             <tr>
                                 <th>Requested Date</th>
                                 @if(popupType === 'Permission(s)') {
-                                    <th>Permission Type</th>
+                                <th>Permission Type</th>
                                 }@else {
-                                    <th>Regularization Type</th>
+                                <th>Regularization Type</th>
                                 }
                                 <th>Duration (In Hrs)</th>
                                 <th>Status</th>

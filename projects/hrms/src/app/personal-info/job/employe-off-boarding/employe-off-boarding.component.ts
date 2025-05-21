@@ -49,19 +49,21 @@ export class EmployeOffBoardingComponent {
     this.getEmployeeId()
     
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    this.dateOfJoining = moment(this.empinfo.dateOfJoining).format('YYYY-MM-DD')
+    this.dateOfJoining = this.formatDateToLocal(this.empinfo.dateOfJoining)
     console.log(this.dateOfJoining);
     
 
 
 
     if (this.empinfo?.lastworkingday) {
-      const formattedDate = new Date(this.empinfo.lastworkingday).toISOString().split('T')[0];
+      const formattedDate = this.formatDateToLocal(this.empinfo.lastworkingday);
       this.offBoardingForm.patchValue({
         lastdate: formattedDate
       });
     }
   }
+
+
 
   initializeForm() {
     this.offBoardingForm = this.fb.group({

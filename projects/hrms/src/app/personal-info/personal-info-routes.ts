@@ -55,7 +55,7 @@ export default [
                 path: 'team-manger-members', loadComponent: () => import('./team-numbers/team-manger-members/team-manger-members.component').then((m) => m.TeamMangerMembersComponent), data: { permission: 'Employee Info Team Managers Tab.view' },
             },
             {
-                path: 'team-members', loadComponent: () => import('./team-numbers/myteam-members/myteam-members.component').then((m) => m.MyteamMembersComponent)
+                path: 'my-team-members', loadComponent: () => import('./team-numbers/myteam-members/myteam-members.component').then((m) => m.MyteamMembersComponent)
             },
         ]
     },

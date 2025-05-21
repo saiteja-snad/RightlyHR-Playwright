@@ -1,1 +1,47 @@
-<p>myteam-members works!</p>
+<div class="custom-main-component-container">
+
+  <div class="input-group custom-search mb-3">
+    <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+    <input type="search" class="form-control custom-search-input" placeholder="Search Here" aria-label="Username"
+        #search="ngModel" [(ngModel)]="searchValue" autocomplete="off" aria-describedby="basic-addon1">
+</div>
+  <div class="custom-table-content">
+    <table class="w-100">
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>Employee Name</th>
+          <th>Work Email</th>
+          <th>Phone Number</th>
+
+
+        </tr>
+      </thead>
+      <tbody
+        *ngIf="(teamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'firstName','lastName','middleName', 'workEmail', 'contactnumber']) as filteredMembers">
+        <ng-container *ngIf="filteredMembers.length > 0; else noData">
+          <tr *ngFor="let details of filteredMembers">
+            <td>{{ details.fusionEmpId }}</td>
+            <td>{{ details.firstName }} {{details.middleName}} {{details.lastName}} </td>
+            <td>{{ details.workEmail }}</td>
+            <td>{{ details.contactnumber }}</td>
+
+          </tr>
+        </ng-container>
+      </tbody>
+
+      <ng-template #noData>
+        <tr>
+          <td colspan="6" class="text-center">
+            <app-no-data-found></app-no-data-found>
+          </td>
+        </tr>
+      </ng-template>
+
+
+
+    </table>
+
+
+  </div>
+</div>

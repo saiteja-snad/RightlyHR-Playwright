@@ -271,7 +271,7 @@ export class JobDetailsComponent implements OnInit, OnDestroy {
   }
 
   onDepartmentChange(selectedDepartment: any): void {
-    const selectedDepartmentId = selectedDepartment.sno; // Get the sno of the selected department
+    const selectedDepartmentId = selectedDepartment?.sno; // Get the sno of the selected department
     // Fetch the teams based on the selected department ID
     this.subscription = this.http.getData(`Subdepartments/Getnames/${selectedDepartmentId}`).subscribe({
       next: (data: any) => {

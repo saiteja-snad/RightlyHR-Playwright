@@ -275,7 +275,7 @@ export class OnboardingDetailsComponent {
         const statusMapping: { [key: string]: string[] } = {
           prospective: ['active', 'inactive', 'prospective'],
           active: ['active', 'inactive'],
-          inactive: ['active', 'inactive'],
+          inactive: [ 'inactive'],
           trainee: ['trainee active', 'inactive', 'trainee'],
           'trainee prospective': ['trainee active', 'trainee prospective'],
           'trainee active': ['trainee active'],

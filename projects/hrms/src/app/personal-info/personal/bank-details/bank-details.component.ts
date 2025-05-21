@@ -96,8 +96,8 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         this.employedata = data;
         this.patchForm(data);
         localStorage.setItem('rightlyHrUserData', JSON.stringify(data));
-      },
-      error: (reason) => console.error('Error fetching employee data:', reason),
+      }
+  
     });
   }
 
@@ -143,10 +143,8 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
         } else {
           this.banknames = [];
         }
-      },
-      error: (err: any) => {
-        console.error('Error fetching bank names:', err);
       }
+  
     });
   }
 
@@ -245,7 +243,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       },
       error: () => {
         this.spinnerLoader = false
-        console.error('File upload failed');
+       
       }
     });
   }
@@ -388,8 +386,7 @@ export class BankDetailsComponent implements OnInit, OnDestroy {
       },
       error: (reason: any) => {
         this.spinnerLoader = false
-        console.error('Error updating bank details:', reason);
-        this.conformationPopup.openErrorModal('Failed to update bank details. Please check all fields.');
+        this.conformationPopup.openErrorModal(reason.error.Message|| 'Bank details update failed');
       }
     });
   }

@@ -65,7 +65,7 @@ export class NodueFormDetailsComponent implements OnInit,OnDestroy {
     }
      //get offer letter Authority list
      getAuthorityDetails() {
-      let offertype = 'No Due Form';
+      let offertype = 'No Due Certificate';
       this.subscription = this.http
         .getData(`SignaturesList?LetterType=${offertype}`)
         .subscribe({

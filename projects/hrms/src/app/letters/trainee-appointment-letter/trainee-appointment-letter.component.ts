@@ -247,7 +247,7 @@ getOfferdetails(Value: any) {
 
   //get offer letter Authority list 
   getAuthorityDetails() {
-    let offertype = 'Appointment Letter';
+    let offertype = 'Trainee Appointment Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         this.authorityDetails = data.map((authority: any) => ({

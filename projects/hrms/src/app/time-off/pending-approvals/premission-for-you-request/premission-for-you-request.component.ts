@@ -82,7 +82,6 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   }
   selectCheck(Value: any) {
     this.multiSelect = Array.isArray(Value) && Value.length > 0;
-    console.log(this.multiSelect);
   }
   bulkapprove(approverPopup: any) {
     this.intializeApproveForm();
@@ -140,13 +139,11 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log(response);
           this.leaves.next(response.data);
           this.permissionsselect = response.data;
-          console.log(this.leaves);
         },
         error: (reason) => {
-          console.log(reason);
+          console.error(reason);
           this.dataload = false;
         },
         complete: () => {
@@ -228,8 +225,8 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
+            console.error(reason);
             this.modalService.dismissAll();
-
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
           },
@@ -297,6 +294,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
           this.signalService.permissionSidNavCountTriggerSignal.set(true);
         },
         error: (reason: any) => {
+          console.error(reason);
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
@@ -363,8 +361,8 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
+            console.error(reason);
             this.modalService.dismissAll();
-
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
           },

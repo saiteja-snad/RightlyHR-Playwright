@@ -97,7 +97,6 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
   selectCheck(Value: any) {
     this.multiSelect = Array.isArray(Value) && Value.length > 0;
-    console.log(this.multiSelect);
   }
   bulkapprove(approverPopup: any) {
     this.intializeApproveForm();
@@ -155,13 +154,10 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          console.log(response);
-          // this.leaves = response.data as AttendanceRequest[];
           this.leaves.next(response.data);
           this.compOffselect = response.data;
-          console.log(this.leaves);
         },
-        error: (reason) => console.log(reason),
+        error: (reason) => console.error(reason),
         complete: () => {
           this.dataload = false;
         },
@@ -239,6 +235,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.signalService.compOffSidNavCountTriggerSignal.set(true);
         },
         error: (reason: any) => {
+          console.error(reason);
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
@@ -303,6 +300,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             this.signalService.compOffSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
+            console.error(reason);
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
@@ -372,6 +370,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
             this.signalService.compOffSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
+            console.error(reason);
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;

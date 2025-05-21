@@ -14,6 +14,9 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import * as XLSX from 'xlsx';
+import { image } from 'html2canvas/dist/types/css/types/image';
+import ExcelJS from 'exceljs';
+import * as FileSaver from 'file-saver';
 @Component({
   selector: 'app-organizationchart',
   imports: [CommonModule, Select, FormsModule, OrganizationChartModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
@@ -88,20 +91,118 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
 
 
 // Helper function to flatten the hierarchical data
-downloadToExcel(): void {
+// downloadToExcel(): void {
+//   if (!this.data || this.data.length === 0) {
+//       console.error('No data available to export!');
+//       return;
+//   }
+
+//   const flattenedData: any[] = [];
+//   const seenNames = new Set<string>(); // Track unique names
+//   this.flattenHierarchy(this.data, flattenedData, seenNames);
+
+//   const worksheet = XLSX.utils.json_to_sheet(flattenedData);
+//   const workbook = XLSX.utils.book_new();
+//   XLSX.utils.book_append_sheet(workbook, worksheet, 'Organization Chart');
+//   XLSX.writeFile(workbook, 'organization-chart.xlsx');
+// }
+
+// private flattenHierarchy(
+//   nodes: TreeNode[],
+//   flattenedData: any[],
+//   seenNames: Set<string>,
+//   parentName: string = ''
+// ): void {
+//   nodes.forEach((node) => {
+//       const { name, doj, title, compensationamount, department,imageUrl } = node.data;
+
+//       if (!seenNames.has(name)) {
+//           flattenedData.push({
+//               Name: name,
+//               DOJ: doj,
+//               Title: title,
+//               Compensation: compensationamount,
+//               Department: department,
+//               Manager: parentName,
+//               image:imageUrl
+//           });
+//           seenNames.add(name);
+//       }
+
+//       if (node.children) {
+//           this.flattenHierarchy(node.children, flattenedData, seenNames, name);
+//       }
+//   });
+// }
+
+async downloadToExcel(): Promise<void> {
   if (!this.data || this.data.length === 0) {
-      console.error('No data available to export!');
-      return;
+    console.error('No data available to export!');
+    return;
   }
 
   const flattenedData: any[] = [];
-  const seenNames = new Set<string>(); // Track unique names
+  const seenNames = new Set<string>();
   this.flattenHierarchy(this.data, flattenedData, seenNames);
 
-  const worksheet = XLSX.utils.json_to_sheet(flattenedData);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Organization Chart');
-  XLSX.writeFile(workbook, 'organization-chart.xlsx');
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Organization Chart');
+
+  // Add headers
+  worksheet.columns = [
+    { header: 'Name', key: 'name', width: 20 },
+    { header: 'DOJ', key: 'doj', width: 15 },
+    { header: 'Title', key: 'title', width: 20 },
+    { header: 'Compensation', key: 'compensation', width: 20 },
+    { header: 'Department', key: 'department', width: 20 },
+    { header: 'Manager', key: 'manager', width: 20 },
+    { header: 'Image', key: 'image', width: 10 },
+  ];
+
+  for (let i = 0; i < flattenedData.length; i++) {
+    const emp = flattenedData[i];
+
+    worksheet.addRow({
+      name: emp.Name,
+      doj: emp.DOJ,
+      title: emp.Title,
+      compensation: emp.Compensation,
+      department: emp.Department,
+      manager: emp.Manager,
+    });
+
+    // Add the image to the sheet
+    if (emp.image) {
+      const base64 = await this.getBase64FromUrl(emp.image);
+      const imageId = workbook.addImage({
+        base64: base64,
+        extension: 'png',
+      });
+
+      worksheet.addImage(imageId, {
+        tl: { col: 6, row: i + 1 },
+        ext: { width: 60, height: 60 },
+      });
+    }
+  }
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  FileSaver.saveAs(new Blob([buffer]), 'organization-chart-with-images.xlsx');
+}
+
+// Utility function to get base64 from image URL
+private async getBase64FromUrl(imageUrl: string): Promise<string> {
+  const response = await fetch(imageUrl);
+  const blob = await response.blob();
+
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      resolve(reader.result as string);
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
 }
 
 private flattenHierarchy(
@@ -111,23 +212,24 @@ private flattenHierarchy(
   parentName: string = ''
 ): void {
   nodes.forEach((node) => {
-      const { name, doj, title, compensationamount, department } = node.data;
+    const { name, doj, title, compensationamount, department, imageUrl } = node.data;
 
-      if (!seenNames.has(name)) {
-          flattenedData.push({
-              Name: name,
-              DOJ: doj,
-              Title: title,
-              Compensation: compensationamount,
-              Department: department,
-              Manager: parentName,
-          });
-          seenNames.add(name);
-      }
+    if (!seenNames.has(name)) {
+      flattenedData.push({
+        Name: name,
+        DOJ: doj,
+        Title: title,
+        Compensation: compensationamount,
+        Department: department,
+        Manager: parentName,
+        image: imageUrl,
+      });
+      seenNames.add(name);
+    }
 
-      if (node.children) {
-          this.flattenHierarchy(node.children, flattenedData, seenNames, name);
-      }
+    if (node.children) {
+      this.flattenHierarchy(node.children, flattenedData, seenNames, name);
+    }
   });
 }
 
@@ -223,7 +325,7 @@ private flattenHierarchy(
     }
     this.subscription = this.http.getData(`Employeedata/getOrganizationalhierarchybyid/${employeeId}`).subscribe({
       next: (response: any) => {
-
+        this.dataload=false
         if (response.length > 0) {
           this.dataload=false
           this.data = response || [];
@@ -241,6 +343,7 @@ private flattenHierarchy(
         } else {
           this.data = []
           this.isDataPresent = true;
+          this.dataload=false
         }
       }, error: (error: any) => {
         this.dataload=false

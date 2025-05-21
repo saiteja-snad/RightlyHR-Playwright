@@ -10,10 +10,12 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { Subscription } from 'rxjs';
 import { IemployeeDetails, ISignatureAuthority, ISignatureList } from './signature-authority.model';
+import { NoDataFoundComponent } from "../../../../shared/no-data-found/no-data-found.component";
+import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 
 @Component({
   selector: 'app-signature-authority',
-  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, SelectModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './signature-authority.component.html',
   styleUrl: './signature-authority.component.scss',
 })
@@ -29,6 +31,7 @@ export class SignatureAuthorityComponent implements OnInit {
   employeeiddetails: IemployeeDetails[] = [];
   selectedId: number | null = null;
   selectedDeleteserving: any = null;
+  dataLoad: boolean = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -39,7 +42,9 @@ export class SignatureAuthorityComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.dataLoad = true;
     this.getAllSignatureEmployees();
+    this.dataLoad = false;
     this.getAllSignatureLetterType();
     this.getAllActiveEmployees();
     this.intializeForm();
@@ -234,12 +239,14 @@ export class SignatureAuthorityComponent implements OnInit {
       .deleteSignatureEmployee(`SignaturesList/delete/${this.selectedDeleteserving.id}`)
       .subscribe({
         next: () => {
-          modal.dismiss();
-          this.conformationPopup.openSuccessModal('Signature Authority deleted successfully');
           this.getAllSignatureEmployees();
+          modal.dismiss();
+          this.signatureEmployeesList = [];
+          this.conformationPopup.openSuccessModal('Signature Authority deleted successfully');
         },
         error: () => {
           modal.dismiss();
+          this.signatureEmployeesList = [];
           this.conformationPopup.openErrorModal('Failed to delete Signature Authority');
         },
       });

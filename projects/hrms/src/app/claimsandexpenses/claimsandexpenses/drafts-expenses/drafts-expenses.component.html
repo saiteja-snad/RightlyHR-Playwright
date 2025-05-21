@@ -22,9 +22,9 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th>{{'Expense Title'  | translate}}</th>
-                        <th>{{'Expense Date'  | translate}}</th>
-                        <th>{{'Total Amount'  | translate}}</th>
+                        <th>{{'Expense Title' | translate}}</th>
+                        <th>{{'Expense Date' | translate}}</th>
+                        <th>{{'Total Amount' | translate}}</th>
                         <th>{{'Status'  | translate}}</th>
                         @if(rbac.allowedToAccess('Draft Tab.update')){
                         <th class="text-center">{{'Action(S)'  | translate}}</th>
@@ -248,7 +248,7 @@
                                     </a>
                                     <a type="button" class="dowload-text"
                                         (click)="onViewAttachement(item.get('attachment_url')?.value)">
-                                        <i class="bi bi-paperclip"></i>View
+                                        <i class="bi bi-eye-fill"></i>View
                                     </a>
                                 </div>
                             </div>

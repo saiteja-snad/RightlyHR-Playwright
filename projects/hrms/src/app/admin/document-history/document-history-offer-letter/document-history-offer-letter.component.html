@@ -11,18 +11,18 @@
         <table class="w-100">
             <thead>
                 <tr>
-                    <th>{{'DATE'|translate}}</th>
-                    <th>{{'NAME'|translate}}</th>
-                    <th>{{'LOCATION'|translate}}</th>
-                    <th>{{'SUB LOCATION'|translate}}</th>
-                    <th>{{'DESIGNATION'|translate}}</th>
-                    <th>{{'STATUS'|translate}}</th>
-                    <th>{{'SUB STATUS'|translate}}</th>
+                    <th>{{'Date'|translate}}</th>
+                    <th>{{'Name'|translate}}</th>
+                    <th>{{'Location'|translate}}</th>
+                    <th>{{'Sub Location'|translate}}</th>
+                    <th>{{'Designation'|translate}}</th>
+                    <th>{{'Status'|translate}}</th>
+                    <th>{{'Sub Status'|translate}}</th>
                     @if(rbac.allowedToAccess('Offer Letter Download.view') || 
                     rbac.allowedToAccess('Offer Letter Release Offer.view') ||
                     rbac.allowedToAccess('Offer Letter Approve.view') || 
                     rbac.allowedToAccess('Offer Letter Reject.view')){
-                    <th class="text-center">{{'ACTION'|translate}}</th>
+                    <th class="text-center">{{'Action'|translate}}</th>
                     }
                 </tr>
             </thead>

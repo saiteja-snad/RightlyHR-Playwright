@@ -40,7 +40,7 @@
                   </a>
                   <ul class="dropdown-menu custom-dropdown-menu">
                     <li><a class="dropdown-item"  (click)="openupdateModal(viewDetailsModal);viewItem(exp.expenses_ID)">
-                      <i class="bi bi-paperclip me-2"></i>View</a></li>
+                      <i class="bi bi-eye-fill me-2"></i>View</a></li>
                   </ul>
                 </div>
               </td>
@@ -106,7 +106,7 @@
                   <i class="bi bi-download me-2"></i>Download
                 </a>
                 <a type="button" class="dowload-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"   (click)="onViewAttachement(item?.attachment_url)">
-                  <i class="bi bi-paperclip"></i>View
+                  <i class="bi bi-eye-fill"></i>View
                 </a>
               </div>
 

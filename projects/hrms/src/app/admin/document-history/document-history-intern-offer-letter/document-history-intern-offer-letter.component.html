@@ -9,19 +9,19 @@
             <table class="w-100">
                 <thead>
                     <tr>
-                        <th class="text-nowrap">{{'DATE'|translate}}</th>
-                        <th>{{'NAME'|translate}}</th>
-                        <th>{{'LOCATION'|translate}}</th>
-                        <th>{{'SUB LOCATION'|translate}}</th>
-                        <th>{{'DESIGNATION'|translate}}</th>
-                        <th>{{'DURATION OF TRAINING'|translate}}</th>
-                        <th>{{'STATUS'|translate}}</th>
-                        <th>{{'SUB STATUS'|translate}}</th>
+                        <th class="text-nowrap">{{'Date'|translate}}</th>
+                        <th>{{'Name'|translate}}</th>
+                        <th>{{'Location'|translate}}</th>
+                        <th>{{'Sub Location'|translate}}</th>
+                        <th>{{'Designation'|translate}}</th>
+                        <th>{{'Duration Of Training'|translate}}</th>
+                        <th>{{'Status'|translate}}</th>
+                        <th>{{'Sub Status'|translate}}</th>
                         @if(rbac.allowedToAccess('Trainee Offer Letter Download.view') || 
                         rbac.allowedToAccess('Trainee Offer Letter Release Offer.view') ||
                         rbac.allowedToAccess('Trainee Offer Letter Approve.view') || 
                         rbac.allowedToAccess('Trainee Offer Letter Reject.view')) {
-                        <th class="text-center">{{'ACTION'|translate}}</th>
+                        <th class="text-center">{{'Action'|translate}}</th>
                         }
                     </tr>
                 </thead>

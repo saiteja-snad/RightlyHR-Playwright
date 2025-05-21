@@ -6,8 +6,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessNavigationService } from '../../services/access-navigation.service';
-import { HttpService } from '../../services/http.service';
-
 @Component({
   selector: 'app-sidenav',
   imports: [CommonModule, RouterModule, TranslateModule],
@@ -23,29 +21,45 @@ export class SidenavComponent implements OnInit {
       route: '/claimsandexpenses', permission: { feature: 'Expenses', action: 'view' }
     },
     //Reports
-    { label: 'Reports', icon: '/main-menu-icons/reports-icon.png', activeIcon: '/main-menu-icons/reports-color.png', 
-      route: '/reports', permission: { feature: 'Reports', action: 'view' } },
+    {
+      label: 'Reports', icon: '/main-menu-icons/reports-icon.png', activeIcon: '/main-menu-icons/reports-color.png',
+      route: '/reports', permission: { feature: 'Reports', action: 'view' }
+    },
     //pms
-    { label: 'PMS', icon: '/main-menu-icons/pms-icon.png', route: '/pms', activeIcon: '/main-menu-icons/pms-color.png',
-       permission: { feature: 'PMS', action: 'view' } },
+    {
+      label: 'PMS', icon: '/main-menu-icons/pms-icon.png', route: '/pms', activeIcon: '/main-menu-icons/pms-color.png',
+      permission: { feature: 'PMS', action: 'view' }
+    },
     //pms configuration
-    { label: 'PMS Configuration', icon: '/main-menu-icons/pms-configuration-icon.png', activeIcon: '/main-menu-icons/pms-configuration-color.png',
-       route: '/pmsconfiguration', permission: { feature: 'PMS Configurations', action: 'view' } },
+    {
+      label: 'PMS Configuration', icon: '/main-menu-icons/pms-configuration-icon.png', activeIcon: '/main-menu-icons/pms-configuration-color.png',
+      route: '/pmsconfiguration', permission: { feature: 'PMS Configurations', action: 'view' }
+    },
     //Desk
-    { label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/desk-color.png', 
-      route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' } },
+    {
+      label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/desk-color.png',
+      route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' }
+    },
     //Assets
-    { label: 'Assets', icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets-color.png',
-       route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' } },
+    {
+      label: 'Assets', icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets-color.png',
+      route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' }
+    },
     //IT Supports
-    { label: 'IT Support', icon: '/main-menu-icons/it-support-icon.png', activeIcon: '/main-menu-icons/it-support-color.png', 
-      route: '/it-support', permission: { feature: 'IT Support', action: 'view' } },
+    {
+      label: 'IT Support', icon: '/main-menu-icons/it-support-icon.png', activeIcon: '/main-menu-icons/it-support-color.png',
+      route: '/it-support', permission: { feature: 'IT Support', action: 'view' }
+    },
     //org Hierarcy
-    { label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-color.png',
-       route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' } },
+    {
+      label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-color.png',
+      route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' }
+    },
     //Holidays
-    { label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holiday-color.png',
-       route: '/holidays', permission: { feature: 'Holidays', action: 'view' } }
+    {
+      label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holiday-color.png',
+      route: '/holidays', permission: { feature: 'Holidays', action: 'view' }
+    }
   ];
   columnsPerRow = 3;
   dropdownOpen = false; // controls the icon
@@ -69,9 +83,6 @@ export class SidenavComponent implements OnInit {
     localStorage.clear();
     window.location.href = "https://login.microsoftonline.com/common/oauth2/v2.0/logout";
   }
-
-
-
 
   close() {
     this.modalservie.dismissAll();
@@ -175,7 +186,7 @@ export class SidenavComponent implements OnInit {
       this.selectedDropdownModule = module;
       this.updateFilteredModules();
       if (module.route === '/organization-chart') {
-         this.router.navigate(['/organization-chart']);
+        this.router.navigate(['/organization-chart']);
       } else {
         this.goToAccessibleRoute(module.route);
       }
@@ -183,8 +194,6 @@ export class SidenavComponent implements OnInit {
   }
 
   updateFilteredModules(): void {
-    this.filteredModules = this.modules.filter(
-      m => m.route !== this.selectedDropdownModule?.route
-    );
+    this.filteredModules = this.modules.filter(m => m.route !== this.selectedDropdownModule?.route);
   }
 }

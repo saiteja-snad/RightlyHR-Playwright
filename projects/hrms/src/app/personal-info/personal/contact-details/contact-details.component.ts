@@ -160,7 +160,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       ...this.employedata,
      
       emailaddress: formValue.personalEmail,
-      workEmail: formValue.workMail,
+      workEmail: formValue.workMail || this.employedata.workEmail,
       contactnumber: contactnumber,
       workPhone: worknumber,
       mobilePhoneCountryCode: this.selectedDialphoneCode || this.employedata.mobilePhoneCountryCode,

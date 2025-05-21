@@ -151,7 +151,7 @@ export class SignatureAuthorityComponent implements OnInit {
           this.AddForm.reset();
         },
         error: (error: any) => {
-          this.modalService.dismissAll();
+          // this.modalService.dismissAll();
           const errorMessage = error?.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
           this.AddForm.reset();
@@ -214,7 +214,7 @@ export class SignatureAuthorityComponent implements OnInit {
           );
         },
         error: (error: any) => {
-          modalRef.dismiss();
+          // modalRef.dismiss();
           const errorMessage = error.error?.message
           this.conformationPopup.openErrorModal(errorMessage);
           this.UpdateForm.reset();

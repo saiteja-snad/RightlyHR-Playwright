@@ -381,10 +381,10 @@ export const MY_INFO_PERSONAL_ROUTES = [
     { route: '/events/past', permission: 'Events(Past Events).view' }
   ]
   
-  export const HOLIDAYS_SUB_TABS =[
-    { route:'/calendar/holiday/public-holidays', permission: 'Holidays(Public).view' },
-    { route:'/calendar/holiday/optional-holidays', permission: 'Holidays(Optional).view' },
-  ]
+export const HOLIDAYS_SUB_TABS = [
+  { route: '/holidays/public-holidays', permission: 'Public Holidays Tab.view' },
+  { route: '/holidays/optional-holidays', permission: 'Optional Holidays Tab.view' },
+]
   
   export const DASHBOARD_SUB_TABS =[
     { route:'/admin/prospective-employees', permission: 'Dashboard Prospective Employees Card.view' },

@@ -34,13 +34,16 @@ export class ProfileInfoDetailsComponent {
   ngOnInit(): void {
     if (this.route.snapshot.routeConfig?.path === 'personalinfo') {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getJobDetails();
+      this.getEmployeeId();
     }
     else if (this.route.snapshot.routeConfig?.path === 'myinfo') {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getJobDetails();
+      this.getEmployeeId();
     }
 
-    this.getJobDetails();
-    this.getEmployeeId();
+   
     this.http.basicDetailesadded$.subscribe(() => {
       this.getJobDetails();
       this.getEmployeeId();

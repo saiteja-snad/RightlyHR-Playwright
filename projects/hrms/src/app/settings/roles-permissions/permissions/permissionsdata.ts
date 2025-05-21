@@ -146,9 +146,7 @@ export const permissionsData = [
   { fields: 'Processed Tab', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected Tab', View: false, Update: false, Create: false, Delete: false },
 
-  //Calender Tabs Sections
-  { fields: 'Calender Tab', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Holidays Tab', View: false, Update: false, Create: false, Delete: false },
+
 
    //Org Hirarchy Tabs Section
    { fields: 'Organization Hierarchy - HR', View: false, Update: false, Create: false, Delete: false },
@@ -213,6 +211,7 @@ export const permissionsData = [
   { fields: 'PMS Configurations', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Desk Allocation', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Holidays', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -737,9 +736,10 @@ export const permissionsData = [
  { fields: 'Assessor Update(Status - Initiated)', View: false, Update: false, Create: false, Delete: false },
  { fields: 'Assessor Update(Status - Review On Hold)', View: false, Update: false, Create: false, Delete: false },
 
-//Events sub tabs
-{ fields: 'Holidays(Optional)', View: false, Update: false, Create: false, Delete: false },
-{ fields: 'Holidays(Public)', View: false, Update: false, Create: false, Delete: false },
+ //Holidays Tabs Sections
+  { fields: 'Public Holidays Tab', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Optional Holidays Tab', View: false, Update: false, Create: false, Delete: false },
+ 
 
  //Events sub tabs
  { fields: 'Events(Upcoming Events)', View: false, Update: false, Create: false, Delete: false },

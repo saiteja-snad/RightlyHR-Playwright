@@ -74,6 +74,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
       this.getEmployeeId();
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+    
       this.getEmployeeId();
     }
   }
@@ -97,13 +98,23 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   enableForm(): void {
     this.buttons = true;
     this.contactForm.enable();
+   
+    if (this.router.url.startsWith('/myinfo')) {
+      // Ensure only workMail is disabled (it's already disabled by .disable(), but you may want to emphasize this)
+      this.contactForm.get('workMail')?.disable();
+    } else {
+      // If needed, re-enable it explicitly
+      this.contactForm.get('workMail')?.enable();
+    }
   }
 
   disableForm(): void {
+
     this.buttons = false;
     this.contactForm.reset();
     this.getEmployeeId();
-    this.contactForm.disable();
+    
+  
   }
 
   getEmployeeId(): void {

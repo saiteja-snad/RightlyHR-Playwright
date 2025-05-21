@@ -51,8 +51,6 @@
             </ng-template>
             <ng-template #body let-leave>
                 @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
-                <!-- @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
-                leave.approvalHeader.id){ -->
                 <tr>
                     <td>
                         <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
@@ -119,15 +117,21 @@
                     </td>
                     }
                 </tr>
-                <!-- } -->
                 }
                 @else{
                 <tr>
-                    <td colospan="8">
+                    <td colospan="10">
                         <app-no-data-found />
                     </td>
                 </tr>
                 }
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr>
+                    <td colospan="10">
+                        <app-no-data-found />
+                    </td>
+                </tr>
             </ng-template>
         </p-table>
         }@else{

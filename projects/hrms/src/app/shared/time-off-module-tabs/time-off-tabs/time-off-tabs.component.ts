@@ -20,8 +20,9 @@ export class TimeOffTabsComponent implements OnInit {
   empinfo: any;
   allowedWfh: boolean = false;
   navTabs: any[] = [];
+  columnsPerRow = 3;
 
-  constructor(public readonly router: Router, private rbac: RbacService,private accessNav: AccessNavigationService) { }
+  constructor(public readonly router: Router, private rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -33,8 +34,8 @@ export class TimeOffTabsComponent implements OnInit {
       { label: 'Comp-Off', link: '/time-off/comp-off', permission: { feature: 'Comp Off Module', action: 'view' } },
       { label: 'Permissions', link: '/time-off/premissions', permission: { feature: 'Permissions Module', action: 'view' } },
       { label: 'Regularization', link: '/time-off/regularization', permission: { feature: 'Regularization Module', action: 'view' } },
-      { label: 'Pending Approvals', link: '/time-off/pending-approvals',permission: { feature: 'Pending Approvals Module', action: 'view' } },
-      { label: 'Attendance', link: '/time-off/attendance',permission: { feature: 'Attendance Module', action: 'view' } },
+      { label: 'Pending Approvals', link: '/time-off/pending-approvals', permission: { feature: 'Pending Approvals Module', action: 'view' } },
+      // { label: 'Attendance', link: '/time-off/attendance', permission: { feature: 'Attendance Module', action: 'view' } },
       { label: 'On Behalf Of', link: '/time-off/on-behalf-of', permission: { feature: 'On Behalf Of Module', action: 'view' } },
       { label: 'On Behalf Of Approvals', link: '/time-off/on-behalf-of-approvals', permission: { feature: 'On Behalf Of Approvals Module', action: 'view' } },
       { label: 'Global-Permissions', link: '/time-off/global-permissions', permission: { feature: 'Global Permissions Module', action: 'view' } }
@@ -51,8 +52,7 @@ export class TimeOffTabsComponent implements OnInit {
     });
   }
 
-
-    navigateToAccessedRoute(route: string) {
+  navigateToAccessedRoute(route: string) {
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);
     if (actualRoute) {
       this.router.navigate([actualRoute]);
@@ -61,13 +61,41 @@ export class TimeOffTabsComponent implements OnInit {
     }
   }
 
-isActiveRoute(link: string): boolean {
-  const currentUrl = this.router.url;
+  isActiveRoute(link: string): boolean {
+    const currentUrl = this.router.url;
+    // Exact match or starts with followed by `/` to avoid partial matches
+    return currentUrl === link || currentUrl.startsWith(link + '/');
+  }
 
-  // Exact match or starts with followed by `/` to avoid partial matches
-  return currentUrl === link || currentUrl.startsWith(link + '/');
-}
+  // Check if item is in the first row
+  isInTopRow(index: number): boolean {
+    return Math.floor(index / this.columnsPerRow) === 0;
+  }
 
+  // Check if item is in the last row
+  isInLastRow(index: number): boolean {
+    const totalRows = Math.ceil(this.filteredTabs.length / this.columnsPerRow);
+    const currentRow = Math.floor(index / this.columnsPerRow) + 1;
+    return currentRow === totalRows;
+  }
 
+  // Check if item is in a middle row
+  isInMiddleRow(index: number): boolean {
+    return !this.isInTopRow(index) && !this.isInLastRow(index);
+  }
 
+  // Check if item is in the first column
+  isFirstColumn(index: number): boolean {
+    return index % this.columnsPerRow === 0;
+  }
+
+  // Check if item is in the last column
+  isLastColumn(index: number): boolean {
+    return (index + 1) % this.columnsPerRow === 0;
+  }
+
+  // Check if item is in a middle column
+  isMiddleColumn(index: number): boolean {
+    return !this.isFirstColumn(index) && !this.isLastColumn(index);
+  }
 }

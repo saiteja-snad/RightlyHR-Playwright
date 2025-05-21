@@ -33,7 +33,7 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
     TimeoffsearchPipe,
     TableModule,
     DataLoaderContentComponent
-],
+  ],
   templateUrl: './time-off-for-you-request.component.html',
   styleUrl: './time-off-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -54,7 +54,9 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   selectedLeaveData = {} as any;
   leavesselect!: LeaveApproval[];
   selectedProducts!: LeaveApproval[];
+  responseSummary!: any;
   @ViewChild('commentspopup') modalContent: any;
+  @ViewChild('leaveSummary') leaveSummary: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   options = [
     { label: 10, value: 10 },
@@ -82,9 +84,80 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     this.LOGIN = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllPendingApprovals();
   }
-  
+
+  // selectCheck(Value: any) {
+  //   console.log(Value)
+  //   this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  //   console.log(this.multiSelect)
+  // }
+
   selectCheck(Value: any) {
+    if (!Value || Value.length === 0) {
+      this.selectedProducts = [];
+      return;
+    }
     this.multiSelect = Array.isArray(Value) && Value.length > 0;
+
+    if (this.multiSelect) {
+      const stageMap: { [stage: string]: any[] } = {};
+
+      Value.forEach((item: any) => {
+        const stage = item.approvalHeader?.currentapprovalStage;
+        if (!stageMap[stage]) {
+          stageMap[stage] = [];
+        }
+        stageMap[stage].push(item);
+      });
+
+      const stages = Object.keys(stageMap);
+
+      if (stages.length > 1) {
+        const totalAvailable = this.leavesselect?.length || 0;
+        const totalSelected = Value.length;
+        const isBulkSelect = totalSelected === totalAvailable;
+        if (isBulkSelect) {
+          let maxStage = stages[0];
+          let maxCount = stageMap[maxStage].length;
+
+
+          for (const stage of stages) {
+            const count = stageMap[stage].length;
+            if (count > maxCount) {
+              maxStage = stage;
+              maxCount = count;
+            } else if (count === maxCount && stage === '1') {
+              maxStage = stage;
+            }
+          }
+
+          this.selectedProducts = [];
+          setTimeout(() => {
+            this.selectedProducts = [...stageMap[maxStage]];
+            console.log('Selected Products:', this.selectedProducts);
+          });
+
+        } else {
+          this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
+          if (this.selectedProducts.length > 0) {
+            const lastSelected = Value[Value.length - 1];
+
+            // Remove the specific item from selectedProducts
+            this.selectedProducts = this.selectedProducts.filter(
+              item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+            );
+            // Force update (optional, but helps)
+            setTimeout(() => {
+              this.selectedProducts = [...this.selectedProducts];
+            });
+          }
+          return;
+        }
+      } else {
+        this.selectedProducts = [...Value];
+      }
+    } else {
+      this.selectedProducts = [Value];
+    }
   }
 
   getAllPendingApprovals() {
@@ -98,7 +171,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.leavesselect = response.data;
         },
         error: (reason) => {
-           this.dataLoad = false;
+          this.dataLoad = false;
         },
         complete: () => {
           this.dataLoad = false;
@@ -187,8 +260,8 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   canBulkApprove(): boolean {
     return this.selectedProducts?.every(
       (item) =>
-        item.approvalHeader.currentapprovalStage !==
-        item.approvalHeader.finalapprovalStage
+        item.approvalHeader?.currentapprovalStage !==
+        item.approvalHeader?.finalapprovalStage
 
     );
   }
@@ -196,8 +269,8 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   canBulkProcess(): boolean {
     return this.selectedProducts?.every(
       (item) =>
-        item.approvalHeader.currentapprovalStage ===
-        item.approvalHeader.finalapprovalStage
+        item.approvalHeader?.currentapprovalStage ===
+        item.approvalHeader?.finalapprovalStage
     );
   }
 
@@ -219,6 +292,10 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
 
   bulkProcess() {
     this.handleProcess();
+  }
+
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   approveleave(approverPopup: any, selecteddata: any) {
@@ -258,19 +335,18 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
         next: (respone: any) => {
           this.selectedProducts = [];
           console.log(respone)
-          if (respone && respone.data.failureRecords.length <= 0) {
-            this.conformationPopup.openSuccessModal(
-              'Request Approved Successfully'
-            );
-          }
-          else if (respone.data.failureRecords.length > 0) {
-            this.conformationPopup.openSuccessModal(`Total Records Approved: ${respone.data.totalRecordCount}
-               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
-          }
-          setTimeout(() => {
-            this.modalService.dismissAll();
-            this.getAllPendingApprovals();
-          }, 2000);
+          this.responseSummary = respone.data;
+          this.modalService.dismissAll();
+          this.openModal(this.leaveSummary);
+          // if (respone && respone.data.failureRecords.length <= 0) {
+          //   this.conformationPopup.openSuccessModal(
+          //     'Request Approved Successfully'
+          //   );
+          // }
+          // else if (respone.data.failureRecords.length > 0) {
+          //   this.conformationPopup.openSuccessModal(`Total Records Approved: ${respone.data.totalRecordCount}
+          //      Failed:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
+          // }
         },
         error: (reason: any) => {
           if (reason.error.statusCode == 400) {
@@ -289,6 +365,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.spinnerLoader = false;
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
+          this.getAllPendingApprovals();
         },
       });
   }
@@ -312,19 +389,18 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (respone: any) => {
           this.selectedProducts = [];
-          if (respone && respone.data.failureRecords.length <= 0) {
-            this.conformationPopup.openSuccessModal(
-              'Request Rejected Successfully'
-            )
-          }
-          else if (respone.data.failureRecords.length > 0) {
-            this.conformationPopup.openSuccessModal(`Total Records Rejected: ${respone.data.totalRecordCount}
-               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
-          }
-          setTimeout(() => {
-            this.modalService.dismissAll();
-            this.getAllPendingApprovals();
-          }, 2000);
+          this.responseSummary = respone.data;
+          this.modalService.dismissAll();
+          this.openModal(this.leaveSummary);
+          // if (respone && respone.data.failureRecords.length <= 0) {
+          //   this.conformationPopup.openSuccessModal(
+          //     'Request Rejected Successfully'
+          //   )
+          // }
+          // else if (respone.data.failureRecords.length > 0) {
+          //   this.conformationPopup.openSuccessModal(`Total Records Rejected: ${respone.data.totalRecordCount}
+          //      Failed:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
+          // }
         },
         error: (reason: any) => {
           if (reason.error.statusCode == 400) {
@@ -343,6 +419,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.spinnerLoader = false;
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
+          this.getAllPendingApprovals();
         },
       });
   }
@@ -363,19 +440,18 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
         next: (respone: any) => {
           // console.log(respone);
           this.selectedProducts = [];
-          if (respone && respone.data.failureRecords.length <= 0) {
-            this.conformationPopup.openSuccessModal(
-              'Request Processed Successfully'
-            );
-          }
-          else if (respone.data.failureRecords.length > 0) {
-            this.conformationPopup.openSuccessModal(`Total Records Processed: ${respone.data.totalRecordCount}
-               Faild:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
-          }
-          setTimeout(() => {
-            this.modalService.dismissAll();
-            this.getAllPendingApprovals();
-          }, 2000);
+          this.responseSummary = respone.data;
+          this.modalService.dismissAll();
+          this.openModal(this.leaveSummary);
+          // if (respone && respone.data.failureRecords.length <= 0) {
+          //   this.conformationPopup.openSuccessModal(
+          //     'Request Processed Successfully'
+          //   );
+          // }
+          // else if (respone.data.failureRecords.length > 0) {
+          //   this.conformationPopup.openSuccessModal(`Total Records Processed: ${respone.data.totalRecordCount}
+          //      Failed:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
+          // }
         },
         error: (reason: any) => {
           console.log(reason);
@@ -393,8 +469,14 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
         complete: () => {
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
+          this.getAllPendingApprovals();
         },
       });
+  }
+
+  closeSummary() {
+    this.modalService.dismissAll();
+    this.responseSummary = null;
   }
 
   ngOnDestroy(): void {

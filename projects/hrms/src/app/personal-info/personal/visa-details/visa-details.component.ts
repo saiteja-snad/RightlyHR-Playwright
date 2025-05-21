@@ -15,6 +15,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { Ipersonal } from '../../../Interfaces/personal-modal';
 
 @Component({
   selector: 'app-visa-details',
@@ -25,7 +26,7 @@ import { AccessForEmployeeinfoService } from '../../../services/access-for-emplo
 
 export class VisaDetailsComponent implements OnInit,OnDestroy {
   subscription!: Subscription;
-  empinfo: any;
+ 
   visa = [] as any;
   visaData = [] as any;
   Countrydetails: any;
@@ -39,12 +40,12 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   selectedvisaDetails: any;
   loading=false
   employedata: any;
+   empinfo = {} as Ipersonal;
   constructor(private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService,public rbac: RbacService,public formValidation: FormValidationService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
   ngOnInit(): void {
    this.getEmpInfoFromRoute();
     this.getCountry();
     this.getvisatype();
-   
     this.intitionfrom()
     this.intitionupdatefrom()
     this.visaForm.get('issueddate')?.valueChanges.subscribe(() => {
@@ -62,7 +63,6 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
 
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
@@ -81,7 +81,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
       countryname:[null,Validators.required],
       issueddate: [null, Validators.required],
       expirydate: [null, Validators.required],
-      notes: [''],
+      notes: [null],
     });
   }
 
@@ -92,7 +92,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
       countryname:[null,Validators.required],
       issueddate: [null, Validators.required],
       expirydate: [null, Validators.required],
-      notes: [''],
+      notes: [null],
     });
   }
 
@@ -191,7 +191,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
       employeeId: this.empinfo.employeeId, // set or get dynamically
       issuedcountry: formValue.countryname,
       vstatus: 'Active',
-      note:formValue.note
+      note:formValue.notes
     };
   
     this.http.postdata('Visa',payload).subscribe({
@@ -248,13 +248,13 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
   }
   openModalupdate(content: any, visaDetails: any): void {
     this.selecteVisaId=visaDetails.id
-
+console.log(visaDetails)
     this.visaupdateForm.patchValue({
       visatype: visaDetails.visatype,         // assuming value is "B1", "H1B", etc.
       countryname: visaDetails.issuedcountry, // make sure the value matches the `optionValue`
       issueddate: this.formatDateToLocal(visaDetails.issueddate),
       expirydate: this.formatDateToLocal(visaDetails.expirydate),
-      notes: visaDetails.notes || ''          // default to empty if notes are null/undefined
+      notes: visaDetails.note || null          // default to empty if notes are null/undefined
     });
    
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
@@ -274,7 +274,7 @@ export class VisaDetailsComponent implements OnInit,OnDestroy {
       employeeId: this.empinfo.employeeId,
       issuedcountry: formValue.countryname,
       vstatus: 'Active',
-      note:formValue.note
+      notes:formValue.note
     };
   
     this.http.postdata('Visa/UPDATER',payload).subscribe({

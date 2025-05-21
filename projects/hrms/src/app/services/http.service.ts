@@ -170,6 +170,19 @@ export class HttpService {
   getData(url: string) {
     return this.http.get(`${this.ApiUrl}${url}`);
   }
+
+  getAllSignatureEmployeesData(url:string){
+    return this.http.get(`${this.ApiUrl}${url}`);
+  }
+
+  employeeSignatureAuthority(url:string, data: any){
+    return this.http.post(`${this.ApiUrl}${url}`,data);
+  }
+
+  deleteSignatureEmployee(url:string){
+    return this.http.post(`${this.ApiUrl}${url}`, {});
+  }
+
   postletters(url: string) {
     return this.http.post(`${this.ApiUrl}${url}`, {});
   }

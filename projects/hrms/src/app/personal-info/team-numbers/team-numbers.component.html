@@ -2,12 +2,9 @@
     <div class="d-flex justify-content-between mb-3">
         <div *ngIf="isActive('/personalinfo/team/team-members')">
             <app-team-members-tabs />
-            
+        
         </div>
-        <div *ngIf="isActive('/myinfo/team/team-members')">
-            <app-team-member-tabs />
-            
-        </div>
+      
 
         @if(canAccess('view','changesrm')){
         <div>

@@ -137,7 +137,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           });
 
         } else {
-          this.conformationPopup.openErrorModal('You cannot select records from different approval stages');
+          this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
           if (this.selectedProducts.length > 0) {
             const lastSelected = Value[Value.length - 1];
 

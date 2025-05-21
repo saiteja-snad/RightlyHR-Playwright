@@ -3,7 +3,6 @@ import { MainLayoutComponent } from './layouts/main-layout/main-layout.component
 import { AuthenticationLayoutComponent } from './layouts/authentication-layout/authentication-layout.component';
 import { ProspectiveEmployeesComponent } from './admin/prospective-employees/prospective-employees.component';
 import { ProspectiveInternsComponent } from './admin/prospective-interns/prospective-interns.component';
-import { SettingsLayoutComponent } from './layouts/settings-layout/settings-layout.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'uservalidation', pathMatch: 'full' },

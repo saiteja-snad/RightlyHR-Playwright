@@ -204,7 +204,7 @@ export class SalaryRevisionLetterComponent {
   }
 
   getAuthorityDetails() {
-    let offertype = 'Appraisal Letter';
+    let offertype = 'Salary Revision Letter';
     this.subscription = this.http.getData(`SignaturesList?LetterType=${offertype}`).subscribe({
       next: (data: any) => {
         this.authoritydetails = data;

@@ -46,8 +46,6 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.getIdentityDropDown();
     this.initializeForm();
     this.initializeupdateForm();
-
-
   }
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
@@ -55,8 +53,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
-
+   
     if (fullPath.startsWith('/personalinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
@@ -124,14 +121,12 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       identityAttachment: data.identityAttachment || '',
     });
 
-    console.log(this.identityForm.value);
   }
   // Fetch identity details by employee ID
   getIdentityByEmpid(): void {
     this.loading = true
     const EmpId = parseInt(this.empinfo.employeeId);
     if (!EmpId) {
-      console.error('Invalid Employee ID');
       return;
     }
 
@@ -142,7 +137,6 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.loading = false
-        console.error('Error fetching identity details:', err);
       },
     });
   }
@@ -152,8 +146,6 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`IdentityType`).subscribe({
       next: (data: any) => {
         this.getidentitydropdetails = data;
-        console.log('Identity dropdown:', this.getidentitydropdetails);
-
       },
       error: (err: any) => {
         console.error('Error fetching identity dropdown:', err);
@@ -197,7 +189,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       `${this.empinfo.employeeId}_${timestamp}_${file.name}`
     );
 
-    console.log('Education attachment:', this.IdentityAttachment);
+
   }
   resetForms() {
     this.identityForm.get('identityAttachment')?.setValue('');
@@ -263,11 +255,9 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
         this.identityForm.reset();
         this.getIdentityByEmpid()
         this.conformationPopup.openSuccessModal('Identity details added successfully');
-        console.log('Data saved successfully');
       },
       error: () => {
         this.spinnerLoader = false
-        console.error('Error saving data');
         this.conformationPopup.openErrorModal('Identity details added failed');
       }
     });
@@ -275,7 +265,6 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
 
   createPayload(attachmentPath: string = ''): any {
     return {
-
       empId: parseInt(this.empinfo.employeeId),
       identityType: this.identityForm.get('identityType')?.value?.identityType1,
       identityNumber: this.identityForm.get('identityNumber')?.value,
@@ -379,7 +368,6 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   saveUpdatedIdentity(payload: any): void {
     this.subscription = this.http.postdata(`IdentityTable/Update`, payload).subscribe({
       next: (data: any) => {
-        console.log('Identity updated successfully:', data);
         this.spinnerLoader = false
         // Close the modal and refresh the data
         this.getIdentityByEmpid();
@@ -388,7 +376,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       },
       error: (err: any) => {
         this.spinnerLoader = false
-        console.error('Error updating identity:', err);
+      
         this.conformationPopup.openErrorModal('Failed to update identity details');
       }
     });

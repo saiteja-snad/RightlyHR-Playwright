@@ -52,10 +52,8 @@
                             </ng-template>
                         </td>
                         <td>
-                            <span *ngIf="item.gradeId;else gradeid"> {{item.gradeName}}</span>
-                            <ng-template #gradeid>
-                                <div>-</div>
-                            </ng-template>
+                            <span> {{item.gradeName || '-'}}</span>
+                          
                         </td>
                         <td>
                             <span *ngIf="item.departmentName;else department"> {{item.departmentName}}</span>

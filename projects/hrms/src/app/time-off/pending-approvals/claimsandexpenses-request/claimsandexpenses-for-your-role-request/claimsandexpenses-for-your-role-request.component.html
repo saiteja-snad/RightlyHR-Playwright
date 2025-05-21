@@ -41,7 +41,7 @@
                   <li>
                     <a class="dropdown-item"
                       (click)="openModal(viewDetailsModal); viewItem(leave.entity.expenses_ID)"><i
-                        class="bi bi-paperclip me-2"></i>View</a>
+                        class="bi bi-eye-fill me-2"></i>View</a>
                   </li>
                   
                 </ul>
@@ -235,12 +235,10 @@
                 </a>
                 <a type="button" class="dowload-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
                   (click)="onViewAttachement(item?.attachment_url)">
-                  <i class="bi bi-paperclip"></i>View
+                  <i class="bi bi-eye-fill me-2"></i>View
                 </a>
               </div>
-
             </td>
-
           </tr>
         </tbody>
       </table>

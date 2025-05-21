@@ -540,7 +540,7 @@ body {
 // Component stylings
 .custom-component-left-content {
     width: 25rem;
-    height: calc(100dvh - 12rem);
+    height: calc(100dvh - 14rem);
     border-radius: 0.5rem;
     overflow-y: auto;
     background-color: var(--white-color);
@@ -549,9 +549,10 @@ body {
 
 .custom-component-right-content {
     width: 100%;
-    height: calc(100dvh - 12rem);
+    height: calc(100dvh - 14rem);
     overflow-y: auto;
     border-radius: 0.5rem;
+    background-color: var(--white-color);
     border: 1px solid var(--border-color);
 }
 

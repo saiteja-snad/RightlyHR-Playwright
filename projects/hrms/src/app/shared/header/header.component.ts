@@ -41,6 +41,10 @@ export class HeaderComponent {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.imageUrl = this.empinfo.profileUrl;
     this.onSelectprofilePicDownload(this.empinfo);
+    this.http.profliepicadd$.subscribe(() => {
+      this.imageUrl = this.empinfo.profileUrl;
+    this.onSelectprofilePicDownload(this.empinfo);
+    });
   }
 
   onSelectprofilePicDownload(employee: any) {

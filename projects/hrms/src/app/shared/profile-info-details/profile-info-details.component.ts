@@ -5,6 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../services/rbac.service';
+import { ActivatedRoute } from '@angular/router';
 @Component({
   selector: 'app-profile-info-details',
   imports: [CommonModule],
@@ -28,14 +29,14 @@ export class ProfileInfoDetailsComponent {
   empdata = {} as any;
   profilePic: any;
 
-  constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public rbac: RbacService) { }
+  constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public rbac: RbacService,private route: ActivatedRoute) { }
 
   ngOnInit(): void {
-    if (
-      this.rbac.allowedToAccess('Employee Info Personal Tab.view') && localStorage.getItem('personaldata') && this.rbac.allowedToAccess('My Info Personal Tab.view')) {
-      this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    } else if (this.rbac.allowedToAccess('My Info Personal Tab.view') && localStorage.getItem('rightlyHrUser')) {
-      this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    if (this.route.snapshot.routeConfig?.path === 'personalinfo') {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+    }
+    else if (this.route.snapshot.routeConfig?.path === 'myinfo') {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
     }
 
     this.getJobDetails();
@@ -124,11 +125,10 @@ export class ProfileInfoDetailsComponent {
           this.empinfo.profileUrl = data.path;
           this.subscription = this.http.postdata("Employeedata/UPDATER", this.empinfo).subscribe({
             next: (data: any) => {
-              if (data.statusCode === 409) { }
-              else if (data.statusCode === 200) {
-                this.conformationPopup.openSuccessModal('Profile picture updated successfully')
-                this.getEmployeeId();
-              }
+              this.http.setprofileDetails()
+              this.conformationPopup.openSuccessModal('Profile picture updated successfully')
+              this.getEmployeeId();
+            
             },
             error: (reason: any) => {
               this.conformationPopup.openErrorModal(reason.error.message || 'Profile picture update failed')

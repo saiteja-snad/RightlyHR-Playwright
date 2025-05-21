@@ -28,6 +28,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './calendar-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
+
 export class CalendarViewComponent implements OnInit, OnDestroy {
   calendarOptions!: CalendarOptions;
   eventsPromise!: Promise<EventInput[]>;
@@ -50,7 +51,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
   constructor(
     private changeDetector: ChangeDetectorRef,
     private http: HttpService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.filterEventsByTitle();
@@ -189,8 +190,8 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
             const bday = new Date(allEventsData[j].dob);
             const formattedBday = `${this.changeYear}-${String(bday.getMonth() + 1).padStart(2, '0')}-${String(bday.getDate()).padStart(2, '0')}`;
             events.push({
-              title: (allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId})`:'') + 
-              `${allEventsData[j].firstName} ${allEventsData[j].lastName}'s` + ` Birthday`,
+              title: (allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId})` : '') +
+                `${allEventsData[j].firstName} ${allEventsData[j].lastName}'s` + ` Birthday`,
               start: formattedBday,
               color: 'rgb(143, 143, 204)',
               textColor: 'black',
@@ -205,11 +206,9 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
               events.push({
                 title:
                   (allEventsData[j].fusionEmpId ? ` (${allEventsData[j].fusionEmpId})` : '') +
-                  ` ${allEventsData[j]?.firstName ?? ''} ${
-                    allEventsData[j]?.middleName ?? ''
+                  ` ${allEventsData[j]?.firstName ?? ''} ${allEventsData[j]?.middleName ?? ''
                   } ${allEventsData[j]?.lastName ?? ''}'s` +
-                  ` ${
-                    allEventsData[j].anniversaryYearCount
+                  ` ${allEventsData[j].anniversaryYearCount
                   }${this.getOrdinalSuffix(
                     allEventsData[j].anniversaryYearCount
                   )} Work Anniversary`,
@@ -249,9 +248,8 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
               2,
               '0'
             )}`;
-            const eventTitle = `${orgHolidaysItems[j].holidayName}${
-              orgHolidaysItems[j].isOptional ? ' (Optional)' : ''
-            }`;
+            const eventTitle = `${orgHolidaysItems[j].holidayName}${orgHolidaysItems[j].isOptional ? ' (Optional)' : ''
+              }`;
 
             if (
               orgHolidaysItems[j].status === 'Published' &&
@@ -262,7 +260,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
                 start: formattedHolidayDate,
                 color: '#28692b4d',
                 textColor: 'black',
-                //display: 'calendar/birthday.png',
+                display: 'main-menu-icons/holiday-icon.png',
               });
             }
           }
@@ -275,5 +273,5 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 }

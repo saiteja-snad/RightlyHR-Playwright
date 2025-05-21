@@ -29,7 +29,6 @@ export class SignatureAuthorityComponent implements OnInit {
   employeeiddetails: IemployeeDetails[] = [];
   selectedId: number | null = null;
   selectedDeleteserving: any = null;
-  dataLoad: boolean = false;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -40,9 +39,7 @@ export class SignatureAuthorityComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.dataLoad = true;
     this.getAllSignatureEmployees();
-    this.dataLoad = false;
     this.getAllSignatureLetterType();
     this.getAllActiveEmployees();
     this.intializeForm();

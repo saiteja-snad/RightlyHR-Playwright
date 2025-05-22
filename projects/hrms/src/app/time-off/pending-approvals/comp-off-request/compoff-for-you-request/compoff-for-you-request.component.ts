@@ -79,7 +79,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   dataload = false;
   compOffselect!: LeaveApproval[];
-  selectedLeavesItems!: LeaveApproval[];
+  selectedLeavesItems: LeaveApproval[] = [];
   multiSelect = false;
   requestBody = {} as any;
   @ViewChild('leaveSummary') leaveSummary: any;
@@ -181,6 +181,33 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.intializeRejectForm();
     this.selectedLeaveData = request;
   }
+
+getFilteredAndSortedLeaves(): AttendanceRequest[] {
+  const search = this.searchValue?.toLowerCase() ?? '';
+  const allLeaves = this.leaves?.getValue() ?? [];
+
+  // Filter
+  let filteredLeaves = allLeaves;
+  if (search) {
+    filteredLeaves = filteredLeaves.filter((item: AttendanceRequest) =>
+      item.entity?.attendanceRequestFusionEmployeeId?.toLowerCase().includes(search) ||
+      item.entity?.attendanceRequesterName?.toLowerCase().includes(search) ||
+      item.entity?.attendanceRequestDurationType?.toLowerCase().includes(search)
+    );
+  }
+
+  // Sort
+  if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+    return filteredLeaves;
+  }
+
+  const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
+  const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+  const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+
+  return [...selected, ...unselected];
+}
+
 
   handleProcess(request: any): void {
     this.selectedLeaveData = request;
@@ -298,6 +325,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
               this.openModal(this.leaveSummary);
             }
             this.selectedLeavesItems = [];
+            this.approveForm.reset();
             this.multiSelect = false;
             this.signalService.compOffForYouTriggerSignal.set(true);
             this.signalService.compOffSidNavCountTriggerSignal.set(true);

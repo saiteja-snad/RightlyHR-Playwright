@@ -81,7 +81,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
   searchValue: any;
   dataload = false;
   wfhsselect!: LeaveApproval[];
-  selectedLeavesItems!: LeaveApproval[];
+  selectedLeavesItems: LeaveApproval[] =[];
   multiSelect = false;
   requestBody = {} as any;
   requestSummary!:any;
@@ -166,6 +166,32 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
         },
       });
   }
+
+  getFilteredAndSortedLeaves(): AttendanceRequest[] {
+  const search = this.searchValue?.toLowerCase() ?? '';
+  const allLeaves = this.leaves?.getValue() ?? [];
+
+  // Filter
+  let filteredLeaves = allLeaves;
+  if (search) {
+    filteredLeaves = filteredLeaves.filter((item: AttendanceRequest) =>
+      item.entity?.attendanceRequestFusionEmployeeId?.toLowerCase().includes(search) ||
+      item.entity?.attendanceRequesterName?.toLowerCase().includes(search) ||
+      item.entity?.attendanceRequestDurationType?.toLowerCase().includes(search)
+    );
+  }
+
+  // Sort
+  if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+    return filteredLeaves;
+  }
+
+  const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
+  const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+  const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+
+  return [...selected, ...unselected];
+}
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });
   }
@@ -303,7 +329,7 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
               this.openModal(this.leaveSummary);
             }
             this.selectedLeavesItems = [];
-             this.multiSelect = false;
+            this.multiSelect = false;
             this.rejectForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
             this.signalService.wfhForYouTriggerSignal.set(true);

@@ -3,7 +3,7 @@
      <div class="d-flex justify-content-between">
         <div class="mt-2">
             @if(selectedLeavesItems){
-                <div class="component-sub-header ">Selected Records Count: {{selectedLeavesItems.length}}</div>
+                <div class="component-sub-header ">Selected Records: {{selectedLeavesItems.length}}</div>
         }
         </div>
         <div class="d-flex justify-content-end gap-3 mb-3">
@@ -35,7 +35,7 @@
     <div class="custom-p-multi-select-table">
     
         @if(!dataload){
-        <p-table [value]="wfhsselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
+        <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
             dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
             <ng-template #header>
                 <tr>
@@ -44,8 +44,8 @@
                     <th>{{'Employee Name' | translate}}</th>
                     <th>{{'Worked Date' | translate}}</th>
                     <th>{{'Availed' | translate}}</th>
-                    <th>{{'Reason' | translate}}</th>
-                    <th>{{'Approver Comments' | translate}}</th>
+                    <th class="text-center">{{'Reason' | translate}}</th>
+                    <th class="text-center">{{'Approver Comments' | translate}}</th>
                     <th>{{'Applied Date' | translate}}</th>
                     @if(!multiSelect && (rbac.allowedToAccess('For You (WFH).update') || 
                     rbac.allowedToAccess('For You (WFH).delete'))){
@@ -54,9 +54,6 @@
                 </tr>
             </ng-template>
             <ng-template #body let-leave>
-                @if ((((leaves | async) ?? []) | wfhsearchfilter: searchValue).length > 0) {
-                <!-- @for (leave of ((leaves | async) ?? []) | wfhsearchfilter: searchValue ; track
-                    leave.approvalHeader.id){ -->
                 <tr>
                     <td>
                         <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
@@ -65,7 +62,7 @@
                     <td>{{leave.entity.attendanceRequesterName}}</td>
                     <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
                     <td>{{leave.entity.attendanceRequestDurationType}}</td>
-                    <td>
+                    <td class="text-center">
                         @if(leave.entity.attendanceRequestDescription != null &&
                         leave.entity.attendanceRequestDescription != '') {
                         <div>
@@ -81,7 +78,7 @@
                         <div>-</div>
                         }
                     </td>
-                    <td>
+                    <td class="text-center">
                         <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
                             <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
                                 <!-- <img src="images\info-fill.png" alt="info icon" class="info-icon">
@@ -129,14 +126,6 @@
                     </td>
                     }
                 </tr>
-                }
-                @else{
-                <tr>
-                    <td colospan="9">
-                        <app-no-data-found />
-                    </td>
-                </tr>
-                }
             </ng-template>
             <ng-template #emptymessage>
                 <tr>
@@ -180,7 +169,7 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]=" spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
@@ -226,7 +215,8 @@
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]=" spinnerLoader">{{'Cancel'|
+                    translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
                     <div class="button-loader-content">

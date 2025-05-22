@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-between">
         <div class="mt-2">
             @if(selectedLeavesItems){
-                <div class="component-sub-header ">Selected Records Count: {{selectedLeavesItems.length}}</div>
+                <div class="component-sub-header ">Selected Records: {{selectedLeavesItems.length}}</div>
         }
         </div>
         <div class="d-flex justify-content-end gap-3 mb-3">
@@ -37,7 +37,7 @@
 
     <div class="custom-p-multi-select-table">
         @if(!dataload){
-        <p-table [value]="permissionsselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
+        <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
             dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
             <ng-template #header>
                 <tr>
@@ -48,8 +48,8 @@
                     <th>{{'Permission Date' | translate}}</th>
                     <th>{{'Duration(InHours)' | translate}}</th>
                     <th>{{'Permission Type' | translate}}</th>
-                    <th>{{'Reason' | translate}}</th>
-                    <th>{{'Approver Comments' | translate}}</th>
+                    <th class="text-center">{{'Reason' | translate}}</th>
+                    <th class="text-center">{{'Approver Comments' | translate}}</th>
                     @if(!multiSelect &&  (rbac.allowedToAccess('For You (Permission).update') || rbac.allowedToAccess('For You (Permission).delete'))){
                     <th class="text-center">{{'Action(s)' | translate}}</th>
                     }
@@ -68,7 +68,7 @@
                     <td>{{leave.entity.requestedDate| dateformat}}</td>
                     <td>{{leave.entity.duration}}</td>
                     <td>{{leave.entity.type}}</td>
-                    <td>
+                    <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="reason">
                                 <i class="bi bi-info-circle-fill" ></i>
@@ -78,7 +78,7 @@
                             </ng-template>
                         </div>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
                             <a type="button"
                                 (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
@@ -176,7 +176,7 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]=" spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
@@ -215,7 +215,7 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close' |
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]=" spinnerLoader">{{'Cancel' |
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || spinnerLoader">
                     @if(spinnerLoader){

@@ -18,10 +18,12 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { environment } from '../../../../environments/environment';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
+import { TableModule } from 'primeng/table';
 @Component({
   selector: 'app-wfh',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe,
-     ReactiveFormsModule, TranslateModule, WfhsearchfilterPipe],
+     ReactiveFormsModule, TranslateModule,TableModule,],
   templateUrl: './wfh.component.html',
   styleUrl: './wfh.component.scss'
 })
@@ -43,11 +45,17 @@ export class WfhComponent {
   LOGIN: any;
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
+  @ViewChild('leaveSummary') leaveSummary: any;
   selectedLeaveData = {} as AttendanceRequest;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   searchValue: any;
   spinnerLoader = false;
+  multiSelect = false;
+  selectedLeavesItems: LeaveApproval[] =[];
+  wfhsselect!: AttendanceRequest;
+  requestBody = {} as any;
+  requestSummary!:any;
   constructor(
     private modalService: NgbModal, 
     private fb: FormBuilder, 
@@ -82,6 +90,80 @@ export class WfhComponent {
     }
   }
 
+  // selectCheck(Value: any) {
+  //   this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  // }
+
+  selectCheck(Value: any) {
+    this.multiSelect = Array.isArray(Value) && Value.length > 0;
+    if (!Value || Value.length === 0) {
+      this.selectedLeavesItems = [];
+      return;
+    }
+ 
+    if (this.multiSelect) {
+      const stageMap: { [stage: string]: any[] } = {};
+ 
+      Value.forEach((item: any) => {
+        const stage = item.approvalHeader?.currentapprovalStage;
+        if (!stageMap[stage]) {
+          stageMap[stage] = [];
+        }
+        stageMap[stage].push(item);
+      });
+ 
+      const stages = Object.keys(stageMap);
+ 
+      if (stages.length > 1) {
+        const totalAvailable = this.leaves?.getValue().length || 0;
+        const totalSelected = Value.length;
+        const isBulkSelect = totalSelected === totalAvailable;
+        if (isBulkSelect) {
+          let maxStage = stages[0];
+          let maxCount = stageMap[maxStage].length;
+ 
+          for (const stage of stages) {
+            const count = stageMap[stage].length;
+            if (count > maxCount) {
+              maxStage = stage;
+              maxCount = count;
+            } else if (count === maxCount && stage === '1') {
+              maxStage = stage;
+            }
+          }
+ 
+          this.selectedLeavesItems = [];
+          setTimeout(() => {
+            this.selectedLeavesItems = [...stageMap[maxStage]];
+          });
+ 
+        } else {
+          this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
+          if (this.selectedLeavesItems.length > 0) {
+            const lastSelected = Value[Value.length - 1];
+ 
+            // Remove the specific item from selectedProducts
+            this.selectedLeavesItems = this.selectedLeavesItems.filter(
+              item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+            );
+     
+            // Force update (optional, but helps)
+            setTimeout(() => {
+              this.selectedLeavesItems = [...this.selectedLeavesItems];
+            });
+            console.log(this.selectedLeavesItems);
+
+          }
+          return;
+        }
+      } else {
+        this.selectedLeavesItems = [...Value];
+      }
+    } else {
+      this.selectedLeavesItems = [Value];
+    }
+  }
+
   intializeApproveForm() {
     this.approveForm = this.fb.group({
       comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
@@ -100,13 +182,68 @@ export class WfhComponent {
       next: (response: any) => {
         console.log(response.data);
         this.leaves.next(response.data);
+        this.wfhsselect = response.data;
       },
       error: (reason) => console.log(reason),
     });
   }
 
-  openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  getFilteredAndSortedLeaves(): AttendanceRequest[] {
+  const search = this.searchValue?.toLowerCase() ?? '';
+  const allLeaves = this.leaves?.getValue() ?? [];
+
+  // Filter
+  let filteredLeaves = allLeaves;
+  if (search) {
+    filteredLeaves = filteredLeaves.filter((item: AttendanceRequest) =>
+      item.entity?.attendanceRequestFusionEmployeeId?.toLowerCase().includes(search) ||
+      item.entity?.attendanceRequesterName?.toLowerCase().includes(search) ||
+      item.entity?.attendanceRequestDurationType?.toLowerCase().includes(search)
+    );
+  }
+
+  // Sort
+  if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+    return filteredLeaves;
+  }
+
+  const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
+  const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+  const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+
+  return [...selected, ...unselected];
+}
+bulkapprove(approverPopup: any) {
+    this.intializeApproveForm();
+    this.modalService.open(approverPopup, {
+      centered: true,
+      backdrop: 'static',
+    });
+  }
+  bulkReject(rejectPopup: any) {
+    this.intializeRejectForm();
+    this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
+  }
+  bulkProcess() {
+    this.handleProcess(this.wfhsselect);
+  }
+  canBulkApprove(): boolean {
+    return this.selectedLeavesItems?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage !==
+        item.approvalHeader.finalapprovalStage
+    );
+  }
+  canBulkProcess(): boolean {
+    return this.selectedLeavesItems?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage ===
+        item.approvalHeader.finalapprovalStage
+    );
+  }
+
+   openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });
   }
 
   onRowsChange() {
@@ -133,16 +270,50 @@ export class WfhComponent {
   handleAccept(approveForm: FormGroup): void {
     if (approveForm.valid) {
       const formData = approveForm.value;
-      const requestBody = {
-        status: 'Approved',
-        comments: formData.comments,
-        approvedBy: this.empinfo.employeeId.toString(),
-      };
-      this.spinnerLoader = true;
-      this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+      let approvedBy = this.empinfo.employeeId.toString();
+      let comments = formData.comments;
+      if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Approved',
+          comments: comments,
+          moduleId: environment.wfhModuleId,
+          headerRequests: this.selectedLeavesItems.map((item) => ({
+            headerID: item.approvalHeader.id,
+            currentStage: item.approvalHeader.currentapprovalStage,
+          })),
+        };
+      } else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Approved',
+          comments: comments,
+          moduleId: environment.wfhModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader.id,
+              currentStage:
+                this.selectedLeaveData.approvalHeader.currentapprovalStage,
+            },
+          ],
+        };
+      }
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request Accepted Successfully');
+          if (
+            this.selectedLeavesItems &&
+            this.selectedLeavesItems.length <= 0
+          ) {
+            this.sharedModalService.openSuccessModal(
+              'Request Approved Successfully'
+            );
+          } else {
+            this.requestSummary = response.data;
+            this.openModal(this.leaveSummary);
+          }
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
           this.approveForm.reset();
           this.selectedLeaveData = {} as AttendanceRequest;
           this.http.triggerActionSignal();
@@ -164,15 +335,51 @@ export class WfhComponent {
   handleReject(rejectForm: FormGroup): void {
     if (rejectForm.valid) {
       const formData = rejectForm.value;
-      const requestBody = {
-        status: 'Rejected',
-        comments: formData.comments,
-      };
+      let approvedBy = this.empinfo.employeeId.toString();
+      let comments = formData.comments;
+      if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Rejected',
+          comments: comments,
+          moduleId: environment.wfhModuleId,
+          headerRequests: this.selectedLeavesItems.map((item) => ({
+            headerID: item.approvalHeader.id,
+            currentStage: item.approvalHeader.currentapprovalStage,
+          })),
+        };
+      } else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Rejected',
+          comments: comments,
+          moduleId: environment.wfhModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader.id,
+              currentStage:
+                this.selectedLeaveData.approvalHeader.currentapprovalStage,
+            },
+          ],
+        };
+      }
       this.spinnerLoader = true;
-      this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request Rejected Successfully');
+          if (
+            this.selectedLeavesItems &&
+            this.selectedLeavesItems.length <= 0
+          ) {
+            this.sharedModalService.openSuccessModal(
+              'Request Rejected Successfully'
+            );
+          } else {
+            this.requestSummary = response.data;
+            this.openModal(this.leaveSummary);
+          }
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
           this.rejectForm.reset();
           this.selectedLeaveData = {} as AttendanceRequest;
           this.http.triggerActionSignal();
@@ -192,12 +399,39 @@ export class WfhComponent {
   }
 
   handleProcess(request: AttendanceRequest) {
-    let requestBody = {
-      status: 'Processed',
-      approvedBy: this.empinfo.employeeId.toString(),
-    };
-    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
-    this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+   this.selectedLeaveData = request;
+    let approvedBy = this.empinfo.employeeId.toString();
+    let message = null;
+    if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.wfhModuleId,
+        headerRequests: this.selectedLeavesItems.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage,
+        })),
+      };
+      message =  'Processing Requests, Please wait...';
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.wfhModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader.id,
+            currentStage:
+              this.selectedLeaveData.approvalHeader.currentapprovalStage,
+          },
+        ],
+      };
+      message =  'Processing Request, Please wait...';
+    }
+    this.sharedModalService.openLoaderModal(
+      'Processing Request, Please wait...'
+    );
+    this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');

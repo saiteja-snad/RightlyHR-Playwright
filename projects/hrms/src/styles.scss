@@ -1589,7 +1589,7 @@ input[type="file"] {
 // popup stylings ends
 
 // download text
-.dowload-text {
+.download-text {
     font-weight: 600;
     font-size: 13px;
     line-height: 100%;
@@ -1598,6 +1598,7 @@ input[type="file"] {
     text-decoration-style: solid;
     text-decoration-thickness: 0%;
     color: var(--primary-color);
+    cursor: pointer;
 }
 
 // plusbutton

@@ -26,8 +26,8 @@
                     <td>{{appointmentLetter.employeeName ?appointmentLetter.employeeName:'-'}}</td>
                     @if(rbac.allowedToAccess('Trainee Appointment Letter Download.view')){
                     <td>
-                        <button class="custom-btn btn-primary"
-                            (click)="onSelectDownload(appointmentLetter)">Download</button>
+                        <span class="download-text" (click)="onSelectDownload(appointmentLetter)">
+                            <i class="bi bi-download clip-icon me-2"></i>Download</span>
                     </td>}
                 </tr>
                 }

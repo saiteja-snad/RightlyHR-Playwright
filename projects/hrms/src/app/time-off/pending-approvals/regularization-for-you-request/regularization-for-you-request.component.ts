@@ -235,10 +235,13 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
       this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.selectedProducts = [];
+           this.modalService.dismissAll();
+          if(this.selectedProducts.length > 1){
             this.responseSummary = response.data;
-            this.modalService.dismissAll();
-            this.openModal(this.leaveSummary)
+            this.openModal(this.leaveSummary);
+          }else{
+            this.sharedModalService.openSuccessModal('Request Approved Successfully')
+          }
           },
           error: (reason: any) => {
             this.spinnerLoader = false;
@@ -261,6 +264,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+             this.selectedProducts = [];
           },
         });
     }
@@ -282,11 +286,14 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
     this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
     this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (respone: any) => {
-          this.selectedProducts = [];
-          this.responseSummary = respone.data;
+        next: (response: any) => {
           this.modalService.dismissAll();
-          this.openModal(this.leaveSummary)
+          if(this.selectedProducts.length > 1){
+            this.responseSummary = response.data;
+            this.openModal(this.leaveSummary);
+          }else{
+            this.sharedModalService.openSuccessModal('Request Processed Successfully')
+          }
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -305,6 +312,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
           this.signalService.regularizationForYouTriggerSignal.set(true);
           this.signalService.regularizationSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+           this.selectedProducts = [];
         },
       });
   }
@@ -329,10 +337,13 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
       this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.selectedProducts = [];
-            this.responseSummary = response.data;
             this.modalService.dismissAll();
-            this.openModal(this.leaveSummary)
+          if(this.selectedProducts.length > 1){
+            this.responseSummary = response.data;
+            this.openModal(this.leaveSummary);
+          }else{
+            this.sharedModalService.openSuccessModal('Request Rejected Successfully')
+          }
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
@@ -355,6 +366,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+             this.selectedProducts = [];
           },
         });
     }

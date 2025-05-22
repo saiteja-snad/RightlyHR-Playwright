@@ -334,10 +334,13 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
-          this.selectedProducts = [];
-          this.responseSummary = respone.data;
           this.modalService.dismissAll();
-          this.openModal(this.leaveSummary);
+          if(this.selectedProducts.length > 1){
+            this.responseSummary = respone.data;
+            this.openModal(this.leaveSummary);
+          }else{
+            this.conformationPopup.openSuccessModal('Request Approved Successfully')
+          }
         },
         error: (reason: any) => {
           if (reason.error.statusCode == 400) {
@@ -359,6 +362,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.selectedProducts = [];
         },
       });
   }
@@ -381,10 +385,13 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
-          this.selectedProducts = [];
-          this.responseSummary = respone.data;
-          this.modalService.dismissAll();
-          this.openModal(this.leaveSummary);
+         this.modalService.dismissAll();
+          if(this.selectedProducts.length > 1){
+            this.responseSummary = respone.data;
+            this.openModal(this.leaveSummary);
+          }else{
+            this.conformationPopup.openSuccessModal('Request Rejected Successfully')
+          }
         },
         error: (reason: any) => {
           if (reason.error.statusCode == 400) {
@@ -406,6 +413,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.selectedProducts = [];
         },
       });
   }
@@ -426,10 +434,13 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (respone: any) => {
-          this.selectedProducts = [];
-          this.responseSummary = respone.data;
           this.modalService.dismissAll();
-          this.openModal(this.leaveSummary);
+          if(this.selectedProducts.length > 1){
+            this.responseSummary = respone.data;
+            this.openModal(this.leaveSummary);
+          }else{
+            this.conformationPopup.openSuccessModal('Request Processed Successfully')
+          }
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -449,6 +460,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
+           this.selectedProducts = [];
         },
       });
   }

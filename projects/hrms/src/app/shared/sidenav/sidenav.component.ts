@@ -6,24 +6,23 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { TimeOffTabsComponent } from "../time-off-module-tabs/time-off-tabs/time-off-tabs.component";
+import { ReportsMainTabsComponent } from "../reports-tabs/reports-main-tabs/reports-main-tabs.component";
+import { SettingsMainHeaderTabsComponent } from "../settings-tabs/settings-main-header-tabs/settings-main-header-tabs.component";
 @Component({
   selector: 'app-sidenav',
-  imports: [CommonModule, RouterModule, TranslateModule],
+  imports: [CommonModule, RouterModule, TranslateModule, TimeOffTabsComponent, ReportsMainTabsComponent, SettingsMainHeaderTabsComponent],
   templateUrl: './sidenav.component.html',
   styleUrl: './sidenav.component.scss'
 })
 
 export class SidenavComponent implements OnInit {
+  // Main Modules
   modules = [
     //expenses
     {
       label: 'Expenses', icon: '/main-menu-icons/expenses-icon.png', activeIcon: '/main-menu-icons/expenses-color.png',
       route: '/claimsandexpenses', permission: { feature: 'Expenses', action: 'view' }
-    },
-    //Reports
-    {
-      label: 'Reports', icon: '/main-menu-icons/reports-icon.png', activeIcon: '/main-menu-icons/reports-color.png',
-      route: '/reports', permission: { feature: 'Reports', action: 'view' }
     },
     //pms
     {

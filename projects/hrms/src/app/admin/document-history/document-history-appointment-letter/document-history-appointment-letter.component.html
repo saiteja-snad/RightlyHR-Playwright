@@ -26,10 +26,10 @@
                     <td>{{appointmentLetter.employeeName ?appointmentLetter.employeeName:'-'}}</td>
                     @if(rbac.allowedToAccess('Appointment Letter Download.view')){
                     <td class="text-center">
-                        <span class="dowload-text cursor" (click)="onSelectDownload(appointmentLetter)">
-                  <i class="bi bi-download clip-icon px-2"></i>Download</span>
+                        <span class="download-text" (click)="onSelectDownload(appointmentLetter)">
+                            <i class="bi bi-download clip-icon me-2"></i>Download</span>
                         <!-- <button class="custom-btn btn-primary"
-                            >Download</button> -->
+                                            >Download</button> -->
                     </td>}
                 </tr>
                 }

@@ -86,8 +86,7 @@
             required</ng-container>
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['maxlength']">Maximum 250 characters
             allowed</ng-container>
-          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['pattern']">Leading spaces are not
-            allowed</ng-container>
+          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['pattern']">Reason for Cancellation cannot start with whitespace or be empty</ng-container>
         </div>
       </div>
       <div class="custom-modal-footer">

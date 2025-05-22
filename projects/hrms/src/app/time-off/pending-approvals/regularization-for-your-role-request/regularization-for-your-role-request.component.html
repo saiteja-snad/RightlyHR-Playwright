@@ -1,23 +1,24 @@
 <div class="custom-main-component-container">
-    @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
-        <div class="d-flex justify-content-end gap-3 mb-3">
-            @if (canBulkApprove()) {
-                @if(rbac.allowedToAccess('For Role (Regularization).update')){
-                    <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
-                }
-                @if(rbac.allowedToAccess('For Role (Regularization).delete')){
-                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-                }
-            }
-            @if (canBulkProcess()) {
-                @if(rbac.allowedToAccess('For Role (Regularization).update')){
-                    <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
-                }
-                @if(rbac.allowedToAccess('For Role (Regularization).delete')){
-                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-                }
-            }
-        </div>
+    @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) { 
+        <p><b>Selected Records:</b> {{selectedProducts.length}}</p>
+    <div class="d-flex justify-content-end gap-3 mb-3">
+        @if (canBulkApprove()) {
+        @if(rbac.allowedToAccess('For Role (Regularization).update')){
+        <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+        }
+        @if(rbac.allowedToAccess('For Role (Regularization).delete')){
+        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+        }
+        }
+        @if (canBulkProcess()) {
+        @if(rbac.allowedToAccess('For Role (Regularization).update')){
+        <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+        }
+        @if(rbac.allowedToAccess('For Role (Regularization).delete')){
+        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+        }
+        }
+    </div>
     }
     <!--Input search-->
     <div class="input-group custom-search mb-3">
@@ -29,111 +30,118 @@
 
     <div class="custom-p-multi-select-table">
         @if(!dataLoad){
-            @if(regularizationselect.length > 0){
-                <p-table [value]="regularizationselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts"
-                    dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
-                    <ng-template #header>
-                        <tr>
-                            <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-                            <th>{{'Employee ID' | translate}} </th>
-                            <th>{{'Employee Name' | translate}}</th>
-                            <th>{{'Requested Date' | translate}}</th>
-                            <th>{{'Regularization Date' | translate}}</th>
-                            <th>{{'Duration(InHours)' | translate}}</th>
-                            <th>{{'Regularization Type' | translate}}</th>
-                            <th>{{'Reason' | translate}}</th>
-                            <th>{{'Approver Comments' | translate}}</th>
-                            @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete'))){
-                            <th class="text-center">{{'Action(s)' | translate}}</th>
-                            }
+        <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts"
+            dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            <ng-template #header>
+                <tr>
+                    <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
+                    <th>{{'Employee ID' | translate}} </th>
+                    <th>{{'Employee Name' | translate}}</th>
+                    <th>{{'Requested Date' | translate}}</th>
+                    <th>{{'Regularization Date' | translate}}</th>
+                    <th>{{'Duration(InHours)' | translate}}</th>
+                    <th>{{'Regularization Type' | translate}}</th>
+                    <th>{{'Reason' | translate}}</th>
+                    <th>{{'Approver Comments' | translate}}</th>
+                    @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') ||
+                    rbac.allowedToAccess('For Role (Regularization).delete'))){
+                    <th class="text-center">{{'Action(s)' | translate}}</th>
+                    }
 
-                        </tr>
-                    </ng-template>
-                    <ng-template #body let-leave>
-                        @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
-                        <!-- @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
+                </tr>
+            </ng-template>
+            <ng-template #body let-leave>
+                @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
+                <!-- @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
                         leave.approvalHeader.id){ -->
-                        <tr>
-                                <td>
-                                <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
-                            </td>
-                            <td>{{leave.entity.fusionempId}}</td>
-                            <td>{{leave.entity.raisedForName}}</td>
-                            <td>{{leave.entity.createdDate| dateformat}}</td>
-                            <td>{{leave.entity.requestedDate| dateformat}}</td>
-                            <td>{{leave.entity.duration}}</td>
-                            <td>{{leave.entity.type}}</td>
-                            <td>
-                                <div>
-                                    <a type="button" [ngbPopover]="notes">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                    <ng-template #notes>
-                                        <p class="mb-0">{{leave.entity.notes}} </p>
-                                    </ng-template>
-                                </div>
-                            </td>
-                            <td>
-                                <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
-                                    <a type="button"
-                                        (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                    </a>
-                                </div>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
+                    </td>
+                    <td>{{leave.entity.fusionempId}}</td>
+                    <td>{{leave.entity.raisedForName}}</td>
+                    <td>{{leave.entity.createdDate| dateformat}}</td>
+                    <td>{{leave.entity.requestedDate| dateformat}}</td>
+                    <td>{{leave.entity.duration}}</td>
+                    <td>{{leave.entity.type}}</td>
+                    <td>
+                        <div>
+                            <a type="button" [ngbPopover]="notes">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                            <ng-template #notes>
+                                <p class="mb-0">{{leave.entity.notes}} </p>
+                            </ng-template>
+                        </div>
+                    </td>
+                    <td>
+                        <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
+                            <a type="button"
+                                (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
+                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                            </a>
+                        </div>
 
 
-                                <ng-template #permissionComments>-</ng-template>
-                            </td>
-                            @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') || rbac.allowedToAccess('For Role (Regularization).delete'))){
-                            <td>
-                                <div class="dropdown">
-                                    <a type="button" data-bs-toggle="dropdown">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </a>
-                                    <ul class="dropdown-menu custom-dropdown-menu">
-                                        @if(rbac.allowedToAccess('For Role (Regularization).update')) {
-                                        @if( leave.approvalHeader.currentapprovalStage !=
-                                        leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="openApproveModal(approval,leave)"
-                                        >
-                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
-                                                translate}}</a>
-                                        </li>}
-                                        }
-                                        @if(rbac.allowedToAccess('For Role (Regularization).update')) {
-                                        @if( leave.approvalHeader.currentapprovalStage ==
-                                        leave.approvalHeader.finalapprovalStage){
-                                        <li (click)="handleProcess(leave)" >
-                                            <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
-                                                {{'Process' | translate}}</a>
-                                        </li>
-                                        }}
-                                        @if(rbac.allowedToAccess('For Role (Regularization).delete')) {
-                                        <li (click)="openRejectModal(rejectmodal,leave)"
-                                            >
-                                            <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
-                                                translate}}</a>
-                                        </li>}
-                                    </ul>
-                                </div>
-                            </td>
-                            }
-                        
-                        </tr>
-                        <!-- } -->
-                        }
-                    </ng-template>
-                </p-table>
-            }@else {
-                <div class="loader-placeholder-content">
-                    <app-no-data-found />
-                </div>   
-            }
-            
-    }@else{
-            <div class="loader-placeholder-content">
-                <app-data-loader-content />
-            </div>
+                        <ng-template #permissionComments>-</ng-template>
+                    </td>
+                    @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') ||
+                    rbac.allowedToAccess('For Role (Regularization).delete'))){
+                    <td>
+                        <div class="dropdown">
+                            <a type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(rbac.allowedToAccess('For Role (Regularization).update')) {
+                                @if( leave.approvalHeader.currentapprovalStage !=
+                                leave.approvalHeader.finalapprovalStage){
+                                <li (click)="openApproveModal(approval,leave)">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
+                                        translate}}</a>
+                                </li>}
+                                }
+                                @if(rbac.allowedToAccess('For Role (Regularization).update')) {
+                                @if( leave.approvalHeader.currentapprovalStage ==
+                                leave.approvalHeader.finalapprovalStage){
+                                <li (click)="handleProcess(leave)">
+                                    <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
+                                        {{'Process' | translate}}</a>
+                                </li>
+                                }}
+                                @if(rbac.allowedToAccess('For Role (Regularization).delete')) {
+                                <li (click)="openRejectModal(rejectmodal,leave)">
+                                    <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                        translate}}</a>
+                                </li>}
+                            </ul>
+                        </div>
+                    </td>
+                    }
+
+                </tr>
+                <!-- } -->
+                }@else{
+                <tr>
+                    <td colospan="10">
+                        <app-no-data-found />
+                    </td>
+                </tr>
+                }
+            </ng-template>
+            <ng-template #emptymessage>
+                <tr>
+                    <td colospan="9">
+                        <app-no-data-found />
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+
+        }@else{
+        <div class="loader-placeholder-content">
+            <app-data-loader-content />
+        </div>
         }
     </div>
 </div>
@@ -150,7 +158,7 @@
                 <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
                         class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
-                    formControlName="comments" maxlength="250"></textarea>
+                    formControlName="comments" maxlength="250" (input)="removeLeadingWhitespace(approveForm.get('comments'))"></textarea>
                 <!-- Character counter -->
                 <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
@@ -161,7 +169,8 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'| translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
+                    translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
                     <div class="button-loader-content">
@@ -190,7 +199,7 @@
                     <span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments"
                     placeholder="Please provide reason for rejection" formControlName="comments"
-                    maxlength="250"></textarea>
+                    maxlength="250" (input)="removeLeadingWhitespace(rejectForm.get('comments'))"></textarea>
                 <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
@@ -200,8 +209,9 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' | translate}}</button>
-                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid">
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel' |
+                    translate}}</button>
+                <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
                     <div class="button-loader-content">
                         <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
@@ -256,7 +266,7 @@
                     <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
- 
+
         <div class="custom-main-popup-content">
             <div class="row">
                 <div class="col-sm-4 text-center">

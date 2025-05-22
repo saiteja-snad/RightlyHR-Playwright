@@ -273,7 +273,7 @@ export class OnboardingDetailsComponent {
         console.log('empStatus:', empStatus);
       
         const statusMapping: { [key: string]: string[] } = {
-          prospective: ['active', 'inactive', 'prospective'],
+          prospective: ['active', 'prospective'],
           active: ['active', 'inactive'],
           inactive: [ 'inactive'],
           trainee: ['trainee active', 'inactive', 'trainee'],
@@ -438,6 +438,7 @@ export class OnboardingDetailsComponent {
   }
 
   showButtons(): void {
+    this.getEmployeeId();
     this.buttons = !this.buttons;
 
     if (this.buttons) {
@@ -445,6 +446,11 @@ export class OnboardingDetailsComponent {
       this.onboardingForm.enable();
       this.getEmployeeId()
       this.onboardingForm.get('totalExperience')?.disable()
+      // this.onboardingForm.get('status')?.disable()
+      // if(this.empinfo.empstatus?.toLowerCase() === 'offer letter accepted'){
+      //   this.onboardingForm.get('status')?.enable()
+      // }
+
     } else {
       this.getEmployeeId()
       this.onboardingForm.disable();

@@ -34,6 +34,7 @@ import { SignalsService } from '../../../../services/signals.service';
 import { LeaveApproval } from '../../../../Interfaces/pendingapprovalsmodel';
 import { TableModule } from 'primeng/table';
 import { environment } from '../../../../../environments/environment';
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-compoff-for-your-role-request',
   imports: [
@@ -88,7 +89,8 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    private signalService: SignalsService
+    private signalService: SignalsService,
+    public formsValidation:FormValidationsService
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

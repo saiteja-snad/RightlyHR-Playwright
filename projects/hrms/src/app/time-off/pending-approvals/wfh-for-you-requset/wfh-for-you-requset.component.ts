@@ -35,6 +35,7 @@ import { SignalsService } from '../../../services/signals.service';
 import { TableModule } from 'primeng/table';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { environment } from '../../../../environments/environment';
+import { FormValidationsService } from '../../../services/form-validations.service';
 
 @Component({
   selector: 'app-wfh-for-you-requset',
@@ -90,7 +91,8 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    private signalService: SignalsService
+    private signalService: SignalsService,
+    public formsValidation:FormValidationsService
   ) {}
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');

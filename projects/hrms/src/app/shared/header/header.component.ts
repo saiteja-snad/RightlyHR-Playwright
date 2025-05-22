@@ -6,9 +6,11 @@ import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RbacService } from '../../services/rbac.service';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { MyinfoHeaderTabsComponent } from "../myinfo-tabs/myinfo-header-tabs/myinfo-header-tabs.component";
+import { PersonalinfoHeaderTabsComponent } from "../personalinfo-tabs/personalinfo-header-tabs/personalinfo-header-tabs.component";
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

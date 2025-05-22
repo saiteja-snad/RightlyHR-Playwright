@@ -1,0 +1,83 @@
+/* dashboard.component.css */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid transparent;
+    background: var(--white-color);
+}
+
+.grid-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-width: 5.25rem;
+    min-height: 5.25rem;
+}
+
+/* RIGHT BORDER STYLES */
+.border-right-top::after,
+.border-right-middle::after,
+.border-right-bottom::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    z-index: 1;
+}
+
+.border-right-top::after {
+    background: linear-gradient(to top, #BCD4F0, white);
+}
+
+.border-right-middle::after {
+    background: linear-gradient(to bottom, #BCD4F0, #BCD4F0);
+}
+
+.border-right-bottom::after {
+    background: linear-gradient(to bottom, #BCD4F0, white);
+}
+
+/* BOTTOM BORDER STYLES */
+.border-bottom-left::before,
+.border-bottom-middle::before,
+.border-bottom-right::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+    z-index: 1;
+}
+
+.border-bottom-left::before {
+    background: linear-gradient(to left, #BCD4F0, white);
+}
+
+.border-bottom-middle::before {
+    background: linear-gradient(to right, #BCD4F0, #BCD4F0);
+}
+
+.border-bottom-right::before {
+    background: linear-gradient(to right, #BCD4F0, white);
+}
+
+.icon-wrapper {
+    position: relative;
+}
+
+.icon {
+    width: 20px;
+    height: 25px;
+    cursor: pointer;
+}
+
+.lable-text {
+    font-size: 9px;
+    font-weight: 500;
+    cursor: pointer;
+}

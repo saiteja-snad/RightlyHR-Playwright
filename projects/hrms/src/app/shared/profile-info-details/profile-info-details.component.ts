@@ -5,10 +5,17 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../services/rbac.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { MyinfoHeaderTabsComponent } from "../myinfo-tabs/myinfo-header-tabs/myinfo-header-tabs.component";
+import { PersonalinfoHeaderTabsComponent } from "../personalinfo-tabs/personalinfo-header-tabs/personalinfo-header-tabs.component";
+import { PersonalPersonalTabsComponent } from "../personalinfo-tabs/personal-personal-tabs/personal-personal-tabs.component";
+import { MyInfoPersonalTabsComponent } from "../myinfo-tabs/my-info-personal-tabs/my-info-personal-tabs.component";
+import { MyinfoJobTabsComponent } from "../myinfo-tabs/myinfo-job-tabs/myinfo-job-tabs.component";
+import { PersonalJobTabsComponent } from "../personalinfo-tabs/personal-job-tabs/personal-job-tabs.component";
 @Component({
   selector: 'app-profile-info-details',
-  imports: [CommonModule],
+  imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PersonalPersonalTabsComponent, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, PersonalJobTabsComponent],
   templateUrl: './profile-info-details.component.html',
   styleUrl: './profile-info-details.component.scss'
 })
@@ -29,7 +36,7 @@ export class ProfileInfoDetailsComponent {
   empdata = {} as any;
   profilePic: any;
 
-  constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public rbac: RbacService,private route: ActivatedRoute) { }
+  constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService, public rbac: RbacService,private route: ActivatedRoute,private router: Router) { }
 
   ngOnInit(): void {
     if (this.route.snapshot.routeConfig?.path === 'personalinfo') {
@@ -49,6 +56,9 @@ export class ProfileInfoDetailsComponent {
       this.getEmployeeId();
     });
 
+  }
+  isActive(route: string): boolean {
+    return this.router.url.includes(route); //based on the route, header tab will be changes
   }
 
   getJobDetails() {

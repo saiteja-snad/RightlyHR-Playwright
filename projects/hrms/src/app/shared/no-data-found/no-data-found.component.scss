@@ -11,6 +11,15 @@
 }
 
 .no-data-image {
-    width: 14rem;
-    height: 13rem;
+    width: 197px;
+    height: 171px;
+}
+
+.no-data-text {
+    font-weight: 600;
+    font-size: var(--fontsize16);
+    line-height: 150%;
+    letter-spacing: 0%;
+    text-transform: capitalize;
+    color: #555555;
 }

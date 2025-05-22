@@ -47,11 +47,9 @@ export interface ICategoryDetails {
   categoryColor: any;
   categoryCode: any;
   duration: number;
-
   probationLeaves: number;
   noticePeriodLeaves: number;
 }
-
 export interface Ileavesdatas {
   requestedBy: any;
   isNotVisible: boolean;
@@ -81,7 +79,6 @@ export interface Ileavesdatas {
   endTimeProp: any;
   startTimeProp: any;
 }
-
 export interface Ilpid {
   employeeId: any;
   leaveType: any;
@@ -101,7 +98,6 @@ export interface Ilpid {
   actualStatus: string;
   durationType: any;
 }
-
 export interface ILeaves {
   custompolicyleaves: any;
   remainingLeaves: number;
@@ -113,7 +109,6 @@ export interface ILeaves {
   lpId: number;
   leavesTaken: number;
 }
-
 export interface ILeavesTaken {
   id: number;
   employeeId: number;
@@ -122,14 +117,12 @@ export interface ILeavesTaken {
   remainingLeaves: number;
   totalleaves: number;
 }
-
 export interface IValidations {
   isStartTimeShouldbelessthanEndTime: boolean;
   StartTimeShouldbelessthanEndTimeErrorMessage?: string;
   isdurationValidated: boolean;
   DurationErrorMessage?: string;
 }
-
 export interface RegularizationApproverComment {
   id: number;
   pendingItemsId: number;
@@ -140,7 +133,6 @@ export interface RegularizationApproverComment {
   addedName: string;
   action: string;
 }
-
 export interface RegularizationRequest {
   id: number;
   raisedFor: number;
@@ -157,8 +149,6 @@ export interface RegularizationRequest {
   approverHeaderId: number;
   regularizationApproverComments: RegularizationApproverComment[];
 }
-
-
 export interface LeaveType {
   id: number;
   name: string;
@@ -167,8 +157,6 @@ export interface LeaveType {
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
 }
-
-
 export interface IEAV {
   id: number;
   entity: string;
@@ -176,30 +164,26 @@ export interface IEAV {
   value: string;
   meta: string;
 }
-
-
 export interface AttendanceRequest {
   entity: AttendanceEntity;
   approvalHeader: ApprovalHeader;
   module: Module;
   currentApprover: string;
 }
-
 export interface AttendanceEntity {
   attendanceRequestId: number;
   attendanceRequestEmployeeId: number;
   attendanceRequestFusionEmployeeId: string;
-  attendanceRequestStartTime: string; 
+  attendanceRequestStartTime: string;
   attendanceRequestEndTime: string;
   attendanceRequesterName: string;
   attendanceRequestDuration?: number;
-  attendanceRequestAppliedDate: string; 
+  attendanceRequestAppliedDate: string;
   attendanceRequestDescription: string;
   attendanceRequestDurationType: string;
   spheaderId: number;
-  attendanceApprovalcomments: any[]; 
+  attendanceApprovalcomments: any[];
 }
-
 export interface ApprovalHeader {
   id: number;
   moduleId: number;
@@ -211,23 +195,18 @@ export interface ApprovalHeader {
   approvedType: string;
   requestedBy: number;
 }
-
-
 export interface Module {
   id: number;
   moduleName: string;
   approvalflowRequired: boolean;
   categoryType: string;
 }
-
-
 export interface PermissionRequestResponse {
   entity: PermissionRequest;
   approvalHeader: ApprovalHeader;
   module: Module;
   currentApprover: string;
 }
-
 export interface PermissionRequest {
   id: number;
   raisedFor: number;
@@ -245,8 +224,6 @@ export interface PermissionRequest {
   headerId: number;
   regularizationApproverComments: any[]; // Define type if structured
 }
-
-
 export interface ApprovalStatusCount {
   moduleId: number;
   moduleName: string;
@@ -254,44 +231,40 @@ export interface ApprovalStatusCount {
   forYourRole: number;
   totalCount: number;
 }
-
-export interface ILeavePolicyData{
-  id:number
-  year :number
-  locationId :any
-  subLocationId :number
-  shiftId :number
-  categoryId :number
-  allowedDays :number
-  entityType :string
-  entityReferenceId:number
-  status :string
-  comments :string
-  addedBy :number
-  addedDate :Date
-  lastModifiedBy :number
-  lastModifiedDate :Date
-  }
-  export interface Igradeid{
-    gradeId: number;
-    gradeName: string;
-    jobGrade: string;
-    createdat: any;
-    updatedat: any;
-    isdeleted: string;
-    maxDays:number;
-    categoryId:number;
-    lpId:number
+export interface ILeavePolicyData {
+  id: number
+  year: number
+  locationId: any
+  subLocationId: number
+  shiftId: number
+  categoryId: number
+  allowedDays: number
+  entityType: string
+  entityReferenceId: number
+  status: string
+  comments: string
+  addedBy: number
+  addedDate: Date
+  lastModifiedBy: number
+  lastModifiedDate: Date
 }
-
-
+export interface Igradeid {
+  gradeId: number;
+  gradeName: string;
+  jobGrade: string;
+  createdat: any;
+  updatedat: any;
+  isdeleted: string;
+  maxDays: number;
+  categoryId: number;
+  lpId: number
+}
 export interface ExpenseApprovalResponse {
   entity: ExpenseEntity;
   approvalHeader: ApprovalHeader;
   module: Module;
   currentApprover: string;
 }
-
 export interface ExpenseEntity {
   expenses_ID: number;
   applied_date: string;
@@ -305,27 +278,23 @@ export interface ExpenseEntity {
   pendingheaderId: number;
   expenseApproverComments: any[]; // Replace `any` with specific type if available
 }
-
-
-export interface IEligibilityCriteria{
-  id:number;
-  name:string;
-  value:string;
+export interface IEligibilityCriteria {
+  id: number;
+  name: string;
+  value: string;
 }
-
-export interface IPermissionType{
-  id:number;
-  name:string;
-  type:string
+export interface IPermissionType {
+  id: number;
+  name: string;
+  type: string
   isDeleted: boolean,
   createdAt: any,
-  updatedAt:any 
+  updatedAt: any
 }
-
-export interface Ipermissions{
-  name:string;
+export interface Ipermissions {
+  name: string;
   isDeleted: boolean,
-  type:string
+  type: string
 }
 export interface IPermissionsvalue {
   id: number;
@@ -341,7 +310,6 @@ export interface IRegularizationvalue {
   value: string;
   meta: string;
 }
-
 export interface OrgShiftItem {
   id: number;
   headerID: number;
@@ -358,7 +326,6 @@ export interface OrgShiftItem {
   halfDayMinHrs: number;
   fullDayMinHrs: number;
 }
-
 export interface ShiftData {
   id: number;
   locationId: number;
@@ -370,7 +337,6 @@ export interface ShiftData {
   statusCode: number;
   orgShiftsItems: OrgShiftItem[];
 }
-
 export interface Iorgcategoryleaves {
   id: any;
   applicableYear: any;
@@ -428,7 +394,6 @@ export interface OrgShiftItem {
   halfDayMinHrs: number;
   fullDayMinHrs: number;
 }
-
 export interface ShiftData {
   id: number;
   locationId: number;
@@ -440,7 +405,6 @@ export interface ShiftData {
   statusCode: number;
   orgShiftsItems: OrgShiftItem[];
 }
-
 export interface ApprovalStatusCount {
   moduleId: number;
   moduleName: string;

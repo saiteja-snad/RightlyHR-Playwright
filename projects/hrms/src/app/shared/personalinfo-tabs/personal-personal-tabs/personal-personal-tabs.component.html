@@ -1,14 +1,12 @@
 
-<div class="component-nav-tabs-container card px-2">
-    <p-tabs value="0" scrollable>
-        <p-tablist>
-            <ng-container *ngFor="let tab of navTabs;">
-                <p-tab [value]="tab.link">
-                    <a [routerLink]="tab.link" routerLinkActive="nav-tab-active" class="nav-link">
-                        {{ tab.label }}
-                    </a>
-                </p-tab>
-            </ng-container>
-        </p-tablist>
-    </p-tabs>
+<div class="grid-container">
+    <div class="grid-item" *ngFor="let tab of filteredTabs; let i = index" [ngClass]="{'border-right-top': isInTopRow(i) && !isLastColumn(i),
+            'border-right-middle': isInMiddleRow(i) && !isLastColumn(i),'border-right-bottom': isInLastRow(i) && !isLastColumn(i),
+            'border-bottom-left': isFirstColumn(i) && !isInLastRow(i),'border-bottom-middle': isMiddleColumn(i) && !isInLastRow(i),
+            'border-bottom-right': isLastColumn(i) && !isInLastRow(i)}" (click)="navigateToAccessedRoute(tab.link)">
+        <div class="d-flex flex-column align-items-center">
+            <img [src]="tab.icon" alt="{{ tab.label }}" class="icon mb-2" />
+            <span class="d-flex lable-text">{{ tab.label }}</span>
+        </div>
+    </div>
 </div>

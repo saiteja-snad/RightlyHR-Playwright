@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs';
 import { Iteammembers } from '../../../Interfaces/members-model';
 import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AccessNavigationService } from '../../../services/access-navigation.service';
 
 @Component({
   selector: 'app-myteam-members',
@@ -17,8 +19,9 @@ export class MyteamMembersComponent implements OnInit, OnDestroy {
   empinfo: any
   subscription!: Subscription;
   searchValue = ''
+  emp: any = {}
   teamMemberArray: Iteammembers[] = [];
-  constructor(private http: HttpService) { }
+  constructor(private http: HttpService, private router: Router, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
@@ -37,6 +40,23 @@ export class MyteamMembersComponent implements OnInit, OnDestroy {
         console.error(error);
       }
     );
+  }
+
+  select(act: any) {
+    console.log(act)
+    this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
+
+    // this.router.navigate(['/personalinfo']);
+    this.goToAccessibleRoute('/personalinfo')
+  }
+
+  goToAccessibleRoute(actualRoute: string) {
+    const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
+    if (route) {
+      this.router.navigate([route]);
+    } else {
+      this.router.navigate(['/unauthorized']);
+    }
   }
 
   ngOnDestroy(): void {

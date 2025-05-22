@@ -16,43 +16,44 @@
 
         <!--user additional details-->
         <div class="text-nowrap mb-3 ">
-            <div >
+            <div>
                 <hr class="dashed-line">
             </div>
-            <div class="d-flex  mb-2">
-                <div>
-                    <p class="name text-center mb-0">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}</p>    
-                <p class="sub-text text-center mb-0">{{this.empdata?.workEmail || 'N/A'}}</p>
-                <p class="sub-text text-center mb-0 me-3">{{jobRole}}</p>
+            <div class="d-flex justify-content-center align-items-centermb-2">
+              
+                    <p class="name mb-0">{{empdata?.firstName}} {{empdata?.middleName || ''}}
+                        {{empdata?.lastName}}</p>
+                    <p class="sub-text mb-0">{{this.empdata?.workEmail || 'N/A'}}</p>
+                    <p class="sub-text mb-0 me-3">{{jobRole}}</p>
 
-                </div>
+              
             </div>
-            
-                <div class="d-flex justify-content-center align-items-center">
-                    <i class="bi bi-telephone profile-data-icon me-2"></i><span class="details-text">
-                        {{empdata?.workPhoneCountryCode}} {{empdata?.workPhone || 'N/A'}} </span>
-                </div>
-                <div class="d-flex justify-content-center align-items-center">
-                    <i class="bi bi-geo-alt profile-data-icon me-2"></i><span
-                        class="details-text">{{jobdata?.locationName}},
-                        {{jobdata?.sublocationName || 'N/A' }}</span>
-                </div>
-                <div class="d-flex justify-content-center align-items-center">
-                    <i class="bi bi-clock-history profile-data-icon me-2"></i> <span class="details-text">
-                        <b *ngIf="jobdata?.jobTypeName; else noData">{{jobdata?.jobTypeName}}</b>
-                        <span *ngIf="jobdata?.jobTypeName && jobdata?.shiftName"> || </span>
-                        <span *ngIf="jobdata?.shiftName">{{jobdata?.shiftName}}</span>
-                        <span
-                            *ngIf="(jobdata?.shiftName || jobdata?.jobTypeName) && (jobdata?.shiftStartTime && jobdata?.shiftEndTime)">
-                            || </span>
-                        <span
-                            *ngIf="jobdata?.shiftStartTime && jobdata?.shiftEndTime">{{jobdata?.shiftStartTime}}-{{jobdata?.shiftEndTime}}</span>
-                        <ng-template #noData>N/A</ng-template>
-                    </span>
-                </div>
-           
-        
-            
+
+            <div class="d-flex justify-content-center align-items-center">
+                <i class="bi bi-telephone profile-data-icon me-2"></i><span class="details-text">
+                    {{empdata?.workPhoneCountryCode}} {{empdata?.workPhone || 'N/A'}} </span>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <i class="bi bi-geo-alt profile-data-icon me-2"></i><span
+                    class="details-text">{{jobdata?.locationName}},
+                    {{jobdata?.sublocationName || 'N/A' }}</span>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <i class="bi bi-clock-history profile-data-icon me-2"></i> <span class="details-text">
+                    <b *ngIf="jobdata?.jobTypeName; else noData">{{jobdata?.jobTypeName}}</b>
+                    <span *ngIf="jobdata?.jobTypeName && jobdata?.shiftName"> || </span>
+                    <span *ngIf="jobdata?.shiftName">{{jobdata?.shiftName}}</span>
+                    <span
+                        *ngIf="(jobdata?.shiftName || jobdata?.jobTypeName) && (jobdata?.shiftStartTime && jobdata?.shiftEndTime)">
+                        || </span>
+                    <span
+                        *ngIf="jobdata?.shiftStartTime && jobdata?.shiftEndTime">{{jobdata?.shiftStartTime}}-{{jobdata?.shiftEndTime}}</span>
+                    <ng-template #noData>N/A</ng-template>
+                </span>
+            </div>
+
+
+
             <div class="d-flex justify-content-center align-items-center">
                 <span class="details-text"><b>Team Manager</b> :
                     {{reportesto?.fistname || 'N/A'}} {{reportesto?.middlename || ''}} {{reportesto?.lastname}}</span>
@@ -74,21 +75,21 @@
 
     </div>
     <div>
-            <!--nav tabs content-->
-    <div >
-        <div *ngIf="isActive('personalinfo/personal' )" >
-            <app-personal-personal-tabs></app-personal-personal-tabs>
-        </div>
-        <div *ngIf="isActive('myinfo/personal')"  >
-            <app-my-info-personal-tabs />
-        </div>
-        <div *ngIf="isActive('myinfo/job' )"  >
-            <app-myinfo-job-tabs />
-        </div>
+        <!--nav tabs content-->
+        <div>
+            <div *ngIf="isActive('personalinfo/personal' )">
+                <app-personal-personal-tabs></app-personal-personal-tabs>
+            </div>
+            <div *ngIf="isActive('myinfo/personal')">
+                <app-my-info-personal-tabs />
+            </div>
+            <div *ngIf="isActive('myinfo/job' )">
+                <app-myinfo-job-tabs />
+            </div>
 
-        <div *ngIf="isActive('personalinfo/job')" >
-            <app-personal-job-tabs></app-personal-job-tabs>
+            <div *ngIf="isActive('personalinfo/job')">
+                <app-personal-job-tabs></app-personal-job-tabs>
+            </div>
         </div>
-    </div>
     </div>
 </div>

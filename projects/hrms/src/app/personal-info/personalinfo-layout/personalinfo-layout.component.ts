@@ -522,7 +522,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     if (currentPath.startsWith('/myinfo')) {
       this.headerName = "My Info";
       this.showBackIcon = false;  // Hide back icon for personalinfo
-      return; // Important: stop here so admin logic does NOT run
+      return;
     }
 
     // Now we know route is NOT personalinfo, so we check admin logic

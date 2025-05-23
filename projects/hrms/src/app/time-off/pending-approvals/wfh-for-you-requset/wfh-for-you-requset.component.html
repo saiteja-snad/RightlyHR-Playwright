@@ -58,20 +58,20 @@
                     <td>
                         <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
                     </td>
-                    <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
-                    <td>{{leave.entity.attendanceRequesterName}}</td>
-                    <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
-                    <td>{{leave.entity.attendanceRequestDurationType}}</td>
+                    <td>{{leave?.entity?.attendanceRequestFusionEmployeeId}}</td>
+                    <td>{{leave?.entity?.attendanceRequesterName}}</td>
+                    <td>{{leave?.entity?.attendanceRequestStartTime | dateformat}}</td>
+                    <td>{{leave?.entity?.attendanceRequestDurationType}}</td>
                     <td class="text-center">
-                        @if(leave.entity.attendanceRequestDescription != null &&
-                        leave.entity.attendanceRequestDescription != '') {
+                        @if(leave?.entity?.attendanceRequestDescription != null &&
+                        leave?.entity?.attendanceRequestDescription != '') {
                         <div>
                             <a type="button" [ngbPopover]="reason">
                                 <!-- <img src="images\info-fill.png" alt="info icon" class="info-icon"> -->
                                 <i class="bi bi-info-circle-fill" ></i>
                             </a>
                             <ng-template #reason>
-                                <p class="mb-0">{{leave.entity.attendanceRequestDescription }} </p>
+                                <p class="mb-0">{{leave?.entity?.attendanceRequestDescription }} </p>
                             </ng-template>
                         </div>
                         }@else {
@@ -79,8 +79,8 @@
                         }
                     </td>
                     <td class="text-center">
-                        <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
-                            <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
+                        <div *ngIf="leave?.entity?.attendanceApprovalcomments[0]?.comments;else compoffcomments">
+                            <div (click)="comments(leave?.entity?.attendanceApprovalcomments,commentspopup)">
                                 <!-- <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                   -->
                                 <i class="bi bi-info-circle-fill" ></i>
@@ -88,7 +88,7 @@
                         </div>
                         <ng-template #compoffcomments>-</ng-template>
                     </td>
-                    <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
+                    <td>{{leave?.entity?.attendanceRequestAppliedDate | dateformat}}</td>
                     @if(!multiSelect && (rbac.allowedToAccess('For You (WFH).update') || 
                     rbac.allowedToAccess('For You (WFH).delete'))){
                     <td class="text-center">
@@ -98,8 +98,8 @@
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('For You (WFH).update')){
-                                @if( leave.approvalHeader.currentapprovalStage !=
-                                leave.approvalHeader.finalapprovalStage){
+                                @if( leave?.approvalHeader?.currentapprovalStage !=
+                                leave?.approvalHeader?.finalapprovalStage){
                                 <li (click)="openApproveModal(approval,leave)">
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
                                         translate}}</a>
@@ -107,8 +107,8 @@
                                 }
                                 }
                                 @if(rbac.allowedToAccess('For You (WFH).update')){
-                                @if( leave.approvalHeader.currentapprovalStage ==
-                                leave.approvalHeader.finalapprovalStage){
+                                @if( leave?.approvalHeader?.currentapprovalStage ==
+                                leave?.approvalHeader?.finalapprovalStage){
                                 <li (click)="handleProcess(leave)">
                                     <a class="dropdown-item">
                                         <i class="bi bi-check-circle me-2"></i>{{'Process' | translate}}</a>
@@ -249,10 +249,10 @@
             <div class="card p-3">
                 <div >
                     <div class="mb-0">
-                        <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
-                        <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
-                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
-                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
+                        <p><b>{{'Comments' | translate}}:</b> {{ comment?.comments }} </p>
+                        <p><b>{{'Commented By'|translate}}:</b> {{ comment?.addedName }}</p>
+                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment?.addedDate | dateformat }}</p>
+                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment?.addedByFusionEmpId }}</p>
                     </div>
                 </div>
             </div>

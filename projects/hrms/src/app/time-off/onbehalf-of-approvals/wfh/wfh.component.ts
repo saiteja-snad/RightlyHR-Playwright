@@ -20,10 +20,12 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { Table, TableModule } from 'primeng/table';
+import { FormValidationsService } from '../../../services/form-validations.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-wfh',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe,
-     ReactiveFormsModule, TranslateModule,TableModule,],
+    ReactiveFormsModule, TranslateModule, TableModule, DataLoaderContentComponent],
   templateUrl: './wfh.component.html',
   styleUrl: './wfh.component.scss'
 })
@@ -56,7 +58,7 @@ export class WfhComponent {
   selectedLeavesItems: LeaveApproval[] =[];
   wfhsselect!: AttendanceRequest;
   requestBody = {} as any;
-  
+  dataload = false;
   requestSummary!:any;
   constructor(
     private modalService: NgbModal, 
@@ -64,7 +66,8 @@ export class WfhComponent {
     private http: HttpService,
     private sharedModalService: OpenModalService, 
     public rbac: RbacService,
-    public formValidation:FormValidationService
+    public formValidation:FormValidationService,
+    public formsValidation: FormValidationsService
   ) {
     // React to trigger signal from shared service
     effect(() => {
@@ -94,7 +97,7 @@ export class WfhComponent {
 
 
 
-   selectCheck(value: any) {
+  selectCheck(value: any) {
   this.multiSelect = Array.isArray(value) && value.length > 0;
 
   if (!value || value.length === 0) {
@@ -194,6 +197,7 @@ private updateTableSelectionState(selectedItems: any[]) {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
+    this.dataload = true;
     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.wfhModuleId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         console.log(response.data);
@@ -201,6 +205,9 @@ private updateTableSelectionState(selectedItems: any[]) {
         this.wfhsselect = response.data;
       },
       error: (reason) => console.log(reason),
+      complete: () => {
+        this.dataload =  false;
+      },
     });
   }
 
@@ -284,6 +291,7 @@ bulkapprove(approverPopup: any) {
   }
 
   handleAccept(approveForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (approveForm.valid) {
       const formData = approveForm.value;
       let approvedBy = this.empinfo.employeeId.toString();
@@ -349,6 +357,7 @@ bulkapprove(approverPopup: any) {
   }
 
   handleReject(rejectForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
       let approvedBy = this.empinfo.employeeId.toString();
@@ -379,7 +388,6 @@ bulkapprove(approverPopup: any) {
           ],
         };
       }
-      this.spinnerLoader = true;
       this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
@@ -445,23 +453,37 @@ bulkapprove(approverPopup: any) {
       message =  'Processing Request, Please wait...';
     }
     this.sharedModalService.openLoaderModal(
-      'Processing Request, Please wait...'
+      message
     );
-    this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (respone: any) => {
-        this.modalService.dismissAll();
-        this.sharedModalService.openSuccessModal('Request Processed Successfully');
-        this.http.triggerActionSignal();
-        this.getAllPendingApprovals();
-      },
-      error: (reason: any) => {
-        this.modalService.dismissAll();
-        this.sharedModalService.openErrorModal(reason.error.Message);
-      },
-      complete: () => {
-        this.getAllPendingApprovals();
-      },
-    });
+    this.http
+      .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.modalService.dismissAll();
+          if (
+            this.selectedLeavesItems &&
+            this.selectedLeavesItems.length <= 0
+          ) {
+            this.sharedModalService.openSuccessModal(
+              'Request Processed Successfully'
+            );
+          } else {
+            this.requestSummary = response.data;
+            this.openModal(this.leaveSummary);
+          }
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
+          this.http.triggerActionSignal();
+          this.getAllPendingApprovals();
+        },
+        error: (reason: any) => {
+          this.modalService.dismissAll();
+          this.sharedModalService.openErrorModal(reason.error.Message);
+        },
+        complete: () => {
+        },
+      });
   }
 
   comments(value: any, commentspopup: any) {

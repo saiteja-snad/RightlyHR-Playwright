@@ -28,6 +28,7 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
 import { Table, TableModule } from 'primeng/table';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 @Component({
   selector: 'app-permissions',
   imports: [
@@ -41,7 +42,8 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     ReactiveFormsModule,
     TranslateModule,
     TableModule,
-  ],
+    DataLoaderContentComponent
+],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
 })
@@ -73,7 +75,8 @@ export class PermissionsComponent {
   permissionsselect!: PermissionRequestResponse;
   requestBody = {} as any;
   requestSummary!: any;
-
+  dataload = false;
+  searchValue: any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -114,27 +117,31 @@ export class PermissionsComponent {
   }
 
   getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
-    const allLeaves = this.leaves?.getValue() ?? [];
+  const search = this.searchValue?.toLowerCase() ?? '';
+  const allLeaves = this.leaves?.getValue() ?? [];
 
-    // Filter
-    let filteredLeaves = allLeaves;
-    // Sort
-    if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
-      return filteredLeaves;
-    }
-
-    const selectedIds = new Set(
-      this.selectedLeavesItems.map((item) => item.approvalHeader?.id)
+  // Filter
+  let filteredLeaves = allLeaves;
+  if (search) {
+    filteredLeaves = filteredLeaves.filter((item: PermissionRequestResponse) =>
+      item.entity?.fusionempId?.toLowerCase().includes(search) ||
+      item.entity?.raisedForName?.toLowerCase().includes(search) ||
+      item.entity?.type?.toLowerCase().includes(search)
     );
-    const selected = filteredLeaves.filter((item) =>
-      selectedIds.has(item.approvalHeader?.id)
-    );
-    const unselected = filteredLeaves.filter(
-      (item) => !selectedIds.has(item.approvalHeader?.id)
-    );
-
-    return [...selected, ...unselected];
   }
+
+  // Sort
+  if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+    return filteredLeaves;
+  }
+
+  const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
+  const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+  const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+
+  return [...selected, ...unselected];
+}
+
 
  selectCheck(value: any) {
   this.multiSelect = Array.isArray(value) && value.length > 0;
@@ -144,98 +151,71 @@ export class PermissionsComponent {
     return;
   }
 
-  if (this.multiSelect) {
-    const stageMap: { [stage: string]: any[] } = {};
+  const stageMap: { [stage: string]: any[] } = {};
 
-    // Group items by their approval stage
-    value.forEach((item: any) => {
-      const stage = item.approvalHeader?.currentapprovalStage;
-      if (!stageMap[stage]) {
-        stageMap[stage] = [];
-      }
-      stageMap[stage].push(item);
-    });
-
-    const stages = Object.keys(stageMap);
-
-    const lastSelected = value[value.length - 1];
-    const lastSelectedStage = lastSelected.approvalHeader?.currentapprovalStage;
-
-    // 🆕 Check if there is already a selection with a different stage
-    const existingStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
-    if (
-      this.selectedLeavesItems.length > 0 &&
-      existingStage &&
-      lastSelectedStage &&
-      existingStage !== lastSelectedStage
-    ) {
-      this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
-
-      const newSelection = this.selectedLeavesItems.filter(
-        item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
-      );
-
-      this.selectedLeavesItems = [...newSelection];
-
-      setTimeout(() => {
-        this.updateTableSelectionState(newSelection);
-      });
-
-      return;
+  // Group items by their approval stage
+  value.forEach((item: any) => {
+    const stage = item.approvalHeader?.currentapprovalStage;
+    if (!stageMap[stage]) {
+      stageMap[stage] = [];
     }
+    stageMap[stage].push(item);
+  });
 
-    // 🔁 Continue existing logic
-    const totalAvailable = this.leaves?.getValue().length || 0;
-    const totalSelected = value.length;
-    const isBulkSelect = totalSelected === totalAvailable;
+  const stages = Object.keys(stageMap);
+  const totalAvailable = this.leaves?.getValue().length || 0;
+  const totalSelected = value.length;
+  const isBulkSelect = totalSelected === totalAvailable;
 
-    let dominantStage = stages[0];
-    let maxCount = stageMap[dominantStage].length;
-
-    for (const stage of stages) {
-      const count = stageMap[stage].length;
-      if (count > maxCount) {
-        dominantStage = stage;
-        maxCount = count;
-      } else if (count === maxCount && stage === '1') {
-        dominantStage = stage;
-      }
+  // Get the dominant stage (most frequent)
+  let dominantStage = stages[0];
+  let maxCount = stageMap[dominantStage].length;
+  for (const stage of stages) {
+    const count = stageMap[stage].length;
+    if (count > maxCount) {
+      dominantStage = stage;
+      maxCount = count;
+    } else if (count === maxCount && stage === '1') {
+      dominantStage = stage;
     }
-
-    if (stages.length > 1 && lastSelectedStage !== dominantStage) {
-      this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
-
-      const newSelection = this.selectedLeavesItems.filter(
-        item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
-      );
-
-      this.selectedLeavesItems = [...newSelection];
-
-      setTimeout(() => {
-        this.updateTableSelectionState(newSelection);
-      });
-
-      return;
-    }
-
-    if (isBulkSelect) {
-      const dominantStageItems = [...stageMap[dominantStage]];
-      this.selectedLeavesItems = dominantStageItems;
-
-      setTimeout(() => {
-        this.updateTableSelectionState(dominantStageItems);
-      });
-    } else {
-      this.selectedLeavesItems = [...value];
-    }
-  } else {
-    this.selectedLeavesItems = [value];
   }
+
+  const lastSelected = value[value.length - 1];
+  const lastSelectedStage = lastSelected.approvalHeader?.currentapprovalStage;
+
+  // Scenario 1: Progressive Selection (mixing stages)
+  const existingStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
+  if (
+    this.selectedLeavesItems.length > 0 &&
+    lastSelectedStage &&
+    existingStage &&
+    lastSelectedStage !== existingStage
+  ) {
+    this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
+    const newSelection = this.selectedLeavesItems.filter(
+      item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+    );
+    this.selectedLeavesItems = [...newSelection];
+    setTimeout(() => this.updateTableSelectionState(newSelection));
+    return;
+  }
+
+  // Scenario 2: Bulk select - filter by dominant stage only
+  if (isBulkSelect && stages.length > 1) {
+    const dominantItems = [...stageMap[dominantStage]];
+    this.selectedLeavesItems = dominantItems;
+
+
+    setTimeout(() => this.updateTableSelectionState(dominantItems));
+    return;
+  }
+
+  // Valid multi-select with same stage
+  this.selectedLeavesItems = [...value];
 }
 
 
-  // Helper method to force update table selection state
-  private updateTableSelectionState(selectedItems: any[]) {
+private updateTableSelectionState(selectedItems: any[]) {
     // Create a new array reference to force change detection
     this.selectedLeavesItems = [...selectedItems];
     
@@ -269,6 +249,7 @@ export class PermissionsComponent {
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
+    this.dataload = true;
     this.http
       .getData(
         `PendingApproval/employee/${EmployeeId}?moduleId=${environment.permissionsModuleId}`
@@ -280,6 +261,9 @@ export class PermissionsComponent {
           this.permissionsselect = response.data;
         },
         error: (reason) => console.log(reason),
+        complete : () =>{
+          this.dataload = false;
+        }
       });
   }
 

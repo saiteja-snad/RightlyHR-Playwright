@@ -5,14 +5,14 @@
         <span class="component-sub-header">Current Address</span>
       </div>
         @if(canAccess('update','address')){
-      @if(!buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
+      @if(!buttons && (empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
       && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
       
       <div>
         <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
        </div>
       }}
-      @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
+      @if(buttons && (empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
       && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
       <div class="d-flex justify-content-end gap-2">
         <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>

@@ -26,6 +26,15 @@
         <div>Rejected ({{rejectedPermissionsRequestsCount}})</div>
       </div>
     </li>
-    }
+  }
+    @if(rbac.allowedToAccess('Cancel (Permissions).view')){
+    <li class="nav-item">
+      <div class="nav-link" [routerLink]="['/time-off/premissions/cancelled']" routerLinkActive="active-nav-link">
+         <img src="/time-off-icon/cancelled-icon.png" alt="Icon" class="icon mb-2">
+       <div> Cancelled
+        ({{cancelPermissionsRequestsCount}})</div>
+        </div>
+    </li>
+  }
   </ul>
 </div>

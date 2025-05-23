@@ -1,26 +1,56 @@
 <div class="custom-main-component-container">
     <div>
         @if (selectedProducts && selectedProducts.length > 0 && multiSelect) {
+             <p><b>Selected Records:</b> {{selectedProducts.length}}</p>
         <div class="d-flex justify-content-end gap-3 mb-3">
-            @if (canBulkApprove()) {
+            <!-- @if (canBulkApprove()) {
                 @if(rbac.allowedToAccess('For Role (Time Off).update')){
-                <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approverPopup)">Approve</button>
+                    <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approverPopup)">Approve</button>
                 }
                 @if(rbac.allowedToAccess('For Role (Time Off).delete')){
-                <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+                }
+            }
+
+            @if (allInPast()) {
+                @if (rbac.allowedToAccess('For Role (Time Off).update')) {
+                    <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+                }
+            } -->
+            <!-- Case 2: Mixed past and future -->
+            <!-- @else if (isMixedDateSelection()) {
+                 @if (rbac.allowedToAccess('For Role (Time Off).update')) {
+                    <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+                }
+                @if (rbac.allowedToAccess('For Role (Time Off).delete')) {
+                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+                }
+            } -->
+            <!-- Case 3: All future/today records -->
+            <!-- @else {
+                @if (rbac.allowedToAccess('For Role (Time Off).delete')) {
+                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+                }
+            } -->
+            @if (canBulkApprove()) {
+                @if(rbac.allowedToAccess('For Role (Time Off).update')){
+                    <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approverPopup)">Approve</button>
+                }
+                @if(rbac.allowedToAccess('For Role (Time Off).delete')){
+                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
                 }
             }
             @if (canBulkProcess()) {
                 @if(rbac.allowedToAccess('For Role (Time Off).update')){
-                <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+                    <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
                 }
                 @if(rbac.allowedToAccess('For Role (Time Off).delete')){
-                <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
                 }
             }
         </div>
         }
-    
+
         <!--Input search-->
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
@@ -28,11 +58,10 @@
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
                 placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
-    
+
         <div class="custom-p-multi-select-table">
             @if(!dataLoad){
-            @if(leavesselect.length > 0){
-            <p-table [value]="leavesselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts"
+            <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts"
                 dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
                 <ng-template #header>
                     <tr>
@@ -47,17 +76,17 @@
                         <th>End Date</th>
                         <th>Reason</th>
                         <th>Approver Comments</th>
-                        @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') || rbac.allowedToAccess('For Role (Time Off).delete'))){
+                        @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') ||
+                        rbac.allowedToAccess('For Role (Time Off).delete'))){
                         <th class="text-center">Action(S)</th>
                         }
-    
                     </tr>
                 </ng-template>
                 <ng-template #body let-item>
-                    @if (rbac.allowedToAccess('Time Off Tab.view')) {
+                    @if (rbac.allowedToAccess('For Role (Time Off).view')) {
                     @if ((((leaves | async) ?? []) | timeoffsearch: searchValue).length > 0) {
                     <!-- @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track
-                                item.approvalHeader.id){ -->
+                                        item.approvalHeader.id){ -->
                     <tr>
                         <td>
                             <p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" />
@@ -70,24 +99,22 @@
                         <td class="text-nowrap">{{item.entity.appliedDate | dateformat}}</td>
                         <td class="text-nowrap">{{item.entity.leaveStartDate | dateformat}}</td>
                         <td class="text-nowrap">{{item.entity.leaveEndDate | dateformat}}</td>
-                        <td>
+                        <td class="text-center">
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    <i class="bi bi-info-circle-fill" ></i>
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity.leaveDescription}}</p>
                                 </ng-template>
                             </div>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <div>
                                 <ng-container
                                     *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
                                     <a type="button">
-                                        <img src="images/info-fill.png" alt="info icon"
-                                            (click)="comments(item.entity.leaveApproverComments, commentspopup)"
-                                            class="info-icon">
+                                         <i class="bi bi-info-circle-fill" (click)="comments(item.entity.leaveApproverComments, commentspopup)"></i>
                                     </a>
                                 </ng-container>
                                 <ng-template #noComments>
@@ -97,8 +124,9 @@
                         </td>
                         @if(!multiSelect){
                         <td class="text-center">
-                             @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') || rbac.allowedToAccess('For Role (Time Off).delete'))){
-                                <div class="dropdown">
+                            @if(!multiSelect &&(rbac.allowedToAccess('For Role (Time Off).update') ||
+                            rbac.allowedToAccess('For Role (Time Off).delete'))){
+                            <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </span>
@@ -109,7 +137,7 @@
                                             (click)="checkLeaveBalance(item,checkbalancepopup)">
                                             <i class="bi bi-calendar-check me-2"></i>Check Balance</a>
                                     </li>
-    
+
                                     <li>
                                         <a class="dropdown-item" (click)="approveleave(approverPopup,item)"
                                             *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('For Role (Time Off).update')">
@@ -121,7 +149,7 @@
                                             <i class="bi bi-x-circle me-2"></i>Reject</a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" (click)="processleave(item)"
+                                        <a class="dropdown-item" (click)="handleProcess(item)"
                                             *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('For Role (Time Off).update')">
                                             <i class="bi bi-check-circle me-2"></i>Process</a>
                                     </li>
@@ -132,7 +160,7 @@
                                     </li>
                                 </ul>
                             </div>
-                             }
+                            }
                         </td>
                         }
                     </tr>
@@ -140,19 +168,21 @@
                     }
                     @else{
                     <tr>
-                        <div class="loader-placeholder-content">
+                        <td colospan="12">
                             <app-no-data-found />
-                        </div>
+                        </td>
                     </tr>
                     }
                     }
                 </ng-template>
+                <ng-template #emptymessage>
+                    <tr>
+                        <td colospan="9">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </ng-template>
             </p-table>
-            }@else {
-            <div class="loader-placeholder-content">
-                <app-no-data-found />
-            </div>
-            }
             }@else {
             <div class="loader-placeholder-content">
                 <app-data-loader-content />
@@ -177,7 +207,7 @@
         </div>
         <div class="custom-main-popup-content" *ngFor="let comment of approverComments">
             <div class="card p-3">
-                <div >
+                <div>
                     <div class="mb-0">
                         <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
                         <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
@@ -198,7 +228,8 @@
                 <p class="popup-heading mb-0">Comments</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content">
@@ -206,14 +237,17 @@
             <div class="mb-3">Booked : {{this.leaveEntitlementsList.booked}}</div>
             <div class="mb-3">Processed : {{this.leaveEntitlementsList.utilizedDays}}</div>
             <div class="mb-3" *ngIf="(this.leaveEntitlementsList.category?.isProbationAllowed && this.leaveEntitlementsList.probationLeaves > 0);
-            else  untilizeddays">Available : {{ this.leaveEntitlementsList.probationLeaves - this.leaveEntitlementsList.utilizedDays }}
+            else  untilizeddays">Available : {{ this.leaveEntitlementsList.probationLeaves -
+                this.leaveEntitlementsList.utilizedDays }}
             </div>
             <ng-template #untilizeddays>
-                <div>Available : {{ this.leaveEntitlementsList.allowedDays - this.leaveEntitlementsList.utilizedDays }}</div>
+                <div>Available : {{ this.leaveEntitlementsList.allowedDays - this.leaveEntitlementsList.utilizedDays }}
+                </div>
             </ng-template>
-            <div *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0" class="mb-3">
-                    Probation Leaves : {{ leaveEntitlementsList.category.isProbationAllowed !== null ?
-                    leaveEntitlementsList.probationLeaves : 'N/A' }}
+            <div *ngIf="leaveEntitlementsList.category?.isProbationAllowed && leaveEntitlementsList.probationLeaves > 0"
+                class="mb-3">
+                Probation Leaves : {{ leaveEntitlementsList.category.isProbationAllowed !== null ?
+                leaveEntitlementsList.probationLeaves : 'N/A' }}
             </div>
         </div>
     </div>
@@ -250,27 +284,30 @@
                 <div class="mb-3">
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
                             class="error-msg">*</span></label>
-                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments" name="Reasons"
-                        #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" pattern="^\S.*"
-                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
+                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
+                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                        pattern="^\S.*" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
+                        required></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250
                     </div>
                     <div class="error-msg"
-                        *ngIf="(Reasons.errors?.['pattern'] && Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
-                        Comments are required </div>
+                        *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
+                        Comments are required
+                    </div>
                 </div>
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'| translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
+                    translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(selectedLeaveData)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
                     @if(spinnerLoader){
-                        <div class="button-loader-content">
-                            <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                            <span>{{'Loading...'}}</span>
-                        </div>
+                    <div class="button-loader-content">
+                        <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                        <span>{{'Loading...'}}</span>
+                    </div>
                     }@else {
                     <span>{{'Approve'| translate}}</span>
                     }
@@ -291,20 +328,23 @@
         <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
             <div class="custom-main-popup-content">
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments" name="Reasons"
-                        #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
+                            class="text-danger">*</span></label>
+                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
+                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" pattern="^\S.*"
                         (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
-                        *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
-                        Comments are required </div>
+                        *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
+                        Comments are required
+                    </div>
                 </div>
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'| translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
+                    translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleReject(leaveapprovee)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
                     @if(spinnerLoader){
@@ -332,7 +372,7 @@
                     <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
- 
+
         <div class="custom-main-popup-content">
             <div class="row">
                 <div class="col-sm-4 text-center">

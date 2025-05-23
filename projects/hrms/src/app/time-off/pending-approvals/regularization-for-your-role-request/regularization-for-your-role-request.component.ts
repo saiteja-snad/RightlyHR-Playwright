@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
@@ -35,7 +35,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
     DataLoaderContentComponent,
     TableModule,
     NoDataFoundComponent
-],
+  ],
   templateUrl: './regularization-for-your-role-request.component.html',
   styleUrl: './regularization-for-your-role-request.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -47,7 +47,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
   multiSelect = false;
   searchValue: any;
   dataLoad = false;
-  spinnerLoader= false;
+  spinnerLoader = false;
   responseSummary!: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
@@ -56,6 +56,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
   approverComments = [] as any[];
   regularizationselect!: LeaveApproval[];
   selectedProducts!: LeaveApproval[];
+  requestBody = {} as any;
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
@@ -90,10 +91,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
 
   bulkapprove(approverPopup: any) {
     this.intializeApproveForm();
-    this.modalService.open(approverPopup, {
-      centered: true,
-      backdrop: 'static',
-    });
+    this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
   }
 
   bulkReject(rejectPopup: any) {
@@ -123,19 +121,13 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: [
-        '',
-        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
-      ],
+      comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: [
-        '',
-        [Validators.required, Validators.maxLength(250), noWhitespaceValidator],
-      ],
+      comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
   }
 
@@ -152,14 +144,13 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
           this.dataLoad = false;
         },
         error: (reason) => {
-          console.log(reason);
           this.dataLoad = false;
         },
       });
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
   onRowsChange() {
@@ -183,42 +174,244 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
     this.selectedLeaveData = request;
   }
 
+  getFilteredAndSortedLeaves(): any[] {
+    const search = this.searchValue?.toLowerCase() ?? '';
+    let leaves = this.regularizationselect ?? [];
+    // Filter
+    if (search) {
+      leaves = leaves.filter(item =>
+        item.entity?.leavefusionempId?.toLowerCase().includes(search) ||
+        item.entity?.employeeName?.toLowerCase().includes(search) ||
+        item.entity?.leaveDurationType?.toLowerCase().includes(search) ||
+        item.entity?.leaveCategoryName?.toLowerCase().includes(search)
+      );
+    }
+
+    // Sort (preserve original sorting logic)
+    if (!this.selectedProducts || this.selectedProducts.length === 0) {
+      return leaves;
+    }
+
+    const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
+    const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+    const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+    return [...selected, ...unselected];
+  }
+
+  removeLeadingWhitespace(control: AbstractControl | null): void {
+    if (control) {
+      const originalValue = control.value || '';
+      const trimmedValue = originalValue.replace(/^\s+/, '');
+      if (originalValue !== trimmedValue) {
+        control.setValue(trimmedValue, { emitEvent: false });
+      }
+    }
+  }
+
+  // handleAccept(approveForm: FormGroup): void {
+  //   if (approveForm.valid) {
+  //     this.spinnerLoader = true;
+  //     const formData = approveForm.value;
+  //     let approvedBy = this.empinfo.employeeId.toString();
+  //     let comments = formData.comments;
+
+  //     let requestBody = {
+  //       requestProcessedBy: approvedBy,
+  //       status: "Approved",
+  //       comments: comments,
+  //       moduleId: environment.attendanceRegularizationModuleId,
+  //       headerRequests: this.selectedProducts.map((item) => ({
+  //         headerID: item.approvalHeader.id,
+  //         currentStage: item.approvalHeader.currentapprovalStage
+  //       }))
+  //     }
+
+  //     this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+  //       .subscribe({
+  //         next: (respone: any) => {
+  //           this.modalService.dismissAll();
+  //         if(this.selectedProducts.length > 1){
+  //           this.responseSummary = respone.data;
+  //           this.openModal(this.leaveSummary);
+  //         }else{
+  //           this.sharedModalService.openSuccessModal('Request Approved Successfully')
+  //         }
+  //         },
+  //         error: (reason: any) => {
+  //           this.spinnerLoader = false;
+  //           this.modalService.dismissAll();
+  //           if (reason.error.statusCode == 400) {
+  //             this.sharedModalService.openErrorModal(reason.error.message)
+  //           }
+  //           else if (reason.error.statusCode == 400) {
+  //             this.sharedModalService.openErrorModal(reason.error.message)
+  //           }
+  //           else {
+  //             this.sharedModalService.openErrorModal('Request Approval Failed');
+  //           }
+  //         },
+  //         complete: () => {
+  //           this.spinnerLoader = false;
+  //           this.approveForm.reset();
+  //           this.multiSelect = false;
+  //           this.selectedLeaveData = {} as PermissionRequestResponse;
+  //           this.signalService.regularizationForYouTriggerSignal.set(true);
+  //           this.signalService.regularizationSidNavCountTriggerSignal.set(true);
+  //           this.getAllPendingApprovals();
+  //            this.selectedProducts = [];
+  //         },
+  //       });
+  //   }
+  // }
+
+  // handleProcess(request: any) {
+  //   this.selectedLeaveData = request;
+  //   let approvedBy = this.empinfo.employeeId.toString();
+  //   let requestBody = {
+  //     requestProcessedBy: approvedBy,
+  //     status: 'Processed',
+  //     moduleId: environment.attendanceRegularizationModuleId,
+  //     headerRequests: this.selectedProducts.map((item) => ({
+  //       headerID: item.approvalHeader.id,
+  //       currentStage: item.approvalHeader.currentapprovalStage
+  //     }))
+  //   }
+
+  //   this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
+  //   this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (response: any) => {
+  //         this.modalService.dismissAll();
+  //         if(this.selectedProducts.length > 1){
+  //           this.responseSummary = response.data;
+  //           this.openModal(this.leaveSummary);
+  //         }else{
+  //           this.sharedModalService.openSuccessModal('Request Processed Successfully')
+  //         }
+  //       },
+  //       error: (reason: any) => {
+  //         this.modalService.dismissAll();
+  //         if (reason.error.statusCode == 400) {
+  //           this.sharedModalService.openErrorModal(reason.error.message)
+  //         }
+  //         else if (reason.error.statusCode == 400) {
+  //           this.sharedModalService.openErrorModal(reason.error.message)
+  //         }
+  //         else {
+  //           this.sharedModalService.openErrorModal('Request Processed Failed');
+  //         }
+  //       },
+  //       complete: () => {
+  //         this.multiSelect = false;
+  //         this.signalService.regularizationForYouTriggerSignal.set(true);
+  //         this.signalService.regularizationSidNavCountTriggerSignal.set(true);
+  //         this.getAllPendingApprovals();
+  //          this.selectedProducts = [];
+  //       },
+  //     });
+  // }
+
+  // handleReject(rejectForm: FormGroup): void {
+  //   if (rejectForm.valid) {
+  //     this.spinnerLoader = true;
+  //     const formData = rejectForm.value;
+  //     let approvedBy = this.empinfo.employeeId.toString();
+  //     let comments = formData.comments;
+  //     let requestBody = {
+  //       requestProcessedBy: approvedBy,
+  //       status: 'Rejected',
+  //       comments: comments,
+  //       moduleId: environment.attendanceRegularizationModuleId,
+  //       headerRequests: this.selectedProducts.map((item) => ({
+  //         headerID: item.approvalHeader.id,
+  //         currentStage: item.approvalHeader.currentapprovalStage
+  //       }))
+  //     }
+
+  //     this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+  //       .subscribe({
+  //         next: (response: any) => {
+  //          this.modalService.dismissAll();
+  //         if(this.selectedProducts.length > 1){
+  //           this.responseSummary = response.data;
+  //           this.openModal(this.leaveSummary);
+  //         }else{
+  //           this.sharedModalService.openSuccessModal('Request Rejected Successfully')
+  //         }
+  //         },
+  //         error: (reason: any) => {
+  //           this.spinnerLoader = false;
+  //           this.modalService.dismissAll();
+  //           if (reason.error.statusCode == 400) {
+  //             this.sharedModalService.openErrorModal(reason.error.message)
+  //           }
+  //           else if (reason.error.statusCode == 400) {
+  //             this.sharedModalService.openErrorModal(reason.error.message)
+  //           }
+  //           else {
+  //             this.sharedModalService.openErrorModal('Request Rejected Failed');
+  //           }
+  //         },
+  //         complete: () => {
+  //           this.spinnerLoader = false;
+  //           this.rejectForm.reset();
+  //           this.multiSelect = false;
+  //           this.selectedLeaveData = {} as PermissionRequestResponse;
+  //           this.signalService.regularizationForYouTriggerSignal.set(true);
+  //           this.signalService.regularizationSidNavCountTriggerSignal.set(true);
+  //           this.getAllPendingApprovals();
+  //            this.selectedProducts = [];
+  //         },
+  //       });
+  //   }
+  // }
+
   handleAccept(approveForm: FormGroup): void {
     if (approveForm.valid) {
-      this.spinnerLoader= true;
+      this.spinnerLoader = true;
       const formData = approveForm.value;
       let approvedBy = this.empinfo.employeeId.toString();
       let comments = formData.comments;
 
-      let requestBody = {
-        requestProcessedBy: approvedBy,
-        status: "Approved",
-        comments: comments,
-        moduleId: environment.attendanceRegularizationModuleId,
-        headerRequests: this.selectedProducts.map((item) => ({
-          headerID: item.approvalHeader.id,
-          currentStage: item.approvalHeader.currentapprovalStage
-        }))
+      if (this.selectedProducts && this.selectedProducts.length > 0) {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Approved',
+          comments: comments,
+          moduleId: environment.attendanceRegularizationModuleId,
+          headerRequests: this.selectedProducts.map((item) => ({
+            headerID: item.approvalHeader.id,
+            currentStage: item.approvalHeader.currentapprovalStage,
+          })),
+        };
+      } else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Approved',
+          comments: comments,
+          moduleId: environment.attendanceRegularizationModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader.id,
+              currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage,
+            },
+          ],
+        };
       }
 
-      // this.sharedModalService.openLoaderModal('Approving Request, Please wait...');
-      this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.selectedProducts = [];
-            this.responseSummary= response.data;
             this.modalService.dismissAll();
-            this.openModal(this.leaveSummary)
-            // if (response && response.data.failureRecords.length <= 0) {
-            //   this.sharedModalService.openSuccessModal('Request Approved Successfully');
-            // }
-            // else if (response.data.failureRecords.length > 0) {
-            //   this.sharedModalService.openSuccessModal(`Total Records Approved: ${response.data.totalRecordCount}
-            //      Failed:${response.data.failureRecordsCount} ${response.data.failureRecords[0].message ? response.data.failureRecords[0].message : ''} Successed:${response.data.successRecordsCount}`)
-            // }
+            if (this.selectedProducts && this.selectedProducts.length <= 0) {
+              this.sharedModalService.openSuccessModal('Request Approved Successfully');
+            } else {
+              this.responseSummary = response.data;
+              this.openModal(this.leaveSummary);
+            }
           },
           error: (reason: any) => {
-            this.spinnerLoader= false;
+            this.spinnerLoader = false;
             this.modalService.dismissAll();
             if (reason.error.statusCode == 400) {
               this.sharedModalService.openErrorModal(reason.error.message)
@@ -231,12 +424,14 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             }
           },
           complete: () => {
-            this.spinnerLoader= false;
+            this.spinnerLoader = false;
             this.approveForm.reset();
+            this.multiSelect = false;
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.selectedProducts = [];
           },
         });
     }
@@ -245,31 +440,45 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
   handleProcess(request: any) {
     this.selectedLeaveData = request;
     let approvedBy = this.empinfo.employeeId.toString();
-    let requestBody = {
-      requestProcessedBy: approvedBy,
-      status: 'Processed',
-      moduleId: environment.attendanceRegularizationModuleId,
-      headerRequests: this.selectedProducts.map((item) => ({
-        headerID: item.approvalHeader.id,
-        currentStage: item.approvalHeader.currentapprovalStage
-      }))
+    let message = null;
+    if (this.selectedProducts && this.selectedProducts.length > 0) {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.attendanceRegularizationModuleId,
+        headerRequests: this.selectedProducts.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage,
+        })),
+      };
+      message = 'Processing Requests, Please wait...';
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.attendanceRegularizationModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader.id,
+            currentStage:
+              this.selectedLeaveData.approvalHeader.currentapprovalStage,
+          },
+        ],
+      };
+      message = 'Processing Request, Please wait...';
     }
-
+    this.sharedModalService.openLoaderModal(message);
     this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
-    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.selectedProducts = [];
-          this.responseSummary= response.data;
           this.modalService.dismissAll();
-          this.openModal(this.leaveSummary);
-          // if (respone && respone.data.failureRecords.length <= 0) {
-          //   this.sharedModalService.openSuccessModal('Request Processed Successfully');
-          // }
-          // else if (respone.data.failureRecords.length > 0) {
-          //   this.sharedModalService.openSuccessModal(`Total Records Processed: ${respone.data.totalRecordCount}
-          //      Failed:${respone.data.failureRecordsCount} ${respone.data.failureRecords[0].message ? respone.data.failureRecords[0].message : ''} Successed:${respone.data.successRecordsCount}`)
-          // }
+          if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            this.sharedModalService.openSuccessModal('Request Processed Successfully');
+          } else {
+            this.responseSummary = response.data;
+            this.openModal(this.leaveSummary);
+          }
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -284,49 +493,62 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
           }
         },
         complete: () => {
+          this.multiSelect = false;
           this.signalService.regularizationForYouTriggerSignal.set(true);
           this.signalService.regularizationSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.selectedProducts = [];
         },
       });
   }
 
   handleReject(rejectForm: FormGroup): void {
     if (rejectForm.valid) {
-      this.spinnerLoader= true;
+      this.spinnerLoader = true;
       const formData = rejectForm.value;
       let approvedBy = this.empinfo.employeeId.toString();
       let comments = formData.comments;
-      let requestBody = {
-        requestProcessedBy: approvedBy,
-        status: 'Rejected',
-        comments: comments,
-        moduleId: environment.attendanceRegularizationModuleId,
-        headerRequests: this.selectedProducts.map((item) => ({
-          headerID: item.approvalHeader.id,
-          currentStage: item.approvalHeader.currentapprovalStage
-        }))
+
+      if (this.selectedProducts && this.selectedProducts.length > 0) {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Rejected',
+          comments: comments,
+          moduleId: environment.permissionsModuleId,
+          headerRequests: this.selectedProducts.map((item) => ({
+            headerID: item.approvalHeader.id,
+            currentStage: item.approvalHeader.currentapprovalStage,
+          })),
+        };
+      } else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Rejected',
+          comments: comments,
+          moduleId: environment.permissionsModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader.id,
+              currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage,
+            },
+          ],
+        };
       }
 
-      // this.sharedModalService.openLoaderModal('Rejecting Request, Please wait...');
-      this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-            this.selectedProducts = [];
-            this.responseSummary= response.data;
             this.modalService.dismissAll();
-            this.openModal(this.leaveSummary)
-            // if (response && response.data.failureRecords.length <= 0) {
-            //   this.sharedModalService.openSuccessModal('Request Rejected Successfully')
-            // }
-            // else if (response.data.failureRecords.length > 0) {
-            //   this.sharedModalService.openSuccessModal(`Total Records Rejected: ${response.data.totalRecordCount}
-            //    Failed:${response.data.failureRecordsCount} ${response.data.failureRecords[0].message ? response.data.failureRecords[0].message : ''} Successed:${response.data.successRecordsCount}`)
-            // }
+            if (this.selectedProducts && this.selectedProducts.length <= 0) {
+              this.sharedModalService.openSuccessModal('Request Rejected Successfully');
+            } else {
+              this.responseSummary = response.data;
+              this.openModal(this.leaveSummary);
+            }
           },
           error: (reason: any) => {
-            this.spinnerLoader= false;
             this.modalService.dismissAll();
+            this.spinnerLoader = false;
             if (reason.error.statusCode == 400) {
               this.sharedModalService.openErrorModal(reason.error.message)
             }
@@ -338,12 +560,14 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             }
           },
           complete: () => {
-            this.spinnerLoader= false;
+            this.spinnerLoader = false;
             this.rejectForm.reset();
+            this.multiSelect = false;
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
+            this.selectedProducts = [];
           },
         });
     }

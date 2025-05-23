@@ -14,12 +14,14 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { environment } from '../../../../environments/environment';
-import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
+import { Table, TableModule } from 'primeng/table';
+import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-comp-off-entitlement',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, 
-    NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,
+    NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule, TableModule, DataLoaderContentComponent],
   templateUrl: './comp-off-entitlement.component.html',
   styleUrl: './comp-off-entitlement.component.scss'
 })
@@ -46,14 +48,22 @@ export class CompOffEntitlementComponent {
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   spinnerLoader = false;
+  searchValue: any;
+  selectedLeavesItems: AttendanceRequest[] = [];
+  dataLoad = false;
+  responseSummary!: any;
+  multiSelect = false;
+  requestBody = {} as any;
+  @ViewChild('leaveSummary') leaveSummary: any;
+  @ViewChild('dt') table!: Table;
 
   constructor(
-    private modalService: NgbModal, 
-    private fb: FormBuilder, 
-    private http: HttpService, 
-    private sharedModalService: OpenModalService, 
+    private modalService: NgbModal,
+    private fb: FormBuilder,
+    private http: HttpService,
+    private conformationPopup: OpenModalService,
     public rbac: RbacService,
-    public formValidation:FormValidationService
+    public formsValidation: FormValidationsService
   ) {
     effect(() => {
       if (this.http.trigger()) {
@@ -83,23 +93,29 @@ export class CompOffEntitlementComponent {
 
   intializeApproveForm() {
     this.approveForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
   }
 
   intializeRejectForm() {
     this.rejectForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
+      comments: ['', [Validators.required, Validators.maxLength(250), noWhitespaceValidator]],
     });
   }
 
   getAllPendingApprovals() {
     let EmployeeId = parseInt(this.LOGIN.employeeId);
+    this.dataLoad = true;
     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.compoffModuleId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.leaves = response.data as AttendanceRequest[];
       },
-      error: (reason) => console.log(reason),
+      error: (reason) => {
+        this.dataLoad = false;
+      },
+      complete: () => {
+        this.dataLoad = false;
+      }
     });
   }
 
@@ -127,88 +143,408 @@ export class CompOffEntitlementComponent {
     this.rows = event.rows;
   }
 
-  handleProcess(request: AttendanceRequest): void {
-    const requestBody = {
-      status: 'Processed',
-      approvedBy: this.empinfo.employeeId.toString(),
-    };
-    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
-    this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
-      next: (response: any) => {
-        this.modalService.dismissAll();
-        this.sharedModalService.openSuccessModal('Request Processed Successfully');
-        this.getAllPendingApprovals();
-      },
-      error: (reason: any) => {
-        this.modalService.dismissAll();
-        this.sharedModalService.openErrorModal(reason.error.Message);
-      },
-      complete: () => {
-        this.http.triggerActionSignal();
-        this.getAllPendingApprovals();
-      },
+  selectCheck(value: any) {
+    this.multiSelect = Array.isArray(value) && value.length > 0;
+
+    if (!value || value.length === 0) {
+      this.selectedLeavesItems = [];
+      return;
+    }
+
+    const stageMap: { [stage: string]: any[] } = {};
+
+    // Group items by their approval stage
+    value.forEach((item: any) => {
+      const stage = item.approvalHeader?.currentapprovalStage;
+      if (!stageMap[stage]) {
+        stageMap[stage] = [];
+      }
+      stageMap[stage].push(item);
+    });
+
+    const stages = Object.keys(stageMap);
+    const totalAvailable = this.leaves.length || 0;
+    const totalSelected = value.length;
+    const isBulkSelect = totalSelected === totalAvailable;
+
+    // Get the dominant stage (most frequent)
+    let dominantStage = stages[0];
+    let maxCount = stageMap[dominantStage].length;
+    for (const stage of stages) {
+      const count = stageMap[stage].length;
+      if (count > maxCount) {
+        dominantStage = stage;
+        maxCount = count;
+      } else if (count === maxCount && stage === '1') {
+        dominantStage = stage;
+      }
+    }
+
+    const lastSelected = value[value.length - 1];
+    const lastSelectedStage = lastSelected.approvalHeader?.currentapprovalStage;
+
+    // Scenario 1: Progressive Selection (mixing stages)
+    const existingStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
+    if (
+      this.selectedLeavesItems.length > 0 &&
+      lastSelectedStage &&
+      existingStage &&
+      lastSelectedStage !== existingStage
+    ) {
+      this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
+      const newSelection = this.selectedLeavesItems.filter(
+        item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+      );
+      this.selectedLeavesItems = [...newSelection];
+      setTimeout(() => this.updateTableSelectionState(newSelection));
+      return;
+    }
+
+    // Scenario 2: Bulk select - filter by dominant stage only
+    if (isBulkSelect && stages.length > 1) {
+      const dominantItems = [...stageMap[dominantStage]];
+      this.selectedLeavesItems = dominantItems;
+
+
+      setTimeout(() => this.updateTableSelectionState(dominantItems));
+      return;
+    }
+
+    // Valid multi-select with same stage
+    this.selectedLeavesItems = [...value];
+  }
+
+
+  private updateTableSelectionState(selectedItems: any[]) {
+    // Create a new array reference to force change detection
+    this.selectedLeavesItems = [...selectedItems];
+
+    // If using PrimeNG table with dataKey
+    if (this.table) {
+      // Clear and reset selection to ensure checkbox states update
+      this.table.selection = null;
+      setTimeout(() => {
+        this.table.selection = selectedItems;
+      });
+    }
+  }
+
+  bulkapprove(approverPopup: any) {
+    this.intializeApproveForm();
+    this.modalService.open(approverPopup, {
+      centered: true,
+      backdrop: 'static',
     });
   }
 
-  handleAccept(approveForm: FormGroup): void {
-    if (approveForm.valid) {
-      const formData = approveForm.value;
-      const requestBody = {
-        status: 'Approved',
-        comments: formData.comments,
-        approvedBy: this.empinfo.employeeId?.toString(),
+  bulkReject(rejectPopup: any) {
+    this.intializeRejectForm();
+    this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
+  }
+
+  bulkProcess() {
+    this.handleProcess(this.leaves);
+  }
+
+  canBulkApprove(): boolean {
+    return this.selectedLeavesItems?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage !==
+        item.approvalHeader.finalapprovalStage
+    );
+  }
+
+  canBulkProcess(): boolean {
+    return this.selectedLeavesItems?.every(
+      (item) =>
+        item.approvalHeader.currentapprovalStage ===
+        item.approvalHeader.finalapprovalStage
+    );
+  }
+
+  getFilteredAndSortedLeaves(): AttendanceRequest[] {
+    const search = this.searchValue?.toLowerCase() ?? '';
+    const allLeaves = this.leaves ?? [];
+
+    // Filter
+    let filteredLeaves = allLeaves;
+    if (search) {
+      filteredLeaves = filteredLeaves.filter((item: AttendanceRequest) =>
+        item.entity?.attendanceRequestFusionEmployeeId?.toLowerCase().includes(search) ||
+        item.entity?.attendanceRequesterName?.toLowerCase().includes(search) ||
+        item.entity?.attendanceRequestDurationType?.toLowerCase().includes(search)
+      );
+    }
+
+    // Sort
+    if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+      return filteredLeaves;
+    }
+
+    const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
+    const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+    const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+
+    return [...selected, ...unselected];
+  }
+
+  // handleProcess(request: AttendanceRequest): void {
+  //   const requestBody = {
+  //     status: 'Processed',
+  //     approvedBy: this.empinfo.employeeId.toString(),
+  //   };
+  //   this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
+  //   this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+  //     next: (response: any) => {
+  //       this.modalService.dismissAll();
+  //       this.sharedModalService.openSuccessModal('Request Processed Successfully');
+  //       this.getAllPendingApprovals();
+  //     },
+  //     error: (reason: any) => {
+  //       this.modalService.dismissAll();
+  //       this.sharedModalService.openErrorModal(reason.error.Message);
+  //     },
+  //     complete: () => {
+  //       this.http.triggerActionSignal();
+  //       this.getAllPendingApprovals();
+  //     },
+  //   });
+  // }
+
+  // handleAccept(approveForm: FormGroup): void {
+  //   if (approveForm.valid) {
+  //     const formData = approveForm.value;
+  //     const requestBody = {
+  //       status: 'Approved',
+  //       comments: formData.comments,
+  //       approvedBy: this.empinfo.employeeId?.toString(),
+  //     };
+  //     this.spinnerLoader = true;
+  //     this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+  //       next: (response: any) => {
+  //         this.modalService.dismissAll();
+  //         this.sharedModalService.openSuccessModal('Request Accepted Successfully');
+  //         this.getAllPendingApprovals();
+  //         this.http.triggerActionSignal();
+  //       },
+  //       error: (reason: any) => {
+  //         this.spinnerLoader = false;
+  //         this.sharedModalService.openErrorModal(reason.error.Message);
+  //       },
+  //       complete: () => {
+  //         this.getAllPendingApprovals();
+  //         this.spinnerLoader = false;
+  //       },
+  //     });
+  //   }
+  // }
+
+  // handleReject(rejectForm: FormGroup): void {
+  //   if (rejectForm.valid) {
+  //     const formData = rejectForm.value;
+  //     const requestBody = {
+  //       status: 'Rejected',
+  //       comments: formData.comments,
+  //     };
+  //     this.spinnerLoader = true;
+  //     this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+  //       next: (response: any) => {
+  //         this.modalService.dismissAll();
+  //         this.sharedModalService.openSuccessModal('Request Rejected Successfully');
+  //         this.rejectForm.reset();
+  //         this.selectedLeaveData = {} as AttendanceRequest;
+  //         this.http.triggerActionSignal();
+  //         this.getAllPendingApprovals();
+  //       },
+  //       error: (reason: any) => {
+  //         this.spinnerLoader = true;
+  //         this.sharedModalService.openErrorModal(reason.error.Message);
+  //       },
+  //       complete: () => {
+  //         this.getAllPendingApprovals();
+  //         this.spinnerLoader = false;
+  //       },
+  //     });
+  //   }
+  // }
+
+  handleProcess(request: any): void {
+    this.selectedLeaveData = request;
+    let approvedBy = this.empinfo.employeeId.toString();
+    let message = null;
+    if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.compoffModuleId,
+        headerRequests: this.selectedLeavesItems.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage,
+        })),
       };
-      this.spinnerLoader = true;
-      this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+      message = 'Processing Requests, Please wait...';
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.compoffModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader.id,
+            currentStage:
+              this.selectedLeaveData.approvalHeader.currentapprovalStage,
+          },
+        ],
+      };
+      message = 'Processing Request, Please wait...';
+    }
+    this.conformationPopup.openLoaderModal(message);
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request Accepted Successfully');
+          if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
+            this.conformationPopup.openSuccessModal('Request Processed Successfully');
+          } else {
+            this.responseSummary = response.data;
+            this.openModal(this.leaveSummary);
+          }
+        },
+        error: (reason: any) => {
+          this.modalService.dismissAll();
+          this.conformationPopup.openErrorModal(reason.error.Message);
+        },
+        complete: () => {
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
           this.getAllPendingApprovals();
           this.http.triggerActionSignal();
         },
-        error: (reason: any) => {
-          this.spinnerLoader = false;
-          this.sharedModalService.openErrorModal(reason.error.Message);
-        },
-        complete: () => {
-          this.getAllPendingApprovals();
-          this.spinnerLoader = false;
-        },
       });
+  }
+
+  handleAccept(approveForm: FormGroup): void {
+    this.spinnerLoader = true;
+    if (approveForm.valid) {
+      const formData = approveForm.value;
+      let approvedBy = this.empinfo.employeeId.toString();
+      let comments = formData.comments;
+      if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Approved',
+          comments: comments,
+          moduleId: environment.compoffModuleId,
+          headerRequests: this.selectedLeavesItems.map((item) => ({
+            headerID: item.approvalHeader.id,
+            currentStage: item.approvalHeader.currentapprovalStage,
+          })),
+        };
+      } else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Approved',
+          comments: comments,
+          moduleId: environment.compoffModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader.id,
+              currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage,
+            },
+          ],
+        };
+      }
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
+              this.conformationPopup.openSuccessModal('Request Approved Successfully');
+            } else {
+              this.responseSummary = response.data;
+              this.openModal(this.leaveSummary);
+            }
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
+            this.conformationPopup.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
+          },
+          complete: () => {
+            this.spinnerLoader = false;
+            this.selectedLeavesItems = [];
+            this.approveForm.reset();
+            this.multiSelect = false;
+            this.getAllPendingApprovals();
+            this.http.triggerActionSignal();
+          },
+        });
     }
   }
 
   handleReject(rejectForm: FormGroup): void {
+    this.spinnerLoader = true;
     if (rejectForm.valid) {
       const formData = rejectForm.value;
-      const requestBody = {
-        status: 'Rejected',
-        comments: formData.comments,
-      };
-      this.spinnerLoader = true;
-      this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
-        next: (response: any) => {
-          this.modalService.dismissAll();
-          this.sharedModalService.openSuccessModal('Request Rejected Successfully');
-          this.rejectForm.reset();
-          this.selectedLeaveData = {} as AttendanceRequest;
-          this.http.triggerActionSignal();
-          this.getAllPendingApprovals();
-        },
-        error: (reason: any) => {
-          this.spinnerLoader = true;
-          this.sharedModalService.openErrorModal(reason.error.Message);
-        },
-        complete: () => {
-          this.getAllPendingApprovals();
-          this.spinnerLoader = false;
-        },
-      });
+      let approvedBy = this.empinfo.employeeId.toString();
+      let comments = formData.comments;
+      if (this.selectedLeavesItems && this.selectedLeavesItems.length > 0) {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Rejected',
+          comments: comments,
+          moduleId: environment.compoffModuleId,
+          headerRequests: this.selectedLeavesItems.map((item) => ({
+            headerID: item.approvalHeader.id,
+            currentStage: item.approvalHeader.currentapprovalStage,
+          })),
+        };
+      } else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Rejected',
+          comments: comments,
+          moduleId: environment.compoffModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader.id,
+              currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage,
+            },
+          ],
+        };
+      }
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (response: any) => {
+            this.modalService.dismissAll();
+            if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
+              this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+            } else {
+              this.responseSummary = response.data;
+              this.openModal(this.leaveSummary);
+            }
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
+            this.conformationPopup.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
+          },
+          complete: () => {
+            this.selectedLeavesItems = [];
+            this.multiSelect = false;
+            this.spinnerLoader = false;
+            this.rejectForm.reset();
+            this.selectedLeaveData = {} as AttendanceRequest;
+            this.getAllPendingApprovals();
+            this.http.triggerActionSignal();
+          },
+        });
     }
   }
 
   comments(value: any, commentspopup: any) {
-    this.modalService.open(commentspopup, {centered: true, backdrop: 'static', size: 'lg'});
+    this.modalService.open(commentspopup, { centered: true, backdrop: 'static', size: 'lg' });
     this.approverComments = value;
   }
 

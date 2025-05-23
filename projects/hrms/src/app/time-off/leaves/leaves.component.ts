@@ -180,6 +180,16 @@ export class LeavesComponent {
       complete: () => { }
     })
   }
+  
+  get totalAvailableLeaves(): number {
+  return this.categoryDetails.reduce((total, item) => {
+    if (item.category.isProbationAllowed && item.probationLeaves > 0) {
+      return total + (item.probationLeaves - item.utilizedDays - item.booked);
+    } else {
+      return total + (item.allowedDays - item.utilizedDays - item.booked);
+    }
+  }, 0);
+}
 
   initChart(item: any) {
     const data: number[] = [];

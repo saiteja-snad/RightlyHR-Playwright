@@ -115,8 +115,7 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
     this.contactForm.reset();
     
     this.getEmployeeId();
-    
-  
+   
   }
 
   getEmployeeId(): void {

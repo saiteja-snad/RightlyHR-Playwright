@@ -139,11 +139,11 @@ isLoading=false;
         if(res){
           this.cancelForm.reset();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Leave cancelled successfully')
+          this.conformationPopup.openSuccessModal('Work form home cancelled successfully')
             this.getWFHRequests()
           
         }
-       this.signalService.timecountTriggerSignal.set(true);
+       this.http.wfhTriggerSignal.set(true);
       
       },
       error:(err:any)=>{
@@ -152,7 +152,7 @@ isLoading=false;
          this.cancelForm.reset();
           this.modalService.dismissAll();
             this.getWFHRequests()
-            this.signalService.timecountTriggerSignal.set(true);
+           this.http.wfhTriggerSignal.set(true);
         this.conformationPopup.openErrorModal(err.error.message);
       },
       complete:()=> {

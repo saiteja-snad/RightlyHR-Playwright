@@ -126,7 +126,8 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
         if(res){
           this.cancelForm.reset();
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Leave cancelled successfully')
+          this.conformationPopup.openSuccessModal('Permission cancelled successfully');
+          this.http.permissionTriggerSignal.set(true);
             this.getDataPermissions()
           
         }
@@ -139,7 +140,7 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
          this.cancelForm.reset();
           this.modalService.dismissAll();
             this. getDataPermissions()
-            this.signalService.timecountTriggerSignal.set(true);
+            this.http.permissionTriggerSignal.set(true);
         this.conformationPopup.openErrorModal(err.error.message);
       },
       complete:()=> {

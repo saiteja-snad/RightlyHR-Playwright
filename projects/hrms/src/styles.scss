@@ -44,7 +44,7 @@
     --side-nav-background-color: #0B3A83;
     --side-nav-item-color: #EAEAEA;
     --side-nav-item-active-color: #0B3A83;
-    --side-nav-active-bg-color: #FFFFFF;
+    --side-nav-active-bg-color: #FFFFFF4D;
     //sidebar colors
 
     // button colors
@@ -265,7 +265,6 @@ body {
 
     .active-nav-link {
         background-color: var(--side-nav-active-bg-color);
-        color: var(--side-nav-item-active-color);
     }
 
     .bi-person-vcard {

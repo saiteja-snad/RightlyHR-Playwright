@@ -60,19 +60,19 @@
                      <td>
                         <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
                     </td>
-                    <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
-                    <td>{{leave.entity.attendanceRequesterName}}</td>
-                    <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
-                    <td>{{leave.entity.attendanceRequestDurationType}}</td>
+                    <td>{{leave?.entity?.attendanceRequestFusionEmployeeId}}</td>
+                    <td>{{leave?.entity?.attendanceRequesterName}}</td>
+                    <td>{{leave?.entity?.attendanceRequestStartTime | dateformat}}</td>
+                    <td>{{leave?.entity?.attendanceRequestDurationType}}</td>
                     <td class="text-center">
-                        @if(leave.entity.attendanceRequestDescription != null &&
-                        leave.entity.attendanceRequestDescription != '') {
+                        @if(leave?.entity?.attendanceRequestDescription != null &&
+                        leave?.entity?.attendanceRequestDescription != '') {
                         <div>
                             <a type="button" [ngbPopover]="reason">
                                  <i class="bi bi-info-circle-fill" ></i>
                             </a>
                             <ng-template #reason>
-                                <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
+                                <p class="mb-0">{{leave?.entity?.attendanceRequestDescription}} </p>
                             </ng-template>
                         </div>
                         }@else {
@@ -80,22 +80,22 @@
                         }
                     </td>
                     <td class="text-center">
-                        <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
-                            <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
+                        <div *ngIf="leave?.entity?.attendanceApprovalcomments[0]?.comments;else compoffcomments">
+                            <div (click)="comments(leave?.entity?.attendanceApprovalcomments,commentspopup)">
                                  <i class="bi bi-info-circle-fill" ></i>
                             </div>
                         </div>
                         <ng-template #compoffcomments>-</ng-template>
                     </td>
-                    <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
+                    <td>{{leave?.entity?.attendanceRequestAppliedDate | dateformat}}</td>
                     @if(!multiSelect && (rbac.allowedToAccess('For Role (Comp Off).update') || rbac.allowedToAccess('For Role (Comp Off).delete'))){
                     <td class="text-center">
                         <div class="dropdown">
                             <a type="button" data-bs-toggle="dropdown"><i class="bi bi-three-dots-vertical"></i></a>
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 @if(rbac.allowedToAccess('For Role (Comp Off).update')) {
-                                @if( leave.approvalHeader.currentapprovalStage !=
-                                leave.approvalHeader.finalapprovalStage){
+                                @if( leave?.approvalHeader?.currentapprovalStage !=
+                                leave?.approvalHeader?.finalapprovalStage){
                                 <li (click)="openApproveModal(approval,leave)">
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve'
                                         |translate}}</a>
@@ -103,8 +103,8 @@
                                 }
                                 }
                                 @if(rbac.allowedToAccess('For Role (Comp Off).update')) {
-                                @if( leave.approvalHeader.currentapprovalStage ==
-                                leave.approvalHeader.finalapprovalStage){
+                                @if( leave?.approvalHeader?.currentapprovalStage ==
+                                leave?.approvalHeader?.finalapprovalStage){
                                 <li (click)="handleProcess(leave)">
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
                                         translate}}</a>
@@ -242,10 +242,10 @@
             <div class="card p-3">
                 <div *ngFor="let comment of approverComments">
                     <div class="mb-0">
-                        <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
-                        <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
-                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
-                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
+                        <p><b>{{'Comments' | translate}}:</b> {{ comment?.comments }} </p>
+                        <p><b>{{'Commented By'|translate}}:</b> {{ comment?.addedName }}</p>
+                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment?.addedDate | dateformat }}</p>
+                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment?.addedByFusionEmpId }}</p>
                     </div>
                 </div>
             </div>

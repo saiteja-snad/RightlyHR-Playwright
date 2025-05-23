@@ -28,8 +28,14 @@
         </div>
          </div>
      }
+     <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
+    </div>
 
     <div class="custom-p-multi-select-table">
+        @if(!dataload){
         <p-table  #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
             dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
             <ng-template #header>
@@ -125,6 +131,11 @@
                 </tr>
             </ng-template>
         </p-table>
+        }@else{
+        <div class="loader-placeholder-content">
+            <app-data-loader-content />
+        </div>
+        }
        
     </div>
 </div>
@@ -146,7 +157,7 @@
                 <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Approve Reason is required</div>
                     <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters
                     </div>
                 </div>

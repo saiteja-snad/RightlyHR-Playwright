@@ -999,74 +999,67 @@ select:focus {
 // My Info Stylings
 
 // User Profile Card Stylings
-// .profile-info-card-main-container {
-//     .image-content {
-//         position: relative;
+.profile-info-card-main-container {
+    .custom-background-card {
+        border: 1px solid #D7DEE6;
+        padding: 0.75rem;
+    }
 
-//         .edit-icon-content {
-//             position: absolute;
-//             background-color: #fff;
-//             border-radius: 50%;
-//             top: 3.75rem;
-//             left: 2rem;
-//         }
+    .image-content {
+        position: relative;
+        display: flex;
+        justify-content: center;
 
-//         .profile-image {
-//             width: 5rem;
-//             height: 5rem;
-//             border-radius: 50%;
-//         }
+        .edit-icon-content {
+            position: absolute;
+            top: 76%;
+            left: 44%;
 
-//         .edit-icon {
-//             width: 1.25rem;
-//             height: 1.25rem;
-//             border-radius: 50%;
-//         }
-//     }
+            .edit-icon {
+                width: 1.75rem;
+                height: 1.75rem;
+                border-radius: 50%;
+            }
+        }
 
-//     .dashed-line {
+        .profile-image {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+        }
+    }
 
-//         border: 1px solid #D9E1EA;
-//     }
+    .profile-content {
+        margin-top: 1.25rem;
+        border-top: 2px solid #D9E1EA;
+        padding-top: 0.5rem;
+        line-height: 100%;
+        letter-spacing: 0%;
 
+        .name {
+            font-weight: 700;
+            font-size: var(--fontsize14);
+            color: var(--primary-color);
+        }
 
-//     .name {
-//         font-weight: 700;
-//         font-size: var(--fontsize16);
-//         vertical-align: middle;
-//         color: var(--primary-color);
-//     }
+        .sub-text {
+            font-weight: 400;
+            font-size: var(--fontsize10);
+            color: #8D8D8D;
+        }
 
-//     .sub-text {
-//         font-weight: 400;
-//         font-size: 0.75rem;
+        .label-text {
+            font-weight: 500;
+            font-size: 10px;
+            text-transform: capitalize;
+            color: #909090;
+        }
 
-//         text-transform: capitalize;
-//         color: #757575;
-//     }
-
-//     .qr-content {
-//         width: 2.25rem;
-//         position: relative;
-//     }
-
-//     .qr-icon {
-//         width: 1.25rem;
-//         height: 1.25rem;
-//     }
-
-//     .profile-data-icon {
-//         font-size: var(--fontsize14);
-//         color: var(--primary-color);
-//     }
-
-//     .details-text {
-//         font-weight: 400;
-//         font-size: 0.75rem;
-//         color: #757575;
-//         ;
-//     }
-// }
+        .name-text{
+            color: #3F434A !important;
+        }
+    }
+}
 // My Info Stylings Ends
 
 // letter main content

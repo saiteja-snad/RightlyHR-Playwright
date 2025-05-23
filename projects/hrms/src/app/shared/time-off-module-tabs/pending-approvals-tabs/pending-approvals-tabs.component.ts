@@ -100,6 +100,10 @@ export class PendingApprovalsTabsComponent {
         }));
       }
 
+      if(this.signalService.timeOffsidenavCountSignal()){
+        this.getAllPendingApprovalsCount();
+        this.signalService.timeOffsidenavCountSignal.set(false);
+      }
       if(this.signalService.wfhSidNavCountTriggerSignal()){
         this.getAllPendingApprovalsCount();
         this.signalService.wfhSidNavCountTriggerSignal.set(false);

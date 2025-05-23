@@ -203,6 +203,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     this.isLoading = true;
   
     const formValue = this.LeaveReportForm.value;
+    console.log(formValue)
     const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
   
     const noFilterProvided =
@@ -240,27 +241,11 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     }
 
     // // Only include employee filter if not "All Employees"
-    if (formValue.team && formValue.team.fusionEmpId) {
-      request.FusionEmpId = formValue.team.fusionEmpId;
-    } else if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (formValue.team && formValue.team.employeeId) {
+      request.employeeId = formValue.team.employeeId;
+    } else if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee.employeeId;
     }
-    // const params = new URLSearchParams();
-
-    // If multiple employees are selected from "My Team", send as comma-separated string
-    // if (this.selectedEmployeeId && this.selectedEmployeeId.length > 0) {
-    //   request.employeeId = this.selectedEmployeeId.join(',');
-    // } else if (!isAllEmployeesSelected && formValue.employee?.TeamManagerFusionEmpId) {
-    //   request.TeamManagerFusionEmpId = formValue.employee.TeamManagerFusionEmpId;
-    // }
-// if (formValue.team) {
-//   if (formValue.team.fusionEmpId === 'all') {
-//     const allTeamEmployeeIds = this.getEmployeeInfo.map(emp => emp.fusionEmpId).join(',');
-//     request.FusionEmpId = allTeamEmployeeIds;
-//   } else {
-//     request.FusionEmpId = formValue.team.fusionEmpId;
-//   }
-// }
 
     // Only include employee filter if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {

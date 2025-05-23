@@ -400,7 +400,6 @@ export class WfhForYouRequsetComponent implements OnInit, OnDestroy {
             } else {
               this.openModal(this.leaveSummary);
             }
-
           },
           error: (reason: any) => {
             this.modalService.dismissAll();

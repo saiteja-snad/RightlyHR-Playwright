@@ -238,24 +238,19 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
       };
       message =  'Processing Request, Please wait...';
     }
-    this.sharedModalService.openLoaderModal(
-      message
-    );
-    this.http
-      .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+    this.sharedModalService.openLoaderModal(message);
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.requestSummary = response.data;
           if (
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.sharedModalService.openSuccessModal(
-              'Request Processed Successfully'
-            );
+            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');;
           } else {
-            this.requestSummary = response.data;
             this.openModal(this.leaveSummary);
           }
           this.selectedLeavesItems = [];
@@ -313,15 +308,13 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.requestSummary = response.data;
             if (
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.sharedModalService.openSuccessModal(
-                'Request Approved Successfully'
-              );
+              this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
             } else {
-              this.requestSummary = response.data;
               this.openModal(this.leaveSummary);
             }
             this.selectedLeavesItems = [];
@@ -383,15 +376,13 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.requestSummary = response.data;
             if (
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.sharedModalService.openSuccessModal(
-                'Request Rejected Successfully'
-              );
+             this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
             } else {
-              this.requestSummary = response.data;
               this.openModal(this.leaveSummary);
             }
             this.selectedLeavesItems = [];

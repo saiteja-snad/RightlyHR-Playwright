@@ -50,9 +50,13 @@ isLoading=false;
     private http: HttpService, private signalService:SignalsService, private modalService: NgbModal,private conformationPopup: OpenModalService, public rbac: RbacService,private fb:FormBuilder
   ) {
     effect(() => {
-      if (this.http.wfhTriggerSignal()) {
+        if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
         this.getWFHRequests();
-      this.http.wfhTriggerSignal.set(false);
+        this.http.tirggerCountSignal.update((status) => ({ ...status, wfh: false }));
+       this.http.wfhTriggerSignal.set(false);
+      }
+      else{
+         this.getWFHRequests();
       }
     });
   }
@@ -96,7 +100,7 @@ isLoading=false;
         next: (response: any) => {
           console.log(response);
           this.compOff = response;
-          this.waitingForApprovalWFHs = this.compOff.filter(
+          this.waitingForApprovalWFHs = response.filter(
             (element: { status: string }) =>
               element.status === 'Waiting for Approval'
           );

@@ -7,7 +7,6 @@ import { Ilpid } from '../../../Interfaces/timoff-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
-
 @Component({
   selector: 'app-on-be-half-of-approval-tabs',
   imports: [CommonModule, RouterModule, TabsModule],
@@ -20,39 +19,36 @@ export class OnBeHalfOfApprovalTabsComponent {
   empdata = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
-  cadidateEmployeeId!:number
+  cadidateEmployeeId!: number
   processedCount: any;
   waitingForApprovalCount: any;
   approvedCount: any;
   rejectedCount: any;
   navLinks: any[] = [
-    { label: 'Waiting For Approval', route: 'waiting-for-approval',permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' } },
-    { label: 'Approved', route: 'approved',permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
-    { label: 'Processed', route: 'processed',permission: { feature: 'Processed (On Behalf Of)', action: 'view' } },
-    { label: 'Rejected', route: 'rejected',permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } },
-    { label: 'Cancelled', route: 'cancel',permission: { feature: 'Cancelled (On Behalf Of)', action: 'view' } }
+    { label: 'Waiting For Approval', route: 'waiting-for-approval', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' } },
+    { label: 'Approved', route: 'approved', icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
+    { label: 'Processed', route: 'processed', icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed (On Behalf Of)', action: 'view' } },
+    { label: 'Rejected', route: 'rejected', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } },
+    { label: 'Cancelled', route: 'cancel', icon: '/time-off-icon/cancelled-icon.png', permission: { feature: 'Cancelled (On Behalf Of)', action: 'view' } }
   ];
   filteredTabs: any[] = [];
 
   constructor(
-    public readonly router: Router, 
-    private http: HttpService, 
+    public readonly router: Router,
+    private http: HttpService,
     private authService: AuthService,
     private rbac: RbacService
-
-  ) { 
-
+  ) {
     // Signal reaction for employee switch
     effect(() => {
-      if (this.http.trigger()) {   
-        this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string) ;
-        if (this.cadidateEmployeeId  != null ) {
+      if (this.http.trigger()) {
+        this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string);
+        if (this.cadidateEmployeeId != null) {
           this.getDataByLPID();
-        } 
+        }
         // this.http.resetTriggerSignal();
       }
     });
-
   }
 
   isActive(route: string): boolean {
@@ -62,12 +58,10 @@ export class OnBeHalfOfApprovalTabsComponent {
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-   
     this.filterTabsByRbac()
   }
 
   getDataByLPID() {
-    
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
@@ -78,12 +72,12 @@ export class OnBeHalfOfApprovalTabsComponent {
           const processed = response.filter(item => item.status === 'Processed');
           // Set counts
           this.navLinks = [
-            { label: 'Waiting For Approval', route: 'waiting-for-approval', count: waiting.length ,permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' }},
-            { label: 'Approved', route: 'approved', count: approved.length,permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
-            { label: 'Processed', route: 'processed', count: processed.length,permission: { feature: 'Processed (On Behalf Of)', action: 'view' } },
-            { label: 'Rejected', route: 'rejected', count: rejected.length,permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } }
+            { label: 'Waiting For Approval', route: 'waiting-for-approval', icon: '/time-off-icon/waiting-for-approval-icon.png', count: waiting.length, permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' } },
+            { label: 'Approved', route: 'approved', count: approved.length, icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
+            { label: 'Processed', route: 'processed', count: processed.length, icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed (On Behalf Of)', action: 'view' } },
+            { label: 'Rejected', route: 'rejected', count: rejected.length, icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } }
           ];
-          this.filterTabsByRbac()
+          this.filterTabsByRbac();
         } else {
           console.error("Invalid response format");
         }
@@ -91,8 +85,6 @@ export class OnBeHalfOfApprovalTabsComponent {
       error: (reason: any) => console.log(reason)
     });
   }
-
-
 
   filterTabsByRbac(): void {
     this.filteredTabs = this.navLinks.filter(tab => {

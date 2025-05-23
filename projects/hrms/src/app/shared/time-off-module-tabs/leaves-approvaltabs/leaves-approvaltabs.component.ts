@@ -166,7 +166,7 @@ export class LeavesApprovaltabsComponent {
         label: 'Org Leave Balance',
         link: '/time-off/leaves/org-leave-balance',
         permission: { feature: 'Org Leave Balance', action: 'view' },
-        icon: '/time-off-icon/waiting-for-approval-icon.png',
+        icon: '/time-off-icon/Org-Leave-Balance-icon.png',
       },
     ];
     this.statusTabs = this.statusTabs.filter(

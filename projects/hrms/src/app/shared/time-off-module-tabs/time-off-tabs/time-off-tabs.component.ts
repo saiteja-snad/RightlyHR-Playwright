@@ -34,11 +34,11 @@ export class TimeOffTabsComponent implements OnInit {
       { label: 'Comp-Off', link: '/time-off/comp-off', icon:'/time-off-icon/comp-off.png', permission: { feature: 'Comp Off Module', action: 'view' } },
       { label: 'Permissions', link: '/time-off/premissions', icon:'/time-off-icon/permissions-icon.png', permission: { feature: 'Permissions Module', action: 'view' } },
       { label: 'Regularization', link: '/time-off/regularization',icon:'/time-off-icon/regularization-icon.png', permission: { feature: 'Regularization Module', action: 'view' } },
-      { label: 'Pending Approvals', link: '/time-off/pending-approvals',icon:'/time-off-icon/leaves-icon.png', permission: { feature: 'Pending Approvals Module', action: 'view' } },
+      { label: 'Pending Approvals', link: '/time-off/pending-approvals',icon:'/time-off-icon/pending-approvals-icon.png', permission: { feature: 'Pending Approvals Module', action: 'view' } },
       // { label: 'Attendance', link: '/time-off/attendance', permission: { feature: 'Attendance Module', action: 'view' } },
-      { label: 'On Behalf Of', link: '/time-off/on-behalf-of',icon:'/time-off-icon/leaves-icon.png', permission: { feature: 'On Behalf Of Module', action: 'view' } },
-      { label: 'On Behalf Of Approvals', link: '/time-off/on-behalf-of-approvals',icon:'/time-off-icon/leaves-icon.png', permission: { feature: 'On Behalf Of Approvals Module', action: 'view' } },
-      { label: 'Global-Permissions', link: '/time-off/global-permissions',icon:'/time-off-icon/leaves-icon.png', permission: { feature: 'Global Permissions Module', action: 'view' } }
+      { label: 'On Behalf Of', link: '/time-off/on-behalf-of',icon:'/time-off-icon/on-behalf-of-icon.png', permission: { feature: 'On Behalf Of Module', action: 'view' } },
+      { label: 'On Behalf Of Approvals', link: '/time-off/on-behalf-of-approvals',icon:'/time-off-icon/on-behalf-of-approvals-icon.png', permission: { feature: 'On Behalf Of Approvals Module', action: 'view' } },
+      { label: 'Global-Permissions', link: '/time-off/global-permissions',icon:'/time-off-icon/Global-Permissions-icon.png', permission: { feature: 'Global Permissions Module', action: 'view' } }
     ];
     this.filterTabsByRbac();
   }

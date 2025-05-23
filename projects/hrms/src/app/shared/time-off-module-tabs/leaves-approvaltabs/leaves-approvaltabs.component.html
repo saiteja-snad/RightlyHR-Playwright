@@ -1,12 +1,16 @@
-<div class="component-side-nav-tabs-container py-3">
+
+<div class="custom-sub-tabs-container">
   <ul class="nav flex-column">
     <li class="nav-item" *ngFor="let tab of statusTabs">
-      <a class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link">
-        {{ tab.label }}
-        <ng-container *ngIf="tab.label !== 'Org Leave Balance'">
-          ({{ tab.count ?? 0 }})
-        </ng-container>
-      </a>
+      <div class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link">
+        <img [src]="tab.icon" alt="Icon" class="icon mb-2">
+        <div class="d-flex gap-1">{{ tab.label }}
+          <ng-container *ngIf="tab.label !== 'Org Leave Balance'">
+            ({{ tab.count ?? 0 }})
+          </ng-container>
+        </div>
+      </div>
+      <div class="border-bottom"></div>
     </li>
   </ul>
 </div>

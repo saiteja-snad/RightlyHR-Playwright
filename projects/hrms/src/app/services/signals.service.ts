@@ -43,5 +43,7 @@ export class SignalsService {
   timecountTriggerSignal = signal<boolean>(false);
   timeoffForYouTriggerSignal = signal<boolean>(false);
   timeoffForRoleTriggerSignal = signal<boolean>(false);
+  timeOffsidenavCountSignal= signal<boolean>(false);
+
   constructor() {}
 }

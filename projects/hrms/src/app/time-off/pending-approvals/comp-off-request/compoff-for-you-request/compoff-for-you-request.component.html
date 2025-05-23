@@ -155,14 +155,14 @@
                     <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                     <div class="error-msg"
                         *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                        <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required</div>
-                        <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250
+                        <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comments are required</div>
+                        <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250
                             characters</div>
                     </div>
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]=" spinnerLoader">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
@@ -189,26 +189,26 @@
         <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
             <div class="custom-main-popup-content">
                 <div class="mb-3">
-                    <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
+                    <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="comments"
-                        placeholder="Please provide reason for rejection" formControlName="comments"
+                        placeholder="Please provide comments" formControlName="comments"
                         maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                     <div class="error-msg"
                         *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                         <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
-                            Rejected Reason is required
+                            Comments are required
                         </div>
                         <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">
-                            Reason cannot exceed 250 characters
+                            Comments cannot exceed 250 characters
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]=" spinnerLoader">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || spinnerLoader">
                     @if(spinnerLoader){

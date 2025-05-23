@@ -1,11 +1,11 @@
-import { Component, effect, ViewChild } from '@angular/core';
+import { Component, effect, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgbModal, NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PaginatorModule } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
-import { Route, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid } from '../../Interfaces/timoff-model';
 import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
@@ -17,12 +17,15 @@ import { RbacService } from '../../services/rbac.service';
 import { LeavesApprovaltabsComponent } from "../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component";
 import { SignalsService } from '../../services/signals.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { TabsModule } from 'primeng/tabs';
+import { ChartModule } from 'primeng/chart';
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule],
   templateUrl: './leaves.component.html',
-  styleUrl: './leaves.component.scss'
+  styleUrl: './leaves.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class LeavesComponent {
@@ -81,6 +84,9 @@ export class LeavesComponent {
   model: any;
   disableSubmitButton: boolean = false;
   @ViewChild('leaveForm') work!: NgForm;
+  //graph
+  leaveCategoryData: any;
+  leaveCategoryOptions: any;
 
   constructor(
     private http: HttpService,
@@ -89,14 +95,12 @@ export class LeavesComponent {
     private authService: AuthService,
     private fb: FormBuilder,
     public rbac: RbacService,
-    public router:Router,
-    private signalService:SignalsService
-  ) { 
-     effect(() => {
+    public router: Router,
+    private signalService: SignalsService) {
+    effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
         this.getCategoryDetails();
-
         // Conditionally reset the signals based on their current state
         if (this.signalService.timecountTriggerSignal()) {
           this.signalService.timecountTriggerSignal.set(false);
@@ -125,18 +129,6 @@ export class LeavesComponent {
 
   navigateOrLeavebalance() {
     this.router.navigate(['/time-off/leaves/org-leave-balance'])
-  }
-
-  convertHexToRgba(hex: string, alpha: number): string {
-    if (!hex) return 'rgba(0, 0, 0, 0.2)'; // fallback
-    hex = hex.replace('#', '');
-    if (hex.length === 3) {
-      hex = hex.split('').map(c => c + c).join('');
-    }
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
 
   openModal(content: any) {
@@ -180,12 +172,77 @@ export class LeavesComponent {
           this.categoryDetails = response.data as ICategoryDetails[];
           this.calculateProbationLeavs(this.categoryDetails);
           this.logOptionalLeaveDays(this.categoryDetails);
+          this.initChart(this.categoryDetails);
         }
       },
       error: (reason: any) => {
       },
       complete: () => { }
     })
+  }
+  
+  get totalAvailableLeaves(): number {
+  return this.categoryDetails.reduce((total, item) => {
+    if (item.category.isProbationAllowed && item.probationLeaves > 0) {
+      return total + (item.probationLeaves - item.utilizedDays - item.booked);
+    } else {
+      return total + (item.allowedDays - item.utilizedDays - item.booked);
+    }
+  }, 0);
+}
+
+  initChart(item: any) {
+    const data: number[] = [];
+    const labels: string[] = [];
+    const backgroundColors: string[] = [];
+    item.forEach((category: {
+      category: any; allowedDays: number; name: string; categoryColor: string;
+    }) => {
+      data.push(category.allowedDays);
+      labels.push(category.category.name);
+      backgroundColors.push(category.category.categoryColor);
+    });
+    this.leaveCategoryData = {
+      datasets: [
+        {
+          data: data,
+          backgroundColor: backgroundColors,
+           borderWidth: 0
+        }
+      ]
+    };
+    this.leaveCategoryOptions = {
+      cutout: '70%',
+      // borderWidth:'10px',
+    };
+  }
+
+  getAvailableLeaves(item: any): number {
+    if (item.category?.isProbationAllowed && item.probationLeaves > 0) {
+      return item.probationLeaves - item.utilizedDays - item.booked;
+    } else {
+      return item.allowedDays - item.utilizedDays - item.booked;
+    }
+  }
+
+  getTransparentColor(hex: string, opacity: number): string {
+    // Remove leading # if present
+    hex = hex.replace('#', '');
+    // Convert 3-digit hex to 6-digit
+    if (hex.length === 3) {
+      hex = hex.split('').map(c => c + c).join('');
+    }
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  }
+
+  getProgress(item: any): number {
+    const available = this.getAvailableLeaves(item);
+    const total = item.allowedDays || 1; // Avoid division by zero
+    const percentage = Math.max(0, Math.min(available / total, 1)); // Clamp between 0 and 1
+    return percentage * 360;
   }
 
   getEmployeeid() {
@@ -792,8 +849,8 @@ export class LeavesComponent {
       else {
         diff -= 0;
       }
-      if (this.orgholidays?.orgHolidaysItems?.some((holiday: any) => moment(holiday.holidayDate).isSame(startDate, 'day') && 
-         (holiday.isOptional === false || holiday.isOptional === null))) {
+      if (this.orgholidays?.orgHolidaysItems?.some((holiday: any) => moment(holiday.holidayDate).isSame(startDate, 'day') &&
+        (holiday.isOptional === false || holiday.isOptional === null))) {
         this.isNonOptionalHolidaySelected = true;
       } else {
         this.isNonOptionalHolidaySelected = false;
@@ -1026,7 +1083,7 @@ export class LeavesComponent {
             setTimeout(() => {
               this.modalService.dismissAll();
               this.leaveForm.reset();
-             window.location.reload();
+              window.location.reload();
             }, 2000);
             this.isLoading = false;
           }

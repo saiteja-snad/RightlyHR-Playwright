@@ -1,0 +1,73 @@
+.theme-container-card {
+    border: none !important;
+    border-radius: 0.5rem;
+    width: 100%;
+    height: calc(100dvh - 13rem);
+    padding: 1.5rem;
+    position: relative;
+
+    .custom-btn-content{
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+    }
+}
+
+.custom-btn{
+    padding: 0.5rem 3rem;
+}
+
+.layout-image {
+    width: 181px;
+    height: 129px;
+}
+
+.layout-name {
+    color: black;
+}
+
+.theme-item {
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.theme-item.selected img {
+    border: 2px solid blue;
+}
+
+.btn-content {
+    position: relative;
+}
+
+.custom-main-content .custom-btn-content {
+    position: absolute;
+    right: 0;
+    bottom: -400px;
+}
+
+.custom-btn1 {
+    padding: 10px 30px;
+}
+
+/* Style for the overlay and check mark */
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.check-mark {
+    font-size: 24px;
+    color: white;
+}

@@ -55,7 +55,7 @@
                             <div
                                 *ngIf="data.attachment.endsWith('jpg') || data.attachment.endsWith('jpeg') || data.attachment.endsWith('png') ;else downloadView">
                                 <a type="button" class="view-btn" (click)="onViewClick(data.attachment)">
-                                    <i class="bi bi-paperclip me-1"></i>View
+                                    <i class="bi bi-eye-fill me-2"></i>View
                                 </a>
                             </div>
                             <ng-template #downloadView>

@@ -1,29 +1,151 @@
-.employee-details-card {
-    border: 0.5px solid rgba(218, 218, 218, 1);
-    border-radius: 1rem;
-    box-shadow: 0px 0px 6px 1px rgba(0, 0, 0, 0.05);
+.graph-grid {
+    display: flex;
+    gap: 1rem;
+    position: relative;
 
-    .profile-card {
-        width: max-content;
-        padding: 0.4rem 1.5rem;
-        font-size: 2.4rem;
+    // total leave summary
+    .total-leave-balance-graph-content {
+        width: 21rem;
+        padding: 1rem;
         border-radius: 1rem;
-        border: none;
+        border: 1px solid #DCE3E9;
+        background-color: var(--white-color);
+        display: flex;
+        align-items: center;
+
+        .chart-content {
+            position: relative;
+            width: max-content;
+            height: max-content;
+
+            .total-count-content {
+                position: absolute;
+                top: 40%;
+                left: 26%;
+                text-align: center;
+
+                .count {
+                    font-weight: 700;
+                    font-size: 16px;
+                    color: #0F358A;
+                    line-height: 100%;
+                    letter-spacing: 0%;
+                }
+
+                .total-count-text {
+                    font-weight: 400;
+                    font-size: 10px;
+                    color: #999999;
+                    line-height: 100%;
+                    letter-spacing: 0%;
+                }
+            }
+        }
+
+        canvas {
+            width: 120px !important;
+            height: 120px !important;
+        }
+
+        .bi-circle-fill {
+            font-size: 10px;
+        }
+
+        .leave-category-text {
+            font-weight: 400;
+            font-size: 13px;
+            line-height: 100%;
+            letter-spacing: 0%;
+            color: #747474;
+        }
     }
 
-    .dashed-line {
-        border: 0.5px solid rgba(218, 218, 218, 1)
+    //scrollable buttons stylings
+    .p-tablist-tab-list {
+        background: none !important;
+        border: none !important;
     }
 
-    .label {
-        font-weight: 500;
-        font-size: var(--fontsize16);
-        color: var(--ash-color);
+    .p-tab {
+        padding: 0rem 1rem !important;
     }
 
-    .labelcount {
-        font-weight: 500;
-        font-size: var(--fontsize20);
-        color: var(--primary-color);
+    .p-tab-active {
+        background: none !important;
+        border: 0rem !important;
     }
+
+    .p-tablist-active-bar {
+        background: none !important;
+    }
+
+    .leaves-category-container {
+        width: calc(100% - 21rem);
+
+        .leaves-category-card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 13.5rem !important;
+            padding: 1rem 0.75rem;
+            border: 1px solid #DCE3E9 !important;
+            border-radius: 0.625rem;
+
+            .circular-progress {
+                position: relative;
+                height: 70px;
+                width: 70px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    height: 50px;
+                    width: 50px;
+                    border-radius: 50%;
+                    background-color: #fff;
+                }
+
+                .progress-value {
+                    position: relative;
+                    font-weight: 600;
+                    color: #222222;
+                }
+
+                .avaliable-leaves-text {
+                    font-weight: 600;
+                    font-size: 12.45px;
+                }
+
+                .total-leaves-text {
+                    font-weight: 400;
+                    font-size: 10.67px;
+                }
+            }
+
+            .leave-content-text {
+                font-weight: 600;
+                font-size: 11.64px;
+            }
+
+            .leave-category-text {
+                font-weight: 400;
+                font-size: 10px;
+                text-align: center;
+                color: #222222;
+            }
+        }
+    }
+}
+
+.component-left-tabs-container {
+    height: calc(100dvh - 21.5rem);
+}
+
+.component-right-content {
+    height: calc(100dvh - 21.5rem);
 }

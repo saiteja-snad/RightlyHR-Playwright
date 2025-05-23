@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <div class="custom-table-content">
+    <div class="custom-table-content custom-content-height17">
         <table class="w-100">
             <thead>
                 <tr>
@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (rbac.allowedToAccess('Timeoff Tab.view')) {
+                @if (rbac.allowedToAccess('Cancelled (Time Off).view')) {
                 @if (lpdata.length > 0) {
                 <tr *ngFor="let item of lpdata">
                     <td>{{item.date | dateformat}}</td>

@@ -99,24 +99,22 @@
                         <td class="text-nowrap">{{item.entity.appliedDate | dateformat}}</td>
                         <td class="text-nowrap">{{item.entity.leaveStartDate | dateformat}}</td>
                         <td class="text-nowrap">{{item.entity.leaveEndDate | dateformat}}</td>
-                        <td>
+                        <td class="text-center">
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    <i class="bi bi-info-circle-fill" ></i>
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity.leaveDescription}}</p>
                                 </ng-template>
                             </div>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <div>
                                 <ng-container
                                     *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
                                     <a type="button">
-                                        <img src="images/info-fill.png" alt="info icon"
-                                            (click)="comments(item.entity.leaveApproverComments, commentspopup)"
-                                            class="info-icon">
+                                         <i class="bi bi-info-circle-fill" (click)="comments(item.entity.leaveApproverComments, commentspopup)"></i>
                                     </a>
                                 </ng-container>
                                 <ng-template #noComments>

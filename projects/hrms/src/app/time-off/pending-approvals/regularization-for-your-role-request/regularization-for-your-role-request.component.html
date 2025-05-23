@@ -64,21 +64,21 @@
                     <td>{{leave.entity.requestedDate| dateformat}}</td>
                     <td>{{leave.entity.duration}}</td>
                     <td>{{leave.entity.type}}</td>
-                    <td>
+                    <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="notes">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                <i class="bi bi-info-circle-fill" ></i>
                             </a>
                             <ng-template #notes>
                                 <p class="mb-0">{{leave.entity.notes}} </p>
                             </ng-template>
                         </div>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
                             <a type="button"
                                 (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                <i class="bi bi-info-circle-fill" ></i>
                             </a>
                         </div>
 

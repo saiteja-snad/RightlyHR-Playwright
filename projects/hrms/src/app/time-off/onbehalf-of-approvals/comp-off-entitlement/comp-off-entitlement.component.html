@@ -1,37 +1,45 @@
 <div class="custom-main-component-container">
     <div>
         @if (selectedLeavesItems && selectedLeavesItems.length > 0 && multiSelect) {
-            <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between">
             <div class="mt-2">
                 @if(selectedLeavesItems){
-                    <div class="component-sub-header ">Selected Records: {{selectedLeavesItems.length}}</div>
-            }
+                <div class="component-sub-header ">Selected Records: {{selectedLeavesItems.length}}</div>
+                }
             </div>
             <div class="d-flex justify-content-end gap-3 mb-3">
                 @if (canBulkApprove()) {
-                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')){
-                    <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
-                    }
-                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')){
-                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-                    }
+                @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')){
+                <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+                }
+                @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')){
+                <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+                }
                 }
                 @if (canBulkProcess()) {
-                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')){
-                    <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
-                    }
-                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')){
-                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-                    }
+                @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')){
+                <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+                }
+                @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')){
+                <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+                }
                 }
             </div>
-            </div>
+        </div>
         }
 
+         <!--Input search-->
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1">
+                <i class="bi bi-search"></i></span>
+            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+                placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+        
         <div class="custom-p-multi-select-table">
             @if(!dataLoad){
-           <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
-            [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+            <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
+                [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
                 <ng-template #header>
                     <tr>
                         <th style="width: 4rem">
@@ -41,98 +49,87 @@
                         <th>Employee Name</th>
                         <th>Worked Date</th>
                         <th>Availed</th>
-                        <th>Reason</th>
-                        <th>Approver Comments</th>
+                        <th class="text-center">Reason</th>
+                        <th class="text-center">Approver Comments</th>
                         <th>Applied Date</th>
-                        @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') || rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')) {
-                            <th class="text-center">Action(S)</th>
+                        @if(!multiSelect && (rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') ||
+                        rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete'))) {
+                        <th class="text-center">Action(S)</th>
                         }
                     </tr>
                 </ng-template>
                 <ng-template #body let-leave>
-                    @if (rbac.allowedToAccess('Time Off (On Behalf Of Approvals).view')) {
-                        @if (leaves.length > 0) {
-                            <tr>
-                                <td>
-                                    <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
-                                </td>
-                                <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
-                                <td>{{leave.entity.attendanceRequesterName}}</td>
-                                <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
-                                <td>{{leave.entity.attendanceRequestDurationType}}</td>
-                                <td>
-                                    @if(leave.entity.attendanceRequestDescription != null && leave.entity.attendanceRequestDescription != '') {
-                                    <div>
-                                        <a type="button" [ngbPopover]="reason">
-                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                        </a>
-                                        <ng-template #reason>
-                                            <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
-                                        </ng-template>
-                                    </div>
-                                    }@else {
-                                    <div>
-                                        <span>-</span>
-                                    </div>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
+                        </td>
+                        <td>{{leave.entity.attendanceRequestFusionEmployeeId}}</td>
+                        <td>{{leave.entity.attendanceRequesterName}}</td>
+                        <td>{{leave.entity.attendanceRequestStartTime | dateformat}}</td>
+                        <td>{{leave.entity.attendanceRequestDurationType}}</td>
+                        <td class="text-center">
+                            @if(leave.entity.attendanceRequestDescription != null &&
+                            leave.entity.attendanceRequestDescription != '') {
+                            <div>
+                                <a type="button" [ngbPopover]="reason">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
+                                </ng-template>
+                            </div>
+                            }@else {
+                            <div>
+                                <span>-</span>
+                            </div>
+                            }
+                        </td>
+                        <td class="text-center">
+                            <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
+                                <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                </div>
+                            </div>
+                            <ng-template #compoffcomments>-</ng-template>
+                        </td>
+                        <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
+                        @if(!multiSelect && (rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') || rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete'))) {
+                        <td>
+                            <div class="dropdown">
+                                <a type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu py-0">
+                                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')) {
+                                    @if( leave.approvalHeader.currentapprovalStage !=
+                                    leave.approvalHeader.finalapprovalStage){
+                                    <li (click)="openApproveModal(approval,leave)">
+                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
+                                            translate}}</a>
+                                    </li>
                                     }
-                                </td>
-                                <td>
-                                    <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
-                                        <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
-                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                        </div>
-                                    </div>
-                                    <ng-template #compoffcomments>-</ng-template>
-                                </td>
-                                <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
-                                    <td>
-                                        @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') || rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')) {
-                                            <div class="dropdown">
-                                                <a type="button" data-bs-toggle="dropdown">
-                                                    <i class="bi bi-three-dots-vertical"></i>
-                                                </a>
-                                                <ul class="dropdown-menu py-0">
-                                                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')) {
-                                                    @if( leave.approvalHeader.currentapprovalStage !=
-                                                    leave.approvalHeader.finalapprovalStage){
-                                                    <li (click)="openApproveModal(approval,leave)"
-                                                    >
-                                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
-                                                            translate}}</a>
-                                                    </li>
-                                                    }
-                                                    }
-                                                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')) {
-                                                    @if( leave.approvalHeader.currentapprovalStage ==
-                                                    leave.approvalHeader.finalapprovalStage){
-                                                    <li (click)="handleProcess(leave)"
-                                                        >
-                                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
-                                                            translate}}</a>
-                                                    </li>
-                                                    }
-                                                    }
-                                                    @if( rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')) {
-                                                    <li (click)="openRejectModal(rejectmodal,leave)"
-                                                        >
-                                                        <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
-                                                            translate}}</a>
-                                                    </li>
-                                                    }
+                                    }
+                                    @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')) {
+                                    @if( leave.approvalHeader.currentapprovalStage ==
+                                    leave.approvalHeader.finalapprovalStage){
+                                    <li (click)="handleProcess(leave)">
+                                        <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Process' |
+                                            translate}}</a>
+                                    </li>
+                                    }
+                                    }
+                                    @if( rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete')) {
+                                    <li (click)="openRejectModal(rejectmodal,leave)">
+                                        <a class="dropdown-item"><i class="bi bi-x-circle me-2"></i>{{'Reject' |
+                                            translate}}</a>
+                                    </li>
+                                    }
 
-                                                </ul>
-                                            </div>
-                                        }
-                                    </td>
-                            </tr>
-                        }@else{
-                        <tr>
-                            <td colospan="12">
-                                <app-no-data-found />
-                            </td>
-                        </tr>
+                                </ul>
+                            </div>
+                        </td>
                         }
-                    }
+                    </tr>
                 </ng-template>
                 <ng-template #emptymessage>
                     <tr>
@@ -348,7 +345,8 @@
                     <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
-                        formControlName="comments" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)" ></textarea>
+                        formControlName="comments" maxlength="250"
+                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <!-- Character counter -->
                     <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                     <div class="error-msg"
@@ -360,7 +358,8 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]=" spinnerLoader">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();"
+                    [disabled]=" spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
@@ -390,8 +389,8 @@
                     <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="comments"
-                        placeholder="Please provide reason for rejection" formControlName="comments"
-                        maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
+                        placeholder="Please provide reason for rejection" formControlName="comments" maxlength="250"
+                        (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                     <div class="error-msg"
                         *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
@@ -406,7 +405,8 @@
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]=" spinnerLoader">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
+                    [disabled]=" spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
@@ -427,18 +427,18 @@
 <ng-template #commentspopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
-            <div class="pt-2">
-                <p class="popup-heading mb-0">Approver History Details</p>
+            <div>
+                <p class="popup-heading mb-0">{{'Approver Comments'| translate}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss('Cross click')">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
             </div>
         </div>
-
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content" *ngFor="let comment of approverComments">
             <div class="card p-3">
-                <div *ngFor="let comment of approverComments">
+                <div>
                     <div class="mb-0">
                         <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
                         <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>

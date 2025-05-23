@@ -192,7 +192,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
 
   approveleave(approverPopup: any, selecteddata: LeaveApproval) {
     this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
-    this.approveRequest(selecteddata);
+    // this.approveRequest(selecteddata);
     this.selectedLeaveData = selecteddata;
     console.log(this.selectedLeaveData)
   }
@@ -423,21 +423,21 @@ private updateTableSelectionState(selectedItems: any[]) {
     }
   }
 
-  approveRequest(leaveRequest: LeaveApproval) {
-    //this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
-    if (leaveRequest) {
-      this.subscription = this.http.getData(`Timeoff/getById/${leaveRequest.approvalHeader.referenceEntityId}`).subscribe({
-        next: (response: any) => {
-          this.selectedLeaveData = response
-          this.selectedLeaveData.request = leaveRequest
-        },
-        error: (err) => { },
-        complete: () => {
-          this.http.triggerActionSignal()
-        }
-      })
-    }
-  }
+  // approveRequest(leaveRequest: LeaveApproval) {
+  //   //this.modalService.open(approverPopup, { centered: true, backdrop: 'static' });
+  //   if (leaveRequest) {
+  //     this.subscription = this.http.getData(`Timeoff/getById/${leaveRequest.approvalHeader.referenceEntityId}`).subscribe({
+  //       next: (response: any) => {
+  //         this.selectedLeaveData = response
+  //         this.selectedLeaveData.request = leaveRequest
+  //       },
+  //       error: (err) => { },
+  //       complete: () => {
+  //         this.http.triggerActionSignal()
+  //       }
+  //     })
+  //   }
+  // }
 
   // handleAccept(data: LeaveApproval) {
   //   this.spinnerLoader = true;
@@ -572,8 +572,8 @@ private updateTableSelectionState(selectedItems: any[]) {
         isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
         headerRequests: [
           {
-            headerID: this.selectedLeaveData?.request?.approvalHeader?.id,
-            currentStage: this.selectedLeaveData?.request?.approvalHeader?.currentapprovalStage,
+            headerID: this.selectedLeaveData.approvalHeader?.id,
+            currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
           },
         ],
       };

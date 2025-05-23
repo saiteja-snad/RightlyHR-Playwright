@@ -32,7 +32,7 @@
         <div class="custom-p-multi-select-table">
             @if(!dataLoad){
             <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
-            [(selection)]="selectedProducts" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+                [(selection)]="selectedProducts" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
                 <ng-template #header>
                     <tr>
                         <th style="width: 4rem">
@@ -56,8 +56,6 @@
                 <ng-template #body let-item appendTo="body">
                     @if (rbac.allowedToAccess('For You (Time Off).view')) {
                     @if ((((leaves | async) ?? [])).length > 0) {
-                    <!-- @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track
-                                        item.approvalHeader.id){ -->
                     <tr>
                         <td>
                             <p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" />
@@ -70,24 +68,22 @@
                         <td class="text-nowrap">{{item.entity.appliedDate | dateformat}}</td>
                         <td class="text-nowrap">{{item.entity.leaveStartDate | dateformat}}</td>
                         <td class="text-nowrap">{{item.entity.leaveEndDate | dateformat}}</td>
-                        <td>
+                        <td class="text-center">
                             <div>
                                 <a type="button" [ngbPopover]="reason">
-                                    <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                    <i class="bi bi-info-circle-fill" ></i>
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{item.entity.leaveDescription}}</p>
                                 </ng-template>
                             </div>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <div>
                                 <ng-container
                                     *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
                                     <a type="button">
-                                        <img src="images/info-fill.png" alt="info icon"
-                                            (click)="comments(item.entity.leaveApproverComments, commentspopup)"
-                                            class="info-icon">
+                                         <i class="bi bi-info-circle-fill"  (click)="comments(item.entity.leaveApproverComments, commentspopup)"></i>
                                     </a>
                                 </ng-container>
                                 <ng-template #noComments>

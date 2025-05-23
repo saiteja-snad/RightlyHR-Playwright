@@ -394,7 +394,26 @@ export const permissionsData = [
   // Monthly Attendance Reports Section
   { fields: 'Monthly Attendance Reports - Generate', View: false, Update: false, Create: false, Delete: false }, 
 
+  // Attendance Reports Section
+  { fields: 'Attendance All Employees List(Leaves)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'Attendance Team Manager List(Leaves)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'My Team Report(Leave)', View: false, Update: false, Create: false, Delete: false },
 
+  { fields: 'Attendance All Employees List(Compoff)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'Attendance Team Manager List(Compoff)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'My Team Report(Compoff)', View: false, Update: false, Create: false, Delete: false }, 
+
+  { fields: 'Attendance All Employees List(WFH)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'Attendance Team Manager List(WFH)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'My Team Report(WFH)', View: false, Update: false, Create: false, Delete: false }, 
+
+  { fields: 'Attendance All Employees List(Permission)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'Attendance Team Manager List(Permission)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'My Team Report(Permission)', View: false, Update: false, Create: false, Delete: false }, 
+
+  { fields: 'Attendance All Employees List(Regularization)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'Attendance Team Manager List(Regularization)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'My Team Report(Regularization)', View: false, Update: false, Create: false, Delete: false }, 
 
   // Attendance Reports Section
   { fields: 'Leave Report', View: false, Update: false, Create: false, Delete: false }, 

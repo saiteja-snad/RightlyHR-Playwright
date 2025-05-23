@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { AttandaceReportTabsComponent } from "../../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component";
 import { Select } from 'primeng/select';
 import { IemployeeDetails, ITeamManagerEmployees } from '../reports.modal';
@@ -24,8 +24,9 @@ import { RbacService } from '../../../services/rbac.service';
   styleUrl: './permission-reports.component.scss'
 })
 export class PermissionReportsComponent implements OnInit, OnDestroy {
+  subscription!: Subscription;
   permissionReportForm!: FormGroup;
-  loggedInUser: IemployeeDetails | undefined;
+  loggedInUser = {} as IemployeeDetails;
   employeeDetails: IemployeeDetails[] = [];
   teamManagerDetails: ITeamManagerEmployees[] = [];
   filteredPermissionData: any[] = [];
@@ -34,7 +35,10 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   spinnerLoader2 = false;
   disableBtn = false;
   isLoading = false;
-
+  getEmployeeInfo = [] as any;
+  selectLeaveEmployeeIds: number[] = [];
+  filteredleaveRecords = true;
+  selectedEmployeeId: any = null;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -67,6 +71,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.getAllEmployees();
     this.getTeam();
+    this.getMyTeam();
     // this.getAttendanceReports();
   }
 
@@ -74,7 +79,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     this.permissionReportForm = this.fb.group({
       employee: [null],
       manager: [null],
-      dateRange: [null]
+      dateRange: [null],
+      team:[null]
     });
 
     this.permissionReportForm.valueChanges.subscribe(() => {
@@ -87,7 +93,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     return !(
       form.get('employee')?.value ||
       form.get('manager')?.value ||
-      form.get('dateRange')?.value
+      form.get('dateRange')?.value || form.get('team')?.value
     );
   }
 
@@ -157,7 +163,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       !formValue.leaveCategory &&
       (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
       !formValue.month &&
-      !formValue.manager;
+      !formValue.manager && !formValue.team;
   
     if (noFilterProvided) {
       this.filteredPermissionData = [];
@@ -181,11 +187,11 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       request.EndDate = endDate;
     }
     
-    // Apply manager name if provided
-    if (formValue.manager) {
-      request.teamManagerId = formValue.manager.employeeId
+   //Apply my team
+    if(formValue.team){
+      request.teamManagerEmpID =formValue.team.teamManagerEmpID;
     }
-  
+
     // Only include employee filter if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
       request.FusionEmpId = formValue.employee.fusionEmpId;
@@ -323,6 +329,53 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
 
     return Math.max(10, maxWidth);
   }
+
+    onClick(employeeIds: any) {
+    if (employeeIds) {
+      console.log(employeeIds);
+      this.filteredleaveRecords = false;
+      this.selectLeaveEmployeeIds = [];
+      this.selectedEmployeeId = [];
+      // If "All Employees" is selected, set employeeId as an empty array or a special flag
+      if (employeeIds == this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+      } else {
+        this.selectLeaveEmployeeIds.push(employeeIds);
+        this.selectedEmployeeId.push(employeeIds);
+      }
+    }
+  }
+
+ getMyTeam() {
+  const EmployeeId = this.loggedInUser?.employeeId;
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe({
+      next: (response: any) => {
+        console.log(response);
+        if (response) {
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${
+                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            };
+          });
+
+          this.getEmployeeInfo.unshift({
+            fullName: 'All Employees',
+            fusionEmpId: this.loggedInUser.fusionEmpId,
+            employeeId: this.loggedInUser.employeeId,
+          });
+        }
+      },
+    });
+}
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

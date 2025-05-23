@@ -10,8 +10,6 @@
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
             Clear All
           </button>
-
-
           <!-- Date Range -->
           <div class="d-flex align-items-center gap-2">
             <div>
@@ -23,18 +21,20 @@
           </div>
 
           <!-- Employee -->
+          @if(rbac.allowedToAccess('Attendance All Employees List(Permission).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="employeeDetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-                [showClear]="true" formControlName="employee" placeholder="Please select employee"
-                class="form-select custom-select" filterPlaceholder="Search employee">
+              <p-select [options]="employeeDetails" optionLabel="fullName" filterBy="fullName" [filter]="true" [showClear]="true"
+                formControlName="employee" placeholder="Please select employee" class="form-select custom-select"
+                filterPlaceholder="Search employee">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                 <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
               </p-select>
             </div>
           </div>
-
+          }
           <!-- Team Manager -->
+          @if(rbac.allowedToAccess('Attendance Team Manager List(Permission).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="teamManagerDetails" [filter]="true" [showClear]="true" optionLabel="fullName"
@@ -46,6 +46,21 @@
             </div>
           </div>
           }
+          <!--My Team  -->
+           @if(rbac.allowedToAccess('My Team Report(Permission).view') &&!rbac.allowedToAccess('Attendance All Employees List(Permission).view') 
+         && !rbac.allowedToAccess('Attendance Team Manager List(Permission).view')){
+          <div class="d-flex align-items-center gap-2">
+            <div class="custom-p-select-content">
+              <p-select [options]="getEmployeeInfo" [filter]="true" [showClear]="true" optionLabel="fullName"
+                filterBy="fullName" formControlName="team" placeholder="Please select employee"
+                class="form-select custom-select" filterPlaceholder="Search employee" (change)="onClick($event)">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+              </p-select>
+            </div>
+          </div>
+          }
+        }
           <!-- Buttons -->
           <div class="d-flex gap-2">
             @if(rbac.allowedToAccess('Permission Report - Generate.view')){

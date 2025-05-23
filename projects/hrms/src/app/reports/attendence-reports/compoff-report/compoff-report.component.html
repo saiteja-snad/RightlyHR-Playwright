@@ -10,7 +10,6 @@
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
             Clear All
           </button>
-          }
 
           <!-- Date Range -->
           <div class="d-flex align-items-center gap-2">
@@ -23,6 +22,7 @@
           </div>
 
           <!-- Employee -->
+            @if(rbac.allowedToAccess('Attendance All Employees List(Compoff).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
@@ -33,8 +33,9 @@
               </p-select>
             </div>
           </div>
-
+        }
           <!-- Team Manager -->
+            @if(rbac.allowedToAccess('Attendance Team Manager List(Compoff).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName"
@@ -45,7 +46,22 @@
               </p-select>
             </div>
           </div>
-
+        }
+           <!--My Team-->
+        @if(rbac.allowedToAccess('My Team Report(Compoff).view') &&!rbac.allowedToAccess('Attendance All Employees List(Compoff).view') 
+         && !rbac.allowedToAccess('Attendance Team Manager List(Compoff).view')){
+         <div class="d-flex align-items-center gap-2">
+            <div class="custom-p-select-content">
+              <p-select [options]="getEmployeeInfo" [filter]="true" [showClear]="true" optionLabel="fullName"
+                filterBy="fullName" formControlName="team" placeholder="Please select employee"
+                class="form-select custom-select" filterPlaceholder="Search employee" (change)="onClick($event)">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+              </p-select>
+            </div>
+          </div>
+        }
+      }
           <!-- Buttons -->
           <div class="d-flex gap-2">
             @if(rbac.allowedToAccess('Comp Off Report - Generate.view')){

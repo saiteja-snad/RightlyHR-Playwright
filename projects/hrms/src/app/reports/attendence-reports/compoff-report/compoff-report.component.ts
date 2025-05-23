@@ -57,7 +57,9 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
   spinnerLoader1 = false;
   spinnerLoader2 = false;
   disableBtn = false;
-
+  filteredleaveRecords = false;
+  selectLeaveEmployeeIds: number[] = [];
+  getEmployeeInfo = [] as any;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -90,13 +92,15 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     this.loggedInUser = this.authService.getToken();
     this.getEmployeeId();
     this.getTeam();
+    this.getMyTeam();
   }
 
   initializeForm() {
     this.compoffReportForm = this.fb.group({
       employee: [null],
       manager: [null],
-      dateRange: [null]
+      dateRange: [null],
+      team: [null]
     });
 
     this.compoffReportForm.valueChanges.subscribe(() => {
@@ -113,7 +117,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
     return !(
       form.get('employee')?.value ||
       form.get('manager')?.value ||
-      form.get('dateRange')?.value 
+      form.get('dateRange')?.value || form.get('team')?.value
     );
   }
 
@@ -181,7 +185,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       !formValue.employee &&
       (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
       !formValue.month &&
-      !formValue.manager;
+      !formValue.manager && !formValue.team;
 
     if (noFilterProvided) {
       this.filteredCompoffRecord = [];
@@ -212,6 +216,16 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
 
+    //Apply my team
+    // if(formValue.team){
+    //   request.teamManagerEmpID =formValue.team.teamManagerEmpID;
+    // }
+    if (formValue.team && formValue.team.fusionEmpId) {
+      request.FusionEmpId = formValue.team.fusionEmpId;
+    } else if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
+      request.FusionEmpId = formValue.employee.fusionEmpId;
+    }
+    
     // Single API call
     this.reportsService.getcompOffReports(request).subscribe({
       next: (response: any) => {
@@ -342,6 +356,51 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
 
     // Set minimum width to 10
     return Math.max(10, maxWidth);
+  }
+  
+  onClick(employeeIds: any) {
+    if (employeeIds) {
+      console.log(employeeIds);
+      this.filteredleaveRecords = false;
+      this.selectLeaveEmployeeIds = [];
+      this.selectedEmployeeId = [];
+      // If "All Employees" is selected, set employeeId as an empty array or a special flag
+      if (employeeIds == this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+      } else {
+        this.selectLeaveEmployeeIds.push(employeeIds);
+        this.selectedEmployeeId.push(employeeIds);
+      }
+    }
+  }
+
+  getMyTeam() {
+    const EmployeeId = this.loggedInUser?.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          if (response) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => {
+              return {
+                ...employee,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                  }${employee.lastName}`,
+              };
+            });
+
+            this.getEmployeeInfo.unshift({
+              fullName: 'All Employees',
+              fusionEmpId: this.loggedInUser.fusionEmpId,
+              employeeId: this.loggedInUser.employeeId,
+            });
+          }
+        },
+      });
   }
 
   ngOnDestroy(): void {

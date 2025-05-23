@@ -59,6 +59,9 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   spinnerLoader1= false;
   spinnerLoader2= false;
   disableBtn= false;
+  filteredleaveRecords = false;
+  selectLeaveEmployeeIds: number[] = [];
+  getEmployeeInfo = [] as any;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -93,6 +96,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.getAttendanceReports();
     this.getTeam();
+    this.getMyTeam();
   }
 
   initializeForm() {
@@ -101,6 +105,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       manager: [null],
       dateRange: [null],
       leaveCategory: [null],
+      team:[null]
       // year: ['']
     });
 
@@ -188,7 +193,8 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       form.get('employee')?.value ||
       form.get('manager')?.value ||
       form.get('dateRange')?.value ||
-      form.get('leaveCategory')?.value
+      form.get('leaveCategory')?.value ||
+      form.get('team')?.value
     );
   }
 
@@ -204,7 +210,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       !formValue.leaveCategory &&
       (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
       !formValue.month &&
-      !formValue.manager;
+      !formValue.manager && !formValue.team;
   
     if (noFilterProvided) {
       this.filteredleaveRecord = [];
@@ -232,7 +238,30 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     if (formValue.manager) {
       request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
-  
+
+    // // Only include employee filter if not "All Employees"
+    if (formValue.team && formValue.team.fusionEmpId) {
+      request.FusionEmpId = formValue.team.fusionEmpId;
+    } else if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
+      request.FusionEmpId = formValue.employee.fusionEmpId;
+    }
+    // const params = new URLSearchParams();
+
+    // If multiple employees are selected from "My Team", send as comma-separated string
+    // if (this.selectedEmployeeId && this.selectedEmployeeId.length > 0) {
+    //   request.employeeId = this.selectedEmployeeId.join(',');
+    // } else if (!isAllEmployeesSelected && formValue.employee?.TeamManagerFusionEmpId) {
+    //   request.TeamManagerFusionEmpId = formValue.employee.TeamManagerFusionEmpId;
+    // }
+// if (formValue.team) {
+//   if (formValue.team.fusionEmpId === 'all') {
+//     const allTeamEmployeeIds = this.getEmployeeInfo.map(emp => emp.fusionEmpId).join(',');
+//     request.FusionEmpId = allTeamEmployeeIds;
+//   } else {
+//     request.FusionEmpId = formValue.team.fusionEmpId;
+//   }
+// }
+
     // Only include employee filter if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
       request.FusionEmpId = formValue.employee.fusionEmpId;
@@ -377,6 +406,49 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     return Math.max(10, maxWidth);
   }
 
+  onClick(employeeIds: any) {
+    if (employeeIds) {
+      console.log(employeeIds);
+      this.filteredleaveRecords = true;
+      this.selectLeaveEmployeeIds = [];
+      this.selectedEmployeeId = [];
+      if (employeeIds == this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); 
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+      } else {
+        this.selectLeaveEmployeeIds.push(employeeIds);
+        this.selectedEmployeeId.push(employeeIds);
+      }
+    }
+  }
+
+  getMyTeam() {
+    const EmployeeId = this.loggedInUser?.employeeId;
+    console.log(this.loggedInUser)
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          if (response) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+            }));
+
+            this.getEmployeeInfo.unshift({
+              fullName: 'All Employees',
+              fusionEmpId: this.loggedInUser.fusionEmpId,
+              employeeId: this.loggedInUser.employeeId,
+            });
+          }
+        },
+      });
+  }
+  
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

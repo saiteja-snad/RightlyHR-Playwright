@@ -35,7 +35,7 @@
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
                 placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
-        
+
         <div class="custom-p-multi-select-table">
             @if(!dataLoad){
             <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
@@ -94,12 +94,12 @@
                         </td>
                         <td>{{leave.entity.attendanceRequestAppliedDate | dateformat}}</td>
                         @if(!multiSelect && (rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update') || rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).delete'))) {
-                        <td>
+                        <td class="text-center">
                             <div class="dropdown">
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
-                                <ul class="dropdown-menu py-0">
+                                <ul class="dropdown-menu custom-dropdown-menu">
                                     @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).update')) {
                                     @if( leave.approvalHeader.currentapprovalStage !=
                                     leave.approvalHeader.finalapprovalStage){

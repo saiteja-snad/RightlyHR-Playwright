@@ -1,27 +1,39 @@
-<div class="component-side-nav-tabs-container py-3">
+<div class="custom-sub-tabs-container">
   <ul class="nav flex-column gap-2">
     @if(rbac.allowedToAccess('Waiting For Approval (Comp Off).view')){
-    <li class="nav-item ">
-      <a class="nav-link" [routerLink]="['/time-off/comp-off/waiting-for-approval']" routerLinkActive="active-nav-link"
-        aria-current="page">Waiting For Approval ({{waitingForApprovalCompOffCount}})</a>
+    <li class="nav-item">
+      <div class="nav-link" [routerLink]="['/time-off/comp-off/waiting-for-approval']"
+        routerLinkActive="active-nav-link" aria-current="page">
+        <img src="/time-off-icon/waiting-for-approval-icon.png" alt="Icon" class="icon mb-2">
+        <div>Waiting For Approval ({{waitingForApprovalCompOffCount}})</div>
+      </div>
+      <div class="border-bottom"></div>
     </li>
     }
     @if(rbac.allowedToAccess('Approved (Comp Off).view')){
     <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/comp-off/approved']" routerLinkActive="active-nav-link">Approved
-        ({{approvalCompOffRequestsCount}})</a>
+      <div class="nav-link" [routerLink]="['/time-off/comp-off/approved']" routerLinkActive="active-nav-link">
+        <img src="/time-off-icon/approved-icon.png" alt="Icon" class="icon mb-2">
+        <div>Approved ({{approvalCompOffRequestsCount}})</div>
+      </div>
+      <div class="border-bottom"></div>
     </li>
     }
     @if(rbac.allowedToAccess('Processed (Comp Off).view')){
     <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/comp-off/processed']" routerLinkActive="active-nav-link">Processed
-        ({{processedCompOffRequestsCount}})</a>
+      <div class="nav-link" [routerLink]="['/time-off/comp-off/processed']" routerLinkActive="active-nav-link">
+        <img src="/time-off-icon/processed-icon.png" alt="Icon" class="icon mb-2">
+        <div>Processed ({{processedCompOffRequestsCount}})</div>
+      </div>
+      <div class="border-bottom"></div>
     </li>
     }
     @if(rbac.allowedToAccess('Rejected (Comp Off).view')){
     <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/comp-off/rejected']" routerLinkActive="active-nav-link">Rejected
-        ({{rejectedCompOffRequestsCount}})</a>
+      <div class="nav-link" [routerLink]="['/time-off/comp-off/rejected']" routerLinkActive="active-nav-link">
+        <img src="/time-off-icon/rejected-icon.png" alt="Icon" class="icon mb-2">
+        <div>Rejected ({{rejectedCompOffRequestsCount}})</div>
+      </div>
     </li>
     }
   </ul>

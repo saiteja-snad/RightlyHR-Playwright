@@ -114,9 +114,9 @@
 }
 
 .component-left-tabs-container {
-    width: 7.5rem;
-    min-width: 7.5rem;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    background-color: var(--white-color);
+    height: calc(100dvh - 21.5rem);
+}
+
+.component-right-content {
+    height: calc(100dvh - 21.5rem);
 }

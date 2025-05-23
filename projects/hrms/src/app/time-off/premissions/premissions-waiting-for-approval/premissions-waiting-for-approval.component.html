@@ -11,6 +11,7 @@
                     <!-- <th>Rejected Reason</th> -->
                     <th>Permission Type</th>
                     <th>Status</th>
+                    <th>Action(s)</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,6 +33,22 @@
                         </td>
                         <td>{{permissionRequest.type}}</td>
                         <td>{{permissionRequest.status}}</td>
+                         <td class="text-center">
+                      @if(isBeforeToday(permissionRequest.requestedDate)){
+                      <div class="dropdown">
+                        <a type="button" data-bs-toggle="dropdown">
+                          <i class="bi bi-three-dots-vertical"></i>
+                        </a>
+                        <ul class="dropdown-menu custom-dropdown-menu">
+                      
+                          <li (click)="onClick(permissionRequest,cancelModal)">
+                            <a class="dropdown-item">Cancel Leave</a>
+                          </li>
+                        </ul>
+                      </div>
+                      }
+                  
+            </td>
                     </tr>
                 </ng-container>
 
@@ -50,3 +67,43 @@
         }
     </div>
 </div>
+<!-- cancel leave popup -->
+<ng-template #cancelModal let-modal>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">{{'Are you sure you want to cancel this leave request?' | translate}}</p>
+    </div>
+    <form autocomplete="off" [formGroup]="cancelForm" (ngSubmit)="cancelpermissionsSubmit()">
+      <div class="custom-main-popup-content">
+        <label for="comments" class="form-label custom-label mb-2">{{'Reason for Cancellation' | translate}}<span
+            class="text-danger">*</span></label>
+        <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="cancelReason" maxlength="250"
+          placeholder="Please enter leave cancellation reason....." rows="3"></textarea>
+        <!-- Character counter -->
+        <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>
+        <div class="error-msg"
+          *ngIf="cancelForm.get('cancelReason')?.touched && cancelForm.get('cancelReason')?.invalid">
+          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Reason for Cancellation is
+            required</ng-container>
+          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['maxlength']">Maximum 250 characters
+            allowed</ng-container>
+          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['pattern']">Leading spaces are not
+            allowed</ng-container>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="reset" class="custom-btn btn-secondary"
+          (click)="modal.dismiss();cancelForm.reset()">{{'Close'| translate}}</button>
+        <button type="submit" class="custom-btn btn-primary" [disabled]="cancelForm.invalid || isLoading">@if
+          (!isLoading) { {{ 'Submit' | translate }} } @else {
+            <div class="button-loader-content">
+              <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+              <div>{{'Submitting'|translate}}</div>
+          </div>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>

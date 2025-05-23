@@ -244,7 +244,7 @@ export const permissionsData = [
   { fields: 'Processed (WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request WFH Button', View: false, Update: false, Create: false, Delete: false },
-
+  { fields: 'Cancel (WFH)', View: false, Update: false, Create: false, Delete: false },
 
   //Remote Login
   { fields: 'Request Remote Login Button', View: false, Update: false, Create: false, Delete: false },
@@ -261,6 +261,7 @@ export const permissionsData = [
   { fields: 'Waiting For Approval (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Approved (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (Permissions)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cancel (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request Permission Button', View: false, Update: false, Create: false, Delete: false },
 
   //Regularization Sub Tabs Section

@@ -933,7 +933,7 @@
                     </tr>
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (WFH)' 
-                                                || per.fields === 'Approved (WFH)' || per.fields === 'Processed (WFH)' 
+                                                || per.fields === 'Approved (WFH)' || per.fields === 'Processed (WFH)' || per.fields==='Cancel (WFH)'
                                                 || per.fields === 'Rejected (WFH)' || per.fields === 'Request WFH Button' ">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
@@ -1010,7 +1010,7 @@
                     </tr>
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (Permissions)' 
-                                            || per.fields === 'Approved (Permissions)'  
+                                            || per.fields === 'Approved (Permissions)'  ||per.fields==='Cancel (Permissions)'
                                             || per.fields === 'Rejected (Permissions)' || per.fields === 'Request Permission Button' ">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">

@@ -20,5 +20,10 @@
       <a class="nav-link" [routerLink]="['/time-off/wfh/rejected']" routerLinkActive="active-nav-link">Rejected ({{rejectedWFHRequestsCount}})</a>
     </li>
   }
+   @if(rbac.allowedToAccess('Cancel (WFH).view')){
+    <li class="nav-item">
+      <a class="nav-link" [routerLink]="['/time-off/wfh/cancelled']" routerLinkActive="active-nav-link">Cancelled ({{cancelWFHRequestsCount}})</a>
+    </li>
+  }
   </ul>
 </div>

@@ -87,7 +87,10 @@ isLoading=false;
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Leave cancelled successfully')
             this.getDataByLPID();
-            window.location.reload();
+            setTimeout(() => {
+               window.location.reload();
+            }, 2000);
+            
           
         }
        this.signalService.timecountTriggerSignal.set(true);
@@ -101,6 +104,9 @@ isLoading=false;
             this.getDataByLPID();
             this.signalService.timecountTriggerSignal.set(true);
         this.conformationPopup.openErrorModal(err.error.message);
+        setTimeout(() => {
+               window.location.reload();
+            }, 2000);
       },
       complete:()=> {
         this.isLoading=false;

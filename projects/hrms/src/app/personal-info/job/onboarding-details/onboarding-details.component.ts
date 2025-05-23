@@ -445,11 +445,7 @@ export class OnboardingDetailsComponent {
       
       this.onboardingForm.enable();
       this.getEmployeeId()
-      this.onboardingForm.get('totalExperience')?.disable()
-      // this.onboardingForm.get('status')?.disable()
-      // if(this.empinfo.empstatus?.toLowerCase() === 'offer letter accepted'){
-      //   this.onboardingForm.get('status')?.enable()
-      // }
+      this.onboardingForm.get('totalExperience')?.disable();
 
     } else {
       this.getEmployeeId()

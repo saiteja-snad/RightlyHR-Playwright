@@ -28,7 +28,7 @@
     }
     <div class="custom-p-multi-select-table">
 
-        <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
+        <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
             [(selection)]="selectedLeavesItems" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
             <ng-template #header>
                 <tr>
@@ -157,7 +157,7 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Close'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]=" spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
@@ -197,7 +197,7 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Cancel' |
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]=" spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || spinnerLoader">
                     @if(spinnerLoader){

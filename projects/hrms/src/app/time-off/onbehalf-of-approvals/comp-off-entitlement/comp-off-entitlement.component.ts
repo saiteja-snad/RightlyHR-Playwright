@@ -48,7 +48,7 @@ export class CompOffEntitlementComponent {
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   spinnerLoader = false;
-  searchValue: any;
+  searchValue: any | null;
   selectedLeavesItems: AttendanceRequest[] = [];
   dataLoad = false;
   responseSummary!: any;
@@ -420,6 +420,7 @@ export class CompOffEntitlementComponent {
           this.multiSelect = false;
           this.getAllPendingApprovals();
           this.http.triggerActionSignal();
+          this.searchValue = null;
         },
       });
   }
@@ -478,6 +479,7 @@ export class CompOffEntitlementComponent {
             this.multiSelect = false;
             this.getAllPendingApprovals();
             this.http.triggerActionSignal();
+            this.searchValue = null;
           },
         });
     }
@@ -538,6 +540,7 @@ export class CompOffEntitlementComponent {
             this.selectedLeaveData = {} as AttendanceRequest;
             this.getAllPendingApprovals();
             this.http.triggerActionSignal();
+            this.searchValue = null;
           },
         });
     }

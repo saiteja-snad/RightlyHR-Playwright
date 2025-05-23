@@ -76,7 +76,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   spinnerLoader = false;
-  searchValue: any;
+  searchValue: any | null;
   dataload = false;
   wfhsselect!: LeaveApproval[];
   selectedLeavesItems: LeaveApproval[] = [];
@@ -273,6 +273,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
           complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }
@@ -344,6 +345,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
           complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }
@@ -411,6 +413,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.getAllPendingApprovals();
+          this.searchValue = null;
         },
       });
   }

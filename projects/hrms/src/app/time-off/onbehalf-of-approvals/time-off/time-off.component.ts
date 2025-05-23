@@ -608,6 +608,7 @@ private updateTableSelectionState(selectedItems: any[]) {
           this.getAllPendingApprovals();
           this.selectedProducts = [];
           this.http.triggerActionSignal();
+          this.searchValue = null;
         },
       });
   }
@@ -676,6 +677,7 @@ private updateTableSelectionState(selectedItems: any[]) {
           this.selectedProducts = [];
           this.getAllPendingApprovals();
           this.http.triggerActionSignal();
+          this.searchValue = null;
         },
       });
   }
@@ -740,6 +742,7 @@ private updateTableSelectionState(selectedItems: any[]) {
           this.getAllPendingApprovals();
           this.selectedProducts = [];
           this.http.triggerActionSignal();
+          this.searchValue = null;
         },
       });
   }

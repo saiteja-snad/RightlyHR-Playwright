@@ -562,7 +562,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             this.headerName = "External Inactive";
             break;
           default:
-            this.headerName = "Employees";
+            this.headerName = "Team member info";
+            this.showBackIcon = false;
         }
       }
     }
@@ -581,7 +582,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    localStorage.removeItem('personaldata')
+    
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

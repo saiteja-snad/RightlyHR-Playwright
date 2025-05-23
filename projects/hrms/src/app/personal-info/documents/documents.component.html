@@ -73,9 +73,9 @@
                   <th>File name</th>
                   <th>Created Date</th>
                   <th>Size</th>
-                  @if(canAccess('view','upload')) {
+              
                   <th class="text-center">Action</th>
-                  }
+                  
                </thead>
                <tbody>
                   <ng-container *ngIf="getVisibleFiles().length > 0; else noDataTemplate">
@@ -84,7 +84,7 @@
                            <td>{{ file.name | lastValue }}</td>
                            <td>{{ file.createdOn | dateformat }}</td>
                            <td>{{ file.contentLength | fileSize }}</td>
-                            @if(canAccess('view','documents')) {
+                         
                            <td class="text-center">
                               <div>
                                  <span class="download-text" (click)="onSelectDownload(file)">
@@ -92,7 +92,7 @@
                                  </span>
                               </div>
                            </td>
-                        }
+                        
                         </tr>
                      </ng-container>
                   </ng-container>

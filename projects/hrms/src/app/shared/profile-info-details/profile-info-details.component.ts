@@ -55,6 +55,10 @@ export class ProfileInfoDetailsComponent {
       this.getJobDetails();
       this.getEmployeeId();
     });
+     this.http.profliepicadd$.subscribe(() => {
+      this.imageUrl = this.empinfo.profileUrl;
+    this.onSelectprofilePicDownload(this.empinfo);
+    });
   }
 
   isActive(route: string): boolean {
@@ -132,8 +136,10 @@ export class ProfileInfoDetailsComponent {
           this.subscription = this.http.postdata("Employeedata/UPDATER", this.empinfo).subscribe({
             next: (data: any) => {
               this.http.setprofileDetails()
+               this.getEmployeeId();
+              this.onSelectprofilePicDownload(this.empdata)
               this.conformationPopup.openSuccessModal('Profile picture updated successfully')
-              this.getEmployeeId();
+             
             },
             error: (reason: any) => {
               this.conformationPopup.openErrorModal(reason.error.message || 'Profile picture update failed')

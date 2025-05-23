@@ -35,6 +35,7 @@ export class ProbationDetailsComponent implements OnInit {
      private modalService: NgbModal,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private readonly router: Router) { }
 
   ngOnInit(): void {
+    this.getEmpInfoFromRoute()
     this.loggedinuser = this.authService.getToken();
     this.getProbationRequest();
     this.getProbationExtendDays();

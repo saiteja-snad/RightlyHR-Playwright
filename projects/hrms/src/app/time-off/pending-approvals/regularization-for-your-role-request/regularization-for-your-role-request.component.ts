@@ -45,7 +45,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
   first: any = 0;
   rows: any = 10;
   multiSelect = false;
-  searchValue: any;
+  searchValue: any | null;
   dataLoad = false;
   spinnerLoader = false;
   responseSummary!: any;
@@ -432,6 +432,8 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
             this.selectedProducts = [];
+            this.searchValue = null;
+
           },
         });
     }
@@ -498,6 +500,8 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
           this.signalService.regularizationSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
           this.selectedProducts = [];
+          this.searchValue = null;
+
         },
       });
   }
@@ -568,6 +572,8 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
             this.selectedProducts = [];
+            this.searchValue = null;
+
           },
         });
     }

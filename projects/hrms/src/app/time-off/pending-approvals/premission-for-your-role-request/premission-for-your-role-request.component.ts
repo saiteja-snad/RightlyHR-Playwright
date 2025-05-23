@@ -76,7 +76,7 @@ export class PremissionForYourRoleRequestComponent
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  searchValue: any;
+  searchValue: any | null;
   spinnerLoader = false;
   dataload = false;
   permissionsselect!: LeaveApproval[];
@@ -278,6 +278,7 @@ export class PremissionForYourRoleRequestComponent
           complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }
@@ -345,6 +346,7 @@ export class PremissionForYourRoleRequestComponent
         },
         complete: () => {
           this.getAllPendingApprovals();
+          this.searchValue = null;
         },
       });
   }
@@ -414,6 +416,7 @@ export class PremissionForYourRoleRequestComponent
           complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }

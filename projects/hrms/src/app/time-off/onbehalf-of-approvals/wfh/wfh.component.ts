@@ -52,7 +52,7 @@ export class WfhComponent {
   selectedLeaveData = {} as AttendanceRequest;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  searchValue: any;
+  searchValue: any | null;
   spinnerLoader = false;
   multiSelect = false;
   selectedLeavesItems: LeaveApproval[] =[];
@@ -351,6 +351,7 @@ bulkapprove(approverPopup: any) {
         complete: () => {
           this.getAllPendingApprovals();
           this.spinnerLoader = false;
+          this.searchValue = null;
         },
       });
     }
@@ -417,6 +418,7 @@ bulkapprove(approverPopup: any) {
         complete: () => {
           this.getAllPendingApprovals();
           this.spinnerLoader = false;
+          this.searchValue = null;
         },
       });
     }
@@ -482,6 +484,7 @@ bulkapprove(approverPopup: any) {
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
+          this.searchValue = null;
         },
       });
   }

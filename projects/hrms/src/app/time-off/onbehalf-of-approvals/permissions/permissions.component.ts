@@ -76,7 +76,7 @@ export class PermissionsComponent {
   requestBody = {} as any;
   requestSummary!: any;
   dataload = false;
-  searchValue: any;
+  searchValue: any | null;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -383,6 +383,7 @@ private updateTableSelectionState(selectedItems: any[]) {
           complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }
@@ -445,7 +446,7 @@ private updateTableSelectionState(selectedItems: any[]) {
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
-        complete: () => {},
+        complete: () => {this.searchValue = null;},
       });
   }
 
@@ -511,6 +512,7 @@ private updateTableSelectionState(selectedItems: any[]) {
           },
           complete: () => {
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }

@@ -397,7 +397,8 @@ body {
 
     .nav-tab-active {
         color: #fff;
-        background-color: var(--primary-color);
+       background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
+
         font-weight: 500;
         border-radius: 6px;
     }
@@ -408,7 +409,7 @@ body {
 
     .active-nav-link {
         color: #fff;
-        background-color: var(--primary-color);
+      background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
         font-weight: 500;
         border-radius: 6px;
     }

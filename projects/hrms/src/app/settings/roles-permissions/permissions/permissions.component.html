@@ -1974,11 +1974,11 @@
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" 
-                                (change)="onCheckboxChange(per, 'Create')" [disabled]="true">
+                                (change)="onCheckboxChange(per, 'Create')"   [disabled]="!(per.fields === 'My Info Previous Experience Details' || per.fields === 'My Info Certification Details') || !roleToFilter?.id">
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" 
-                                (change)="onCheckboxChange(per, 'Delete')" [disabled]="true">
+                                (change)="onCheckboxChange(per, 'Delete')" [disabled]="!(per.fields === 'My Info Previous Experience Details' || per.fields === 'My Info Certification Details') || !roleToFilter?.id">
                             </td>
                         </tr>
                     </ng-container>

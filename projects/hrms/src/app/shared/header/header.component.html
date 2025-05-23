@@ -1,51 +1,76 @@
 <div class="header-main-container">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="component-header-content m-0">
         <!--Logo-->
-        <div class="me-4">
+        <div>
             <img src="/logos/SNAD-horizontal-logo.png" alt="Company Logo" class="logo-image">
         </div>
 
-        <div class="left-content">
-            <div>
-                <div *ngIf="isActive('myinfo')">
-                    <app-myinfo-header-tabs />
-                </div>
-                <div *ngIf="isActive('personalinfo')">
-                    <app-personalinfo-header-tabs />
-                </div>
-                <!-- <div *ngIf="isActive('/it-support')">
-                    <app-itsuporrt-header-tabs />
-                </div>
-                <div *ngIf="isActive('settings')">
-                    <app-settings-main-header-tabs />
-                </div>
-                <div *ngIf="showPmsTabs()">
-                    <app-pms-tabs />
-                </div>
-                <div *ngIf="showPmsConfigurationTabs()">
-                    <app-pms-settings-tabs />
-                </div> -->
-            </div>
-        </div>
+    
 
-        <div class="d-flex right-content">
+        <!--Header profile content-->
+        <div class="header-profile-dropdown-content">
             <div class="dropdown">
-                <a type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image"
-                        class="profile-img cursor">
-                </a>
-                <ul class="dropdown-menu custom-dropdown-menu">
-                    @if(rbac.allowedToAccess('Invite New User.view')){
-                    <li>
-                        <a class="dropdown-item" (click)="navigateToAccessedRoute('/admin/active-new-user')">
-                            <i class="bi bi-envelope-plus me-2"></i>Invite New User</a>
-                    </li>
-                    }
-                    <li><a class="dropdown-item" [routerLink]="['/myinfo/personal/basic-info']">
-                            <i class="bi bi-file-earmark-text-fill me-2"></i>View Profile</a>
-                    </li>
+                <div class="profile-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div>
+                        <p class="m-0 name">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}
+                        </p>
+                        <p class="m-0 job-role">{{jobRole}}</p>
+                    </div>
+                    <div>
+                        <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image"
+                            class="profile-img">
+                    </div>
+                </div>
+
+                <ul class="dropdown-menu">
+                    <div class="dropdown-content">
+                    <div class="image-content">
+                        <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image"
+                            class="profile-image">
+                        <div class="edit-icon-content">
+                            <label for="formFile" class="form-label">
+                                <img src="/personal-info-icons/editimages.png" alt="edit-icon"
+                                    class="edit-icon cursor"></label>
+                            <input class="form-control d-none" type="file" id="formFile" accept=".jpg"
+                                (change)="chooseNewProfile($event)">
+                        </div>
+                    </div>
+                    <div class="data-content">
+                        <p class="name m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}
+                        </p>
+                        <p class="sub-text m-0 mb-1">{{this.empdata?.workEmail || 'N/A'}}</p>
+                        <p class="sub-text m-0 mb-1">{{jobRole}}</p>
+                        <div class="mb-2">
+                            <a class="profile-btn" [routerLink]="['/myinfo/personal/basic-info']">View Profile</a>
+                        </div>
+                        <button class="custom-btn btn-primary" (click)="openlogoutModal()"><img
+                                src="/icons/logout-icon.png" alt="Logout" class="logout-icon me-2">Logout</button>
+                    </div>
+                    </div>
                 </ul>
             </div>
         </div>
     </div>
 </div>
+
+<ng-template #logoutpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="images\logout-image.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to logout?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'No'| translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="onLogout()">
+                @if(spinnerLoader){
+                <div class="button-loader-content">
+                    <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                    <span>{{'Loading...'}}</span>
+                </div>
+                }@else {
+                <span>{{'Yes'| translate}}</span>
+                }
+            </button>
+        </div>
+    </div>
+</ng-template>

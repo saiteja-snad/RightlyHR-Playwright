@@ -67,6 +67,7 @@ export class ProspectiveEmployeesComponent implements OnInit {
 
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
+    console.log("act",act)
     // this.router.navigate(['/personalinfo']);
     this.goToAccessibleRoute('/personalinfo')
   }

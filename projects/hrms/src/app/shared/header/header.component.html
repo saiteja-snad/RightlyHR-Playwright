@@ -1,7 +1,7 @@
 <div class="header-main-container">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="component-header-content m-0">
         <!--Logo-->
-        <div class="me-4">
+        <div>
             <img src="/logos/SNAD-horizontal-logo.png" alt="Company Logo" class="logo-image">
         </div>
 
@@ -13,91 +13,49 @@
                 <div *ngIf="isActive('personalinfo')">
                     <app-personalinfo-header-tabs />
                 </div>
-                
             </div>
         </div>  -->
 
-        <div class="d-flex right-content">
+        <!--Header profile content-->
+        <div class="header-profile-dropdown-content">
             <div class="dropdown">
-                <div class="card custom-profile-card p-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <div class="d-flex gap-2">
-                        <div>
-                            <div class="d-flex justify-content-center align-items-center">
-                                <p class="name  text-nowrap mb-0">{{empdata?.firstName}} {{empdata?.middleName || ''}}
-                                    {{empdata?.lastName}}</p>
-                            </div>
-                            <div class="d-flex justify-content-center align-items-center">
-                                <p class="sub-text text-nowrap mb-0 me-3">{{jobRole}}</p>
-                            </div>
-
-                        </div>
-
-                        <div>
-                            <a>
-                                <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image"
-                                    class="profile-img cursor">
-                            </a>
-                        </div>
+                <div class="profile-dropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <div>
+                        <p class="m-0 name">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}
+                        </p>
+                        <p class="m-0 job-role">{{jobRole}}</p>
+                    </div>
+                    <div>
+                        <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="Profile Image"
+                            class="profile-img">
                     </div>
                 </div>
 
-                <ul class="dropdown-menu  custom-drop-down-profile-card">
-                    <!-- @if(rbac.allowedToAccess('Invite New User.view')){
-                    <li>
-                        <a class="dropdown-item" (click)="navigateToAccessedRoute('/admin/active-new-user')">
-                            <i class="bi bi-envelope-plus me-2"></i>Invite New User</a>
-                    </li>
-                    } -->
-
-                    <div>
-                        <div class="d-flex justify-content-center mb-2">
-                            <div class="image-content">
-                                <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image"
-                                    class="profile-image">
-                                <div class="edit-icon-content">
-                                    <label for="formFile" class="form-label"><img src="/images/editimages.png"
-                                            alt="edit-icon" class="edit-icon cursor"></label>
-                                    <input class="form-control d-none" type="file" id="formFile" accept=".jpg"
-                                        (change)="chooseNewProfile($event)">
-                                </div>
-                            </div>
+                <ul class="dropdown-menu">
+                    <div class="dropdown-content">
+                    <div class="image-content">
+                        <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image"
+                            class="profile-image">
+                        <div class="edit-icon-content">
+                            <label for="formFile" class="form-label">
+                                <img src="/personal-info-icons/editimages.png" alt="edit-icon"
+                                    class="edit-icon cursor"></label>
+                            <input class="form-control d-none" type="file" id="formFile" accept=".jpg"
+                                (change)="chooseNewProfile($event)">
                         </div>
-
-                        <div class="d-flex justify-content-center align-items-center ">
-
-                            <p class="name mb-0">{{empdata?.firstName}} {{empdata?.middleName || ''}}
-                                {{empdata?.lastName}}</p>
-                        </div>
-                        <div class="d-flex justify-content-center align-items-center">
-                            <p class="sub-text mb-0">{{this.empdata?.workEmail || 'N/A'}}</p>
-                        </div>
-                        <div class="d-flex justify-content-center align-items-center">
-                            <p class="sub-text mb-1 ">{{jobRole}}</p>
-
-                        </div>
-                        <div>
-                            <hr class="dashed-line m-0 ">
-                        </div>
-
-                        <div class="d-flex justify-content-center align-items-center mt-2">
-
-                            <a class="view-profile" [routerLink]="['/myinfo/personal/basic-info']">
-                                View Profile</a>
-
-                        </div>
-                        <div class="d-flex justify-content-center align-items-center cursor  "
-                            (click)="openlogoutModal()">
-                            <div class="logout-content ">
-                                <div>
-                                    <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon">
-                                </div>
-                                <div class="logout-text pt-1">Logout</div>
-                            </div>
-                        </div>
-
                     </div>
-
-
+                    <div class="data-content">
+                        <p class="name m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}
+                        </p>
+                        <p class="sub-text m-0 mb-1">{{this.empdata?.workEmail || 'N/A'}}</p>
+                        <p class="sub-text m-0 mb-1">{{jobRole}}</p>
+                        <div class="mb-2">
+                            <a class="profile-btn" [routerLink]="['/myinfo/personal/basic-info']">View Profile</a>
+                        </div>
+                        <button class="custom-btn btn-primary" (click)="openlogoutModal()"><img
+                                src="/icons/logout-icon.png" alt="Logout" class="logout-icon me-2">Logout</button>
+                    </div>
+                    </div>
                 </ul>
             </div>
         </div>

@@ -1,13 +1,12 @@
 
-
-<div class="grid-container">
+<div class="menu-grid-content">
     <div class="grid-item" *ngFor="let tab of filteredTabs; let i = index" [ngClass]="{'border-right-top': isInTopRow(i) && !isLastColumn(i),
             'border-right-middle': isInMiddleRow(i) && !isLastColumn(i),'border-right-bottom': isInLastRow(i) && !isLastColumn(i),
             'border-bottom-left': isFirstColumn(i) && !isInLastRow(i),'border-bottom-middle': isMiddleColumn(i) && !isInLastRow(i),
             'border-bottom-right': isLastColumn(i) && !isInLastRow(i)}" (click)="navigateToAccessedRoute(tab.link)">
-        <div class="d-flex flex-column align-items-center">
-            <img [src]="tab.icon" alt="{{ tab.label }}" class="icon mb-2" />
-            <span class="d-flex lable-text">{{ tab.label }}</span>
+        <div class="d-flex flex-column align-items-center p-2">
+            <img [src]="tab.icon" alt="{{ tab.label }}" class="dropdown-menu-icon mb-2" />
+            <span class="dropdown-menu-text">{{ tab.label }}</span>
         </div>
     </div>
 </div>

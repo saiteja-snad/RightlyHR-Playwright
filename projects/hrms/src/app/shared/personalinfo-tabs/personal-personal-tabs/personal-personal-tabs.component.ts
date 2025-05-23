@@ -29,18 +29,17 @@ export class PersonalPersonalTabsComponent {
       { label: 'Visa Details', link: '/personalinfo/personal/visa-details', icon: '/images/visa.png', permission: { feature: 'My Info Visa Details', action: 'view' } },
     ];
     this.filterTabsByRbac();
-
   }
 
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
-
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
   }
+  
   navigateToAccessedRoute(link: string): void {
     this.router.navigateByUrl(link);
   }

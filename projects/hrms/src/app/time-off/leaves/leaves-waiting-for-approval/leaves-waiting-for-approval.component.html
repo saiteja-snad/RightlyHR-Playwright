@@ -91,7 +91,7 @@
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();cancelForm.reset()">{{'Close'| translate}}</button>
+          (click)="modal.dismiss();cancelForm.reset()">{{'Cancel'| translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="cancelForm.invalid || isLoading">@if
           (!isLoading) { {{ 'Submit' | translate }} } @else {
             <div class="button-loader-content">

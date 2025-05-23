@@ -22,14 +22,14 @@
         </div>
         }
 
-         <!--Input search-->
+        <!--Input search-->
         <div class="input-group custom-search mb-3">
             <span class="input-group-text custom-input-group-search" id="basic-addon1">
                 <i class="bi bi-search"></i></span>
             <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
                 placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
         </div>
-        
+
         <div class="custom-p-multi-select-table">
             @if(!dataLoad){
             <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
@@ -79,18 +79,12 @@
                             </div>
                         </td>
                         <td class="text-center">
-                            <div>
-                                <ng-container
-                                    *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
-                                    <a type="button">
-                                        <i class="bi bi-info-circle-fill"
-                                            (click)="comments(item.entity.leaveApproverComments, commentspopup)"></i>
-                                    </a>
-                                </ng-container>
-                                <ng-template #noComments>
-                                    <span>-</span>
-                                </ng-template>
+                            <div *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
+                                <div type="button" (click)="comments(item.entity.leaveApproverComments, commentspopup)">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                </div>
                             </div>
+                            <ng-template #noComments>-</ng-template>
                         </td>
                         @if(!multiSelect && (rbac.allowedToAccess('Time Off (On Behalf Of Approvals).update') ||
                         rbac.allowedToAccess('Time Off (On Behalf Of Approvals).delete'))) {
@@ -100,7 +94,7 @@
                                 <a type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
-                                <ul class="dropdown-menu py-0">
+                                <ul class="dropdown-menu custom-dropdown-menu">
                                     <li><a class="dropdown-item" (click)="checkLeaveBalance(item,checkbalancepopup)"><i
                                                 class="bi bi-calendar-check me-2"></i>{{"Check Balance" |
                                             translate}}</a>

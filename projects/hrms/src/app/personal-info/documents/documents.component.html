@@ -1,18 +1,31 @@
 <div class="custom-main-component-container">
    <div class="employee-fields-main-container d-flex gap-3 w-100">
-      <div class="folders-container">
+
+      <div>
+         <div class="subfolder-container" *ngIf="subfolders.length > 0; else noData">
+            <div *ngFor="let subFolder of subfolders" class="folder-content sub-folders cursor px-2"
+               (click)="onSubFolderSelected(subFolder)" [ngClass]="{'active': selectedFile === subFolder}">
+               <i class="bi bi-folder-fill folder-icon"></i>
+               <span class="folder-name px-2">{{ subFolder.name }}</span>
+            </div>
+         </div>
+
+         <ng-template #noData>
+            <b class="d-flex justify-content-center">No Subfolders Found</b>
+         </ng-template>
+      </div>
+      <!-- <div class="folders-container">
          <p class="component-sub-header">Folders</p>
          @for(folder of folders; track $index){
-         <!-- Loop through main folders -->
+
          <div (click)="toggleFolder(folder)" class="folder-content cursor px-2"
             [ngClass]="{'active': selectedMainFolder === folder}">
             <i class="bi bi-folder-fill folder-icon"></i>
             <span class="folder-name px-2">{{ folder.name | lastValue }}</span>
          </div>
-
-         <!-- Subfolders -->
+     
          <div *ngIf="folder.expanded" class="subfolder-container">
-            <!-- Check if there are subfolders -->
+          
             <ng-container *ngIf="(folder?.subfolders ?? []).length > 0; else noSubfoldersTemplate">
                <div *ngFor="let subFolder of folder.subfolders" class="folder-content sub-folders cursor px-2"
                   (click)="onSubFolderSelected(subFolder)" [ngClass]="{'active': selectedFile === subFolder}">
@@ -21,13 +34,13 @@
                </div>
             </ng-container>
 
-            <!-- No Data Found Template -->
+          
             <ng-template #noSubfoldersTemplate>
                <b class="d-flex justify-content-center">No Subfolders Found</b>
             </ng-template>
          </div>
-         }
-      </div>
+      }
+      </div> -->
 
       <div class="custom-setting-right-content p-3">
          <div class="d-flex align-items-center gap-3 mb-3">
@@ -41,14 +54,14 @@
 
             <div *ngIf="selectedFile">
                @if((empdata?.empstatus?.toLowerCase() !== 'prospective' &&
-                 empdata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                && empdata?.empstatus?.toLowerCase() !== 'inactive' && empdata?.empstatus?.toLowerCase() !==
-                 'trainee inactive' )){
-                @if(canAccess('view','upload')) {
+               empdata?.empstatus?.toLowerCase() !== 'trainee prospective'
+               && empdata?.empstatus?.toLowerCase() !== 'inactive' && empdata?.empstatus?.toLowerCase() !==
+               'trainee inactive' )){
+               @if(canAccess('view','upload')) {
                <button class="custom-btn btn-primary text-nowrap" type="button" (click)="openModal(adddocumentmodal)"><i
                      class="bi bi-upload me-2"></i>Upload File</button>
                }
-            }
+               }
             </div>
          </div>
 
@@ -84,7 +97,7 @@
                            <td>{{ file.name | lastValue }}</td>
                            <td>{{ file.createdOn | dateformat }}</td>
                            <td>{{ file.contentLength | fileSize }}</td>
-                            @if(canAccess('view','documents')) {
+                           @if(canAccess('view','documents')) {
                            <td class="text-center">
                               <div>
                                  <span class="download-text" (click)="onSelectDownload(file)">
@@ -92,7 +105,7 @@
                                  </span>
                               </div>
                            </td>
-                        }
+                           }
                         </tr>
                      </ng-container>
                   </ng-container>

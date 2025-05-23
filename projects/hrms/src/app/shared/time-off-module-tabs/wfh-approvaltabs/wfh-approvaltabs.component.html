@@ -1,24 +1,11 @@
-<div class="component-side-nav-tabs-container py-3">
+<div class="custom-sub-tabs-container">
   <ul class="nav flex-column">
-    @if(rbac.allowedToAccess('Waiting For Approval (WFH).view')){
-      <li class="nav-item">
-        <a class="nav-link" [routerLink]="['/time-off/wfh/waiting-for-approval']" routerLinkActive="active-nav-link" aria-current="page">Waiting For Approval ({{waitingForApprovalWFHCount}})</a>
-      </li>
-    }
-    @if(rbac.allowedToAccess('Approved (WFH).view')){
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/wfh/approved']" routerLinkActive="active-nav-link">Approved ({{approvedWFHRequestsCount}})</a>
+    <li class="nav-item" *ngFor="let tab of navTabs">
+      <div class="nav-link" [routerLink]="[tab.link]" routerLinkActive="active-nav-link">
+        <img [src]="tab.icon" alt="Icon" class="icon mb-2">
+        <div>{{ tab.label }} ({{ tab.count ?? 0 }})</div>
+      </div>
+      <div class="border-bottom"></div>
     </li>
-  }
-  @if(rbac.allowedToAccess('Processed (WFH).view')){
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/wfh/processed']" routerLinkActive="active-nav-link">Processed ({{processedWFHRequestsCount}})</a>
-    </li>
-  }
-  @if(rbac.allowedToAccess('Rejected (WFH).view')){
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/wfh/rejected']" routerLinkActive="active-nav-link">Rejected ({{rejectedWFHRequestsCount}})</a>
-    </li>
-  }
   </ul>
 </div>

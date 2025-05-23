@@ -49,7 +49,7 @@
                         <td>{{empexperimentdata.jobTitle}}</td>
                         <td>{{empexperimentdata.isPresent ? 'Yes' :'No'}}</td>
                         <td>
-                            <span *ngIf="empexperimentdata.attachment;else noData" class="dowload-text cursor"
+                            <span *ngIf="empexperimentdata.attachment;else noData" class="download-text"
                                 (click)="onSelectBankProofDownload(empexperimentdata)">
                                 <i class="bi bi-download clip-icon px-2"></i>Download</span>
                             <ng-template #noData>-</ng-template>

@@ -13,7 +13,6 @@ import { AccessNavigationService } from '../../../services/access-navigation.ser
 })
 export class SettingsMainHeaderTabsComponent implements OnInit {
   public navTabs: any[] = [];
-
   private allNavTabs = [
     { label: 'Employee Fields', link: '/settings/employee-fields', permission: { feature: 'Employee Fields Module', action: 'view' } },
     { label: 'Roles', link: '/settings/roles-permissions' },
@@ -21,6 +20,7 @@ export class SettingsMainHeaderTabsComponent implements OnInit {
     { label: 'Asset Configuration', link: '/settings/assets-configuration', permission: { feature: 'Assets Management Configuration Module', action: 'view' } },
     { label: 'Dynamic Forms', link: '/settings/dynamic-forms', permission: { feature: 'Dynamic Forms Module', action: 'view' } }
   ];
+  columnsPerRow = 3;
 
   constructor(public rbac: RbacService, private router: Router,private accessNav: AccessNavigationService) {}
 
@@ -36,7 +36,6 @@ export class SettingsMainHeaderTabsComponent implements OnInit {
     });
   }
 
-
   navigateToAccessedRoute(route: string) {
     const actualRoute = this.accessNav.navigateToAccessedRoute(route);
     if (actualRoute) {
@@ -48,5 +47,37 @@ export class SettingsMainHeaderTabsComponent implements OnInit {
 
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
+  }
+
+    // Check if item is in the first row
+  isInTopRow(index: number): boolean {
+    return Math.floor(index / this.columnsPerRow) === 0;
+  }
+
+  // Check if item is in the last row
+  isInLastRow(index: number): boolean {
+    const totalRows = Math.ceil(this.navTabs.length / this.columnsPerRow);
+    const currentRow = Math.floor(index / this.columnsPerRow) + 1;
+    return currentRow === totalRows;
+  }
+
+  // Check if item is in a middle row
+  isInMiddleRow(index: number): boolean {
+    return !this.isInTopRow(index) && !this.isInLastRow(index);
+  }
+
+  // Check if item is in the first column
+  isFirstColumn(index: number): boolean {
+    return index % this.columnsPerRow === 0;
+  }
+
+  // Check if item is in the last column
+  isLastColumn(index: number): boolean {
+    return (index + 1) % this.columnsPerRow === 0;
+  }
+
+  // Check if item is in a middle column
+  isMiddleColumn(index: number): boolean {
+    return !this.isFirstColumn(index) && !this.isLastColumn(index);
   }
 }

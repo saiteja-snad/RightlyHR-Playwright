@@ -105,7 +105,7 @@
                                             <td>{{ed.gpa }}</td>
                                             <td>{{ed.attachment ? '' : '-'}}
                                                 <a class="view-btn" (click)="onViewClick(ed.attachment);openModal(myModall)">
-                                                    <i class="bi bi-paperclip"></i>View</a>
+                                                    <i class="bi bi-eye-fill me-2"></i>View</a>
                                                 <ng-template #downloadView>
                                                     <button class="view-btn" (click)="onSelectDownload(ed.attachment)">Download</button>
                                                 </ng-template>
@@ -155,12 +155,12 @@
                                                 <a class="view-btn" *ngIf="exp.attachment.endsWith('jpg') || exp.attachment.toLowerCase().endsWith('jpeg') || 
                                                 exp.attachment.toLowerCase().endsWith('png') ;else downloadView"
                                                    (click)="onViewClick(exp.attachment);openModal(myModall)">
-                                                    <i class="bi bi-paperclip"></i>View</a>
+                                                    <i class="bi bi-eye-fill me-2"></i>View</a>
                                                 <ng-template #downloadView>
                                                     <div *ngIf="exp.attachment =='' ;else documentdownload" class="centerhypen">-</div>
                                                     <ng-template #documentdownload>
                                                         <a class="view-btn" (click)="onSelectDownload(exp.attachment)">
-                                                            <i class="bi bi-paperclip"></i>View</a>
+                                                            <i class="bi bi-eye-fill me-2"></i>View</a>
                                                     </ng-template>
                                                 </ng-template>
                                             </td>

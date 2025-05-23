@@ -17,14 +17,14 @@ import { environment } from '../../../environments/environment';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
-    CommonModule, 
-    RouterModule, 
-    TranslateModule, 
-    ReactiveFormsModule, 
-    DropdownModule, 
-    WfhComponent, 
-    PermissionsComponent, 
-    CompOffEntitlementComponent, 
+    CommonModule,
+    RouterModule,
+    TranslateModule,
+    ReactiveFormsModule,
+    DropdownModule,
+    WfhComponent,
+    PermissionsComponent,
+    CompOffEntitlementComponent,
     TimeOffComponent,
     Select
   ],
@@ -47,10 +47,10 @@ export class OnbehalfOfApprovalsComponent {
   permissionsCount = 0;
   employeeiddetails = [] as any;
 
-  constructor(private http: HttpService, private authService: AuthService,public rbac: RbacService) {
+  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService) {
     // Signal reaction for employee switch
     effect(() => {
-      if (this.http.trigger()) {   
+      if (this.http.trigger()) {
         const data = JSON.parse(localStorage.getItem('onbehalfofaproverData') || '{}');
         if (data?.employeeId) {
           this.employeedata = data;
@@ -58,11 +58,11 @@ export class OnbehalfOfApprovalsComponent {
           this.getCompoff(this.employeedata.employeeId);
           this.getWfhoff(this.employeedata.employeeId);
           this.getPermissionsoff(this.employeedata.employeeId);
-        } 
+        }
         // this.http.resetTriggerSignal();
       }
     });
-   }
+  }
 
   ngOnInit(): void {
     localStorage.removeItem("onbehalfofaproverData");
@@ -78,7 +78,7 @@ export class OnbehalfOfApprovalsComponent {
           return {
             ...employee,
             fullName: `${employee.fusionEmployeeId ? employee.fusionEmployeeId + ' - ' : ''
-              }${employee.firstName ? employee.firstName : '' } ${employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.firstName ? employee.firstName : ''} ${employee.middleName ? employee.middleName + ' ' : ''
               }${employee.lastName ? employee.lastName : ''}`,
           };
         });
@@ -94,11 +94,9 @@ export class OnbehalfOfApprovalsComponent {
   }
 
   Onclick($event: any) {
-    console.log($event);
-    
     if ($event.value) {
-       this.employeedata = this.employeeiddetails.find((e:any)=>e.employeeId == $event.value);
-       localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
+      this.employeedata = this.employeeiddetails.find((e: any) => e.employeeId == $event.value);
+      localStorage.setItem("onbehalfofaproverData", JSON.stringify(this.employeedata));
       this.http.triggerActionSignal();
     }
     else {

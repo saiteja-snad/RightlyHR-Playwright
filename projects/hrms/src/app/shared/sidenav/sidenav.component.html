@@ -1,7 +1,8 @@
 <div class="sidenav-main-container">
-    <div class="sidenav-header text-center w-100 px-0">
+    <!-- <div class="sidenav-header text-center w-100 px-0">
         <img src="logos/sidenav-logo.png" alt="company logo" class="logo-img">
     </div>
+    <hr class="white-line"> -->
     <div class="sidnav-main-content">
         <ul class="nav-items-list text-center ps-0">
             <!--Dashboard-->
@@ -30,10 +31,16 @@
             }
             <!--Time Off-->
             @if(this.rbac.allowedToAccess('Time-Off.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/time-off');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/time-off')">
-                <img [src]="isActiveRoute('/time-off') ? 'main-menu-icons/clock-color.png' : 'main-menu-icons/clock.png'"
-                    alt="Icon" class="main-menu-icon">Time-off
+            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/time-off')">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img [src]="isActiveRoute('/time-off') ? 'main-menu-icons/clock-color.png' : 'main-menu-icons/clock.png'"
+                            alt="Icon" class="main-menu-icon">Time-off
+                    </div>
+                    <ul class="dropdown-menu">
+                        <app-time-off-tabs />
+                    </ul>
+                </div>
             </li>
             }
             <!--Policies-->
@@ -50,6 +57,19 @@
                 [class.active-nav-link]="isActiveRoute('/calendar')">
                 <img [src]="isActiveRoute('/calendar') ? 'main-menu-icons/Union-color.png' : 'main-menu-icons/Union.png'"
                     alt="Icon" class="main-menu-icon">Calendar
+            </li>
+            }
+            @if(this.rbac.allowedToAccess('Reports.view')){
+            <li class="nav-item" [class.active-nav-link]="isActiveRoute('/reports')">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img [src]="isActiveRoute('/reports') ? 'main-menu-icons/reports-color.png' : 'main-menu-icons/reports.png'"
+                            alt="Icon" class="main-menu-icon">Reports
+                    </div>
+                    <ul class="dropdown-menu">
+                        <app-reports-main-tabs />
+                    </ul>
+                </div>
             </li>
             }
             <!--Selected Item form the dropdown-->
@@ -80,15 +100,9 @@
                     </ul>
                 </div>
             </li>
-
             <!-- @if(this.rbac.allowedToAccess('Expenses.view')){
             <li class="nav-item" (click)="goToAccessibleRoute('/claimsandexpenses')" [class.active-nav-link]="isActiveRoute('/claimsandexpenses')">
                 <i class="bi bi-currency-dollar custom-icon"></i>Expenses
-            </li>
-            }
-            @if(this.rbac.allowedToAccess('Reports.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/reports')"  [class.active-nav-link]="isActiveRoute('/reports')">
-                <i class="bi bi-file-earmark-bar-graph-fill custom-icon"></i>Reports
             </li>
             }
             @if(this.rbac.allowedToAccess('PMS.view')){
@@ -121,6 +135,21 @@
             </li>} -->
         </ul>
     </div>
+    <!--Settings content-->
+    @if(this.rbac.allowedToAccess('Settings Icon.view')){
+    <div class="settings-content">
+        <li class="nav-item" [class.active-nav-link]="isActiveRoute('/settings')">
+            <div class="btn-group dropend custom-main-menu-dropdown">
+                <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-gear gear-icon"></i>Settings
+                </div>
+                <ul class="dropdown-menu">
+                    <app-settings-main-header-tabs />
+                </ul>
+            </div>
+        </li>
+    </div>
+    }
     <div class="sidenav-footer-content">
         <!-- <img src="logos/powered-by.png" alt="Powered By logo" class="powered-by-image"> -->
         <div class="d-flex justify-content-center align-items-center cursor w-100 gap-1" (click)="openlogoutModal()">

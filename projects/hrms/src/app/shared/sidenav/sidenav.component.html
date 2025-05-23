@@ -1,7 +1,4 @@
 <div class="sidenav-main-container">
-    <div class="sidenav-header text-center w-100 px-0">
-        <img src="logos/sidenav-logo.png" alt="company logo" class="logo-img">
-    </div>
     <div class="sidnav-main-content">
         <ul class="nav-items-list text-center ps-0">
             <!--Dashboard-->
@@ -30,10 +27,16 @@
             }
             <!--Time Off-->
             @if(this.rbac.allowedToAccess('Time-Off.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/time-off');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/time-off')">
-                <img [src]="isActiveRoute('/time-off') ? 'main-menu-icons/clock-color.png' : 'main-menu-icons/clock.png'"
-                    alt="Icon" class="main-menu-icon">Time-off
+            <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/time-off')">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img [src]="isActiveRoute('/time-off') ? 'main-menu-icons/clock-color.png' : 'main-menu-icons/clock.png'"
+                            alt="Icon" class="main-menu-icon">Time-off
+                    </div>
+                    <ul class="dropdown-menu">
+                        <app-time-off-tabs />
+                    </ul>
+                </div>
             </li>
             }
             <!--Policies-->
@@ -50,6 +53,19 @@
                 [class.active-nav-link]="isActiveRoute('/calendar')">
                 <img [src]="isActiveRoute('/calendar') ? 'main-menu-icons/Union-color.png' : 'main-menu-icons/Union.png'"
                     alt="Icon" class="main-menu-icon">Calendar
+            </li>
+            }
+            @if(this.rbac.allowedToAccess('Reports.view')){
+            <li class="nav-item" [class.active-nav-link]="isActiveRoute('/reports')">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img [src]="isActiveRoute('/reports') ? 'main-menu-icons/reports-color.png' : 'main-menu-icons/reports.png'"
+                            alt="Icon" class="main-menu-icon">Reports
+                    </div>
+                    <ul class="dropdown-menu">
+                        <app-reports-main-tabs />
+                    </ul>
+                </div>
             </li>
             }
             <!--Selected Item form the dropdown-->
@@ -80,54 +96,24 @@
                     </ul>
                 </div>
             </li>
-
-            <!-- @if(this.rbac.allowedToAccess('Expenses.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/claimsandexpenses')" [class.active-nav-link]="isActiveRoute('/claimsandexpenses')">
-                <i class="bi bi-currency-dollar custom-icon"></i>Expenses
+            @if(this.rbac.allowedToAccess('Settings Icon.view')){
+            <li class="nav-item" [class.active-nav-link]="isActiveRoute('/settings')">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-gear gear-icon"></i>Settings
+                    </div>
+                    <ul class="dropdown-menu">
+                        <app-settings-main-header-tabs />
+                    </ul>
+                </div>
             </li>
             }
-            @if(this.rbac.allowedToAccess('Reports.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/reports')"  [class.active-nav-link]="isActiveRoute('/reports')">
-                <i class="bi bi-file-earmark-bar-graph-fill custom-icon"></i>Reports
-            </li>
-            }
-            @if(this.rbac.allowedToAccess('PMS.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/pms')"  [class.active-nav-link]="isActiveRoutePms()">
-                <i class="bi bi-graph-up-arrow custom-icon"></i>PMS
-            </li>
-            }
-            @if(this.rbac.allowedToAccess('PMS Configurations.view')){
-            <li class="nav-item text-wrap" (click)="goToAccessibleRoute('/pmsconfiguration')"  [class.active-nav-link]="isActiveRoute('/pmsconfiguration')">
-                <i class="bi bi-gear-fill custom-icon"></i>PMS Configurations
-            </li>}
-            @if(this.rbac.allowedToAccess('Desk Allocation.view')){
-            <li class="nav-item"  (click)="goToAccessibleRoute('/desk')"  [class.active-nav-link]="isActiveRoute('/desk')">
-                <i class="bi bi-pc-display custom-icon"></i>Desk<br>Allocation
-            </li>
-            }
-            @if(this.rbac.allowedToAccess('Asset Management.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/assets-management')" [class.active-nav-link]="isActiveRoute('/assets-management')">
-                <i class="bi bi-display custom-icon"></i>Asset<br>Management
-            </li>
-            }
-            @if(this.rbac.allowedToAccess('IT Support.view')){
-            <li class="nav-item" (click)="goToAccessibleRoute('/it-support')" [class.active-nav-link]="isActiveRoute('/it-support')">
-                <i class="bi bi-headset  custom-icon"></i>IT Support
-            </li>
-            }
-            @if(this.rbac.allowedToAccess('Org Hierarchy.view')){
-            <li class="nav-item p-2 mb-3" [routerLink]="['/organization-chart']" routerLinkActive="active-nav-link">
-                <i class="bi bi-diagram-3  custom-icon"></i>Hierarchy
-            </li>} -->
         </ul>
     </div>
+    <!--Settings content-->
     <div class="sidenav-footer-content">
-        <!-- <img src="logos/powered-by.png" alt="Powered By logo" class="powered-by-image"> -->
-        <div class="d-flex justify-content-center align-items-center cursor w-100 gap-1" (click)="openlogoutModal()">
-            <div>
-                <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon">
-            </div>
-            <div class="logout-text pt-1">Logout</div>
+        <div class="d-flex justify-content-center w-100">
+            <img src="logos/powered-by.png" alt="Powered By logo" class="powered-by-image">
         </div>
     </div>
 </div>

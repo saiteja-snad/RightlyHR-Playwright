@@ -49,7 +49,7 @@
                                     *ngIf="item.documentUrl.endsWith('jpg') || item.documentUrl.endsWith('jpeg') || item.documentUrl.endsWith('png') ;else downloadView">
                                     <a type="button" class="view-btn"
                                         (click)="onViewClick(item.documentUrl);onClickEditDocument(item)">
-                                        <i class="bi bi-paperclip me-1"></i>View
+                                        <i class="bi bi-eye-fill me-2"></i>View
                                     </a>
                                 </div>
                                 <ng-template #downloadView>

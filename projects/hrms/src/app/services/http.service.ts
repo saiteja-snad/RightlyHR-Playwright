@@ -79,6 +79,13 @@ export class HttpService {
     this.basicDetailes.next();
   }
 
+    // Function to set the communication service data for basic info 
+    profliepicDetailes = new Subject<void>();
+    profliepicadd$ = this.profliepicDetailes.asObservable();
+    setprofileDetails() {
+      this.profliepicDetailes.next();
+    }
+  
   //funtion to call add desk
   deskadded = new Subject<void>();
   deskDetailesadded$ = this.deskadded.asObservable();

@@ -111,7 +111,9 @@ export class ContactDetailsComponent implements OnInit, OnDestroy {
   disableForm(): void {
 
     this.buttons = false;
+    this.contactForm.disable()
     this.contactForm.reset();
+    
     this.getEmployeeId();
     
   

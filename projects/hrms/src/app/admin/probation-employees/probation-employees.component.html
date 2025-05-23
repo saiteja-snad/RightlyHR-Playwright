@@ -5,98 +5,102 @@
                 <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Probation Employees'|translate}}
             </p>
         </div>
-         @if(this.rbac.allowedToAccess('Probation Confirmation Letter.view') || this.rbac.allowedToAccess('Probation Extension Letter.view')){
+
+        @if(this.rbac.allowedToAccess('Probation Confirmation Letter.view') || this.rbac.allowedToAccess('Probation Extension Letter.view')){
         <div class="dropdown">
             <button type="button" class="custom-btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-plus me-2"></i>{{'Generate Documents'| translate}}
             </button>
+
             <ul class="dropdown-menu custom-dropdown-menu">
-                 @if(rbac.allowedToAccess('Probation Confirmation Letter.view')){
+                @if(rbac.allowedToAccess('Probation Confirmation Letter.view')){
                 <li>
                     <a class="dropdown-item" [routerLink]="['/admin/letters/probation-confirmation-letter']"
-                     routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>Probation Confirmation Letter</a>
+                        routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>
+                        Probation Confirmation Letter</a>
                 </li>}
-                 @if(rbac.allowedToAccess('Probation Extension Letter.view')){
+
+                @if(rbac.allowedToAccess('Probation Extension Letter.view')){
                 <li>
                     <a class="dropdown-item" [routerLink]="['/admin/letters/probation-extension-letter']"
-                     routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>Probation Extension Letter</a>
+                        routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>
+                        Probation Extension Letter</a>
                 </li>}
             </ul>
         </div>
-    }
+        }
     </div>
 
-    <div>
-        <!--Input search-->
-        <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-            <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-                placeholder="Search Here" aria-label="Username" aria-describedby="basic-addon1">
-        </div>
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+            placeholder="Search Here" aria-label="Username" aria-describedby="basic-addon1">
+    </div>
 
-        <div class="custom-table-content">
-            @if (!loader) {
-            <table class="w-100">
-                <thead>
-                    <tr>
-                        <th>{{'ID'|translate}}</th>
-                        <th>{{'EMPLOYEE NAME'|translate}}</th>
-                        <th>{{'PERSONAL EMAIL'|translate}}</th>
-                        <th>{{'PHONE NUMBER'|translate}}</th>
-                        <th>{{'PROBATION START DATE '|translate}}</th>
-                        <th>{{'PROBATION END DATE'|translate}}</th>
-                        <th>{{'PROBATION EXTENDED DATE'|translate}}</th>
-                        <th>{{'DESIGNATION'|translate}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container *ngIf="(probationemp | probationpipe: searchValue) as filteredData">
-                        <tr *ngFor="let item of filteredData">
-                            <td>
-                                <span *ngIf="item.fusionEmpId;else fusionid"> {{item.fusionEmpId}}</span>
-                                <ng-template #fusionid> - </ng-template>
-                            </td>
-                            <td>
-                               
-                                <span *ngIf="item.firstName;else fistname"> </span>
-                                <a class="select-item cursor" (click)="select(item)">
+    <div class="custom-table-content custom-content-height16">
+        @if (!loader) {
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>{{'Id'|translate}}</th>
+                    <th>{{'Employee Name'|translate}}</th>
+                    <th>{{'Personal Email'|translate}}</th>
+                    <th>{{'Phone Number'|translate}}</th>
+                    <th>{{'Probation Start Date'|translate}}</th>
+                    <th>{{'Probation End Date'|translate}}</th>
+                    <th>{{'Probation Extended Date'|translate}}</th>
+                    <th>{{'Designation'|translate}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="(probationemp | probationpipe: searchValue) as filteredData">
+                    <tr *ngFor="let item of filteredData">
+                        <td>
+                            <span *ngIf="item.fusionEmpId;else fusionid"> {{item.fusionEmpId}}</span>
+                            <ng-template #fusionid> - </ng-template>
+                        </td>
+                        <td>
+                            <span *ngIf="item.firstName;else fistname"> </span>
+                            <a class="select-item cursor" (click)="select(item)">
                                 {{item?.firstName}} {{item?.middleName}} {{item?.lastName}}</a>
-                                <ng-template #fistname> - </ng-template>
-                            </td>
-                            <td>
-                                <span *ngIf="item.workEmail;else workemail"> {{item.workEmail}}</span>
-                                <ng-template #workemail> - </ng-template>
-                            </td>
-                            <td>
-                                <span *ngIf="item?.contactnumber;else contactnumb"> {{item.contactnumber}}</span>
-                                <ng-template #contactnumb> - </ng-template>
-                            </td>
-                            <td>
-                                <span *ngIf="item.dateOfJoining;else prostartdate"> {{item.dateOfJoining | date }}</span>
-                                <ng-template #prostartdate> - </ng-template>
-                            </td>
-                            <td>
-                                <span *ngIf="item.probationEndDate;else proenddate"> {{item?.probationEndDate | date}}</span>
-                                <ng-template #proenddate> - </ng-template>
-                            </td>
-                            <td>
-                                <span *ngIf="item.probationExtendedDate;else proextenddate"> {{item.probationExtendedDate | date}}</span>
-                                <ng-template #proextenddate> - </ng-template>
-                            </td>
-                            <td>
-                                <span *ngIf="item.jobDetails;else designation"> {{item.jobDetails.jobRole}}</span>
-                                <ng-template #designation> - </ng-template>
-                            </td>
-                        </tr>
-                        <tr *ngIf="filteredData.length === 0">
-                            <td colspan="9"><app-no-data-found></app-no-data-found></td>
-                        </tr>
-                  </ng-container>
-                </tbody>
-            </table>
-            } @else {
-            <app-data-loader-content />
-            }
-        </div>
+                            <ng-template #fistname> - </ng-template>
+                        </td>
+                        <td>
+                            <span *ngIf="item.workEmail;else workemail"> {{item.workEmail}}</span>
+                            <ng-template #workemail> - </ng-template>
+                        </td>
+                        <td>
+                            <span *ngIf="item?.contactnumber;else contactnumb"> {{item.contactnumber}}</span>
+                            <ng-template #contactnumb> - </ng-template>
+                        </td>
+                        <td>
+                            <span *ngIf="item.dateOfJoining;else prostartdate"> {{item.dateOfJoining | date }}</span>
+                            <ng-template #prostartdate> - </ng-template>
+                        </td>
+                        <td>
+                            <span *ngIf="item.probationEndDate;else proenddate"> {{item?.probationEndDate |
+                                date}}</span>
+                            <ng-template #proenddate> - </ng-template>
+                        </td>
+                        <td>
+                            <span *ngIf="item.probationExtendedDate;else proextenddate"> {{item.probationExtendedDate |
+                                date}}</span>
+                            <ng-template #proextenddate> - </ng-template>
+                        </td>
+                        <td>
+                            <span *ngIf="item.jobDetails;else designation"> {{item.jobDetails.jobRole}}</span>
+                            <ng-template #designation> - </ng-template>
+                        </td>
+                    </tr>
+                    <tr *ngIf="filteredData.length === 0">
+                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </table>
+        } @else {
+        <app-data-loader-content />
+        }
     </div>
 </div>

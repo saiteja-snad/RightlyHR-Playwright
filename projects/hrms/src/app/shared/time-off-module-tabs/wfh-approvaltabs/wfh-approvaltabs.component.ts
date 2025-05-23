@@ -21,10 +21,10 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
   approvedWFHRequestsCount = 0;
   processedWFHRequestsCount = 0;
   navTabs: any[] = [
-    { label: 'Waiting For Approval', link: 'waiting-for-approval', count:this.waitingForApprovalWFHCount,permission: { feature: 'Waiting For Approval (WFH)', action: 'view' } },
-    { label: 'Approved', link: 'approved', count: this.approvedWFHRequestsCount,permission: { feature: 'Approved (WFH)', action: 'view' } },
-    { label: 'Processed', link: 'processed', count: this.processedWFHRequestsCount,permission: { feature: 'Processed (WFH)', action: 'view' } },
-    { label: 'Rejected', link: 'rejected', count: this.rejectedWFHRequestsCount,permission: { feature: 'Rejected (WFH)', action: 'view' } },
+    { label: 'Waiting For Approval', link: '/time-off/wfh/waiting-for-approval', icon: '/time-off-icon/waiting-for-approval-icon.png', count:this.waitingForApprovalWFHCount,permission: { feature: 'Waiting For Approval (WFH)', action: 'view' } },
+    { label: 'Approved', link: '/time-off/wfh/approved', icon: '/time-off-icon/approved-icon.png', count: this.approvedWFHRequestsCount,permission: { feature: 'Approved (WFH)', action: 'view' } },
+    { label: 'Processed', link: '/time-off/wfh/processed', icon: '/time-off-icon/processed-icon.png', count: this.processedWFHRequestsCount,permission: { feature: 'Processed (WFH)', action: 'view' } },
+    { label: 'Rejected', link: '/time-off/wfh/rejected', icon: '/time-off-icon/rejected-icon.png', count: this.rejectedWFHRequestsCount,permission: { feature: 'Rejected (WFH)', action: 'view' } },
   ];
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();

@@ -117,7 +117,7 @@ export const EMPLOYEE_INFO_CLAIMS = [
   { permission: 'upload', claim: 'Employee Info Documents Upload File' },
 
   // Team Members
-  { permission: 'team-members', claim: 'Employee Info Team Members Tab' },
+  { permission: 'team-members', claim: 'Employee Info Reporting Manager Tab' },
   { permission: 'team-managers', claim: 'Employee Info Team Managers Tab' },
 
   { permission: 'changesrm', claim: 'Employee Info Change RM Button' },

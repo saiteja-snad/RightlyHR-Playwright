@@ -78,18 +78,13 @@
                                 </ng-template>
                             </div>
                         </td>
-                        <td class="text-center">
-                            <div>
-                                <ng-container
-                                    *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
-                                    <a type="button">
-                                         <i class="bi bi-info-circle-fill"  (click)="comments(item.entity.leaveApproverComments, commentspopup)"></i>
-                                    </a>
-                                </ng-container>
-                                <ng-template #noComments>
-                                    <span>-</span>
-                                </ng-template>
+                         <td class="text-center">
+                            <div *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
+                                <div type="button" (click)="comments(item.entity.leaveApproverComments, commentspopup)">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                </div>
                             </div>
+                            <ng-template #noComments>-</ng-template>
                         </td>
                         @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') ||
                         rbac.allowedToAccess('For You (Time Off).delete'))){

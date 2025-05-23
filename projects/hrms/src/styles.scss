@@ -216,6 +216,7 @@ body {
         width: 2.25rem;
         height: 2.25rem;
         border-radius: 50%;
+        vertical-align: middle;
     }
 }
 //header stylings Ends
@@ -1041,7 +1042,7 @@ input:focus,textarea:focus,select:focus {
         }
     }
     .dashed-line {
-        height: 1px;
+      
         border: 1px solid #D9E1EA;
     }
     

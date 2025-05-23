@@ -273,7 +273,7 @@ export class OnboardingDetailsComponent {
         console.log('empStatus:', empStatus);
       
         const statusMapping: { [key: string]: string[] } = {
-          prospective: ['active', 'inactive', 'prospective'],
+          prospective: ['active', 'prospective'],
           active: ['active', 'inactive'],
           inactive: [ 'inactive'],
           trainee: ['trainee active', 'inactive', 'trainee'],
@@ -438,13 +438,15 @@ export class OnboardingDetailsComponent {
   }
 
   showButtons(): void {
+    this.getEmployeeId();
     this.buttons = !this.buttons;
 
     if (this.buttons) {
       
       this.onboardingForm.enable();
       this.getEmployeeId()
-      this.onboardingForm.get('totalExperience')?.disable()
+      this.onboardingForm.get('totalExperience')?.disable();
+
     } else {
       this.getEmployeeId()
       this.onboardingForm.disable();

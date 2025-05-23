@@ -1,24 +1,25 @@
 <div class="custom-main-component-container">
     <div>
         @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
-            <div class="d-flex justify-content-end gap-3 mb-3">
-                @if (canBulkApprove()) {
-                    @if(rbac.allowedToAccess('For You (Time Off).update')){
-                        <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approverPopup)">Approve</button>
-                    }
-                    @if(rbac.allowedToAccess('For You (Time Off).delete')){
-                        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
-                    }
+        <p><b>Selected Records:</b> {{selectedProducts.length}}</p>
+        <div class="d-flex justify-content-end gap-3 mb-3">
+            @if (canBulkApprove()) {
+                @if(rbac.allowedToAccess('For You (Time Off).update')){
+                    <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approverPopup)">Approve</button>
                 }
-                @if (canBulkProcess()) {
-                    @if(rbac.allowedToAccess('For You (Time Off).update')){
-                        <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
-                    }
-                    @if(rbac.allowedToAccess('For You (Time Off).delete')){
-                        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
-                    }
+                @if(rbac.allowedToAccess('For You (Time Off).delete')){
+                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
                 }
-            </div>
+            }
+            @if (canBulkProcess()) {
+                @if(rbac.allowedToAccess('For You (Time Off).update')){
+                    <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+                }
+                @if(rbac.allowedToAccess('For You (Time Off).delete')){
+                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectPopup)">Reject</button>
+                }
+            }
+        </div>
         }
         <!--Input search-->
         <div class="input-group custom-search mb-3">
@@ -30,133 +31,128 @@
 
         <div class="custom-p-multi-select-table">
             @if(!dataLoad){
-                @if(leavesselect.length > 0){
-                    <p-table [value]="leavesselect" [(selection)]="selectedProducts" (selectionChange)="selectCheck($event)" 
-                        dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
-                        <ng-template #header>
-                            <tr>
-                                <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
-                                <th>Employee ID </th>
-                                <th>Employee Name</th>
-                                <th>Leave Type </th>
-                                <th>Duration</th>
-                                <th>Availed</th>
-                                <th>Applied Date</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Reason</th>
-                                <th>Approver Comments</th>
-                                @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For You (Time Off).delete'))){
-                                <th class="text-center">Action(S)</th>
-                                }
-                            </tr>
-                        </ng-template>
-                        <ng-template #body let-item appendTo="body">
-                            @if (rbac.allowedToAccess('Time Off Tab.view')) {
-                            @if ((((leaves | async) ?? []) | timeoffsearch: searchValue).length > 0) {
-                            <!-- @for (item of ((leaves | async) ?? []) | timeoffsearch: searchValue ; track
-                                    item.approvalHeader.id){ -->
-                            <tr>
-                                <td>
-                                    <p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" />
-                                </td>
-                                <td>{{item.entity.leavefusionempId}}</td>
-                                <td>{{item.entity.employeeName}}</td>
-                                <td>{{item.entity.leaveCategoryName}}</td>
-                                <td>{{item.entity.leaveDuration}}</td>
-                                <td>{{item.entity.leaveDurationType}}</td>
-                                <td class="text-nowrap">{{item.entity.appliedDate | dateformat}}</td>
-                                <td class="text-nowrap">{{item.entity.leaveStartDate | dateformat}}</td>
-                                <td class="text-nowrap">{{item.entity.leaveEndDate | dateformat}}</td>
-                                <td>
-                                    <div>
-                                        <a type="button" [ngbPopover]="reason">
-                                            <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                                        </a>
-                                        <ng-template #reason>
-                                            <p class="mb-0">{{item.entity.leaveDescription}}</p>
-                                        </ng-template>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div>
-                                        <ng-container *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
-                                            <a type="button">
-                                                <img src="images/info-fill.png" alt="info icon"
-                                                    (click)="comments(item.entity.leaveApproverComments, commentspopup)"
-                                                    class="info-icon">
-                                            </a>
-                                        </ng-container>
-                                        <ng-template #noComments>
-                                            <span>-</span>
-                                        </ng-template>
-                                    </div>
-                                </td>
-                                @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For You (Time Off).delete'))){
-                                <td class="text-center">
-                                    <div class="dropdown">
-                                        <span type="button" data-bs-toggle="dropdown">
-                                            <i class="bi bi-three-dots-vertical"></i>
-                                        </span>
-                                        <ul class="dropdown-menu custom-dropdown-menu"> 
-                                            <li>
-                                                <a class="dropdown-item"
-                                                    *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage"
-                                                    (click)="checkLeaveBalance(item,checkbalancepopup)">
-                                                    <i class="bi bi-calendar-check me-2"></i>Check Balance</a>
-                                            </li>
-                                        @if(rbac.allowedToAccess('For You (Time Off).update') ) {
-                                            <li>
-                                                <a class="dropdown-item" (click)="approveleave(approverPopup,item)"
-                                                    *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage">
-                                                    <i class="bi bi-check-circle me-2"></i>Approve</a>
-                                            </li>
-                                        }
-                                        @if(rbac.allowedToAccess('For You (Time Off).delete') ) {
-                                            <li>
-                                                <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
-                                                    *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage">
-                                                    <i class="bi bi-x-circle me-2"></i>Reject</a>
-                                            </li>
-                                        }
-                                        @if(rbac.allowedToAccess('For You (Time Off).update') ) {
-                                            <li>
-                                                <a class="dropdown-item" (click)="processleave(item)"
-                                                    *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage ">
-                                                    <i class="bi bi-check-circle me-2"></i>Process</a>
-                                            </li>
-                                            <li>
-                                                <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
-                                                    *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('Timeoff Tab.delete')">
-                                                    <i class="bi bi-x-circle me-2"></i>Reject</a>
-                                            </li>
-                                        }
-                                        </ul>
-                                    </div>
-                                </td>
-                                }
-                            </tr>
-                            <!-- } -->
-                            }
-                            @else{
-                            <tr>
-                                <td colospan="8">
-                                    <app-no-data-found />
-                                </td>
-                            </tr>
-                            }
-                            }
-                        </ng-template>
-                    </p-table>
-                }@else {
-                <div class="loader-placeholder-content">
-                    <app-no-data-found />
-                </div>   
-            }
+            <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
+                [(selection)]="selectedProducts" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+                <ng-template #header>
+                    <tr>
+                        <th style="width: 4rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox> 
+                        </th>
+                        <th>Employee ID </th>
+                        <th>Employee Name</th>
+                        <th>Leave Type </th>
+                        <th>Duration</th>
+                        <th>Availed</th>
+                        <th>Applied Date</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Reason</th>
+                        <th>Approver Comments</th>
+                        @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For You (Time Off).delete'))){
+                        <th class="text-center">Action(S)</th>
+                        }
+                    </tr>
+                </ng-template>
+                <ng-template #body let-item appendTo="body">
+                    @if (rbac.allowedToAccess('For You (Time Off).view')) {
+                    @if ((((leaves | async) ?? [])).length > 0) {
+                    <tr>
+                        <td>
+                            <p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" />
+                        </td>
+                        <td>{{item.entity.leavefusionempId}}</td>
+                        <td>{{item.entity.employeeName}}</td>
+                        <td>{{item.entity.leaveCategoryName}}</td>
+                        <td>{{item.entity.leaveDuration}}</td>
+                        <td>{{item.entity.leaveDurationType}}</td>
+                        <td class="text-nowrap">{{item.entity.appliedDate | dateformat}}</td>
+                        <td class="text-nowrap">{{item.entity.leaveStartDate | dateformat}}</td>
+                        <td class="text-nowrap">{{item.entity.leaveEndDate | dateformat}}</td>
+                        <td class="text-center">
+                            <div>
+                                <a type="button" [ngbPopover]="reason">
+                                    <i class="bi bi-info-circle-fill" ></i>
+                                </a>
+                                <ng-template #reason>
+                                    <p class="mb-0">{{item.entity.leaveDescription}}</p>
+                                </ng-template>
+                            </div>
+                        </td>
+                         <td class="text-center">
+                            <div *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
+                                <div type="button" (click)="comments(item.entity.leaveApproverComments, commentspopup)">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                </div>
+                            </div>
+                            <ng-template #noComments>-</ng-template>
+                        </td>
+                        @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') ||
+                        rbac.allowedToAccess('For You (Time Off).delete'))){
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item"
+                                            *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage"
+                                            (click)="checkLeaveBalance(item,checkbalancepopup)">
+                                            <i class="bi bi-calendar-check me-2"></i>Check Balance</a>
+                                    </li>
+                                    @if(rbac.allowedToAccess('For You (Time Off).update') ) {
+                                    <li>
+                                        <a class="dropdown-item" (click)="approveleave(approverPopup,item)"
+                                            *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage">
+                                            <i class="bi bi-check-circle me-2"></i>Approve</a>
+                                    </li>
+                                    }
+                                    @if(rbac.allowedToAccess('For You (Time Off).delete') ) {
+                                    <li>
+                                        <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
+                                            *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage">
+                                            <i class="bi bi-x-circle me-2"></i>Reject</a>
+                                    </li>
+                                    }
+                                    @if(rbac.allowedToAccess('For You (Time Off).update') ) {
+                                    <li>
+                                        <a class="dropdown-item" (click)="handleProcess(item)"
+                                            *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage ">
+                                            <i class="bi bi-check-circle me-2"></i>Process</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" (click)="rejectleave(rejectPopup,item)"
+                                            *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('For You (Time Off).delete')">
+                                            <i class="bi bi-x-circle me-2"></i>Reject</a>
+                                    </li>
+                                    }
+                                </ul>
+                            </div>
+                        </td>
+                        }
+                    </tr>
+                    <!-- } -->
+                    }@else{
+                    <tr>
+                        <td colospan="12">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                    }
+                    }
+                </ng-template>
+                <ng-template #emptymessage>
+                    <tr>
+                        <td colospan="9">
+                            <app-no-data-found />
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
             }@else {
-                <div class="loader-placeholder-content">
-                    <app-data-loader-content />
-                </div>
+            <div class="loader-placeholder-content">
+                <app-data-loader-content />
+            </div>
             }
         </div>
     </div>
@@ -255,20 +251,23 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
                             class="error-msg">*</span></label>
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
-                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
-                        pattern="^\S.*" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
-                        required></textarea>
+                        name="Reasons" #Reasons="ngModel" maxlength="250" required pattern="^\S.*"
+                        [(ngModel)]="selectedLeaveData.comments"
+                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3">
+                    </textarea>
+
                     <div class="textarea-count-text">
-                        {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250
+                        {{selectedLeaveData.comments?.length? selectedLeaveData.comments?.length : 0}}/250
                     </div>
                     <div class="error-msg"
-                        *ngIf="(Reasons.errors?.['pattern'] && Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
-                        Comments are required </div>
+                        *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
+                        Comments are required
+                    </div>
                 </div>
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(leaveapprovee)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
@@ -300,18 +299,19 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
-                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
+                        name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" pattern="^\S.*"
                         (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
-                        *ngIf="(Reasons.touched && Reasons.invalid) || (Reasons.invalid && leaveapprovee.submitted)">
-                        Comments are required </div>
+                        *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
+                        Comments are required
+                    </div>
                 </div>
             </div>
 
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]="spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleReject(leaveapprovee)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
@@ -358,4 +358,4 @@
             </div>
         </div>
     </div>
-</ng-template> 
+</ng-template>

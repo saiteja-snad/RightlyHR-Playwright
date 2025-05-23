@@ -18,15 +18,10 @@ export class TimeoffsearchPipe implements PipeTransform {
  
      return active.filter(
        (p) =>
-         p.entity?.leavefusionempId
-           ?.toLowerCase()
-           .includes(searchValue) ||
-         p.entity?.employeeName
-           ?.toLowerCase()
-           .includes(searchValue) ||
-         p.entity?.leaveDurationType
-           ?.toLowerCase()
-           .includes(searchValue) 
+         p.entity?.leavefusionempId?.toLowerCase().includes(searchValue) ||
+         p.entity?.employeeName?.toLowerCase().includes(searchValue) ||
+         p.entity?.leaveDurationType?.toLowerCase().includes(searchValue) ||
+         p.entity?.leaveCategoryName?.toLowerCase().includes(searchValue)
      );
    }
 

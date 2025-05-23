@@ -17,6 +17,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { SignalsService } from '../../../services/signals.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-premissions-waiting-for-approval',
@@ -111,7 +112,7 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
       requestProcessedBy: approvedBy,
       status: 'Cancelled',
       comments: this.cancelForm.get('cancelReason')?.value,
-      moduleId: this.selectedFields.requestedCategory,
+      moduleId: environment.permissionsModuleId,
        headerRequests: [
     {
       headerID: this.selectedFields.id,

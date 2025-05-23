@@ -164,8 +164,7 @@
                 <div class="error-msg"
                     *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
                     <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required</div>
-                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250
-                        characters.</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250 characters</div>
                 </div>
             </div>
             <div class="custom-modal-footer">
@@ -204,7 +203,7 @@
                 <div class="error-msg"
                     *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                     <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Comments are required</div>
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters.
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250 characters
                     </div>
                 </div>
             </div>

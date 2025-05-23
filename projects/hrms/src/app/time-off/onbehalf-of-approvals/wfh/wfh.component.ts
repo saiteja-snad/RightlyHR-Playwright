@@ -19,7 +19,7 @@ import { environment } from '../../../../environments/environment';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 @Component({
   selector: 'app-wfh',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe,
@@ -46,6 +46,7 @@ export class WfhComponent {
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
+  @ViewChild('dt') table!: Table;
   selectedLeaveData = {} as AttendanceRequest;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
@@ -55,6 +56,7 @@ export class WfhComponent {
   selectedLeavesItems: LeaveApproval[] =[];
   wfhsselect!: AttendanceRequest;
   requestBody = {} as any;
+  
   requestSummary!:any;
   constructor(
     private modalService: NgbModal, 
@@ -90,77 +92,91 @@ export class WfhComponent {
     }
   }
 
-  // selectCheck(Value: any) {
-  //   this.multiSelect = Array.isArray(Value) && Value.length > 0;
-  // }
 
-  selectCheck(Value: any) {
-    this.multiSelect = Array.isArray(Value) && Value.length > 0;
-    if (!Value || Value.length === 0) {
-      this.selectedLeavesItems = [];
-      return;
+
+   selectCheck(value: any) {
+  this.multiSelect = Array.isArray(value) && value.length > 0;
+
+  if (!value || value.length === 0) {
+    this.selectedLeavesItems = [];
+    return;
+  }
+
+  const stageMap: { [stage: string]: any[] } = {};
+
+  // Group items by their approval stage
+  value.forEach((item: any) => {
+    const stage = item.approvalHeader?.currentapprovalStage;
+    if (!stageMap[stage]) {
+      stageMap[stage] = [];
     }
- 
-    if (this.multiSelect) {
-      const stageMap: { [stage: string]: any[] } = {};
- 
-      Value.forEach((item: any) => {
-        const stage = item.approvalHeader?.currentapprovalStage;
-        if (!stageMap[stage]) {
-          stageMap[stage] = [];
-        }
-        stageMap[stage].push(item);
-      });
- 
-      const stages = Object.keys(stageMap);
- 
-      if (stages.length > 1) {
-        const totalAvailable = this.leaves?.getValue().length || 0;
-        const totalSelected = Value.length;
-        const isBulkSelect = totalSelected === totalAvailable;
-        if (isBulkSelect) {
-          let maxStage = stages[0];
-          let maxCount = stageMap[maxStage].length;
- 
-          for (const stage of stages) {
-            const count = stageMap[stage].length;
-            if (count > maxCount) {
-              maxStage = stage;
-              maxCount = count;
-            } else if (count === maxCount && stage === '1') {
-              maxStage = stage;
-            }
-          }
- 
-          this.selectedLeavesItems = [];
-          setTimeout(() => {
-            this.selectedLeavesItems = [...stageMap[maxStage]];
-          });
- 
-        } else {
-          this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
-          if (this.selectedLeavesItems.length > 0) {
-            const lastSelected = Value[Value.length - 1];
- 
-            // Remove the specific item from selectedProducts
-            this.selectedLeavesItems = this.selectedLeavesItems.filter(
-              item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
-            );
-     
-            // Force update (optional, but helps)
-            setTimeout(() => {
-              this.selectedLeavesItems = [...this.selectedLeavesItems];
-            });
-            console.log(this.selectedLeavesItems);
+    stageMap[stage].push(item);
+  });
 
-          }
-          return;
-        }
-      } else {
-        this.selectedLeavesItems = [...Value];
-      }
-    } else {
-      this.selectedLeavesItems = [Value];
+  const stages = Object.keys(stageMap);
+  const totalAvailable = this.leaves?.getValue().length || 0;
+  const totalSelected = value.length;
+  const isBulkSelect = totalSelected === totalAvailable;
+
+  // Get the dominant stage (most frequent)
+  let dominantStage = stages[0];
+  let maxCount = stageMap[dominantStage].length;
+  for (const stage of stages) {
+    const count = stageMap[stage].length;
+    if (count > maxCount) {
+      dominantStage = stage;
+      maxCount = count;
+    } else if (count === maxCount && stage === '1') {
+      dominantStage = stage;
+    }
+  }
+
+  const lastSelected = value[value.length - 1];
+  const lastSelectedStage = lastSelected.approvalHeader?.currentapprovalStage;
+
+  // Scenario 1: Progressive Selection (mixing stages)
+  const existingStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
+  if (
+    this.selectedLeavesItems.length > 0 &&
+    lastSelectedStage &&
+    existingStage &&
+    lastSelectedStage !== existingStage
+  ) {
+    this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
+    const newSelection = this.selectedLeavesItems.filter(
+      item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+    );
+    this.selectedLeavesItems = [...newSelection];
+    setTimeout(() => this.updateTableSelectionState(newSelection));
+    return;
+  }
+
+  // Scenario 2: Bulk select - filter by dominant stage only
+  if (isBulkSelect && stages.length > 1) {
+    const dominantItems = [...stageMap[dominantStage]];
+    this.selectedLeavesItems = dominantItems;
+
+
+    setTimeout(() => this.updateTableSelectionState(dominantItems));
+    return;
+  }
+
+  // Valid multi-select with same stage
+  this.selectedLeavesItems = [...value];
+}
+
+
+private updateTableSelectionState(selectedItems: any[]) {
+    // Create a new array reference to force change detection
+    this.selectedLeavesItems = [...selectedItems];
+    
+    // If using PrimeNG table with dataKey
+    if (this.table) {
+      // Clear and reset selection to ensure checkbox states update
+      this.table.selection = null;
+      setTimeout(() => {
+        this.table.selection = selectedItems;
+      });
     }
   }
 

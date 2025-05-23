@@ -7,21 +7,5 @@
       </div>
       <div class="border-bottom"></div>
     </li>
-  }
-  @if(rbac.allowedToAccess('Processed (WFH).view')){
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/wfh/processed']" routerLinkActive="active-nav-link">Processed ({{processedWFHRequestsCount}})</a>
-    </li>
-  }
-  @if(rbac.allowedToAccess('Rejected (WFH).view')){
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/wfh/rejected']" routerLinkActive="active-nav-link">Rejected ({{rejectedWFHRequestsCount}})</a>
-    </li>
-  }
-   @if(rbac.allowedToAccess('Cancel (WFH).view')){
-    <li class="nav-item">
-      <a class="nav-link" [routerLink]="['/time-off/wfh/cancelled']" routerLinkActive="active-nav-link">Cancelled ({{cancelWFHRequestsCount}})</a>
-    </li>
-  }
   </ul>
 </div>

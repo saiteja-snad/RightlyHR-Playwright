@@ -19,15 +19,20 @@
             <div>
                 <hr class="dashed-line">
             </div>
-            <div class="d-flex justify-content-center align-items-centermb-2">
-              
-                    <p class="name mb-0">{{empdata?.firstName}} {{empdata?.middleName || ''}}
-                        {{empdata?.lastName}}</p>
-                    <p class="sub-text mb-0">{{this.empdata?.workEmail || 'N/A'}}</p>
-                    <p class="sub-text mb-0 me-3">{{jobRole}}</p>
+            <div class="d-flex justify-content-center align-items-center">
 
-              
+                <p class="name mb-0">{{empdata?.firstName}} {{empdata?.middleName || ''}}
+                    {{empdata?.lastName}}</p>
             </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <p class="sub-text mb-0">{{this.empdata?.workEmail || 'N/A'}}</p>
+            </div>
+            <div class="d-flex justify-content-center align-items-center">
+                <p class="sub-text mb-0 me-3">{{jobRole}}</p>
+
+            </div>
+
+
 
             <div class="d-flex justify-content-center align-items-center">
                 <i class="bi bi-telephone profile-data-icon me-2"></i><span class="details-text">

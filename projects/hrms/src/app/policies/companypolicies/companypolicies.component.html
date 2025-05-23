@@ -15,7 +15,7 @@
     </div>
   </div>
 
-  <div class="custom-table-content">
+  <div class="custom-table-content custom-content-height16">
     @if (!loading) {
     <table class="w-100">
       <thead>
@@ -32,7 +32,7 @@
             <td>{{item.policyDescription}}</td>
             <td>
               <a type="button" class="view-btn text-nowrap" (click)="onViewAttachement(item.policyAttachment)">
-                <i class="bi bi-paperclip"></i>View
+                <i class="bi bi-eye-fill me-2"></i>View
               </a>
             </td>
           </tr>

@@ -580,7 +580,7 @@ input[type="file"] {
     text-decoration-thickness: 0%;
 }
 
-.dowload-text {
+.download-text {
     font-weight: 600;
     font-size: 13px;
     line-height: 100%;
@@ -589,6 +589,7 @@ input[type="file"] {
     text-decoration-style: solid;
     text-decoration-thickness: 0%;
     color: rgba(6, 39, 79, 1);
+    cursor: pointer;
 }
 
 input[type="number"].no-arrows::-webkit-outer-spin-button,

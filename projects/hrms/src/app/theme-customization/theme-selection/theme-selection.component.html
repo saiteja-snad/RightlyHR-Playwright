@@ -1,0 +1,62 @@
+<div class="custom-main-component-container">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <p class="component-header mb-0">Themes</p>
+        </div>
+        <div>
+            <button class="custom-btn btn-primary" (click)="navigateNewTheme()">Add Theme</button>
+        </div>
+    </div>
+
+    <div class="card theme-container-card">
+        <!-- Display default theme -->
+        <div class="d-flex flex-wrap gap-3 w-100">
+            <!-- Default Theme -->
+            <div class="theme-item text-center" [class.selected]="defaultTheme === selectedTheme"
+                (click)="selectTheme(defaultTheme)">
+                <div class="image-container"
+                    [class.applied]="isThemeApplied(defaultTheme) || (savedThemes.length === 0 && !selectedTheme)">
+                    <img src="./assets/image/custom-relationship.jpg" alt="" class="layout-image mb-2">
+                    <div class="overlay"
+                        *ngIf="isThemeApplied(defaultTheme) || (savedThemes.length === 0 && !selectedTheme)">
+                        <span class="check-mark">
+                            <i class="bi bi-check"></i>
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <p class="layout-name medium3 mt-2">Default Theme</p>
+                </div>
+            </div>
+
+            <!-- Display saved themes as a list of images and names -->
+            <div *ngFor="let theme of savedThemes">
+                <div class="theme-item text-center" [class.selected]="theme === selectedTheme"
+                    (click)="selectTheme(theme)">
+                    <div class="image-container" [class.applied]="isThemeApplied(theme)">
+                        <img src="./assets/image/custom-relationship.jpg" alt="Image" class="layout-image">
+                        <div class="overlay" *ngIf="isThemeApplied(theme)">
+                            <span class="check-mark">
+                                <i class="bi bi-check"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="layout-name medium3 mt-2">{{ theme.layoutName }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="custom-btn-content">
+            <div class="d-flex gap-3">
+                <!-- Edit Theme button -->
+                <button class="custom-btn btn-secondary" *ngIf="savedThemes.length > 0 && selectedTheme !== defaultTheme"
+                    (click)="editSelectedTheme()">Edit Theme</button>
+                <!-- Apply Theme button -->
+                <button class="custom-btn btn-primary" *ngIf="savedThemes.length > 0" (click)="applyTheme()">Apply Theme</button>
+            </div>
+        </div>
+    </div>
+</div>

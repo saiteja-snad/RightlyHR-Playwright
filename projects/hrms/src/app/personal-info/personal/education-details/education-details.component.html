@@ -41,7 +41,7 @@
               <td>{{edacationDetails.degreeStartDate | dateformat}}</td>
               <td>{{edacationDetails.degreeEndDate | dateformat}}</td>
               <td>
-                <span *ngIf="edacationDetails.attachment;else noData" class="dowload-text cursor"
+                <span *ngIf="edacationDetails.attachment;else noData" class="download-text"
                   (click)="onSelectIdentityAttachmentDownload(edacationDetails)">
                   <i class="bi bi-download clip-icon px-2"></i>Download</span><ng-template #noData>-</ng-template>
               </td>

@@ -14,8 +14,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../../services/rbac.service';
 import { TranslateModule } from '@ngx-translate/core';
-import { TimeoffsearchPipe } from "../../../../Pipes/timeoffsearch.pipe";
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { environment } from '../../../../../environments/environment';
 import { SignalsService } from '../../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
@@ -30,7 +29,6 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
     DropdownModule,
     DateformatPipe,
     NoDataFoundComponent,
-    TimeoffsearchPipe,
     TableModule,
     DataLoaderContentComponent
   ],
@@ -54,10 +52,12 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   leaveEntitlementsList = {} as ICategoryDetails;
   selectedLeaveData = {} as any;
   leavesselect!: LeaveApproval[];
-  selectedProducts!: LeaveApproval[];
+  selectedProducts: LeaveApproval[] = [];
   responseSummary!: any;
+  requestBody = {} as any;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
+  @ViewChild('dt') table!: Table;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   options = [
@@ -88,70 +88,155 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     this.getAllPendingApprovals();
   }
 
-  selectCheck(Value: any) {
-    this.multiSelect = Array.isArray(Value) && Value.length > 0;
-    if (!Value || Value.length === 0) {
+  // selectCheck(Value: any) {
+  //   this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  //   if (!Value || Value.length === 0) {
+  //     this.selectedProducts = [];
+  //     return;
+  //   }
+
+  //   if (this.multiSelect) {
+  //     const stageMap: { [stage: string]: any[] } = {};
+
+  //     Value.forEach((item: any) => {
+  //       const stage = item.approvalHeader?.currentapprovalStage;
+  //       if (!stageMap[stage]) {
+  //         stageMap[stage] = [];
+  //       }
+  //       stageMap[stage].push(item);
+  //     });
+
+  //     const stages = Object.keys(stageMap);
+
+  //     if (stages.length > 1) {
+  //       const totalAvailable = this.leavesselect?.length || 0;
+  //       const totalSelected = Value.length;
+  //       const isBulkSelect = totalSelected === totalAvailable;
+  //       if (isBulkSelect) {
+  //         let maxStage = stages[0];
+  //         let maxCount = stageMap[maxStage].length;
+
+  //         for (const stage of stages) {
+  //           const count = stageMap[stage].length;
+  //           if (count > maxCount) {
+  //             maxStage = stage;
+  //             maxCount = count;
+  //           } else if (count === maxCount && stage === '1') {
+  //             maxStage = stage;
+  //           }
+  //         }
+
+  //         this.selectedProducts = [];
+  //         setTimeout(() => {
+  //           this.selectedProducts = [...stageMap[maxStage]];
+  //         });
+
+  //       } else {
+  //         this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
+  //         if (this.selectedProducts.length > 0) {
+  //           const lastSelected = Value[Value.length - 1];
+
+  //           // Remove the specific item from selectedProducts
+  //           this.selectedProducts = this.selectedProducts.filter(
+  //             item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+  //           );
+  //           // Force update (optional, but helps)
+  //           setTimeout(() => {
+  //             this.selectedProducts = [...this.selectedProducts];
+  //           });
+  //         }
+  //         return;
+  //       }
+  //     } else {
+  //       this.selectedProducts = [...Value];
+  //     }
+  //   } else {
+  //     this.selectedProducts = [Value];
+  //   }
+  // }
+
+  selectCheck(value: any) {
+    this.multiSelect = Array.isArray(value) && value.length > 0;
+
+    if (!value || value.length === 0) {
       this.selectedProducts = [];
       return;
     }
 
-    if (this.multiSelect) {
-      const stageMap: { [stage: string]: any[] } = {};
+    const stageMap: { [stage: string]: any[] } = {};
 
-      Value.forEach((item: any) => {
-        const stage = item.approvalHeader?.currentapprovalStage;
-        if (!stageMap[stage]) {
-          stageMap[stage] = [];
-        }
-        stageMap[stage].push(item);
-      });
-
-      const stages = Object.keys(stageMap);
-
-      if (stages.length > 1) {
-        const totalAvailable = this.leavesselect?.length || 0;
-        const totalSelected = Value.length;
-        const isBulkSelect = totalSelected === totalAvailable;
-        if (isBulkSelect) {
-          let maxStage = stages[0];
-          let maxCount = stageMap[maxStage].length;
-
-          for (const stage of stages) {
-            const count = stageMap[stage].length;
-            if (count > maxCount) {
-              maxStage = stage;
-              maxCount = count;
-            } else if (count === maxCount && stage === '1') {
-              maxStage = stage;
-            }
-          }
-
-          this.selectedProducts = [];
-          setTimeout(() => {
-            this.selectedProducts = [...stageMap[maxStage]];
-          });
-
-        } else {
-          this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
-          if (this.selectedProducts.length > 0) {
-            const lastSelected = Value[Value.length - 1];
-
-            // Remove the specific item from selectedProducts
-            this.selectedProducts = this.selectedProducts.filter(
-              item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
-            );
-            // Force update (optional, but helps)
-            setTimeout(() => {
-              this.selectedProducts = [...this.selectedProducts];
-            });
-          }
-          return;
-        }
-      } else {
-        this.selectedProducts = [...Value];
+    // Group items by their approval stage
+    value.forEach((item: any) => {
+      const stage = item.approvalHeader?.currentapprovalStage;
+      if (!stageMap[stage]) {
+        stageMap[stage] = [];
       }
-    } else {
-      this.selectedProducts = [Value];
+      stageMap[stage].push(item);
+    });
+
+    const stages = Object.keys(stageMap);
+    const totalAvailable = this.leaves?.getValue().length || 0;
+    const totalSelected = value.length;
+    const isBulkSelect = totalSelected === totalAvailable;
+
+    // Get the dominant stage (most frequent)
+    let dominantStage = stages[0];
+    let maxCount = stageMap[dominantStage].length;
+    for (const stage of stages) {
+      const count = stageMap[stage].length;
+      if (count > maxCount) {
+        dominantStage = stage;
+        maxCount = count;
+      } else if (count === maxCount && stage === '1') {
+        dominantStage = stage;
+      }
+    }
+
+    const lastSelected = value[value.length - 1];
+    const lastSelectedStage = lastSelected.approvalHeader?.currentapprovalStage;
+
+    // Scenario 1: Progressive Selection (mixing stages)
+    const existingStage = this.selectedProducts[0]?.approvalHeader?.currentapprovalStage;
+    if (
+      this.selectedProducts.length > 0 &&
+      lastSelectedStage &&
+      existingStage &&
+      lastSelectedStage !== existingStage
+    ) {
+      this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
+      const newSelection = this.selectedProducts.filter(
+        item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+      );
+      this.selectedProducts = [...newSelection];
+      setTimeout(() => this.updateTableSelectionState(newSelection));
+      return;
+    }
+
+    // Scenario 2: Bulk select - filter by dominant stage only
+    if (isBulkSelect && stages.length > 1) {
+      const dominantItems = [...stageMap[dominantStage]];
+      this.selectedProducts = dominantItems;
+
+      setTimeout(() => this.updateTableSelectionState(dominantItems));
+      return;
+    }
+
+    // Valid multi-select with same stage
+    this.selectedProducts = [...value];
+  }
+
+
+  private updateTableSelectionState(selectedItems: any[]) {
+    // Create a new array reference to force change detection
+    this.selectedProducts = [...selectedItems];
+
+    // If using PrimeNG table with dataKey
+    if (this.table) {
+      // Clear and reset selection to ensure checkbox states update
+      this.table.selection = null;
+      setTimeout(() => {
+        this.table.selection = selectedItems;
+      });
     }
   }
 
@@ -291,9 +376,9 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     );
   }
 
-  rejectleave(rejectPopup: any, selecteddata: any) {
+  rejectleave(rejectPopup: any, selecteddata: LeaveApproval) {
     this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
-    this.selectedProducts = [selecteddata];
+    this.selectedLeaveData = selecteddata;
   }
 
   bulkapprove(approverPopup: any) {
@@ -308,56 +393,74 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   bulkProcess() {
-    this.handleProcess();
+    this.handleProcess(this.leaves);
   }
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
 
-  approveleave(approverPopup: any, selecteddata: any) {
+  approveleave(approverPopup: any, selecteddata: LeaveApproval) {
     this.modalService.open(approverPopup, {
       centered: true,
       backdrop: 'static',
     });
-    this.selectedProducts = [selecteddata];
+    this.selectedLeaveData = selecteddata;
   }
 
-  processleave(selecteddata: any) {
-    this.selectedProducts = [selecteddata];
-    setTimeout(() => {
-      this.handleProcess();
-    }, 500);
-  }
+  // processleave(selecteddata: any) {
+  //   this.selectedProducts = [selecteddata];
+  //   setTimeout(() => {
+  //     this.handleProcess();
+  //   }, 500);
+  // }
 
   handleAccept(form: any) {
+    console.log(this.selectedLeaveData)
     this.spinnerLoader = true;
     let approvedBy = this.LOGIN.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
 
-    let requestBody = {
-      requestProcessedBy: approvedBy,
-      status: "Approved",
-      comments: comments,
-      moduleId: environment.leavesModuleId,
-      isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
-      headerRequests: this.selectedProducts.map((item) => ({
-        headerID: item.approvalHeader.id,
-        currentStage: item.approvalHeader.currentapprovalStage
-      }))
+    if (this.selectedProducts && this.selectedProducts.length > 0) {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: "Approved",
+        comments: comments,
+        moduleId: environment.leavesModuleId,
+        isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
+        headerRequests: this.selectedProducts.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage
+        }))
+      }
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Approved',
+        comments: comments,
+        moduleId: environment.leavesModuleId,
+        isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader?.id,
+            currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
+          },
+        ],
+      };
     }
-    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (respone: any) => {
+        next: (response: any) => {
           this.modalService.dismissAll();
-          if(this.selectedProducts.length > 1){
-            this.responseSummary = respone.data;
+          if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            this.conformationPopup.openSuccessModal('Request Approved Successfully');
+          } else {
+            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
-          }else{
-            this.conformationPopup.openSuccessModal('Request Approved Successfully')
           }
         },
         error: (reason: any) => {
+          this.modalService.dismissAll();
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
@@ -386,29 +489,46 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
     let approvedBy = this.LOGIN.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
-    let requestBody = {
-      requestProcessedBy: approvedBy,
-      status: 'Rejected',
-      comments: comments,
-      isPlannedLeave: false,
-      moduleId: environment.leavesModuleId,
-      headerRequests: this.selectedProducts.map((item) => ({
-        headerID: item.approvalHeader.id,
-        currentStage: item.approvalHeader.currentapprovalStage
-      }))
+    if (this.selectedProducts && this.selectedProducts.length > 0) {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Rejected',
+        comments: comments,
+        isPlannedLeave: false,
+        moduleId: environment.leavesModuleId,
+        headerRequests: this.selectedProducts.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage
+        }))
+      }
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Rejected',
+        comments: comments,
+        isPlannedLeave: false,
+        moduleId: environment.leavesModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader?.id,
+            currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
+          },
+        ],
+      };
     }
-    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (respone: any) => {
+        next: (response: any) => {
           this.modalService.dismissAll();
-          if(this.selectedProducts.length > 1){
-            this.responseSummary = respone.data;
+          if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+          } else {
+            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
-          }else{
-            this.conformationPopup.openSuccessModal('Request Rejected Successfully')
           }
         },
         error: (reason: any) => {
+          this.modalService.dismissAll();
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
@@ -433,29 +553,49 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
       });
   }
 
-  handleProcess() {
+  handleProcess(selecteddata: any) {
+    this.selectedLeaveData = selecteddata;
     let approvedBy = this.LOGIN.employeeId.toString();
-    let requestBody = {
-      requestProcessedBy: approvedBy,
-      status: 'Processed',
-      moduleId: environment.leavesModuleId,
-      headerRequests: this.selectedProducts.map((item) => ({
-        headerID: item.approvalHeader.id,
-        currentStage: item.approvalHeader.currentapprovalStage
-      }))
+    let message = null;
+    if (this.selectedProducts && this.selectedProducts.length > 0) {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.leavesModuleId,
+        headerRequests: this.selectedProducts.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage
+        }))
+      }
+      message = 'Processing Requests, Please wait...';
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.leavesModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader?.id,
+            currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
+          },
+        ],
+      };
+      message = 'Processing Request, Please wait...';
     }
-    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+    this.conformationPopup.openLoaderModal(message);
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (respone: any) => {
+        next: (response: any) => {
           this.modalService.dismissAll();
-          if(this.selectedProducts.length > 1){
-            this.responseSummary = respone.data;
+          if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            this.conformationPopup.openSuccessModal('Request Processed Successfully');
+          } else {
+            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
-          }else{
-            this.conformationPopup.openSuccessModal('Request Processed Successfully')
           }
         },
         error: (reason: any) => {
+          this.modalService.dismissAll();
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }

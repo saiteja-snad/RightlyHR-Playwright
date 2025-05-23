@@ -151,7 +151,7 @@
                                             <i class="bi bi-x-circle me-2"></i>Reject</a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" (click)="processleave(item)"
+                                        <a class="dropdown-item" (click)="handleProcess(item)"
                                             *ngIf="item.approvalHeader.currentapprovalStage === item.approvalHeader.finalapprovalStage && rbac.allowedToAccess('For Role (Time Off).update')">
                                             <i class="bi bi-check-circle me-2"></i>Process</a>
                                     </li>

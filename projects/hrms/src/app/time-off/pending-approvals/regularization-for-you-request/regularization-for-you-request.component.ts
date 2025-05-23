@@ -55,6 +55,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
+  requestBody = {} as any;
   leaves = new BehaviorSubject<PermissionRequestResponse[]>([]);
   regularizationselect!: LeaveApproval[];
   selectedProducts!: LeaveApproval[];
@@ -221,27 +222,59 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
       let approvedBy = this.empinfo.employeeId.toString();
       let comments = formData.comments;
 
-      let requestBody = {
-        requestProcessedBy: approvedBy,
-        status: "Approved",
-        comments: comments,
-        moduleId: environment.attendanceRegularizationModuleId,
-        headerRequests: this.selectedProducts.map((item) => ({
-          headerID: item.approvalHeader.id,
-          currentStage: item.approvalHeader.currentapprovalStage
-        }))
+      // let requestBody = {
+      //   requestProcessedBy: approvedBy,
+      //   status: "Approved",
+      //   comments: comments,
+      //   moduleId: environment.attendanceRegularizationModuleId,
+      //   headerRequests: this.selectedProducts.map((item) => ({
+      //     headerID: item.approvalHeader.id,
+      //     currentStage: item.approvalHeader.currentapprovalStage
+      //   }))
+      // }
+
+      if (this.selectedProducts && this.selectedProducts.length > 0) {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Approved',
+          comments: comments,
+          moduleId: environment.attendanceRegularizationModuleId,
+          headerRequests: this.selectedProducts.map((item) => ({
+            headerID: item.approvalHeader.id,
+            currentStage: item.approvalHeader.currentapprovalStage,
+          })),
+        };
+      } else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Approved',
+          comments: comments,
+          moduleId: environment.attendanceRegularizationModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader.id,
+              currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage,
+            },
+          ],
+        };
       }
 
-      this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
-           this.modalService.dismissAll();
-          if(this.selectedProducts.length > 1){
-            this.responseSummary = response.data;
-            this.openModal(this.leaveSummary);
-          }else{
-            this.sharedModalService.openSuccessModal('Request Approved Successfully')
-          }
+            this.modalService.dismissAll();
+            // if(this.selectedProducts.length > 1){
+            //   this.responseSummary = response.data;
+            //   this.openModal(this.leaveSummary);
+            // }else{
+            //   this.sharedModalService.openSuccessModal('Request Approved Successfully')
+            // }
+            if (this.selectedProducts && this.selectedProducts.length <= 0) {
+              this.sharedModalService.openSuccessModal('Request Approved Successfully');
+            } else {
+              this.responseSummary = response.data;
+              this.openModal(this.leaveSummary);
+            }
           },
           error: (reason: any) => {
             this.spinnerLoader = false;
@@ -264,7 +297,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
-             this.selectedProducts = [];
+            this.selectedProducts = [];
           },
         });
     }
@@ -273,26 +306,54 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   handleProcess(request: any) {
     this.selectedLeaveData = request;
     let approvedBy = this.empinfo.employeeId.toString();
-    let requestBody = {
-      requestProcessedBy: approvedBy,
-      status: 'Processed',
-      moduleId: environment.attendanceRegularizationModuleId,
-      headerRequests: this.selectedProducts.map((item) => ({
-        headerID: item.approvalHeader.id,
-        currentStage: item.approvalHeader.currentapprovalStage
-      }))
-    }
+    // let requestBody = {
+    //   requestProcessedBy: approvedBy,
+    //   status: 'Processed',
+    //   moduleId: environment.attendanceRegularizationModuleId,
+    //   headerRequests: this.selectedProducts.map((item) => ({
+    //     headerID: item.approvalHeader.id,
+    //     currentStage: item.approvalHeader.currentapprovalStage
+    //   }))
+    // }
 
+     let message = null;
+    if (this.selectedProducts && this.selectedProducts.length > 0) {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.attendanceRegularizationModuleId,
+        headerRequests: this.selectedProducts.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage,
+        })),
+      };
+      message =  'Processing Requests, Please wait...';
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.attendanceRegularizationModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader.id,
+            currentStage:
+              this.selectedLeaveData.approvalHeader.currentapprovalStage,
+          },
+        ],
+      };
+      message =  'Processing Request, Please wait...';
+    }
+    this.sharedModalService.openLoaderModal(message );
     this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
-    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          if(this.selectedProducts.length > 1){
+          if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            this.sharedModalService.openSuccessModal('Request Processed Successfully');
+          } else {
             this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
-          }else{
-            this.sharedModalService.openSuccessModal('Request Processed Successfully')
           }
         },
         error: (reason: any) => {
@@ -312,7 +373,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
           this.signalService.regularizationForYouTriggerSignal.set(true);
           this.signalService.regularizationSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
-           this.selectedProducts = [];
+          this.selectedProducts = [];
         },
       });
   }
@@ -323,27 +384,53 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
       const formData = rejectForm.value;
       let approvedBy = this.empinfo.employeeId.toString();
       let comments = formData.comments;
-      let requestBody = {
-        requestProcessedBy: approvedBy,
-        status: 'Rejected',
-        comments: comments,
-        moduleId: environment.attendanceRegularizationModuleId,
-        headerRequests: this.selectedProducts.map((item) => ({
-          headerID: item.approvalHeader.id,
-          currentStage: item.approvalHeader.currentapprovalStage
-        }))
+      // let requestBody = {
+      //   requestProcessedBy: approvedBy,
+      //   status: 'Rejected',
+      //   comments: comments,
+      //   moduleId: environment.attendanceRegularizationModuleId,
+      //   headerRequests: this.selectedProducts.map((item) => ({
+      //     headerID: item.approvalHeader.id,
+      //     currentStage: item.approvalHeader.currentapprovalStage
+      //   }))
+      // }
+
+      if (this.selectedProducts && this.selectedProducts.length > 0) {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Rejected',
+          comments: comments,
+          moduleId: environment.permissionsModuleId,
+          headerRequests: this.selectedProducts.map((item) => ({
+            headerID: item.approvalHeader.id,
+            currentStage: item.approvalHeader.currentapprovalStage,
+          })),
+        };
+      } else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Rejected',
+          comments: comments,
+          moduleId: environment.permissionsModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader.id,
+              currentStage: this.selectedLeaveData.approvalHeader.currentapprovalStage,
+            },
+          ],
+        };
       }
 
-      this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
-          if(this.selectedProducts.length > 1){
-            this.responseSummary = response.data;
-            this.openModal(this.leaveSummary);
-          }else{
-            this.sharedModalService.openSuccessModal('Request Rejected Successfully')
-          }
+            if (this.selectedProducts && this.selectedProducts.length <= 0) {
+              this.sharedModalService.openSuccessModal('Request Rejected Successfully');
+            } else {
+              this.responseSummary = response.data;
+              this.openModal(this.leaveSummary);
+            }
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
@@ -366,7 +453,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.signalService.regularizationForYouTriggerSignal.set(true);
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
-             this.selectedProducts = [];
+            this.selectedProducts = [];
           },
         });
     }

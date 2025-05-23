@@ -57,7 +57,8 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   leaveEntitlementsList = {} as ICategoryDetails;
   selectedLeaveData = {} as any;
   leavesselect!: LeaveApproval[];
-  selectedProducts!: LeaveApproval[];
+  selectedProducts: LeaveApproval[]=[];
+    requestBody = {} as any;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -252,9 +253,9 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     return startDate < today && endDate < today;
   }
 
-  rejectleave(rejectPopup: any, selecteddata: any) {
+  rejectleave(rejectPopup: any, selecteddata: LeaveApproval) {
     this.modalService.open(rejectPopup, { centered: true, backdrop: 'static' });
-    this.selectedProducts = [selecteddata];
+   this.selectedLeaveData = selecteddata;
   }
 
   bulkapprove(approverPopup: any) {
@@ -269,23 +270,23 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   }
 
   bulkProcess() {
-    this.handleProcess();
+    this.handleProcess(this.leaves);
   }
 
-  approveleave(approverPopup: any, selecteddata: any) {
+  approveleave(approverPopup: any, selecteddata: LeaveApproval) {
     this.modalService.open(approverPopup, {
       centered: true,
       backdrop: 'static',
     });
-    this.selectedProducts = [selecteddata];
+    this.selectedLeaveData = selecteddata;
   }
 
-  processleave(selecteddata: any) {
-    this.selectedProducts = [selecteddata];
-    setTimeout(() => {
-      this.handleProcess();
-    }, 500);
-  }
+  // processleave(selecteddata: LeaveApproval) {
+  //   this.selectedProducts = [selecteddata];
+  //   setTimeout(() => {
+  //     this.handleProcess();
+  //   }, 500);
+  // }
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
@@ -320,26 +321,42 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     let approvedBy = this.LOGIN.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
 
-    let requestBody = {
-      requestProcessedBy: approvedBy,
-      status: "Approved",
-      comments: comments,
-      moduleId: environment.leavesModuleId,
-      isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
-      headerRequests: this.selectedProducts.map((item) => ({
-        headerID: item.approvalHeader.id,
-        currentStage: item.approvalHeader.currentapprovalStage
-      }))
+   if (this.selectedProducts && this.selectedProducts.length > 0) {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: "Approved",
+        comments: comments,
+        moduleId: environment.leavesModuleId,
+        isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
+        headerRequests: this.selectedProducts.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage
+        }))
+      }
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Approved',
+        comments: comments,
+        moduleId: environment.leavesModuleId,
+        isPlannedLeave: this.selectedLeaveData.isPlannedLeave,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader?.id,
+            currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
+          },
+        ],
+      };
     }
-    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (respone: any) => {
+        next: (response: any) => {
           this.modalService.dismissAll();
-          if(this.selectedProducts.length > 1){
-            this.responseSummary = respone.data;
+         if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            this.conformationPopup.openSuccessModal('Request Approved Successfully');
+          } else {
+            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
-          }else{
-            this.conformationPopup.openSuccessModal('Request Approved Successfully')
           }
         },
         error: (reason: any) => {
@@ -371,26 +388,42 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.spinnerLoader = true;
     let approvedBy = this.LOGIN.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
-    let requestBody = {
-      requestProcessedBy: approvedBy,
-      status: 'Rejected',
-      comments: comments,
-      isPlannedLeave: false,
-      moduleId: environment.leavesModuleId,
-      headerRequests: this.selectedProducts.map((item) => ({
-        headerID: item.approvalHeader.id,
-        currentStage: item.approvalHeader.currentapprovalStage
-      }))
+    if (this.selectedProducts && this.selectedProducts.length > 0) {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Rejected',
+        comments: comments,
+        isPlannedLeave: false,
+        moduleId: environment.leavesModuleId,
+        headerRequests: this.selectedProducts.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage
+        }))
+      }
+    } else {
+      this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Rejected',
+        comments: comments,
+        isPlannedLeave: false,
+        moduleId: environment.leavesModuleId,
+        headerRequests: [
+          {
+            headerID: this.selectedLeaveData.approvalHeader?.id,
+            currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
+          },
+        ],
+      };
     }
-    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (respone: any) => {
+        next: (response: any) => {
          this.modalService.dismissAll();
-          if(this.selectedProducts.length > 1){
-            this.responseSummary = respone.data;
+          if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+          } else {
+            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
-          }else{
-            this.conformationPopup.openSuccessModal('Request Rejected Successfully')
           }
         },
         error: (reason: any) => {
@@ -418,28 +451,46 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
       });
   }
 
-  handleProcess() {
+  handleProcess(selecteddata: any) {
+     this.selectedLeaveData = selecteddata;
     let approvedBy = this.LOGIN.employeeId.toString();
-    let requestBody = {
-      requestProcessedBy: approvedBy,
-      status: 'Processed',
-      moduleId: environment.leavesModuleId,
-      headerRequests: this.selectedProducts.map((item) => ({
-        headerID: item.approvalHeader.id,
-        currentStage: item.approvalHeader.currentapprovalStage
-      }))
+    let message = null;
+     if (this.selectedProducts && this.selectedProducts.length > 0) {
+        this.requestBody = {
+        requestProcessedBy: approvedBy,
+        status: 'Processed',
+        moduleId: environment.leavesModuleId,
+        headerRequests: this.selectedProducts.map((item) => ({
+          headerID: item.approvalHeader.id,
+          currentStage: item.approvalHeader.currentapprovalStage
+        }))
+      }
+      message = 'Processing Requests, Please wait...';
+     }else {
+        this.requestBody = {
+          requestProcessedBy: approvedBy,
+          status: 'Processed',
+          moduleId: environment.leavesModuleId,
+          headerRequests: [
+            {
+              headerID: this.selectedLeaveData.approvalHeader?.id,
+              currentStage: this.selectedLeaveData.approvalHeader?.currentapprovalStage,
+            },
+          ],
+        };
+        message = 'Processing Request, Please wait...';
     }
 
-    this.conformationPopup.openLoaderModal('Processing Request, Please wait...');
-    this.http.putData(`v2/PendingApproval/multiapprovals`, requestBody).pipe(takeUntil(this.destroy$))
+    this.conformationPopup.openLoaderModal(message);
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (respone: any) => {
+        next: (response: any) => {
           this.modalService.dismissAll();
-          if(this.selectedProducts.length > 1){
-            this.responseSummary = respone.data;
+          if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            this.conformationPopup.openSuccessModal('Request Processed Successfully');
+          } else {
+            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
-          }else{
-            this.conformationPopup.openSuccessModal('Request Processed Successfully')
           }
         },
         error: (reason: any) => {

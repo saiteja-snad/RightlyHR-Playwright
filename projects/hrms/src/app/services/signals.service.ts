@@ -44,5 +44,6 @@ export class SignalsService {
   timeoffForYouTriggerSignal = signal<boolean>(false);
   timeoffForRoleTriggerSignal = signal<boolean>(false);
   timeOffsidenavCountSignal= signal<boolean>(false);
+
   constructor() {}
 }

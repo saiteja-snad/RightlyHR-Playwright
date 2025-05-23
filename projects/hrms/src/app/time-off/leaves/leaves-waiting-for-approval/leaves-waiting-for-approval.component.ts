@@ -75,9 +75,9 @@ isLoading=false;
     this.isLoading=true;
     const currentDate=moment()
  const payload={
-       "updatedDate": currentDate,
+       "cancelledDate": currentDate,
         "rejectedReason": this.cancelForm.get('cancelReason')?.value,
-        "rejectedBy": this.empdata.employeeId
+        "cancelledBy": this.empdata.employeeId
     }
     this.subscription=this.http.putData(`Timeoff/cancel?id=${this.selectedFields.id}`,payload).subscribe({
       next:(res:any)=>{

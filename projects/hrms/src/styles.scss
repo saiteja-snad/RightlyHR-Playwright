@@ -402,17 +402,9 @@ body {
         border-radius: 6px;
     }
 
-    a {
-
-
-        &:hover {
-            color: #606060 !important;
-        }
-
-        &:focus {
-            color: #fff !important;
-        }
-    }
+   .employee-info-nav-tabs a:hover{
+    color: #fff;
+   }
 
     .active-nav-link {
         color: #fff;

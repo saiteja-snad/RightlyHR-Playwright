@@ -8,7 +8,6 @@ import { RbacService } from '../../services/rbac.service';
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { MyinfoHeaderTabsComponent } from "../myinfo-tabs/myinfo-header-tabs/myinfo-header-tabs.component";
 import { PersonalinfoHeaderTabsComponent } from "../personalinfo-tabs/personalinfo-header-tabs/personalinfo-header-tabs.component";
-<<<<<<< HEAD
 import { OpenModalService } from '../../services/open-modal.service';
 import { AuthService } from '../../services/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -16,11 +15,6 @@ import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-header',
   imports: [CommonModule, RouterModule, TranslateModule,MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent],
-=======
-@Component({
-  selector: 'app-header',
-  imports: [CommonModule, RouterModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent],
->>>>>>> 28a00cf0a1ed0618155da00597b2a474e21d4a10
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

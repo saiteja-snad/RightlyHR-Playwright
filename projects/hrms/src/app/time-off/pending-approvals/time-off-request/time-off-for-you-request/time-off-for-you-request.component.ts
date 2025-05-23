@@ -453,10 +453,14 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Approved Successfully');
+            if(this.responseSummary.failureRecordsCount != 0){
+              this.conformationPopup.openErrorModal(this.responseSummary.failureRecords[0].message)
+            }else{
+               this.conformationPopup.openSuccessModal('Request Approved Successfully');
+            }
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
@@ -521,10 +525,14 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Rejected Successfully');
-          } else {
-            this.responseSummary = response.data;
+            if(this.responseSummary.failureRecordsCount != 0){
+              this.conformationPopup.openErrorModal(this.responseSummary.failureRecords[0].message)
+            }else{
+               this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+            }
+          }else {
             this.openModal(this.leaveSummary);
           }
         },
@@ -540,6 +548,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal('Request Rejected Failed');
           }
           this.spinnerLoader = false;
+          form.resetForm();
         },
         complete: () => {
           form.resetForm();
@@ -588,10 +597,14 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Processed Successfully');
-          } else {
-            this.responseSummary = response.data;
+            if(this.responseSummary.failureRecordsCount != 0){
+              this.conformationPopup.openErrorModal(this.responseSummary.failureRecordsCount[0].message)
+            }else{
+               this.conformationPopup.openSuccessModal('Request Processed Successfully');
+            }
+          }else {
             this.openModal(this.leaveSummary);
           }
         },

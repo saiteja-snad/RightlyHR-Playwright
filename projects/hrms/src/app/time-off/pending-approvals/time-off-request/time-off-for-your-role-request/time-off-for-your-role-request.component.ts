@@ -352,14 +352,20 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
          if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Approved Successfully');
+           if(this.responseSummary.failureRecordsCount != 0){
+              this.conformationPopup.openErrorModal(this.responseSummary.failureRecords[0].message)
+            }else{
+               this.conformationPopup.openSuccessModal('Request Approved Successfully');
+            }
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
         error: (reason: any) => {
+          this.modalService.dismissAll();
+          form.resetForm();
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
@@ -372,7 +378,6 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.spinnerLoader = false;
         },
         complete: () => {
-          form.resetForm();
           this.spinnerLoader = false;
           this.multiSelect= false;
           this.signalService.timeOffsidenavCountSignal.set(true);
@@ -419,14 +424,20 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
          this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+            if(this.responseSummary.failureRecordsCount != 0){
+              this.conformationPopup.openErrorModal(this.responseSummary.failureRecords[0].message)
+            }else{
+               this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+            }
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
         error: (reason: any) => {
+          this.modalService.dismissAll();
+           form.resetForm();
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
@@ -486,10 +497,14 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Processed Successfully');
+            if(this.responseSummary.failureRecordsCount != 0){
+              this.conformationPopup.openErrorModal(this.responseSummary.failureRecordsCount[0].message);
+            }else{
+              this.conformationPopup.openSuccessModal('Request Processed Successfully');
+            }
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },

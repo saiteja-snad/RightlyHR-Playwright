@@ -78,6 +78,8 @@ import { CancelledComponent } from './leaves/cancelled/cancelled.component';
 import { OrgLeaveBalanceComponent } from './leaves/org-leave-balance/org-leave-balance.component';
 import { PermissionsGuard } from "../guards/permissions.guard";
 import { OnBeHalfOfCancelComponent } from './on-be-half-of/on-be-half-of-cancel/on-be-half-of-cancel.component';
+import { WfhCancellationComponent } from './work-from-home/wfh-cancellation/wfh-cancellation.component';
+import { PermissionsCancellationComponent } from './premissions/permissions-cancellation/permissions-cancellation.component';
 
 export default [
   { path: '', redirectTo: '/time-off/leaves', pathMatch: 'full' },
@@ -100,6 +102,7 @@ export default [
       { path: 'approved', component: WfhApprovedComponent, data: { permission: 'Approved (WFH).view' } },
       { path: 'processed', component: WfhProcessedComponent, data: { permission: 'Processed (WFH).view' } },
       { path: 'rejected', component: WfhRejectedComponent, data: { permission: 'Rejected (WFH).view' } },
+      { path: 'cancelled', component: WfhCancellationComponent, data: { permission: 'Cancel (WFH).view' } },
       // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
@@ -132,6 +135,7 @@ export default [
       },
       { path: 'approved', component: PremissionsApprovedComponent, data: { permission: 'Approved (Permissions).view' } },
       { path: 'rejected', component: PremissionsRejectedComponent , data: { permission: 'Rejected (Permissions).view' }},
+      { path: 'cancelled', component: PermissionsCancellationComponent, data: { permission: 'Cancel (Permissions).view' } },
       // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },

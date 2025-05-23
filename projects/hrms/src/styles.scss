@@ -36,22 +36,22 @@
 
     // header colors
     --header-background-color: #FFFFFF;
-    --btn-header-color: #224C7E;
+    --btn-header-color: #0B3A83;
     --notification-border-color: #CFE0F5;
     // header colors ends
 
     //sidebar colors
-    --side-nav-background-color: #224C7E;
+    --side-nav-background-color: #0B3A83;
     --side-nav-item-color: #EAEAEA;
-    --side-nav-item-active-color: #224C7E;
+    --side-nav-item-active-color: #0B3A83;
     --side-nav-active-bg-color: #FFFFFF;
     //sidebar colors
 
     // button colors
-    --btn-primary-color: #224C7E;
+    --btn-primary-color: #0B3A83;
     --btn-secondary-color: #F0F4F8;
     --btn-color-tp: #FFFFFF;
-    --btn-color-ts: #224C7E;
+    --btn-color-ts: #0B3A83;
     --btn-success: #38930D;
     --btn-failure: #D82D24;
     --btn-publish: #26BD3D;
@@ -60,7 +60,7 @@
 
     // colors
     --white-color: #FFFFFF;
-    --primary-color: #224C7E;
+    --primary-color: #0B3A83;
     --primary-color-100: #305889;
     --ash-color: #707070;
     --black-color-100: #444444;
@@ -732,7 +732,7 @@ a {
 }
 
 .btn-primary {
-    background-color: var(--btn-primary-color);
+    background: linear-gradient(269.82deg, var(--btn-primary-color) 0.16%, #FFFFFF 304.88%);
     color: var(--btn-color-tp);
     cursor: pointer;
 }

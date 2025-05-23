@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-    <div class="custom-table-content">
+    <div class="custom-table-content custom-content-height17">
         <table class="w-100">
             <thead>
                 <tr>
@@ -86,13 +86,12 @@
             required</ng-container>
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['maxlength']">Maximum 250 characters
             allowed</ng-container>
-          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['pattern']">Leading spaces are not
-            allowed</ng-container>
+          <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['pattern']">Reason for Cancellation cannot start with whitespace or be empty</ng-container>
         </div>
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();cancelForm.reset()">{{'Close'| translate}}</button>
+          (click)="modal.dismiss();cancelForm.reset()">{{'Cancel'| translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="cancelForm.invalid || isLoading">@if
           (!isLoading) { {{ 'Submit' | translate }} } @else {
             <div class="button-loader-content">

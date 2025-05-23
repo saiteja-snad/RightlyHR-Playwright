@@ -32,7 +32,6 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
   filteredTeamLeaveBalance: any[] = [];
   destroy$: Subject<boolean> = new Subject<boolean>();
   @ViewChild('leavesModal') leavesModal!: TemplateRef<any>;
-
   years = [
     { label: (new Date().getFullYear() - 1).toString(), value: new Date().getFullYear() - 1 },
     { label: new Date().getFullYear().toString(), value: new Date().getFullYear() },

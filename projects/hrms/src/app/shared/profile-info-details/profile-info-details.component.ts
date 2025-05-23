@@ -128,11 +128,10 @@ export class ProfileInfoDetailsComponent {
           this.empinfo.profileUrl = data.path;
           this.subscription = this.http.postdata("Employeedata/UPDATER", this.empinfo).subscribe({
             next: (data: any) => {
-              if (data.statusCode === 409) { }
-              else if (data.statusCode === 200) {
-                this.conformationPopup.openSuccessModal('Profile picture updated successfully')
-                this.getEmployeeId();
-              }
+              this.http.setprofileDetails()
+              this.conformationPopup.openSuccessModal('Profile picture updated successfully')
+              this.getEmployeeId();
+            
             },
             error: (reason: any) => {
               this.conformationPopup.openErrorModal(reason.error.message || 'Profile picture update failed')

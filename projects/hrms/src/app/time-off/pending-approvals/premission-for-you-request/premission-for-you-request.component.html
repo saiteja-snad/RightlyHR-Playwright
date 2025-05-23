@@ -1,25 +1,32 @@
 <div class="custom-main-component-container">
         @if (selectedLeavesItems && selectedLeavesItems.length > 0 && multiSelect) {
-    <div class="d-flex justify-content-end gap-3 mb-3">
-    
-        @if (canBulkApprove()) {
-            @if(rbac.allowedToAccess('For You (Permission).update')){
-              <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
-            }
-            @if(rbac.allowedToAccess('For You (Permission).delete')){
-              <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-            }
+        <div class="d-flex justify-content-between">
+        <div class="mt-2">
+            @if(selectedLeavesItems){
+                <div class="component-sub-header ">Selected Records: {{selectedLeavesItems.length}}</div>
         }
-        @if (canBulkProcess()) {
-            @if(rbac.allowedToAccess('For You (Permission).update')){
-              <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+        </div>
+        <div class="d-flex justify-content-end gap-3 mb-3">
+        
+            @if (canBulkApprove()) {
+                @if(rbac.allowedToAccess('For You (Permission).update')){
+                <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+                }
+                @if(rbac.allowedToAccess('For You (Permission).delete')){
+                <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+                }
             }
-            @if(rbac.allowedToAccess('For You (Permission).delete')){
-              <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            @if (canBulkProcess()) {
+                @if(rbac.allowedToAccess('For You (Permission).update')){
+                <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+                }
+                @if(rbac.allowedToAccess('For You (Permission).delete')){
+                <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+                }
             }
-        }
-       
-    </div>
+        
+        </div>
+         </div>
      }
     <!--Input search-->
     <div class="input-group custom-search mb-3">
@@ -30,7 +37,7 @@
 
     <div class="custom-p-multi-select-table">
         @if(!dataload){
-        <p-table [value]="permissionsselect" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
+        <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
             dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
             <ng-template #header>
                 <tr>
@@ -41,8 +48,8 @@
                     <th>{{'Permission Date' | translate}}</th>
                     <th>{{'Duration(InHours)' | translate}}</th>
                     <th>{{'Permission Type' | translate}}</th>
-                    <th>{{'Reason' | translate}}</th>
-                    <th>{{'Approver Comments' | translate}}</th>
+                    <th class="text-center">{{'Reason' | translate}}</th>
+                    <th class="text-center">{{'Approver Comments' | translate}}</th>
                     @if(!multiSelect &&  (rbac.allowedToAccess('For You (Permission).update') || rbac.allowedToAccess('For You (Permission).delete'))){
                     <th class="text-center">{{'Action(s)' | translate}}</th>
                     }
@@ -55,27 +62,27 @@
                     <td>
                         <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
                     </td>
-                    <td>{{leave.entity.fusionempId}}</td>
-                    <td>{{leave.entity.raisedForName}}</td>
-                    <td>{{leave.entity.createdDate| dateformat}}</td>
-                    <td>{{leave.entity.requestedDate| dateformat}}</td>
-                    <td>{{leave.entity.duration}}</td>
-                    <td>{{leave.entity.type}}</td>
-                    <td>
+                    <td>{{leave?.entity?.fusionempId}}</td>
+                    <td>{{leave?.entity?.raisedForName}}</td>
+                    <td>{{leave?.entity?.createdDate| dateformat}}</td>
+                    <td>{{leave?.entity?.requestedDate| dateformat}}</td>
+                    <td>{{leave?.entity?.duration}}</td>
+                    <td>{{leave?.entity?.type}}</td>
+                    <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="reason">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                <i class="bi bi-info-circle-fill" ></i>
                             </a>
                             <ng-template #reason>
-                                <p class="mb-0">{{leave.entity.notes}} </p>
+                                <p class="mb-0">{{leave?.entity?.notes}} </p>
                             </ng-template>
                         </div>
                     </td>
-                    <td>
-                        <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
+                    <td class="text-center">
+                        <div *ngIf="leave?.entity?.regularizationApproverComments[0]?.comments;else permissionComments">
                             <a type="button"
-                                (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                (click)="comments(leave?.entity?.regularizationApproverComments,commentspopup)">
+                                 <i class="bi bi-info-circle-fill" ></i>
                             </a>
                         </div>
 
@@ -90,8 +97,8 @@
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu">
                                  @if(rbac.allowedToAccess('For You (Permission).update') ) {
-                                @if( leave.approvalHeader.currentapprovalStage !=
-                                leave.approvalHeader.finalapprovalStage){
+                                @if( leave?.approvalHeader?.currentapprovalStage !=
+                                leave?.approvalHeader?.finalapprovalStage){
                                 <li (click)="openApproveModal(approval,leave)"
                                     >
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>{{'Approve' |
@@ -100,8 +107,8 @@
                             }
                                 }
                                  @if(rbac.allowedToAccess('For You (Permission).update')) {
-                                @if( leave.approvalHeader.currentapprovalStage ==
-                                leave.approvalHeader.finalapprovalStage){
+                                @if( leave?.approvalHeader?.currentapprovalStage ==
+                                leave?.approvalHeader?.finalapprovalStage){
                                 <li (click)="handleProcess(leave)" >
                                     <a class="dropdown-item"><i class="bi bi-check-circle me-2"></i>
                                         {{'Process' | translate}}</a>
@@ -158,18 +165,18 @@
                 <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
                         class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
-                    formControlName="comments" maxlength="250"></textarea>
+                    formControlName="comments" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                 <!-- Character counter -->
                 <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required.</div>
+                    <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comment is required</div>
                     <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comment cannot exceed 250
-                        characters.</div>
+                        characters</div>
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();">{{'Cancel'|
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();" [disabled]=" spinnerLoader">{{'Cancel'|
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="approveForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
@@ -198,17 +205,17 @@
                     <span class="text-danger">*</span></label>
                 <textarea class="form-control custom-input" id="comments"
                     placeholder="Please provide reason for rejection" formControlName="comments"
-                    maxlength="250"></textarea>
+                    maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                 <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Rejected Reason is required.</div>
-                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reason cannot exceed 250 characters.
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Rejected Reason is required</div>
+                    <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">Reason cannot exceed 250 characters
                     </div>
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'Close' |
+                <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()" [disabled]=" spinnerLoader">{{'Cancel' |
                     translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" [disabled]="rejectForm.invalid || spinnerLoader">
                     @if(spinnerLoader){
@@ -242,10 +249,10 @@
             <div class="card p-3">
                 <div >
                     <div class="mb-0">
-                        <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
-                        <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
-                        <p><b>{{"Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
-                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
+                        <p><b>{{'Comments' | translate}}:</b> {{ comment?.comments }} </p>
+                        <p><b>{{'Commented By'|translate}}:</b> {{ comment?.addedName }}</p>
+                        <p><b>{{"Date" | translate}}:</b> {{ comment?.addedDate | dateformat }}</p>
+                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment?.addedByFusionEmpId }}</p>
                     </div>
                 </div>
             </div>
@@ -270,15 +277,15 @@
             <div class="row">
                 <div class="col-sm-4 text-center">
                     <p><b>{{'Total Records' | translate}}</b></p>
-                    <p>{{ requestSummary.totalRecordCount }}</p>
+                    <p>{{ requestSummary?.totalRecordCount }}</p>
                 </div>
                 <div class="col-sm-4 text-center">
                     <p><b>{{'Success Records'|translate}}</b> </p>
-                    <p>{{ requestSummary.successRecordsCount }}</p>
+                    <p>{{ requestSummary?.successRecordsCount }}</p>
                 </div>
                 <div class="col-sm-4 text-center">
                     <p><b>{{'Failed Records' | translate}}</b></p>
-                    <p>{{ requestSummary.failureRecordsCount }}</p>
+                    <p>{{ requestSummary?.failureRecordsCount }}</p>
                 </div>
             </div>
         </div>

@@ -19,6 +19,7 @@ import { SignalsService } from '../../../services/signals.service';
 import { TableModule } from 'primeng/table';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { environment } from '../../../../environments/environment';
+import { FormValidationsService } from '../../../services/form-validations.service';
 
 @Component({
   selector: 'app-premission-for-you-request',
@@ -64,7 +65,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   dataload = false;
   permissionsselect!: LeaveApproval[];
-  selectedLeavesItems!: LeaveApproval[];
+  selectedLeavesItems: LeaveApproval[] = [];
   multiSelect = false;
   requestBody = {} as any;
   constructor(
@@ -73,7 +74,8 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    private signalService: SignalsService
+    private signalService: SignalsService,
+    public formsValidation:FormValidationsService
   ) {}
 
   ngOnInit(): void {
@@ -151,6 +153,32 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         },
       });
   }
+
+  getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
+  const search = this.searchValue?.toLowerCase() ?? '';
+  const allLeaves = this.leaves?.getValue() ?? [];
+
+  // Filter
+  let filteredLeaves = allLeaves;
+  if (search) {
+    filteredLeaves = filteredLeaves.filter((item: PermissionRequestResponse) =>
+      item.entity?.fusionempId?.toLowerCase().includes(search) ||
+      item.entity?.raisedForName?.toLowerCase().includes(search) ||
+      item.entity?.type?.toLowerCase().includes(search)
+    );
+  }
+
+  // Sort
+  if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+    return filteredLeaves;
+  }
+
+  const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
+  const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+  const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+
+  return [...selected, ...unselected];
+}
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });

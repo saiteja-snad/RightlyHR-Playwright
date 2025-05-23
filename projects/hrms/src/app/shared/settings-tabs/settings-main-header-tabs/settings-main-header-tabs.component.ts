@@ -4,21 +4,21 @@ import { Router, RouterModule } from '@angular/router';
 import { TabsModule } from 'primeng/tabs';
 import { RbacService } from '../../../services/rbac.service';
 import { AccessNavigationService } from '../../../services/access-navigation.service';
-
 @Component({
   selector: 'app-settings-main-header-tabs',
   imports: [RouterModule, CommonModule, TabsModule],
   templateUrl: './settings-main-header-tabs.component.html',
   styleUrl: './settings-main-header-tabs.component.scss',
 })
+
 export class SettingsMainHeaderTabsComponent implements OnInit {
   public navTabs: any[] = [];
   private allNavTabs = [
-    { label: 'Employee Fields', link: '/settings/employee-fields', permission: { feature: 'Employee Fields Module', action: 'view' } },
-    { label: 'Roles', link: '/settings/roles-permissions' },
-    { label: 'Time Off', link: '/settings/timeoff-configurations', permission: { feature: 'Settings Timeoff Module', action: 'view' } },
-    { label: 'Asset Configuration', link: '/settings/assets-configuration', permission: { feature: 'Assets Management Configuration Module', action: 'view' } },
-    { label: 'Dynamic Forms', link: '/settings/dynamic-forms', permission: { feature: 'Dynamic Forms Module', action: 'view' } }
+    { label: 'Employee Fields', link: '/settings/employee-fields', icon:'/main-menu-icons/Employee-Fields-icon.png', permission: { feature: 'Employee Fields Module', action: 'view' } },
+    { label: 'Roles', link: '/settings/roles-permissions', icon:'/main-menu-icons/Roles-icon.png', },
+    { label: 'Time Off', link: '/settings/timeoff-configurations', icon:'/main-menu-icons/Time-off-settings-icon.png', permission: { feature: 'Settings Timeoff Module', action: 'view' } },
+    { label: 'Asset Configuration', link: '/settings/assets-configuration', icon:'/main-menu-icons/Asset-configuration-icon.png', permission: { feature: 'Assets Management Configuration Module', action: 'view' } },
+    { label: 'Dynamic Forms', link: '/settings/dynamic-forms', icon:'/main-menu-icons/Dynamic-Form-icon.png', permission: { feature: 'Dynamic Forms Module', action: 'view' } }
   ];
   columnsPerRow = 3;
 

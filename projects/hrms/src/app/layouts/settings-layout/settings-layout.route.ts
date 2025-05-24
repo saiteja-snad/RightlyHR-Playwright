@@ -17,5 +17,4 @@ export default [
     { path: 'timeoff-configurations', component: TimeOffLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../settings/time-off/time-off.route') },
     { path: 'dynamic-forms', component: DynamicFormsLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../settings/dynamic-forms/dynamic-forms.route') },
     { path: 'assets-configuration', component: AssetConfigurationLayOutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../settings/assets-configurations/assets-configuration.router') },
-    { path: 'company-settings', component: CompanySettingsComponent, canActivate: [MsalGuard]},
 ] as Route[];

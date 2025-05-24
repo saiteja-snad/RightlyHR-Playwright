@@ -16,7 +16,7 @@ import { PersonalJobTabsComponent } from "../personalinfo-tabs/personal-job-tabs
 @Component({
   selector: 'app-profile-info-details',
   imports: [CommonModule, MyinfoHeaderTabsComponent, PersonalinfoHeaderTabsComponent, PersonalPersonalTabsComponent,
-     MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, PersonalJobTabsComponent],
+    MyInfoPersonalTabsComponent, MyinfoJobTabsComponent, PersonalJobTabsComponent],
   templateUrl: './profile-info-details.component.html',
   styleUrl: './profile-info-details.component.scss'
 })
@@ -38,27 +38,31 @@ export class ProfileInfoDetailsComponent {
   profilePic: any;
 
   constructor(private http: HttpService, private sanitizer: DomSanitizer, private conformationPopup: OpenModalService,
-     public rbac: RbacService, private route: ActivatedRoute, private router: Router) { }
+    public rbac: RbacService, private router: Router) { }
 
   ngOnInit(): void {
-    if (this.route.snapshot.routeConfig?.path === 'personalinfo') {
-      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
-      this.getJobDetails();
-      this.getEmployeeId();
-    }
-    else if (this.route.snapshot.routeConfig?.path === 'myinfo') {
-      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-      this.getJobDetails();
-      this.getEmployeeId();
-    }
+    this.getEmpInfoFromRoute();
     this.http.basicDetailesadded$.subscribe(() => {
       this.getJobDetails();
       this.getEmployeeId();
     });
-     this.http.profliepicadd$.subscribe(() => {
-      this.imageUrl = this.empinfo.profileUrl;
-    this.onSelectprofilePicDownload(this.empinfo);
+    this.http.profliepicadd$.subscribe(() => {
+      this.getEmployeeId();
     });
+  }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
+
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+      this.getJobDetails();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+      this.getJobDetails();
+    }
   }
 
   isActive(route: string): boolean {
@@ -91,6 +95,7 @@ export class ProfileInfoDetailsComponent {
   }
 
   chooseNewProfile(event: any) {
+       this.getEmpInfoFromRoute();
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -136,10 +141,10 @@ export class ProfileInfoDetailsComponent {
           this.subscription = this.http.postdata("Employeedata/UPDATER", this.empinfo).subscribe({
             next: (data: any) => {
               this.http.setprofileDetails()
-               this.getEmployeeId();
+              this.getEmployeeId();
               this.onSelectprofilePicDownload(this.empdata)
               this.conformationPopup.openSuccessModal('Profile picture updated successfully')
-             
+
             },
             error: (reason: any) => {
               this.conformationPopup.openErrorModal(reason.error.message || 'Profile picture update failed')

@@ -16,7 +16,7 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
 import { PermissionsearchPipe } from "../../../Pipes/permissionsearch.pipe";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { environment } from '../../../../environments/environment';
 import { FormValidationsService } from '../../../services/form-validations.service';
@@ -57,17 +57,19 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
   @ViewChild('leaveSummary') leaveSummary: any;
+  @ViewChild('dt') table!: Table; 
   requestSummary!:any;
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  searchValue: any;
+  searchValue: any | null;
   spinnerLoader = false;
   dataload = false;
   permissionsselect!: LeaveApproval[];
   selectedLeavesItems: LeaveApproval[] = [];
   multiSelect = false;
   requestBody = {} as any;
+  
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -82,8 +84,90 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
-  selectCheck(Value: any) {
-    this.multiSelect = Array.isArray(Value) && Value.length > 0;
+  selectCheck(value: any) {
+  this.multiSelect = Array.isArray(value) && value.length > 0;
+
+  if (!value || value.length === 0) {
+    this.selectedLeavesItems = [];
+    return;
+  }
+
+  const stageMap: { [stage: string]: any[] } = {};
+
+  // Group items by their approval stage
+  value.forEach((item: any) => {
+    const stage = item.approvalHeader?.currentapprovalStage;
+    if (!stageMap[stage]) {
+      stageMap[stage] = [];
+    }
+    stageMap[stage].push(item);
+  });
+
+  const stages = Object.keys(stageMap);
+  const totalAvailable = this.leaves?.getValue().length || 0;
+  const totalSelected = value.length;
+  const isBulkSelect = totalSelected === totalAvailable;
+
+  // Get the dominant stage (most frequent)
+  let dominantStage = stages[0];
+  let maxCount = stageMap[dominantStage].length;
+  for (const stage of stages) {
+    const count = stageMap[stage].length;
+    if (count > maxCount) {
+      dominantStage = stage;
+      maxCount = count;
+    } else if (count === maxCount && stage === '1') {
+      dominantStage = stage;
+    }
+  }
+
+  const lastSelected = value[value.length - 1];
+  const lastSelectedStage = lastSelected.approvalHeader?.currentapprovalStage;
+
+  // Scenario 1: Progressive Selection (mixing stages)
+  const existingStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
+  if (
+    this.selectedLeavesItems.length > 0 &&
+    lastSelectedStage &&
+    existingStage &&
+    lastSelectedStage !== existingStage
+  ) {
+    this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
+    const newSelection = this.selectedLeavesItems.filter(
+      item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+    );
+    this.selectedLeavesItems = [...newSelection];
+    setTimeout(() => this.updateTableSelectionState(newSelection));
+    return;
+  }
+
+  // Scenario 2: Bulk select - filter by dominant stage only
+  if (isBulkSelect && stages.length > 1) {
+    const dominantItems = [...stageMap[dominantStage]];
+    this.selectedLeavesItems = dominantItems;
+
+
+    setTimeout(() => this.updateTableSelectionState(dominantItems));
+    return;
+  }
+
+  // Valid multi-select with same stage
+  this.selectedLeavesItems = [...value];
+}
+
+
+private updateTableSelectionState(selectedItems: any[]) {
+    // Create a new array reference to force change detection
+    this.selectedLeavesItems = [...selectedItems];
+    
+    // If using PrimeNG table with dataKey
+    if (this.table) {
+      // Clear and reset selection to ensure checkbox states update
+      this.table.selection = null;
+      setTimeout(() => {
+        this.table.selection = selectedItems;
+      });
+    }
   }
   bulkapprove(approverPopup: any) {
     this.intializeApproveForm();
@@ -228,39 +312,36 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
           ],
         };
       }
-      this.http
-        .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.requestSummary = response.data;
             if (
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.sharedModalService.openSuccessModal(
-                'Request Approved Successfully'
-              );
+              this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
             } else {
-              this.requestSummary = response.data;
               this.openModal(this.leaveSummary);
             }
-            this.selectedLeavesItems = [];
-            this.multiSelect = false;
-            this.approveForm.reset();
-            this.selectedLeaveData = {} as PermissionRequestResponse;
-            this.signalService.permissionForYouTriggerSignal.set(true);
-            this.signalService.permissionSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
-            console.error(reason);
             this.modalService.dismissAll();
+            this.approveForm.reset();
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
           },
           complete: () => {
+            this.selectedLeavesItems = [];
+            this.multiSelect = false;
+            this.selectedLeaveData = {} as PermissionRequestResponse;
+            this.signalService.permissionForYouTriggerSignal.set(true);
+            this.signalService.permissionSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }
@@ -305,29 +386,28 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.requestSummary = response.data;
           if (
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.sharedModalService.openSuccessModal(
-              'Request Processed Successfully'
-            );
+            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
           } else {
-            this.requestSummary = response.data;
             this.openModal(this.leaveSummary);
           }
-          this.selectedLeavesItems = [];
-          this.multiSelect = false;
-          this.signalService.permissionForYouTriggerSignal.set(true);
-          this.signalService.permissionSidNavCountTriggerSignal.set(true);
+         
         },
         error: (reason: any) => {
-          console.error(reason);
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
+          this.signalService.permissionForYouTriggerSignal.set(true);
+          this.signalService.permissionSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.searchValue = null;
         },
       });
   }
@@ -370,33 +450,28 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
-            if (
-              this.selectedLeavesItems &&
-              this.selectedLeavesItems.length <= 0
-            ) {
-              this.sharedModalService.openSuccessModal(
-                'Request Rejected Successfully'
-              );
+            this.requestSummary = response.data;
+            if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
+              this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
             } else {
-              this.requestSummary = response.data;
               this.openModal(this.leaveSummary);
             }
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
             this.selectedLeavesItems = [];
             this.multiSelect = false;
             this.rejectForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.permissionForYouTriggerSignal.set(true);
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
-          },
-          error: (reason: any) => {
-            console.error(reason);
-            this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
           },
           complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }

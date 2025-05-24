@@ -21,11 +21,10 @@
         *ngIf="(teamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'firstName','lastName','middleName', 'workEmail', 'contactnumber']) as filteredMembers">
         <ng-container *ngIf="filteredMembers.length > 0; else noData">
           <tr *ngFor="let details of filteredMembers">
-            <td>{{ details.fusionEmpId }}</td>
-            <td (click)="select(details)" class="cursor" >{{ details.firstName }} {{details.middleName}} {{details.lastName}} </td>
-            <td>{{ details.workEmail }}</td>
-            <td>{{ details.contactnumber }}</td>
-
+            <td>{{ details.fusionEmpId || 'N/A' }}</td>
+            <td (click)="select(details)" class="cursor" >{{ details.firstName || 'N/A' }} {{details.middleName }} {{details.lastName }} </td>
+            <td>{{ details.workEmail || 'N/A' }}</td>
+            <td>{{ details.contactnumber || 'N/A' }}</td>
           </tr>
         </ng-container>
       </tbody>
@@ -38,7 +37,5 @@
         </tr>
       </ng-template>
     </table>
-
-
   </div>
 </div>

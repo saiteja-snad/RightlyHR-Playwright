@@ -1,25 +1,25 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        @if (router.url !== '/time-off/pending-approvals/assessmentform') {
+    <div class="component-header-content">
         <div>
-            <p class="component-header cursor mb-0">{{'Pending Approvals'|translate}}</p>
+            @if (router.url !== '/time-off/pending-approvals/assessmentform') {
+            <p class="component-header mb-0">{{'Pending Approvals'|translate}}</p>
+            }
+            @else {
+            <p class="component-header mb-0" (click)="navigate()">
+                <i class="bi bi-arrow-90deg-left me-2 cursor"></i>{{'Assessment Form'|translate}}
+            </p>
+            }
         </div>
-        }
-        @if (router.url === '/time-off/pending-approvals/assessmentform') {
-        <div>
-            <p class="component-header cursor mb-0" (click)="navigate()"><i class="bi bi-arrow-90deg-left me-2 cursor"></i>{{'Assessment Form'|translate}}</p>
-        </div>
-        }
     </div>
-   
-    <div class="employee-fields-main-container d-flex gap-3 w-100">
+
+    <div class="d-flex gap-3 w-100">
         @if (router.url != '/time-off/pending-approvals/assessmentform') {
-        <div class="custom-component-left-content">
-            <app-pending-approvals-tabs/>
+        <div class="component-left-tabs-container">
+            <app-pending-approvals-tabs />
         </div>
         }
 
-        <div class="custom-setting-right-content p-3">
+        <div class="component-right-content">
             <router-outlet />
         </div>
     </div>

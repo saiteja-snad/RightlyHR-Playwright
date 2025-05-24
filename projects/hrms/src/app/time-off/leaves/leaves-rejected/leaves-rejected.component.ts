@@ -24,6 +24,7 @@ export class LeavesRejectedComponent {
   rows: any = 10;
   loggedinuser = {} as any;
   empdata = {} as any;
+  selectempid = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
   options = [
@@ -45,11 +46,20 @@ export class LeavesRejectedComponent {
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getDataByLPID();
+    //this.getDataByLPID();
+    this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getDataByLPID();
+      }
+    });
   }
 
   getDataByLPID() {
-    let empid = this.empdata.employeeId;
+    let empid =  this.selectempid || this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {

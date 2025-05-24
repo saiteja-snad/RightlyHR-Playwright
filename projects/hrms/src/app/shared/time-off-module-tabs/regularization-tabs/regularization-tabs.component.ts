@@ -18,6 +18,7 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
   approvalregularizationRequestsCount = 0;
   processregularizationRequestsCount = 0;
   empinfo = {} as IJob;
+  selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   regularization = [] as any;
   constructor(public readonly router: Router, private http: HttpService,public rbac: RbacService) {
@@ -34,8 +35,20 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+
+     this.http.selectedEmployeeIdRegularization$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getregularizationEMPRequest();
+      }
+      else{
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getregularizationRequest();
+      }
+    });
   }
 
   isActive(route: string): boolean {
@@ -73,8 +86,40 @@ export class RegularizationTabsComponent implements OnInit, OnDestroy {
       });
   }
 
+  getregularizationEMPRequest() {
+    let empId = this.selectempid;
+    console.log(empId);
+    this.http
+      .getData(`RegularizationRequests/attendance/${empId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          this.regularization = response;
+          this.waitingForApprovalregularizationCount = this.regularization.filter(
+            (element: { status: string }) =>
+              element.status === 'Waiting for Approval'
+          ).length;
+          this.approvalregularizationRequestsCount = this.regularization.filter(
+            (element: { status: string }) => element.status === 'Approved'
+          ).length;
+          this.rejectedregularizationRequestsCount = this.regularization.filter(
+            (element: { status: string }) => element.status === 'Rejected'
+          ).length;
+          this.processregularizationRequestsCount = this.regularization.filter(
+            (element: { status: string }) => element.status === 'Processed'
+          ).length;
+        },
+        error: (error) => {
+          console.error('Error fetching data:', error);
+          this.regularization = []; // Set to empty array on error
+        },
+      });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+    this.http.setEmployeeIdRegularization(null);
   }
 }

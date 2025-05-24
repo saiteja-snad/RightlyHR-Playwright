@@ -34,6 +34,7 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
   permissions = [] as any;
   waitingForApprovalPerimisions: RegularizationRequest [] = [] as RegularizationRequest[];
   dataload =  false;
+  selectempid: any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -55,9 +56,20 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
 
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getDataPermissions()
-    this.formInializer();
+      this.http.selectedEmployeeIdPermission$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getDataEMPPermissions();
+      }
+      else{
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.getDataPermissions();
+      }
+    });
+     this.formInializer();
   }
    formInializer() {
     this.cancelForm = this.fb.group({
@@ -147,8 +159,25 @@ export class PremissionsWaitingForApprovalComponent  implements OnInit,OnDestroy
         this.isLoading=false;
         this. getDataPermissions();
       },
-
-    })
+    });
+  }
+  getDataEMPPermissions() {
+    let empId = this.selectempid;
+    this.dataload =  true;
+    this.http.getData(`RegularizationRequests/${empId}`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        this.permissions = response as RegularizationRequest[];
+        this.waitingForApprovalPerimisions = this.permissions.filter((element: { status: string }) => element.status === 'Waiting for Approval');
+        this.dataload =  false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.permissions = [];
+        this.dataload =  false; // Set to empty array on error
+      },
+    });
   }
 
 

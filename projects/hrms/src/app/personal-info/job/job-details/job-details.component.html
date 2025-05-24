@@ -2,15 +2,15 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div><span class="component-sub-header">{{'Job Details' |translate }}</span></div>
 
-        <!-- @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
+        @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !==
-        'trainee inactive' )){ -->
+        'trainee inactive' )){
         <div class="custom-add-btn" (click)="openModal(addEducationmodal)" *ngIf="canAccess('create','job')">
             <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
         </div>
 
-
+    }
 
     </div>
     <div class="custom-table-content">

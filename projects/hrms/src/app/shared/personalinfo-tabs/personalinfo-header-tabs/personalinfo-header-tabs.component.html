@@ -1,11 +1,8 @@
-
 <div class="employee-info-nav-tabs">
     <ul class="nav flex-row">
         <li class="nav-item" *ngFor="let tab of navTabs">
-            <a class="nav-link"(click)="navigateToAccessedRoute(tab.link)" [class.active-nav-link]="isActiveRoute(tab.link)" class="nav-link"
-                >
+            <a class="nav-link" (click)="navigateToAccessedRoute(tab.link)" [class.active-nav-link]="isActiveRoute(tab.link)">
                 {{ tab.label }}
-
             </a>
         </li>
     </ul>

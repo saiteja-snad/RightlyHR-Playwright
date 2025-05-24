@@ -22,7 +22,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('applicableYear')?.invalid && 
-                                              (leavePolicyForm.get('applicableYear')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('applicableYear')?.touched  )">
             Year is required
           </div>
         </div>
@@ -37,7 +37,7 @@
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('locationID')?.invalid && 
-                                              (leavePolicyForm.get('locationID')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('locationID')?.touched  )">
             Location is required
           </div>
         </div>
@@ -53,7 +53,7 @@
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('subLocation')?.invalid && 
-                                              (leavePolicyForm.get('subLocation')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('subLocation')?.touched  )">
             Sub Location is required
           </div>
         </div>
@@ -67,7 +67,7 @@
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('shiftId')?.invalid && 
-                                              (leavePolicyForm.get('shiftId')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('shiftId')?.touched  )">
             Shift is required
           </div>
         </div>
@@ -79,12 +79,12 @@
           <label class="form-label custom-label mb-2" for="LeaveCategory">Leave Category Type<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="leaveCategoryType" optionLabel="label" optionValue="value" placeholder="Select shift"
+            <p-select [options]="leaveCategoryType" optionLabel="label" optionValue="value" placeholder="Select Category"
               formControlName="type" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('type')?.invalid && 
-                                              (leavePolicyForm.get('type')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('type')?.touched  )">
             Leave Category Type is required
           </div>
         </div>
@@ -96,7 +96,7 @@
           <input type="text" formControlName="name" class="form-control custom-input" id="name" autocomplete="off"
             placeholder="Please enter name" required>
           <div class="error-msg"
-            *ngIf="leavePolicyForm.get('name')?.invalid &&  (leavePolicyForm.get('name')?.touched || leavePolicyForm.dirty)">
+            *ngIf="leavePolicyForm.get('name')?.invalid &&  (leavePolicyForm.get('name')?.touched  )">
             Leave Category Name is required
           </div>
         </div>
@@ -108,7 +108,7 @@
           <input type="text" formControlName="categoryCode" class="form-control custom-input" id="code"
             autocomplete="off" placeholder="Please enter code" required>
           <div class="error-msg" *ngIf="leavePolicyForm.get('categoryCode')?.invalid && 
-                                              (leavePolicyForm.get('categoryCode')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('categoryCode')?.touched  )">
             Leave Category Code is required
           </div>
         </div>
@@ -119,7 +119,7 @@
           <input type="number" formControlName="validity" class="form-control custom-input" id="validdates"
             autocomplete="off" placeholder="Please enter valid days" required>
           <div class="error-msg" *ngIf="leavePolicyForm.get('validity')?.invalid && 
-                                              (leavePolicyForm.get('validity')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('validity')?.touched  )">
             Valid Days is required
           </div>
         </div>
@@ -132,7 +132,7 @@
             placeholder="Please enter color" required>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('categoryColor')?.invalid && 
-                                              (leavePolicyForm.get('categoryColor')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('categoryColor')?.touched  )">
             Leave Category Color is required
           </div>
         </div>
@@ -141,7 +141,7 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="LeaveCategory">Is Dependent </label>
           <div class="custom-p-select-content">
-            <p-select [options]="publishedCategories" optionLabel="name" optionValue="id" placeholder="Select shift"
+            <p-select [options]="publishedCategories" optionLabel="name" optionValue="id" placeholder="Select option"
               formControlName="parentId" class="custom-select w-100">
             </p-select>
           </div>
@@ -160,7 +160,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('allowedGender')?.invalid && 
-                                              (leavePolicyForm.get('allowedGender')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('allowedGender')?.touched  )">
             Allowed Gender is required
           </div>
         </div>
@@ -176,7 +176,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('allowedMaritalStatus')?.invalid && 
-                                              (leavePolicyForm.get('allowedMaritalStatus')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('allowedMaritalStatus')?.touched  )">
             Allowed Marital Status is required
           </div>
         </div>
@@ -192,7 +192,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('excludeWeekends')?.invalid && 
-                                              (leavePolicyForm.get('excludeWeekends')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('excludeWeekends')?.touched  )">
             Exclude Weekends is required
           </div>
         </div>
@@ -208,7 +208,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('excludeHolidays')?.invalid && 
-                                              (leavePolicyForm.get('excludeHolidays')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('excludeHolidays')?.touched  )">
             Exclude Holidays is required
           </div>
         </div>
@@ -224,7 +224,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('isOptionalHoliday')?.invalid && 
-                                              (leavePolicyForm.get('isOptionalHoliday')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('isOptionalHoliday')?.touched  )">
             Is Optional Holiday is required
           </div>
         </div>
@@ -240,7 +240,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('allowedHalfDay')?.invalid && 
-                                              (leavePolicyForm.get('allowedHalfDay')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('allowedHalfDay')?.touched  )">
             Half Day Leave Allowed is required
           </div>
         </div>
@@ -255,7 +255,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('isApplicableProRataLeave')?.invalid && 
-                                              (leavePolicyForm.get('isApplicableProRataLeave')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('isApplicableProRataLeave')?.touched  )">
             Pro Rata Leave Allocation is required
           </div>
         </div>
@@ -272,7 +272,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('futureDatesAllowed')?.invalid && 
-                                              (leavePolicyForm.get('futureDatesAllowed')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('futureDatesAllowed')?.touched  )">
             Future Dates Allowed is required
           </div>
         </div>
@@ -285,7 +285,7 @@
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('futureDatesAllowed')?.value === true && 
                                               leavePolicyForm.get('futureDatesAllowedDays')?.invalid && 
-                                              (leavePolicyForm.get('futureDatesAllowedDays')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('futureDatesAllowedDays')?.touched  )">
             <span *ngIf="leavePolicyForm.get('futureDatesAllowedDays')?.errors?.['required']">
               Future Dates Allowed days are required
             </span>
@@ -307,7 +307,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('pastDateAllowed')?.invalid && 
-                                              (leavePolicyForm.get('pastDateAllowed')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('pastDateAllowed')?.touched  )">
             Past Dates Allowed is required
           </div>
         </div>
@@ -320,7 +320,7 @@
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('pastDateAllowed')?.value === true && 
                                               leavePolicyForm.get('pastDatesAllowedDays')?.invalid && 
-                                              (leavePolicyForm.get('pastDatesAllowedDays')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('pastDatesAllowedDays')?.touched  )">
             <span *ngIf="leavePolicyForm.get('pastDatesAllowedDays')?.errors?.['required']">
               Past Dates Allowed days are required
             </span>
@@ -342,7 +342,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('carryForwardAllowed')?.invalid && 
-                                              (leavePolicyForm.get('carryForwardAllowed')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('carryForwardAllowed')?.touched  )">
             Carry Forward Leave is required
           </div>
         </div>
@@ -355,7 +355,7 @@
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('carryForwardAllowed')?.value === true && 
                                               leavePolicyForm.get('carryForwardAllowedValue')?.invalid && 
-                                              (leavePolicyForm.get('carryForwardAllowedValue')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('carryForwardAllowedValue')?.touched  )">
             <span *ngIf="leavePolicyForm.get('carryForwardAllowedValue')?.errors?.['required']">
               Carry Forward days are required
             </span>
@@ -377,7 +377,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('encashAllowedType')?.invalid && 
-                                              (leavePolicyForm.get('encashAllowedType')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('encashAllowedType')?.touched  )">
             Encash Allowed is required
           </div>
         </div>
@@ -390,7 +390,7 @@
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('encashAllowedType')?.value === true && 
                                               leavePolicyForm.get('encashAllowedValue')?.invalid && 
-                                              (leavePolicyForm.get('encashAllowedValue')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('encashAllowedValue')?.touched  )">
             <span *ngIf="leavePolicyForm.get('encashAllowedValue')?.errors?.['required']">
               Encash days are required
             </span>
@@ -412,7 +412,7 @@
           </div>
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.invalid && 
-                                              (leavePolicyForm.get('noticeperiodAllowedType')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('noticeperiodAllowedType')?.touched  )">
             Allow Leaves is required
           </div>
         </div>
@@ -425,7 +425,7 @@
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.value === true && 
                                               leavePolicyForm.get('noticePeriodAllowedValue')?.invalid && 
-                                              (leavePolicyForm.get('noticePeriodAllowedValue')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('noticePeriodAllowedValue')?.touched  )">
             <span *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['required']">
               Maximum Leaves Allowed Per Month is required
             </span>
@@ -446,7 +446,7 @@
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('isProbationAllowed')?.invalid && (leavePolicyForm.get('isProbationAllowed')?.touched
-             || leavePolicyForm.dirty)">
+              )">
             Allow Leaves is required
           </div>
         </div>
@@ -459,7 +459,7 @@
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('isProbationAllowed')?.value === true && 
                                               leavePolicyForm.get('probationDays')?.invalid && 
-                                              (leavePolicyForm.get('probationDays')?.touched || leavePolicyForm.dirty)">
+                                              (leavePolicyForm.get('probationDays')?.touched  )">
             <span *ngIf="leavePolicyForm.get('probationDays')?.errors?.['required']">
               Maximum Leaves Allowed Per Month is required
             </span>

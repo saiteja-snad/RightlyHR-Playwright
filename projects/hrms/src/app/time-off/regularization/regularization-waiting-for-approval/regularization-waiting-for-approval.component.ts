@@ -24,6 +24,7 @@ export class RegularizationWaitingForApprovalComponent implements OnInit,OnDestr
   first: any = 0;
   rows: any = 10;
   empinfo = {} as IJob;
+  selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   waitingForApprovalPerimisions: RegularizationRequest [] = [] as RegularizationRequest[];
   options = [
@@ -49,8 +50,20 @@ export class RegularizationWaitingForApprovalComponent implements OnInit,OnDestr
 
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getDataPermissions()
+
+     this.http.selectedEmployeeIdRegularization$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getDataEMPPermissions();
+      }
+      else{
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.getDataPermissions();
+      }
+    });
   }
   onRowsChange() {
     this.first = 0;
@@ -80,6 +93,23 @@ export class RegularizationWaitingForApprovalComponent implements OnInit,OnDestr
     });
   }
 
+  getDataEMPPermissions() {
+    let empId = this.selectempid;
+    this.dataLoad =  true;
+    this.http.getData(`RegularizationRequests/attendance/${empId}`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        this.waitingForApprovalPerimisions = response.filter((element: { status: string }) => element.status === 'Waiting for Approval');
+        this.dataLoad =  false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.dataLoad =  false;
+        this.waitingForApprovalPerimisions = []; // Set to empty array on error
+      },
+    });
+  }
 
 
   ngOnDestroy(): void {

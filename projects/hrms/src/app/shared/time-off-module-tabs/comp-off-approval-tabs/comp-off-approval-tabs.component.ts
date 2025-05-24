@@ -20,6 +20,7 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   approvalCompOffRequestsCount = 0;
   processedCompOffRequestsCount = 0;
   empinfo = {} as IJob;
+  selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(public readonly router: Router, private http: HttpService, public rbac: RbacService) {
@@ -35,8 +36,21 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+     this.selectempid = '';
+      this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getCompOffEMPRequest();
+      }
+      else {
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getCompOffRequest();
+      }
+    });
+    
   }
 
   isActive(route: string): boolean {
@@ -59,9 +73,25 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+  getCompOffEMPRequest() {
+    let empId =  this.selectempid;
+    this.http.getData(`Timeoff/getCompoffRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.compOff = response;
+        this.waitingForApprovalCompOffCount = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval').length;
+        this.approvalCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Approved').length;
+        this.rejectedCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Rejected').length;
+        this.processedCompOffRequestsCount = this.compOff.filter((element: { status: string }) => element.status === 'Processed').length;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.compOff = []; // Set to empty array on error
+      },
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+     this.http.setEmployeeIdCompOff(null);
   }
 }

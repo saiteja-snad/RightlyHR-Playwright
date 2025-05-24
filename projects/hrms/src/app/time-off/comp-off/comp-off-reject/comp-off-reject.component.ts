@@ -26,6 +26,7 @@ export class CompOffRejectComponent  implements OnInit,OnDestroy {
   rows: any = 10;
   rejectedCompOffRequests:ICompOff[]=[] ;
   compOff = [] as any;
+  selectemp :any;
   rejectedCompOffRequestsCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -40,6 +41,15 @@ export class CompOffRejectComponent  implements OnInit,OnDestroy {
   constructor(private http: HttpService, public rbac: RbacService) {}
 
   ngOnInit(): void {
+    this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectemp = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getCompOffRequest();
+      }
+    });
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getCompOffRequest();
   }
@@ -54,7 +64,7 @@ export class CompOffRejectComponent  implements OnInit,OnDestroy {
   }
 
   getCompOffRequest() {
-    let empId = this.empinfo.employeeId;
+    let empId = this.empinfo.employeeId || this.selectemp;
     this.dataload = true;
     this.http.getData(`Timeoff/getCompoffRequests/${empId}`) 
     .pipe(takeUntil(this.destroy$))

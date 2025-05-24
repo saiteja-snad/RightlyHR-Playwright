@@ -30,6 +30,7 @@ export class PremissionsRejectedComponent implements OnInit,OnDestroy {
   permissions = [] as any;
  rejectedPerimisions: RegularizationRequest [] = [] as RegularizationRequest[];
  dataload =  false;
+  selectempid: any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -44,8 +45,20 @@ export class PremissionsRejectedComponent implements OnInit,OnDestroy {
 
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getDataPermissions()
+
+    this.http.selectedEmployeeIdPermission$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getDataempPermissions();
+      }
+      else{
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+        this.getDataPermissions();
+      }
+    });
   }
   onRowsChange() {
     this.first = 0;
@@ -75,6 +88,25 @@ export class PremissionsRejectedComponent implements OnInit,OnDestroy {
       },
     });
   }
+  getDataempPermissions() {
+    let empId = this.selectempid;
+    this.dataload =  true;
+    this.http.getData(`RegularizationRequests/${empId}`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        this.dataload =  false;
+        this.permissions = response as RegularizationRequest[];
+        this.rejectedPerimisions = this.permissions.filter((element: { status: string }) => element.status === 'Rejected');
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.permissions = []; 
+        this.dataload =  false;// Set to empty array on error
+      },
+    });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

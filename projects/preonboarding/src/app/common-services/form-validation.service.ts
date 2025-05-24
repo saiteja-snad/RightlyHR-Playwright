@@ -289,4 +289,13 @@ restrictInputAllowAlphaNumericAndCommonSpecialChars(event: KeyboardEvent): void 
     };
     return minLengths[countryCode] || 10; // Default to 10 if not found
   }
+    // replace spaces with underscores and remove special characters expect dot
+  sanitizeFileName(fileName: string): string {
+    let filename = fileName.replace(/\s+/g, '_');
+    // Remove all special characters except dot and underscore
+    filename = filename.replace(/[^\w.-]/g, '');
+ 
+    return filename;
+  }
+ 
 }

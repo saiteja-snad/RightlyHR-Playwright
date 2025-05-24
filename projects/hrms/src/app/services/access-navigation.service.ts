@@ -773,6 +773,10 @@ export class AccessNavigationService {
         }
 
         break;
+
+      case '/settings/company-settings':
+          return '/settings/company-settings';
+        break;
       case '/settings/timeoff-configurations':
         for (const item of SETTINGS_TIMEOFF_TABS) {
           if (this.rbac.allowedToAccess('Leave Category Tab.view')) {

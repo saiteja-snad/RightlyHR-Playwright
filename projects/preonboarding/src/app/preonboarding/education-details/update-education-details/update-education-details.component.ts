@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
@@ -10,6 +10,7 @@ import { Ipersonal } from '../../../models/personal-details.model';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { DataService } from '../../../common-services/data.service';
+import { FormValidationService } from '../../../common-services/form-validation.service';
 @Component({
   selector: 'app-update-education-details',
   imports: [CommonModule, Select, ReactiveFormsModule],
@@ -32,8 +33,8 @@ export class UpdateEducationDetailsComponent {
   selectedValueDegreeNameUpdateInitial: string = '';//previously selected value
   selectedValueDegreeNameUpdate: string = '';//to post the data
   selectedFile: File | null = null;
-
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService,
+startDatevalidate:any;
+  constructor(private modalService: NgbModal,private formValidationService:FormValidationService, private fb: FormBuilder, private http: HttpService, private openPopup: PopupService,
      private getData:DataService) { }
   
   ngOnInit(): void {
@@ -57,9 +58,28 @@ export class UpdateEducationDetailsComponent {
       ]],
       startDate: [this.formatDate(this.educationData?.degreeStartDate) || '', Validators.required],
       endDate: [this.formatDate(this.educationData?.degreeEndDate) || '', Validators.required],
-    });
+    },
+    { validators: [this.DateValidator()] }
+  );
   }
+//function for the date validation
+DateValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const startDate = control.get('startDate')?.value;
 
+    if (!startDate) return null;
+
+    const formattedStart = moment(startDate, 'YYYY-MM-DD');
+    const startOfCurrentMonth = moment().startOf('month');
+
+    // Save formatted value (optional)
+    this.startDatevalidate = formattedStart.format('YYYY-MM-DD');
+
+    
+
+    return null; // valid
+  };
+}
   getDegree() {
     this.subscription = this.http.getData("PreonboardingDegree").subscribe({
       next: (data: any) => {
@@ -78,8 +98,9 @@ export class UpdateEducationDetailsComponent {
     this.isfileselected = false;
     this.file = event.target.files[0];
     let d: Date = new Date()
-    this.educationAttachment = this.renameFiles(this.file, `${this.empinfo.employeeId}_${d.getTime()}_${this.file.name}`)
-    console.log(this.educationAttachment);
+     const removeSpaceFileName = this.formValidationService.sanitizeFileName(this.file.name);
+        const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
+    this.educationAttachment = this.renameFiles(this.file, newFileName)
   }
 
   fileChange(event: Event) {
@@ -87,10 +108,7 @@ export class UpdateEducationDetailsComponent {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       const allowedTypes = [
-        'image/jpeg',
-        'image/*',
-        'application/pdf',
-        'image/png'
+      'application/pdf', 'image/jpeg', 'image/png'
       ];
       const maxSizeInBytes = 25 * 1024 * 1024; // 5MB
       if (!allowedTypes.includes(file.type)) {

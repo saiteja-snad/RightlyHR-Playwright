@@ -754,6 +754,7 @@ export class UpdateFormComponent implements OnInit, OnDestroy {
           }, 1000);
         }, error: (error) => {
           console.log(error);
+          this.sharedModalService.openErrorModal(error.error);
         }
       });
     }

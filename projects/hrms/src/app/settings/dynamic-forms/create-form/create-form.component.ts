@@ -653,6 +653,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.log(error);
+          this.sharedModalService.openErrorModal(error.error);
         },
       });
     }
@@ -683,6 +684,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.log(error);
+          this.sharedModalService.openErrorModal(error.error);
         },
       });
   }

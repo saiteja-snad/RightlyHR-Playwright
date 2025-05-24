@@ -76,6 +76,7 @@ export class CompOffApprovalComponent implements OnInit, OnDestroy {
         this.approvalCompOffRequestsCount = this.approvalCompOffRequests.length;
       },
       error: (error) => {
+        this.dataload = false;
         console.error('Error fetching data:', error);
         this.approvalCompOffRequests = []; 
       },complete: ()  =>{

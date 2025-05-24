@@ -75,6 +75,7 @@ export class CompOffRejectComponent  implements OnInit,OnDestroy {
         this.rejectedCompOffRequestsCount = this.rejectedCompOffRequests.length;
       },
       error: (error) => {
+        this.dataload = false;
         console.error('Error fetching data:', error);
         this.rejectedCompOffRequests = []; 
       },complete: ()  =>{

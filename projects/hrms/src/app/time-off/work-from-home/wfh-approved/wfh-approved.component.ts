@@ -92,6 +92,7 @@ export class WfhApprovedComponent implements OnInit, OnDestroy {
           this.approvedWFHsCount = this.approvedWFHs.length;
         },
         error: (error) => {
+          this.dataload = false;
           console.error('Error fetching data:', error);
           this.approvedWFHs = []; // Set to empty array on error
         },complete: () =>{

@@ -96,6 +96,7 @@ selectempid: any;
           this.processedWFHsCount = this.processedWFHs.length;
         },
         error: (error) => {
+          this.dataload = false;
           console.error('Error fetching data:', error);
           this.processedWFHs = []; // Set to empty array on error
         },complete:() =>{

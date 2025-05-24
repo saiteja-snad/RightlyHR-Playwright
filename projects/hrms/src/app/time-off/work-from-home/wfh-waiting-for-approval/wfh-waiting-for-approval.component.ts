@@ -123,6 +123,7 @@ isLoading=false;
           this.waitingForApprovalWFHCount = this.waitingForApprovalWFHs.length;
         },
         error: (error) => {
+          this.dataload = false;
           console.error('Error fetching data:', error);
           this.waitingForApprovalWFHs = [];
         },complete: () => {

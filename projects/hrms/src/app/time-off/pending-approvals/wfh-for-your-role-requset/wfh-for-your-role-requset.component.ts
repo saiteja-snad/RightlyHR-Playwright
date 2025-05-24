@@ -26,7 +26,6 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
-import { WfhsearchfilterPipe } from '../../../Pipes/wfhsearchfilter.pipe';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
@@ -47,7 +46,6 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     DateformatPipe,
     TranslateModule,
     ReactiveFormsModule,
-    WfhsearchfilterPipe,
     DataLoaderContentComponent,
     TableModule,
   ],
@@ -76,7 +74,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   spinnerLoader = false;
-  searchValue: any;
+  searchValue: any | null;
   dataload = false;
   wfhsselect!: LeaveApproval[];
   selectedLeavesItems: LeaveApproval[] = [];
@@ -246,33 +244,32 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.requestSummary = response.data;
             if (
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.sharedModalService.openSuccessModal(
-                'Request Approved Successfully'
-              );
+               this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
             } else {
-              this.requestSummary = response.data;
               this.openModal(this.leaveSummary);
             }
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
+            this.approveForm.reset();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
+          },
+          complete: () => {
+            this.spinnerLoader = false;
+            this.searchValue = null;
             this.selectedLeavesItems = [];
             this.multiSelect = false;
             this.approveForm.reset();
             this.selectedLeaveData = {} as AttendanceRequest;
             this.signalService.wfhForYouTriggerSignal.set(true);
             this.signalService.wfhSidNavCountTriggerSignal.set(true);
-          },
-          error: (reason: any) => {
-            console.error(reason);
-            this.modalService.dismissAll();
-            this.sharedModalService.openErrorModal(reason.error.Message);
-            this.spinnerLoader = false;
-          },
-          complete: () => {
             this.getAllPendingApprovals();
-            this.spinnerLoader = false;
           },
         });
     }
@@ -311,39 +308,37 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
           ],
         };
       }
-      this.http
-        .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
-            this.rejectForm.reset();
+            this.requestSummary = response.data;
             if (
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.sharedModalService.openSuccessModal(
-                'Request Rejected Successfully'
-              );
+               this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
             } else {
-              this.requestSummary = response.data;
               this.openModal(this.leaveSummary);
             }
-            this.selectedLeavesItems = [];
-            this.multiSelect = false;
-            this.selectedLeaveData = {} as AttendanceRequest;
-            this.signalService.wfhForYouTriggerSignal.set(true);
-            this.signalService.wfhSidNavCountTriggerSignal.set(true);
+           
           },
           error: (reason: any) => {
-            console.error(reason);
+            this.rejectForm.reset();
             this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
           },
           complete: () => {
-            this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
+             this.selectedLeavesItems = [];
+            this.multiSelect = false;
+            this.selectedLeaveData = {} as AttendanceRequest;
+            this.signalService.wfhForYouTriggerSignal.set(true);
+            this.signalService.wfhSidNavCountTriggerSignal.set(true);
+            this.getAllPendingApprovals();
           },
         });
     }
@@ -382,35 +377,33 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
     this.sharedModalService.openLoaderModal(
       message
     );
-    this.http
-      .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.requestSummary = response.data;
           if (
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.sharedModalService.openSuccessModal(
-              'Request Processed Successfully'
-            );
+             this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
           } else {
-            this.requestSummary = response.data;
             this.openModal(this.leaveSummary);
           }
-          this.selectedLeavesItems = [];
-          this.multiSelect = false;
-          this.signalService.wfhForYouTriggerSignal.set(true);
-          this.signalService.wfhSidNavCountTriggerSignal.set(true);
+         
         },
         error: (reason: any) => {
-          console.error(reason);
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
+          this.signalService.wfhForYouTriggerSignal.set(true);
+          this.signalService.wfhSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.searchValue = null;
         },
       });
   }

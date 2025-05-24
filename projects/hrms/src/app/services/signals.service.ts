@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { OpenModalService } from './open-modal.service';
 
 @Injectable({
   providedIn: 'root',
@@ -45,5 +46,15 @@ export class SignalsService {
   timeoffForRoleTriggerSignal = signal<boolean>(false);
   timeOffsidenavCountSignal= signal<boolean>(false);
 
-  constructor() {}
+  constructor(
+    private sharedModalService: OpenModalService,
+  ) {}
+
+  handleResponse(respone: any, status: string) {
+    if (respone.failureRecordsCount != 0) {
+      this.sharedModalService.openErrorModal(respone.failureRecords[0].message)
+    } else {
+      this.sharedModalService.openSuccessModal(status);
+    }
+  }
 }

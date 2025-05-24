@@ -35,7 +35,7 @@
 
     <div class="custom-p-multi-select-table">
         @if(!dataload){
-              <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems" 
+              <p-table  #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems" 
              dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}" >
                 <ng-template #header>
                     <tr>

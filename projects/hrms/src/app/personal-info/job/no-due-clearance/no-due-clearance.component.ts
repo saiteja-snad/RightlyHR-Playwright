@@ -133,7 +133,7 @@ export class NoDueClearanceComponent {
     this.subscription = this.http.postdata(`NoDueClearanceForm/re-request/${Value.id}`, noduereq).subscribe({
       next: (data: any) => {
         console.log(data);
-        this.conformationPopup.openSuccessModal('Requested No Due Successfully');
+        this.conformationPopup.openSuccessModal('No Due requested successfully');
         this.getNodueClearance();
       },
       error: (reason: any) => {

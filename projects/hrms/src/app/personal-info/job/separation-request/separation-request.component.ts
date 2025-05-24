@@ -21,7 +21,7 @@ import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
 @Component({
   selector: 'app-separation-request',
-  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule, 
+  imports: [CommonModule, TranslateModule, NgbPopoverModule, ReactiveFormsModule, FormsModule, PaginatorModule,
     DropdownModule, DateformatPipe, NgxDocViewerModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './separation-request.component.html',
   styleUrl: './separation-request.component.scss'
@@ -34,7 +34,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   empdata = {} as Ipersonal;
   substatus: any;
   status: any;
-  loading=false
+  loading = false
   recallbuttonConditions = false;
   recallandearlyrelievingbuttonConditions = false;
   isLastWorkingDatePassed = false;
@@ -49,15 +49,15 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   profileForm!: FormGroup;
   isDataLoaded = false;
   constructor(private fb: FormBuilder, private http: HttpService, private conformationPopup: OpenModalService,
-     private modalService: NgbModal,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
+    private modalService: NgbModal, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) {
     // Initialize any required services or dependencies here
   }
 
   ngOnInit(): void {
-      
-    this.getonboardPeriodData() ;
+
+    this.getonboardPeriodData();
     this.formInitialization();
-   this.getEmpInfoFromRoute();
+    this.getEmpInfoFromRoute();
   }
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
@@ -95,7 +95,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to open the modal
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop : 'static'});
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   removeSection(index: number) {
@@ -141,6 +141,8 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to get the notice period duration
   nodueDuration: any;
+  noticeperiodDuration: any;
+  lastWorkingDate: any;
   getonboardPeriodData() {
     this.subscription = this.http.getData(`ServingPeriods`).subscribe({
       next: (res: any) => {
@@ -149,17 +151,30 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
             ele.servingPeriodType?.toLowerCase() == 'button before no due'
           );
         });
+        let durationValue = res.find((ele: any) => {
+          return ele.servingPeriodType?.toLocaleLowerCase() == 'notice period';
+        });
+        this.noticeperiodDuration = durationValue?.duration;
         this.nodueDuration = noduevalue.duration;
+        this.onCheckNotiesperiod();
       },
     });
   }
 
+  onCheckNotiesperiod() {
+    const noticePeriodDays = this.noticeperiodDuration;
+    const today = moment(); // Use current date instead of appliedDate
+    const futureDate = today.add(noticePeriodDays, 'days');
+    const formattedDate = this.formatDate(futureDate);
+    this.lastWorkingDate = formattedDate;
+  }
+
   //function to get the nodue list
- 
+
 
   //funtion to check the valudation
 
-  
+
   //function to get employee by id
   getEmployeeId() {
     let employeeId = parseInt(this.empinfo.employeeId);
@@ -180,14 +195,14 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-        
+
         this.nodueclearancedetails = data;
       }
     })
   }
-  shouldShowButton(date:string): boolean {
-    let lastworkingdate=date;
-    const shouldShow = (this.isLastWorkingDate(lastworkingdate)) ;
+  shouldShowButton(date: string): boolean {
+    let lastworkingdate = date;
+    const shouldShow = (this.isLastWorkingDate(lastworkingdate));
     return shouldShow;
   }
 
@@ -198,67 +213,67 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       buttonEnabledDate.setDate(endDate.getDate() - parseInt(this.nodueDuration));
       const currentDate = new Date();
       console.log(this.nodueDuration);
-  
+
       // Check if the current date is between buttonEnabledDate and endDate
       const isComplete = currentDate >= buttonEnabledDate && currentDate <= endDate;
       console.log(isComplete)
       // Check if the current date is past the last working date
       const isPastLastWorkingDate = currentDate > endDate;
       console.log(isPastLastWorkingDate);
-      
+
       // Return true if either condition is met
       return isComplete || isPastLastWorkingDate;
-      
+
     }
     return false;
   }
 
   //function to get the separation details of the employee
   fetchSeparationDetails(): void {
-    this.isDataLoaded=true;
+    this.isDataLoaded = true;
     const EmployeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`SeparationRequests/getbyemployeeId?Id=${EmployeeId}`).subscribe({
       next: (data: any) => {
-        if(data){
-          this.isDataLoaded=false;
-       
-        this.getSeparationDetails.next(data);
-        this.substatus = this.getSeparationDetails.value.map(
-          (application: { status: any }) => application.status.toLowerCase()
-        );
-        const seperationStatus1 = [
-          'waiting for approval', 'approved', 'processed',
-          'early relieving processed', 'extended',
-        ];
-        this.status = seperationStatus1.some((value) =>
-          this.substatus.includes(value)
-        );
-        this.checkStatus();
-        data.forEach((ele: any) => {
-          if ((ele?.status?.toLowerCase() == 'waiting for approval' || ele?.status?.toLowerCase() == 'approved') &&
-            ele.recallStatus?.toLowerCase() == 'earlyrelieving') {
-            this.recallandearlyrelievingbuttonConditions = true;
+        if (data) {
+          this.isDataLoaded = false;
+
+          this.getSeparationDetails.next(data);
+          this.substatus = this.getSeparationDetails.value.map(
+            (application: { status: any }) => application.status.toLowerCase()
+          );
+          const seperationStatus1 = [
+            'waiting for approval', 'approved', 'processed',
+            'early relieving processed', 'extended',
+          ];
+          this.status = seperationStatus1.some((value) =>
+            this.substatus.includes(value)
+          );
+          this.checkStatus();
+          data.forEach((ele: any) => {
+            if ((ele?.status?.toLowerCase() == 'waiting for approval' || ele?.status?.toLowerCase() == 'approved') &&
+              ele.recallStatus?.toLowerCase() == 'earlyrelieving') {
+              this.recallandearlyrelievingbuttonConditions = true;
+            }
+            if ((ele?.status?.toLowerCase() == 'recalled' || ele?.status?.toLowerCase() == 'approved') &&
+              ele.recallStatus?.toLowerCase() == 'recalled') {
+              this.recallbuttonConditions = true;
+            }
+          });
+          const current = this.formatDate(moment());
+          if (this.formatDate(this.empdata.lastworkingday < current)) {
+            this.isLastWorkingDatePassed = true;
           }
-          if ((ele?.status?.toLowerCase() == 'recalled' || ele?.status?.toLowerCase() == 'approved') &&
-            ele.recallStatus?.toLowerCase() == 'recalled') {
-            this.recallbuttonConditions = true;
-          }
-        });
-        const current = this.formatDate(moment());
-    if (this.formatDate(this.empdata.lastworkingday < current)) {
-      this.isLastWorkingDatePassed = true;
-    }
-      }
+        }
 
       },
       error: (err: any) => {
-        this.isDataLoaded=false;
+        this.isDataLoaded = false;
         this.getSeparationDetails.next([]);
       },
 
 
     });
-  
+
   }
 
   //function to check the status of the request
@@ -278,31 +293,43 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
 
   //function to open the modal for the comments
   approverCommentsFunction(Value: any, content: any) {
-    this.modalService.open(content, { centered: true , size:'xl', backdrop:'static'});
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
+
+    const roleOrder: { [key: string]: number } = {
+      'RM': 1,
+      'TM': 2,
+      'EM': 3  // 'EM' is displayed as HR in the UI
+    };
+
     this.appover_comments = Value.map((ele: any) => {
-      const parsedMetaData = JSON.parse(ele.metaData);
+      const parsedMetaData = JSON.parse(ele.metaData || '{}');
       return {
         ...ele,
         metadata: parsedMetaData,
       };
+    }).sort((a: any, b: any) => {
+      const roleA = a.approverRole?.toUpperCase() || '';
+      const roleB = b.approverRole?.toUpperCase() || '';
+      return (roleOrder[roleA] || 99) - (roleOrder[roleB] || 99);
     });
   }
 
+
   //function to store the disaciption values
   decription(value: any, content: any) {
-    this.modalService.open(content, { centered: true,backdrop:'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.decription_Storing_Variable = value;
   }
 
   //function to select data of perticular record to  recall the request
   recallRequest(data: any, content: any) {
-    this.modalService.open(content, { centered: true, backdrop : 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.selectRecallrequest = JSON.parse(JSON.stringify(data));
   }
 
   //function to select the data of early relieving request
   earlyReleivingdata(data: any, content: any) {
-    this.modalService.open(content, { centered: true, backdrop : 'static' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.postEarlyRelievingRequest = data;
     console.log(this.postEarlyRelievingRequest.appliedDate);
   }
@@ -315,15 +342,15 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     return dt;
   }
 
-  closepopup(content:any){
-    this.modalService.open(content,{centered: true,backdrop: 'static'})
+  closepopup(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' })
   }
-  popupclose(){
+  popupclose() {
     this.profileForm.reset();
     this.recallreason.reset();
     this.earlyReleivingform.reset();
     this.modalService.dismissAll();
-    
+
   }
   //function to recall the request
   postRecallRequest() {
@@ -356,7 +383,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.modalService.dismissAll();
           this.recallreason.reset();
-          this.conformationPopup.openSuccessModal('Recalled Request Raised successfully');
+          this.conformationPopup.openSuccessModal('Recall Request Raised successfully');
           this.fetchSeparationDetails();
         }
       },

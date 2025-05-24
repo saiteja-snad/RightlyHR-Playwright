@@ -52,7 +52,7 @@ isLoading=false;
 
   ngOnInit(): void {
 
-       this.http.selectedEmployeeId$.subscribe((id) => {
+       this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
       if (id) {
         // Use the new employee ID here
         this.selectempid = id;
@@ -60,11 +60,13 @@ isLoading=false;
         // Example: this.loadEmployeeDetails(id);
         this.getDataByLPEMPID();
       }
-    });
+      else{
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getDataByLPID();
     this.formInializer();
+      }
+    });
   }
  formInializer() {
     this.cancelForm = this.fb.group({
@@ -127,7 +129,7 @@ isLoading=false;
     })
   }
   getDataByLPID() {
-    let empid = this.empdata.employeeId || this.selectempid;
+    let empid = this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {

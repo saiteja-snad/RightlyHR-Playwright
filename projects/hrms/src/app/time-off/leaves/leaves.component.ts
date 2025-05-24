@@ -138,7 +138,7 @@ export class LeavesComponent {
   cancelledCount = 0;
    disaplyapplybutton=true;
   onCheckemployee(employeedId: any) {
-    this.http.setEmployeeId(employeedId); //
+    this.http.setEmployeeIdTimeoff(employeedId); //
     this.waitingforapprovalCount = 0;
     this.rejectedCount = 0;
     this.approvedCount = 0;

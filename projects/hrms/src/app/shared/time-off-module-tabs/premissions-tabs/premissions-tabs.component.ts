@@ -19,6 +19,7 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
   waitingForApprovalPermissionsCount = 0;
   approvalPermissionsRequestsCount = 0;
   empinfo = {} as IJob;
+  selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(public readonly router: Router, private http: HttpService,public rbac: RbacService) {
@@ -39,8 +40,20 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+
+          this.http.selectedEmployeeIdPermission$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getCompOffEMPRequest();
+      }
+      else{
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getCompOffRequest();
+      }
+    });  
   }
 
   isActive(route: string): boolean {
@@ -69,9 +82,31 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+ getCompOffEMPRequest() {
+    let empId = this.selectempid;
+    this.http.getData(`RegularizationRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response: any) => {
+        this.wfh = response;
+        this.waitingForApprovalPermissionsCount = this.wfh.filter(
+          (element: { status: string }) =>
+            element.status === 'Waiting for Approval'
+        ).length;
+        this.approvalPermissionsRequestsCount = this.wfh.filter(
+          (element: { status: string }) => element.status === 'Processed' || element.status === 'Approved'
+        ).length;
+        this.rejectedPermissionsRequestsCount = this.wfh.filter(
+          (element: { status: string }) => element.status === 'Rejected'
+        ).length;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.wfh = []; // Set to empty array on error
+      },
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
+     this.http.setEmployeeIdPermission(null);
   }
 }

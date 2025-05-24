@@ -125,17 +125,55 @@ export class HttpService {
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
 
-// function for employeid
-
- private selectedEmployeeId = new BehaviorSubject<any>(null);
-
+// function for employeid TIMEOFF
+ private selectedEmployeeIdTimeoff = new BehaviorSubject<any>(null);
   // Observable for components to subscribe to
-  selectedEmployeeId$ = this.selectedEmployeeId.asObservable();
-
+  selectedEmployeeIdTimeoff$ = this.selectedEmployeeIdTimeoff.asObservable();
   // Method to update the employeeId
-  setEmployeeId(id: any): void {
-    this.selectedEmployeeId.next(id);
-    console.log('Selected Employee ID:', id);
+  setEmployeeIdTimeoff(id: any): void {
+    this.selectedEmployeeIdTimeoff.next(id);
+    console.log('Selected Employee Timeoff ID:', id);
+  }
+
+// function for employeid COMPOFF
+ private selectedEmployeeIdCompOff = new BehaviorSubject<any>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdCompOff$ = this.selectedEmployeeIdCompOff.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdCompOff(id: any): void {
+    this.selectedEmployeeIdCompOff.next(id);
+    console.log('Selected Employee Compoff ID:', id);
+  }
+
+// function for employeid wfh
+  private selectedEmployeeIdWFH = new BehaviorSubject<any>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdWFH$ = this.selectedEmployeeIdWFH.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdWFH(id: any): void {
+    this.selectedEmployeeIdWFH.next(id);
+    console.log('Selected Employee WFH ID:', id);
+  }
+
+// function for employeid permission
+  private selectedEmployeeIdPermission = new BehaviorSubject<any>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdPermission$ = this.selectedEmployeeIdPermission.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdPermission(id: any): void {
+    this.selectedEmployeeIdPermission.next(id);
+    console.log('Selected Employee Permission ID:', id);
+  }
+
+
+// function for employeid regularization
+  private selectedEmployeeIdRegularization = new BehaviorSubject<any>(null);
+  // Observable for components to subscribe to
+  selectedEmployeeIdRegularization$ = this.selectedEmployeeIdRegularization.asObservable();
+  // Method to update the employeeId
+  setEmployeeIdRegularization(id: any): void {
+    this.selectedEmployeeIdRegularization.next(id);
+    console.log('Selected Employee Regularization ID:', id);
   }
 
   //function to update the desk Updatelocation

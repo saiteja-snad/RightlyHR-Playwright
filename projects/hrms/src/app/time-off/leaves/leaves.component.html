@@ -8,8 +8,7 @@
         <div class="d-flex gap-3">
             <label class="form-label custom-label mt-3">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">               
-                <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
-                    [(ngModel)]="getEmployeeid" name="myteamemployees" formControlName="myteam"
+                <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"name="myteamemployees" 
                     placeholder="Select Employee Name"  [filter]="true" [virtualScroll]="false"
                     [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
                 </p-select>

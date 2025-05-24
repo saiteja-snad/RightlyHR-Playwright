@@ -30,6 +30,7 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false;
+  selectemp: any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -49,8 +50,19 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getCompOffRequest();
+    
+    this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectemp= id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getCompOffEMPRequest();
+      }else{
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+        this.getCompOffRequest();
+      }
+    });
   }
 
   onRowsChange() {
@@ -81,7 +93,25 @@ export class CompOffWaitingForApprovalComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+  getCompOffEMPRequest() {
+    let empId = this.selectemp;
+    this.dataload = true;
+    this.http.getData(`Timeoff/getCompoffRequests/${empId}`) 
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        this.compOff = response;
+        this.waitingForApprovalCompOff = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval');
+        this.waitingForApprovalCompOffCount = this.waitingForApprovalCompOff.length;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.waitingForApprovalCompOff = [];
+      },complete: () =>{
+        this.dataload = false;
+      },
+    });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

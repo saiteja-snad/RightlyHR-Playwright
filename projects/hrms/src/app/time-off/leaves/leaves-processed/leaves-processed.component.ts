@@ -48,7 +48,7 @@ export class LeavesProcessedComponent {
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
    // this.getDataByLPID();
 
-       this.http.selectedEmployeeId$.subscribe((id) => {
+       this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
     if (id) {
       // Use the new employee ID here
       this.selectempid = id;

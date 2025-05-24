@@ -56,7 +56,7 @@ export class LeavesApprovaltabsComponent {
   }
 
   ngOnInit(): void {
-    this.http.selectedEmployeeId$.subscribe((id) => {
+    this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
     if (id) {
       // Use the new employee ID here
       this.id = id;
@@ -205,6 +205,7 @@ export class LeavesApprovaltabsComponent {
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
+      this.http.setEmployeeIdTimeoff(null);
     }
   }
 }

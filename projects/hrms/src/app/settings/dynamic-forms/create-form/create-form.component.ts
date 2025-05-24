@@ -679,6 +679,7 @@ export class CreateFormComponent implements OnInit, OnDestroy {
         next: () => {
           this.openSuccessModal(true, false);
           this.isSubmitted = false;
+          this.location.back();
         },
         error: (error) => {
           console.log(error);

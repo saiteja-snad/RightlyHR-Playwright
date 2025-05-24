@@ -13,18 +13,23 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
 import { CompOffApprovalTabsComponent } from "../../shared/time-off-module-tabs/comp-off-approval-tabs/comp-off-approval-tabs.component";
 import { FormValidationsService } from '../../services/form-validations.service';
+import { Subscription } from 'rxjs';
+import { DropdownModule } from 'primeng/dropdown';
+import { Select } from 'primeng/select';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-comp-off',
   imports: [
     RouterModule,
     ReactiveFormsModule,
     CommonModule,
-    CompOffApprovalTabsComponent,
+    CompOffApprovalTabsComponent,DropdownModule,Select,TranslateModule
   ],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',
 })
 export class CompOffComponent implements OnInit, OnDestroy {
+  subscription!: Subscription;
   addCompOffForm!: FormGroup;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -47,6 +52,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
   pastDatesAllowed!:number;
   futureDatesAllowed!:number;
   compOffCriterias = [] as any;
+   getEmployeeInfo = [] as any;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -63,8 +69,33 @@ export class CompOffComponent implements OnInit, OnDestroy {
     this.getEmployeeeHolidays();
     this.getEmployeeeWeekends();
     this.handleAvailingChange();
+    this.getTeamManagersDetails();
   }
-
+  // function to get the data of employees by hierarchy
+  
+   getTeamManagersDetails() {
+   const EmployeeId = this.empinfo.employeeId;
+   this.subscription = this.http
+     .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+     .subscribe({
+       next: (response: any) => {
+         console.log('getEmployeesByhierarchy', response);
+         if (response && response.length) {
+           // No filter
+           this.getEmployeeInfo = response.map((employee: any) => ({
+             ...employee,
+             fullName: `${
+               employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+             }${employee.firstName} ${
+               employee.middleName ? employee.middleName + ' ' : ''
+             }${employee.lastName}`,
+           }));
+           console.log('getEmployeeInfo', this.getEmployeeInfo);
+         }
+       },
+     });
+ }
+ 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
@@ -193,7 +224,43 @@ export class CompOffComponent implements OnInit, OnDestroy {
     futureDate.setDate(currentDate.getDate() + days);
     return futureDate.toISOString().split('T')[0];
   }
+pendingCount = 0;
+  compOff: any[] = [];
+  ApprovedCount = 0;
+  rejectedCount = 0;
+  ProcessedCount = 0;
+  disaplyapplybutton=true;
+  onCheckemployee(employeedId:any){
+      this.http.setEmployeeIdCompOff(employeedId);
+    this.ProcessedCount=0;
+    this.rejectedCount=0;
+    this.ApprovedCount=0;
+    this.pendingCount=0;
+    this.compOff = [];
+    if(employeedId){
+      this.disaplyapplybutton=false;
+      this.getCompOffRequest(employeedId);
+    }else{
+      this.disaplyapplybutton=true;
+      this.getCompOffRequest(this.empinfo.employeeId);
+    }
+  }
+  getCompOffRequest(employeeId?: any) {
 
+    let empId = employeeId;
+    console.log(empId);
+    this.subscription = this.http.getData(`Timeoff/getCompoffRequests/${empId}`).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.compOff = response
+        this.pendingCount = this.compOff.filter((element: { status: string }) => element.status === 'Waiting for Approval').length;
+        this.ApprovedCount = this.compOff.filter((element: { status: string }) => element.status === 'Approved').length;
+        this.rejectedCount = this.compOff.filter((element: { status: string }) => element.status === 'Rejected').length;
+        this.ProcessedCount = this.compOff.filter((element: { status: string }) => element.status === 'Processed').length;
+      },
+      error: (reason: any) => console.log(reason)
+    })
+  }
 
 
   applyCompOff(addForm: FormGroup) {

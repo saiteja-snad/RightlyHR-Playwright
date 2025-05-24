@@ -109,7 +109,7 @@
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close'|translate}}</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
@@ -121,7 +121,7 @@
 <ng-template #deletepopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <img src="/icons/delete-icon.png" alt="delete-icon" class="confirmation-delete-icon">
-        <p class="confirmation-text">{{'Are you sure you want to Delete?'|translate}}</p>
+        <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         <div class="custom-modal-footer">
             <button class="custom-btn btn-secondary" (click)="modal.close()">{{'No'|translate}}</button>
             <button class="custom-btn btn-primary" (click)="deleteRole(rolesDeletedata)">{{'Yes'|translate}}</button>

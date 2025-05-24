@@ -98,7 +98,7 @@
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary "
-                        (click)="expenseForm.reset();modal.dismiss()">Close</button>
+                        (click)="expenseForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
                     <button type="submit" class="custom-btn btn-primary "
                         [disabled]="expenseForm.invalid">Submit</button>
                 </div>
@@ -149,7 +149,7 @@
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary "
-                        (click)="expenseupdateForm.reset();modal.dismiss()">Close</button>
+                        (click)="expenseupdateForm.reset();modal.dismiss()">{{'Cancel' | translate}}</button>
                     <button type="submit" class="custom-btn btn-primary "
                         [disabled]="expenseupdateForm.invalid">
                         Update

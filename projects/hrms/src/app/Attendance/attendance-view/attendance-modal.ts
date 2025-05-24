@@ -12,13 +12,11 @@ export interface IAttendance {
     permissions: [],
     regularizations: []
 }
-
 export interface IdayLogs {
     in: any;
     out: any;
     duration: any;
 }
-
 export interface Itags {
     name: string;
     order: any;

@@ -212,6 +212,7 @@ export const permissionsData = [
   { fields: 'Desk Allocation', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Holidays', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -220,7 +221,6 @@ export const permissionsData = [
   { fields: 'Comp Off Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permissions Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Module', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Attendance Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Permissions Module', View: false, Update: false, Create: false, Delete: false },

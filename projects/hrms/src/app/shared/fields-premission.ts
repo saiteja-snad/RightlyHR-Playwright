@@ -249,10 +249,8 @@ export const MY_INFO_CLAIMS = [
 
 
   { permission: 'team-members', claim: 'My Info Team Members Tab' },
-  { permission: 'team-managers', claim: 'My Info Team Managers Tab' },
-  { permission: 'changesrm', claim: 'Change RM Button' },
-  { permission: 'rmtab', claim: 'My Info Reporting Managers Tab' },
 
+  
 
   { permission: 'onboarding-request', claim: 'My Info Onboard Request Tab' }
 

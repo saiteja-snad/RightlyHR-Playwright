@@ -4,7 +4,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../../services/http.service';
-import { Ipersonal } from '../../../Interfaces/members-model';
+import { Ipersonal, Iteammembers } from '../../../Interfaces/members-model';
 import { Subscription } from 'rxjs';
 import { IDepartment } from '../../../Interfaces/letters-model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
@@ -29,6 +29,12 @@ export class TeamMangerMembersComponent {
   subscription!: Subscription;
   searchValue: any;
   teammangerid: any
+    selectedEmployees: Iteammembers[] = [];
+  selectedEmployeeIds: string[] = [];
+   managers: any[] = [];
+    rmForm!: FormGroup;
+      teamForm!: FormGroup;
+      selectedData: any = {}; 
   teamMembersdata: any[] = [];
   spinnerLoader = false
   getTeamMemberArray: any[] = [];
@@ -44,35 +50,36 @@ export class TeamMangerMembersComponent {
   selectedemployeid: any
   constructor(
     private http: HttpService,
-    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
+    private modalService: NgbModal, private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('personaldata') || '{}');
     this.initializeForm()
     this.initializeFormforeachemploye()
     this.getDepartment()
+    this.getEmployeeId();
+    this.getAllTeammembersList();
+    this.formsubmit();
+    this.formsubmits();
+    this.getEmployee();
   }
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permissionRouteService.canAccessField(action, permission);
   }
-  getEmpInfoFromRoute(): void {
-    const fullPath = this.router.url;
-    console.log('Full path:', fullPath);
 
-    if (fullPath.startsWith('/personalinfo')) {
-      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
-      this.getEmployeeId();
-      this.getAllTeammembersList()
 
-    } else if (fullPath.startsWith('/myinfo')) {
-      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-      this.getEmployeeId();
-      this.getAllTeammembersList()
-     
-    }
+  formsubmit() {
+    this.rmForm = this.fb.group({
+      mReportingto: [null, Validators.required]
+    });
   }
 
-  
+  formsubmits() {
+    this.teamForm = this.fb.group({
+      teamMembers: [null, Validators.required],
+      reportingManager: [null, Validators.required]
+    });
+  }
   initializeForm() {
     this.requestForm = this.fb.group({
       effectiveDate: [null, Validators.required],
@@ -97,7 +104,7 @@ export class TeamMangerMembersComponent {
   openModals(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
-  
+
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
@@ -117,32 +124,30 @@ export class TeamMangerMembersComponent {
     return `${year}-${month}-${day}`;
   }
 
-  //function to get the all the team members
-  getAllTeammembersList(): void {
-    const loggedInUserId = this.empinfo.employeeId;
-  
-    this.subscription = this.http.getData(`JobDetails/GetByreporteesEmployeeId?employeeId=${loggedInUserId}`)
-      .subscribe({
-        next: (responseData: any) => {
-          console.log('Response Data:', responseData);
-  
-          this.teamMemberArray = responseData
-            .map((employee: any) => ({
-              ...employee,
-              jobDetails: employee.jobDetails ?? [], // Default to [] if undefined
-              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.employeeName ?? ''}`,
-              selectedAllGroup: 'Group 1',
-            }));
-  
-          this.getTeamMemberArray = [...this.teamMemberArray];
-          console.log('Filtered Team Member Array:', this.teamMemberArray);
-        },
-        error: (error: any) => {
-          console.error('Error fetching team members:', error);
-        }
-      });
+
+  getAllTeammembersList() {
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
+      (responseData: any) => {
+        const filteredData = (responseData as Iteammembers[]).filter(member => member['isAccess'] === true);
+        this.teamMemberArray = filteredData
+          .map((employee: any) => ({
+            ...employee,
+            jobDetails: employee.jobDetails ?? [], // Default to [] if undefined
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ?? ''} ${employee.lastName ?? ''} ${employee.lastName ?? ''}`,
+            selectedAllGroup: 'Group 1',
+          }));
+        ;
+
+        this.getTeamMemberArray = [...this.teamMemberArray];
+      },
+      error => {
+        console.error(error);
+      }
+    );
   }
-  
+
+
 
 
   viwejobhistoy(content: any, Value: any) {
@@ -166,7 +171,7 @@ export class TeamMangerMembersComponent {
     this.selectedemployeid = details.employeeId
 
     this.foremployeeForm.patchValue({
-      teamEmpselectedOptions: `${details.fusionEmpId} - ${details.employeeName ?? ''} `
+      teamEmpselectedOptions: `${details.fusionEmpId} - ${details.firstName ?? ''} ${details.middleName ?? ''} ${details.lastName ?? ''} ${details.lastName ?? ''} `
     })
 
     this.modalService.open(content, { size: 'lg', centered: true, scrollable: true });
@@ -245,8 +250,8 @@ export class TeamMangerMembersComponent {
       : [];
     console.log(teammanagers)
     const effectiveDate = this.requestForm.get('effectiveDate')?.value;
-    const departentid=this.requestForm.get('department')?.value?.sno
-    const subdepartentid= this.requestForm.get('teamSelectedOptions')?.value?.subdepartmentId;
+    const departentid = this.requestForm.get('department')?.value?.sno
+    const subdepartentid = this.requestForm.get('teamSelectedOptions')?.value?.subdepartmentId;
     const url = `JobDetails/TeamManagerUpdate?teamManagerEmployeeId=${this.teammangerid}&effectiveDate=${effectiveDate}&DeptId=${departentid}&SubdeptId=${subdepartentid}`;
 
     this.subscription = this.http.postdata(url, teammanagers).subscribe({
@@ -261,7 +266,7 @@ export class TeamMangerMembersComponent {
       error: (err: any) => {
         this.getAllTeammembersList()
         console.error('Error:', err);
-        this.conformationPopup.openErrorModal( err.error.Message ||'Team manager updated failed ')
+        this.conformationPopup.openErrorModal(err.error.Message || 'Team manager updated failed ')
       }
     });
   }
@@ -273,8 +278,8 @@ export class TeamMangerMembersComponent {
       ? selectedEmployees
       : [selectedEmployees];
     console.log(teammanagers)
-    const departentid=this.foremployeeForm.get('department')?.value?.sno
-    const subdepartentid= this.foremployeeForm.get('teamSelectedOptions')?.value?.subdepartmentId;
+    const departentid = this.foremployeeForm.get('department')?.value?.sno
+    const subdepartentid = this.foremployeeForm.get('teamSelectedOptions')?.value?.subdepartmentId;
     const effectiveDate = this.foremployeeForm.get('effectiveDate')?.value;
     console.log(departentid)
     console.log(subdepartentid)
@@ -292,12 +297,126 @@ export class TeamMangerMembersComponent {
       error: (err: any) => {
         this.getAllTeammembersList()
         console.error('Error:', err);
-        this.conformationPopup.openErrorModal( err.error.Message ||'Team manager updated failed ')
+        this.conformationPopup.openErrorModal(err.error.Message || 'Team manager updated failed ')
       }
     });
   }
 
+  selectedEmployeeDetails = {} as any;
+  openModal(content: any, details: any) {
+    this.selectedEmployeeDetails = details;
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+  getEmployee() {
+    this.subscription = this.http.getData('JobDetails/getAllReportingManagers').subscribe({
+      next: (data: any) => {
+        this.managers = data
+          .filter((emp: { fusionEmpId: any }) => emp.fusionEmpId)
+          .map((emp: { fusionEmpId: string; firstName: string; middleName?: string; lastName: string }) => ({
+            ...emp,
+            name: `${emp.fusionEmpId} - ${emp.firstName} ${emp.middleName ? emp.middleName + ' ' : ''}${emp.lastName}`
+          }));
+      },
+      error: (err) => console.log(err),
+    });
+  }
+selectedManager: any = null;
+    onSelectManager(event: any) {
+    this.selectedManager = event.value;
+     console.log('Selected Manager:', this.selectedManager);
+    if (!this.selectedManager) {
+      console.error("Error: No manager selected.");
+  
+      return;
+    }
 
+    this.selectedData.employeeId = this.selectedManager.employeeId ?? "";
+    this.selectedData.id = this.selectedManager.jobId ?? ""; // Ensure jobId is correctly assigned
+  }
+
+ updateRM() {
+    this.spinnerLoader = true;
+    let jobid = this.selectedEmployeeDetails.id;
+    let ManagerEmployeeId = this.rmForm.get('mReportingto')?.value?.reportingToEmployeeId;
+    this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
+      next: (data: any) => {
+        console.log('Next callback');
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+        this.getAllTeammembersList();
+        this.http.setBasicDetails();
+        console.log(data);
+      },
+      error: (reason: any) => {
+        console.log('Error callback');
+        console.log(reason);
+        if (reason) {
+          this.http.setBasicDetails();
+          this.modalService.dismissAll();
+          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.getAllTeammembersList();
+        
+          this.spinnerLoader = false;
+          this.rmForm.reset();
+        }
+      }
+    });
+  }
+
+  onSelectManagers(event: any, field: string) {
+    if (field === 'teamMembers') {
+      this.selectedEmployees = Array.isArray(event.value) ? event.value : [event.value];
+      this.selectedEmployeeIds = this.selectedEmployees.map(emp => emp.employeeId);
+    }
+    if (field === 'reportingManager') {
+      this.teamForm.patchValue({ reportingManager: event.value });
+    }
+  }
+
+  updateTeamRMs() {
+    this.spinnerLoader = true;
+    if (!Array.isArray(this.selectedEmployees) || this.selectedEmployees.length === 0) {
+      console.error("selectedEmployees is not a valid array", this.selectedEmployees);
+      return;
+    }
+    let requestBody = this.selectedEmployees.map(employee => ({
+      jobRole: employee.jobRole,
+      firstName: employee.firstName,
+      lastName: employee.lastName,
+      middleName: employee.middleName ?? "",
+      workEmail: employee.workEmail,
+      fusionEmpId: employee.fusionEmpId,
+      employeeId: employee.employeeId,
+      contactnumber: employee.contactnumber,
+      id: employee.id
+    }));
+    const ManagerId = this.teamForm.value.reportingManager?.employeeId;
+    if (!ManagerId) {
+      console.error("No valid ManagerId found.");
+      return;
+    }
+    this.subscription = this.http.postdata(`JobDetails/joblist/updater?ManagerId=${ManagerId}`, requestBody).subscribe({
+      next: (data: any) => {
+        this.modalService.dismissAll();
+        this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+        this.getAllTeammembersList();
+      
+        this.http.setBasicDetails();
+      },
+      error: (reason: any) => {
+        if (reason) {
+          this.modalService.dismissAll();
+          this.http.setBasicDetails();
+          this.conformationPopup.openSuccessModal('Reporting Manager Updated Successfully');
+          this.spinnerLoader = false;
+          this.teamForm.reset();
+          this.getAllTeammembersList();
+          //this.getAllTeammembersLists();
+        }
+      }
+    });
+
+  }
 
   ngOnDestroy(): void {
     if (this.subscription) {

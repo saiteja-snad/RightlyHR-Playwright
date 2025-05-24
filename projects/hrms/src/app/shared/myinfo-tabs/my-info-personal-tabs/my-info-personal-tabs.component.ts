@@ -29,6 +29,7 @@ export class MyInfoPersonalTabsComponent implements OnInit {
        { label: 'Family Details', link: '/myinfo/personal/family-details', icon:'images/family.png',permission: { feature: 'My Info Family Details', action: 'view' } },
        { label: 'Bank Details', link: '/myinfo/personal/bank-details',icon:'/images/atm-card.png',permission: { feature: 'My Info Bank Details', action: 'view' } },
        { label: 'Visa Details', link: '/myinfo/personal/visa-details',icon:'/images/visa.png', permission: { feature: 'My Info Visa Details', action: 'view' } },
+        { label: 'Team Members', link: '/myinfo/personal/team-members', icon: '/images/team-members.png', permission: { feature: 'My Info Team Members Tab', action: 'view' } }
      ];
      this.filterTabsByRbac();
    

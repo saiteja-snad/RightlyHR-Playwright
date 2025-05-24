@@ -36,6 +36,7 @@ totalRecords = 100;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false;
+  selectempid: any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -53,9 +54,21 @@ totalRecords = 100;
   }
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.http.selectedEmployeeIdWFH$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getWFHEMPRequests();
+      }
+      else{
+          this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     console.log(this.empinfo);
     this.getWFHRequests();
+      }
+    });
+  
   }
 
   onRowsChange() {
@@ -91,7 +104,32 @@ totalRecords = 100;
         },
       });
   }
-
+  // this method use when choose my team in dropdown
+  getWFHEMPRequests() {
+    let empId = this.selectempid;
+    console.log(empId);
+    this.dataload = true; 
+    this.http
+      .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          this.compOff = response;
+          this.rejectedWFHs = this.compOff.filter(
+            (element: { status: string }) =>
+              element.status === 'Cancelled'
+          );
+          this.rejectedWFHsCount = this.rejectedWFHs.length;
+        },
+        error: (error) => {
+          console.error('Error fetching data:', error);
+          this.rejectedWFHs = []; // Set to empty array on error
+        },complete: () =>{
+          this.dataload = false;
+        },
+      });
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

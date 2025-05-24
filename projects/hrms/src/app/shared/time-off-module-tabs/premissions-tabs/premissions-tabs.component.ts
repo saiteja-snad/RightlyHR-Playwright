@@ -101,6 +101,9 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
         this.rejectedPermissionsRequestsCount = this.wfh.filter(
           (element: { status: string }) => element.status === 'Rejected'
         ).length;
+        this.cancelPermissionsRequestsCount = this.wfh.filter(
+          (element: { status: string }) => element.status === 'Cancelled'
+        ).length;
       },
       error: (error) => {
         console.error('Error fetching data:', error);

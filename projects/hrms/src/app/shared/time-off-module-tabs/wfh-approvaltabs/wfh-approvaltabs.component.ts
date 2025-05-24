@@ -50,8 +50,6 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
     this.getCompOffRequest();
       }
     });
-     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getCompOffRequest();
   }
   getCompOffRequest() {
     console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-0');
@@ -64,14 +62,14 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
           const approved = response.filter(item => item.status === 'Approved');
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
-         // const cancelled = response.filter(item => item.status === 'Cancelled');
+         const cancelled = response.filter(item => item.status === 'Cancelled');
 
           this.waitingForApprovalWFHCount = waiting.length;
           this.approvedWFHRequestsCount = approved.length;
           this.rejectedWFHRequestsCount = rejected.length;
           this.processedWFHRequestsCount = processed.length;
           console.log('processedCount',this.waitingForApprovalWFHCount);
-         // this.cancelCount=cancelled.length
+         this.cancelWFHRequestsCount=cancelled.length
 
           this.updateNavTabs();
         } else {
@@ -95,14 +93,14 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
           const approved = response.filter(item => item.status === 'Approved');
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
-         // const cancelled = response.filter(item => item.status === 'Cancelled');
+         const cancelled = response.filter(item => item.status === 'Cancelled');
 
           this.waitingForApprovalWFHCount = waiting.length;
           this.approvedWFHRequestsCount = approved.length;
           this.rejectedWFHRequestsCount = rejected.length;
           this.processedWFHRequestsCount = processed.length;
           console.log('processedCount',this.waitingForApprovalWFHCount);
-         // this.cancelCount=cancelled.length
+         this.cancelWFHRequestsCount=cancelled.length
 
           this.updateNavTabs();
         } else {

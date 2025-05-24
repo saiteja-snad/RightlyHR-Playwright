@@ -56,8 +56,7 @@ export class ProfileInfoDetailsComponent {
       this.getEmployeeId();
     });
      this.http.profliepicadd$.subscribe(() => {
-      this.imageUrl = this.empinfo.profileUrl;
-    this.onSelectprofilePicDownload(this.empinfo);
+     this.getEmployeeId()
     });
   }
 

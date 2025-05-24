@@ -29,6 +29,7 @@ import { Table, TableModule } from 'primeng/table';
 import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-permissions',
   imports: [
@@ -76,7 +77,7 @@ export class PermissionsComponent {
   requestBody = {} as any;
   requestSummary!: any;
   dataload = false;
-  searchValue: any;
+  searchValue: any | null;
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -84,7 +85,8 @@ export class PermissionsComponent {
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
     public formValidation: FormValidationService,
-    public formsValidation: FormValidationsService
+    public formsValidation: FormValidationsService,
+    private signalService: SignalsService,
   ) {
     effect(() => {
       if (this.http.trigger()) {
@@ -359,15 +361,13 @@ private updateTableSelectionState(selectedItems: any[]) {
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.requestSummary = response.data;
             if (
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.sharedModalService.openSuccessModal(
-                'Request Approved Successfully'
-              );
+               this.signalService.handleResponse(this.requestSummary,'Request Approved Successfully');
             } else {
-              this.requestSummary = response.data;
               this.openModal(this.leaveSummary);
             }
             this.selectedLeavesItems = [];
@@ -378,11 +378,14 @@ private updateTableSelectionState(selectedItems: any[]) {
           },
           error: (reason: any) => {
             this.spinnerLoader = false;
+            this.modalService.dismissAll();
+            this.approveForm.reset();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }
@@ -425,15 +428,13 @@ private updateTableSelectionState(selectedItems: any[]) {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.requestSummary = response.data;
           if (
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.sharedModalService.openSuccessModal(
-              'Request Processed Successfully'
-            );
+            this.signalService.handleResponse(this.requestSummary,'Request Processed Successfully');
           } else {
-            this.requestSummary = response.data;
             this.openModal(this.leaveSummary);
           }
           this.selectedLeavesItems = [];
@@ -445,7 +446,7 @@ private updateTableSelectionState(selectedItems: any[]) {
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
-        complete: () => {},
+        complete: () => {this.searchValue = null;},
       });
   }
 
@@ -487,15 +488,13 @@ private updateTableSelectionState(selectedItems: any[]) {
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.requestSummary = response.data;
             if (
               this.selectedLeavesItems &&
               this.selectedLeavesItems.length <= 0
             ) {
-              this.sharedModalService.openSuccessModal(
-                'Request Rejected Successfully'
-              );
+              this.signalService.handleResponse(this.requestSummary,'Request Rejected Successfully');
             } else {
-              this.requestSummary = response.data;
               this.openModal(this.leaveSummary);
             }
             this.selectedLeavesItems = [];
@@ -507,10 +506,12 @@ private updateTableSelectionState(selectedItems: any[]) {
           },
           error: (reason: any) => {
             this.spinnerLoader = false;
+            this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
           },
           complete: () => {
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }

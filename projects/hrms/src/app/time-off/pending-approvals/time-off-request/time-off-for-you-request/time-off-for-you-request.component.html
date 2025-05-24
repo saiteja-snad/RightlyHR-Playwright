@@ -36,8 +36,8 @@
                 <ng-template #header>
                     <tr>
                         <th style="width: 4rem">
-                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox> 
-                        </th>
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th> 
                         <th>Employee ID </th>
                         <th>Employee Name</th>
                         <th>Leave Type </th>
@@ -48,7 +48,7 @@
                         <th>End Date</th>
                         <th>Reason</th>
                         <th>Approver Comments</th>
-                        @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For You (Time Off).delete'))){
+                        @if(!multiSelect &&(rbac.allowedToAccess('For You (Time   Off).update') || rbac.allowedToAccess('For You (Time Off).delete'))){
                         <th class="text-center">Action(S)</th>
                         }
                     </tr>

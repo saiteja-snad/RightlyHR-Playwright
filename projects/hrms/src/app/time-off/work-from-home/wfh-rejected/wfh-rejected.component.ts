@@ -86,6 +86,7 @@ export class WfhRejectedComponent implements OnInit, OnDestroy {
           this.rejectedWFHsCount = this.rejectedWFHs.length;
         },
         error: (error) => {
+          this.dataload = false;
           console.error('Error fetching data:', error);
           this.rejectedWFHs = []; // Set to empty array on error
         },complete: () =>{

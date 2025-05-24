@@ -34,14 +34,12 @@ export class HeaderComponent {
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.imageUrl = this.empinfo.profileUrl;
-    this.onSelectprofilePicDownload(this.empinfo);
-    this.http.profliepicadd$.subscribe(() => {
-      this.imageUrl = this.empinfo.profileUrl;
-    this.onSelectprofilePicDownload(this.empinfo);
-    });
     this.getEmployeeId()
     this.getJobDetails()
+       this.http.profliepicadd$.subscribe(() => {
+          this.getEmployeeId();
+     
+    });
   }
 
   onSelectprofilePicDownload(employee: any) {
@@ -63,7 +61,8 @@ export class HeaderComponent {
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
         this.empdata = data;
-       
+        this.imageUrl = this.empdata.profileUrl; 
+       this.onSelectprofilePicDownload(this.empdata);
       },
       error: reason => console.log(reason)
     });

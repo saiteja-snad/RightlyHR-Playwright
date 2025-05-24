@@ -70,10 +70,10 @@ export class OnboardingRequestComponent implements OnInit, OnDestroy {
 
   intitalizeForm() {
     this.rejectDocument = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),Validators.pattern(/^(?!\s).*$/)]],
     });
     this.reRequestForm = this.fb.group({
-      comments: ['', [Validators.required, Validators.maxLength(250)]],
+      comments: ['', [Validators.required, Validators.maxLength(250),Validators.pattern(/^(?!\s).*$/)]],
     });
   }
 

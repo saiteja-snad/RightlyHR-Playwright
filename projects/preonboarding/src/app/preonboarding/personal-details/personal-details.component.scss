@@ -14,7 +14,10 @@ input[type="checkbox"].custom-check:checked {
     border-color: #305889 !important;
     /* Optional: matches background */
 }
-
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
 input[type="text"] {
     text-transform: capitalize;
 }

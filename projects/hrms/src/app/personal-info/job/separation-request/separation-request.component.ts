@@ -117,6 +117,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     );
   }
 
+  closeBtn= false;
   requestNoDue(f: FormGroup) {
     this.isLoading = true;
     const noduereq = {
@@ -126,6 +127,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     };
     this.subscription = this.http.postdata('NoDueClearanceForm', noduereq).subscribe({
       next: (data: any) => {
+        this.closeBtn= true;
         this.profileForm.reset();
         this.formemailsfornodue.clear();
         this.modalService.dismissAll();
@@ -133,6 +135,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         this.conformationPopup.openSuccessModal('No Due Request Raised Successfully');
       },
       error: (reason: any) => {
+        this.closeBtn= false;
         this.conformationPopup.openErrorModal('reason.error.Message');
         const modalElement = document.getElementById('errorhide');
       },
@@ -228,6 +231,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     return false;
   }
 
+  separationDetails!: any;
   //function to get the separation details of the employee
   fetchSeparationDetails(): void {
     this.isDataLoaded = true;
@@ -236,18 +240,20 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         if (data) {
           this.isDataLoaded = false;
-
+          this.separationDetails= data;
+          console.log(this.separationDetails)
           this.getSeparationDetails.next(data);
           this.substatus = this.getSeparationDetails.value.map(
             (application: { status: any }) => application.status.toLowerCase()
           );
           const seperationStatus1 = [
-            'waiting for approval', 'approved', 'processed',
+            'waiting for approval', 'approved', 'processed', 'recalled processed',
             'early relieving processed', 'extended',
           ];
           this.status = seperationStatus1.some((value) =>
             this.substatus.includes(value)
           );
+          console.log(this.status)
           this.checkStatus();
           data.forEach((ele: any) => {
             if ((ele?.status?.toLowerCase() == 'waiting for approval' || ele?.status?.toLowerCase() == 'approved') &&
@@ -383,7 +389,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.modalService.dismissAll();
           this.recallreason.reset();
-          this.conformationPopup.openSuccessModal('Recall Request Raised successfully');
+          this.conformationPopup.openSuccessModal('Recall Request raised successfully');
           this.fetchSeparationDetails();
         }
       },
@@ -439,7 +445,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
           this.isLoading = false;
           this.modalService.dismissAll();
           this.earlyReleivingform.reset();
-          this.conformationPopup.openSuccessModal('Early Relieving Request Raised successfully');
+          this.conformationPopup.openSuccessModal('Early Relieving Request raised successfully');
           this.fetchSeparationDetails();
         }
       },

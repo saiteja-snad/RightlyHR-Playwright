@@ -17,13 +17,12 @@
                     <th>{{'Requested Date' |translate}}</th>
                     <th>{{'Department' |translate}}</th>
                     <th>{{'Status' |translate}}</th>
-                    <th>{{'Employee Emails' |translate}}</th>
+                    <th  class="text-center">{{'Employee Emails' |translate}}</th>
                     @if(rbac.allowedToAccess('No Due Clearance Request.update') || rbac.allowedToAccess('No Due Clearance Request.delete')) {
-                    <th>Action<span class="text-lowercase">(s)</span></th>
+                    <th>Action(S)</th>
                     }
             </thead>
             <tbody>
-               
                 @if (((nodue_Request_data | async) ?? []).length > 0) {
                 @for (item of ((nodue_Request_data | async) ?? []) | nodueDetails : searchValue; track item.id){
                 <tr>
@@ -33,9 +32,11 @@
                     <td>{{item?.departmentName ?? '-'}}</td>
                     <td>{{item?.status ?? '-'}}</td>
                     <td class="text-center">
-                        <div *ngIf="item.requiredEmails; else popupcomments">
+                        <div>
+                            <div *ngIf="item.requiredEmails; else popupcomments">
                             <i class="bi bi-info-circle-fill" triggers="mouseenter:mouseleave" ngbPopover="{{ item.requiredEmails }}" 
                             container="body"></i>
+                        </div>
                         </div>
                         <ng-template #popupcomments>NA</ng-template>
                     </td>
@@ -130,14 +131,14 @@
         </div>
         <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="rejectNodue()">
             <div class="custom-main-popup-content">
-                <label for="comments" class="form-label custom-label mb-2">{{"Rejected Reason" | translate}}
+                <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}
                     <span class="text-danger">*</span></label>
-                <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Please enter reason"
+                <textarea class="form-control custom-input" id="exampleFormControlTextarea1" placeholder="Please enter comments"
                     formControlName="notes" rows="3" maxlength="250"></textarea>
                 <div class="textarea-count-text">{{ rejectForm.get('notes')?.value?.length || 0 }}/250
                 </div>
                 <div class="error-msg" *ngIf="rejectForm.get('notes')?.touched && rejectForm.get('notes')?.invalid">
-                    <ng-container *ngIf="rejectForm.get('notes')?.errors?.['required']">Reason is
+                    <ng-container *ngIf="rejectForm.get('notes')?.errors?.['required']">Comments are
                         required</ng-container>
                     <ng-container *ngIf="rejectForm.get('notes')?.errors?.['maxlength']">Maximum 250 characters
                         allowed</ng-container>

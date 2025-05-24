@@ -3,19 +3,19 @@
     <div class="component-sub-header">Separation Details</div>
     @if(canAccess('view','raisenodue')){
 
-    <!-- @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length >= 0)){
+    @if(shouldShowButton(this.empdata.lastworkingday) && !closeBtn && (nodueclearancedetails.length >= 0 && (separationDetails[0]?.status?.toLowerCase() === 'processed' || separationDetails[0]?.status?.toLowerCase() === 'early relieving processed'))){
       @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' && empinfo?.empstatus?.toLowerCase() !== 'trainee prospective'
         && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase()!== 'trainee inactive' )){
       <div class="custom-add-btn" (click)="openModal(raiseNodue)">
         <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
       </div>
       }
-    } -->
-    @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length > 0) ){
+    }
+    <!-- @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length >= 0)  ){
       <div class="custom-add-btn" (click)="openModal(raiseNodue)">
       <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
       </div>
-    }
+    } -->
   }
   </div>
 
@@ -26,8 +26,8 @@
           <th>{{'Raised Date'|translate}}</th>
           <th>{{'Notice Period(In Days)'|translate}}</th>
           <th>{{'Last Working Day'|translate}}</th>
-          <th>{{'Reason'|translate}}</th>
-          <th>{{'Approver History'|translate}}</th>
+          <th class="text-center">{{'Reason'|translate}}</th>
+          <th class="text-center">{{'Approver History'|translate}}</th>
           <th>{{'Request Type'|translate}}</th>
           <th>{{'Status'|translate}}</th>
           @if((empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
@@ -57,7 +57,7 @@
           <td>
             {{ item.lastWorkingDate ? (item.lastWorkingDate | date) : 'NA' }}
           </td>
-          <td>
+          <td class="text-center">
             @if(item.description){
             <div (click)="decription(item.description,openDiscriotionviewpopup)" class="cursor">
               <i class="bi bi-info-circle-fill"></i>
@@ -69,7 +69,7 @@
             <div>
             </div>
           </td>
-          <td>
+          <td class="text-center">
             @if(item.approvers && item.approvers.length > 0;){
             <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)" class="cursor">
               <i class="bi bi-info-circle-fill"></i>

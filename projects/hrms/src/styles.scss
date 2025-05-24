@@ -48,7 +48,7 @@
 
     // button colors
     --btn-primary-color: #0B3A83;
-    --btn-secondary-color: #F0F4F8;
+    --btn-secondary-color: #FFFFFF;
     --btn-color-tp: #FFFFFF;
     --btn-color-ts: #0B3A83;
     --btn-success: #38930D;
@@ -119,6 +119,11 @@
 
     //error msg
     --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg:#E7EFFD;
+    --module-info-border:#cbcfd5;
+    --module-info-text-color:#7F7C7C;
 }
 
 * {
@@ -395,19 +400,19 @@ body {
 
     .nav-tab-active {
         color: #fff;
-       background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
+        background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
 
         font-weight: 500;
         border-radius: 6px;
     }
 
-   .employee-info-nav-tabs a:hover{
-    color: #fff;
-   }
+    .employee-info-nav-tabs a:hover {
+        color: #fff;
+    }
 
     .active-nav-link {
         color: #fff;
-      background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
+        background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
         font-weight: 500;
         border-radius: 6px;
     }
@@ -500,7 +505,7 @@ body {
         flex-direction: column;
         align-items: center;
         text-align: center;
-        font-weight: 500;
+        font-weight: 600;
         font-size: 11px;
         color: #3F434A;
         padding: 0.625rem 0.5rem;
@@ -511,8 +516,8 @@ body {
     }
 
     .icon {
-        width: 1.25rem;
-        height: 1.25rem;
+        width: 1.5rem;
+        height: 1.5rem;
     }
 
     .active-nav-link {
@@ -672,8 +677,8 @@ a {
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     font-size: var(--fontsize14);
-    border: 1px solid var(--btn-primary-color);
     font-weight: 500;
+    border: none !important;
 }
 
 .btn-primary {
@@ -709,6 +714,7 @@ a {
 .btn-secondary {
     background-color: var(--btn-secondary-color);
     color: var(--btn-color-ts);
+    border: 1px solid var(--btn-color-ts) !important;
 }
 
 .button-loader-content {
@@ -937,14 +943,13 @@ input:focus,textarea:focus,select:focus {
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
         letter-spacing: 0%;
         vertical-align: middle;
-        padding: 1rem;
+        padding: 0.75rem;
     }
 
     th {
@@ -953,6 +958,10 @@ input:focus,textarea:focus,select:focus {
         text-wrap: nowrap;
         font-weight: 500;
         text-transform: capitalize;
+    }
+
+    td {
+        color: var(--table-data-color);
     }
 
     th:first-child {
@@ -1043,7 +1052,7 @@ input:focus,textarea:focus,select:focus {
             color: #909090;
         }
 
-        .name-text{
+        .name-text {
             color: #3F434A !important;
         }
     }
@@ -1952,10 +1961,10 @@ input[type=number]::-webkit-outer-spin-button {
     }
 
     .p-accordionheader {
-        padding: 0.75rem 1rem !important;
-        background-color: #184066 !important;
-        font-weight: 700;
-        font-size: 14px;
+        padding: 0.75rem !important;
+        background-color: var(--btn-primary-color) !important;
+        font-weight: 600;
+        font-size: var(--fontsize14);
         line-height: 100%;
         letter-spacing: 0%;
         vertical-align: middle;
@@ -1974,19 +1983,18 @@ input[type=number]::-webkit-outer-spin-button {
 
     .employee-data-table {
         th {
-            background-color: #DDE6F0;
-            font-weight: 600;
+            background-color: var(--table-header-bg-color) !important;
+            color: var(--table-header-color) !important;
+            font-weight: 500;
         }
 
-        th,
-        td {
-            padding: 0.75rem 1rem;
+        th,td {
+            padding: 0.75rem;
             text-align: center;
             line-height: 100%;
             letter-spacing: 0%;
             vertical-align: middle;
             font-size: var(--fontsize14);
-            color: var(--table-data-color);
         }
 
         tr {
@@ -1995,6 +2003,7 @@ input[type=number]::-webkit-outer-spin-button {
 
         td {
             font-weight: 400;
+            color: var(--table-data-color);
         }
 
         .avaliable-number {
@@ -2148,5 +2157,30 @@ input[type=number]::-webkit-outer-spin-button {
         font-weight: 500;
         font-size: 10px;
         color: #222222;
+    }
+}
+
+//module information 
+.module-information-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--module-info-bg);
+    border: 1px solid var(--module-info-border);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    .question-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+
+    .info-text {
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        color: var(--module-info-text-color);
     }
 }

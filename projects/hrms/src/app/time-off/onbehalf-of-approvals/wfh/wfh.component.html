@@ -1,36 +1,36 @@
 <div class="custom-main-component-container">
      @if (selectedLeavesItems && selectedLeavesItems.length > 0 && multiSelect) {
-     <div class="d-flex justify-content-between">
-        <div class="mt-2">
-            @if(selectedLeavesItems){
-                <div class="component-sub-header">Selected Records: {{selectedLeavesItems.length}}</div>
+    <div class="component-header-content">
+        @if(selectedLeavesItems){
+        <div class="component-sub-header">Selected Records: {{selectedLeavesItems.length}}</div>
         }
-        </div>
-        <div class="d-flex justify-content-end gap-3 mb-3">
+        <div class="d-flex gap-3">
             @if (canBulkApprove()) {
-                @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).update')){
-                  <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
-                }
-                @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).delete')){
-                  <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-                }
+            @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+            }
+            @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
             }
             @if (canBulkProcess()) {
-                @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).update')){
-                  <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
-                }
-                @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).delete')){
-                  <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-                }
+            @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+            }
+            @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
             }
         </div>
     </div>
     }
-     <div class="input-group custom-search mb-3">
+
+    <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
             placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
     </div>
+
     <div class="custom-p-multi-select-table">
         @if(!dataload){
         <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
@@ -72,9 +72,7 @@
                             </ng-template>
                         </div>
                         }@else {
-                        <div>
-                            <span>-</span>
-                        </div>
+                        <span>-</span>
                         }
                     </td>
                     <td class="text-center">
@@ -126,9 +124,7 @@
             </ng-template>
             <ng-template #emptymessage>
                 <tr>
-                    <td colospan="9">
-                        <app-no-data-found />
-                    </td>
+                    <app-no-data-found />
                 </tr>
             </ng-template>
         </p-table>
@@ -154,8 +150,7 @@
                 <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
                     formControlName="comments" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                 <!-- Character counter -->
-                <div class="form-label custom-label text-end my-1">{{ approveForm.get('comments')?.value?.length || 0
-                    }}/250</div>
+                <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
                     <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comments are required</div>
@@ -195,7 +190,7 @@
                 <textarea class="form-control custom-input" id="comments"
                     placeholder="Please provide comments" formControlName="comments"
                     maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
-                <div class="text-end my-1">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
+                <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                 <div class="error-msg"
                     *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                     <div *ngIf="rejectForm.get('comments')?.errors?.['required']">Comments are required</div>

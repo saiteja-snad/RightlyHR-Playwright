@@ -540,20 +540,22 @@ body {
 // Component stylings
 .custom-component-left-content {
     width: 25rem;
-    height: calc(100dvh - 14rem);
+    height: calc(100dvh - 10rem);
     border-radius: 0.5rem;
     overflow-y: auto;
     background-color: var(--white-color);
     border: 1px solid var(--border-color);
+    padding: 1rem;
 }
 
 .custom-component-right-content {
     width: 100%;
-    height: calc(100dvh - 14rem);
+    height: calc(100dvh - 10rem);
     overflow-y: auto;
     border-radius: 0.5rem;
     background-color: var(--white-color);
     border: 1px solid var(--border-color);
+    padding: 1rem;
 }
 
 .component-left-tabs-container {
@@ -931,7 +933,7 @@ input:focus,textarea:focus,select:focus {
 
 .custom-table-content {
     width: 100%;
-    height: calc(100dvh - 9rem);
+    height: calc(100dvh - 10rem);
     overflow: auto;
     background-color: var(--white-color);
     border: 1px solid var(--table-main-content-border-color);
@@ -1913,10 +1915,10 @@ input[type=number]::-webkit-outer-spin-button {
 .custom-p-multi-select-table {
     .p-datatable-table-container {
         width: 100%;
-        height: 60dvh;
+        height: calc(100vh - 16.625rem);
         overflow: auto;
         background-color: var(--white-color);
-        border: 1px solid #E7E7ED;
+        border: 1px solid var(--table-main-content-border-color);
         border-radius: 0.5rem;
         position: relative;
     }

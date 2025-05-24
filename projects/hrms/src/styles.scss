@@ -20,7 +20,6 @@
     src: url("/fonts/DMSans-Italic-VariableFont_opsz,wght.ttf");
 }
 
-
 @font-face {
     font-family: "LEXEND";
     src: url("/fonts/Lexend-VariableFont_wght.ttf");
@@ -44,12 +43,12 @@
     --side-nav-background-color: #0B3A83;
     --side-nav-item-color: #EAEAEA;
     --side-nav-item-active-color: #0B3A83;
-    --side-nav-active-bg-color: #FFFFFF;
+    --side-nav-active-bg-color: #FFFFFF4D;
     //sidebar colors
 
     // button colors
     --btn-primary-color: #0B3A83;
-    --btn-secondary-color: #F0F4F8;
+    --btn-secondary-color: #FFFFFF;
     --btn-color-tp: #FFFFFF;
     --btn-color-ts: #0B3A83;
     --btn-success: #38930D;
@@ -75,13 +74,13 @@
     // input color ends
 
     // table colors
-    --table-main-content-border-color: #D9E2EB;
-    --table-header-bg-color: #E1E7F2;
-    --table-header-color: #3A496F;
+    --table-main-content-border-color: #FFFFFF;
+    --table-header-bg-color: #DCE5F5;
+    --table-header-color: #3B3B3B;
     --table-data-bg-color: #FFFFFF;
     --table-data-bg-even-color: #F0F4F8;
-    --table-data-color: #444444;
-    --table-data-border-color: #D9E2EB;
+    --table-data-color: #5E5E5E;
+    --table-data-border-color: #E3E3E3;
     // table colors ends
 
     // nav tabs 
@@ -120,6 +119,11 @@
 
     //error msg
     --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg:#E7EFFD;
+    --module-info-border:#cbcfd5;
+    --module-info-text-color:#7F7C7C;
 }
 
 * {
@@ -183,7 +187,6 @@ body {
 
     .active-nav-link {
         background-color: var(--side-nav-active-bg-color);
-        color: var(--side-nav-item-active-color);
     }
 
     .bi-person-vcard {
@@ -397,19 +400,19 @@ body {
 
     .nav-tab-active {
         color: #fff;
-       background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
+        background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
 
         font-weight: 500;
         border-radius: 6px;
     }
 
-   .employee-info-nav-tabs a:hover{
-    color: #fff;
-   }
+    .employee-info-nav-tabs a:hover {
+        color: #fff;
+    }
 
     .active-nav-link {
         color: #fff;
-      background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
+        background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
         font-weight: 500;
         border-radius: 6px;
     }
@@ -502,10 +505,10 @@ body {
         flex-direction: column;
         align-items: center;
         text-align: center;
-        font-weight: 400;
+        font-weight: 600;
         font-size: 11px;
         color: #3F434A;
-        padding: 0.625rem;
+        padding: 0.625rem 0.5rem;
         border-radius: 0.5rem;
         border-bottom: 1px solid linear-gradient(90deg, #F4F4F4 8.64%, #A5B8D7 57.28%, #F4F4F4 92.5%);
         margin: 0.25rem 0rem;
@@ -513,8 +516,8 @@ body {
     }
 
     .icon {
-        width: 1.75rem;
-        height: 1.75rem;
+        width: 1.5rem;
+        height: 1.5rem;
     }
 
     .active-nav-link {
@@ -565,14 +568,9 @@ body {
 
 .component-right-content {
     width: 100%;
-    height: calc(100dvh - 9rem);
-    overflow-y: auto;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 1rem;
-    border-radius: 0.5rem;
-    background-color: var(--white-color);
-    border: 1px solid var(--border-color);
 }
 
 .component-header-content {
@@ -672,7 +670,6 @@ a {
     background: var(--Scroller-bar-color);
     min-height: 4rem !important;
 }
-
 // scroll bar stylings ends
 
 // button stylings
@@ -680,8 +677,8 @@ a {
     padding: 0.5rem 1rem;
     border-radius: 0.5rem;
     font-size: var(--fontsize14);
-    border: 1px solid var(--btn-primary-color);
     font-weight: 500;
+    border: none !important;
 }
 
 .btn-primary {
@@ -717,6 +714,7 @@ a {
 .btn-secondary {
     background-color: var(--btn-secondary-color);
     color: var(--btn-color-ts);
+    border: 1px solid var(--btn-color-ts) !important;
 }
 
 .button-loader-content {
@@ -766,9 +764,7 @@ a {
     color: #A1A1A1;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
+input:focus,textarea:focus,select:focus {
     outline: none !important;
     box-shadow: none !important;
 }
@@ -810,7 +806,6 @@ select:focus {
     vertical-align: middle;
     color: #222222;
 }
-
 // Select Styling 
 
 // p select stylings
@@ -852,7 +847,7 @@ select:focus {
     }
 }
 
-//multiselect
+// multiselect
 .custom-p-multiSelect-content {
     .p-multiselect {
         border: 1px solid var(--input-border-color) !important;
@@ -924,7 +919,6 @@ select:focus {
         background-color: #F0F4F8;
     }
 }
-
 // Select Styling 
 
 // table stylings
@@ -936,11 +930,11 @@ select:focus {
 
 .custom-table-content {
     width: 100%;
-    height: 60dvh;
+    height: calc(100dvh - 9rem);
     overflow: auto;
     background-color: var(--white-color);
     border: 1px solid var(--table-main-content-border-color);
-    border-radius: 0.55rem;
+    border-radius: 0.5rem;
     position: relative;
 
     thead {
@@ -949,22 +943,25 @@ select:focus {
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
         letter-spacing: 0%;
         vertical-align: middle;
-        padding: 1rem;
+        padding: 0.75rem;
     }
 
     th {
         background-color: var(--table-header-bg-color);
         color: var(--table-header-color);
         text-wrap: nowrap;
+        font-weight: 500;
         text-transform: capitalize;
-        font-weight: 600;
+    }
+
+    td {
+        color: var(--table-data-color);
     }
 
     th:first-child {
@@ -977,6 +974,10 @@ select:focus {
 
     tr {
         border: 1px solid var(--table-data-border-color);
+    }
+
+    .table-placeholder {
+        border: none !important;
     }
 
     // tr:nth-child(even) {
@@ -992,7 +993,6 @@ select:focus {
         padding: 0.75rem;
     }
 }
-
 // My Info Stylings
 
 // User Profile Card Stylings
@@ -1052,12 +1052,11 @@ select:focus {
             color: #909090;
         }
 
-        .name-text{
+        .name-text {
             color: #3F434A !important;
         }
     }
 }
-
 // My Info Stylings Ends
 
 // letter main content
@@ -1150,17 +1149,13 @@ select:focus {
 
 // salary details table
 .salary-details-table {
-
-    table,
-    th,
-    td {
+    table,th,td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th,
-    td {
+    th,td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -1170,8 +1165,7 @@ select:focus {
         font-weight: bold;
     }
 
-    tr:nth-child(4),
-    tr:nth-child(9) {
+    tr:nth-child(4),tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -1222,7 +1216,6 @@ select:focus {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
-
 // letter stylings
 
 // note text stylings
@@ -1236,7 +1229,6 @@ select:focus {
         font-weight: 700;
     }
 }
-
 // note text stylings
 
 //My Info Stylings
@@ -1394,10 +1386,8 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first,
-        .p-paginator-prev,
-        .p-paginator-next,
-        .p-paginator-last {
+        .p-paginator-first,.p-paginator-prev,
+        .p-paginator-next,.p-paginator-last {
             border-radius: 50%;
             width: 1.25rem;
             height: 1.25rem;
@@ -1406,17 +1396,14 @@ input[type="file"] {
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,
-        .p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,
-        .p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 
 }
-
 //pagenation stylings
 
 // login components stylings
@@ -1438,7 +1425,6 @@ input[type="file"] {
         font-weight: 500;
     }
 }
-
 // login components stylings
 
 // custom phone number input with country code stylings
@@ -1493,7 +1479,6 @@ input[type="file"] {
         min-width: 350px !important;
     }
 }
-
 // custom phone number input with country code stylings
 
 //ERROR MESSAGE
@@ -1626,7 +1611,6 @@ input[type="file"] {
     padding: 1rem;
     overflow: auto;
 }
-
 // popup stylings ends
 
 // download text
@@ -1662,7 +1646,6 @@ input[type="file"] {
         text-align: right;
     }
 }
-
 //styles for popup table
 
 // styles for expenses
@@ -1680,8 +1663,7 @@ input[type="file"] {
         z-index: 1;
     }
 
-    th,
-    td {
+    th, td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1777,7 +1759,6 @@ input[type="file"] {
         }
     }
 }
-
 // Settings Stylings Ends
 
 // red trash icon
@@ -1855,7 +1836,6 @@ input[type="checkbox"] {
         }
     }
 }
-
 // leaves cards stylings Ends
 
 // Action buttons stylings
@@ -1874,7 +1854,6 @@ input[type="checkbox"] {
         box-shadow: none !important;
     }
 }
-
 // Action buttons stylings Ends
 
 // component loader
@@ -1982,10 +1961,10 @@ input[type=number]::-webkit-outer-spin-button {
     }
 
     .p-accordionheader {
-        padding: 0.75rem 1rem !important;
-        background-color: #184066 !important;
-        font-weight: 700;
-        font-size: 14px;
+        padding: 0.75rem !important;
+        background-color: var(--btn-primary-color) !important;
+        font-weight: 600;
+        font-size: var(--fontsize14);
         line-height: 100%;
         letter-spacing: 0%;
         vertical-align: middle;
@@ -2004,19 +1983,18 @@ input[type=number]::-webkit-outer-spin-button {
 
     .employee-data-table {
         th {
-            background-color: #DDE6F0;
-            font-weight: 600;
+            background-color: var(--table-header-bg-color) !important;
+            color: var(--table-header-color) !important;
+            font-weight: 500;
         }
 
-        th,
-        td {
-            padding: 0.75rem 1rem;
+        th,td {
+            padding: 0.75rem;
             text-align: center;
             line-height: 100%;
             letter-spacing: 0%;
             vertical-align: middle;
             font-size: var(--fontsize14);
-            color: var(--table-data-color);
         }
 
         tr {
@@ -2025,6 +2003,7 @@ input[type=number]::-webkit-outer-spin-button {
 
         td {
             font-weight: 400;
+            color: var(--table-data-color);
         }
 
         .avaliable-number {
@@ -2178,5 +2157,30 @@ input[type=number]::-webkit-outer-spin-button {
         font-weight: 500;
         font-size: 10px;
         color: #222222;
+    }
+}
+
+//module information 
+.module-information-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--module-info-bg);
+    border: 1px solid var(--module-info-border);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    .question-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+
+    .info-text {
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        color: var(--module-info-text-color);
     }
 }

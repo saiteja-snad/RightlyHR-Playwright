@@ -21,42 +21,42 @@ export class SidenavComponent implements OnInit {
   modules = [
     //expenses
     {
-      label: 'Expenses', icon: '/main-menu-icons/expenses-icon.png', activeIcon: '/main-menu-icons/expenses-color.png',
+      label: 'Expenses', icon: '/main-menu-icons/expenses-icon.png', activeIcon: '/main-menu-icons/expenses.png',
       route: '/claimsandexpenses', permission: { feature: 'Expenses', action: 'view' }
     },
     //pms
     {
-      label: 'PMS', icon: '/main-menu-icons/pms-icon.png', route: '/pms', activeIcon: '/main-menu-icons/pms-color.png',
+      label: 'PMS', icon: '/main-menu-icons/pms-icon.png', route: '/pms', activeIcon: '/main-menu-icons/pms.png',
       permission: { feature: 'PMS', action: 'view' }
     },
     //pms configuration
     {
-      label: 'PMS Configuration', icon: '/main-menu-icons/pms-configuration-icon.png', activeIcon: '/main-menu-icons/pms-configuration-color.png',
+      label: 'PMS Configuration', icon: '/main-menu-icons/pms-configuration-icon.png', activeIcon: '/main-menu-icons/pms-configuration.png',
       route: '/pmsconfiguration', permission: { feature: 'PMS Configurations', action: 'view' }
     },
     //Desk
     {
-      label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/desk-color.png',
+      label: 'Desk', icon: '/main-menu-icons/desk-icon.png', activeIcon: '/main-menu-icons/computer-desk.png',
       route: '/desk', permission: { feature: 'Desk Allocation', action: 'view' }
     },
     //Assets
     {
-      label: 'Assets', icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets-color.png',
+      label: 'Assets', icon: '/main-menu-icons/assets-icon.png', activeIcon: '/main-menu-icons/assets.png',
       route: '/assets-management', permission: { feature: 'Asset Management', action: 'view' }
     },
     //IT Supports
     {
-      label: 'IT Support', icon: '/main-menu-icons/it-support-icon.png', activeIcon: '/main-menu-icons/it-support-color.png',
+      label: 'IT Support', icon: '/main-menu-icons/it-support-icon.png', activeIcon: '/main-menu-icons/it-support.png',
       route: '/it-support', permission: { feature: 'IT Support', action: 'view' }
     },
     //org Hierarcy
     {
-      label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-color.png',
+      label: 'Org Hierarchy', icon: '/main-menu-icons/org.png', activeIcon: '/main-menu-icons/org-hierarchy-square.png',
       route: '/organization-chart', permission: { feature: 'Org Hierarchy', action: 'view' }
     },
     //Holidays
     {
-      label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holiday-color.png',
+      label: 'Holiday', icon: '/main-menu-icons/holiday-icon.png', activeIcon: '/main-menu-icons/holidays.png',
       route: '/holidays', permission: { feature: 'Holidays', action: 'view' }
     }
   ];

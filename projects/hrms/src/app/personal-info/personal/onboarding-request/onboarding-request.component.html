@@ -50,7 +50,7 @@
                             <div>-</div>
                         </ng-template>
                     </td>
-                     @if(rbac.allowedToAccess('Employee Info Documents Verification.update') 
+                     @if(rbac.allowedToAccess('Employee Info Documents Verification	.update') 
                     || rbac.allowedToAccess('Employee Info Documents Verification.delete')){
                     <td>
                         <span *ngIf="!data.documentUrl; else approverejectbuttons"></span>

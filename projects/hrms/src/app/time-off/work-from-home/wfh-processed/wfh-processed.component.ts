@@ -38,7 +38,7 @@ export class WfhProcessedComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false; 
-
+selectempid: any;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -54,6 +54,18 @@ export class WfhProcessedComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+     this.http.selectedEmployeeIdWFH$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getWFHRequests();
+        
+      }
+     
+    });
+
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     console.log(this.empinfo);
     this.getWFHRequests();
@@ -68,7 +80,7 @@ export class WfhProcessedComponent implements OnInit, OnDestroy {
   }
 
   getWFHRequests() {
-    let empId = this.empinfo.employeeId;
+    let empId = this.empinfo.employeeId || this.selectempid;
     console.log(empId);
     this.dataload = true; 
     this.http
@@ -84,6 +96,7 @@ export class WfhProcessedComponent implements OnInit, OnDestroy {
           this.processedWFHsCount = this.processedWFHs.length;
         },
         error: (error) => {
+          this.dataload = false;
           console.error('Error fetching data:', error);
           this.processedWFHs = []; // Set to empty array on error
         },complete:() =>{

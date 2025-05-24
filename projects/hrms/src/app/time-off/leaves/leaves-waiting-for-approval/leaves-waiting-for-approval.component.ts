@@ -39,6 +39,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit,OnDestroy{
     { label: 20, value: 20 },
     { label: 25, value: 25 }
   ];
+  selectempid: any;
   onRowsChange() {
     this.first = 0;
   }
@@ -50,10 +51,22 @@ isLoading=false;
   constructor(private http: HttpService, private signalService:SignalsService, private modalService: NgbModal,private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService,private fb:FormBuilder) { }
 
   ngOnInit(): void {
+
+       this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getDataByLPEMPID();
+      }
+      else{
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getDataByLPID();
     this.formInializer();
+      }
+    });
   }
  formInializer() {
     this.cancelForm = this.fb.group({
@@ -121,6 +134,22 @@ isLoading=false;
       next: (response: any) => {
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Waiting for Approval');
+              console.error("Invalid response this lpdata ",this.lpdata );
+        } else {
+          console.error("Invalid response format");
+        }
+      },
+      error: (reason: any) => console.log(reason)
+    });
+  }
+
+  getDataByLPEMPID() {
+    let empid = this.selectempid;
+    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+      next: (response: any) => {
+        if (Array.isArray(response)) {
+          this.lpdata = response.filter(item => item.status === 'Waiting for Approval');
+              console.error("Invalid response this lpdata ",this.lpdata );
         } else {
           console.error("Invalid response format");
         }
@@ -135,3 +164,6 @@ isLoading=false;
     }
   }
 }
+  
+
+  

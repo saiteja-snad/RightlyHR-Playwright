@@ -74,7 +74,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
   @ViewChild('commentspopup') modalContent: any;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  searchValue: any;
+  searchValue: any | null;
   spinnerLoader = false;
   dataload = false;
   compOffselect!: LeaveApproval[];
@@ -270,6 +270,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
         },
         complete: () => {
           this.getAllPendingApprovals();
+          this.searchValue = null;
         },
       });
   }
@@ -338,6 +339,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }
@@ -408,6 +410,7 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
           complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }

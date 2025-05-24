@@ -41,7 +41,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   first: any = 0;
   rows: any = 10;
   LOGIN: any;
-  searchValue: any;
+  searchValue: any | null;
   spinnerLoader = false;
   multiSelect = false;
   issubmitdiable = false;
@@ -486,6 +486,8 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
           this.selectedProducts = [];
+          this.searchValue = null;
+
         },
       });
   }
@@ -559,6 +561,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
           this.selectedProducts = [];
+          this.searchValue = null;
         },
       });
   }
@@ -628,6 +631,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
           this.selectedProducts = [];
+          this.searchValue = null;
         },
       });
   }

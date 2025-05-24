@@ -472,6 +472,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   onBackSubmit() {
+
+      if (this.headerName === 'Team member info') {
+    this.router.navigate(['/myinfo/team/my-team-members']);
+    return;
+  }
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
     if (routestatus.empType === 'Probation') {
       this.router.navigate(['/admin/probation-employees']);
@@ -563,7 +568,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             break;
           default:
             this.headerName = "Team member info";
-            this.showBackIcon = false;
+        
         }
       }
     }

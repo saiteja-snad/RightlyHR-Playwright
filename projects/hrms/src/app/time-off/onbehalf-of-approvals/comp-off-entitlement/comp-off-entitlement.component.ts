@@ -18,6 +18,7 @@ import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace
 import { Table, TableModule } from 'primeng/table';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-comp-off-entitlement',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,
@@ -48,7 +49,7 @@ export class CompOffEntitlementComponent {
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
   spinnerLoader = false;
-  searchValue: any;
+  searchValue: any | null;
   selectedLeavesItems: AttendanceRequest[] = [];
   dataLoad = false;
   responseSummary!: any;
@@ -63,7 +64,8 @@ export class CompOffEntitlementComponent {
     private http: HttpService,
     private conformationPopup: OpenModalService,
     public rbac: RbacService,
-    public formsValidation: FormValidationsService
+    public formsValidation: FormValidationsService,
+    private signalService: SignalsService,
   ) {
     effect(() => {
       if (this.http.trigger()) {
@@ -404,10 +406,10 @@ export class CompOffEntitlementComponent {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary,'Request Processed Successfully');
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
@@ -420,6 +422,7 @@ export class CompOffEntitlementComponent {
           this.multiSelect = false;
           this.getAllPendingApprovals();
           this.http.triggerActionSignal();
+          this.searchValue = null;
         },
       });
   }
@@ -459,10 +462,10 @@ export class CompOffEntitlementComponent {
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.responseSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.conformationPopup.openSuccessModal('Request Approved Successfully');
+             this.signalService.handleResponse(this.responseSummary,'Request Approved Successfully');
             } else {
-              this.responseSummary = response.data;
               this.openModal(this.leaveSummary);
             }
           },
@@ -478,6 +481,7 @@ export class CompOffEntitlementComponent {
             this.multiSelect = false;
             this.getAllPendingApprovals();
             this.http.triggerActionSignal();
+            this.searchValue = null;
           },
         });
     }
@@ -518,10 +522,10 @@ export class CompOffEntitlementComponent {
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.responseSummary = response.data;
             if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
-              this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+              this.signalService.handleResponse(this.responseSummary,'Request Rejected Successfully');
             } else {
-              this.responseSummary = response.data;
               this.openModal(this.leaveSummary);
             }
           },
@@ -538,6 +542,7 @@ export class CompOffEntitlementComponent {
             this.selectedLeaveData = {} as AttendanceRequest;
             this.getAllPendingApprovals();
             this.http.triggerActionSignal();
+            this.searchValue = null;
           },
         });
     }

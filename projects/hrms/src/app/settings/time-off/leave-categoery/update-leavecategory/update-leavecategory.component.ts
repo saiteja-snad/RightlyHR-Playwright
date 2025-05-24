@@ -197,7 +197,7 @@ export class UpdateLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -210,7 +210,7 @@ export class UpdateLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -223,7 +223,7 @@ export class UpdateLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -236,7 +236,7 @@ export class UpdateLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -249,7 +249,7 @@ export class UpdateLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -262,7 +262,7 @@ export class UpdateLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -383,8 +383,8 @@ export class UpdateLeavecategoryComponent {
     let payload = {
       id: this.updateLeaveCategoryData.id,
       applicableYear: this.leavePolicyForm.value.applicableYear ?? this.updateLeaveCategoryData.applicableYear,
-      locationID: this.leavePolicyForm.value.locationID ?? this.updateLeaveCategoryData.locationID,
-      subLocation: this.leavePolicyForm.value.subLocation ?? this.updateLeaveCategoryData.subLocation,
+      locationID: this.leavePolicyForm.value.locationID.id ?? this.updateLeaveCategoryData.locationID,
+      subLocation: this.leavePolicyForm.value.subLocation.id ?? this.updateLeaveCategoryData.subLocation,
       shiftId: this.leavePolicyForm.value.shiftId ?? this.updateLeaveCategoryData.shiftId,
       type: this.leavePolicyForm.value.type ?? this.updateLeaveCategoryData.type,
       name: this.leavePolicyForm.value.name ?? this.updateLeaveCategoryData.name,
@@ -417,7 +417,7 @@ export class UpdateLeavecategoryComponent {
       addedDate: this.updateLeaveCategoryData.addedDate,
       lastModifiedDate: new Date()
     };
-    this.http.postdata('OrgLeavesCategories', payload).subscribe({
+    this.http.postdata('OrgLeavesCategories/UPDATER', payload).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Leave Category published successfully');
         this.router.navigate(['/settings/timeoff-configurations/leave-categoery/publishedleavecategory']);

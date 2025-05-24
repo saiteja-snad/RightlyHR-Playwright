@@ -18,6 +18,7 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
   rejectedPermissionsRequestsCount = 0;
   waitingForApprovalPermissionsCount = 0;
   approvalPermissionsRequestsCount = 0;
+  cancelPermissionsRequestsCount=0;
   empinfo = {} as IJob;
   selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
@@ -74,6 +75,9 @@ export class PremissionsTabsComponent implements OnInit, OnDestroy {
         ).length;
         this.rejectedPermissionsRequestsCount = this.wfh.filter(
           (element: { status: string }) => element.status === 'Rejected'
+        ).length;
+         this.cancelPermissionsRequestsCount = this.wfh.filter(
+          (element: { status: string }) => element.status === 'Cancelled'
         ).length;
       },
       error: (error) => {

@@ -22,6 +22,7 @@ import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { Table, TableModule } from 'primeng/table';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-wfh',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe,
@@ -52,7 +53,7 @@ export class WfhComponent {
   selectedLeaveData = {} as AttendanceRequest;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  searchValue: any;
+  searchValue: any | null;
   spinnerLoader = false;
   multiSelect = false;
   selectedLeavesItems: LeaveApproval[] =[];
@@ -67,7 +68,8 @@ export class WfhComponent {
     private sharedModalService: OpenModalService, 
     public rbac: RbacService,
     public formValidation:FormValidationService,
-    public formsValidation: FormValidationsService
+    public formsValidation: FormValidationsService,
+    private signalService: SignalsService,
   ) {
     // React to trigger signal from shared service
     effect(() => {
@@ -325,15 +327,13 @@ bulkapprove(approverPopup: any) {
       this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.requestSummary = response.data;
           if (
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.sharedModalService.openSuccessModal(
-              'Request Approved Successfully'
-            );
+            this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
           } else {
-            this.requestSummary = response.data;
             this.openModal(this.leaveSummary);
           }
           this.selectedLeavesItems = [];
@@ -346,11 +346,13 @@ bulkapprove(approverPopup: any) {
         error: (reason: any) => {
           this.spinnerLoader = false;
           this.modalService.dismissAll();
+          this.approveForm.reset();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
           this.getAllPendingApprovals();
           this.spinnerLoader = false;
+          this.searchValue = null;
         },
       });
     }
@@ -391,15 +393,13 @@ bulkapprove(approverPopup: any) {
       this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.requestSummary = response.data;
           if (
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.sharedModalService.openSuccessModal(
-              'Request Rejected Successfully'
-            );
+            this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
           } else {
-            this.requestSummary = response.data;
             this.openModal(this.leaveSummary);
           }
           this.selectedLeavesItems = [];
@@ -412,11 +412,13 @@ bulkapprove(approverPopup: any) {
         error: (reason: any) => {
           this.spinnerLoader = false;
           this.modalService.dismissAll();
+          this.rejectForm.reset();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
           this.getAllPendingApprovals();
           this.spinnerLoader = false;
+          this.searchValue = null;
         },
       });
     }
@@ -461,15 +463,13 @@ bulkapprove(approverPopup: any) {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.requestSummary = response.data;
           if (
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.sharedModalService.openSuccessModal(
-              'Request Processed Successfully'
-            );
+            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
           } else {
-            this.requestSummary = response.data;
             this.openModal(this.leaveSummary);
           }
           this.selectedLeavesItems = [];
@@ -482,6 +482,7 @@ bulkapprove(approverPopup: any) {
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
+          this.searchValue = null;
         },
       });
   }

@@ -41,7 +41,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   first: any = 0;
   rows: any = 10;
   LOGIN: any;
-  searchValue: any;
+  searchValue: any | null;
   spinnerLoader = false;
   multiSelect = false;
   issubmitdiable = false;
@@ -453,10 +453,10 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Approved Successfully');
+           this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
@@ -482,6 +482,8 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
           this.selectedProducts = [];
+          this.searchValue = null;
+
         },
       });
   }
@@ -521,10 +523,10 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Rejected Successfully');
-          } else {
-            this.responseSummary = response.data;
+            this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
+          }else {
             this.openModal(this.leaveSummary);
           }
         },
@@ -540,6 +542,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
             this.conformationPopup.openErrorModal('Request Rejected Failed');
           }
           this.spinnerLoader = false;
+          form.resetForm();
         },
         complete: () => {
           form.resetForm();
@@ -550,6 +553,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
           this.selectedProducts = [];
+          this.searchValue = null;
         },
       });
   }
@@ -588,10 +592,10 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Processed Successfully');
-          } else {
-            this.responseSummary = response.data;
+             this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
+          }else {
             this.openModal(this.leaveSummary);
           }
         },
@@ -606,7 +610,6 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           else {
             this.conformationPopup.openErrorModal('Request Processed Failed');
           }
-
         },
         complete: () => {
           this.multiSelect = false;
@@ -615,6 +618,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
           this.selectedProducts = [];
+          this.searchValue = null;
         },
       });
   }

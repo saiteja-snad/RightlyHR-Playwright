@@ -50,7 +50,7 @@
                     <p-tab>
                         <div class="card leaves-category-card">
                             <p class="leave-content-text m-0">{{ item.category.name }}</p>
-                            <div class="circular-progress my-3" [style.background]="'conic-gradient(' + item.category.categoryColor + ' ' 
+                            <div class="circular-progress" [style.background]="'conic-gradient(' + item.category.categoryColor + ' ' 
                             + getProgress(item) + 'deg, ' + getTransparentColor(item.category.categoryColor, 0.3) + ' 0deg)'">
                                 <span class="progress-value">
                                     <span class="avaliable-leaves-text">{{ getAvailableLeaves(item) }}</span>

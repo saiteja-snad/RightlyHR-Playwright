@@ -204,7 +204,7 @@ export class CloneLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -217,7 +217,7 @@ export class CloneLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -229,7 +229,7 @@ export class CloneLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -242,7 +242,7 @@ export class CloneLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -255,7 +255,7 @@ export class CloneLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });
@@ -268,7 +268,7 @@ export class CloneLeavecategoryComponent {
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
-        daysControl?.setValue(undefined);
+        daysControl?.setValue(0);
       }
       daysControl?.updateValueAndValidity();
     });

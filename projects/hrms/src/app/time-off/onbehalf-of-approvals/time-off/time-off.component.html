@@ -95,9 +95,10 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </a>
                                 <ul class="dropdown-menu custom-dropdown-menu">
-                                    <li><a class="dropdown-item" (click)="checkLeaveBalance(item,checkbalancepopup)"><i
-                                                class="bi bi-calendar-check me-2"></i>{{"Check Balance" |
-                                            translate}}</a>
+                                    <li><a class="dropdown-item" (click)="checkLeaveBalance(item,checkbalancepopup)"  
+                                            *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage">
+                                            <i class="bi bi-calendar-check me-2"></i>{{"Check Balance" | translate}}
+                                        </a>
                                     </li>
                                     @if(rbac.allowedToAccess('Time Off (On Behalf Of Approvals).update')) {
                                     <li><a class="dropdown-item" (click)="approveleave(approverPopup,item)"
@@ -455,8 +456,7 @@
 
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
-                    [disabled]="spinnerLoader">{{'Cancel'|
-                    translate}}</button>
+                    [disabled]="spinnerLoader">{{'Cancel'| translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleAccept(leaveapprovee)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
                     @if(spinnerLoader){
@@ -500,8 +500,7 @@
 
             <div class="custom-modal-footer">
                 <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()"
-                    [disabled]="spinnerLoader">{{'Cancel'|
-                    translate}}</button>
+                    [disabled]="spinnerLoader">{{'Cancel'| translate}}</button>
                 <button type="submit" class="custom-btn btn-primary" (click)="handleReject(leaveapprovee)"
                     [disabled]="leaveapprovee.invalid || !selectedLeaveData.comments || spinnerLoader">
                     @if(spinnerLoader){
@@ -517,7 +516,6 @@
         </form>
     </div>
 </ng-template>
-
 
 <ng-template #leaveSummary let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>

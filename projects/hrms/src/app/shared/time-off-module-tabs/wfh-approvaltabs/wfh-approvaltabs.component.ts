@@ -21,15 +21,17 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
   approvedWFHRequestsCount = 0;
   processedWFHRequestsCount = 0;
   selectempid: any;
- navTabs: any[] = [];
+  navTabs: any[] = [];
+  cancelWFHRequestsCount = 0;
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
 
   constructor(public readonly router: Router, private http: HttpService,public rbac: RbacService) {
     effect(() => {
-      if (this.http.tirggerCountSignal().wfh) {
+      if (this.http.tirggerCountSignal().wfh || this.http.wfhTriggerSignal()) {
         this.getCompOffRequest();
         this.http.tirggerCountSignal.update((status) => ({ ...status, wfh: false }));
+        this.http.wfhTriggerSignal.set(false);
       }
     });
   }
@@ -114,36 +116,46 @@ export class WfhApprovaltabsComponent implements OnInit, OnDestroy {
   }
 
 updateNavTabs() {
-  this.navTabs = [
-    {
-      label: 'Waiting For Approval',
-      link: '/time-off/wfh/waiting-for-approval',
-      icon: '/time-off-icon/waiting-for-approval-icon.png',
-      count: this.waitingForApprovalWFHCount,
-      permission: { feature: 'Waiting For Approval (WFH)', action: 'view' }
-    },
-    {
-      label: 'Approved',
-      link: '/time-off/wfh/approved',
-      icon: '/time-off-icon/approved-icon.png',
-      count: this.approvedWFHRequestsCount,
-      permission: { feature: 'Approved (WFH)', action: 'view' }
-    },
-    {
-      label: 'Processed',
-      link: '/time-off/wfh/processed',
-      icon: '/time-off-icon/processed-icon.png',
-      count: this.processedWFHRequestsCount,
-      permission: { feature: 'Processed (WFH)', action: 'view' }
-    },
-    {
-      label: 'Rejected',
-      link: '/time-off/wfh/rejected',
-      icon: '/time-off-icon/rejected-icon.png',
-      count: this.rejectedWFHRequestsCount,
-      permission: { feature: 'Rejected (WFH)', action: 'view' }
-    }
-  ];
+   this.navTabs = [
+          {
+            label: 'Waiting For Approval',
+            link: 'waiting-for-approval',
+            icon: '/time-off-icon/waiting-for-approval-icon.png',
+            count: this.waitingForApprovalWFHCount,
+            permission: {
+              feature: 'Waiting For Approval (WFH)',
+              action: 'view',
+            },
+          },
+          {
+            label: 'Approved',
+            link: 'approved',
+            icon: '/time-off-icon/approved-icon.png',
+            count: this.approvedWFHRequestsCount,
+            permission: { feature: 'Approved (WFH)', action: 'view' },
+          },
+          {
+            label: 'Processed',
+            link: 'processed',
+            icon: '/time-off-icon/processed-icon.png',
+            count: this.processedWFHRequestsCount,
+            permission: { feature: 'Processed (WFH)', action: 'view' },
+          },
+          {
+            label: 'Rejected',
+            link: 'rejected',
+            icon: '/time-off-icon/rejected-icon.png',
+            count: this.rejectedWFHRequestsCount,
+            permission: { feature: 'Rejected (WFH)', action: 'view' },
+          },
+          {
+            label: 'Cancelled',
+            link: 'cancelled',
+            icon: '/time-off-icon/cancelled-icon.png',
+            count: this.cancelWFHRequestsCount,
+            permission: { feature: 'Cancel (WFH)', action: 'view' },
+          },
+        ];
 }
 
   ngOnDestroy(): void {

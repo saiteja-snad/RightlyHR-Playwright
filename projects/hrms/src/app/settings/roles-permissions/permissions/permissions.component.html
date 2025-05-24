@@ -40,7 +40,7 @@
                         <th>Create</th>
                         <th>Delete</th>
                     </thead>
-                    <tbody>
+                    <tbody >
                         <tr>
                             <th colspan="5" class="custom-header">Settings Sidebar</th>
                         </tr>
@@ -933,7 +933,7 @@
                     </tr>
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (WFH)' 
-                                                || per.fields === 'Approved (WFH)' || per.fields === 'Processed (WFH)' 
+                                                || per.fields === 'Approved (WFH)' || per.fields === 'Processed (WFH)' || per.fields==='Cancel (WFH)'
                                                 || per.fields === 'Rejected (WFH)' || per.fields === 'Request WFH Button' ">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
@@ -1010,7 +1010,7 @@
                     </tr>
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center" *ngIf="per.fields === 'Waiting For Approval (Permissions)' 
-                                            || per.fields === 'Approved (Permissions)'  
+                                            || per.fields === 'Approved (Permissions)'  ||per.fields==='Cancel (Permissions)'
                                             || per.fields === 'Rejected (Permissions)' || per.fields === 'Request Permission Button' ">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
@@ -1974,11 +1974,11 @@
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" 
-                                (change)="onCheckboxChange(per, 'Create')" [disabled]="true">
+                                (change)="onCheckboxChange(per, 'Create')"   [disabled]="!(per.fields === 'My Info Previous Experience Details' || per.fields === 'My Info Certification Details') || !roleToFilter?.id">
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" 
-                                (change)="onCheckboxChange(per, 'Delete')" [disabled]="true">
+                                (change)="onCheckboxChange(per, 'Delete')" [disabled]="!(per.fields === 'My Info Previous Experience Details' || per.fields === 'My Info Certification Details') || !roleToFilter?.id">
                             </td>
                         </tr>
                     </ng-container>

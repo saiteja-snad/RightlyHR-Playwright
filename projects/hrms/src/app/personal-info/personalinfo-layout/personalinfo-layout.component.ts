@@ -8,19 +8,16 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { ProfileInfoDetailsComponent } from '../../shared/profile-info-details/profile-info-details.component';
-import { PersonalPersonalTabsComponent } from '../../shared/personalinfo-tabs/personal-personal-tabs/personal-personal-tabs.component';
-import { PersonalJobTabsComponent } from '../../shared/personalinfo-tabs/personal-job-tabs/personal-job-tabs.component';
+
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { MyInfoPersonalTabsComponent } from "../../shared/myinfo-tabs/my-info-personal-tabs/my-info-personal-tabs.component";
-import { MyinfoJobTabsComponent } from "../../shared/myinfo-tabs/myinfo-job-tabs/myinfo-job-tabs.component";
 
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 @Component({
   selector: 'app-personalinfo-layout',
-  imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent, PersonalPersonalTabsComponent, PersonalJobTabsComponent,
-    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, MyInfoPersonalTabsComponent, MyinfoJobTabsComponent],
+  imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent,
+    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss'
 })
@@ -475,6 +472,11 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   onBackSubmit() {
+
+      if (this.headerName === 'Team member info') {
+    this.router.navigate(['/myinfo/team/my-team-members']);
+    return;
+  }
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
     if (routestatus.empType === 'Probation') {
       this.router.navigate(['/admin/probation-employees']);
@@ -522,7 +524,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     if (currentPath.startsWith('/myinfo')) {
       this.headerName = "My Info";
       this.showBackIcon = false;  // Hide back icon for personalinfo
-      return; // Important: stop here so admin logic does NOT run
+      return;
     }
 
     // Now we know route is NOT personalinfo, so we check admin logic
@@ -565,7 +567,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             this.headerName = "External Inactive";
             break;
           default:
-            this.headerName = "Employees";
+            this.headerName = "Team member info";
+        
         }
       }
     }
@@ -584,7 +587,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    localStorage.removeItem('personaldata')
+    
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

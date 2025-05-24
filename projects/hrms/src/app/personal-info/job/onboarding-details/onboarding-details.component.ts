@@ -79,6 +79,7 @@ export class OnboardingDetailsComponent {
   ];
   filteredWorkLocations: any[] = [];
   selectedWorkLocation: any = null;
+  statustoprint: any;
   constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService, private modalService: NgbModal,public rbac:RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
@@ -195,7 +196,9 @@ export class OnboardingDetailsComponent {
         console.log(data);
         this.empdata = data;
         this.employeestatus=data?.empstatus?.toLowerCase()
+        this.statustoprint=data?.substatus?.toLowerCase()
         console.log("status"+this.employeestatus)
+         console.log("status"+this.statustoprint)
         this.getStatus();
         this.patchForm(data);
       },
@@ -270,11 +273,12 @@ export class OnboardingDetailsComponent {
     this.subscription = this.http.getData(`Status`).subscribe({
       next: (data: any) => {
         const empStatus = this.employeestatus?.toLowerCase();
+        
         console.log('empStatus:', empStatus);
       
         const statusMapping: { [key: string]: string[] } = {
-          prospective: ['active', 'inactive', 'prospective'],
-          active: ['active', 'inactive'],
+          prospective: ['active', 'prospective'],
+          active: ['active'],
           inactive: [ 'inactive'],
           trainee: ['trainee active', 'inactive', 'trainee'],
           'trainee prospective': ['trainee active', 'trainee prospective'],
@@ -438,13 +442,21 @@ export class OnboardingDetailsComponent {
   }
 
   showButtons(): void {
+    this.getEmployeeId();
     this.buttons = !this.buttons;
 
     if (this.buttons) {
       
       this.onboardingForm.enable();
       this.getEmployeeId()
-      this.onboardingForm.get('totalExperience')?.disable()
+      this.onboardingForm.get('totalExperience')?.disable();
+      this.onboardingForm.get('status')?.disable();
+      if(this.statustoprint === 'offer letter accepted'){
+        console.log(this.empdata?.substatus)
+          this.onboardingForm.get('status')?.enable();
+      }
+
+
     } else {
       this.getEmployeeId()
       this.onboardingForm.disable();
@@ -462,6 +474,7 @@ export class OnboardingDetailsComponent {
     }
     return true;
   }
+  
   
 }
 

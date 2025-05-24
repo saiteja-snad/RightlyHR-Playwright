@@ -178,7 +178,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="currentAddressLine1" (keydown)="enforceMaxLength($event, 150)"
+                        <input type="text" class="form-control custom-input" id="currentAddressLine1" [maxLength]="100"
                             formControlName="addressLine1"  (input)="onCurrentAddressChange()"  placeholder="Please enter address line 1" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('currentAddress.addressLine1')?.invalid && personalDetailsForm.get('currentAddress.addressLine1')?.touched"
                             class="error-msg">
@@ -188,7 +188,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="currentAddressLine2" class="form-label custom-label mb-2">Address Line2<span
                                 class="text-danger"></span></label>
-                        <input type="text" class="form-control custom-input"  (input)="onCurrentAddressChange()"  id="currentAddressLine2" (keydown)="enforceMaxLength($event, 150)"
+                        <input type="text" class="form-control custom-input"  (input)="onCurrentAddressChange()"  id="currentAddressLine2" [maxLength]="100"
                             formControlName="addressLine2" placeholder="Please enter address line 2" autocomplete="off">
                         <div *ngIf="personalDetailsForm.get('currentAddress.addressLine2')?.invalid && personalDetailsForm.get('currentAddress.addressLine2')?.touched"
                             class="error-msg">
@@ -243,7 +243,7 @@
                                 Zip Code cannot exceed 6 digits
                             </div>
                             <div *ngIf="personalDetailsForm.get('currentAddress.zipCode')?.hasError('pattern') && personalDetailsForm.get('currentAddress.zipCode')?.touched" class="error-msg">
-                                Zip Code should contain only numbers
+                                Invalid Zip Code
                             </div>
                         </div>
                     </div>
@@ -263,7 +263,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentAddressLine1" class="form-label custom-label mb-2">Address Line 1<span
                                 class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" id="permanentAddressLine1" (keydown)="enforceMaxLength($event, 150)"
+                        <input type="text" class="form-control custom-input" id="permanentAddressLine1" [maxLength]="100"
                             formControlName="addressLine1" (input)="onCurrentAddressChange()" placeholder="Please enter address line 1" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.addressLine1')?.invalid && personalDetailsForm.get('permanentAddress.addressLine1')?.touched"
                             class="error-msg">Address Line 1 is required
@@ -272,7 +272,7 @@
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label for="permanentAddressLine2" class="form-label custom-label mb-2">Address Line 2
                             <span class="text-danger"></span></label>
-                        <input type="text" class="form-control custom-input" id="permanentAddressLine2" (keydown)="enforceMaxLength($event, 150)"
+                        <input type="text" class="form-control custom-input" id="permanentAddressLine2" [maxLength]="100"
                             formControlName="addressLine2" (input)="onCurrentAddressChange()" placeholder="Please enter address line 2" autocomplete="off" />
                         <div *ngIf="personalDetailsForm.get('permanentAddress.addressLine2')?.invalid && personalDetailsForm.get('permanentAddress.addressLine2')?.touched"
                             class="error-msg">
@@ -326,8 +326,9 @@
                                 Zip Code cannot exceed 6 digits
                             </div>
                             <div *ngIf="personalDetailsForm.get('permanentAddress.zipCode')?.hasError('pattern') && personalDetailsForm.get('permanentAddress.zipCode')?.touched" class="error-msg">
-                                Zip Code should contain only numbers
+                               Invalid Zip Code
                             </div>
+
                         </div>
                     </div>
                 </ng-container>

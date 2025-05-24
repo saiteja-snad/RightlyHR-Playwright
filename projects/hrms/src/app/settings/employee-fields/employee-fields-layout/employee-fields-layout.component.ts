@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { SettingsEmployeeFieldsModuleTabsComponent } from "../../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component";
 import { SettingsPersonalTabsComponent } from "../../../shared/settings-tabs/settings-personal-tabs/settings-personal-tabs.component";
 import { SettingsJobTabsComponent } from "../../../shared/settings-tabs/settings-job-tabs/settings-job-tabs.component";
@@ -11,19 +11,31 @@ import { SettingsManageShitsTabsComponent } from "../../../shared/settings-tabs/
 import { SettingsManageHolidaysTabsComponent } from "../../../shared/settings-tabs/settings-manage-holidays-tabs/settings-manage-holidays-tabs.component";
 import { SettingsManagePoliciesTabsComponent } from "../../../shared/settings-tabs/settings-manage-policies-tabs/settings-manage-policies-tabs.component";
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../../shared/modules-info';
+import { DocumentsCreationComponent } from "../documents-creation/documents-creation.component";
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-employee-fields-layout',
   imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent,
     SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent, ManageDstTabsComponent, SettingsManageShitsTabsComponent,
-    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent, ModuleInformationComponent],
+    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent, ModuleInformationComponent, DocumentsCreationComponent],
   templateUrl: './employee-fields-layout.component.html',
   styleUrl: './employee-fields-layout.component.scss'
 })
 
-export class EmployeeFieldsLayoutComponent {
-
+export class EmployeeFieldsLayoutComponent implements OnInit{
+  moduleinfo : string = '';
   constructor(public readonly router: Router) { }
+
+  ngOnInit(): void {
+    this.updateModuleInfo();
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
 
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
@@ -66,5 +78,25 @@ export class EmployeeFieldsLayoutComponent {
       }
       return false;
     });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/settings/employee-fields/personal': MODULE_INFOS.SETTINGS_PERSONAL_INFO_MODULE_INFO,
+      '/settings/employee-fields/job': MODULE_INFOS.SETTINGS_JOB_INFO_MODULE_INFO,
+      '/settings/employee-fields/documents': MODULE_INFOS.SETTINGS_DOCUMENTS_INFO_MODULE_INFO,
+      '/settings/employee-fields/manage-shifts': MODULE_INFOS.SETTINGS_MANAGE_SHIFTS_INFO_MODULE_INFO,
+      '/settings/employee-fields/manage-policies': MODULE_INFOS.SETTINGS_MANAGE_POLICIES_INFO_MODULE_INFO,
+      '/settings/employee-fields/manage-holidays': MODULE_INFOS.SETTINGS_MANAGE_HOLIDAYS_INFO_MODULE_INFO,
+      '/settings/employee-fields/manage-weekends': MODULE_INFOS.SETTINGS_MANAGE_WEEKENDS_INFO_MODULE_INFO,
+      '/settings/employee-fields/expenes': MODULE_INFOS.SETTINGS_ESPENSE_TYPE_INFO_MODULE_INFO,
+      '/settings/employee-fields/manage-dsts': MODULE_INFOS.SETTINGS_MANAGE_DST_INFO_MODULE_INFO,
+      '/settings/employee-fields/no-due-clearnce': MODULE_INFOS.SETTINGS_NO_DUE_CLEARANCE_MODULE_INFO,
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 }

@@ -127,7 +127,7 @@
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();AddForm.reset()">
-            {{ 'Close' | translate }}
+            {{ 'Cancel' | translate }}
           </button>
           <button type="button" class="custom-btn btn-primary" (click)="addTeam(AddForm)" [disabled]="!AddForm.valid">
             {{ 'Add' | translate }}
@@ -219,7 +219,7 @@
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();updateForm.reset()">
-            {{ 'Close' | translate }}
+            {{ 'Cancel' | translate }}
           </button>
           <button type="button" class="custom-btn btn-primary" (click)="updateTeam(modal)" [disabled]="updateForm.invalid ">
             {{ 'Update' | translate }}

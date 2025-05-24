@@ -12,6 +12,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { Select } from 'primeng/select';
 
 @Component({
   selector: 'app-wfh-waiting-for-approval',

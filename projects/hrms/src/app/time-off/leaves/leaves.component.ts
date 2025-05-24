@@ -123,9 +123,198 @@ export class LeavesComponent {
     this.getEmployementTypeByempId(this.empdata.employeeId)
     this.getweekendbyempid()
     this.checkPreviousOptionalLeaves();
+    this.getTeamManagersDetails();
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
   }
+
+
+
+ draftsCount = 0;
+  waitingforapprovalCount = 0;
+  approvedCount = 0;
+  rejectedCount = 0;
+  processedCount = 0;
+  cancelledCount = 0;
+   disaplyapplybutton=true;
+  onCheckemployee(employeedId: any) {
+    this.http.setEmployeeId(employeedId); //
+    this.waitingforapprovalCount = 0;
+    this.rejectedCount = 0;
+    this.approvedCount = 0;
+    this.processedCount = 0;
+    this.cancelledCount = 0;
+    this.lpdata=[];
+    if (employeedId) {
+      this.disaplyapplybutton=false;
+     this.getDataByLPID(employeedId);
+     this.getLeavesData(employeedId);
+     this.getCategoryDetails();
+    } else {
+    this.disaplyapplybutton=true;
+    this.getLeavesData(this.empdata.employeeId);
+    this.getDataByLPID(this.empdata.employeeId);
+    this.getCategoryDetails();
+    }
+  }
+
+   getDataByLPID(employeeId:any) {
+    let empid = employeeId;
+    this.subscription = this.http.getData(`Timeoff/LPID/${empid}`).subscribe({
+      next: (response: any) => {
+        console.log('getDataByLPID-LEAVECOM',response);
+        this.lpdata = response;
+        console.log(this.lpdata); // the response data stored in the lpdata variable
+       
+        // Reset counts
+        this.waitingforapprovalCount = 0;
+        this.draftsCount = 0;
+        this.approvedCount = 0;
+        this.rejectedCount = 0;
+        this.processedCount = 0;
+        this.cancelledCount = 0;
+
+        // Add existing counts
+        this.lpdata.forEach((element: { status: string }) => {
+          if (element.status === 'Waiting for Approval') {
+            this.waitingforapprovalCount++;
+          }
+          if (element.status === 'Draft') {
+            this.draftsCount++;
+          }
+          if (element.status === 'Approved') {
+            this.approvedCount++;
+          }
+          if (element.status === 'Rejected') {
+            this.rejectedCount++;
+          }
+          if (element.status === 'Processed') {
+            this.processedCount++;
+          }
+          if (element.status === 'Cancelled') {
+            this.cancelledCount++;
+          }
+        });
+
+        // Check if optionalHolidays is defined before accessing its length
+        if (this.optionalHolidays) {
+          let totalOptionalHolidays = this.optionalHolidays.length;
+          console.log('Total Optional Holidays:', totalOptionalHolidays);
+
+          // Initialize variables
+          this.optLevsUsed = 0; // Track how many optional holidays are booked with "Optional Holiday"
+          let otherCategoriesUsed = 0; // Track how many optional holidays are booked with other categories
+
+          // Iterate over lpdata to adjust the used "Optional Holiday"
+          this.lpdata.forEach((leave: any) => {
+            let leaveDate = moment(leave.startdate).format('YYYY-MM-DD');
+            let isOptionalHoliday = this.optionalHolidays.some(
+              (holiday: any) =>
+                moment(holiday.holidayDate).format('YYYY-MM-DD') === leaveDate
+            );
+            if (isOptionalHoliday) {
+              if (leave.categoryName === 'Optional Holiday') {
+                this.optLevsUsed += leave.duration; // Add duration to optLevsUsed
+              } else {
+                otherCategoriesUsed += leave.duration;
+                console.log(
+                  `Optional holiday on ${leaveDate} booked with ${leave.categoryName}.`
+                );
+              }
+            }
+          });
+
+          console.log('"Optional Holiday" used:', this.optLevsUsed);
+          console.log(
+            'Optional holidays booked with other categories, total duration:',
+            otherCategoriesUsed
+          );
+
+          // Ensure optionalLeaveAllowedDays is defined
+          if (
+            this.optionalLeaveAllowedDays !== undefined &&
+            this.optionalLeaveAllowedDays !== null
+          ) {
+            let remainingOptionalHolidays =
+              totalOptionalHolidays - otherCategoriesUsed;
+            console.log(
+              'Remaining Optional Holidays:',
+              remainingOptionalHolidays
+            );
+
+            console.log(
+              'Optional leave allowed days:',
+              this.optionalLeaveAllowedDays
+            );
+
+            // Logic for blocking leave requests if remainingOptionalHolidays matches optionalLeaveAllowedDays
+            if (remainingOptionalHolidays <= this.optionalLeaveAllowedDays) {
+              console.log(
+                'You must use "Optional Holiday" category for remaining optional holidays.'
+              );
+            }
+          } else {
+            console.error('optionalLeaveAllowedDays is undefined.');
+          }
+        } else {
+          console.error('optionalHolidays is undefined.');
+        }
+      },
+      error: (reason: any) => console.log(reason),
+    });
+  }
+   leavedatatimeoff: any;
+  leavedatas: any;
+  getLeavesData(employeeId:any) {
+    let empdata = employeeId;
+    console.log(empdata);
+    this.subscription = this.http
+      .getData(`Timeoff/${empdata}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+
+          this.leavedatatimeoff = response;
+          console.log(this.leavedatas);
+
+          this.getDataByLPID(employeeId);
+        },
+        error: (reason: any) => console.log(reason),
+      });
+  }
+  
+  // function to get the data of employees by hierarchy
+  getEmployeeInfo = [] as any;
+ getTeamManagersDetails() {
+  const EmployeeId = this.empdata.employeeId;
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe({
+      next: (response: any) => {
+        console.log('getEmployeesByhierarchy', response);
+        if (response && response.length) {
+          // No filter
+          this.getEmployeeInfo = response.map((employee: any) => ({
+            ...employee,
+            fullName: `${
+              employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+            }${employee.firstName} ${
+              employee.middleName ? employee.middleName + ' ' : ''
+            }${employee.lastName}`,
+          }));
+          console.log('getEmployeeInfo', this.getEmployeeInfo);
+        }
+      },
+    });
+}
+
+
+
+
+
+
+
+
 
   navigateOrLeavebalance() {
     this.router.navigate(['/time-off/leaves/org-leave-balance'])

@@ -124,6 +124,20 @@ export class HttpService {
 
   desklocationId$ = this.desklocationIdSubject.asObservable();
   desksublocationId$ = this.desksublocationIdSubject.asObservable();
+
+// function for employeid
+
+ private selectedEmployeeId = new BehaviorSubject<any>(null);
+
+  // Observable for components to subscribe to
+  selectedEmployeeId$ = this.selectedEmployeeId.asObservable();
+
+  // Method to update the employeeId
+  setEmployeeId(id: any): void {
+    this.selectedEmployeeId.next(id);
+    console.log('Selected Employee ID:', id);
+  }
+
   //function to update the desk Updatelocation
   deskUpdateLocationId(id: string | null) {
     this.desklocationIdSubject.next(id);

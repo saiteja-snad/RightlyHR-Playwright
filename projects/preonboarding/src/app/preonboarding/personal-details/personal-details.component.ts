@@ -202,6 +202,7 @@ export class PersonalDetailsComponent implements OnInit {
       event.preventDefault();
     }
   }
+  disablecode=false;
   patchForm() {
     this.personalDetailsForm.patchValue({
       firstName: this.employeeData.firstName,
@@ -233,6 +234,13 @@ export class PersonalDetailsComponent implements OnInit {
       this.personalDetailsForm.get('sameAsPermanent')?.setValue(areSame);
     } else {
       this.personalDetailsForm.get('sameAsPermanent')?.setValue(false);
+    }
+    if (this.employeeData.substatus !== 'Requested Documents') {
+    this.personalDetailsForm.disable();
+    this.disablecode=true;
+     } else {
+      this.personalDetailsForm.enable();
+      this.disablecode=false;
     }
   }
   // Copy Current Address to Permanent Address

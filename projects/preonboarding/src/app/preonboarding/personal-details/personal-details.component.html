@@ -83,7 +83,7 @@
                             class="text-danger">*</span></label>
                     <div class="d-flex custom-input-group position-relative custom-phone-number-content w-100">
                         <div *ngIf="!loading; else loadingTemplate">
-                            <lib-country-list [selectedCountryConfig]="selectedCountryConfig" 
+                            <lib-country-list [selectedCountryConfig]="selectedCountryConfig" [class.disabled]="disablecode"
                                 [selectedCountryCode]="selectedCountryCode()" [countryListConfig]="countryListConfig"
                                 class="country-input" (onCountryChange)="onCountryChange($event)">
                             </lib-country-list>

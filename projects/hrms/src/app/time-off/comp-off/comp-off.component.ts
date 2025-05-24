@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -23,7 +23,9 @@ import { FormValidationsService } from '../../services/form-validations.service'
   ],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',
+  encapsulation:ViewEncapsulation.None,
 })
+
 export class CompOffComponent implements OnInit, OnDestroy {
   addCompOffForm!: FormGroup;
   empinfo = {} as IJob;

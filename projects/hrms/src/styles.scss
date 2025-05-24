@@ -560,7 +560,7 @@ body {
     width: 7.5rem;
     min-width: 7.5rem;
     padding: 0.75rem;
-    height: calc(100dvh - 9rem);
+    height: calc(100dvh - 10rem);
     border-radius: 0.5rem;
     overflow-y: auto;
     background-color: var(--white-color);
@@ -571,6 +571,7 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .component-header-content {
@@ -938,7 +939,7 @@ input:focus,textarea:focus,select:focus {
     position: relative;
 
     thead {
-        top: -1%;
+        top: 0;
         position: sticky;
         z-index: 1;
     }
@@ -949,7 +950,7 @@ input:focus,textarea:focus,select:focus {
         line-height: 100%;
         letter-spacing: 0%;
         vertical-align: middle;
-        padding: 0.75rem;
+        padding: 1rem;
     }
 
     th {
@@ -973,7 +974,7 @@ input:focus,textarea:focus,select:focus {
     }
 
     tr {
-        border: 1px solid var(--table-data-border-color);
+        border-bottom: 1px solid var(--table-data-border-color);
     }
 
     .table-placeholder {
@@ -1658,7 +1659,7 @@ input[type="file"] {
     border: 1px solid var(--table-main-content-border-color);
 
     thead {
-        top: 0%;
+        top: 0;
         position: sticky;
         z-index: 1;
     }
@@ -1860,7 +1861,7 @@ input[type="checkbox"] {
 .custom-compoent-data-loader {
     position: relative;
     width: 100%;
-    height: calc(100dvh - 20rem);
+    height: calc(100dvh - 10rem);
 }
 
 .view-btn {
@@ -1940,7 +1941,7 @@ input[type=number]::-webkit-outer-spin-button {
         letter-spacing: 0% !important;
         vertical-align: middle !important;
         padding: 1rem !important;
-        border: 0rem !important
+        border-bottom: 1px solid var(--table-data-border-color);
     }
 
     .p-checkbox-checked .p-checkbox-box {
@@ -1961,7 +1962,7 @@ input[type=number]::-webkit-outer-spin-button {
     }
 
     .p-accordionheader {
-        padding: 0.75rem !important;
+        padding: 1rem !important;
         background-color: var(--btn-primary-color) !important;
         font-weight: 600;
         font-size: var(--fontsize14);
@@ -1989,7 +1990,7 @@ input[type=number]::-webkit-outer-spin-button {
         }
 
         th,td {
-            padding: 0.75rem;
+            padding: 1rem;
             text-align: center;
             line-height: 100%;
             letter-spacing: 0%;

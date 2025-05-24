@@ -1,63 +1,50 @@
-
 <div class="custom-main-component-container">
-    <div class="custom-table-content ">
-      @if(!dataload){
-        <table class="w-100">
-            <thead>
-                <tr>
-                    <th>Worked Date</th>
-                    <th>Availed</th>
-                    <th>Reason</th>
-                    <th>Applied Date</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                
-                <ng-container *ngIf="rejectedWFHs!.length > 0; else noDataTemplate">
-                    <tr *ngFor="let wfhRequest of rejectedWFHs; let i = index">
-                        <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
-                        <td [ngSwitch]="wfhRequest.durationType">
-                            <span *ngSwitchCase="1">First Half</span>
-                            <span *ngSwitchCase="3">Second Half</span>
-                            <span *ngSwitchCase="2">Full Day</span>
-                            <span *ngSwitchDefault>-</span>
-                        </td>
-                        <td>
-                            <div>
-                              <span>
-                                <a *ngIf="wfhRequest.requestedComments; else noRequestedComments"
-                                   type="button"
-                                  
-                                   [ngbPopover]="requestedComments">
-                                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                                </a>
-                                <ng-template #requestedComments>
-                                  <div>
-                                    <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
-                                  </div>
-                                </ng-template>
-                                <ng-template #noRequestedComments>
-                                  <span>-</span>
-                                </ng-template>
-                              </span>
-                            </div>
-                          </td>
-                        <td>{{ wfhRequest.requestedDate | dateformat }}</td>
-                        <td>{{ wfhRequest.status }}</td>
-                    </tr>
-                </ng-container>
-
-                <ng-template #noDataTemplate>
-                    <tr>
-                        <td colspan="6">
-                            <app-no-data-found></app-no-data-found>
-                        </td>
-                    </tr>
+  <div class="custom-table-content">
+    @if(!dataload){
+    <table class="w-100">
+      <thead>
+        <th>Worked Date</th>
+        <th>Availed</th>
+        <th>Reason</th>
+        <th>Applied Date</th>
+        <th>Status</th>
+      </thead>
+      <tbody>
+        <ng-container *ngIf="rejectedWFHs!.length > 0; else noDataTemplate">
+          <tr *ngFor="let wfhRequest of rejectedWFHs; let i = index">
+            <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
+            <td [ngSwitch]="wfhRequest.durationType">
+              <span *ngSwitchCase="1">First Half</span>
+              <span *ngSwitchCase="3">Second Half</span>
+              <span *ngSwitchCase="2">Full Day</span>
+              <span *ngSwitchDefault>-</span>
+            </td>
+            <td>
+              <div>
+                <a *ngIf="wfhRequest.requestedComments; else noRequestedComments" type="button"
+                  [ngbPopover]="requestedComments">
+                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                </a>
+                <ng-template #requestedComments>
+                  <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
                 </ng-template>
-                
-            </tbody>
-        </table>
-      }@else{<app-data-loader-content />}
-    </div>
+                <ng-template #noRequestedComments>
+                  <span>-</span>
+                </ng-template>
+              </div>
+            </td>
+            <td>{{ wfhRequest.requestedDate | dateformat }}</td>
+            <td>{{ wfhRequest.status }}</td>
+          </tr>
+        </ng-container>
+
+        <ng-template #noDataTemplate>
+          <tr class="table-placeholder">
+            <app-no-data-found></app-no-data-found>
+          </tr>
+        </ng-template>
+      </tbody>
+    </table>
+    }@else{<app-data-loader-content />}
+  </div>
 </div>

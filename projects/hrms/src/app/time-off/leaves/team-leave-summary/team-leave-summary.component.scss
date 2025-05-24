@@ -1,11 +1,7 @@
-.custom-table-content {
-  position: relative;
-}
-
 .component-left-tabs-container {
-  height: calc(100dvh - 9rem) !important;
+  height: calc(100dvh - 10rem) !important;
 }
 
-.component-right-content{
-  height: calc(100dvh - 9rem) !important;
+.custom-table-content {
+  height: calc(100dvh - 13.25rem);
 }

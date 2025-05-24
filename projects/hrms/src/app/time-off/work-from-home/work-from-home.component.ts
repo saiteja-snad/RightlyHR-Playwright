@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IJob } from '../../Interfaces/letters-model';
@@ -24,7 +24,9 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
+
 export class WorkFromHomeComponent implements OnInit, OnDestroy {
   empinfo = {} as IJob;
   halfDayValue = {} as any;

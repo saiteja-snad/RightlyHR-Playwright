@@ -9,7 +9,7 @@
         <div>
             <button class="custom-btn btn-primary" (click)="openModals(changetmmodals)">Change TM</button>
         </div>}
-        @if(rbac.allowedToAccess('Employee Info Change RM Button.view')){
+            @if(canAccess('view','changesrm')) {
         <div>
             <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change RM</button>
         </div>

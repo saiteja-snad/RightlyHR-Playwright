@@ -80,7 +80,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Add New Family Member Details</p>
+                <p class="popup-heading mb-0">Add Family Member Details</p>
             </div>
             <div>
                 <a (click)="modal.dismiss();familyDetailsForm.reset()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
@@ -102,7 +102,7 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="dateOfBirth" class="form-label custom-label mb-2">Date of Birth<span class="text-danger">*</span></label>
-                        <input type="date"  onkeypress="return false" class="form-control custom-input" id="dateOfBirth"
+                        <input type="date"  onkeypress="return false" class="form-control custom-input" id="dateOfBirth" [max]="currentdata | date:'yyyy-MM-dd'"
                             formControlName="dateOfBirth">
                         <div class="error-msg"
                             *ngIf="familyDetailsForm.get('dateOfBirth')?.invalid && familyDetailsForm.get('dateOfBirth')?.touched">
@@ -171,7 +171,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="dateOfBirthupdate" class="form-label custom-label mb-2">Date of Birth<span
                                 class="text-danger">*</span></label>
-                        <input type="date" class="form-control custom-input"  onkeypress="return false" id="dateOfBirthupdate"
+                        <input type="date" class="form-control custom-input" [max]="currentdata | date:'yyyy-MM-dd'"  onkeypress="return false" id="dateOfBirthupdate"
                             formControlName="dateOfBirthupdate">
                         <div class="error-msg"
                             *ngIf="familyDetailsupdateForm.get('dateOfBirthupdate')?.invalid && familyDetailsupdateForm.get('dateOfBirthupdate')?.touched">

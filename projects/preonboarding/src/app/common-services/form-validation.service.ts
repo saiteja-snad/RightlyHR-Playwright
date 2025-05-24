@@ -23,6 +23,13 @@ export class FormValidationService {
     }
   }
 
+  validatePasteAlphabets(event: ClipboardEvent): void {
+  const pastedData = event.clipboardData?.getData('text') ?? '';
+  if (!/^[A-Za-z\s]+$/.test(pastedData)) {
+    event.preventDefault(); // Cancel the paste event if the data is not alphabetic
+  }
+}
+
   ///onlynumnbers
   restrictAlphabets(event: KeyboardEvent) {
     const key = event.key;
@@ -82,7 +89,7 @@ export class FormValidationService {
     }
   
     // Allow alphabetic characters, numbers, and special characters
-    const isValidCharacter = /^[A-Za-z0-9\s!@#$%^&*(),.?":{}|<>-]$/.test(key);
+    const isValidCharacter = /^[A-Za-z0-9\s!@#$^&*(),.":{}/|-]$/.test(key);
     if (!isValidCharacter) {
       event.preventDefault();
     }
@@ -242,6 +249,7 @@ restrictInputAllowAlphaNumericAndCommonSpecialChars(event: KeyboardEvent): void 
       }
     }
   }
+
 
   checkNoSpaceForEmail(event: KeyboardEvent, formControl: FormGroup, formControlName: string): void {
     const input = event.target as HTMLInputElement;

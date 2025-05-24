@@ -11,7 +11,7 @@
       </div>
       }
     } -->
-    @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length >= 0) ){
+    @if(shouldShowButton(this.empdata.lastworkingday) && (nodueclearancedetails.length > 0) ){
       <div class="custom-add-btn" (click)="openModal(raiseNodue)">
       <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
       </div>

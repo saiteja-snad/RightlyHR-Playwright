@@ -99,32 +99,66 @@ export class NoDueClearanceComponent {
   //function to get the nodue data
   allApproved = false;
   nodueapprovedcount = 0;
-  getNodueClearance() {
-    this.loading = true
-    const employeeId = parseInt(this.empinfo.employeeId)
-    this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.loading = false
-        this.nodue_Clearance_Details.next(data);
-        const totalCount = data.filter((ele: any) => (ele.subStatus?.toLowerCase() !== 'rerequested')).length;
-        const approvedCount = data.filter((ele: any) => (ele.status?.toLowerCase() === 'approved')).length;
-        this.nodueapprovedcount = approvedCount;
-        this.allApproved = totalCount > 0 && approvedCount === totalCount;
-        this.nodueapprovalcount = data.length
-        if (data.length > 0) {
-          const lineOrders = data.map((item: any) => item.lineOrder);
-          const highestLineOrder = Math.max(...lineOrders);
-          if (highestLineOrder == this.nodueapprovalcount) {
-            this.lineOrder = true
-            console.log(this.lineOrder);
+  // getNodueClearance() {
+  //   this.loading = true
+  //   const employeeId = parseInt(this.empinfo.employeeId)
+  //   this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
+  //     next: (data: any) => {
+  //       this.loading = false
+  //       this.nodue_Clearance_Details.next(data);
+  //       const totalCount = data.filter((ele: any) => (ele.subStatus?.toLowerCase() !== 'rerequested')).length;
+  //       const approvedCount = data.filter((ele: any) => (ele.status?.toLowerCase() === 'approved')).length;
+  //       this.nodueapprovedcount = approvedCount;
+  //       this.allApproved = totalCount > 0 && approvedCount === totalCount;
+  //       this.nodueapprovalcount = data.length
+  //       if (data.length > 0) {
+  //         const lineOrders = data.map((item: any) => item.lineOrder);
+  //         const highestLineOrder = Math.max(...lineOrders);
+  //         if (highestLineOrder == this.nodueapprovalcount) {
+  //           this.lineOrder = true
+  //           console.log(this.lineOrder);
 
-          }
-        }
-      }, error: (err) => {
-        this.loading = false
+  //         }
+  //       }
+  //     }, error: (err) => {
+  //       this.loading = false
+  //     }
+  //   })
+  // }
+
+  getNodueClearance() {
+  this.loading = true;
+  const employeeId = parseInt(this.empinfo.employeeId);
+
+  this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
+    next: (data: any) => {
+      this.loading = false;
+      this.nodue_Clearance_Details.next(data);
+
+      // Filter out re-requested
+      const validItems = data.filter((ele: any) => ele.subStatus?.toLowerCase() !== 'rerequested');
+      const approvedCount = validItems.filter((ele: any) => ele.status?.toLowerCase() === 'approved').length;
+
+      this.nodueapprovedcount = approvedCount;
+      this.allApproved = validItems.length > 0 && approvedCount === validItems.length;
+
+      this.nodueapprovalcount = data.length;
+
+      if (data.length > 0) {
+        const uniqueLineOrders = new Set<number>(data.map((item: any) => Number(item.lineOrder)));
+        const highestLineOrder = Math.max(...Array.from(uniqueLineOrders));
+        this.lineOrder = highestLineOrder === uniqueLineOrders.size;
+        console.log('lineOrder:', this.lineOrder);
       }
-    })
-  }
+    },
+    error: (err) => {
+      this.loading = false;
+      console.log(err);
+    },
+  });
+}
+
+
   rerequestFornoDue(Value: any) {
 
     let noduereq = {

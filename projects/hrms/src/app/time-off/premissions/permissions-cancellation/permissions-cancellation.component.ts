@@ -27,6 +27,7 @@ export class PermissionsCancellationComponent implements OnInit,OnDestroy {
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
   permissions = [] as any;
+  selectempid: any;
   approvedPerimisions: RegularizationRequest [] = [] as RegularizationRequest[];
   dataload =  false;
   options = [
@@ -43,8 +44,21 @@ export class PermissionsCancellationComponent implements OnInit,OnDestroy {
 
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+  this.http.selectedEmployeeIdPermission$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getDataempPermissions();
+      }
+      else{
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getDataPermissions()
+      }
+    });
+
+   
   }
   onRowsChange() {
     this.first = 0;
@@ -58,6 +72,25 @@ export class PermissionsCancellationComponent implements OnInit,OnDestroy {
 
   getDataPermissions() {
     let empId = this.empinfo.employeeId;
+    this.dataload =  true;
+    this.http.getData(`RegularizationRequests/${empId}`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        this.permissions = response as RegularizationRequest[];
+        this.approvedPerimisions = this.permissions.filter((element: { status: string }) => element.status === 'Cancelled');
+        this.dataload =  false;
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.permissions = []; 
+        this.dataload =  false;// Set to empty array on error
+      },
+    });
+  }
+// this method use when choose my team in dropdown
+    getDataempPermissions() {
+    let empId = this.selectempid;
     this.dataload =  true;
     this.http.getData(`RegularizationRequests/${empId}`)
     .pipe(takeUntil(this.destroy$))

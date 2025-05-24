@@ -24,6 +24,7 @@ export class RegularizationRejectedComponent implements OnInit,OnDestroy {
   first: any = 0;
   rows: any = 10;
   empinfo = {} as IJob;
+  selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   rejectedPerimisions: RegularizationRequest [] = [] as RegularizationRequest[];
   dataLoad = false;
@@ -41,21 +42,49 @@ export class RegularizationRejectedComponent implements OnInit,OnDestroy {
 
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getDataPermissions()
+    this.http.selectedEmployeeIdRegularization$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getDataEMPPermissions();
+      }
+      else{
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+        this.getDataPermissions();
+      }
+    });
+
   }
   onRowsChange() {
     this.first = 0;
-
   }
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
 
   }
-
   getDataPermissions() {
     let empId = this.empinfo.employeeId;
+    this.dataLoad =  true;
+    this.http.getData(`RegularizationRequests/attendance/${empId}`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        this.rejectedPerimisions = response.filter((element: { status: string }) => element.status === 'Rejected');
+        this.dataLoad =  false;
+
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.dataLoad =  false;
+        this.rejectedPerimisions = []; // Set to empty array on error
+      },
+    });
+  }
+    getDataEMPPermissions() {
+    let empId = this.selectempid;
     this.dataLoad =  true;
     this.http.getData(`RegularizationRequests/attendance/${empId}`)
     .pipe(takeUntil(this.destroy$))

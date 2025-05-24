@@ -455,11 +455,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            if(this.responseSummary.failureRecordsCount != 0){
-              this.conformationPopup.openErrorModal(this.responseSummary.failureRecords[0].message)
-            }else{
-               this.conformationPopup.openSuccessModal('Request Approved Successfully');
-            }
+           this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -529,11 +525,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            if(this.responseSummary.failureRecordsCount != 0){
-              this.conformationPopup.openErrorModal(this.responseSummary.failureRecords[0].message)
-            }else{
-               this.conformationPopup.openSuccessModal('Request Rejected Successfully');
-            }
+            this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
           }else {
             this.openModal(this.leaveSummary);
           }
@@ -602,11 +594,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            if(this.responseSummary.failureRecordsCount != 0){
-              this.conformationPopup.openErrorModal(this.responseSummary.failureRecordsCount[0].message)
-            }else{
-               this.conformationPopup.openSuccessModal('Request Processed Successfully');
-            }
+             this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
           }else {
             this.openModal(this.leaveSummary);
           }
@@ -622,7 +610,6 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           else {
             this.conformationPopup.openErrorModal('Request Processed Failed');
           }
-
         },
         complete: () => {
           this.multiSelect = false;

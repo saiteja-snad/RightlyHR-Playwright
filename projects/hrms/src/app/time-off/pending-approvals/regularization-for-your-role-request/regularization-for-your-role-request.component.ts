@@ -403,10 +403,10 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-              this.sharedModalService.openSuccessModal('Request Approved Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
             } else {
-              this.responseSummary = response.data;
               this.openModal(this.leaveSummary);
             }
           },
@@ -470,15 +470,14 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
       message = 'Processing Request, Please wait...';
     }
     this.sharedModalService.openLoaderModal(message);
-    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.sharedModalService.openSuccessModal('Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
@@ -543,15 +542,16 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-              this.sharedModalService.openSuccessModal('Request Rejected Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
             } else {
-              this.responseSummary = response.data;
               this.openModal(this.leaveSummary);
             }
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
+            this.rejectForm.reset();
             this.spinnerLoader = false;
             if (reason.error.statusCode == 400) {
               this.sharedModalService.openErrorModal(reason.error.message)

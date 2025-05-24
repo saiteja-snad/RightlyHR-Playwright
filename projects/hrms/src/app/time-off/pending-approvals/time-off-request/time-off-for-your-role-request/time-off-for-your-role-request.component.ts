@@ -281,13 +281,6 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.selectedLeaveData = selecteddata;
   }
 
-  // processleave(selecteddata: LeaveApproval) {
-  //   this.selectedProducts = [selecteddata];
-  //   setTimeout(() => {
-  //     this.handleProcess();
-  //   }, 500);
-  // }
-
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
@@ -353,12 +346,8 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
-         if (this.selectedProducts && this.selectedProducts.length <= 0) {
-           if(this.responseSummary.failureRecordsCount != 0){
-              this.conformationPopup.openErrorModal(this.responseSummary.failureRecords[0].message)
-            }else{
-               this.conformationPopup.openSuccessModal('Request Approved Successfully');
-            }
+          if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -427,11 +416,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
          this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            if(this.responseSummary.failureRecordsCount != 0){
-              this.conformationPopup.openErrorModal(this.responseSummary.failureRecords[0].message)
-            }else{
-               this.conformationPopup.openSuccessModal('Request Rejected Successfully');
-            }
+            this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -501,11 +486,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            if(this.responseSummary.failureRecordsCount != 0){
-              this.conformationPopup.openErrorModal(this.responseSummary.failureRecordsCount[0].message);
-            }else{
-              this.conformationPopup.openSuccessModal('Request Processed Successfully');
-            }
+            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }

@@ -76,7 +76,7 @@ export class PremissionForYourRoleRequestComponent
   selectedLeaveData = {} as PermissionRequestResponse;
   approveForm!: FormGroup;
   rejectForm!: FormGroup;
-  searchValue: any;
+  searchValue: any | null;
   spinnerLoader = false;
   dataload = false;
   permissionsselect!: LeaveApproval[];
@@ -251,33 +251,29 @@ export class PremissionForYourRoleRequestComponent
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
-            if (
-              this.selectedLeavesItems &&
-              this.selectedLeavesItems.length <= 0
-            ) {
-              this.sharedModalService.openSuccessModal(
-                'Request Approved Successfully'
-              );
+            this.requestSummary = response.data;
+            if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
+              this.signalService.handleResponse(this.requestSummary, 'Request Approved Successfully');
             } else {
-              this.requestSummary = response.data;
               this.openModal(this.leaveSummary);
             }
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
+            this.approveForm.reset();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
+          },
+          complete: () => {
             this.selectedLeavesItems = [];
             this.multiSelect = false;
             this.approveForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.permissionForYouTriggerSignal.set(true);
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
-          },
-          error: (reason: any) => {
-            console.error(reason);
-            this.modalService.dismissAll();
-            this.sharedModalService.openErrorModal(reason.error.Message);
-            this.spinnerLoader = false;
-          },
-          complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }
@@ -316,35 +312,33 @@ export class PremissionForYourRoleRequestComponent
     this.sharedModalService.openLoaderModal(
       message
     );
-    this.http
-      .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+    this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.requestSummary = response.data;
           if (
             this.selectedLeavesItems &&
             this.selectedLeavesItems.length <= 0
           ) {
-            this.sharedModalService.openSuccessModal(
-              'Request Processed Successfully'
-            );
+            this.signalService.handleResponse(this.requestSummary, 'Request Processed Successfully');
           } else {
-            this.requestSummary = response.data;
             this.openModal(this.leaveSummary);
           }
-          this.selectedLeavesItems = [];
-          this.multiSelect = false;
-          this.signalService.permissionForYouTriggerSignal.set(true);
-          this.signalService.permissionSidNavCountTriggerSignal.set(true);
+          
         },
         error: (reason: any) => {
-          console.error(reason);
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
         complete: () => {
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
+          this.signalService.permissionForYouTriggerSignal.set(true);
+          this.signalService.permissionSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
+          this.searchValue = null;
         },
       });
   }
@@ -381,39 +375,34 @@ export class PremissionForYourRoleRequestComponent
           ],
         };
       }
-      this.http
-        .putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
+      this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
-            if (
-              this.selectedLeavesItems &&
-              this.selectedLeavesItems.length <= 0
-            ) {
-              this.sharedModalService.openSuccessModal(
-                'Request Rejected Successfully'
-              );
+            this.requestSummary = response.data;
+            if (this.selectedLeavesItems && this.selectedLeavesItems.length <= 0) {
+              this.signalService.handleResponse(this.requestSummary, 'Request Rejected Successfully');
             } else {
-              this.requestSummary = response.data;
               this.openModal(this.leaveSummary);
             }
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
+            this.rejectForm.reset();
+            this.sharedModalService.openErrorModal(reason.error.Message);
+            this.spinnerLoader = false;
+          },
+          complete: () => {
             this.selectedLeavesItems = [];
             this.multiSelect = false;
             this.rejectForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.permissionForYouTriggerSignal.set(true);
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
-          },
-          error: (reason: any) => {
-            console.error(reason);
-            this.modalService.dismissAll();
-            this.sharedModalService.openErrorModal(reason.error.Message);
-            this.spinnerLoader = false;
-          },
-          complete: () => {
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
         });
     }

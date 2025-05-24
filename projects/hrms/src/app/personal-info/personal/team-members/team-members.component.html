@@ -1,0 +1,423 @@
+<div class="custom-main-component-container">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+       <div>
+            <p class="component-header mb-0">Team Members</p>
+        </div>
+    <div class="d-flex gap-3 align-items-center">
+            @if(canAccess('view','chtm')) {
+        <div>
+            <button class="custom-btn btn-primary" (click)="openModals(changetmmodals)">Change TM</button>
+        </div>}
+        @if(rbac.allowedToAccess('Employee Info Change RM Button.view')){
+        <div>
+            <button class="custom-btn btn-primary" (click)="openModals(changermmodals)">Change RM</button>
+        </div>
+        }
+    </div>
+    </div>
+
+    <!--Input search-->
+    <div class="input-group custom-search mb-3">
+        <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <input type="search" class="form-control custom-search-input" placeholder="Search Here" aria-label="Username"
+            #search="ngModel" [(ngModel)]="searchValue" autocomplete="off" aria-describedby="basic-addon1">
+    </div>
+    <div class="custom-table-content">
+        <table class="w-100">
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Employee Name</th>
+                    <th>Work Email</th>
+                    <th>Phone Number</th>
+                    <!-- <th>Employee Job Details</th> -->
+                    @if(canAccess('update','team-managers') || canAccess('update','team-members')) {
+                    <th class="text-center">Action</th>}
+                </tr>
+            </thead>
+            <tbody
+                *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
+                <ng-container *ngIf="filteredMembers.length > 0; else noData">
+                    <tr *ngFor="let details of filteredMembers">
+                        <td>{{ details.fusionEmpId }}</td>
+                        <td  (click)="select(details)" >{{ details.firstName || 'N/A' }} {{details.middleName }} {{details.lastName }}</td>
+                        <td>{{ details.workEmail }}</td>
+                        <td>{{ details.contactnumber }}</td>
+
+                        @if(canAccess('update','team-managers')) {
+                        <td class="text-center">
+                            <div class="dropdown">
+                                <a type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </a>
+                                <ul class="dropdown-menu custom-dropdown-menu py-0">
+                                    @if(canAccess('update','team-managers')) {
+                                    <li (click)="assigintm(changetmmodalforsingle, details)">
+                                        <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change TM</a>
+                                    </li>
+                                    }
+                                    @if(canAccess('update','team-members')) {
+                                    <li (click)="openModal(changermmodal,details)">
+                                        <a class="dropdown-item"><i class="bi bi-pencil me-2"></i>Change RM</a>
+                                    </li>
+                                    }
+                                </ul>
+                            </div>
+                        </td>
+                        }
+                    </tr>
+                </ng-container>
+            </tbody>
+
+            <ng-template #noData>
+                <tr>
+                    <td colspan="6" class="text-center"> <app-no-data-found></app-no-data-found></td>
+                </tr>
+            </ng-template>
+
+        </table>
+
+
+    </div>
+
+</div>
+
+
+<ng-template #changetmmodals let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            @if(canAccess('view','team-managers')){
+            <div class="pt-2">
+                <p class="popup-heading mb-0"> {{'Change TM'|translate}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss();requestForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
+            </div>
+            }
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="requestForm" (ngSubmit)="updateTM()">
+                <div class="row">
+
+                    <!-- Team Employees (MultiSelect) -->
+                    <div class="col-6 mb-3">
+                        <label for="teamEmpselectedOptions" class="form-label custom-label mb-2">Team Employee(s)<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-multiSelect-content">
+                            <p-multiSelect [options]="teamMemberArray" class="form-select custom-select"
+                                formControlName="teamEmpselectedOptions" optionLabel="fullName" filterBy="fullName"
+                                filter="true" optionValue="employeeId" placeholder="Select employee(s)">
+                            </p-multiSelect>
+                        </div>
+                        <div *ngIf="requestForm.get('teamEmpselectedOptions')?.touched && requestForm.get('teamEmpselectedOptions')?.invalid"
+                            class="error-msg">
+                            Please select at least one employee.
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span
+                                class="text-danger">*</span></label>
+                        <input type="date" id="effectiveDate" class="form-control custom-input" [min]="joiningDate"
+                            onkeypress="return false" formControlName="effectiveDate" />
+                        <div *ngIf="requestForm.get('effectiveDate')?.touched && requestForm.get('effectiveDate')?.invalid"
+                            class="error-msg">
+                            Effective date is required.
+                        </div>
+                    </div>
+
+                    <!-- Department -->
+                    <div class="col-6 mb-3">
+                        <label for="department" class="form-label custom-label mb-2">Department<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="departmentDetails" optionLabel="departmentName"
+                                placeholder="Please select department" (onChange)="onDepartmentChange($event.value)"
+                                class="form-select custom-select" formControlName="department"></p-select>
+                        </div>
+
+                        <div *ngIf="requestForm.get('department')?.touched && requestForm.get('department')?.invalid"
+                            class="error-msg">
+                            Department is required.
+                        </div>
+                    </div>
+
+                    <!-- Team (Dropdown) -->
+                    <div class="col-6 mb-3">
+                        <label for="teamSelectedOptions" class="form-label custom-label mb-2">Team<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="teamDropdownValues" formControlName="teamSelectedOptions"
+                                optionLabel="subdepartmentName" (onChange)="onSubDepartmentNameChange($event.value)"
+                                class="form-select custom-select" placeholder="Please select team">
+                            </p-select>
+                        </div>
+                        <div *ngIf="requestForm.get('teamSelectedOptions')?.touched && requestForm.get('teamSelectedOptions')?.invalid"
+                            class="error-msg">
+                            Team is required.
+                        </div>
+                    </div>
+
+                    <!-- Team Manager Name (Disabled) -->
+                    <div class="col-6 mb-3">
+                        <label for="teamManagerName" class="form-label custom-label mb-2">Team Manager<span
+                                class="text-danger">*</span></label>
+                        <input id="teamManagerName" placeholder="Team manager" class="form-control custom-input"
+                            formControlName="teamManagerName" [disabled]="true" />
+                        <div *ngIf="requestForm.get('teamManagerName')?.touched && requestForm.get('teamManagerName')?.invalid"
+                            class="error-msg">
+                            Team manager is required.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4"
+                        (click)="modal.dismiss();requestForm.reset()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="requestForm.invalid || spinnerLoader">
+                        @if(spinnerLoader){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
+                        }@else {
+                        <span>{{'Submit'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</ng-template>
+
+
+
+
+
+
+<ng-template #changetmmodalforsingle let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0"> {{'Change TM'|translate}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss();foremployeeForm.reset()"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="foremployeeForm" (ngSubmit)="forsingletmchange()">
+                <div class="row">
+                    <!-- Team Employees (MultiSelect) -->
+                    <div class="col-6 mb-3">
+                        <label for="teamEmpselectedOptions" class="form-label custom-label mb-2">Team Employees<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-multiSelect-content">
+                            <input type="text" class="form-control custom-input"
+                                formControlName="teamEmpselectedOptions">
+                        </div>
+                        <div *ngIf="foremployeeForm.get('teamEmpselectedOptions')?.touched && foremployeeForm.get('teamEmpselectedOptions')?.invalid"
+                            class="error-msg">
+                            Please select at least one employee.
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label for="effectiveDate" class="form-label custom-label mb-2">Effective Date<span
+                                class="text-danger">*</span></label>
+                        <input type="date" id="effectiveDate" class="form-control custom-input" [min]="joiningDate"
+                            onkeypress="return false" formControlName="effectiveDate" />
+                        <div *ngIf="foremployeeForm.get('effectiveDate')?.touched && foremployeeForm.get('effectiveDate')?.invalid"
+                            class="error-msg">
+                            Effective date is required.
+                        </div>
+                    </div>
+
+                    <!-- Department -->
+                    <div class="col-6 mb-3">
+                        <label for="department" class="form-label custom-label mb-2">Department<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="departmentDetails" optionLabel="departmentName"
+                                placeholder="Please select department" (onChange)="onDepartmentChange($event.value)"
+                                class="form-select custom-select" formControlName="department"></p-select>
+                        </div>
+
+                        <div *ngIf="foremployeeForm.get('department')?.touched && foremployeeForm.get('department')?.invalid"
+                            class="error-msg">
+                            Department is required.
+                        </div>
+                    </div>
+
+                    <!-- Team (Dropdown) -->
+                    <div class="col-6 mb-3">
+                        <label for="teamSelectedOptions" class="form-label custom-label mb-2">Team<span
+                                class="text-danger">*</span></label>
+                        <div class="custom-p-select-content">
+                            <p-select [options]="teamDropdownValues" formControlName="teamSelectedOptions"
+                                optionLabel="subdepartmentName"
+                                (onChange)="onSubDepartmentNameChangeforsingleemploye($event.value)"
+                                class="form-select custom-select" placeholder="Please select team">
+                            </p-select>
+                        </div>
+                        <div *ngIf="foremployeeForm.get('teamSelectedOptions')?.touched && foremployeeForm.get('teamSelectedOptions')?.invalid"
+                            class="error-msg">
+                            Team is required.
+                        </div>
+                    </div>
+
+                    <!-- Team Manager Name (Disabled) -->
+                    <div class="col-6 mb-3">
+                        <label for="teamManagerName" class="form-label custom-label mb-2">Team Manager<span
+                                class="text-danger">*</span></label>
+                        <input id="teamManagerName" placeholder="Team manager" class="form-select custom-input"
+                            formControlName="teamManagerName" [disabled]="true" />
+                        <div *ngIf="foremployeeForm.get('teamManagerName')?.touched && foremployeeForm.get('teamManagerName')?.invalid"
+                            class="error-msg">
+                            Team manager is required.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4"
+                        (click)="modal.dismiss();foremployeeForm.reset()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="foremployeeForm.invalid || spinnerLoader">
+                        @if(spinnerLoader){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
+                        }@else {
+                        <span>{{'Submit'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</ng-template>
+
+
+
+<ng-template #changermmodal let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            @if(canAccess('view','team-members')){<div class="pt-2">
+                <p class="popup-heading mb-0">Change RM</p>
+            </div>
+            }
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+
+        <div class="custom-main-popup-content p-4">
+            <form [formGroup]="rmForm" (ngSubmit)="updateRM()">
+                <div class="mb-3">
+                    <label class="form-label custom-label mb-2">{{'Select Reporting Manager'| translate}}<span
+                            class="text-danger">*</span>
+                    </label>
+                    <div class="custom-p-select-content">
+                        <p-select optionLabel="name" [options]="managers" placeholder="Select Reporting Manager"
+                            class="form-select custom-select" id="mReportingto" formControlName="mReportingto"
+                            filterBy="name" filter="true" resetFilterOnHide="true" (onChange)="onSelectManager($event)">
+                        </p-select>
+                    </div>
+                    <div *ngIf="rmForm.get('mReportingto')?.invalid && (rmForm.get('mReportingto')?.touched || rmForm.get('mReportingto')?.dirty)"
+                        class="error-msg">Please select Reporting Manager</div>
+                </div>
+                <div class="d-flex justify-content-end gap-3 mt-4">
+                    <button type="reset" class="custom-btn btn-secondary"
+                        (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="rmForm.invalid || spinnerLoader">
+                        @if(spinnerLoader){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
+                        }@else {
+                        <span>{{'Submit'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>
+
+
+
+<ng-template #changermmodals let-modal>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="d-flex justify-content-between popup-header-border p-3">
+            <div class="pt-2">
+                <p class="popup-heading mb-0"> {{'Change RM'|translate}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
+        </div>
+        <div class="custom-main-popup-content p-4">
+            <form autocomplete="off" [formGroup]="teamForm" (ngSubmit)="updateTeamRMs()">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Select Team Member(s)'|translate}}<span
+                                class="error-msg">*</span></label>
+                        <div class="custom-p-multiSelect-content">
+                            <p-multiSelect formControlName="teamMembers" id="teamMembers" optionLabel="fullName"
+                                [options]="teamMemberArray" placeholder="Select Team Member(s)" resetFilterOnHide="true"
+                                class="w-100" multiple="true" filterBy="fullName" filter="true"
+                                (onChange)="onSelectManagers($event, 'teamMembers')">
+                            </p-multiSelect>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="teamForm.get('teamMembers')?.invalid && teamForm.get('teamMembers')?.touched">
+                            Team Members is required
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Select Reporting Manager'|translate}}<span
+                                class="error-msg">*</span>
+                        </label>
+                        <div class="custom-p-select-content">
+                            <p-select formControlName="reportingManager" id="reportingManager" optionLabel="name"
+                                [options]="managers" placeholder="Select Reporting Manager" filterBy="name"
+                                filter="true" class="form-select custom-select" resetFilterOnHide="true"
+                                (onChange)="onSelectManagers($event, 'reportingManager')">
+                            </p-select>
+                        </div>
+                        <div class="error-msg"
+                            *ngIf="teamForm.get('reportingManager')?.invalid && teamForm.get('reportingManager')?.touched">
+                            Reporting Manager is required
+                        </div>
+                    </div>
+                </div>
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-3">
+                    <button type="reset" class="custom-btn btn-secondary px-4"
+                        (click)="modal.dismiss();teamForm.reset()">{{'Close'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="teamForm.invalid || spinnerLoader">
+                        @if(spinnerLoader){
+                        <div class="button-loader-content">
+                            <span class="spinner-border button-spinner text-light" role="status"
+                                aria-hidden="true"></span>
+                            <span>{{'Loading...'}}</span>
+                        </div>
+                        }@else {
+                        <span>{{'Submit'| translate}}</span>
+                        }
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</ng-template>

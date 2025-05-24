@@ -20,7 +20,9 @@ export default [
             // { path: 'onboarding-documents', loadComponent: () => import('./personal/onboarding-documents/onboarding-documents.component').then(m => m.OnboardingDocumentsComponent) , },
             { path: 'onboarding-verification', loadComponent: () => import('./personal/onboarding-request/onboarding-request.component').then(m => m.OnboardingRequestComponent), },
             { path: 'emergency-contact-details', loadComponent: () => import('./personal/emergency-contact-details/emergency-contact-details.component').then(m => m.EmergencyContactDetailsComponent),  },
-         
+            { path: 'team-members', loadComponent: () => import('./personal/team-members/team-members.component').then(m => m.TeamMembersComponent),  },
+
+
         ]
     },
     {

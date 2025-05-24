@@ -13,6 +13,7 @@ import { PopupService } from '../../common-services/popup.service';
 import { Ipersonal } from '../../models/personal-details.model';
 import { DateFormatPipe } from '../../Pipes/date-format.pipe';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
+import { FormValidationService } from '../../common-services/form-validation.service';
 @Component({
   selector: 'app-onboarding-documents',
   imports: [CommonModule, ReactiveFormsModule, DateFormatPipe, NgbPopoverModule, NgxDocViewerModule, RouterModule, DetailedStepProgressbarComponent],
@@ -52,7 +53,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   @ViewChild('confirmationPopup') confirmationPopup: any;
 
   constructor(private router: Router, private modalService: NgbModal, private http: HttpService, private location: Location,
-     private fb: FormBuilder, private openPopup: PopupService) { }
+     private fb: FormBuilder, private openPopup: PopupService,private formValidationService:FormValidationService) { }
 
   ngOnInit(): void {
     this.employeeinfo = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -91,7 +92,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
     this.documentForm = this.fb.group({
       documentType: [{ value: '', disabled: true }, Validators.required],
       documentNumber: ['', [ Validators.minLength(this.IdentityMinNumber), Validators.maxLength(this.IdentityMaxNumber), Validators.pattern(this.pattern)]],
-      docFile: [null, Validators.required],
+      docFile: [null],
     });
   }
 
@@ -109,6 +110,8 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   }
 
   close() {
+    this.showErrorforpdf=false;
+    this.showErrorrforsize=false;
     this.modalService.dismissAll();
     this.documentForm.reset(); // Reset form to initial state
     this.documentForm.markAsPristine(); // Mark as pristine (optional)
@@ -167,7 +170,6 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
   errorMsg = 'Special characters are not allowed';
   onClickEditDocument(data: any) {
-
     this.documentSelectFields = JSON.parse(JSON.stringify(data));
     this.isMandatory = this.documentSelectFields.isMandatory;
     if(this.isMandatory){
@@ -181,6 +183,8 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       ]);
 
     this.documentForm.get('documentNumber')?.updateValueAndValidity();
+    }else{
+      this.documentForm .get('documentNumber')?.clearValidators();
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "pan") {
       this.isMandatory = this.documentSelectFields.isMandatory
@@ -203,6 +207,11 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
       this.documentForm.get('documentNumber')?.updateValueAndValidity();
       }
+      else{
+       this.documentForm
+        .get('documentNumber')?.clearValidators();
+      }
+
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "aadhaar") {
       this.isMandatory = this.documentSelectFields.isMandatory;
@@ -228,6 +237,8 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
       this.documentForm.get('documentNumber')?.updateValueAndValidity();
       }
+       this.documentForm
+        .get('documentNumber')?.clearValidators();
      
     }
     if (this.documentSelectFields.documentType?.toLowerCase() === "uan") {
@@ -251,13 +262,32 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
 
       this.documentForm.get('documentNumber')?.updateValueAndValidity();
       }
+      else {
+          this.documentForm
+        .get('documentNumber')?.clearValidators();
+         }
     }
   }
-
+documentUrl:any;
   openModal(item: any) {
 
     this.selectedItem = item;
-    this.documentForm?.patchValue({ documentType: item.documentType || '', documentNumber: item.documentNumber || '' });
+    this.documentForm?.patchValue({ 
+      documentType: item.documentType || '', 
+      documentNumber: item.referenceNumber || item.documentNumber || '',
+    });
+    
+  if (!item.documentUrl) {
+    this.documentUrl = item.documentUrl;
+
+    // Fake a valid file value to pass validation
+    this.documentForm.get('docFile')?.setValue(null)
+    this.documentForm.get('docFile')?.setValidators( Validators.required)
+    this.documentForm.get('docFile')?.markAsTouched();
+    this.documentForm.get('docFile')?.updateValueAndValidity();
+  }else{
+    this.documentForm .get('docFile')?.clearValidators();
+  }
     this.modalService.open(this.uploadPopup, { centered: true, backdrop: 'static' });
   }
 
@@ -276,7 +306,9 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
         let file = event.target.files[0];
         let d: Date = new Date()
         let documentType = this.documentSelectFields.documentType.replace(/\//g, ' ')
-        this.documentAttachment = this.renameFileAttchment(file, `${this.prosempdata.employeeId}_${documentType}_${d.getTime()}_${file.name}`)
+        const removeSpaceFileName = this.formValidationService.sanitizeFileName(file.name);
+        const newFileName = `${this.prosempdata.employeeId}_${documentType}_${d.getTime()}_${removeSpaceFileName}`;
+        this.documentAttachment = this.renameFileAttchment(file, newFileName)
       }
     
   }
@@ -368,10 +400,10 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
         return;
       }
   
-      // ✅ Everything is valid, update form control
+      // Everything is valid, update form control
       this.showErrorforpdf = false;
       this.showErrorrforsize = false;
-      this.documentForm.get('docFile')?.setValue(file);
+      this.documentForm?.get('docFile')?.setValue(file);
     } else {
       this.documentForm.get('docFile')?.setValue(null);
     }

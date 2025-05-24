@@ -273,7 +273,7 @@
       
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Offer Issued Date<span class="error-msg">*</span></label>
-            <input type="date" class="form-control custom-input" formControlName="offerIssuedDate"
+            <input type="date" class="form-control custom-input" formControlName="offerIssuedDate" [min]="issuedDatevalidate"
               placeholder="Please enter offer issued date" (click)="pathValuesFuction()" onkeydown="return false;" />
             <div *ngIf="employeeForm.get('offerIssuedDate')?.invalid && employeeForm.get('offerIssuedDate')?.touched">
               <div class="error-msg">Offer Issued Date is required</div>
@@ -286,7 +286,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Expected Start Date<span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="dateOfJoining" (click)="pathValuesFuction()"
-              placeholder="Please enter expected start date" onkeydown="return false;" />
+              placeholder="Please enter expected start date" [min]="startDatevalidate" onkeydown="return false;" />
             <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
               <div class="error-msg">Expected Start Date is required</div>
             </div>
@@ -303,7 +303,7 @@
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Offer Expiry Date<span class="error-msg">*</span></label>
             <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-              (click)="pathValuesFuction()" onkeydown="return false;" placeholder="Please enter offer expiry date" />
+              (click)="pathValuesFuction()" [min]="expiryDatevalidate" onkeydown="return false;" placeholder="Please enter offer expiry date" />
             <div class="error-msg">
               <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                 Offer Expiry Date is required
@@ -550,7 +550,7 @@
                     intentions any-time before your joining date. </p>
     
                   <p>For any further information or clarification required, please feel free to
-                    reach us on our email at <a href=""> hr&#64;rightlyhr.com</a></p>
+                    reach us on our email at <a href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"> hr&#64;rightlyhr.com</a></p>
                 </div>
               </div>
               <div class="letter-footer">

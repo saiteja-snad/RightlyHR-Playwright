@@ -24,6 +24,9 @@
                     <div *ngIf="educationForm.get('university')?.hasError('required') && educationForm.get('university')?.touched" class="error-msg">
                         University is required
                     </div>
+                    <div *ngIf="educationForm.get('university')?.hasError('pattern') && educationForm.get('university')?.touched" class="error-msg">
+                        Specialization should contain only alphabets and special characters
+                    </div>
                     <div *ngIf="educationForm.get('university')?.hasError('maxlength') && educationForm.get('university')?.touched" class="error-msg">
                         University name must not exceed {{ educationForm.get('university')?.errors?.['maxlength']?.requiredLength }} characters
                       </div>
@@ -63,7 +66,7 @@
                 <div class="col-md-6 mb-3">
                     <label for="endDate" class="form-label custom-label mb-2">To Date<span
                             class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="endDate" formControlName="endDate">
+                    <input type="date" class="form-control custom-input" id="endDate" formControlName="endDate" [min]="startDatevalidate">
                 </div>
 
                 <div class="col-md-12 mb-3">

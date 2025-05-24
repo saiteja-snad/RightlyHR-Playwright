@@ -47,7 +47,7 @@
         
                 <div class="col-md-6 mb-3">
                     <label class="form-label custom-label mb-2">To Date<span class="error-msg" *ngIf="required">*</span></label>
-                    <input type="date" class="form-control custom-input" formControlName="toDate" [disabled]="isDisabletoDate" onkeydown="return false;">
+                    <input type="date" class="form-control custom-input" formControlName="toDate" [min]="startDatevalidate" [disabled]="isDisabletoDate" onkeydown="return false;">
                     <div *ngIf="experienceForm.get('toDate')?.invalid && experienceForm.get('toDate')?.touched" class="error-msg">
                         To Date is required
                     </div>
@@ -110,8 +110,8 @@
                     <div class="error-msg" *ngIf="experienceForm.get('attachment')?.invalid && experienceForm.get('attachment')?.touched">
                         Please choose a file
                     </div>
-                    <div class="error-msg" *ngIf="showError">Only PDF and image files are allowed</div>
-                    <div class="error-msg" *ngIf="showErrorr">The file size should be less than 25MB</div>
+                    <div class="error-msg" *ngIf="showErrorforpdf">Only PDF and image files are allowed</div>
+                    <div class="error-msg" *ngIf="showErrorforsize">The file size should be less than 25MB</div>
                 </div>
             </div>
         

@@ -79,6 +79,11 @@
 
     //error msg
     --error-msg-color: #ea362c;
+
+    //module information
+    --module-info-bg:#E7EFFD;
+    --module-info-border:#cbcfd5;
+    --module-info-text-color:#7F7C7C;
 }
 
 * {
@@ -612,4 +617,29 @@ input[type="number"].no-arrows {
 .modal-image {
     width: inherit !important;
     max-height: 60vh;
+}
+
+//module information 
+.module-information-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background-color: var(--module-info-bg);
+    border: 1px solid var(--module-info-border);
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    .question-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+    }
+
+    .info-text {
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        color: var(--module-info-text-color);
+    }
 }

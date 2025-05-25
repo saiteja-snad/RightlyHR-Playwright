@@ -18,17 +18,18 @@ export class PersonalPersonalTabsComponent {
 
   ngOnInit(): void {
     this.navTabs = [
-      { label: 'Basic Information', link: '/personalinfo/personal/basic-info', icon: 'images/basicinfo.png', permission: { feature: 'My Info Basic Information', action: 'view' } },
+      { label: 'Basic Information', link: '/personalinfo/personal/basic-info', icon: 'images/basicinfo.png', permission: { feature: 'Employee Info Basic Information', action: 'view' } },
         { label: 'Onboarding Documents', link: '/personalinfo/personal/onboarding-verification', icon: '/images/onboarding.png', permission: { feature: 'Employee Info Documents Verification', action: 'view' } },
-      { label: 'Address Details', link: '/personalinfo/personal/address-info', icon: 'images/address.png', permission: { feature: 'My Info Address Details', action: 'view' } },
-      { label: 'Contact Details', link: '/personalinfo/personal/contact-details', icon: '/images/contact-info 1.png', permission: { feature: 'My Info Contact Details', action: 'view' } },
-      { label: 'Emergency Contact Details', link: '/personalinfo/personal/emergency-contact-details', icon: '/images/ambulance.png', permission: { feature: 'My Info Emergency Contact Details', action: 'view' } },
-      { label: 'Education Details', link: '/personalinfo/personal/education-details', icon: '/images/education 1.png', permission: { feature: 'My Info Education Details', action: 'view' } },
-      { label: 'Identity Details', link: '/personalinfo/personal/identity-details', icon: '/images/identity-verification.png', permission: { feature: 'My Info Identity Details', action: 'view' } },
-      { label: 'Family Details', link: '/personalinfo/personal/family-details', icon: 'images/family.png', permission: { feature: 'My Info Family Details', action: 'view' } },
-      { label: 'Bank Details', link: '/personalinfo/personal/bank-details', icon: '/images/atm-card.png', permission: { feature: 'My Info Bank Details', action: 'view' } },
-      { label: 'Visa Details', link: '/personalinfo/personal/visa-details', icon: '/images/visa.png', permission: { feature: 'My Info Visa Details', action: 'view' } },
-        
+      { label: 'Address Details', link: '/personalinfo/personal/address-info', icon: 'images/address.png', permission: { feature: 'Employee Info Address Details', action: 'view' } },
+      { label: 'Contact Details', link: '/personalinfo/personal/contact-details', icon: '/images/contact-info 1.png', permission: { feature: 'Employee Info Contact Details', action: 'view' } },
+      { label: 'Emergency Contact Details', link: '/personalinfo/personal/emergency-contact-details', icon: '/images/ambulance.png', permission: { feature: 'Employee Info Emergency Contact Details', action: 'view' } },
+      { label: 'Education Details', link: '/personalinfo/personal/education-details', icon: '/images/education 1.png', permission: { feature: 'Employee Info Education Details', action: 'view' } },
+      { label: 'Identity Details', link: '/personalinfo/personal/identity-details', icon: '/images/identity-verification.png', permission: { feature: 'Employee Info Identity Details', action: 'view' } },
+      { label: 'Family Details', link: '/personalinfo/personal/family-details', icon: 'images/family.png', permission: { feature: 'Employee Info Family Details', action: 'view' } },
+      { label: 'Bank Details', link: '/personalinfo/personal/bank-details', icon: '/images/atm-card.png', permission: { feature: 'Employee Info Bank Details', action: 'view' } },
+      { label: 'Visa Details', link: '/personalinfo/personal/visa-details', icon: '/images/visa.png', permission: { feature: 'Employee Info Visa Details', action: 'view' } },
+      { label: 'Team Members', link: '/personalinfo/personal/team-members', icon: '/images/team-members.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' } }
+
     ];
     this.filterTabsByRbac();
   }

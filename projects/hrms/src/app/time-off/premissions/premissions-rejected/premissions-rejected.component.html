@@ -1,17 +1,15 @@
 <div class="custom-main-component-container">
-    <div class="custom-table-content custom-content-height17">
+    <div class="custom-table-content">
         @if(!dataload){
         <table class="w-100">
             <thead>
-                <tr>
-                    <th>Requested Date</th>
-                    <th>Permission Date</th>
-                    <th>Duration(In Hours)</th>
-                    <th>Reason</th>
-                    <th>Rejected Reason</th>
-                    <th>Permission Type</th>
-                    <th>Status</th>
-                </tr>
+                <th>Requested Date</th>
+                <th>Permission Date</th>
+                <th>Duration(In Hours)</th>
+                <th>Reason</th>
+                <th>Rejected Reason</th>
+                <th>Permission Type</th>
+                <th>Status</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="rejectedPerimisions!.length > 0; else noDataTemplate">
@@ -35,8 +33,7 @@
                                     <img src="images\info-fill.png" alt="info icon" class="info-icon">
                                 </a>
                                 <ng-template #reason>
-                                    <p class="mb-0">{{permissionRequest.regularizationApproverComments[0].comments}}
-                                    </p>
+                                    <p class="mb-0">{{permissionRequest.regularizationApproverComments[0].comments}}</p>
                                 </ng-template>
                             </div>
                         </td>
@@ -46,10 +43,8 @@
                 </ng-container>
 
                 <ng-template #noDataTemplate>
-                    <tr>
-                        <td colspan="7">
-                            <app-no-data-found></app-no-data-found>
-                        </td>
+                    <tr class="table-placeholder">
+                        <app-no-data-found></app-no-data-found>
                     </tr>
                 </ng-template>
             </tbody>

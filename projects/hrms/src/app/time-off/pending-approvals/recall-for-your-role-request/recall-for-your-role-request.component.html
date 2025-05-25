@@ -11,7 +11,6 @@
     <table class="w-100">
      
       <thead>
-        <tr>
           <th>{{'Employee Name' | translate}}</th>
           <th>{{'Employee ID' | translate}}</th>
           <th>{{'Department' | translate}}</th>
@@ -26,7 +25,6 @@
           @if(rbac.allowedToAccess('For Role (Recall Requests).update') || rbac.allowedToAccess('For Role (Recall Requests).delete')) {
           <th>Action<span class="text-lowercase">(s)</span></th>
           }
-        </tr>
       </thead>
       <tbody>
         <ng-container
@@ -42,11 +40,11 @@
             <td class="text-nowrap">{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|date):'-'}}</td>
             <td class="text-nowrap">{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|date):'-'}}</td>
             <td class="text-nowrap">{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|date):'-'}}</td>
-            <td>
+            <td class="text-center">
               @if(item.entity?.spRecallReason){
               <div>
                 <a type="button" [ngbPopover]="reason">
-                  <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                  <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{item.entity?.spRecallReason}}</p>
@@ -56,11 +54,11 @@
               @else {-}
             </td>
             <td> {{item.entity?.sprecalledStatus?item.entity?.sprecalledStatus:'-'}}</td>
-            <td>@if(item.entity?.spApproverComments?.length ?? 0 > 0){
+            <td class="text-center">@if(item.entity?.spApproverComments?.length ?? 0 > 0){
               <div>
                 <a type="button"
-                  (click)="approverCommentsfunction(item.entity?.spApproverComments);openModal(approverComments)">
-                  <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                  (click)="approverCommentsfunction(item.entity?.spApproverComments);openModalXLarge(approverComments)">
+                  <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
                 </a>
               </div>
               }
@@ -100,7 +98,7 @@
           }
           </tr>
           <tr *ngIf="filteredData.length === 0">
-            <td colspan="9"><app-no-data-found></app-no-data-found></td>
+            <app-no-data-found/>
           </tr>
         </ng-container>
       </tbody>
@@ -124,7 +122,7 @@
     </div>
 
     <div class="custom-main-popup-content">
-      <div class="custom-table-content">
+      <div class="custom-table-content custom-height">
         <table class="w-100">
           <thead>
             <tr>
@@ -135,7 +133,7 @@
               <th class="text-nowrap">Last Working Date</th>
               <th class="text-nowrap">Early Relieving Date</th>
               <th class="text-nowrap">Extended Date</th>
-              <th class="text-nowrap">AcceptEarlyRelieving</th>
+              <th class="text-nowrap">Accept Early Relieving</th>
               <th class="text-nowrap">Status</th>
             </tr>
           </thead>
@@ -158,7 +156,7 @@
               <td>
                 <div class="text-center" *ngIf="comment?.comments;else popupcomments">
                   <a type="button" [ngbPopover]="reason">
-                    <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"></i>
+                    <i class="bi bi-info-circle-fill" data-toggle="tooltip"></i>
                   </a>
                   <ng-template #reason>
                     <p class="mb-0">{{comment?.comments}} </p>
@@ -209,7 +207,7 @@
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}<span
             class="text-danger">*</span></label>
-        <textarea id="exampleFormControlTextarea1" class="form-control" formControlName="AcceptReason" maxlength="250"
+        <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="AcceptReason" maxlength="250"
           placeholder="Please enter comments" rows="3"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ recallAcceptForm.get('AcceptReason')?.value?.length || 0 }} /250</div>
@@ -225,7 +223,7 @@
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();recallAcceptForm.reset()">{{'Close'| translate}}</button>
+          (click)="modal.dismiss();recallAcceptForm.reset()">{{'Cancel'| translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="recallAcceptForm.invalid || isLoading">@if
           (!isLoading) { {{ 'Approve' | translate }} } @else {
           <div class="button-loader-content">
@@ -249,15 +247,15 @@
 
     <form autocomplete="off" [formGroup]="rejectSeparationForm" (ngSubmit)="handlerecallReject()">
       <div class="custom-main-popup-content">
-        <label for="comments" class="form-label custom-label mb-2">Enter reason
+        <label for="comments" class="form-label custom-label mb-2">Rejection reason
           <span class="text-danger">*</span></label>
-        <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Please enter reason"
+        <textarea class="form-control custom-input" id="exampleFormControlTextarea1" placeholder="Please enter rejection reason"
           formControlName="notes" rows="3" maxlength="250"></textarea>
         <div class="textarea-count-text">{{ rejectSeparationForm.get('notes')?.value?.length || 0 }}/250</div>
         <div class="error-msg"
           *ngIf="rejectSeparationForm.get('notes')?.touched && rejectSeparationForm.get('notes')?.invalid">
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['required']">
-            Reason is required
+            Rejection reason is required
           </ng-container>
           <ng-container *ngIf="rejectSeparationForm.get('notes')?.errors?.['maxlength']">
             Maximum 250 characters allowed
@@ -270,7 +268,7 @@
 
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();rejectSeparationForm.reset()">{{'Close' | translate}}</button>
+          (click)="modal.dismiss();rejectSeparationForm.reset()">{{'Cancel' | translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="rejectSeparationForm.invalid || isLoading">
           @if (!isLoading) {
           {{ 'Reject' | translate }}
@@ -317,7 +315,7 @@
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();recallAcceptFormForProcess.reset()">{{'Close'| translate}}</button>
+          (click)="modal.dismiss();recallAcceptFormForProcess.reset()">{{'Cancel'| translate}}</button>
         <button type="submit" class="custom-btn btn-primary"
           [disabled]="recallAcceptFormForProcess.invalid || isLoading">
           @if (!isLoading) {

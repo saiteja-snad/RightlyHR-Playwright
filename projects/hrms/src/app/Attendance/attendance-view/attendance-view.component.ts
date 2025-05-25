@@ -1,37 +1,32 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { HttpService } from '../../services/http.service';
-import { AuthService } from '../../services/auth.service';
-import {
-  FormBuilder,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
+import moment from 'moment';
+import { DatePicker } from 'primeng/datepicker';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
-import { DateformatPipe } from '../../Pipes/dateformat.pipe';
-import { OpenModalService } from '../../services/open-modal.service';
-import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
-import { IAttendance, IdayLogs } from './attendance-modal';
-import { Ipersonal } from '../../Interfaces/personal-modal';
-import { RbacService } from '../../services/rbac.service';
-import moment from 'moment';
-import { IPermissionsvalue, LeaveType } from '../../Interfaces/timoff-model';
 import { Select } from 'primeng/select';
+import { Subscription, BehaviorSubject, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
-import { FormValidationsService } from '../../services/form-validations.service';
+import { Ipersonal } from '../../Interfaces/members-model';
+import { LeaveType, IPermissionsvalue } from '../../Interfaces/timoff-model';
+import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { TohoursPipe } from '../../Pipes/tohours.pipe';
-import { AddLeaveComponent } from '../leaves/add-leave/add-leave.component';
-import { DatePicker } from 'primeng/datepicker';
+import { AuthService } from '../../services/auth.service';
+import { FormValidationsService } from '../../services/form-validations.service';
+import { HttpService } from '../../services/http.service';
+import { OpenModalService } from '../../services/open-modal.service';
+import { RbacService } from '../../services/rbac.service';
+import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
+import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
+import { AddLeaveComponent } from '../../time-off/leaves/add-leave/add-leave.component';
+import { IAttendance, IdayLogs } from './attendance-modal';
+
 @Component({
-  selector: 'app-attendance',
+  selector: 'app-attendance-view',
   imports: [
     CommonModule,
     TranslateModule,
@@ -48,12 +43,12 @@ import { DatePicker } from 'primeng/datepicker';
     TohoursPipe,
     DatePicker,
   ],
-  templateUrl: './attendance.component.html',
-  styleUrl: './attendance.component.scss',
-  encapsulation:ViewEncapsulation.None
+  templateUrl: './attendance-view.component.html',
+  styleUrl: './attendance-view.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
-export class AttendanceComponent implements OnInit, OnDestroy {
+export class AttendanceViewComponent implements OnInit, OnDestroy {
   dataLoader = false;
   subscription!: Subscription;
   yearOptions = [
@@ -126,7 +121,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     console.log(this.date);
     // Get current date
     const now = moment().startOf('month'); // ← important!
-  this.date = now.toDate(); 
+    this.date = now.toDate();
     this.currentDate = moment().date();
     // Get current month (1-based)
     this.currentMonth = moment().month() + 1;
@@ -141,21 +136,22 @@ export class AttendanceComponent implements OnInit, OnDestroy {
     this.getEmployeeDetails();
     this.initializeForm();
   }
+
   checkdates(Value: any) {
-    if(Value){
-   console.log(Value);
-    const selectedDate = moment(Value);
-    this.selectedYear = selectedDate.year();
-    this.selectedMonth = selectedDate.month() + 1; // month() is 0-based
-    console.log(this.selectedYear + this.selectedMonth);
-    this.getAttendnaceData(this.getSelectedEmployee());
+    if (Value) {
+      const selectedDate = moment(Value);
+      this.selectedYear = selectedDate.year();
+      this.selectedMonth = selectedDate.month() + 1; // month() is 0-based
+      console.log(this.selectedYear + this.selectedMonth);
+      this.getAttendnaceData(this.getSelectedEmployee());
     }
- 
   }
+
   //function to check the date
   isPastOrToday(date: any): boolean {
     return moment(date).isBefore(moment(), 'day');
   }
+
   //function to inialize form
   initializeForm() {
     this.regularizationForm = this.fb.group({
@@ -228,6 +224,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
       this.punchPairs = [];
     }
   }
+
   //function to get the regularization types
   getDuration() {
     this.subscription = this.http
@@ -238,6 +235,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
         },
       });
   }
+
   //function to post the regularization
   applyRgularization(regularizationForm: FormGroup) {
     if (regularizationForm.valid) {
@@ -312,9 +310,8 @@ export class AttendanceComponent implements OnInit, OnDestroy {
   getAttendnaceData(employee: any) {
     this.dataLoader = true;
     const employeeId = employee.employeeId;
-    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${
-      employee.middleName ? ' ' + employee.middleName : ''
-    }${employee.lastName ? ' ' + employee.lastName : ''}`;
+    this.empName = `${employee.fusionEmpId ?? ''} - ${employee.firstName}${employee.middleName ? ' ' + employee.middleName : ''
+      }${employee.lastName ? ' ' + employee.lastName : ''}`;
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${employeeId}?year=${this.selectedYear}&month=${this.selectedMonth}`
@@ -345,6 +342,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
         },
       });
   }
+
   //function to bind color for the each status
   getStatusClass(status: string): string {
     switch (status?.toLowerCase()) {
@@ -373,7 +371,7 @@ export class AttendanceComponent implements OnInit, OnDestroy {
         return 'status-wfh';
       case 'compoff':
         return 'status-compoff';
-        case 'holiday':
+      case 'holiday':
         return 'status-holiday';
       case 'weekend':
         return 'status-weekend';
@@ -405,24 +403,23 @@ export class AttendanceComponent implements OnInit, OnDestroy {
               .map((employee: any) => {
                 return {
                   ...employee,
-                  fullName: `${
-                    employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                  }${employee.firstName} ${
-                    employee.middleName ? employee.middleName + ' ' : ''
-                  }${employee.lastName}`,
+                  fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                    }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                    }${employee.lastName}`,
                 };
               });
           }
         },
       });
   }
+
   onclickRegularization(date: Date) {
     this.regularizationForm.patchValue({
       permissionDate: date,
     });
   }
-  // function to get the data of employees by hierarchy
 
+  // function to get the data of employees by hierarchy
   getEmployeeDetails() {
     const EmployeeId = this.empdata.employeeId;
     this.subscription = this.http
@@ -434,17 +431,16 @@ export class AttendanceComponent implements OnInit, OnDestroy {
             this.get_Employeelist_forTM = myTeam.map((employee: any) => {
               return {
                 ...employee,
-                fullName: `${
-                  employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                }${employee.firstName} ${
-                  employee.middleName ? employee.middleName + ' ' : ''
-                }${employee.lastName}`,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                  }${employee.lastName}`,
               };
             });
           }
         },
       });
   }
+  
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {

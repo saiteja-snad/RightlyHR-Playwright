@@ -178,6 +178,14 @@ export class FormValidationsService {
 
     control.setValue(value, { emitEvent: false });
   }
-
+  // replace spaces with underscores and remove special characters expect dot
+  sanitizeFileName(fileName: string): string {
+    let filename = fileName.replace(/\s+/g, '_');
+    // Remove all special characters except dot and underscore
+    filename = filename.replace(/[^\w.-]/g, '');
+ 
+    return filename;
+  }
+ 
 
 }

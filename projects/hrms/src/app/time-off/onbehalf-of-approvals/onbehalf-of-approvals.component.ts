@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, effect } from '@angular/core';
+import { Component, effect, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -14,7 +14,6 @@ import { CompOffEntitlementComponent } from "./comp-off-entitlement/comp-off-ent
 import { TimeOffComponent } from "./time-off/time-off.component";
 import { Select } from 'primeng/select';
 import { environment } from '../../../environments/environment';
-import { SignalsService } from '../../services/signals.service';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -30,7 +29,8 @@ import { SignalsService } from '../../services/signals.service';
     Select
   ],
   templateUrl: './onbehalf-of-approvals.component.html',
-  styleUrl: './onbehalf-of-approvals.component.scss'
+  styleUrl: './onbehalf-of-approvals.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 
 export class OnbehalfOfApprovalsComponent {

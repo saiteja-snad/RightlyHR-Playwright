@@ -9,7 +9,6 @@
     <div class="custom-table-content">
         <table class="w-100">
             <thead>
-                <tr>
                     <th>{{'Employee ID' | translate}} </th>
                     <th>{{'Employee Name' | translate}}</th>
                     <th>{{'Probation Start Date' | translate}}</th>
@@ -18,10 +17,8 @@
                     @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
                     <th class="text-center">Action(s)</th>
                     }
-                </tr>
             </thead>
             <tbody>
-
                 <ng-container *ngIf="(probationDetails | probationdetails: searchValue) as filteredDetails">
                     <tr *ngFor="let item of filteredDetails">
                         <td>{{item.entity?.fusionEmployeeId ?? '-'}}</td>
@@ -58,7 +55,7 @@
                         }
                     </tr>
                     <tr *ngIf="filteredDetails.length === 0">
-                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                        <app-no-data-found></app-no-data-found>
                     </tr>
                 </ng-container>
             </tbody>

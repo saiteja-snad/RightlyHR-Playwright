@@ -527,7 +527,7 @@
                             || per.fields === 'Calendar'  || per.fields === 'IT Support' 
                             || per.fields === 'Org Hierarchy' || per.fields === 'PMS' 
                             || per.fields === 'PMS Configurations' || per.fields === 'Desk Allocation' || per.fields === 'Asset Management'
-                            || per.fields === 'Holidays'">
+                            || per.fields === 'Holidays' || per.fields === 'Attendance'">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -879,7 +879,7 @@
                     <ng-container *ngFor="let per of permissions">
                         <tr class="text-align-center"
                             *ngIf="per.fields === 'Time Off Module' || per.fields === 'WFH/On Duty Module'|| per.fields === 'Remote Login Module' || per.fields === 'Comp Off Module' || per.fields === 'Permissions Module' 
-                                            || per.fields === 'Regularization Module' || per.fields === 'Attendance Module' || per.fields === 'On Behalf Of Module'  || per.fields === 'On Behalf Of Approvals Module' || per.fields === 'Global Permissions Module' || per.fields === 'Pending Approvals Module'">
+                                            || per.fields === 'Regularization Module'  || per.fields === 'On Behalf Of Module'  || per.fields === 'On Behalf Of Approvals Module' || per.fields === 'Global Permissions Module' || per.fields === 'Pending Approvals Module'">
                             <td class="text-align-center">{{ per.fields }}</td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
@@ -1970,7 +1970,7 @@
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" 
-                                (change)="onCheckboxChange(per, 'Update')"  [disabled]="(per.fields === 'My Info Compensation Details' || per.fields === 'My Info Job Details' || per.fields === 'My Info Pre-Onboarding Details' || per.fields === 'My Info Offboarding Details' || per.fields === 'My Info Onboarding Details' || per.fields === 'My Info Desk Details' || per.fields === 'My Info Asset Details' || per.fields === 'My Info Separation Request Button') || !roleToFilter?.id">
+                                (change)="onCheckboxChange(per, 'Update')"  [disabled]="(per.fields === 'My Info Compensation Details' || per.fields === 'My Info Job Details' || per.fields === 'My Info Pre-Onboarding Details' || per.fields === 'My Info Offboarding Details' || per.fields === 'My Info Onboarding Details' || per.fields === 'My Info Desk Details' || per.fields === 'My Info Asset Details' || per.fields === 'My Info Separation Request Button' || per.fields ==='My Info Probation Details' || per.fields ==='My Info Separation Request Details' || per.fields=== 'My Info No Due Clearance Details') || !roleToFilter?.id">
                             </td>
                             <td scope="row">
                                 <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" 

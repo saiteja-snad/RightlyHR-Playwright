@@ -81,6 +81,9 @@ export class RecallForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  openModalXLarge(content: any) {
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static',});
+  }
   onRowsChange() {
     this.first = 0;
   }

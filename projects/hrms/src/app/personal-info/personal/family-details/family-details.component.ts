@@ -36,6 +36,7 @@ export class FamilyDetailsComponent implements OnInit,OnDestroy {
   familyDetailsdisplay = new BehaviorSubject<any[]>([]);
   loading=false
    employedata={} as  Ipersonal;
+     currentdata=new Date()
   constructor(private modalService: NgbModal, private conformationPopup: OpenModalService, 
     private http: HttpService, private fb: FormBuilder,
     public formValidation: FormValidationService,public rbac: RbacService,public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }

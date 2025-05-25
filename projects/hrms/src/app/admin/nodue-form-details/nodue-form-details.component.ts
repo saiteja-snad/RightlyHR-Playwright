@@ -37,12 +37,9 @@ export class NodueFormDetailsComponent implements OnInit,OnDestroy {
   ngOnInit(): void {
  
   }
-    //function to open the modal
-    openModal(content: any) {
-      this.modalService.open(content, { centered: true });
-    }
     //function to go back
     back(){
+      this.modalService.dismissAll();
       this.location.back()
     }
     //function to get employee by id
@@ -99,6 +96,11 @@ export class NodueFormDetailsComponent implements OnInit,OnDestroy {
       }
     })
   }
+
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' })
+  }
+
 //function to get the separation request details
 getSeparationDetails={} as any;
 getSeparationRequest(){
@@ -169,7 +171,8 @@ FormDownload() {
       .uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, file)
       .subscribe({
         next: (data: any) => {
-       this.postsepartionDetails(data.path);
+          console.log(data.path)
+        this.postsepartionDetails(data.path);
 
         },
         error: (reason: any) => {
@@ -180,7 +183,9 @@ FormDownload() {
   }
     //to post OfferLetter Details to the offerletter table
     postsepartionDetails( docurl: string) {
-         this.getSeparationDetails.documentURL=docurl;
+        //  this.getSeparationDetails = this.getSeparationDetails || {};
+         console.log(this.getSeparationDetails)
+  this.getSeparationDetails.documentURL = docurl;
       this.subscription = this.http
         .postdata('SeparationRequests/FormSubmission', this.getSeparationDetails)
         .subscribe({

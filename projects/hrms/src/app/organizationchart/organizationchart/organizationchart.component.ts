@@ -6,7 +6,6 @@ import { HttpService } from '../../services/http.service';
 import { catchError, map, Observable, of, Subscription } from 'rxjs';
 import { TreeNode } from 'primeng/api'
 import { OrganizationChartModule } from 'primeng/organizationchart';
-import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { DomSanitizer } from '@angular/platform-browser';
@@ -14,12 +13,11 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import ExcelJS from 'exceljs';
-import * as FileSaver from 'file-saver';
+import FileSaver from 'file-saver';
 import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-organizationchart',
-  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, DateformatPipe,
-     NoDataFoundComponent, DataLoaderContentComponent, TranslateModule],
+  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule],
   templateUrl: './organizationchart.component.html',
   styleUrl: './organizationchart.component.scss',
   encapsulation: ViewEncapsulation.None,

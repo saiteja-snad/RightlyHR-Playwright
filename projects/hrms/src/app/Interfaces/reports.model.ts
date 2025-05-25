@@ -25,6 +25,9 @@ export interface IWfhReportRequest {
   EndDate?: string;
   Worked_Month?: number;
   TeamManagerSnadId?: string;
+  teamManagerEmpID?:string;
+  employeeId?:string;
+  teamManagerID?:any;
 }
 
 export interface IAbsentReportRequest {
@@ -41,6 +44,7 @@ export interface IAbsentReportRequest {
   Worked_Month?: number;
   Team_Manager?:string
   TeamManagerSnadId?: string;
+  employeeId?:string;
 }
 
 export interface IInactiveReportRequest {
@@ -53,6 +57,7 @@ export interface IInactiveReportRequest {
   LeaveName?: number;
   Year?: number;
   TeamManagerSnadId?: string;
+  employeeId?:string;
 }
 
 export interface IYearlyReportRequest {
@@ -65,6 +70,7 @@ export interface IYearlyReportRequest {
   Shift?: string;
   EntitlementYear?: number;
   TeamManagerSnadId?: string;
+  employeeId?:string;
 }
 
 
@@ -75,6 +81,7 @@ export interface IPermissionReportRequest {
   StartDate?: string;
   EndDate?: string;
   teamManagerId?:number;
+  employeeId?:string;
 }
 
 export interface IFamilyDetails{
@@ -205,6 +212,10 @@ export interface IAttendanceDetails{
   Worked_Month?: number;
   teamManagerId?:number;
   TeamManagerSnadId?: string;
+  employeeId?:any;
+  teamManagerEmpID?:any;
+  TeamManagerFusionEmpId?:any;
+  teamManagerID?:any;
 }
 //leave summmery
 export interface ILeavesummery{
@@ -220,6 +231,8 @@ export interface ILeavesummery{
   Shift?: string;
   Year?: number;
   TeamManagerSnadId?: string;
+  TeamManagerFusionEmpId?:string;
+  employeeId?:string;
 }
 //comp-off
 export interface ICompoffDetails{
@@ -241,4 +254,6 @@ export interface ICompoffDetails{
   EndDate?: string;
   Worked_Month?: number;
   TeamManagerSnadId?: string;
+  teamManagerEmpID?:string;
+  employeeId?:string;
 }

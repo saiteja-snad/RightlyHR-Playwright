@@ -71,7 +71,6 @@ export class TimeOffComponent implements OnInit, OnDestroy {
     public rbac: RbacService,
     public formValidation: FormValidationService,
     private signalService: SignalsService,
-
   ) {
     // Signal reaction for employee switch
     effect(() => {
@@ -409,8 +408,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   // Valid multi-select with same stage
   this.selectedProducts = [...value];
 }
- 
- 
+
 private updateTableSelectionState(selectedItems: any[]) {
     // Create a new array reference to force change detection
     this.selectedProducts = [...selectedItems];

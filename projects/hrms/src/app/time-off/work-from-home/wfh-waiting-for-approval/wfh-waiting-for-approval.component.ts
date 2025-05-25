@@ -12,6 +12,7 @@ import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { Select } from 'primeng/select';
 import moment from 'moment';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -34,6 +35,7 @@ export class WfhWaitingForApprovalComponent implements OnInit,OnDestroy {
   compOff = [] as any;
   waitingForApprovalWFHCount = 0;
   empinfo = {} as IJob;
+  selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
   dataload = false;
   options = [
@@ -63,9 +65,23 @@ isLoading=false;
 
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+
+        this.http.selectedEmployeeIdWFH$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee WFH ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getWFHEMPRequests();
+        
+      }else{
+  this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     console.log(this.empinfo);
     this.getWFHRequests();
+      }
+    });
+  
+ 
     this.formInializer();
   }
  formInializer() {
@@ -164,9 +180,35 @@ isLoading=false;
         this.isLoading=false;
         this.getWFHRequests()
       },
-
-    })
+ })
   }
+  getWFHEMPRequests() {
+    let empId =  this.selectempid;
+    this.dataload = true;
+    console.log(empId);
+    this.http
+      .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          this.compOff = response;
+          this.waitingForApprovalWFHs = this.compOff.filter(
+            (element: { status: string }) =>
+              element.status === 'Waiting for Approval'
+          );
+          this.waitingForApprovalWFHCount = this.waitingForApprovalWFHs.length;
+        },
+        error: (error) => {
+          console.error('Error fetching data:', error);
+          this.waitingForApprovalWFHs = [];
+        },complete: () => {
+          this.dataload = false;
+          
+        },
+      });
+  }
+
   
   ngOnDestroy(): void {
     this.destroy$.next(true);

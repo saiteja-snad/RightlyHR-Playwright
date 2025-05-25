@@ -14,6 +14,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { RbacService } from '../../../services/rbac.service';
 import { Router } from '@angular/router';
 import { AccessForEmployeeinfoService } from '../../../services/access-for-employeeinfo.service';
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 
 @Component({
   selector: 'app-identity-details',
@@ -38,7 +39,7 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
   spinnerLoader = false
   loading = false
   selectedIdentityTypetoUpdate: any;
-  constructor(private modalService: NgbModal, private http: HttpService,
+  constructor(private modalService: NgbModal, private http: HttpService,public formValidation: FormValidationService,
     private fb: FormBuilder, private conformationPopup: OpenModalService, public rbac: RbacService, public permissionRouteService: AccessForEmployeeinfoService, private router: Router) { }
 
   ngOnInit(): void {
@@ -46,6 +47,8 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
     this.getIdentityDropDown();
     this.initializeForm();
     this.initializeupdateForm();
+    this.vadationfotidentitytype()
+    this. vadationfoforupdatetidentitytype() 
   }
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
@@ -102,6 +105,55 @@ export class IdentityDetailsComponent implements OnInit, OnDestroy {
       }
       return null; // Valid identity number
     };
+  }
+
+    vadationfotidentitytype() {
+    this.identityForm.get('identityType')?.valueChanges.subscribe(selected => {
+      const identityNumberControl = this.identityForm.get('identityNumber') 
+
+      identityNumberControl?.clearValidators();
+
+      if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'PAN') {
+        // Allow alphanumeric + special characters
+        identityNumberControl?.setValidators([
+          Validators.required,
+          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
+        ]);
+      } else {
+        // Allow numbers only
+        identityNumberControl?.setValidators([
+          Validators.required,
+          Validators.pattern(/^[0-9]+$/)
+        ]);
+      }
+
+      identityNumberControl?.updateValueAndValidity();
+    });
+  }
+
+
+     vadationfoforupdatetidentitytype() {
+    this.identityupdateForm.get('identityupdateNumber')?.valueChanges.subscribe(selected => {
+      const identityNumberControl =this.identityupdateForm.get('identityupdateNumber')
+
+      identityNumberControl?.clearValidators();
+
+      if (selected?.identityType1 === 'Passport' || selected?.identityType1 === 'PAN') {
+        // Allow alphanumeric + special characters
+        identityNumberControl?.setValidators([
+          Validators.required,
+          Validators.pattern(/^[a-zA-Z0-9!@#\$%\^\&*\)]+$/)
+        ]);
+      } else {
+        // Allow numbers only
+        identityNumberControl?.setValidators([
+          Validators.required,
+          Validators.pattern(/^[0-9]+$/)
+        ]);
+      }
+
+      identityNumberControl?.updateValueAndValidity();
+    });
   }
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);

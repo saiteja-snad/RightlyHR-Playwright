@@ -70,7 +70,7 @@ export class EmployeOffBoardingComponent {
       exit: [null, Validators.required],
       eligiblefor: [null, Validators.required],
       status: [null, Validators.required],
-      lastdate: [null]
+      lastdate: ['', Validators.required]
     });
   }
   
@@ -80,7 +80,15 @@ export class EmployeOffBoardingComponent {
       .getData(`Employeedata/${employeeId}`)
       .subscribe({
         next: (data: any) => {
-          this.joiningDate =this.formatDateToLocal(data.dateOfJoining)
+          this.joiningDate = this.formatDateToLocal(data.dateOfJoining);
+          const lastWorking= this.formatDateToLocal(data.lastworkingday);
+          if(data.substatus.toLowerCase() === 'cleared no due'){
+            this.offBoardingForm.patchValue({ lastdate: lastWorking });
+            const lastDateControl = this.offBoardingForm.get('lastdate');
+            if (lastDateControl) {
+              lastDateControl.disable();
+            }
+          }
         },
         error: (reason: any) =>
           console.error('Error fetching employee data:', reason),
@@ -150,7 +158,12 @@ export class EmployeOffBoardingComponent {
     })
   }
   postOffBoardingDetails() {
+    debugger
     if (this.offBoardingForm.valid) {
+      const lastDateControl = this.offBoardingForm.get('lastdate');
+      if (lastDateControl) {
+          lastDateControl.enable();
+        }
       const formdata=this.offBoardingForm.value
 
       this.empinfo.termreasonoffboard=formdata.exit.reason;

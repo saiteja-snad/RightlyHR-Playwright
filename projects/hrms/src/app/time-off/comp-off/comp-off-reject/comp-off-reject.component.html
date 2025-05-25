@@ -3,14 +3,12 @@
     @if(!dataload){
     <table class="w-100">
       <thead>
-        <tr>
-          <th>Worked Date</th>
-          <th>Availed</th>
-          <th>Applied Date</th>
-          <th>Reason</th>
-          <th>Rejected Reason</th>
-          <th>Status</th>
-        </tr>
+        <th>Worked Date</th>
+        <th>Availed</th>
+        <th>Applied Date</th>
+        <th>Reason</th>
+        <th>Rejected Reason</th>
+        <th>Status</th>
       </thead>
       <tbody>
         <ng-container *ngIf="rejectedCompOffRequests!.length > 0; else noDataTemplate">
@@ -24,18 +22,16 @@
             </td>
             <td>{{ compOffRequest.requestedDate | dateformat }}</td>
             <td>
-              <div>
-                <a *ngIf="compOffRequest.requestedComments; else noRequestedComments" type="button"
-                  [ngbPopover]="requestedComments">
-                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                </a>
-                <ng-template #requestedComments>
-                  <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
-                </ng-template>
-                <ng-template #noRequestedComments>
-                  <span>-</span>
-                </ng-template>
-              </div>
+              <a *ngIf="compOffRequest.requestedComments; else noRequestedComments" type="button"
+                [ngbPopover]="requestedComments">
+                <img src="images/info-fill.png" alt="info icon" class="info-icon">
+              </a>
+              <ng-template #requestedComments>
+                <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
+              </ng-template>
+              <ng-template #noRequestedComments>
+                <span>-</span>
+              </ng-template>
             </td>
             <td>
               <div>
@@ -55,13 +51,10 @@
         </ng-container>
 
         <ng-template #noDataTemplate>
-          <tr>
-            <td colspan="6">
-              <app-no-data-found></app-no-data-found>
-            </td>
+          <tr class="table-placeholder">
+            <app-no-data-found></app-no-data-found>
           </tr>
         </ng-template>
-        
       </tbody>
     </table>
     }@else{

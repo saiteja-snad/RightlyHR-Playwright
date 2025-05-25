@@ -38,6 +38,10 @@ export class AddressInfoComponent implements OnInit,OnDestroy{
     this.addressForm.get('permanentAddress')?.valueChanges.subscribe(() => {
       this.checkIfAddressesAreSame();
     });
+
+      this.addressForm.get('currentAddress')?.valueChanges.subscribe(() => {
+      this.checkIfAddressesAreSame();
+    });
    
   }
   getEmpInfoFromRoute(): void {

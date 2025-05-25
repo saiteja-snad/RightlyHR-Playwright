@@ -116,13 +116,16 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
   confirmation_Msg: any;
   data_Storing = {} as any;
   ApprovalLoader = false;
-
+issuedDatevalidate:any;
+startDatevalidate:any;
+expiryDatevalidate:any;
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
     private authService: AuthService, private conformationPopup: OpenModalService
     // private _userAcessService: UserAccessService,
   ) { this.initializeForm(); }
 
   ngOnInit(): void {
+    this.issuedDatevalidate = moment().format('YYYY-MM-DD');
     // this._userAcessService.checkRouteAccess('Dashboard.view');
     this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
     this.initializeForm();
@@ -234,6 +237,8 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     return (control: AbstractControl): ValidationErrors | null => {
       const issuedDate = control.get('offerIssuedDate')?.value;
       const expiryDate = control.get('offerExpiryDate')?.value;
+      const dateOfJoiningDate = control.get('dateOfJoining')?.value;
+       this.expiryDatevalidate=moment(dateOfJoiningDate).format('YYYY-MM-DD')
       if (!issuedDate || !expiryDate) {
         return null; // Don’t validate if one of the dates is missing
       }
@@ -246,6 +251,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
     return (control: AbstractControl): ValidationErrors | null => {
       const issuedDate = control.get('offerIssuedDate')?.value;
       const dateOfJoiningDate = control.get('dateOfJoining')?.value;
+       this.startDatevalidate=moment(issuedDate).format('YYYY-MM-DD')
       if (!issuedDate || !dateOfJoiningDate) {
         return null; // Don’t validate if one of the dates is missing
       }
@@ -429,6 +435,7 @@ export class OfferLetterComponent implements OnInit, OnDestroy {
       this.prospectiveEmpData.Copys = formValues.Copys,
       this.prospectiveEmpData.offerExpiryDate = formValues.offerExpiryDate
     this.prospectiveEmpData.note = formValues.note
+   
   }
 
   //employeeid validation to check we have the mail already exist or not

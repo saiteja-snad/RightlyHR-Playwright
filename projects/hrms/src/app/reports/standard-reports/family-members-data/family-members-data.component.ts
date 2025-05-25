@@ -10,7 +10,7 @@ import { SelectModule } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { IFamilyDetails } from '../../../Interfaces/reports.model';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import * as XLSX from 'xlsx';
@@ -18,6 +18,9 @@ import { StandardReportTabsComponent } from '../../../shared/reports-tabs/standa
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-family-members-data',
@@ -29,12 +32,14 @@ import { RbacService } from '../../../services/rbac.service';
     NoDataFoundComponent,
     StandardReportTabsComponent,
     DateformatPipe,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    ModuleInformationComponent
 ],
   templateUrl: './family-members-data.component.html',
   styleUrl: './family-members-data.component.scss',
 })
 export class FamilyMembersDataComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   empStatusList: string[] = ['All Employees', 'Active', 'Inactive'];
   reportForm!: FormGroup;
   dataload = false;
@@ -48,7 +53,8 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private http: HttpService,
     private modal: OpenModalService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -58,6 +64,9 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     this.reportForm.valueChanges.subscribe(()=>{
       this.disableBtn= true;
     })
+
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -66,6 +75,25 @@ export class FamilyMembersDataComponent implements OnInit, OnDestroy {
     });
   }
 
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/standard-reports/family-data': MODULE_INFOS.STANDARD_REPORTS_FAMILY_MEMBERS_DATA_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+  
   getFamilyDetails(status?: string) {
     this.dataload = true;
     this.spinnerLoader1= true;

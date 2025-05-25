@@ -55,6 +55,11 @@ export const MODULE_INFOS = {
     ORGANIZATIONAL_HIERARCHY_MODULE_INFO : "The Organizational Hierarchy view displays detailed reporting structure and compensation info for the selected employee. Options are available to download the data as PDF, JPG, or Excel.",
 
     //Holidays Module Info
-    HOLIDAYS_MODULE_INFO : "The Holidays page displays public and optional holidays for the selected year, with the ability to change the year using a dropdown. Each holiday is shown with its name, date, and an event for easy reference."
+    HOLIDAYS_MODULE_INFO : "The Holidays page displays public and optional holidays for the selected year, with the ability to change the year using a dropdown. Each holiday is shown with its name, date, and an event for easy reference.",
 
+    //Reports Module Standard Reports Module Info
+    STANDARD_REPORTS_EMPLOYEE_MASTER_DATA_MODULE_INFO : "The Employee Master Data Reports page allows generation and export of comprehensive Employee Master Data based on selected date ranges and employee status. It displays detailed employee information including personal, contact, educational, statutory, banking, and job-related details for accurate HR recordkeeping.",
+    STANDARD_REPORTS_JOB_LOCATION_WISE_DATA_MODULE_INFO : "The Job Location Wise Data report lists employees filtered by job location and joining date. It includes personal details, contact numbers, and placeholders for job-related information such as role, shift, and department, allowing generation and export of structured job allocation data.",
+    STANDARD_REPORTS_BRANCH_LOCATION_WISE_DATA_MODULE_INFO : "The Branch Location Wise Data report enables generation of employee information based on selected branch locations. It filters records by branch code and joining date, helping HR teams organize, export, and analyze employee distribution across different office branches.",
+    STANDARD_REPORTS_FAMILY_MEMBERS_DATA_MODULE_INFO : "The Family Members Data report provides information on employees' family members, including relationship and dependency details. It is generated based on employee status and supports export for records and compliance.",
 }

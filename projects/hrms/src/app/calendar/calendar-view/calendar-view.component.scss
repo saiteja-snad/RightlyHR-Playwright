@@ -1,6 +1,7 @@
 .custom-component-left-content {
   width: 20rem;
   min-width: 15rem;
+  padding: 1rem;
 }
 
 .calender-content {
@@ -9,6 +10,7 @@
   overflow: auto;
   padding: 1rem;
   min-width: 600px;
+  border-radius: 0.5rem;
   background-color: #FFFFFF;
 
   .fc-direction-ltr {
@@ -19,6 +21,10 @@
     background-color: var(--btn-primary-color);
     border-color: var(--btn-primary-color);
     color: var(--btn-color-tp);
+  }
+
+  .fc .fc-list-table td {
+    vertical-align: middle !important;
   }
 
   .event-title {

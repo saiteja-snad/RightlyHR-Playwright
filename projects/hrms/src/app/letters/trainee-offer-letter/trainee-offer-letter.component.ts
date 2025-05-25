@@ -123,13 +123,16 @@ export class TraineeOfferLetterComponent {
   confirmation_Msg: any;
   @ViewChild('approveModal1') approveModal1: any;
   Approvalloader = false;
-
+ issuedDatevalidate:any;
+ startDatevalidate:any;
+ expiryDatevalidate:any;
   constructor(private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private router: Router,
     private authService: AuthService, private conformationPopup: OpenModalService,) {
     this.initializeForm();
   }
 
   ngOnInit(): void {
+    this.issuedDatevalidate = moment().format('YYYY-MM-DD');
     this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
     this.traineeEmpData.mobilePhoneCountryCode = 'India (+91)';
     this.traineeEmpData.title = null;
@@ -213,6 +216,7 @@ export class TraineeOfferLetterComponent {
 
   onDateOfJoiningChange() {
     this.traineeEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value;
+        this.expiryDatevalidate = moment(this.traineeEmpData.dateOfJoining).format('YYYY-MM-DD');
     this.calculateEndDate(this.employeeForm.get('internshipperiod')?.value);
   }
 
@@ -544,6 +548,7 @@ export class TraineeOfferLetterComponent {
 
   isDataPopulated() {
     this.traineeEmpData.offerIssuedDate = this.employeeForm.get('offerSentDate')?.value;
+    this.startDatevalidate = moment(this.traineeEmpData.offerIssuedDate).format('YYYY-MM-DD');
   }
 
   isDataPopulated1() {
@@ -724,8 +729,10 @@ export class TraineeOfferLetterComponent {
         if (res.statusCode == 409) {
           this.conformationPopup.openErrorModal(res.message);
         } else if (res.statusCode == 200) {
-          this.UpdateFieldsToRespectiveTables();
-          this.downLoadDocument(this.result);
+           this.UpdateFieldsToRespectiveTables();
+            setTimeout(() => {
+           this.downLoadDocument(this.result);
+           }, 3000); // wait 1 second (1000ms)
         } else if (res.statusCode == 1002) {
           this.confirmation_Msg = res.message;
           this.data_Storing = this.traineeEmpData;
@@ -1009,11 +1016,14 @@ export class TraineeOfferLetterComponent {
   updateEndDateValidity(): void {
     const offerExpiryDate = moment(this.employeeForm.get('offerExpiryDate')?.value);
     const offerIssuedDate = moment(this.employeeForm.get('offerSentDate')?.value);
+    if(offerIssuedDate){
+    this.expiryDatevalidate = moment(offerIssuedDate).format('YYYY-MM-DD');
+    }
     if (offerExpiryDate && offerIssuedDate) {
-      if (offerExpiryDate <= offerIssuedDate) {
-        this.isExpiryDateValid = false;
-      } else {
+      if (offerExpiryDate >= offerIssuedDate) {
         this.isExpiryDateValid = true;
+      } else {
+        this.isExpiryDateValid = false;
       }
     }
   }

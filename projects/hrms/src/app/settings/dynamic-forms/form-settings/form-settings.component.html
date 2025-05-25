@@ -192,7 +192,7 @@
         </div>
     
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="onClose();">{{'Close'|translate}}</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="onClose();">{{'Cancel'|translate}}</button>
           <button type="submit" [disabled]="ratingform.invalid" class="custom-btn btn-primary">{{'Add'|translate}}</button>
         </div>
       </form>
@@ -322,7 +322,7 @@
 
         <!-- Submit Button -->
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="onClose();">Close</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="onClose();">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="updateFormRating.invalid"
             (click)="onUpdate(ratingType);modal.dismiss()">Update</button>
         </div>
@@ -335,8 +335,8 @@
 <ng-template #confirmPopUp1 let-modal>
   <div class="result-popup-content" ngbAutofocus>
     <div>
-      <img src="/icons/conformation.png" alt="delete-icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to close?</p>
+      <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

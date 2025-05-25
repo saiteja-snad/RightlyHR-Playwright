@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
 import { HttpService } from '../../services/http.service';
 import { CreateComponent } from './create/create.component';
@@ -13,6 +13,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../services/rbac.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-review-cycle-list',
@@ -23,13 +26,15 @@ import { RbacService } from '../../services/rbac.service';
     PaginatorModule,
     TranslateModule,
     DataLoaderContentComponent,
-    NoDataFoundComponent
-  ],
+    NoDataFoundComponent,
+    ModuleInformationComponent
+],
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss',
 })
 
 export class ReviewCycleListComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   subscription!: Subscription;
   filteredDetails: any[] = [];
   jobLocationDropDownData: any;
@@ -57,7 +62,7 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
   @ViewChild('cancelationConfirmation') cancelationConfirmation: any;
   @ViewChild('confirmation') confirmation: any;
 
-  constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService) {
+  constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService, public readonly router: Router) {
     effect(() => {
       if (this.http.reviewCycleTriggerSignal()) {
         this.getAllReviewCyclesList(this.page, this.pageSize);
@@ -68,6 +73,23 @@ export class ReviewCycleListComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAllReviewCyclesList(this.page, this.pageSize);
+    this.updateModuleInfo();
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/pms/review-cycle': MODULE_INFOS.PMS_REVIEW_CYCLE_LIST_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   openAdd() {

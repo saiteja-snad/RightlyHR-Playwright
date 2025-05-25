@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { AttandaceReportTabsComponent } from "../../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component";
 import { Select } from 'primeng/select';
 import { IemployeeDetails, ITeamManagerEmployees } from '../reports.modal';
@@ -16,14 +16,18 @@ import * as XLSX from 'xlsx';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-permission-reports',
-  imports: [CommonModule, ReactiveFormsModule, AttandaceReportTabsComponent, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, AttandaceReportTabsComponent, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './permission-reports.component.html',
   styleUrl: './permission-reports.component.scss'
 })
 export class PermissionReportsComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   subscription!: Subscription;
   permissionReportForm!: FormGroup;
   loggedInUser = {} as IemployeeDetails;
@@ -63,7 +67,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -72,6 +77,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     this.getAllEmployees();
     this.getTeam();
     this.getMyTeam();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
     // this.getAttendanceReports();
   }
 
@@ -95,6 +102,25 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       form.get('manager')?.value ||
       form.get('dateRange')?.value || form.get('team')?.value
     );
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/attendence-reports/permission-report': MODULE_INFOS.ATTENDANCE_PERMISSION_REPORTS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getAllEmployees() {

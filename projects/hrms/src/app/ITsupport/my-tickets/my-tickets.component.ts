@@ -4,8 +4,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
-import { Subscription } from 'rxjs';
-import { RouterModule } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
@@ -13,15 +13,18 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { IDepartment } from '../../Interfaces/letters-model';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 
 @Component({
   selector: 'app-my-tickets',
-  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DateformatPipe],
+  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DateformatPipe, ModuleInformationComponent],
   templateUrl: './my-tickets.component.html',
   styleUrl: './my-tickets.component.scss'
 })
 export class MyTicketsComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   empinfo = {} as Ipersonal;
   tickets: any = [];
@@ -62,7 +65,8 @@ export class MyTicketsComponent {
     private readonly modalService: NgbModal,
     private fb: FormBuilder,
     private confirmation: OpenModalService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) {}
 
   
@@ -96,6 +100,28 @@ export class MyTicketsComponent {
     this.itSupportForm.patchValue({
       employee: this.ticketFor
     });
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/it-support/mytickets': MODULE_INFOS.IT_SUPPORT_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 // Call this when ticket For dropdwon data changes
 setConditionalValidators() {

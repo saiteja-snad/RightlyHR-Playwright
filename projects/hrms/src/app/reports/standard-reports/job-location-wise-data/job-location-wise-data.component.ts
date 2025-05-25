@@ -4,7 +4,7 @@ import { NgxDaterangepickerBootstrapDirective } from 'ngx-daterangepicker-bootst
 import { environment } from '../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { ILocation, ILocationReportData, ISubLocation } from './location-reports.model';
 import { SelectModule } from 'primeng/select';
@@ -18,14 +18,18 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 @Component({
   selector: 'app-job-location-wise-data',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective, SelectModule, TranslateModule, StandardReportTabsComponent, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './job-location-wise-data.component.html',
   styleUrls: ['./job-location-wise-data.component.scss']
 })
 
 export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   spinnerLoader = false;
   dataload = false;
   spinnerLoader1= false;
@@ -43,7 +47,8 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private fb: FormBuilder,
     private modal: OpenModalService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -56,6 +61,8 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
     this.locationReportsForm.valueChanges.subscribe(()=>{
       this.disableBtn= true;
     })
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -64,6 +71,25 @@ export class JobLocationWiseDataComponent implements OnInit, OnDestroy {
       location: [''],
       subLocation: ['']
     });
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/standard-reports/job-data': MODULE_INFOS.STANDARD_REPORTS_JOB_LOCATION_WISE_DATA_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   get dateOfJoiningControl(): FormControl {

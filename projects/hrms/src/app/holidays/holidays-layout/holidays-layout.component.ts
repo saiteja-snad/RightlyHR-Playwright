@@ -1,17 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../services/http.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { filter } from 'rxjs';
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-holidays-layout',
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, Select],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, Select, ModuleInformationComponent],
   templateUrl: './holidays-layout.component.html',
   styleUrl: './holidays-layout.component.scss'
 })
 export class HolidaysLayoutComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   optionalholidaysform!: FormGroup;
   years: number[] = [];
   empinfo: any;
@@ -38,6 +42,28 @@ export class HolidaysLayoutComponent implements OnInit, OnDestroy {
       selectedYear: new FormControl(this.selectedYear)
     });
     this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/holidays': MODULE_INFOS.HOLIDAYS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   onYearChange() {

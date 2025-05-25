@@ -3,7 +3,7 @@ import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
 import { HttpService } from '../../services/http.service';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment.dev';
 import { Location } from '@angular/common';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -13,14 +13,18 @@ import { Select } from 'primeng/select';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })
 export class CompanypoliciesComponent {
+  moduleinfo : string = '';
   policiesform!: FormGroup;
   ExpenseViewURL: any;
   ExpenseImageUrl: any;
@@ -43,7 +47,9 @@ export class CompanypoliciesComponent {
   shouldOpenModal = false;
 
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef) { }
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef,
+    public readonly router: Router
+  ) { }
   // @ViewChild('viewattamchment') private viewattamchment!: TemplateRef<any>;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   ngOnInit(): void {
@@ -65,7 +71,30 @@ export class CompanypoliciesComponent {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
       this.years.push({ label: i.toString(), value: i });
     }
+
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/policies/companypolicies': MODULE_INFOS.POLICIES_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+  
   openupdateModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
   }

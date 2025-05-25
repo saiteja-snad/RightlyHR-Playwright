@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IRoles } from '../permissions/permission.model';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -15,17 +15,20 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { SettingsRolePermissionsModuleTabsComponent } from "../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 @Component({
   selector: 'app-role-assignee',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, DataLoaderContentComponent, NoDataFoundComponent,
-    SettingsRolePermissionsModuleTabsComponent, TranslateModule
-  ],
+    SettingsRolePermissionsModuleTabsComponent, TranslateModule, ModuleInformationComponent],
   templateUrl: './role-assignee.component.html',
   styleUrl: './role-assignee.component.scss',
   encapsulation:ViewEncapsulation.None
 })
 
 export class RoleAssigneeComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   roleId: string | undefined;
   userId: number | undefined;
   selectedUsersCount!: number;
@@ -45,13 +48,20 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private modal: OpenModalService,
     private modalService: NgbModal,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
     this.getAllroles();
     this.getUsers();
     this.intializeForm();
+    this.updateModuleInfo();
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   intializeForm() {
@@ -179,6 +189,17 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
 
   close() {
     this.modalService.dismissAll();
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/settings/roles-permissions/role-assignee': MODULE_INFOS.SETTINGS_ROLES_ASSIGNEE_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   ngOnDestroy(): void {

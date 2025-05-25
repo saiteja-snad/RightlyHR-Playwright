@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { IRoles } from './permission.model';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,15 +11,19 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SettingsRolePermissionsModuleTabsComponent } from "../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component";
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 @Component({
   selector: 'app-permissions',
-  imports: [CommonModule, FormsModule, AutoCompleteModule, SettingsRolePermissionsModuleTabsComponent, DataLoaderContentComponent],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, SettingsRolePermissionsModuleTabsComponent, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class PermissionsComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   roleId!: string;
   noRoleSelected = true;
   isSaveButtonEnabled = false;
@@ -35,7 +39,8 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     private http: HttpService, 
     private modalService: NgbModal, 
     private modal: OpenModalService, 
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -46,6 +51,13 @@ export class PermissionsComponent implements OnInit, OnDestroy {
       }
       this.getAllroles();
       this.dataLoad = false;
+    });
+
+    this.updateModuleInfo();
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
     });
   }
 
@@ -254,6 +266,17 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     }
   
     return false; // Default: all enabled
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/settings/roles-permissions/permissions': MODULE_INFOS.SETTINGS_ROLES_PERMISSION_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   ngOnDestroy(): void {

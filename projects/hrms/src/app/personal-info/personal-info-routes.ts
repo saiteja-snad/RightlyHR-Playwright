@@ -1,6 +1,5 @@
 import { Route, } from '@angular/router';
 import { BasicInfoComponent } from './personal/basic-info/basic-info.component';
-import { TeamNumbersComponent } from './team-numbers/team-numbers.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { PermissionsGuard } from '../guards/permissions.guard';
 
@@ -46,20 +45,7 @@ export default [
 
         ]   
     },
-    {
-            path: 'team-members', component: TeamNumbersComponent,canActivate: [PermissionsGuard], data: { permission: 'Employee Info Reporting Managers Tab.view' }
-        },
-    {
-        path: 'team',
-        children: [
-            // { path: '', redirectTo: 'team-members', pathMatch: 'full' },
-            { path: 'team-members', loadComponent: () => import('./team-numbers/team-numbers.component').then((m) => m.TeamNumbersComponent), data: { permission: 'Employee Info Reporting Manager Tab.view' } },
-          
-            {
-                path: 'my-team-members', loadComponent: () => import('./team-numbers/myteam-members/myteam-members.component').then((m) => m.MyteamMembersComponent)
-            },
-        ]
-    },
+   
     {
         path:'documents', component: DocumentsComponent, data: { permission: 'Employee Info Documents Tab.view' }
     },

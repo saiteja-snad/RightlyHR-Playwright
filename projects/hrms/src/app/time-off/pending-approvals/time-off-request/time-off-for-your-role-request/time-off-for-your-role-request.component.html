@@ -129,7 +129,7 @@
                             <ul class="dropdown-menu custom-dropdown-menu">
                                 <li>
                                     <a class="dropdown-item"
-                                        *ngIf="item.approvalHeader.currentapprovalStage != item.approvalHeader.finalapprovalStage"
+                                        *ngIf="item.approvalHeader.currentapprovalStage == item.approvalHeader.finalapprovalStage"
                                         (click)="checkLeaveBalance(item,checkbalancepopup)">
                                         <i class="bi bi-calendar-check me-2"></i>Check Balance</a>
                                 </li>
@@ -164,18 +164,14 @@
                 }
                 @else{
                 <tr>
-                    <td colospan="12">
-                        <app-no-data-found />
-                    </td>
+                    <app-no-data-found />
                 </tr>
                 }
                 }
             </ng-template>
             <ng-template #emptymessage>
                 <tr>
-                    <td colospan="9">
-                        <app-no-data-found />
-                    </td>
+                    <app-no-data-found />
                 </tr>
             </ng-template>
         </p-table>
@@ -277,9 +273,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
+                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Approve reason<span
                             class="error-msg">*</span></label>
-                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
+                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approve reason"
                         name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments"
                         pattern="^\S.*" (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3"
                         required></textarea>
@@ -288,7 +284,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        Comments are required
+                        Reason is required
                     </div>
                 </div>
             </div>
@@ -323,16 +319,16 @@
         <form autocomplete="off" name="leaveapprovee" #leaveapprovee="ngForm" (ngSubmit)="leaveapprovee.valid">
             <div class="custom-main-popup-content">
                 <div class="mb-3">
-                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Comments<span
+                    <label for="exampleFormControlTextarea1" class="form-label custom-label">Reject reason<span
                             class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide comments"
+                    <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide reject reason"
                         name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" pattern="^\S.*"
                         (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                         Comments are required
+                         Reason is required
                     </div>
                 </div>
             </div>

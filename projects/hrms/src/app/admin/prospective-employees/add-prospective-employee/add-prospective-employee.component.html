@@ -4,7 +4,7 @@
             <p class="popup-heading mb-0">{{'Add Prospective Employee'| translate}}</p>
         </div>
         <div>
-            <a (click)="close()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            <a (click)="closepopup(confirmationpopupfornodue)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
         </div>
     </div>
     <div class="custom-main-popup-content">
@@ -116,9 +116,22 @@
                 </div>
             </div>
             <div class="custom-modal-footer">
-                <button type="reset" class="custom-btn btn-secondary" (click)="close()">{{'Close'|translate}}</button>
+                <button type="reset" class="custom-btn btn-secondary" (click)="closepopup(confirmationpopupfornodue)">{{'Cancel'|translate}}</button>
                 <button type="submit" [disabled]="employeeForm.invalid" class="custom-btn btn-primary">{{'Add'|translate}}</button>
             </div>
         </form>
     </div>
 </div>
+<ng-template #confirmationpopupfornodue let-model>
+  <div class="result-popup-content" ngbAutofocus>
+    <div>
+      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+      <p class="confirmation-text">Are you sure you want to cancel?</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+      <button type="button" class="custom-btn btn-primary" (click)="close();model.dismiss()">Yes</button>
+    </div>
+  </div>
+</ng-template>
+<!-- modal end to close the nodue -->

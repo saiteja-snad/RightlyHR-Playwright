@@ -60,13 +60,13 @@
                 <div class="col-md-6 mb-3">
                     <label for="startDate" class="form-label custom-label mb-2">Start Date<span
                             class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="startDate" formControlName="startDate">
+                    <input type="date" class="form-control custom-input" onkeydown="return false;" (change)="oncheckdates(educationForm.get('startDate')?.value)" id="startDate" formControlName="startDate">
                 </div>
 
                 <div class="col-md-6 mb-3">
                     <label for="endDate" class="form-label custom-label mb-2">To Date<span
                             class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="endDate" formControlName="endDate" [min]="startDatevalidate">
+                    <input type="date" class="form-control custom-input" onkeydown="return false;" id="endDate" formControlName="endDate" [min]="startDatevalidate">
                 </div>
 
                 <div class="col-md-12 mb-3">
@@ -84,7 +84,7 @@
 
             <div class="d-flex justify-content-end gap-3">
                 <button type="reset" class="custom-btn btn-secondary px-4" (click)="close()">Close</button>
-                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationForm.invalid">Update</button>
+                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationForm.invalid||showErrorforpdf||showErrorforsize">Update</button>
             </div>
         </form>
     </div>

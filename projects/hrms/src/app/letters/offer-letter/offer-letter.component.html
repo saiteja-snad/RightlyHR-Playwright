@@ -220,10 +220,25 @@
       
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Salary (Cost to Company)<span class="error-msg">*</span></label>
-            <input type="number" class="form-control custom-input" formControlName="amount" placeholder="Please enter salary"
+            <input type="number" class="form-control custom-input" (input)="formvalidators.restrictAlphabets(employeeForm.get('amount')?.value)" formControlName="amount" minlength="0"
+                            maxlength="10" placeholder="Please enter salary"
               (ngModelChange)="onclickCTC($event)" />
-            <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched" class="error-msg">
-              Salary is required</div>
+            <!-- <div *ngIf="employeeForm.get('amount')?.invalid && employeeForm.get('amount')?.touched" class="error-msg">
+              Salary is required</div> -->
+                <div class="error-msg" *ngIf="employeeForm.get('amount')?.touched && employeeForm.get('amount')?.invalid">
+                  <div *ngIf="employeeForm.get('amount')?.errors?.['required']">
+                     Salary is required.
+                  </div>
+                  <div *ngIf="employeeForm.get('amount')?.errors?.['min']">
+                    Amount must be 0 or more.
+                  </div>
+                  <div *ngIf="employeeForm.get('amount')?.errors?.['maxlength']">
+                    Amount cannot exceed 10 digits.
+                  </div>
+                  <div *ngIf="employeeForm.get('amount')?.errors?.['pattern']">
+                    Invalid number
+                  </div>
+                </div>
           </div>
       
           <div class="mb-3">
@@ -240,10 +255,22 @@
       
           <div class="mb-3">
             <label class="form-label custom-label mb-2">Variable Amount<span class="error-msg">*</span></label>
-            <input type="text" class="form-control custom-input" formControlName="variablePayAmount"
+            <input type="text" class="form-control custom-input" formControlName="variablePayAmount" (input)="formvalidators.restrictAlphabets(employeeForm.get('amount')?.value)"
               (ngModelChange)="onVariablePayChangeAmount($event)" placeholder="Please enter variable amount" />
-            <div *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
-              <div class="error-msg">Variable Amount is required</div>
+            <div class="error-msg" *ngIf="employeeForm.get('variablePayAmount')?.invalid && employeeForm.get('variablePayAmount')?.touched">
+              <!-- <div class="error-msg">Variable Amount is required</div> -->
+               <div *ngIf="employeeForm.get('variablePayAmount')?.errors?.['required']">
+                     Variable Amount is required.
+                  </div>
+                  <div *ngIf="employeeForm.get('variablePayAmount')?.errors?.['min']">
+                    Amount must be 0 or more.
+                  </div>
+                  <div *ngIf="employeeForm.get('variablePayAmount')?.errors?.['maxlength']">
+                    Amount cannot exceed 10 digits.
+                  </div>
+                  <div *ngIf="employeeForm.get('variablePayAmount')?.errors?.['pattern']">
+                    Invalid number
+                  </div>
             </div>
           </div>
       

@@ -5,7 +5,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
-import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, MinLengthValidator, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
@@ -18,6 +18,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, LettersTabComponent, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule,
@@ -120,7 +121,7 @@ issuedDatevalidate:any;
 startDatevalidate:any;
 expiryDatevalidate:any;
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService
+    private authService: AuthService, private conformationPopup: OpenModalService,public formvalidators:FormValidationService
     // private _userAcessService: UserAccessService,
   ) { this.initializeForm(); }
 
@@ -163,9 +164,9 @@ expiryDatevalidate:any;
       jobRoleDetails: [{ value: null, disabled: true }],
       esic: [null, Validators.required],
       pf: [null, Validators.required],
-      amount: ['', Validators.required],
+      amount: ['', [Validators.required, Validators.min(0),Validators.maxLength(10),Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       isVariablePay: [null, Validators.required],
-      variablePayAmount: [{ value: null, disabled: true }, Validators.required],
+      variablePayAmount: [{ value: null, disabled: true }, [Validators.required, Validators.min(0),Validators.maxLength(10),Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],

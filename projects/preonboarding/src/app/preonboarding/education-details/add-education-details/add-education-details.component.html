@@ -62,7 +62,7 @@
         
                 <div class="col-md-6 mb-3">
                     <label for="startDate" class="form-label custom-label mb-2">Start Date<span class="text-danger">*</span></label>
-                    <input type="date" class="form-control custom-input" id="startDate" formControlName="startDate" placeholder="Select start date" autoComplete="off" onkeydown="return false;">
+                    <input type="date" class="form-control custom-input" id="startDate" (change)="oncheckdates(educationForm.get('startDate')?.value)" formControlName="startDate" placeholder="Select start date" autoComplete="off" onkeydown="return false;">
                     <div *ngIf="educationForm.get('startDate')?.invalid && educationForm.get('startDate')?.touched" class="error-msg">
                         Start date is required
                     </div>
@@ -93,7 +93,7 @@
         
             <div class="d-flex justify-content-end gap-3 mt-4">
                 <button type="reset" class="custom-btn btn-secondary px-4" (click)="close()">Close</button>
-                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationForm.invalid || !file">Add</button>
+                <button type="submit" class="custom-btn btn-primary px-4" [disabled]="educationForm.invalid || !file||showErrorforpdf||showErrorforsize">Add</button>
             </div>
         </form> 
     </div>

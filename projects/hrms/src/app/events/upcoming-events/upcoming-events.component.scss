@@ -4,10 +4,11 @@
 
 .events-section-card {
     width: 100%;
-    height: calc(100dvh - 11.5rem);
-    padding: 1.5rem;
+    height: calc(100dvh - 10rem);
+    padding: 1rem;
     border-radius: 0.5rem;
     overflow-y: auto;
+    border: 1px solid var(--border-color);
 }
 
 .no-data-wrapper {

@@ -9,15 +9,12 @@
     @if(!loading){
       <table class="w-100">
         <thead>
-          <tr>
-            <th>Expense Title</th>
-            <th>Expense Date</th>
-            <th>Total Amount</th>
-            <th>Status</th>
-            <th class="text-center">Approver Comments</th>
-            <th class="text-center">View Details</th>
-            
-          </tr>
+          <th>Expense Title</th>
+          <th>Expense Date</th>
+          <th>Total Amount</th>
+          <th>Status</th>
+          <th class="text-center">Approver Comments</th>
+          <th class="text-center">View Details</th>
         </thead>
         <tbody>
           <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
@@ -51,9 +48,7 @@
           <!-- No Data Found Template -->
           <ng-template #noDataTemplate>
             <tr>
-              <td>
-                <app-no-data-found />
-              </td>
+              <app-no-data-found />
             </tr>
           </ng-template>
         </tbody>
@@ -66,7 +61,7 @@
 
 <ng-template #viewDetailsModal let-modal>
   <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-3">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">Expenses Details</p>
       </div>
@@ -75,51 +70,52 @@
       </div>
     </div>
 
-    <div class="d-flex gap-5 pt-3 ps-4">
-      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
-      <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b>
-    </div>
-    <div class="custom-table p-3">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>Expense Type</th>
-            <th>Expense Name</th>
-            <th>Expense Date</th>
-            <th>Expense Amount</th>
-            <th>Status</th>
-            <th>Receipt Number</th>
-            <th class="text-center">Action(S)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
-            <td>{{ item?.expenseType }}</td>
-            <td>{{ item?.item_Name }}</td>
-            <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
-            <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+    <div class="custom-main-popup-content">
+      <div class="mb-3 d-flex gap-3">
+        <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
+        <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b>
+      </div>
 
-            <td>{{ item?.status }}</td>
-            <td>{{ item?.receipt_Number }}</td>
-            <td class="text-center">
-
-              <div class="d-flex gap-2">
-                <a type="button" class="me-2 download-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
-                  <i class="bi bi-download me-2"></i>Download
-                </a>
-                <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"    (click)="onViewAttachement(item?.attachment_url)">
-                  <i class="bi bi-eye-fill me-2"></i>View
-                </a>
-              </div>
-
-            </td>
-
-          </tr>
-        </tbody>
-      </table>
-      <div class="text-center mt-3" >
-        <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
-    </div>
+      <div class="custom-table">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>Expense Type</th>
+              <th>Expense Name</th>
+              <th>Expense Date</th>
+              <th>Expense Amount</th>
+              <th>Status</th>
+              <th>Receipt Number</th>
+              <th class="text-center">Action(S)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
+              <td>{{ item?.expenseType }}</td>
+              <td>{{ item?.item_Name }}</td>
+              <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
+              <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td>{{ item?.status }}</td>
+              <td>{{ item?.receipt_Number }}</td>
+              <td class="text-center">
+                <div class="d-flex gap-2">
+                  <a type="button" class="me-2 download-text text-nowrap"
+                    (click)="onSelectDownload(item?.attachment_url)">
+                    <i class="bi bi-download me-2"></i>Download
+                  </a>
+                  <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
+                    (click)="onViewAttachement(item?.attachment_url)">
+                    <i class="bi bi-eye-fill me-2"></i>View
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center mt-3">
+          <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+        </div>
+      </div>
     </div>
   </div>
 </ng-template>
@@ -127,7 +123,7 @@
 <!-- Attachment View Modal -->
 <ng-template #viewattamchment let-modal>
   <div class="custom-main-popup-container">
-    <div class="d-flex justify-content-between popup-header-border p-4">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">Expenses Details</p>
       </div>
@@ -136,7 +132,7 @@
             src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
-    <div class="modal-body" style="text-align: center">
+    <div class="custom-main-popup-content">
       <p *ngIf="!ExpenseImageUrl; else imageView">
         <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
       </p>
@@ -146,9 +142,10 @@
     </div>
   </div>
 </ng-template>
+
 <ng-template #viewcomments let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-    <div class="d-flex justify-content-between popup-header-border p-3">
+    <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
         <p class="popup-heading mb-0">Approver Comments</p>
       </div>
@@ -156,13 +153,14 @@
         <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
       </div>
     </div>
+
     <div class="custom-main-popup-content">
       <div class="card p-3">
-        <div *ngFor="let comment of commentsrecivced" >
+        <div *ngFor="let comment of commentsrecivced">
           <div class="mb-0">
-            <p> <b>Processed by:</b> {{ comment.addedName }} </p>
-            <p> <b>Processed by ID:</b> {{ comment.addedByFusionEmpId }} </p>
-            <p> <b> Date:</b> {{ comment.addedDate | date: 'short' }} </p>
+            <p><b>Processed by:</b> {{ comment.addedName }} </p>
+            <p><b>Processed by ID:</b> {{ comment.addedByFusionEmpId }} </p>
+            <p><b> Date:</b> {{ comment.addedDate | date: 'short' }} </p>
             <p><b>Status:</b> {{ comment.action }}</p>
             <!-- <p> <b>Comments:</b> {{ comment.comments }} </p> -->
           </div>

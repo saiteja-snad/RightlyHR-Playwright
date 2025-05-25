@@ -88,46 +88,13 @@ export class ReportsService {
   getWfhReports(request: IWfhReportRequest) {
     let params = new HttpParams();
   
-    if (request.FusionEmpId) {
-      params = params.set('FusionEmpId', request.FusionEmpId);
-    }
-  
-    // if (request.EmployeeName) {
-    //   params = params.set('EmployeeName', request.EmployeeName);
-    // }
-  
-    // if (request.Department) {
-    //   params = params.set('Department', request.Department);
-    // }
-  
-    if (request.TeamManagerSnadId) {
-      params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
-    }
-  
-    // if (request.Shift) {
-    //   params = params.set('Shift', request.Shift);
-    // }
-  
-    // if (request.Location) {
-    //   params = params.set('Location', request.Location);
-    // }
-  
-    // if (request.SubLocation) {
-    //   params = params.set('SubLocation', request.SubLocation);
-    // }
-  
-    // if (request.Worked_Date) {
-    //   params = params.set('Worked_Date', request.Worked_Date);
-    // }
-  
+    if (request.employeeId) { params = params.set('employeeId', request.employeeId);}
+    if (request.teamManagerID)params =params.set('teamManagerID',request.teamManagerID);
+    if (request.TeamManagerSnadId) {params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId); }
     if (request.StartDate && request.EndDate) {
       params = params.set('StartDate', request.StartDate);
       params = params.set('EndDate', request.EndDate);
     }
-  
-    // if (request.Worked_Month !== undefined) {
-    //   params = params.set('Worked_Month', request.Worked_Month.toString());
-    // }
   
     return this.http.get('Reports/WfhReports', { params });
   }
@@ -139,27 +106,11 @@ export class ReportsService {
     if (request.FusionEmpId) {
       params = params.set('FusionEmpId', request.FusionEmpId);
     }
-  
-    // if (request.EmployeeName) {
-    //   params = params.set('EmployeeName', request.EmployeeName);
-    // }
-  
-    // if (request.Department) {
-    //   params = params.set('Department', request.Department);
-    // }
-  
+
     if (request.TeamManagerSnadId) {
       params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     }
   
-    // if (request.shift) {
-    //   params = params.set('Shift', request.shift);
-    // }
-
-    // if(request.location) {
-    //   params = params.set('Location', request.location);	
-    // }
-    
     if(request.LeaveName) {
       params = params.set('LeaveName', request.LeaveName);
     }
@@ -179,29 +130,9 @@ export class ReportsService {
       params = params.set('FusionEmpId', request.FusionEmpId.toString());
     }
   
-    // if (request.EmployeeName) {
-    //   params = params.set('EmployeeName', request.EmployeeName);
-    // }
-  
-    // if (request.Department) {
-    //   params = params.set('Department', request.Department);
-    // }
-  
     if (request.TeamManagerSnadId) {
       params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     }
-  
-    // if (request.Shift) {
-    //   params = params.set('Shift', request.Shift);
-    // }
-  
-    // if (request.Location) {
-    //   params = params.set('Location', request.Location);
-    // }
-  
-    // if (request.SubLocation) {
-    //   params = params.set('SubLocation', request.SubLocation);
-    // }
   
     if (request.Worked_Date) {
       params = params.set('Worked_Date', request.Worked_Date);
@@ -251,9 +182,11 @@ export class ReportsService {
   }
   //attendance report
   getAttendanceReports(request: IAttendanceDetails) {
-    let params = new HttpParams();
     
-    if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
+    let params = new HttpParams();
+    // if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.employeeId) params = params.set('employeeId', request.employeeId);
+    if (request.teamManagerID)params =params.set('teamManagerID',request.teamManagerID);
     if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
     if (request.StartDate && request.EndDate) {params = params.set('StartDate', request.StartDate);
@@ -280,8 +213,8 @@ export class ReportsService {
   getcompOffReports(request: ICompoffDetails) {
     let params = new HttpParams();
   
-    if (request.FusionEmpId) {
-      params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.employeeId) {
+      params = params.set('employeeId', request.employeeId);
     }
   
     if (request.TeamManagerSnadId) {
@@ -299,12 +232,11 @@ export class ReportsService {
   gterPermissionReports(request: IPermissionReportRequest) {
     let params = new HttpParams();
 
-    if (request.FusionEmpId) params = params.set('empFusionEmpId', request.FusionEmpId);
+    if (request.employeeId) params = params.set('employeeId', request.employeeId);
     if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
     if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
-    if (request.StartDate && request.EndDate) {
-      params = params.set('StartDate', request.StartDate);
-      params = params.set('EndDate', request.EndDate);
+    if (request.StartDate && request.EndDate) { params = params.set('StartDate', request.StartDate);
+       params = params.set('EndDate', request.EndDate);
     }
 
     return this.http.get('Reports/PermissionReports', { params });
@@ -313,7 +245,7 @@ export class ReportsService {
   getRegularizationReports(request: IPermissionReportRequest) {
     let params = new HttpParams();
 
-    if (request.FusionEmpId) params = params.set('empFusionEmpId', request.FusionEmpId);
+    if (request.employeeId) params = params.set('employeeId', request.employeeId);
     if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
     if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
     if (request.StartDate && request.EndDate) {

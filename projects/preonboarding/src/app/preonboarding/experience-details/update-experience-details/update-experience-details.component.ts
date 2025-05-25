@@ -82,6 +82,11 @@ startDatevalidate:any;
       }
     
   }
+      oncheckdates(value:any){
+    if(value){
+      this.experienceForm.get('toDate')?.setValue(null);
+    }
+  }
     //function for the date validation
 DateValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -143,12 +148,19 @@ DateValidator(): ValidatorFn {
   onChangeexperience(event: any) {
     this.isfileselected = false;
     this.file = event.target.files[0];
-    let d: Date = new Date()
+    if(this.file){
+      let d: Date = new Date()
      const removeSpaceFileName = this.formValidationService.sanitizeFileName(this.file.name);
         const newFileName = `${this.prosempdata.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
     this.ExperienceDetails = this.renameFile(this.file, newFileName);
     this.experienceForm.get('attachment')?.setValue(this.file);
     this.experienceForm.get('attachment')?.updateValueAndValidity();
+    }
+    else{
+       this.experienceForm.get('attachment')?.setValue(null);
+    this.experienceForm.get('attachment')?.updateValueAndValidity();
+    }
+   
   }
 
   onChange(event: Event) {

@@ -162,7 +162,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   isActive(route: string): boolean {
@@ -254,8 +254,8 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Employee archived successfully');
           setTimeout(() => {
-            this.router.navigate(['/admin']);
-          }, 3000);
+            this.router.navigate(['/admin/dashboard']);
+          }, 1000);
         },
         error: (err: any) => {
           console.log(err);
@@ -333,7 +333,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
             this.updateJobapplicantdata();
           }
           setTimeout(() => {
-            this.router.navigate(['/admin']);
+            this.router.navigate(['/admin/dashboard']);
           }, 3000);
         }
 

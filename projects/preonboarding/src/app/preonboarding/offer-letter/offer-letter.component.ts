@@ -352,7 +352,7 @@ export class OfferLetterComponent implements OnInit {
         //total net salary  per month
         Employee.netSalary = Math.round(Employee.totalGrossSalary - Employee.totalDeduction);
         //calculation for the otherallowances
-        Employee.otherAllowances = Math.round(Employee.totalGrossSalary * (10 / 100))
+        Employee.otherAllowances = Math.round(Employee.totalGrossSalary * (16 / 100))
         //pfcontribution per annum
         Employee.pfPreAnuum = Math.round(Employee.pfContribution * Employee.grossby)
         //totalGrossPerAnnum calculation

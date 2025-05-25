@@ -29,8 +29,8 @@
                                             *ngIf="! offerLetterData.firstName && !offerLetterData.middleName && !offerLetterData.lastName;else fullname">
                                             Name:</li>
                                         <ng-template #fullname>
-                                            <li>{{ offerLetterData.firstName}} {{offerLetterData.middleName}}
-                                                {{offerLetterData.lastName}},</li>
+                                            <li>{{ offerLetterData.firstName??''}} {{offerLetterData.middleName ??''}}
+                                                {{offerLetterData.lastName??''}},</li>
                                         </ng-template>
                                         <div *ngIf="! offerLetterData.addressLine1;else address">Address:</div>
                                         <ng-template #address>
@@ -277,11 +277,13 @@
                                     <p class="mb-3">I accept this offer letter and will complete all the necessary
                                         documents
                                         as required.</p>
-                                    <p class="mb-3 mt-4">Signature: _________________________</p>
-                                    <p class="mb-3">Name: </p>
-                                    <p class="mb-3">Date: </p>
+                                    <p class="mb-3 mt-4 ">Signature: <span class="authority-signature">{{ offerLetterData.firstName ??''}} {{offerLetterData.middleName??''}}
+                                                {{offerLetterData.lastName ??''}}</span> </p>
+                                    <p class="mb-3">Name:{{ offerLetterData.firstName}} {{offerLetterData.middleName}}
+                                                {{offerLetterData.lastName}} </p>
+                                    <p class="mb-3">Date:{{currentDate|dateFormat}} </p>
                                     <p class="mb-3">Place: </p>
-                                    <p class="mb-5">My Date of joining will be ________________________(If different
+                                    <p class="mb-5">My Date of joining will be {{offerLetterData.dateOfJoining | dateFormat}} (If different
                                         from
                                         the joining Date above)</p>
                                 </div>
@@ -787,13 +789,17 @@
                             class="error-msg">*</span></label>
                     <textarea type="note" name="rejectReason" class="form-control custom-input"
                         formControlName="rejectReason" placeholder="Please enter reject reason" maxlength="250"
-                        id="rejectReason" (keypress)="blockNonAlphabetic($event)" autocomplete="off"
+                        id="rejectReason" autocomplete="off"
                         required></textarea>
-                    <div class="error-msg py-1"
-                        *ngIf="rejectForm.get('rejectReason')?.touched && rejectForm.get('rejectReason')?.invalid">
-                        <div *ngIf="rejectForm.get('rejectReason')?.hasError('required')">Reject reason is required
-                        </div>
+                    <div class="error-msg py-1" *ngIf="rejectForm.get('rejectReason')?.invalid && rejectForm.get('rejectReason')?.touched ">
+                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['required']">Reject reason is required</ng-container>
+                        <ng-container *ngIf="rejectForm.get('rejectReason')?.errors?.['pattern']">Leading spaces are not allowed</ng-container>
+                       
                     </div>
+                      <!-- <div class="error-msg"  *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" >
+                        <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['required']"> {{'Reject Reason is required'| translate}}</ng-container>
+                        <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['pattern']">Leading spaces are not allowed</ng-container>
+                    </div> -->
                     <div class="count-text text-end w-100 py-1"><span>{{
                             rejectForm.get('rejectReason')?.value?.length || 0 }}/250</span></div>
                 </div>

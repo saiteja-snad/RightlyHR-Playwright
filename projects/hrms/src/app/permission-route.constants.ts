@@ -406,7 +406,8 @@ export const HOLIDAYS_SUB_TABS = [
     { permission: 'Employee Info Identity Details.view', route: '/personalinfo/personal/identity-details' },
     { permission: 'Employee Info Family Details.view', route: '/personalinfo/personal/family-details' },
     { permission: 'Employee Info Bank Details.view', route: '/personalinfo/personal/bank-details' },
-    { permission: 'Employee Info Visa Details.view', route: '/personalinfo/personal/visa-details' }
+    { permission: 'Employee Info Visa Details.view', route: '/personalinfo/personal/visa-details' },
+  { permission: 'Employee Info Team Members Tab.view', route: '/personalinfo/personal/team-members' }
   ];
   export const EMPLOYEE_INFO_DOCUMENTS_ROUTES = [
     { permission: 'Employee Info Documents Tab.view', route: '/personalinfo/documents' }
@@ -426,11 +427,8 @@ export const HOLIDAYS_SUB_TABS = [
     { permission: 'Employee Info Asset Details.view', route: '/personalinfo/job/assets-details' }
   ];
 
-export const EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES = [
-  { route: '/personalinfo/team/team-members', permission: 'Employee Info Reporting Manager Tab.view' },
-  { route: '/personalinfo/team/team-manger-members', permission: 'Employee Info Team Managers Tab.view' },
-  
-]
+
+
   export const INVITE_NEW_USER_TABS = [
     {  route: '/admin/active-new-user', permission:  'Dashboard Active Invite New User.view' },
     {  route: '/admin/prospective-new-user', permission:'Dashboard Trainee Active Invite New User.view' },

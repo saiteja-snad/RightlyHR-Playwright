@@ -61,6 +61,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     trcomments: '', // Add a default value for trcomments
     rejectedReason: '',
     early: false,
+    spsalaryhold: undefined
   };
   isLoading = false;
   regular = false;
@@ -114,6 +115,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       spRequestAppliedDate: null,
       spRequestLastWorkingDate: null,
       spIsEarlyRelieveing: false,
+      spsalaryhold: undefined
       // Add any other keys your form uses here
     };
     // Reset condition flags
@@ -326,6 +328,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.isLoading = false;
+        f.resetForm();
       },
     });
   }

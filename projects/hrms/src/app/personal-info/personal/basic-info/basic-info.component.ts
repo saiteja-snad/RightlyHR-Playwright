@@ -45,7 +45,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   buttons = false
   dateofbirth: any
   changeingdob: any;
-
+  currentdata=new Date()
   constructor(private modalService: NgbModal, private fb: FormBuilder,
     public formValidation: FormValidationService,
    
@@ -59,17 +59,7 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     this.getMaritaldetails();
     this.getTitle();
     this.basicInfoForm.disable();
-    this.basicInfoForm.get('salutation')?.valueChanges.subscribe((data) => {
-      if (data) {
-        this.onsalutationvalidation();
-      }
-    });
-
-    this.basicInfoForm.get('gender')?.valueChanges.subscribe((data) => {
-      if (data) {
-        this.onsalutationvalidation();
-      }
-    });
+  
 
 
     this.basicInfoForm.get('dob')?.valueChanges.subscribe((data) => {
@@ -132,8 +122,12 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
   }
 
   onsalutationvalidation(): void {
-    const gender = this.basicInfoForm.get('gender')?.value;
-    const title = this.basicInfoForm.get('salutation')?.value;
+    console.log("CALL")
+    const gender = this.basicInfoForm.get('gender')?.value
+    console.log(gender);
+    
+    const title = this.basicInfoForm.get('salutation')?.value?.titlename;
+    console.log(title)
 
     const genderLower = typeof gender === 'string' ? gender.toLowerCase() : '';
     const titleLower = typeof title === 'string' ? title.toLowerCase() : '';
@@ -141,12 +135,13 @@ export class BasicInfoComponent implements OnInit, OnDestroy {
     if (
       (genderLower === 'male' && titleLower === 'mr.') ||
       (genderLower === 'female' && ['ms.', 'miss.', 'mrs.'].includes(titleLower)) ||
-      ((genderLower === 'other' || genderLower === 'others') && (titleLower === 'other' || titleLower === 'others')) ||
+      ((genderLower === 'other' || genderLower === 'others') && (titleLower === 'others.' || titleLower === 'other.')) ||
       ((genderLower === 'male' || genderLower === 'female') && (titleLower == null || titleLower === ''))
     ) {
       this.salutationValidationcheck = false; // Valid combination
     } else {
       this.salutationValidationcheck = true; // Invalid combination
+      console.log(this.salutationValidationcheck)
     }
   }
 

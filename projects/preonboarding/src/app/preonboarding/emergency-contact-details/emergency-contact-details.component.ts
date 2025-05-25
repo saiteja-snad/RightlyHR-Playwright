@@ -136,16 +136,24 @@ export class EmergencyContactDetailsComponent {
 
   updateEmpDetails() {
     if (this.contactForm.valid) {
+         const cleanPhoneNumber = (phone: any): string => {
+      if (!phone) return '';
+      return String(phone).replace(/\D+/g, '');
+    };
+
+    
       let formEmployeeData = this.contactForm.value;
+      const emmergencynumber1 = cleanPhoneNumber(formEmployeeData.contact1.mobile || '');
+      const emmergencynumber2 = cleanPhoneNumber(formEmployeeData.contact2.mobile || '');
       this.empdata.emergencyName=formEmployeeData.contact1.name,
       this.empdata.emailId= formEmployeeData.contact1.email,
       this.empdata.emergencycode= this.selectedDialCode1,
-      this.empdata.emergencynumber=formEmployeeData.contact1.mobile,
+      this.empdata.emergencynumber=emmergencynumber1,
       this.empdata.relationShip= formEmployeeData.contact1.relationship,
       this.empdata.emergencyName1= formEmployeeData.contact2.name,
       this.empdata.emergencyEmail1= formEmployeeData.contact2.email,
       this.empdata.emergencycode1= this.selectedDialCode,
-      this.empdata.emergencyNumber1= formEmployeeData.contact2.mobile,
+      this.empdata.emergencyNumber1= emmergencynumber2,
       this.empdata.relationship1= formEmployeeData.contact2.relationship
       this.subscription = this.http.postData(`PreonboardingEmployeedata/UPDATER`, this.empdata).subscribe({
         next: (data: any) => {
@@ -213,11 +221,17 @@ export class EmergencyContactDetailsComponent {
         return null;
       }
       const phoneNumber = parsePhoneNumberFromString(value, ValueSelected);
-      if (phoneNumber && phoneNumber.isValid()) {
+      if(phoneNumber){
+       if (phoneNumber && phoneNumber.isValid()) {
         return null;
       } else {
         return { invalidPhoneNumber: true };
       }
+      }
+      else{
+        return null;
+      }
+    
     };
   }
 

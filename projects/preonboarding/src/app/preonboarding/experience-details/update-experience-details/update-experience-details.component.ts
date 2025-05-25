@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { HttpService } from '../../../http-services/http.service';
 import { IJobtype } from '../../../models/experience.model';
 import { Select } from 'primeng/select';
@@ -12,6 +12,7 @@ import { IphoneNumberData } from '../../../models/mobilenumber.model';
 import { PopupService } from '../../../common-services/popup.service';
 import { DataService } from '../../../common-services/data.service';
 import moment from 'moment';
+import { FormValidationService } from '../../../common-services/form-validation.service';
 
 @Component({
   selector: 'app-update-experience-details',
@@ -45,8 +46,8 @@ export class UpdateExperienceDetailsComponent {
   };
   mobileNumberData: IphoneNumberData | null = null;
   @Input() experienceData: any;
-
-  constructor(private http: HttpService, private fb: FormBuilder, private modalService: NgbModal, private openPopup: PopupService, private getData: DataService) { }
+startDatevalidate:any;
+  constructor(private http: HttpService,private formValidationService:FormValidationService, private fb: FormBuilder, private modalService: NgbModal, private openPopup: PopupService, private getData: DataService) { }
 
   ngOnInit(): void {
     this.prosempdata = JSON.parse(localStorage.getItem("prospectiveemppersonaldata") || '{}');
@@ -67,7 +68,8 @@ export class UpdateExperienceDetailsComponent {
       previousContactNumber: [this.experienceData?.previousContactNumber ||null, [this.phoneNumberValidator()]],
       previousContactEmail: [this.experienceData?.previousContactEmail || null, [Validators.email]],
       attachment: [this.experienceData?.attachment || null, Validators.required]
-    });
+    }, { validators: [this.DateValidator()] }
+  );
       this.isDisabletoDate = this.experienceData?.isPresent;
       console.log(this.isDisabletoDate);
       if (this.experienceData?.isPresent) {
@@ -80,6 +82,24 @@ export class UpdateExperienceDetailsComponent {
       }
     
   }
+    //function for the date validation
+DateValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const startDate = control.get('fromDate')?.value;
+
+    if (!startDate) return null;
+
+    const formattedStart = moment(startDate, 'YYYY-MM-DD');
+    const startOfCurrentMonth = moment().startOf('month');
+
+    // Save formatted value (optional)
+    this.startDatevalidate = formattedStart.format('YYYY-MM-DD');
+
+    
+
+    return null; // valid
+  };
+}
   checkboxCondition(event: any) {
     if (event.target.checked) {
       this.isDisabletoDate=false;
@@ -124,7 +144,9 @@ export class UpdateExperienceDetailsComponent {
     this.isfileselected = false;
     this.file = event.target.files[0];
     let d: Date = new Date()
-    this.ExperienceDetails = this.renameFile(this.file, `${this.prosempdata.employeeId}_${d.getTime()}_${this.file.name}`);
+     const removeSpaceFileName = this.formValidationService.sanitizeFileName(this.file.name);
+        const newFileName = `${this.prosempdata.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
+    this.ExperienceDetails = this.renameFile(this.file, newFileName);
     this.experienceForm.get('attachment')?.setValue(this.file);
     this.experienceForm.get('attachment')?.updateValueAndValidity();
   }
@@ -133,7 +155,7 @@ export class UpdateExperienceDetailsComponent {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      const allowedTypes = ['image/jpeg', 'image/*', 'application/pdf', 'image/png'];
+      const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png'];
       const maxSizeInBytes = 25 * 1024 * 1024; // 5MB
       if (!allowedTypes.includes(file.type)) {
         this.showErrorforpdf = true;

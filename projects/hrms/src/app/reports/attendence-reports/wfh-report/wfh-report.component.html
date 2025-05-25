@@ -55,7 +55,7 @@
               <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" [filter]="true" [showClear]="true" optionLabel="fullName" filterBy="fullName"
                   formControlName="team" placeholder="Please select employee" class="form-select custom-select"
-                  filterPlaceholder="Search employee" (change)="onClick($event)">
+                  filterPlaceholder="Search employee" (onChange)="onClick($event)">
                   <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                   <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
                 </p-select>

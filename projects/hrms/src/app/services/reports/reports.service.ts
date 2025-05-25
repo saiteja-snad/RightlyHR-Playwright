@@ -88,14 +88,9 @@ export class ReportsService {
   getWfhReports(request: IWfhReportRequest) {
     let params = new HttpParams();
   
-    if (request.FusionEmpId) {
-      params = params.set('FusionEmpId', request.FusionEmpId);
-    }
-
-    if (request.TeamManagerSnadId) {
-      params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
-    }
-  
+    if (request.employeeId) { params = params.set('employeeId', request.employeeId);}
+    if (request.teamManagerID)params =params.set('teamManagerID',request.teamManagerID);
+    if (request.TeamManagerSnadId) {params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId); }
     if (request.StartDate && request.EndDate) {
       params = params.set('StartDate', request.StartDate);
       params = params.set('EndDate', request.EndDate);
@@ -187,13 +182,14 @@ export class ReportsService {
   }
   //attendance report
   getAttendanceReports(request: IAttendanceDetails) {
-    let params = new HttpParams();
     
-    if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
+    let params = new HttpParams();
+    // if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.employeeId) params = params.set('employeeId', request.employeeId);
+    if (request.teamManagerID)params =params.set('teamManagerID',request.teamManagerID);
     if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
     if (request.StartDate && request.EndDate) {params = params.set('StartDate', request.StartDate);
-    if (request.TeamManagerFusionEmpId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerFusionEmpId);
     params = params.set('EndDate', request.EndDate);
     }
   
@@ -217,8 +213,8 @@ export class ReportsService {
   getcompOffReports(request: ICompoffDetails) {
     let params = new HttpParams();
   
-    if (request.FusionEmpId) {
-      params = params.set('FusionEmpId', request.FusionEmpId);
+    if (request.employeeId) {
+      params = params.set('employeeId', request.employeeId);
     }
   
     if (request.TeamManagerSnadId) {
@@ -236,12 +232,11 @@ export class ReportsService {
   gterPermissionReports(request: IPermissionReportRequest) {
     let params = new HttpParams();
 
-    if (request.FusionEmpId) params = params.set('empFusionEmpId', request.FusionEmpId);
+    if (request.employeeId) params = params.set('employeeId', request.employeeId);
     if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
     if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
-    if (request.StartDate && request.EndDate) {
-      params = params.set('StartDate', request.StartDate);
-      params = params.set('EndDate', request.EndDate);
+    if (request.StartDate && request.EndDate) { params = params.set('StartDate', request.StartDate);
+       params = params.set('EndDate', request.EndDate);
     }
 
     return this.http.get('Reports/PermissionReports', { params });
@@ -250,7 +245,7 @@ export class ReportsService {
   getRegularizationReports(request: IPermissionReportRequest) {
     let params = new HttpParams();
 
-    if (request.FusionEmpId) params = params.set('empFusionEmpId', request.FusionEmpId);
+    if (request.employeeId) params = params.set('employeeId', request.employeeId);
     if (request.EmployeeName) params = params.set('EmployeeName', request.EmployeeName);
     if (request.teamManagerId) params = params.set('teamManagerId', request.teamManagerId);
     if (request.StartDate && request.EndDate) {

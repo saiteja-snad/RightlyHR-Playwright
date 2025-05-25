@@ -173,7 +173,11 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     }
   
     const request: IAttendanceDetails = {};
-  
+    
+    if (this.selectLeaveEmployeeIds.length >= 0) {
+      const ids = this.selectLeaveEmployeeIds?.join(',');
+      request.employeeId = ids;  // The selected employee IDs are set here
+    }
     // Apply leave category if selected
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
@@ -193,8 +197,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     }
 
     // Only include employee filter if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee.empoyeeId;
     }
   
     console.log(request)
@@ -331,18 +335,18 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   }
 
     onClick(employeeIds: any) {
-    if (employeeIds) {
+    if (employeeIds.value) {
       console.log(employeeIds);
       this.filteredleaveRecords = false;
       this.selectLeaveEmployeeIds = [];
       this.selectedEmployeeId = [];
       // If "All Employees" is selected, set employeeId as an empty array or a special flag
-      if (employeeIds == this.loggedInUser.employeeId) {
+      if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
         this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
         this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
       } else {
-        this.selectLeaveEmployeeIds.push(employeeIds);
-        this.selectedEmployeeId.push(employeeIds);
+        this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
+        this.selectedEmployeeId.push(employeeIds.value.employeeId);
       }
     }
   }

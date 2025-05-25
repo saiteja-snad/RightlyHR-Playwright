@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -26,7 +26,9 @@ import { TranslateModule } from '@ngx-translate/core';
   ],
   templateUrl: './premissions.component.html',
   styleUrl: './premissions.component.scss',
+  encapsulation:ViewEncapsulation.None,
 })
+
 export class PremissionsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   permissiondata = {} as any;

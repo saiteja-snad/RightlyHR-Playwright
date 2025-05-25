@@ -307,6 +307,13 @@ export class AccessNavigationService {
         }
 
         break;
+
+      case '/attendance':
+        if (this.rbac.allowedToAccess('Attendance.view')) {
+          return (route = '/attendance');
+        }
+        break;
+
       case '/claimsandexpenses':
         for (const item of EXPENSE_TABS) {
           if (this.rbac.allowedToAccess(item.permission)) {
@@ -372,9 +379,6 @@ export class AccessNavigationService {
           }
         }
 
-        if (this.rbac.allowedToAccess('Attendance Module.view')) {
-          return (route = '/time-off/attendance');
-        }
 
         if (this.rbac.allowedToAccess('On Behalf Of Approvals Module.view')) {
           return (route = 'time-off/on-behalf-of-approvals/time-off');
@@ -1145,9 +1149,9 @@ export class AccessNavigationService {
           }
         }
         break;
-      case '/time-off/attendance':
-        if (this.rbac.allowedToAccess('Attendance Module.view')) {
-          return (route = '/time-off/attendance');
+      case 'attendance':
+        if (this.rbac.allowedToAccess('Attendance.view')) {
+          return (route = '/attendance');
         }
         break;
       case '/time-off/on-behalf-of-approvals':

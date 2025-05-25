@@ -14,19 +14,16 @@
     <div class="custom-table-content">
         <table class="w-100">
             <thead>
-                <tr>
-                    <th class="text-nowrap">{{'Trainee Employee ID'|translate}}</th>
-                    <th class="text-nowrap">{{'Employee Name'|translate}}</th>
-                    <th class="text-nowrap">{{'Training Start Date'|translate}}</th>
-                    <th class="text-nowrap">{{'Training End Date'|translate}}</th>
-                    <th class="text-nowrap">{{'Approver Comments'|translate}}</th>
-                    @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('TraineeDetails.delete')) {
-                    <th class="text-nowrap">{{'Action(s)' | translate}}</th>
-                    }
-                </tr>
+                <th class="text-nowrap">{{'Trainee Employee ID'|translate}}</th>
+                <th class="text-nowrap">{{'Employee Name'|translate}}</th>
+                <th class="text-nowrap">{{'Training Start Date'|translate}}</th>
+                <th class="text-nowrap">{{'Training End Date'|translate}}</th>
+                <th class="text-nowrap">{{'Approver Comments'|translate}}</th>
+                @if(rbac.allowedToAccess('Trainee Details.update') || rbac.allowedToAccess('TraineeDetails.delete')) {
+                <th class="text-nowrap">{{'Action(s)' | translate}}</th>
+                }
             </thead>
             <tbody>
-               
                 @if(((Trainees | async) ?? []).length > 0) {
                 <tr *ngFor="let trn of ((Trainees |async) ?? [] ) | traineesearchfilter:Traineeaprovalsearch ; ">
                     <td>
@@ -105,9 +102,7 @@
                 }
                 @else{
                 <tr>
-                    <td>
-                        <app-no-data-found />
-                    </td>
+                    <app-no-data-found />
                 </tr>
                 }
                 

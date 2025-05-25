@@ -1,16 +1,14 @@
 <div class="custom-main-component-container">
-  <div class="custom-table-content custom-content-height17">
+  <div class="custom-table-content">
     @if(!dataload){
     <table class="w-100">
       <thead>
-        <tr>
-          <th>Worked Date</th>
-          <th>Availed</th>
-          <th>Reason</th>
-          <th>Approver Reason</th>
-          <th>Applied Date</th>
-          <th>Status</th>
-        </tr>
+        <th>Worked Date</th>
+        <th>Availed</th>
+        <th>Reason</th>
+        <th>Approver Reason</th>
+        <th>Applied Date</th>
+        <th>Status</th>
       </thead>
       <tbody>
         <ng-container *ngIf="approvedWFHs!.length > 0; else noDataTemplate">
@@ -38,9 +36,7 @@
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
-                  <div>
-                    <p class="mb-0">{{wfhRequest.reason}}</p>
-                  </div>
+                  <p class="mb-0">{{wfhRequest.reason}}</p>
                 </ng-template>
               </div>
             </td>
@@ -48,12 +44,10 @@
             <td>{{ wfhRequest.status }}</td>
           </tr>
         </ng-container>
-        
+
         <ng-template #noDataTemplate>
-          <tr>
-            <td colspan="6">
-              <app-no-data-found></app-no-data-found>
-            </td>
+          <tr class="table-placeholder">
+            <app-no-data-found></app-no-data-found>
           </tr>
         </ng-template>
       </tbody>

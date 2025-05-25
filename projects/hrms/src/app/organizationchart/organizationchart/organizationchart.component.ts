@@ -13,10 +13,9 @@ import { DomSanitizer } from '@angular/platform-browser';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
-import * as XLSX from 'xlsx';
-import { image } from 'html2canvas/dist/types/css/types/image';
 import ExcelJS from 'exceljs';
-import * as FileSaver from 'file-saver';
+import FileSaver from 'file-saver';
+
 @Component({
   selector: 'app-organizationchart',
   imports: [CommonModule, Select, FormsModule, OrganizationChartModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],

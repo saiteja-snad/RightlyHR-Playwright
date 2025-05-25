@@ -1,39 +1,55 @@
-.event-title {
-  padding: 0.75rem;
-  overflow-wrap: break-word;
-  height: auto;
-  white-space: pre-wrap;
-}
-
-.custom-event-icon {
-  width: 1rem;
-  height: 1rem;
-}
-
-.fc .fc-scroller-liquid-absolute {
-  overflow: inherit !important;
-}
-
-.fc-scrollgrid-liquid {
-  a {
-    color: var(--primary-color) !important;
-  }
-}
-
-.fc-list-day {
-  a {
-    color: var(--primary-color) !important;
-  }
-}
-
-.custom-setting-right-content {
-  overflow-x: auto;
-
-  .calender-content {
-    min-width: 800px;
-  }
-}
-
 .custom-component-left-content {
-  height: calc(100dvh - 12rem) !important;
+  width: 20rem;
+  min-width: 15rem;
+}
+
+.calender-content {
+  width: calc(100vw - 20rem);
+  height: calc(100vh - 10rem);
+  overflow: auto;
+  padding: 1rem;
+  min-width: 600px;
+  background-color: #FFFFFF;
+
+  .fc-direction-ltr {
+    font-family: var(--font-family) !important;
+  }
+
+  .fc .fc-button-primary {
+    background-color: var(--btn-primary-color);
+    border-color: var(--btn-primary-color);
+    color: var(--btn-color-tp);
+  }
+
+  .event-title {
+    padding: 0.75rem;
+    overflow-wrap: break-word;
+    height: auto;
+    white-space: pre-wrap;
+    font-weight: 500;
+    font-size: var(--fontsize12) !important;
+    line-height: 100%;
+    letter-spacing: 0%;
+  }
+
+  .custom-event-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .fc .fc-scroller-liquid-absolute {
+    overflow: inherit !important;
+  }
+
+  .fc-scrollgrid-liquid {
+    a {
+      color: var(--primary-color) !important;
+    }
+  }
+
+  .fc-list-day {
+    a {
+      color: var(--primary-color) !important;
+    }
+  }
 }

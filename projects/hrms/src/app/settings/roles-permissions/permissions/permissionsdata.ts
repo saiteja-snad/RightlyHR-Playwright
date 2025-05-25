@@ -212,6 +212,7 @@ export const permissionsData = [
   { fields: 'Desk Allocation', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Holidays', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -220,7 +221,6 @@ export const permissionsData = [
   { fields: 'Comp Off Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permissions Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Module', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Attendance Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Permissions Module', View: false, Update: false, Create: false, Delete: false },
@@ -395,7 +395,26 @@ export const permissionsData = [
   // Monthly Attendance Reports Section
   { fields: 'Monthly Attendance Reports - Generate', View: false, Update: false, Create: false, Delete: false }, 
 
+  // Attendance Reports Section
+  { fields: 'Attendance All Employees List(Leaves)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'Attendance Team Manager List(Leaves)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'My Team Report(Leave)', View: false, Update: false, Create: false, Delete: false },
 
+  { fields: 'Attendance All Employees List(Compoff)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'Attendance Team Manager List(Compoff)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'My Team Report(Compoff)', View: false, Update: false, Create: false, Delete: false }, 
+
+  { fields: 'Attendance All Employees List(WFH)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'Attendance Team Manager List(WFH)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'My Team Report(WFH)', View: false, Update: false, Create: false, Delete: false }, 
+
+  { fields: 'Attendance All Employees List(Permission)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'Attendance Team Manager List(Permission)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'My Team Report(Permission)', View: false, Update: false, Create: false, Delete: false }, 
+
+  { fields: 'Attendance All Employees List(Regularization)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'Attendance Team Manager List(Regularization)', View: false, Update: false, Create: false, Delete: false }, 
+  { fields: 'My Team Report(Regularization)', View: false, Update: false, Create: false, Delete: false }, 
 
   // Attendance Reports Section
   { fields: 'Leave Report', View: false, Update: false, Create: false, Delete: false }, 

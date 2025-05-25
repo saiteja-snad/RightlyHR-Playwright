@@ -195,12 +195,23 @@
                 <button *ngIf="!isCheckedoffer" class="custom-btn btn-primary px-5" (click)="openconformatioModal(submitornot)">
                     Submit
                 </button>
-                <button *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'" class="custom-btn btn-primary px-5"
+                @if(this.empDetails.substatus !== 'Offer Letter Accepted'){
+                    <button *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'" class="custom-btn btn-primary px-5"
                  (click)="openconformatioModal(submitornot)">
                     Submit
                 </button>
+                }    
             </div>
         </div>
+        @if(this.empDetails.substatus === 'Offer Letter Accepted'){
+          <div class="d-flex justify-content-end">
+                <button  *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'" class="custom-btn btn-primary px-5"
+                 (click)="openconformatioModal(submitornot)">
+                    Submitted
+                </button>
+                    </div>
+        }
+
     </div>
 </div>
 

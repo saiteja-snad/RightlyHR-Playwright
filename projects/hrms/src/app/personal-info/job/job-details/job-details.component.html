@@ -112,9 +112,8 @@
                       
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' &&
                         employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
-                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase()
-                        !==
-                        'trainee inactive' )){<td class="text-center">
+                        && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !=='trainee inactive' )){
+                        <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
@@ -342,10 +341,10 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Update Job Details</p>
             </div>
-            <div>
+            <!-- <div>
                 <a (click)="modal.dismiss();jobDetailsupdateForm.reset()">
                     <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
+            </div> -->
         </div>
         <div class="custom-main-popup-content p-4">
             <form autocomplete="off" [formGroup]="jobDetailsupdateForm">
@@ -518,10 +517,10 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Separation Request</p>
             </div>
-            <div>
+            <!-- <div>
                 <a (click)="confirmationopenModal(closeconformation)"><img src="icons/close.png" alt="Close Icon"
                         class="close-icon"></a>
-            </div>
+            </div> -->
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="separationRequestForm" (ngSubmit)="postSeparationRequestForm()">
@@ -574,7 +573,7 @@
                                     class="text-danger">*</span></label>
                             <textarea class="form-control custom-input" id="description" formControlName="description"
                                 rows="3" maxlength="400" placeholder="Please provide separation reason..."
-                                (keydown)="formValidations.restrictInput($event)"></textarea>
+                                 (keydown)="formValidations.restrictInitialSpace($event)"></textarea>
                             <div class="textarea-count-text">{{ separationRequestForm.get('description')?.value?.length
                                 || 0 }}/400</div>
                             <div class="error-msg"
@@ -621,7 +620,7 @@
                             <textarea class="form-control custom-input" id="reasonForEarlyRelieving"
                                 formControlName="reasonForEarlyRelieving" rows="3"
                                 placeholder="Please provide early relieving reason..." [maxlength]="400"
-                                (keydown)="formValidations.restrictInput($event)"></textarea>
+                                (keydown)="formValidations.restrictInitialSpace($event)"></textarea>
                             <div class="textarea-count-text">{{
                                 separationRequestForm.get('reasonForEarlyRelieving')?.value?.length || 0 }}/400</div>
                             <div class="error-msg"
@@ -668,7 +667,7 @@
 <ng-template #closeconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon mb-4">
             <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
@@ -681,7 +680,7 @@
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon mb-4">
             <p class="confirmation-text mb-4">Are you sure you want to delete the Job Details?</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">

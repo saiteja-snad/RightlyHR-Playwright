@@ -62,4 +62,21 @@ export const MODULE_INFOS = {
     STANDARD_REPORTS_JOB_LOCATION_WISE_DATA_MODULE_INFO : "The Job Location Wise Data report lists employees filtered by job location and joining date. It includes personal details, contact numbers, and placeholders for job-related information such as role, shift, and department, allowing generation and export of structured job allocation data.",
     STANDARD_REPORTS_BRANCH_LOCATION_WISE_DATA_MODULE_INFO : "The Branch Location Wise Data report enables generation of employee information based on selected branch locations. It filters records by branch code and joining date, helping HR teams organize, export, and analyze employee distribution across different office branches.",
     STANDARD_REPORTS_FAMILY_MEMBERS_DATA_MODULE_INFO : "The Family Members Data report provides information on employees' family members, including relationship and dependency details. It is generated based on employee status and supports export for records and compliance.",
+
+    //Reports Module Custom Reports Module Info
+    CUSTOM_REPORTS_MODULE_INFO : "The Custom Reports section enables users to generate employee reports by selecting specific fields from Personal, Job. Reports can be filtered, customized, and exported for analysis or documentation.",
+
+    //Attendance Reports Module Info
+    ATTENDANCE_LEAVE_REPORTS_MODULE_INFO : "Displays detailed information on all leave applications submitted by employees, including types of leave, start and end dates, number of days availed, department, reporting manager, and approval status.",
+    ATTENDANCE_LEAVE_SUMMARY_REPORTS_MODULE_INFO : "Provides a summarized view of leave balances and leave availed by employees across various leave types. Useful for tracking total entitlement, usage, and remaining balance for each employee.",
+    ATTENDANCE_COMP_OFF_REPORTS_MODULE_INFO : "Shows compensatory off records for employees who have worked beyond normal working hours or on holidays. Includes applied dates, approved days, and usage status.",
+    ATTENDANCE_WFH_REPORTS_MODULE_INFO : "Lists all work-from-home requests along with dates, approval status, employee details, and related comments. Helps HR track remote work utilization and approvals.",
+    ATTENDANCE_ABSENT_REPORTS_MODULE_INFO : "Captures all unplanned or unauthorised absences within a selected date range. Helps identify patterns in absenteeism for compliance and corrective action.",
+    ATTENDANCE_INACTIVE_EMPLOYEE_REPORTS_MODULE_INFO : "The Inactive Employee Report shows leave entitlements, availed leaves, and balance for inactive employees. It aids in exit processing and compliance audits.",
+    ATTENDANCE_YEARLY_SUMMARY_REPORTS_MODULE_INFO : "Provides an annual summary of attendance, leaves, permissions, and other related activities for each employee. Helps HR analyze yearly trends and employee availability.",
+    ATTENDANCE_PERMISSION_REPORTS_MODULE_INFO : "Lists all short-duration permissions taken by employees (e.g., late arrivals, early exits), including timing, reason, and manager approval status.",
+    ATTENDANCE_REGULARIZATION_REPORTS_MODULE_INFO : "Monitor attendance regularization requests submitted by employees and their approval status.Shows requests for attendance regularization submitted by employees for missed or incorrect entries. Includes dates, corrections made, and approval status.",
+
+    //Monthly Attendance Report Module Info
+    MONTHLY_ATTENDANCE_REPORT_MODULE_INFO : "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking."
 }

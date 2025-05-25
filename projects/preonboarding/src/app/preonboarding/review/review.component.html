@@ -195,12 +195,23 @@
                 <button *ngIf="!isCheckedoffer" class="custom-btn btn-primary px-5" (click)="openconformatioModal(submitornot)">
                     Submit
                 </button>
-                <button *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'" class="custom-btn btn-primary px-5"
+                @if(this.empDetails.substatus !== 'Offer Letter Accepted'){
+                    <button *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'" class="custom-btn btn-primary px-5"
                  (click)="openconformatioModal(submitornot)">
                     Submit
                 </button>
+                }    
             </div>
         </div>
+        @if(this.empDetails.substatus === 'Offer Letter Accepted'){
+          <div class="d-flex justify-content-end">
+                <button  *ngIf="isCheckedoffer" [disabled]="this.empDetails.substatus === 'Offer Letter Accepted'" class="custom-btn btn-primary px-5"
+                 (click)="openconformatioModal(submitornot)">
+                    Submitted
+                </button>
+                    </div>
+        }
+
     </div>
 </div>
 
@@ -229,7 +240,7 @@
                 <a (click)="modal.dismiss()"><img src="/images/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content text-center p-4">
+        <div class="custom-main-popup-content text-center  w-100 p-4">
             <div *ngIf="!DocImageUrl; else imageView">
                 <ngx-doc-viewer [url]="DocViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
             </div>

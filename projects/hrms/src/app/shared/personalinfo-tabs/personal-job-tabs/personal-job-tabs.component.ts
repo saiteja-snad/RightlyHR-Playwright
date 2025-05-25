@@ -30,6 +30,7 @@ export class PersonalJobTabsComponent implements OnInit {
      { label: 'Compensation Details', link: '/personalinfo/job/compensation-details', icon:'/images/compensation.png',permission: { feature: 'Employee Info Compensation Details', action: 'view' } },
      { label: 'Desk Details', link: '/personalinfo/job/desk-details', icon:'/images/desk.png', permission: { feature: 'Employee Info Desk Details', action: 'view' } },
      { label: 'Assets Details', link: '/personalinfo/job/assets-details', icon:'/images/assets-list.png', permission: { feature: 'Employee Info Asset Details', action: 'view' } },
+    { label: 'Trainee Onboard Request', link: '/personalinfo/job/tranee-onboarding-requests',icon:'/images/onboarding.png', permission: { feature: 'Employee Info Onboarding Request Details', action: 'view' }},
    ];
    this.filterTabsByRbac();
   }

@@ -1,17 +1,20 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { ExpenesHeaderTabsComponent } from "../../shared/claimsandexpenses-tabs/expenes-header-tabs/expenes-header-tabs.component";
 import { Router, RouterModule } from '@angular/router';
 import { RbacService } from '../../services/rbac.service';
-
 @Component({
   selector: 'app-claimsandexpenses',
-  imports: [ExpenesHeaderTabsComponent,RouterModule],
+  imports: [ExpenesHeaderTabsComponent, RouterModule],
   templateUrl: './claimsandexpenses.component.html',
-  styleUrl: './claimsandexpenses.component.scss'
+  styleUrl: './claimsandexpenses.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
+
 export class ClaimsandexpensesComponent {
-  constructor( public router:Router, public rbac: RbacService) { }
-  navigatetoAddExpenses(){
+
+  constructor(public router: Router, public rbac: RbacService) { }
+
+  navigatetoAddExpenses() {
     this.router.navigate(['/claimsandexpenses/addexpense'])
   }
 }

@@ -171,7 +171,7 @@
 
             <div class="d-flex gap-3 justify-content-end">
                 <button class="custom-btn btn-secondary px-5" type="button" (click)="openConfirmation()">
-                    {{'Close' | translate}}</button>
+                    {{'Cancel' | translate}}</button>
                 @if(!hidePublishCloneButtons){
                 <button class="custom-btn publish-btn px-5" type="button" (click)="publishDST()">{{'Publish' |
                     translate}}</button>
@@ -194,7 +194,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to Close?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">

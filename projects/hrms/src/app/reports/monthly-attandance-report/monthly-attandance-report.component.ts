@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpService } from '../../services/http.service';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import moment from 'moment';
 import { Select } from 'primeng/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,14 +9,18 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { filter } from 'rxjs';
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-monthly-attandance-report',
-  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule],
+  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule, ModuleInformationComponent],
   templateUrl: './monthly-attandance-report.component.html',
   styleUrl: './monthly-attandance-report.component.scss'
 })
 
 export class MonthlyAttandanceReportComponent {
+  moduleinfo : string = '';
   monthlyReportForm!: FormGroup;
   years: { label: string; value: number }[] = [];
   selectedMonth: string | null = null;
@@ -48,12 +52,33 @@ export class MonthlyAttandanceReportComponent {
     private openmodalservice:OpenModalService,
     private modalService:NgbModal,
     private fb: FormBuilder,
-    public rbac: RbacService
+    public rbac: RbacService,
   ) { }
 
   ngOnInit(): void {
     this.generateYear();
     this.initializeForm();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/monthly-attandance-reports': MODULE_INFOS.MONTHLY_ATTENDANCE_REPORT_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   generateYear(){

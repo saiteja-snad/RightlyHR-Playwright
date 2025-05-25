@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import dayjs from 'dayjs';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,6 +18,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-wfh-report',
@@ -25,12 +28,14 @@ import { RbacService } from '../../../services/rbac.service';
     CommonModule, FormsModule, ReactiveFormsModule, NgxDaterangepickerBootstrapDirective,
     AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule,
     NoDataFoundComponent,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    ModuleInformationComponent
 ],
   templateUrl: './wfh-report.component.html',
   styleUrl: './wfh-report.component.scss',
 })
 export class WfhReportComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -81,7 +86,8 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +96,8 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.getTeam();
     this.getMyTeam();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -112,6 +120,25 @@ export class WfhReportComponent implements OnInit, OnDestroy {
       form.get('manager')?.value ||
       form.get('dateRange')?.value || form.get('team')?.value
     );
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/attendence-reports/wfh-report': MODULE_INFOS.ATTENDANCE_WFH_REPORTS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getEmployeeId() {

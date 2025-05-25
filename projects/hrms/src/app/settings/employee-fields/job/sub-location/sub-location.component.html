@@ -100,7 +100,7 @@
                 <!-- Buttons -->
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();AddForm.reset()">
-                        {{ 'Close' | translate }}
+                        {{ 'Cancel' | translate }}
                     </button>
                     <button type="button" class="custom-btn btn-primary" (click)="addSublocation(modal)"
                         [disabled]="AddForm.invalid">
@@ -170,7 +170,7 @@
                 <!-- Modal Footer with Buttons -->
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">
-                        {{ 'Close' | translate }}
+                        {{ 'Cancel' | translate }}
                     </button>
                     <button type="button" class="custom-btn btn-primary" (click)="updateSublocation(modal)"
                         [disabled]="updateForm.invalid">

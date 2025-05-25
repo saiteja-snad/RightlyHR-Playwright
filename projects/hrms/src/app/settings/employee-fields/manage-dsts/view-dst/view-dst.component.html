@@ -96,7 +96,7 @@
                 </table>
             </div>
             <div class="d-flex gap-3 justify-content-end pt-4">
-                <button class="custom-btn btn-secondary px-5" type="button" (click)="openConfirmation()" >{{'Close' | translate}}</button>
+                <button class="custom-btn btn-secondary px-5" type="button" (click)="openConfirmation()" >{{'Cancel' | translate}}</button>
                 <button class="custom-btn clone-btn px-5" type="button" (click)="navigateToCloneComponent()">{{'Clone'  | translate}}</button>
             </div>
         </form>
@@ -107,7 +107,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">{{'Are you sure you want to close?' | translate}}</p>
+            <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
         </div>
         <div class="custom-modal-footer">
             <button class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>

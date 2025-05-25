@@ -99,7 +99,7 @@
           <div *ngIf="AddForm.get('updategradeId')?.errors?.['required']">{{'Grade Name is required'|translate}}</div>
         </div>
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close' | translate}}</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel' | translate}}</button>
           <button type="button" class="custom-btn btn-primary" (click)="updateJobroletype(modal)"
             [disabled]="updateForm.invalid">
             {{'Update' | translate}}
@@ -164,7 +164,7 @@
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="close(modal); resetForm()">
-            {{ 'Close' | translate }}
+            {{ 'Cancel' | translate }}
           </button>
           <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)" [disabled]="AddForm.invalid">
             {{ 'Add' | translate }}

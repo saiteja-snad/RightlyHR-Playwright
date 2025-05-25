@@ -10,20 +10,18 @@
     <div class="custom-table-content">
         <table class="w-100">
             <thead>
-                <tr>
-                    <th>Employee Name</th>
-                    <th>Desk ID</th>
-                    <th>Desk Type </th>
-                    <th>Location </th>
-                    <th>Sub Location</th>
-                    <th>Shift </th>
-                    <th>Allocated Date</th>
-                    <th class="text-center">View Desk</th>
-                    <th>Desk Status</th>
-                    @if(rbac.allowedToAccess('For You (Desk Requests).update') || rbac.allowedToAccess('For You (Desk Requests).delete')) {
-                    <th class="text-center">Action(S)</th>
-                    }
-                </tr>
+                <th>Employee Name</th>
+                <th>Desk ID</th>
+                <th>Desk Type </th>
+                <th>Location </th>
+                <th>Sub Location</th>
+                <th>Shift </th>
+                <th>Allocated Date</th>
+                <th class="text-center">View Desk</th>
+                <th>Desk Status</th>
+                @if(rbac.allowedToAccess('For You (Desk Requests).update') || rbac.allowedToAccess('For You (Desk Requests).delete')) {
+                <th class="text-center">Action(S)</th>
+                }
             </thead>
             <tbody>
                 <ng-container *ngIf="(deskheaderpending |searchfilter : searchValue : ['entity.deskallocatedtoname', 'entity.deskType','entity.locationName','entity.sublocationName','entity.shiftName']).length > 0; else noDataTemplate">
@@ -89,10 +87,9 @@
                 }
                 </tr>
             </ng-container>
-             
                <ng-template #noDataTemplate>
                 <tr>
-                    <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                   <app-no-data-found></app-no-data-found>
                 </tr>
             </ng-template>
             </tbody>

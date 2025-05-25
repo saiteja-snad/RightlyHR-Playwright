@@ -29,24 +29,15 @@ export class LeavesApprovaltabsComponent {
   teamLeaveSummaryCount: number = 0;
   id: any;
   statusTabs: any[]=[];
-  // statusTabs: any[] = [
-  //   { label: 'Waiting For Approval', link: 'waiting-for-approval', },
-  //   { label: 'Approved', link: 'approved', },
-  //   { label: 'Processed', link: 'processed', },
-  //   { label: 'Rejected', link: 'rejected', },
-  //   { label: 'Cancelled', link: 'cancelled', },
-  //   { label: 'Team Leave balance', link: 'team-leave-balance', },
-  //   { label: 'Team Leave Summary', link: 'team-leave-summary', }
-  // ];
 
-  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService,private signalService:SignalsService, private rbac: RbacService) { 
+  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService, 
+    private signalService:SignalsService, private rbac: RbacService) { 
      effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
          this.getDataByLPID();
          this.getAllTeamLeaveBalance();
          this.getAllTeamLeaveSummary();
-
         // Conditionally reset the signals based on their current state
         if (this.signalService.timecountTriggerSignal()) {
           this.signalService.timecountTriggerSignal.set(false);
@@ -60,7 +51,6 @@ export class LeavesApprovaltabsComponent {
     if (id) {
       // Use the new employee ID here
       this.id = id;
-      console.log('Updated employee ID:', id);
       // Example: this.loadEmployeeDetails(id);
        this.getDataByLPID();
     }
@@ -74,25 +64,20 @@ export class LeavesApprovaltabsComponent {
   }
 
   getDataByLPID() {
-    console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-0');
     let empid = this.id || this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
-          console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT',response);
         if (Array.isArray(response)) {
           const waiting = response.filter(item => item.status === 'Waiting for Approval');
           const approved = response.filter(item => item.status === 'Approved');
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
           const cancelled = response.filter(item => item.status === 'Cancelled');
-
           this.waitingForApprovalCount = waiting.length;
           this.approvedCount = approved.length;
           this.rejectedCount = rejected.length;
           this.processedCount = processed.length;
-          console.log('processedCount',this.processedCount.length);
           this.cancelCount=cancelled.length
-
           this.updateStatusTabs();
         } else {
           console.error('Invalid response format');
@@ -107,7 +92,6 @@ export class LeavesApprovaltabsComponent {
   getAllTeamLeaveBalance() {
     const employeeId = this.empdata.employeeId;
     let url = `LeaveEntitlements/team-leave-entitlements/${employeeId}`;
-
     this.subscription = this.http.getData(url).subscribe({
       next: (res: any) => {
         if (res?.success && Array.isArray(res?.data)) {
@@ -125,7 +109,6 @@ export class LeavesApprovaltabsComponent {
   getAllTeamLeaveSummary() {
     const employeeId = this.empdata.employeeId;
     let url = `Employeedata/v1/getreportessdata?employeeId=${employeeId}`;
-
     this.subscription = this.http.getData(url).subscribe({
       next: (res: any) => {
         this.teamLeaveSummaryCount = res.length;
@@ -148,57 +131,62 @@ export class LeavesApprovaltabsComponent {
           feature: 'Waiting For Approval (Time Off)',
           action: 'view',
         },
+        icon:'/time-off-icon/waiting-for-approval-icon.png',
       },
       {
         label: 'Approved',
         link: '/time-off/leaves/approved',
         count: this.approvedCount,
         permission: { feature: 'Approved (Time Off)', action: 'view' },
+        icon:'/time-off-icon/approved-icon.png',
       },
       {
         label: 'Processed',
         link: '/time-off/leaves/processed',
         count: this.processedCount,
         permission: { feature: 'Processed (Time Off)', action: 'view' },
+        icon:'/time-off-icon/processed-icon.png',
       },
       {
         label: 'Rejected',
         link: '/time-off/leaves/rejected',
         count: this.rejectedCount,
         permission: { feature: 'Rejected (Time Off)', action: 'view' },
+        icon:'/time-off-icon/rejected-icon.png',
       },
       {
         label: 'Cancelled',
         link: '/time-off/leaves/cancelled',count:this.cancelCount,
         permission: { feature: 'Cancelled (Time Off)', action: 'view' },
+        icon: '/time-off-icon/cancelled-icon.png'
       },
       {
         label: 'Team Leave balance',
         link: '/time-off/leaves/team-leave-balance',
         count: this.teamLeaveBalanceCount,
-         permission: { feature: 'Team Leave Balance (Time Off)', action: 'view' },
+        permission: { feature: 'Team Leave Balance (Time Off)', action: 'view' },
+        icon:'/time-off-icon/team-leave-balance-icon.png',
       },
       {
         label: 'Team Leave Summary',
         link: '/time-off/leaves/team-leave-summary',
         count: this.teamLeaveSummaryCount,
          permission: { feature: 'Team Leave Balance Summary (Time Off)', action: 'view' },
+         icon:'/time-off-icon/team-leave-summary-icon.png',
       },
       {
         label: 'Org Leave Balance',
         link: '/time-off/leaves/org-leave-balance',
-         permission: { feature: 'Org Leave Balance', action: 'view' },
+        permission: { feature: 'Org Leave Balance', action: 'view' },
+        icon:'/time-off-icon/Org-Leave-Balance-icon.png',
       },
     ];
-
     this.statusTabs = this.statusTabs.filter(
       (tab) =>
         tab.permission &&
         tab.permission.feature &&
         tab.permission.action &&
-        this.rbac.allowedToAccess(
-          `${tab.permission.feature}.${tab.permission.action}`
-        )
+        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
   }
 

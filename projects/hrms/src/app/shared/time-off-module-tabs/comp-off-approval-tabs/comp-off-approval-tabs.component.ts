@@ -36,8 +36,8 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-     this.selectempid = '';
-      this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
+    this.selectempid = '';
+    this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
       if (id) {
         // Use the new employee ID here
         this.selectempid = id;
@@ -47,10 +47,9 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
       }
       else {
         this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getCompOffRequest();
+        this.getCompOffRequest();
       }
     });
-    
   }
 
   isActive(route: string): boolean {
@@ -73,8 +72,9 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
       },
     });
   }
+
   getCompOffEMPRequest() {
-    let empId =  this.selectempid;
+    let empId = this.selectempid;
     this.http.getData(`Timeoff/getCompoffRequests/${empId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
         this.compOff = response;
@@ -89,9 +89,10 @@ export class CompOffApprovalTabsComponent implements OnInit, OnDestroy {
       },
     });
   }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
-     this.http.setEmployeeIdCompOff(null);
+    this.http.setEmployeeIdCompOff(null);
   }
 }

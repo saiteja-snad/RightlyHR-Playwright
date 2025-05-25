@@ -1,15 +1,13 @@
 <div class="custom-main-component-container">
-  <div class="custom-table-content custom-content-height17">
+  <div class="custom-table-content">
     @if(!dataload){
     <table class="w-100">
       <thead>
-        <tr>
-          <th>Worked Date</th>
-          <th>Availed</th>
-          <th>Reason</th>
-          <th>Applied Date</th>
-          <th>Status</th>
-        </tr>
+        <th>Worked Date</th>
+        <th>Availed</th>
+        <th>Reason</th>
+        <th>Applied Date</th>
+        <th>Status</th>
       </thead>
       <tbody>
         <ng-container *ngIf="processedWFHs!.length > 0; else noDataTemplate">
@@ -23,17 +21,15 @@
             </td>
             <td>
               <div>
-                <span>
-                  <a *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
-                    <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                  </a>
-                  <ng-template #requestedComments>
-                    <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
-                  </ng-template>
-                  <ng-template #noReason>
-                    <span>-</span>
-                  </ng-template>
-                </span>
+                <a *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
+                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                </a>
+                <ng-template #requestedComments>
+                  <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
+                </ng-template>
+                <ng-template #noReason>
+                  <span>-</span>
+                </ng-template>
               </div>
             </td>
             <td>{{ wfhRequest.requestedDate | dateformat }}</td>
@@ -42,10 +38,8 @@
         </ng-container>
 
         <ng-template #noDataTemplate>
-          <tr>
-            <td colspan="5">
-              <app-no-data-found></app-no-data-found>
-            </td>
+          <tr class="table-placeholder">
+            <app-no-data-found></app-no-data-found>
           </tr>
         </ng-template>
       </tbody>

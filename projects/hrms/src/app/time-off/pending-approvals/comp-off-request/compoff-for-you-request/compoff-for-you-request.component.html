@@ -1,31 +1,30 @@
 <div class="custom-main-component-container">
-       @if (selectedLeavesItems && selectedLeavesItems.length > 0 &&multiSelect) {
-        <div class="d-flex justify-content-between">
-            <div class="mt-2">
-                @if(selectedLeavesItems){
-                    <div class="component-sub-header ">Selected Records: {{selectedLeavesItems.length}}</div>
+    @if (selectedLeavesItems && selectedLeavesItems.length > 0 &&multiSelect) {
+    <div class="component-header-content">
+        @if(selectedLeavesItems){
+        <div class="component-sub-header">Selected Records: {{selectedLeavesItems.length}}</div>
+        }
+        <div class="d-flex gap-3">
+            @if (canBulkApprove()) {
+            @if(rbac.allowedToAccess('For You (Comp Off).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
             }
-            </div>
-            <div class="d-flex justify-content-end gap-3 mb-3">
-                @if (canBulkApprove()) {
-                    @if(rbac.allowedToAccess('For You (Comp Off).update')){
-                    <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
-                    }
-                    @if(rbac.allowedToAccess('For You (Comp Off).delete')){
-                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-                    }
-                }
-                @if (canBulkProcess()) {
-                    @if(rbac.allowedToAccess('For You (Comp Off).update')){
-                    <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
-                    }
-                    @if(rbac.allowedToAccess('For You (Comp Off).delete')){
-                    <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-                    }
-                }
-            </div>
+            @if(rbac.allowedToAccess('For You (Comp Off).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
+            }
+            @if (canBulkProcess()) {
+            @if(rbac.allowedToAccess('For You (Comp Off).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+            }
+            @if(rbac.allowedToAccess('For You (Comp Off).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
+            }
         </div>
-     }
+    </div>
+    }
+
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -122,9 +121,7 @@
                 </ng-template>
                 <ng-template #emptymessage>
                 <tr>
-                    <td colospan="9">
-                        <app-no-data-found />
-                    </td>
+                    <app-no-data-found />
                 </tr>
                 </ng-template>
                 

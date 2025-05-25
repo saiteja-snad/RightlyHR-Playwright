@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { PendingApprovalsTabsComponent } from "../../shared/time-off-module-tabs/pending-approvals-tabs/pending-approvals-tabs.component";
 import { TranslateModule } from '@ngx-translate/core';
@@ -6,7 +6,8 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-pending-approvals',
   imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule],
   templateUrl: './pending-approvals.component.html',
-  styleUrl: './pending-approvals.component.scss'
+  styleUrl: './pending-approvals.component.scss',
+  encapsulation:ViewEncapsulation.None,
 })
 
 export class PendingApprovalsComponent {

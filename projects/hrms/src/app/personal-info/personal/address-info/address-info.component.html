@@ -5,15 +5,15 @@
         <span class="component-sub-header">Current Address</span>
       </div>
         @if(canAccess('update','address')){
-      @if(!buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
-      && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
+      @if(!buttons && (employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+      && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
       
       <div>
         <a (click)="enableForm()"><i class="bi bi-pencil-square component-edit-icon"></i></a>
        </div>
       }}
-      @if(buttons && (empinfo.empstatus.toLowerCase() !== 'prospective' && empinfo.empstatus.toLowerCase() !== 'trainee prospective'
-      && empinfo?.empstatus?.toLowerCase() !== 'inactive' && empinfo?.empstatus?.toLowerCase() !== 'trainee inactive')){
+      @if(buttons && (employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective'
+      && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
       <div class="d-flex justify-content-end gap-2">
         <button type="reset" class="custom-btn btn-secondary" (click)="disableForm()">Close</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="addressForm.invalid"

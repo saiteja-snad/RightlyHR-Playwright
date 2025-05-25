@@ -5,24 +5,23 @@
             @if(this.rbac.allowedToAccess('Dashboard.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/admin');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/admin')">
-                <img [src]="isActiveRoute('/admin')  ? 'main-menu-icons/dashboard-square-color.png' : 'main-menu-icons/dashboard-square.png'"
+                <img src="main-menu-icons/dashboard-square.png"
                     alt="Icon" class="main-menu-icon">Dashboard
             </li>
             }
             <!--My Info-->
-            @if(this.rbac.allowedToAccess('My Info.view')){
+            <!-- @if(this.rbac.allowedToAccess('My Info.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/myinfo')">
                 <img [src]="isActiveRoute('/myinfo') ? 'main-menu-icons/user-account-color.png' : 'main-menu-icons/user-account.png'"
                     alt="Icon" class="main-menu-icon">My Info
             </li>
-            }
+            } -->
             <!--Events-->
             @if(this.rbac.allowedToAccess('Events.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/events');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/events')">
-                <img [src]="isActiveRoute('/events') ? 'main-menu-icons/calendar-favorite-color.png' : 'main-menu-icons/calendar-favorite.png'"
-                    alt="Icon" class="main-menu-icon">Events
+                <img src="main-menu-icons/calendar-favorite.png" alt="Icon" class="main-menu-icon">Events
             </li>
             }
             <!--Time Off-->
@@ -30,8 +29,8 @@
             <li class="nav-item menu-item-clear" [class.active-nav-link]="isActiveRoute('/time-off')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img [src]="isActiveRoute('/time-off') ? 'main-menu-icons/clock-color.png' : 'main-menu-icons/clock.png'"
-                            alt="Icon" class="main-menu-icon">Time-off
+                        <img src="main-menu-icons/clock.png"
+                            alt="Icon" class="main-menu-icon">Time-Off
                     </div>
                     <ul class="dropdown-menu">
                         <app-time-off-tabs />
@@ -43,7 +42,7 @@
             @if(this.rbac.allowedToAccess('Policies.view')){
             <li class="nav-item menu-item-clear" [routerLink]="['/policies']" (click)="resetDropdown()"
                 routerLinkActive="active-nav-link" #policies="routerLinkActive">
-                <img [src]="policies.isActive ? 'main-menu-icons/audit-color.png' : 'main-menu-icons/audit.png'"
+                <img src="main-menu-icons/policies.png"
                     alt="Icon" class="main-menu-icon">Policies
             </li>
             }
@@ -51,16 +50,22 @@
             @if(this.rbac.allowedToAccess('Calendar.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/calendar');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/calendar')">
-                <img [src]="isActiveRoute('/calendar') ? 'main-menu-icons/Union-color.png' : 'main-menu-icons/Union.png'"
-                    alt="Icon" class="main-menu-icon">Calendar
+                <img src="main-menu-icons/calendar.png" alt="Icon" class="main-menu-icon">Calendar
             </li>
             }
+            <!--Attendance-->
+            @if(this.rbac.allowedToAccess('Attendance.view')){
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/attendance');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/attendance')">
+                <img src="main-menu-icons/finger-print.png" alt="Icon" class="main-menu-icon">Attendance
+            </li>
+            }
+            <!--Reports-->
             @if(this.rbac.allowedToAccess('Reports.view')){
             <li class="nav-item" [class.active-nav-link]="isActiveRoute('/reports')">
                 <div class="btn-group dropend custom-main-menu-dropdown">
                     <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img [src]="isActiveRoute('/reports') ? 'main-menu-icons/reports-color.png' : 'main-menu-icons/reports.png'"
-                            alt="Icon" class="main-menu-icon">Reports
+                        <img src="main-menu-icons/reports.png" alt="Icon" class="main-menu-icon">Reports
                     </div>
                     <ul class="dropdown-menu">
                         <app-reports-main-tabs />
@@ -117,25 +122,3 @@
         </div>
     </div>
 </div>
-
-<ng-template #logoutpopup let-modal>
-    <div class="result-popup-content" ngbAutofocus>
-        <div>
-            <img src="images\logout-image.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to logout?</p>
-        </div>
-        <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="close()">{{'No'| translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="onLogout()">
-                @if(spinnerLoader){
-                <div class="button-loader-content">
-                    <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
-                    <span>{{'Loading...'}}</span>
-                </div>
-                }@else {
-                <span>{{'Yes'| translate}}</span>
-                }
-            </button>
-        </div>
-    </div>
-</ng-template>

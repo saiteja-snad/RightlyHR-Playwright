@@ -3,7 +3,7 @@ import { Component, effect, OnInit, signal, ViewChild, ViewEncapsulation } from 
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, MaxLengthValidator, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, MaxLengthValidator, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { IAddress, IGender, IJobdetails, Ipersonal, ITitle } from '../../models/personal-details.model';
 import { HttpService } from '../../http-services/http.service';
@@ -13,6 +13,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { IphoneNumberData } from '../../models/mobilenumber.model';
 import { PopupService } from '../../common-services/popup.service';
 import { DetailedStepProgressbarComponent } from "../../shared/detailed-step-progressbar/detailed-step-progressbar.component";
+import { FormValidationService } from '../../common-services/form-validation.service';
 @Component({
   selector: 'app-personal-details',
   imports: [CommonModule, Select,ReactiveFormsModule, NgxCountriesDropdownModule, DetailedStepProgressbarComponent],
@@ -64,7 +65,7 @@ export class PersonalDetailsComponent implements OnInit {
   ];
 
   constructor(private router: Router, private modalService: NgbModal, private openPopup: PopupService, private readonly fb: FormBuilder,
-    private http: HttpService, private bnIdle: BnNgIdleService) {
+    private http: HttpService, private bnIdle: BnNgIdleService,private formvalidator:FormValidationService) {
     this.initializePersonalForm();
     effect(() => {
       this.selectedCountryCode.set(this.selectedDialCode);
@@ -161,22 +162,22 @@ export class PersonalDetailsComponent implements OnInit {
       currentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'C',
-        addressLine1: [null, [Validators.required,Validators.maxLength(150), Validators.pattern(/^[A-Za-z0-9,._\/\-\(\)][A-Za-z0-9 ,._\/\-\(\)]*$/)]],
-        addressLine2: [null, [Validators.maxLength(150), Validators.pattern(/^[A-Za-z0-9,._\/\-\(\)][A-Za-z0-9 ,._\/\-\(\)]*$/)]],
+        addressLine1: [null, [Validators.required,Validators.maxLength(100),Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
+        addressLine2: [null, [Validators.maxLength(150), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
         city: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         state: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         country: [null, [Validators.required ,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
-        zipCode: [null, [Validators.required,Validators.maxLength(6),Validators.pattern(/^(?!\s*$)[0-9]{1,6}$/)]],
+        zipCode: [null, [Validators.required,Validators.maxLength(6),Validators.pattern(/^(?!0+$)[0-9]{1,6}$/)]],
       }),
       permanentAddress: this.fb.group({
         empId: parseInt(loggedInUser.employeeId),
         type: 'P',
-        addressLine1: [null, [Validators.required,Validators.maxLength(150), Validators.pattern(/^[A-Za-z0-9,._\/\-\(\)][A-Za-z0-9 ,._\/\-\(\)]*$/)]],
-        addressLine2: [null, [Validators.maxLength(150), Validators.pattern(/^[A-Za-z0-9,._\/\-\(\)][A-Za-z0-9 ,._\/\-\(\)]*$/)]],
+        addressLine1: [null, [Validators.required,Validators.maxLength(100), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
+        addressLine2: [null, [Validators.maxLength(100), Validators.pattern(/^(?! )[A-Za-z0-9/.\-_%&' ]{1,255}$/)]],
         city: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         state: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
         country: [null, [Validators.required,Validators.maxLength(50),Validators.pattern(/^(?!\s*$)[A-Za-z,._-][A-Za-z ,._-]*$/)]],
-        zipCode: [null, [Validators.required,Validators.maxLength(6),Validators.pattern(/^(?!\s*$)[0-9]{1,6}$/)]],
+        zipCode: [null, [Validators.required,Validators.maxLength(6),Validators.pattern(/^(?!0+$)[0-9]{1,6}$/)]],
       }),
     });
   }
@@ -201,8 +202,8 @@ export class PersonalDetailsComponent implements OnInit {
       event.preventDefault();
     }
   }
+  disablecode=false;
   patchForm() {
-    const dateOfBirth = this.employeeData.dob ? this.formatDate(this.employeeData.dob) : null;
     this.personalDetailsForm.patchValue({
       firstName: this.employeeData.firstName,
       middleName: this.employeeData.middleName,
@@ -234,6 +235,13 @@ export class PersonalDetailsComponent implements OnInit {
     } else {
       this.personalDetailsForm.get('sameAsPermanent')?.setValue(false);
     }
+    if (this.employeeData.substatus !== 'Requested Documents') {
+    this.personalDetailsForm.disable();
+    this.disablecode=true;
+     } else {
+      this.personalDetailsForm.enable();
+      this.disablecode=false;
+    }
   }
   // Copy Current Address to Permanent Address
   copyCurrentAddress(event: any) {
@@ -249,6 +257,7 @@ export class PersonalDetailsComponent implements OnInit {
           zipCode: currentAddress?.zipCode || null,
         }
       });
+      this.personalDetailsForm?.get('permanentAddress.zipCode')?.markAsTouched();
     }
     if(this.personalDetailsForm?.get('sameAsPermanent')?.value === false){
       this.personalDetailsForm?.patchValue({
@@ -279,13 +288,19 @@ export class PersonalDetailsComponent implements OnInit {
   // Submit Form
   onSubmit() {
     console.log(this.employeeData);
+    const cleanPhoneNumber = (phone: any): string => {
+      if (!phone) return '';
+      return String(phone).replace(/\D+/g, '');
+    };
+
+    const contactnumber = cleanPhoneNumber(this.personalDetailsForm.get('phonenumber')?.value || '');
     if (!this.personalDetailsForm.invalid) {
       this.employeeData.firstName = this.personalDetailsForm.get('firstName')?.value,
         this.employeeData.middleName = this.personalDetailsForm.get('middleName')?.value,
         this.employeeData.lastName = this.personalDetailsForm.get('lastName')?.value,
         this.employeeData.gender = this.personalDetailsForm.get('gender')?.value,
         this.employeeData.title = this.personalDetailsForm.get('salutation')?.value,
-        this.employeeData.contactnumber = this.personalDetailsForm.get('phonenumber')?.value,
+        this.employeeData.contactnumber = contactnumber,
         this.employeeData.dob = this.personalDetailsForm.get('dob')?.value,
         this.employeeData.bloodGroup = this.personalDetailsForm.get('bloodGroup')?.value,
         this.employeeData.emailaddress = this.personalDetailsForm.get('personalEmail')?.value,

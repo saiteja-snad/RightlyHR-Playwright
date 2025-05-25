@@ -13,11 +13,10 @@ import { AccessNavigationService } from '../../../services/access-navigation.ser
 })
 export class PersonalinfoHeaderTabsComponent {
   navTabs: any[] = [
-    { label: 'Personal', link: '/personalinfo/personal',permission: {features: ['My Info Personal Tab', 'Employee Info Personal Tab'], action: 'view' },},
-    { label: 'Job', link: '/personalinfo/job',permission:{ features:['My Info Job Tab','Employee Info Job Tab',], action: 'view' },},
-    { label: 'Documents', link: '/personalinfo/documents', permission: { features: ['My Info Documents Tab','Employee Info Documents Tab'], action: 'view' } },
-
-    { label: 'Team Members', link: '/personalinfo/team',permission: { features: ['My Info Team Members Tab','Employee Info Team Members Tab'], action: 'view' } },
+    { label: 'Personal', link: '/personalinfo/personal',permission: { feature: 'Employee Info Personal Tab', action: 'view' },},
+    { label: 'Job', link: '/personalinfo/job',permission: { feature: 'Employee Info Job Tab', action: 'view' },},
+    { label: 'Documents', link: '/personalinfo/documents',permission: { feature: 'Employee Info Documents Tab', action: 'view' },},
+   // { label: 'Team Members', link: '/personalinfo/team',permission: { feature: 'Employee Info Team Members Tab', action: 'view' } },
    
   ];
 
@@ -28,20 +27,15 @@ export class PersonalinfoHeaderTabsComponent {
   ) {}
 
   ngOnInit(): void {
-    this.navTabs = this.navTabs.filter((tab) => {
-      if (tab.permission && tab.permission.features) {
-        // Check if the user has access to any of the features
-        return tab.permission.features.some((feature: string) =>
-          this.rbac.allowedToAccess(`${feature}.${tab.permission.action}`)
-        );
-      } else if (tab.permission && tab.permission.feature) {
-        // Check for a single feature
-        return this.rbac.allowedToAccess(
+      this.navTabs = this.navTabs.filter(
+      (tab) =>
+        tab.permission &&
+        tab.permission.feature &&
+        tab.permission.action &&
+        this.rbac.allowedToAccess(
           `${tab.permission.feature}.${tab.permission.action}`
-        );
-      }
-      return false;
-    });
+        )
+    );
   }
   
    navigateToAccessedRoute(route: string) {

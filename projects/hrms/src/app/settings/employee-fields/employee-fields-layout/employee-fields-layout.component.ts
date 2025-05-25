@@ -10,12 +10,13 @@ import { ManageDstTabsComponent } from "../../../shared/settings-tabs/manage-dst
 import { SettingsManageShitsTabsComponent } from "../../../shared/settings-tabs/settings-manage-shits-tabs/settings-manage-shits-tabs.component";
 import { SettingsManageHolidaysTabsComponent } from "../../../shared/settings-tabs/settings-manage-holidays-tabs/settings-manage-holidays-tabs.component";
 import { SettingsManagePoliciesTabsComponent } from "../../../shared/settings-tabs/settings-manage-policies-tabs/settings-manage-policies-tabs.component";
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 
 @Component({
   selector: 'app-employee-fields-layout',
   imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent,
     SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent, ManageDstTabsComponent, SettingsManageShitsTabsComponent,
-    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent],
+    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent, ModuleInformationComponent],
   templateUrl: './employee-fields-layout.component.html',
   styleUrl: './employee-fields-layout.component.scss'
 })

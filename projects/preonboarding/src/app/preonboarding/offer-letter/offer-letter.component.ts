@@ -42,7 +42,7 @@ export class OfferLetterComponent implements OnInit {
   @ViewChild('acceptpopup') acceptpopup: any;
   @ViewChild('rejectpopup') rejectpopup: any;
   updateempdata = {} as any;
-
+  currentDate=moment();
   constructor(private router: Router, private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private confiramtionpopups: PopupService) { }
 
   ngOnInit(): void {
@@ -79,7 +79,7 @@ export class OfferLetterComponent implements OnInit {
 
   initializeRejectForm() {
     this.rejectForm = this.fb.group({
-      rejectReason: ['', Validators.required],
+      rejectReason: ['', [Validators.required,Validators.pattern(/^(?!\s).*$/)]],
     });
   }
 

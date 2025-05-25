@@ -46,7 +46,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
   first: any = 0;
   rows: any = 10;
   LOGIN: any;
-  searchValue: any;
+  searchValue: any | null;
   spinnerLoader = false;
   multiSelect = false;
   issubmitdiable = false;
@@ -281,13 +281,6 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
     this.selectedLeaveData = selecteddata;
   }
 
-  // processleave(selecteddata: LeaveApproval) {
-  //   this.selectedProducts = [selecteddata];
-  //   setTimeout(() => {
-  //     this.handleProcess();
-  //   }, 500);
-  // }
-
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
   }
@@ -352,14 +345,16 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-         if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Approved Successfully');
+          this.responseSummary = response.data;
+          if (this.selectedProducts && this.selectedProducts.length <= 0) {
+            this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
         error: (reason: any) => {
+          this.modalService.dismissAll();
+          form.resetForm();
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
@@ -372,7 +367,6 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.spinnerLoader = false;
         },
         complete: () => {
-          form.resetForm();
           this.spinnerLoader = false;
           this.multiSelect= false;
           this.signalService.timeOffsidenavCountSignal.set(true);
@@ -380,6 +374,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
           this.selectedProducts = [];
+          this.searchValue = null;
         },
       });
   }
@@ -419,14 +414,16 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
          this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
         error: (reason: any) => {
+          this.modalService.dismissAll();
+           form.resetForm();
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
@@ -447,6 +444,7 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
           this.selectedProducts = [];
+          this.searchValue = null;
         },
       });
   }
@@ -486,10 +484,10 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Processed Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
@@ -511,7 +509,8 @@ export class TimeOffForYourRoleRequestComponent implements OnInit, OnDestroy {
           this.signalService.timeoffForYouTriggerSignal.set(true);
           this.signalService.timeoffForRoleTriggerSignal.set(true);
           this.getAllPendingApprovals();
-           this.selectedProducts = [];
+          this.selectedProducts = [];
+          this.searchValue = null;
         },
       });
   }

@@ -27,6 +27,7 @@ export class RegularizationApprovedComponent implements OnInit, OnDestroy{
   empinfo = {} as IJob;
   destroy$: Subject<boolean> = new Subject<boolean>();
   permissions = [] as any;
+  selectempid: any;
   approvedPerimisions: RegularizationRequest [] = [] as RegularizationRequest[];
   dataLoad =  false;
   options = [
@@ -43,8 +44,19 @@ export class RegularizationApprovedComponent implements OnInit, OnDestroy{
 
 
   ngOnInit(): void {
-    this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
-    this.getDataPermissions()
+ this.http.selectedEmployeeIdRegularization$.subscribe((id) => {
+      if (id) {
+        // Use the new employee ID here
+        this.selectempid = id;
+        console.log('Updated employee ID:', id);
+        // Example: this.loadEmployeeDetails(id);
+        this.getDataempPermissions();
+      }
+      else{
+        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+    this.getDataPermissions();
+      }
+    });
   }
   onRowsChange() {
     this.first = 0;
@@ -74,6 +86,26 @@ export class RegularizationApprovedComponent implements OnInit, OnDestroy{
       },
     });
   }
+
+  getDataempPermissions() {
+    let empId = this.selectempid;
+    this.dataLoad =  true;
+    this.http.getData(`RegularizationRequests/attendance/${empId}`)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: any) => {
+        this.permissions = response as RegularizationRequest[];
+        this.dataLoad =  false;
+        this.approvedPerimisions = this.permissions.filter((element: { status: string }) => element.status === 'Approved');
+      },
+      error: (error) => {
+        console.error('Error fetching data:', error);
+        this.dataLoad =  false;
+        this.permissions = []; // Set to empty array on error
+      },
+    });
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

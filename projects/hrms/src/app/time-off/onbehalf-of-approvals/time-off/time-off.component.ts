@@ -19,6 +19,7 @@ import { IemployeeDetails } from '../../../Interfaces/job-model';
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { Table, TableModule } from 'primeng/table';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-time-off',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe,
@@ -69,7 +70,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     public rbac: RbacService,
     public formValidation: FormValidationService,
-
+    private signalService: SignalsService,
   ) {
     // Signal reaction for employee switch
     effect(() => {
@@ -407,8 +408,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   // Valid multi-select with same stage
   this.selectedProducts = [...value];
 }
- 
- 
+
 private updateTableSelectionState(selectedItems: any[]) {
     // Create a new array reference to force change detection
     this.selectedProducts = [...selectedItems];
@@ -582,14 +582,16 @@ private updateTableSelectionState(selectedItems: any[]) {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Approved Successfully');
+             this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
         error: (reason: any) => {
+          this.modalService.dismissAll();
+          this.spinnerLoader = false;
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
@@ -599,7 +601,6 @@ private updateTableSelectionState(selectedItems: any[]) {
           else {
             this.conformationPopup.openErrorModal('Request Approval Failed');
           }
-          this.spinnerLoader = false;
         },
         complete: () => {
           form.resetForm();
@@ -608,6 +609,7 @@ private updateTableSelectionState(selectedItems: any[]) {
           this.getAllPendingApprovals();
           this.selectedProducts = [];
           this.http.triggerActionSignal();
+          this.searchValue = null;
         },
       });
   }
@@ -649,15 +651,15 @@ private updateTableSelectionState(selectedItems: any[]) {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Rejected Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
         error: (reason: any) => {
-           this.modalService.dismissAll();
+          this.modalService.dismissAll();
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
@@ -676,6 +678,7 @@ private updateTableSelectionState(selectedItems: any[]) {
           this.selectedProducts = [];
           this.getAllPendingApprovals();
           this.http.triggerActionSignal();
+          this.searchValue = null;
         },
       });
   }
@@ -715,15 +718,15 @@ private updateTableSelectionState(selectedItems: any[]) {
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-            this.conformationPopup.openSuccessModal('Request Processed Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
         error: (reason: any) => {
-           this.modalService.dismissAll();
+          this.modalService.dismissAll();
           if (reason.error.statusCode == 400) {
             this.conformationPopup.openErrorModal(reason.error.message)
           }
@@ -740,6 +743,7 @@ private updateTableSelectionState(selectedItems: any[]) {
           this.getAllPendingApprovals();
           this.selectedProducts = [];
           this.http.triggerActionSignal();
+          this.searchValue = null;
         },
       });
   }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -8,7 +8,7 @@ import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid, Iorgcategoryleaves, } from '../../Interfaces/timoff-model';
 import { environment } from '../../../environments/environment';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { OpenModalService } from '../../services/open-modal.service';
 import { IJobdetails } from '../../Interfaces/job-model';
 import { CommonModule } from '@angular/common';
@@ -21,7 +21,8 @@ import { RbacService } from '../../services/rbac.service';
   selector: 'app-on-be-half-of',
   imports: [CommonModule, RouterModule, TranslateModule, Select, ReactiveFormsModule, OnBeHalfOfApprovalTabsComponent],
   templateUrl: './on-be-half-of.component.html',
-  styleUrl: './on-be-half-of.component.scss'
+  styleUrl: './on-be-half-of.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 
 export class OnBeHalfOfComponent {
@@ -1267,6 +1268,4 @@ export class OnBeHalfOfComponent {
       this.issEndDategreater = true;
     }
   }
-
-
 }

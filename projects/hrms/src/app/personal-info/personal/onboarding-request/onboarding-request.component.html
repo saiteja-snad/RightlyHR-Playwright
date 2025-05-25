@@ -50,7 +50,7 @@
                             <div>-</div>
                         </ng-template>
                     </td>
-                     @if(rbac.allowedToAccess('Employee Info Documents Verification.update') 
+                     @if(rbac.allowedToAccess('Employee Info Documents Verification	.update') 
                     || rbac.allowedToAccess('Employee Info Documents Verification.delete')){
                     <td>
                         <span *ngIf="!data.documentUrl; else approverejectbuttons"></span>
@@ -99,7 +99,7 @@
                 <ngx-doc-viewer [url]="OnbViewURL" viewer="google"></ngx-doc-viewer>
             </p>
             <ng-template #imageViews>
-                <div>
+                <div class="w-100">
                     <img [src]="OnbImageUrl" alt="My Image" class="modal-image">
                 </div>
             </ng-template>
@@ -130,9 +130,9 @@
                     <div class="my-1 textarea-count-text">
                         <span class="color">{{ rejectDocument.get('comments')?.value?.length || 0 }}/250</span>
                     </div>
-                    <div *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched"
-                        class="error-msg">
-                        {{'Reject Reason is required'| translate}}
+                    <div class="error-msg"  *ngIf="rejectDocument.get('comments')?.invalid && rejectDocument.get('comments')?.touched" >
+                        <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['required']"> {{'Reject Reason is required'| translate}}</ng-container>
+                        <ng-container *ngIf="rejectDocument.get('comments')?.errors?.['pattern']">Leading spaces are not allowed</ng-container>
                     </div>
                 </div>
                 <div class="d-flex justify-content-end gap-3">
@@ -181,8 +181,9 @@
                     <div class="my-1 textarea-count-text">
                         <span class="color">{{ reRequestForm.get('comments')?.value?.length || 0 }}/250</span>
                     </div>
-                    <div *ngIf="reRequestForm.get('comments')?.invalid && reRequestForm.get('comments')?.touched">
-                        <div class="error-msg">{{'Comments are required'|translate}}</div>
+                    <div class="error-msg" *ngIf="reRequestForm.get('comments')?.invalid && reRequestForm.get('comments')?.touched">
+                           <ng-container *ngIf="reRequestForm.get('comments')?.errors?.['required']">{{'Comments are required'|translate}}</ng-container>
+                          <ng-container *ngIf="reRequestForm.get('comments')?.errors?.['pattern']">Leading spaces are not allowed</ng-container>
                     </div>
                 </div>
                 <div class="custom-modal-footer">

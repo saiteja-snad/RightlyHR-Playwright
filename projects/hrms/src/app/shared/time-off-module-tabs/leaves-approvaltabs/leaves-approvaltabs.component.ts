@@ -8,13 +8,13 @@ import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
 import { SignalsService } from '../../../services/signals.service';
+
 @Component({
   selector: 'app-leaves-approvaltabs',
   imports: [RouterModule, CommonModule, TabsModule],
   templateUrl: './leaves-approvaltabs.component.html',
   styleUrl: './leaves-approvaltabs.component.scss',
 })
-
 export class LeavesApprovaltabsComponent {
   loggedinuser = {} as any;
   empdata = {} as any;
@@ -24,19 +24,20 @@ export class LeavesApprovaltabsComponent {
   waitingForApprovalCount: number = 0;
   approvedCount: number = 0;
   rejectedCount: number = 0;
-  cancelCount: number = 0;
+  cancelCount:number=0;
   teamLeaveBalanceCount: number = 0;
   teamLeaveSummaryCount: number = 0;
-  statusTabs: any[] = [];
+  id: any;
+  statusTabs: any[]=[];
 
-  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService,
-     private signalService: SignalsService, private rbac: RbacService) {
-    effect(() => {
+  constructor(public readonly router: Router, private http: HttpService, private authService: AuthService, 
+    private signalService:SignalsService, private rbac: RbacService) { 
+     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
         // Call the function to fetch the pending approvals count
-        this.getDataByLPID();
-        this.getAllTeamLeaveBalance();
-        this.getAllTeamLeaveSummary();
+         this.getDataByLPID();
+         this.getAllTeamLeaveBalance();
+         this.getAllTeamLeaveSummary();
         // Conditionally reset the signals based on their current state
         if (this.signalService.timecountTriggerSignal()) {
           this.signalService.timecountTriggerSignal.set(false);
@@ -46,6 +47,15 @@ export class LeavesApprovaltabsComponent {
   }
 
   ngOnInit(): void {
+    this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+    if (id) {
+      // Use the new employee ID here
+      this.id = id;
+      // Example: this.loadEmployeeDetails(id);
+       this.getDataByLPID();
+    }
+  });
+  // this.getDataByLPID();
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getDataByLPID();
@@ -54,7 +64,7 @@ export class LeavesApprovaltabsComponent {
   }
 
   getDataByLPID() {
-    let empid = this.empdata.employeeId;
+    let empid = this.id || this.empdata.employeeId;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
@@ -67,13 +77,15 @@ export class LeavesApprovaltabsComponent {
           this.approvedCount = approved.length;
           this.rejectedCount = rejected.length;
           this.processedCount = processed.length;
-          this.cancelCount = cancelled.length
+          this.cancelCount=cancelled.length
           this.updateStatusTabs();
         } else {
           console.error('Invalid response format');
         }
       },
-      error: (reason: any) => console.log(reason),
+      error: (reason: any) => {
+        console.log('getDataByLPID-LEAVE-APPROVALCOMPONENT-ERROR', reason);
+      }
     });
   }
 
@@ -119,54 +131,54 @@ export class LeavesApprovaltabsComponent {
           feature: 'Waiting For Approval (Time Off)',
           action: 'view',
         },
-        icon: '/time-off-icon/waiting-for-approval-icon.png',
+        icon:'/time-off-icon/waiting-for-approval-icon.png',
       },
       {
         label: 'Approved',
         link: '/time-off/leaves/approved',
         count: this.approvedCount,
         permission: { feature: 'Approved (Time Off)', action: 'view' },
-        icon: '/time-off-icon/approved-icon.png',
+        icon:'/time-off-icon/approved-icon.png',
       },
       {
         label: 'Processed',
         link: '/time-off/leaves/processed',
         count: this.processedCount,
         permission: { feature: 'Processed (Time Off)', action: 'view' },
-        icon: '/time-off-icon/processed-icon.png',
+        icon:'/time-off-icon/processed-icon.png',
       },
       {
         label: 'Rejected',
         link: '/time-off/leaves/rejected',
         count: this.rejectedCount,
         permission: { feature: 'Rejected (Time Off)', action: 'view' },
-        icon: '/time-off-icon/rejected-icon.png',
+        icon:'/time-off-icon/rejected-icon.png',
       },
       {
         label: 'Cancelled',
-        link: '/time-off/leaves/cancelled', count: this.cancelCount,
+        link: '/time-off/leaves/cancelled',count:this.cancelCount,
         permission: { feature: 'Cancelled (Time Off)', action: 'view' },
-        icon: '/time-off-icon/cancelled-icon.png',
+        icon: '/time-off-icon/cancelled-icon.png'
       },
       {
         label: 'Team Leave balance',
         link: '/time-off/leaves/team-leave-balance',
         count: this.teamLeaveBalanceCount,
         permission: { feature: 'Team Leave Balance (Time Off)', action: 'view' },
-        icon: '/time-off-icon/team-leave-balance-icon.png',
+        icon:'/time-off-icon/team-leave-balance-icon.png',
       },
       {
         label: 'Team Leave Summary',
         link: '/time-off/leaves/team-leave-summary',
         count: this.teamLeaveSummaryCount,
-        permission: { feature: 'Team Leave Balance Summary (Time Off)', action: 'view' },
-        icon: '/time-off-icon/team-leave-summary-icon.png',
+         permission: { feature: 'Team Leave Balance Summary (Time Off)', action: 'view' },
+         icon:'/time-off-icon/team-leave-summary-icon.png',
       },
       {
         label: 'Org Leave Balance',
         link: '/time-off/leaves/org-leave-balance',
         permission: { feature: 'Org Leave Balance', action: 'view' },
-        icon: '/time-off-icon/Org-Leave-Balance-icon.png',
+        icon:'/time-off-icon/Org-Leave-Balance-icon.png',
       },
     ];
     this.statusTabs = this.statusTabs.filter(
@@ -181,6 +193,7 @@ export class LeavesApprovaltabsComponent {
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();
+      this.http.setEmployeeIdTimeoff(null);
     }
   }
 }

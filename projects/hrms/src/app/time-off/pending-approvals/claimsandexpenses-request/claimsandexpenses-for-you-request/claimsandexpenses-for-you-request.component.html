@@ -8,18 +8,16 @@
   <div class="custom-table-content">
     <table class="w-100">
       <thead>
-        <tr>
-          <th>Employee Name</th>
-          <th>Expense Title</th>
-          <th>Applied Date</th>
-          <th>Total Amount</th>
-          <th>Status</th>
-          <th class="text-center">View Expense</th>
-          <th class="text-center">Approver Comments</th>
-          @if(rbac.allowedToAccess('For You (Claims and Expenses).update') || rbac.allowedToAccess('For You (Claims and Expenses).delete')) {
-          <th class="text-center">Action(s)</th>
-          }
-        </tr>
+        <th>Employee Name</th>
+        <th>Expense Title</th>
+        <th>Applied Date</th>
+        <th>Total Amount</th>
+        <th>Status</th>
+        <th class="text-center">View Expense</th>
+        <th class="text-center">Approver Comments</th>
+        @if(rbac.allowedToAccess('For You (Claims and Expenses).update') || rbac.allowedToAccess('For You (Claims and Expenses).delete')) {
+        <th class="text-center">Action(s)</th>
+        }
       </thead>
       <tbody>
         @if (rbac.allowedToAccess('For You (Claims and Expenses).view')) {
@@ -43,7 +41,6 @@
                 </ul>
               </div>
             </td>
-
             <td class="text-center">
               <div *ngIf="leave.entity.expenseApproverComments.length > 0; else NA">
                 <a type="button" (click)="comments(leave.entity.expenseApproverComments,commentspopup)">
@@ -84,12 +81,10 @@
             }
           </tr>
         </ng-container>
-
+        
         <ng-template #noDataTemplate>
           <tr>
-            <td colspan="4">
-              <app-no-data-found></app-no-data-found>
-            </td>
+            <app-no-data-found></app-no-data-found>
           </tr>
         </ng-template>
         }

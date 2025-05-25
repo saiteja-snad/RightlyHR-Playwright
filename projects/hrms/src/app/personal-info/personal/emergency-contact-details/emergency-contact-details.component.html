@@ -1,6 +1,7 @@
 <div class="custom-main-component-container">
   <div class="card custom-background-card p-4 mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
+  
       <div>
         <span class="component-sub-header">Emergency Contact 1</span>
       </div>
@@ -25,7 +26,7 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact1Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
           <input type="text" class="form-control custom-input" id="contact1Name" formControlName="contact1Name"
-            placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
+            placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePasteAlphabets($event)">
           <div class="error-msg"
             *ngIf="emergencyContactForm.get('contact1Name')?.invalid && emergencyContactForm.get('contact1Name')?.touched">
             Name is required
@@ -103,7 +104,7 @@
         <div class="col-md-6 col-lg-4 mb-3">
           <label for="contact2Name" class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
           <input type="text" class="form-control custom-input" id="contact2Name" formControlName="contact2Name"
-            placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)">
+            placeholder="Please enter name" (keypress)="formValidation.restrictInput($event)" (paste)="formValidation.validatePasteAlphabets($event)">
           <div class="error-msg"
             *ngIf="emergencyContactForm.get('contact2Name')?.invalid && emergencyContactForm.get('contact2Name')?.touched">
             Name is required

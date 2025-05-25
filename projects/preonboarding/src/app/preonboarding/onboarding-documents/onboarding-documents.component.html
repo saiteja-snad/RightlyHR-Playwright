@@ -123,7 +123,7 @@
             <div class="custom-main-popup-content p-4">
                 <div>
                     <div class="mb-3">
-                        <label for="documentType" class="form-label custom-label mb-2">Document Type<span
+                        <label for="documentType" class="form-label custom-label mb-2">Document Type<span *ngIf="isMandatory"
                                 class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" id="documentType"
                             formControlName="documentType" placeholder="document type">
@@ -145,8 +145,8 @@
                                 {{ IdentityMinNumber }} digits</div>
                             <!-- Pattern Error -->
                               <!-- Min Length Error -->
-                            <div *ngIf="documentForm.get('documentNumber')?.hasError('maxlength')">Document Number should not be greater than
-                                {{ IdentityMaxNumber }} digits</div>
+                            <!-- <div *ngIf="documentForm.get('documentNumber')?.hasError('maxlength')">Document Number should not be greater than
+                                {{ IdentityMaxNumber }} digits</div> -->
                             <!-- Pattern Error -->
                             <div *ngIf="documentForm.get('documentNumber')?.hasError('pattern')">{{ errorMsg }}</div>
                         </div>
@@ -157,6 +157,19 @@
                         <input type="file" class="form-control custom-input px-0" (change)="onDocAttachmentSelected($event)"
                             accept=".pdf,image/*,.png" (change)="onChanges($event)"
                             formControlName="docFile">
+                            @if(this.documentSelectFields.documentUrl){
+                                <div class="file-name custom-label my-1" >
+                                  <span>File Name: {{getFileName(this.documentSelectFields.documentUrl)}}</span>
+                               </div>
+                            }
+                         
+                            @if(showErrorrforsize){
+                               <div class="error-msg my-1">The file size should be less than 25MB.</div>
+                            }
+                            @if(showErrorforpdf){
+                              <div class="error-msg my-1">Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.</div>
+                            }
+                            
                     </div>
                     <div class="mb-4">
                         <p class="note-text"><span class="note me-2">Note:</span> Only Pdf and image are allowed. The
@@ -200,7 +213,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4">Are you sure want to submit the documents?</p>
+            <p class="confirmation-text mb-4">Are you sure you want to submit the documents?</p>
         </div>
         <div class="d-flex justify-content-center gap-5 mt-4">
             <button type="button" class="custom-btn btn-secondary px-5" (click)="close()">Close</button>

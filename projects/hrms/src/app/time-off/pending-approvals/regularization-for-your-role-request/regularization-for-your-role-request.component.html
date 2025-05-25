@@ -1,25 +1,28 @@
 <div class="custom-main-component-container">
-    @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) { 
+    @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
+    <div class="component-header-content">
         <p><b>Selected Records:</b> {{selectedProducts.length}}</p>
-    <div class="d-flex justify-content-end gap-3 mb-3">
-        @if (canBulkApprove()) {
-        @if(rbac.allowedToAccess('For Role (Regularization).update')){
-        <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
-        }
-        @if(rbac.allowedToAccess('For Role (Regularization).delete')){
-        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-        }
-        }
-        @if (canBulkProcess()) {
-        @if(rbac.allowedToAccess('For Role (Regularization).update')){
-        <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
-        }
-        @if(rbac.allowedToAccess('For Role (Regularization).delete')){
-        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-        }
-        }
+        <div class="d-flex gap-3">
+            @if (canBulkApprove()) {
+            @if(rbac.allowedToAccess('For Role (Regularization).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+            }
+            @if(rbac.allowedToAccess('For Role (Regularization).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
+            }
+            @if (canBulkProcess()) {
+            @if(rbac.allowedToAccess('For Role (Regularization).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+            }
+            @if(rbac.allowedToAccess('For Role (Regularization).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
+            }
+        </div>
     </div>
     }
+
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
@@ -47,7 +50,6 @@
                     rbac.allowedToAccess('For Role (Regularization).delete'))){
                     <th class="text-center">{{'Action(s)' | translate}}</th>
                     }
-
                 </tr>
             </ng-template>
             <ng-template #body let-leave>
@@ -81,8 +83,6 @@
                                 <i class="bi bi-info-circle-fill" ></i>
                             </a>
                         </div>
-
-
                         <ng-template #permissionComments>-</ng-template>
                     </td>
                     @if(!multiSelect &&(rbac.allowedToAccess('For Role (Regularization).update') ||
@@ -118,22 +118,17 @@
                         </div>
                     </td>
                     }
-
                 </tr>
                 <!-- } -->
                 }@else{
                 <tr>
-                    <td colospan="10">
-                        <app-no-data-found />
-                    </td>
+                    <app-no-data-found />
                 </tr>
                 }
             </ng-template>
             <ng-template #emptymessage>
                 <tr>
-                    <td colospan="9">
-                        <app-no-data-found />
-                    </td>
+                    <app-no-data-found />
                 </tr>
             </ng-template>
         </p-table>

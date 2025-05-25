@@ -212,6 +212,7 @@ export const permissionsData = [
   { fields: 'Desk Allocation', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Asset Management', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Holidays', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Attendance', View: false, Update: false, Create: false, Delete: false },
 
   //Time Off Tabs Section
   { fields: 'Time Off Module', View: false, Update: false, Create: false, Delete: false },
@@ -220,7 +221,6 @@ export const permissionsData = [
   { fields: 'Comp Off Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Permissions Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Regularization Module', View: false, Update: false, Create: false, Delete: false },
-  { fields: 'Attendance Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'On Behalf Of Approvals Module', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Global Permissions Module', View: false, Update: false, Create: false, Delete: false },
@@ -244,7 +244,7 @@ export const permissionsData = [
   { fields: 'Processed (WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (WFH)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request WFH Button', View: false, Update: false, Create: false, Delete: false },
-
+  { fields: 'Cancel (WFH)', View: false, Update: false, Create: false, Delete: false },
 
   //Remote Login
   { fields: 'Request Remote Login Button', View: false, Update: false, Create: false, Delete: false },
@@ -261,6 +261,7 @@ export const permissionsData = [
   { fields: 'Waiting For Approval (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Approved (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (Permissions)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cancel (Permissions)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request Permission Button', View: false, Update: false, Create: false, Delete: false },
 
   //Regularization Sub Tabs Section

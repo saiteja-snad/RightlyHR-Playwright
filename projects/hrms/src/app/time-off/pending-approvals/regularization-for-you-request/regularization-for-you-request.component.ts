@@ -44,7 +44,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   first: any = 0;
   rows: any = 10;
   multiSelect = false;
-  searchValue: any;
+  searchValue: any | null;
   dataLoad = false;
   spinnerLoader = false;
   responseSummary!: any;
@@ -222,17 +222,6 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
       let approvedBy = this.empinfo.employeeId.toString();
       let comments = formData.comments;
 
-      // let requestBody = {
-      //   requestProcessedBy: approvedBy,
-      //   status: "Approved",
-      //   comments: comments,
-      //   moduleId: environment.attendanceRegularizationModuleId,
-      //   headerRequests: this.selectedProducts.map((item) => ({
-      //     headerID: item.approvalHeader.id,
-      //     currentStage: item.approvalHeader.currentapprovalStage
-      //   }))
-      // }
-
       if (this.selectedProducts && this.selectedProducts.length > 0) {
         this.requestBody = {
           requestProcessedBy: approvedBy,
@@ -263,16 +252,10 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
-            // if(this.selectedProducts.length > 1){
-            //   this.responseSummary = response.data;
-            //   this.openModal(this.leaveSummary);
-            // }else{
-            //   this.sharedModalService.openSuccessModal('Request Approved Successfully')
-            // }
+            this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-              this.sharedModalService.openSuccessModal('Request Approved Successfully');
+              this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
             } else {
-              this.responseSummary = response.data;
               this.openModal(this.leaveSummary);
             }
           },
@@ -298,6 +281,8 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
             this.selectedProducts = [];
+            this.searchValue = null;
+
           },
         });
     }
@@ -306,17 +291,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
   handleProcess(request: any) {
     this.selectedLeaveData = request;
     let approvedBy = this.empinfo.employeeId.toString();
-    // let requestBody = {
-    //   requestProcessedBy: approvedBy,
-    //   status: 'Processed',
-    //   moduleId: environment.attendanceRegularizationModuleId,
-    //   headerRequests: this.selectedProducts.map((item) => ({
-    //     headerID: item.approvalHeader.id,
-    //     currentStage: item.approvalHeader.currentapprovalStage
-    //   }))
-    // }
-
-     let message = null;
+    let message = null;
     if (this.selectedProducts && this.selectedProducts.length > 0) {
       this.requestBody = {
         requestProcessedBy: approvedBy,
@@ -344,15 +319,14 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
       message =  'Processing Request, Please wait...';
     }
     this.sharedModalService.openLoaderModal(message );
-    this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
     this.http.putData(`v2/PendingApproval/multiapprovals`, this.requestBody).pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
             this.sharedModalService.openSuccessModal('Request Processed Successfully');
           } else {
-            this.responseSummary = response.data;
             this.openModal(this.leaveSummary);
           }
         },
@@ -374,6 +348,8 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
           this.signalService.regularizationSidNavCountTriggerSignal.set(true);
           this.getAllPendingApprovals();
           this.selectedProducts = [];
+          this.searchValue = null;
+
         },
       });
   }
@@ -384,16 +360,6 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
       const formData = rejectForm.value;
       let approvedBy = this.empinfo.employeeId.toString();
       let comments = formData.comments;
-      // let requestBody = {
-      //   requestProcessedBy: approvedBy,
-      //   status: 'Rejected',
-      //   comments: comments,
-      //   moduleId: environment.attendanceRegularizationModuleId,
-      //   headerRequests: this.selectedProducts.map((item) => ({
-      //     headerID: item.approvalHeader.id,
-      //     currentStage: item.approvalHeader.currentapprovalStage
-      //   }))
-      // }
 
       if (this.selectedProducts && this.selectedProducts.length > 0) {
         this.requestBody = {
@@ -425,10 +391,10 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
         .subscribe({
           next: (response: any) => {
             this.modalService.dismissAll();
+            this.responseSummary = response.data;
             if (this.selectedProducts && this.selectedProducts.length <= 0) {
-              this.sharedModalService.openSuccessModal('Request Rejected Successfully');
+             this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
             } else {
-              this.responseSummary = response.data;
               this.openModal(this.leaveSummary);
             }
           },
@@ -454,6 +420,8 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
             this.signalService.regularizationSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
             this.selectedProducts = [];
+            this.searchValue = null;
+
           },
         });
     }

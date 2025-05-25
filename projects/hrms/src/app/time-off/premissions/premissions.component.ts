@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -7,13 +7,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { OrgHolidayHeader, OrgWeekendHeader } from '../comp-off/compoff.modal';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil,Subscription } from 'rxjs';
 import { IEAV, LeaveType } from '../../Interfaces/timoff-model';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../services/rbac.service';
 import { PremissionsTabsComponent } from "../../shared/time-off-module-tabs/premissions-tabs/premissions-tabs.component";
 import { environment } from '../../../environments/environment';
 import { FormValidationsService } from '../../services/form-validations.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-premissions',
   imports: [
@@ -21,12 +22,15 @@ import { FormValidationsService } from '../../services/form-validations.service'
     Select,
     ReactiveFormsModule,
     CommonModule,
-    PremissionsTabsComponent,
+    PremissionsTabsComponent,TranslateModule
   ],
   templateUrl: './premissions.component.html',
   styleUrl: './premissions.component.scss',
+  encapsulation:ViewEncapsulation.None,
 })
+
 export class PremissionsComponent implements OnInit, OnDestroy {
+  subscription!: Subscription;
   permissiondata = {} as any;
   empinfo = {} as IJob;
   holidaysData!: OrgHolidayHeader;
@@ -42,6 +46,11 @@ export class PremissionsComponent implements OnInit, OnDestroy {
   firstDayOfCurrentMonthString = this.formatDate(this.firstDayOfCurrentMonth);
   lastDayOfCurrentMonthString = this.formatDate(this.lastDayOfCurrentMonth);
   permissionHours: number[] = [0.5, 1, 1.5, 2];
+    ApprovedCount = 0;
+  rejectedCount = 0;
+  ProcessedCount = 0;
+  pendingCount = 0;
+  permissions: any[] = [];
   permissionForm!: FormGroup;
   premissionType = [
     { name: 'Short Break', value: 'short-break' },
@@ -58,6 +67,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   pastDatesAllowed!:number;
   futureDatesAllowed!:number;
+  getEmployeeInfo: any;
 
   constructor(
     private modalService: NgbModal,
@@ -76,8 +86,33 @@ export class PremissionsComponent implements OnInit, OnDestroy {
     this.getPermissionTypes();
     this.formintions();
     this.getEAVData();
+    this.getTeamManagersDetails();
   }
-
+ // function to get the data of employees by hierarchy
+  
+   getTeamManagersDetails() {
+   const EmployeeId = this.empinfo.employeeId;
+   this.subscription = this.http
+     .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+     .subscribe({
+       next: (response: any) => {
+         console.log('getEmployeesByhierarchy', response);
+         if (response && response.length) {
+           // No filter
+           this.getEmployeeInfo = response.map((employee: any) => ({
+             ...employee,
+             fullName: `${
+               employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+             }${employee.firstName} ${
+               employee.middleName ? employee.middleName + ' ' : ''
+             }${employee.lastName}`,
+           }));
+           console.log('getEmployeeInfo', this.getEmployeeInfo);
+         }
+       },
+     });
+ }
+ 
   formatDate(date: Date): string {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -225,6 +260,52 @@ export class PremissionsComponent implements OnInit, OnDestroy {
         },
       });
   }
+  disaplyapplybutton=true;
+  onCheckemployee(employeedId:any){
+    this.http.setEmployeeIdPermission(employeedId);
+    this.ProcessedCount=0;
+    this.rejectedCount=0;
+    this.ApprovedCount=0;
+    this.pendingCount=0;
+    this.permissions = [];
+    if(employeedId){
+      this.disaplyapplybutton=false;
+      this.getDataPermissions(employeedId);
+    }else{
+      this.disaplyapplybutton=true;
+      this.getDataPermissions(this.empinfo.employeeId);
+    }
+  }
+  getDataPermissions(EmployeeId?: number) {
+    let empId =EmployeeId
+    this.subscription = this.http.getData(`RegularizationRequests/${empId}`).subscribe({
+      next: (response: any) => {
+        console.log(response);
+
+        this.permissions = response
+        console.log(this.permissions);
+        this.permissions.forEach((element: { status: string }) => {
+          if (element.status === 'Waiting for Approval') {
+            this.pendingCount++;
+          }
+          if (element.status === 'Approved') {
+            this.ApprovedCount++
+          }
+
+          if (element.status === 'Rejected') {
+            this.rejectedCount++
+          }
+          if (element.status === 'Processed') {
+            this.ProcessedCount++
+          }
+        });
+      },
+      error: (reason: any) =>{
+        console.log(reason)
+      } 
+    })
+  }
+
 
   applyPermission(permissionForm: FormGroup) {
     if (permissionForm.valid) {

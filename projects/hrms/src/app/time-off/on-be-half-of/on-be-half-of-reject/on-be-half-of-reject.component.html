@@ -1,18 +1,16 @@
 <div class="custom-main-component-container">
-    <div class="custom-table-content custom-content-height17">
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Leave Type</th>
-                    <th>Duration</th>
-                    <th>Availed</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Reason</th>
-                    <th>Rejected Reason</th>
-                    <th>Status</th>
-                </tr>
+                <th>Date</th>
+                <th>Leave Type</th>
+                <th>Duration</th>
+                <th>Availed</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Reason</th>
+                <th>Rejected Reason</th>
+                <th>Status</th>
             </thead>
             <tbody>
                 @if(rejectedLeaves.length > 0){
@@ -48,15 +46,16 @@
                     <td>{{lev.status}}</td>
                 </tr>
                 } @else {
-                <tr>
+                <tr class="table-placeholder">
                     <app-no-data-found></app-no-data-found>
                 </tr>
                 }
             </tbody>
         </table>
     </div>
+</div>
 
-</div><ng-template #commentspopup let-modal>
+<ng-template #commentspopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">

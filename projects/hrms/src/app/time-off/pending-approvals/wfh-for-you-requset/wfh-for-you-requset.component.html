@@ -1,27 +1,25 @@
 <div class="custom-main-component-container">
      @if (selectedLeavesItems && selectedLeavesItems.length > 0 && multiSelect) {
-     <div class="d-flex justify-content-between">
-        <div class="mt-2">
-            @if(selectedLeavesItems){
-                <div class="component-sub-header ">Selected Records: {{selectedLeavesItems.length}}</div>
+    <div class="component-header-content">
+        @if(selectedLeavesItems){
+        <div class="component-sub-header ">Selected Records: {{selectedLeavesItems.length}}</div>
         }
-        </div>
-        <div class="d-flex justify-content-end gap-3 mb-3">
+        <div class="d-flex gap-3">
             @if (canBulkApprove()) {
-                @if(rbac.allowedToAccess('For You (WFH).update')){
-                  <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
-                }
-                @if(rbac.allowedToAccess('For You (WFH).delete')){
-                  <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-                }
+            @if(rbac.allowedToAccess('For You (WFH).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+            }
+            @if(rbac.allowedToAccess('For You (WFH).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
             }
             @if (canBulkProcess()) {
-                @if(rbac.allowedToAccess('For You (WFH).update')){
-                  <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
-                }
-                @if(rbac.allowedToAccess('For You (WFH).delete')){
-                  <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-                }
+            @if(rbac.allowedToAccess('For You (WFH).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+            }
+            @if(rbac.allowedToAccess('For You (WFH).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
             }
         </div>
     </div>
@@ -35,7 +33,7 @@
     <div class="custom-p-multi-select-table">
     
         @if(!dataload){
-        <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
+        <p-table  #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
             dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
             <ng-template #header>
                 <tr>
@@ -129,9 +127,7 @@
             </ng-template>
             <ng-template #emptymessage>
                 <tr>
-                    <td colospan="9">
-                        <app-no-data-found />
-                    </td>
+                    <app-no-data-found />
                 </tr>
             </ng-template>
         </p-table>

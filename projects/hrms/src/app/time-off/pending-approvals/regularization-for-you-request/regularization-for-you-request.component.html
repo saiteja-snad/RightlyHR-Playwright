@@ -1,26 +1,28 @@
 <div class="custom-main-component-container">
     @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
-         <p><b>Selected Records:</b> {{selectedProducts.length}}</p>
-    <div class="d-flex justify-content-end gap-3 mb-3">
-        @if (canBulkApprove()) {
-        @if(rbac.allowedToAccess('For You (Regularization).update')){
-        <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
-        }
-        @if(rbac.allowedToAccess('For You (Regularization).delete')){
-        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-        }
-        }
-        @if (canBulkProcess()) {
-        @if(rbac.allowedToAccess('For You (Regularization).update')){
-        <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
-        }
-        @if(rbac.allowedToAccess('For You (Regularization).delete')){
-        <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
-        }
-        }
+    <div class="component-header-content">
+        <p><b>Selected Records:</b> {{selectedProducts.length}}</p>
+        <div class="d-flex gap-3">
+            @if (canBulkApprove()) {
+            @if(rbac.allowedToAccess('For You (Regularization).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkapprove(approval)">Approve</button>
+            }
+            @if(rbac.allowedToAccess('For You (Regularization).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
+            }
+            @if (canBulkProcess()) {
+            @if(rbac.allowedToAccess('For You (Regularization).update')){
+            <button class="custom-btn btn-primary-approve" (click)="bulkProcess()">Process</button>
+            }
+            @if(rbac.allowedToAccess('For You (Regularization).delete')){
+            <button class="custom-btn btn-primary-reject" (click)="bulkReject(rejectmodal)">Reject</button>
+            }
+            }
+        </div>
     </div>
     }
-
+    
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1">
@@ -31,8 +33,8 @@
 
     <div class="custom-p-multi-select-table">
         @if(!dataLoad){
-        <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedProducts"
-            dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
+        <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)"
+            [(selection)]="selectedProducts" dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
             <ng-template #header>
                 <tr>
                     <th style="width: 4rem"><p-tableHeaderCheckbox /></th>
@@ -53,7 +55,7 @@
             <ng-template #body let-leave>
                 @if ((((leaves | async) ?? []) | permissionsearch: searchValue).length > 0) {
                 <!-- @for (leave of ((leaves | async) ?? []) | permissionsearch: searchValue ; track
-                                        leave.approvalHeader.id){ -->
+                                            leave.approvalHeader.id){ -->
                 <tr>
                     <td>
                         <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
@@ -67,7 +69,7 @@
                     <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="notes">
-                               <i class="bi bi-info-circle-fill" ></i>
+                                <i class="bi bi-info-circle-fill"></i>
                             </a>
                             <ng-template #notes>
                                 <p class="mb-0">{{leave.entity.notes}} </p>
@@ -76,9 +78,8 @@
                     </td>
                     <td class="text-center">
                         <div *ngIf="leave.entity.regularizationApproverComments[0]?.comments;else permissionComments">
-                            <a type="button"
-                                (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
-                                 <i class="bi bi-info-circle-fill" ></i>
+                            <a type="button" (click)="comments(leave.entity.regularizationApproverComments,commentspopup)">
+                                <i class="bi bi-info-circle-fill"></i>
                             </a>
                         </div>
                         <ng-template #permissionComments>-</ng-template>
@@ -119,22 +120,18 @@
                         </div>
                     </td>
                     }
-
+    
                 </tr>
                 <!-- } -->
                 }@else{
                 <tr>
-                    <td colospan="10">
-                        <app-no-data-found />
-                    </td>
+                    <app-no-data-found />
                 </tr>
                 }
             </ng-template>
             <ng-template #emptymessage>
                 <tr>
-                    <td colospan="9">
-                        <app-no-data-found />
-                    </td>
+                    <app-no-data-found />
                 </tr>
             </ng-template>
         </p-table>

@@ -1,11 +1,23 @@
 <div class="header-main-container">
     <div class="component-header-content m-0">
         <!--Logo-->
-        <div>
-            <img src="/logos/SNAD-horizontal-logo.png" alt="Company Logo" class="logo-image">
-        </div>
+        <div class="d-flex gap-4">
+            <div>
+                <img src="/logos/SNAD-horizontal-logo.png" alt="Company Logo" class="logo-image">
+            </div>
 
-    
+            <div>
+                <div *ngIf="isActive('/it-support')">
+                    <app-itsuporrt-header-tabs />
+                </div>
+                <div *ngIf="showPmsTabs()">
+                    <app-pms-tabs/>
+                </div>
+                <div *ngIf="showPmsConfigurationTabs()">
+                    <app-pms-settings-tabs/>
+                </div>
+            </div>
+        </div>
 
         <!--Header profile content-->
         <div class="header-profile-dropdown-content">

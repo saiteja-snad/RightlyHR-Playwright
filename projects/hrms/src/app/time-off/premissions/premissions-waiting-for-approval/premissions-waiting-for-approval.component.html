@@ -6,7 +6,7 @@
         <th>{{'Requested Date' | translate}}</th>
         <th>{{'Permission Date'| translate}}</th>
         <th>{{'Duration(In Hours)'| translate}}</th>
-        <th>{{'Reason'| translate}}</th>
+        <th class="text-center">{{'Reason'| translate}}</th>
         <!-- <th>Rejected Reason</th> -->
         <th>{{'Permission Type'| translate}}</th>
         <th>{{'Status'| translate}}</th>
@@ -18,10 +18,10 @@
             <td>{{permissionRequest.createdDate | dateformat}}</td>
             <td>{{permissionRequest.requestedDate | dateformat}}</td>
             <td>{{(+permissionRequest.duration) * 60 * 60 * 1000 | date:'HH:mm':'UTC'}}</td>
-            <td>
+            <td class="text-center">
               <div>
                 <a type="button" [ngbPopover]="reason">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                  <i class="bi bi-info-circle-fill" ></i>
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{permissionRequest.notes}}</p>

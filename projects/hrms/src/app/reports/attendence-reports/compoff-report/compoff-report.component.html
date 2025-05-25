@@ -22,7 +22,7 @@
           </div>
 
           <!-- Employee -->
-            @if(rbac.allowedToAccess('Attendance All Employees List(Compoff).view')){
+          @if(rbac.allowedToAccess('Attendance All Employees List(Compoff).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
@@ -33,9 +33,9 @@
               </p-select>
             </div>
           </div>
-        }
+          }
           <!-- Team Manager -->
-            @if(rbac.allowedToAccess('Attendance Team Manager List(Compoff).view')){
+          @if(rbac.allowedToAccess('Attendance Team Manager List(Compoff).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName"
@@ -46,11 +46,12 @@
               </p-select>
             </div>
           </div>
-        }
-           <!--My Team-->
-        @if(rbac.allowedToAccess('My Team Report(Compoff).view') &&!rbac.allowedToAccess('Attendance All Employees List(Compoff).view') 
-         && !rbac.allowedToAccess('Attendance Team Manager List(Compoff).view')){
-         <div class="d-flex align-items-center gap-2">
+          }
+          <!--My Team-->
+          @if(rbac.allowedToAccess('My Team Report(Compoff).view') &&!rbac.allowedToAccess('Attendance All Employees
+          List(Compoff).view')
+          && !rbac.allowedToAccess('Attendance Team Manager List(Compoff).view')){
+          <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="getEmployeeInfo" [filter]="true" [showClear]="true" optionLabel="fullName"
                 filterBy="fullName" formControlName="team" placeholder="Please select employee"
@@ -60,8 +61,8 @@
               </p-select>
             </div>
           </div>
-        }
-      }
+          }
+          }
           <!-- Buttons -->
           <div class="d-flex gap-2">
             @if(rbac.allowedToAccess('Comp Off Report - Generate.view')){
@@ -74,7 +75,8 @@
               }
             </button>
             }
-            @if(rbac.allowedToAccess('Comp Off Report - Generate.view') && rbac.allowedToAccess('Comp Off Report - Export.view')){
+            @if(rbac.allowedToAccess('Comp Off Report - Generate.view') && rbac.allowedToAccess('Comp Off Report -
+            Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
               [disabled]="filteredCompoffRecord.length === 0 || disableBtn">
               @if(spinnerLoader2){
@@ -91,6 +93,10 @@
     </div>
   </div>
 
+  <!--Module Information-->
+  <div>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </div>
 
   <div class="d-flex gap-3 w-100">
     <div class="custom-component-left-content">

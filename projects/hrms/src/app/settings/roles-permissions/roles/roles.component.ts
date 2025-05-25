@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@ang
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { Iroles } from './roles.model';
 import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -12,17 +12,20 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { SettingsRolePermissionsModuleTabsComponent } from '../../../shared/settings-tabs/settings-role-permissions-module-tabs/settings-role-permissions-module-tabs.component';
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 @Component({
   selector: 'app-roles',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, DataLoaderContentComponent, NoDataFoundComponent,
-    SettingsRolePermissionsModuleTabsComponent
-  ],
+    SettingsRolePermissionsModuleTabsComponent, ModuleInformationComponent],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.scss',
   encapsulation:ViewEncapsulation.None
 })
 
 export class RolesComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   updateForm!: FormGroup;
   model: any;
   subscription!: Subscription;
@@ -40,12 +43,20 @@ export class RolesComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private conformationPopup: OpenModalService,
     public rbac: RbacService,
-    public  formValidation: FormValidationService
+    public  formValidation: FormValidationService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
     this.initializeRoleForm();
     this.getrole();
+
+    this.updateModuleInfo();
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   initializeRoleForm() {
@@ -155,6 +166,17 @@ export class RolesComponent implements OnInit, OnDestroy {
         this.getrole();
       }
     });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/settings/roles-permissions/roles': MODULE_INFOS.SETTINGS_ROLES_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   ngOnDestroy(): void {

@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
@@ -19,15 +19,17 @@ import { IReviewCycle, IDesignationNames } from './add-assessor/add-assessor.mod
 import { AuthService } from '../../services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-assessor-configuration',
-  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, Select,
-  ],
+  imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, Select, ModuleInformationComponent],
   templateUrl: './assessor-configuration.component.html',
   styleUrl: './assessor-configuration.component.scss'
 })
 
 export class AssessorConfigurationComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   dataload = false;
   empinfo = {} as any;
   subscription!: Subscription;
@@ -65,7 +67,7 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
   @ViewChild('updateAssessor') updateAssessor: any;
 
   constructor(private http: HttpService, private modalService: NgbModal, 
-    private conformationPopup: OpenModalService, public rbac: RbacService, private authService: AuthService, ) {
+    private conformationPopup: OpenModalService, public rbac: RbacService, private authService: AuthService, public readonly router: Router) {
     effect(() => {
       if (this.http.tirggerCountSignal().global) {
         this.getAllAssesorConfigurationdata(this.page, this.pageSize);
@@ -85,6 +87,27 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
     this.getAllActiveEmpList();
     const today = new Date();
     this.currentDate = this.formatDate(today);
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/pmsconfiguration/assessor': MODULE_INFOS.PMS_CONFIGURATION_ASSESSOR_CONFIGURATION_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   openAdd() {

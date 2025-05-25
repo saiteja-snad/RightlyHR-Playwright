@@ -10,7 +10,7 @@ import { HttpService } from '../../../services/http.service';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { Branch, EmployeeDetails, IFamilyDetails, IStandardReportRequest } from '../../../Interfaces/reports.model';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import * as XLSX from 'xlsx';
@@ -22,6 +22,9 @@ import { ReportsService } from '../../../services/reports/reports.service';
 import { IJob } from '../../../Interfaces/letters-model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-branch-location-wise-data',
@@ -34,12 +37,14 @@ import { RbacService } from '../../../services/rbac.service';
     StandardReportTabsComponent,
     DateformatPipe,
     NgxDaterangepickerBootstrapDirective,
-    DataLoaderContentComponent
-  ],
+    DataLoaderContentComponent,
+    ModuleInformationComponent
+],
   templateUrl: './branch-location-wise-data.component.html',
   styleUrl: './branch-location-wise-data.component.scss',
 })
 export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   empinfo = {} as IJob;
   reportForm!: FormGroup;
   familydata = [] as IFamilyDetails[];
@@ -76,7 +81,8 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private modal: OpenModalService,
     private reportService: ReportsService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -87,6 +93,9 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
     this.reportForm.valueChanges.subscribe(()=>{
       this.disableBtn= true;
     })
+
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -94,6 +103,25 @@ export class BranchLocationWiseDataComponent implements OnInit, OnDestroy {
       location: [''],
       dateOfJoining: [null],
     });
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/standard-reports/branch-data': MODULE_INFOS.STANDARD_REPORTS_BRANCH_LOCATION_WISE_DATA_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getBranchLocations() {

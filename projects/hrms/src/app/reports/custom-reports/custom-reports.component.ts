@@ -5,7 +5,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { SelectModule } from 'primeng/select';
 import * as XLSX from 'xlsx';
 import { AuthService } from '../../services/auth.service';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { Ipersonal, IStatus } from './custom-model';
 import { CalendarModule } from 'primeng/calendar';
 import { environment } from '../../../environments/environment';
@@ -14,6 +14,9 @@ import dayjs from 'dayjs';
 import { AccordionModule } from 'primeng/accordion';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../services/rbac.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../shared/modules-info';
 interface FieldGroup {
   name: string;
   fields: string[];
@@ -30,7 +33,8 @@ interface FieldGroup {
     CalendarModule,
     NgxDaterangepickerBootstrapDirective,
     AccordionModule,
-    NoDataFoundComponent
+    NoDataFoundComponent,
+    ModuleInformationComponent
 ],
   templateUrl: './custom-reports.component.html',
   styleUrl: './custom-reports.component.scss',
@@ -38,6 +42,7 @@ interface FieldGroup {
 })
 
 export class CustomReportsComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   reportForm!: FormGroup;
   private destroy$ = new Subject<boolean>();
   activeRangeDates: Date[] | undefined;
@@ -300,7 +305,8 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private authService: AuthService,
     private http: HttpService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -310,6 +316,8 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     this.getCustomReportDetails();
     this.getStatus();
     this.showPersonalData();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   inititalizeForm() {
@@ -325,6 +333,25 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     this.reportForm.valueChanges.subscribe(() => {
       this.disableBtn = true;
     })
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/custom-reports': MODULE_INFOS.CUSTOM_REPORTS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   showPersonalData() {

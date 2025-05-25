@@ -1,28 +1,31 @@
 import { Component, effect, OnDestroy, OnInit } from '@angular/core';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
 import { AddIncrementComponent } from './add-increment/add-increment.component';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { UpdateIncrementComponent } from './update-increment/update-increment.component';
 import { ViewIncrementComponent } from './view-increment/view-increment.component';
 import { DataLoaderContentComponent } from '../../shared/data-loader-content/data-loader-content.component';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-increment-percentage',
   imports: [CommonModule, RouterModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,
-     NoDataFoundComponent, DataLoaderContentComponent],
+    NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './increment-percentage.component.html',
   styleUrl: './increment-percentage.component.scss',
 })
 
 export class IncrementPercentageComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   dataload = false;
   empinfo = {} as any;
   subscription!: Subscription;
@@ -47,7 +50,7 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
   
   IncementalDetailsget: any[] = [];
 
-  constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService) {
+  constructor(private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService, public rbac: RbacService, public readonly router: Router) {
     effect(() => {
       if (this.http.tirggerCountSignal().global) {
         this.getAllIncrementalPercentagedata(this.page, this.pageSize);
@@ -62,6 +65,27 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllIncrementalPercentagedata(this.page, this.pageSize);
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/pmsconfiguration/increment': MODULE_INFOS.PMS_CONFIGURATION_INCREMENT_PERCENTAGE_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   openAdd() {

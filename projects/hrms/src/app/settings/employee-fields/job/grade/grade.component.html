@@ -101,7 +101,7 @@
         <!-- Buttons -->
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();AddForm.reset()">
-            {{ 'Close' | translate }}
+            {{ 'Cancel' | translate }}
           </button>
           <button type="button" class="custom-btn btn-primary" (click)="addjobrole(modal)" [disabled]="AddForm.invalid">
             {{ 'Add' | translate }}
@@ -163,7 +163,7 @@
         </div>
         
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Close' | translate}}</button>
+          <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel' | translate}}</button>
           <button type="button" class="custom-btn btn-primary" (click)="updateJobroletype(modal)"
             [disabled]="updateForm.invalid">{{'Update' | translate}}
           </button>

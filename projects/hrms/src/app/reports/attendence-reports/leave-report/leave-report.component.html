@@ -34,14 +34,14 @@
             </div>
           </div>
           }
-          
+
           <!-- Team Manager -->
           @if(rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName" filterBy="fullName"
-                formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
-                filterPlaceholder="Search manager">
+              <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName"
+                filterBy="fullName" formControlName="manager" placeholder="Please select manager"
+                class="form-select custom-select" filterPlaceholder="Search manager">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                 <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
               </p-select>
@@ -49,10 +49,11 @@
           </div>
           }
 
-         <!--My Team-->
-         @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All Employees List(Leaves).view') 
-         && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
-         <div class="d-flex align-items-center gap-2">
+          <!--My Team-->
+          @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All Employees
+          List(Leaves).view')
+          && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
+          <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="getEmployeeInfo" [filter]="true" [showClear]="true" optionLabel="fullName"
                 filterBy="fullName" formControlName="team" placeholder="Please select employee"
@@ -62,7 +63,7 @@
               </p-select>
             </div>
           </div>
-        }
+          }
           <!-- Leave Category -->
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
@@ -88,7 +89,8 @@
               }
             </button>
             }
-            @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
+            @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report -
+            Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
               [disabled]="filteredleaveRecord.length == 0 || disableBtn">
               @if(spinnerLoader2){
@@ -103,6 +105,11 @@
         </div>
       </form>
     </div>
+  </div>
+
+  <!--Module Information-->
+  <div>
+    <app-module-information [moduleInfo]="moduleinfo" />
   </div>
 
   <div class="d-flex gap-3 w-100">

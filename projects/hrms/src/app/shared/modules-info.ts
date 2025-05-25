@@ -95,5 +95,28 @@ export const MODULE_INFOS = {
     TIME_OFF_ON_BEHALF_OF_MODULE_INFO : "The On Behalf Of section allows managers or authorized users to apply for leave on behalf of selected employees. It displays leave details including Date, Leave Type, Duration, Availed, Start and End Date, Reason, and Status across various approval stages.",
     TIME_OFF_PENDING_APPROVAL_MODULE_INFO : "The Pending Approvals section lists all employee requests (e.g., Time-Off, WFH, Comp-Off) awaiting action. It allows managers to approve or reject requests.",
     TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO : "The On Behalf Of Approvals section allows authorized users to manage and approve requests submitted by employees. It includes categories such as Time Off, Comp Off, WFH, and Permissions, each showing the count of pending items for review.",
-    TIME_OFF_GLOBAL_PERMISSION_MODULE_INFO : "The Global Permissions section allows bulk permission requests across departments and teams. Each request includes details like requester, duration, employee list, and reason."
+    TIME_OFF_GLOBAL_PERMISSION_MODULE_INFO : "The Global Permissions section allows bulk permission requests across departments and teams. Each request includes details like requester, duration, employee list, and reason.",
+
+    //Events Module Info
+    EVENTS_MODULE_INFO : "The Events section displays all upcoming and past events, allowing users to view and manage event details. New events can be created under Custom Events with date, title, description, and attachments for effective communication.",
+
+    //Letters Module Info 
+    OFFER_LETTER_MODULE_INFO : "Generate and issue offer letters to selected candidates through the system. HR can configure templates, fill in role-specific details like compensation and joining date, and share them digitally. Candidates can view or download the offer for their reference.",
+    APPOINTMENT_LETTER_MODULE_INFO : "Issue appointment letters upon successful joining of an employee. These letters confirm employment terms such as designation, reporting manager, and location. The system allows generation using pre-defined templates and employee details.",
+    TRAINEE_OFFER_LETTER_MODULE_INFO : "Send trainee-specific offer letters to shortlisted candidates. The letter outlines training duration, stipend (if applicable), and terms. Templates can be customized and shared digitally for acknowledgment.",
+    TRAINEE_APPOINTMENT_LETTER_MODULE_INFO : "Generate appointment letters for trainees once they join the organization. These letters confirm training terms, department allocation, and reporting structure. Letters can be downloaded or shared directly from the system.",
+    WELCOME_LETTER_MODULE_INFO : "Share a personalized welcome letter with new joiners. The letter introduces them to the organization, culture, and point-of-contact. HR can customize templates and send them along with onboarding instructions.",
+    ADDRESS_PROOF_LETTER_MODULE_INFO : "Generate address proof letters upon employee request. This letter confirms the employee’s official work location and employment details, often used for official or residential purposes.",
+    BANK_LOAN_LETTER_MODULE_INFO : "Provide employment confirmation letters for bank loan applications. The letter includes details like designation, salary, and employment tenure. It can be downloaded or printed on company letterhead.",
+    APPRAISAL_LETTER_MODULE_INFO : "Issue appraisal letters post-performance evaluations. The letter highlights appraisal period, performance rating, and summary feedback. Templates can be customized and issued to individual employees.",
+    SALARY_REVISION_LETTER_MODULE_INFO : "Generate salary revision letters for employees whose compensation has changed. The letter details the new salary structure, effective date, and any remarks. HR can issue them in bulk or individually.",
+    PROMOTION_LETTER_MODULE_INFO : "Share promotion letters confirming an employee’s new designation and responsibilities. The letter reflects updated role details and effective dates, and can be generated based on promotion approvals.",
+    RELIEVING_LETTER_MODULE_INFO : "Issue relieving letters to employees upon exit. This letter confirms their resignation acceptance, last working date, and relieving status. It can be generated after completing the exit process.",
+    PROBATION_CONFIRMATION_LETTER_MODULE_INFO : "Generate confirmation letters for employees who successfully complete their probation. The letter includes confirmation date and updated employment status, and can be downloaded or shared by HR.",
+    PROBATION_EXTENSION_LETTER_MODULE_INFO : "Issue extension letters when an employee’s probation is extended. The letter outlines the new extension period and expectations. HR can generate it with relevant remarks and approvals.",
+
+
+    //Dashboard Module Info
+    PROSPECTIVE_EMPLOYEES_MODULE_INFO : "The Prospective Employees page lists candidates with details such as ID, name, personal email, phone number, location, designation, and sub-status reflecting their onboarding progress. Users can add new prospective employees and search the list for efficient candidate management.",
+    
 }

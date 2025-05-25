@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
 import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
@@ -18,15 +18,18 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, LettersTabComponent, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule,
-    LettersheaderComponent, DateformatPipe, LetterFooterComponent],
+    LettersheaderComponent, DateformatPipe, LetterFooterComponent, ModuleInformationComponent],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })
 
 export class OfferLetterComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   currentDate = moment();
   isIssuedDateValid = true;
   isExpiryDateValid = true;
@@ -137,6 +140,8 @@ expiryDatevalidate:any;
     this.getEmployeeId();
     this.getAllWorkLocation();
     this.getAuthorityDetails();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   navigateDashboard() {
@@ -177,6 +182,25 @@ expiryDatevalidate:any;
     },
       { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here
     );
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/admin/letters/offer-letter': MODULE_INFOS.OFFER_LETTER_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   onclickCTC(Value: any) {

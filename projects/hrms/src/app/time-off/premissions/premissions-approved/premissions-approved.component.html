@@ -3,13 +3,13 @@
         @if(!dataload){
         <table class="w-100">
             <thead>
-                <th>Requested Date</th>
-                <th>Permission Date</th>
-                <th>Duration(In Hours)</th>
-                <th>Reason</th>
-                <th>Approver Reason</th>
-                <th>Permission Type</th>
-                <th>Status</th>
+                <th>{{'Requested Date'| translate}}</th>
+                <th>{{'Permission Date'| translate}}</th>
+                <th>{{'Duration(In Hours)'| translate}}</th>
+                <th>{{'Reason'| translate}}</th>
+                <th>{{'Approver Reason'| translate}}</th>
+                <th>{{'Permission Type'| translate}}</th>
+                <th>{{'Status'| translate}}</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="approvedPerimisions!.length > 0; else noDataTemplate">

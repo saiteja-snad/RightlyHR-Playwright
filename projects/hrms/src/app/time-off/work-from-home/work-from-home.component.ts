@@ -23,15 +23,17 @@ import { Select } from 'primeng/select';
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
-    WfhApprovaltabsComponent,TranslateModule,DropdownModule,Select
+    WfhApprovaltabsComponent,
+    TranslateModule,
+    DropdownModule,
+    Select,
   ],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
-
 export class WorkFromHomeComponent implements OnInit, OnDestroy {
-   subscription!: Subscription;
+  subscription!: Subscription;
   empinfo = {} as IJob;
   halfDayValue = {} as any;
   fullDayValue = {} as any;
@@ -51,13 +53,13 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   totalbalance: any;
   minDate!: string;
   maxDate!: string;
-  pastDatesAllowed!:number;
-  futureDatesAllowed!:number;
-   ApprovedCount = 0;
+  pastDatesAllowed!: number;
+  futureDatesAllowed!: number;
+  ApprovedCount = 0;
   rejectedCount = 0;
-  ProcessedCount=0;
+  ProcessedCount = 0;
   pendingCount = 0;
-  employeeid:any;
+  employeeid: any;
   wfhBalance: any;
   constructor(
     private modalService: NgbModal,
@@ -65,11 +67,10 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    public formsValidation:FormValidationsService
+    public formsValidation: FormValidationsService
   ) {}
 
   ngOnInit(): void {
-     
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getWFHBal();
     this.intializewfhForm();
@@ -89,117 +90,126 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  cleardata() {
+    this.modalService.dismissAll();
+    this.addWFHForm.reset();
+    this.availablebalance = 0;
+  }
 
   getPastDate(): string {
     const days = Number(this.pastDatesAllowed ?? 0);
-  
+
     if (isNaN(days)) {
       console.error('Invalid pastDatesAllowed:', this.pastDatesAllowed);
       return new Date().toISOString().split('T')[0]; // Fallback to current date
     }
-  
+
     const currentDate = new Date();
     const pastDate = new Date(currentDate);
     pastDate.setDate(currentDate.getDate() - days); // subtract days for past
     return pastDate.toISOString().split('T')[0];
   }
-  
-  
-  disaplyapplybutton=true;
-  onCheckemployee(employeedId:any){
-    this.ProcessedCount=0;
-    this.rejectedCount=0;
-    this.ApprovedCount=0;
-    this.pendingCount=0;
+
+  disaplyapplybutton = true;
+  onCheckemployee(employeedId: any) {
+    this.ProcessedCount = 0;
+    this.rejectedCount = 0;
+    this.ApprovedCount = 0;
+    this.pendingCount = 0;
     this.Workfromhome = [];
-    if(employeedId){
-         this.http.setEmployeeIdWFH(employeedId);
-      this.disaplyapplybutton=false;
+    if (employeedId) {
+      this.http.setEmployeeIdWFH(employeedId);
+      this.disaplyapplybutton = false;
       this.getWorkfromhomeRequest(employeedId);
       this.getWFHBalance(employeedId);
-    }else{
-      this.disaplyapplybutton=true;
+    } else {
+      this.disaplyapplybutton = true;
       this.getWorkfromhomeRequest(this.empinfo.employeeId);
       this.getWFHBalance(this.empinfo.employeeId);
     }
   }
-     getWorkfromhomeRequest(employeedId:any) {
-    let empId = employeedId
+  getWorkfromhomeRequest(employeedId: any) {
+    let empId = employeedId;
     console.log(empId);
-    this.subscription = this.http.getData(`Timeoff/getWorkFromHomeRequests/${empId}`).subscribe({
-      next: (response: any) => {
-        console.log(response);
-        this.Workfromhome = response;
-        this.Workfromhome.forEach((element: { status: string }) => {
-          if (element.status === 'Waiting for Approval') {
-            this.pendingCount++;
-          }
-          if (element.status === 'Approved') {
-            this.ApprovedCount++
-          }
+    this.subscription = this.http
+      .getData(`Timeoff/getWorkFromHomeRequests/${empId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          this.Workfromhome = response;
+          this.Workfromhome.forEach((element: { status: string }) => {
+            if (element.status === 'Waiting for Approval') {
+              this.pendingCount++;
+            }
+            if (element.status === 'Approved') {
+              this.ApprovedCount++;
+            }
 
-          if (element.status === 'Rejected') {
-            this.rejectedCount++
-          }
-          if (element.status === 'Processed') {
-            this.ProcessedCount++
-          }
-        });
-      },
-      error: (reason: any) => console.log(reason)
-    })
+            if (element.status === 'Rejected') {
+              this.rejectedCount++;
+            }
+            if (element.status === 'Processed') {
+              this.ProcessedCount++;
+            }
+          });
+        },
+        error: (reason: any) => console.log(reason),
+      });
   }
-    getWFHBalance(employeedId:any) {
+  getWFHBalance(employeedId: any) {
     let empId = employeedId;
     let currentDate = new Date().toISOString().split('T')[0];
-    this.subscription = this.http.getData(`WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`).subscribe({
-      next: (response: any) => {
-        console.log(response);
-        this.wfhBalance = response;
-      },
-      error: (reason: any) => console.log(reason)
-    })
+    this.subscription = this.http
+      .getData(
+        `WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${currentDate}`
+      )
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          this.wfhBalance = response;
+        },
+        error: (reason: any) => console.log(reason),
+      });
   }
-   // function to get the data of employees by hierarchy
-   getEmployeeInfo = [] as any;
+  // function to get the data of employees by hierarchy
+  getEmployeeInfo = [] as any;
   getTeamManagersDetails() {
-   const EmployeeId = this.empinfo.employeeId;
-   this.subscription = this.http
-     .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
-     .subscribe({
-       next: (response: any) => {
-         console.log('getEmployeesByhierarchy', response);
-         if (response && response.length) {
-           // No filter
-           this.getEmployeeInfo = response.map((employee: any) => ({
-             ...employee,
-             fullName: `${
-               employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-             }${employee.firstName} ${
-               employee.middleName ? employee.middleName + ' ' : ''
-             }${employee.lastName}`,
-           }));
-           console.log('getEmployeeInfo', this.getEmployeeInfo);
-         }
-       },
-     });
- }
- 
+    const EmployeeId = this.empinfo.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log('getEmployeesByhierarchy', response);
+          if (response && response.length) {
+            // No filter
+            this.getEmployeeInfo = response.map((employee: any) => ({
+              ...employee,
+              fullName: `${
+                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            }));
+            console.log('getEmployeeInfo', this.getEmployeeInfo);
+          }
+        },
+      });
+  }
+
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);
-  
+
     if (isNaN(days)) {
       console.error('Invalid futureDatesAllowed:', this.futureDatesAllowed);
       return new Date().toISOString().split('T')[0]; // Fallback to current date
     }
-  
+
     const currentDate = new Date();
     const futureDate = new Date(currentDate);
     futureDate.setDate(currentDate.getDate() + days);
     return futureDate.toISOString().split('T')[0];
   }
-  
- 
+
   intializewfhForm() {
     this.addWFHForm = this.fb.group({
       workedDate: ['', [Validators.required]],
@@ -276,13 +286,10 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  
-
   getWFHBal(currentDate?: any) {
     const empId = this.empinfo.employeeId;
     const date = currentDate ?? new Date().toISOString().split('T')[0];
-  
+
     this.http
       .getData(
         `WorkFromHomeEligibilityCriteria/getwfhbalance?employeeId=${empId}&workeddate=${date}`
@@ -298,7 +305,6 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         error: (reason: any) => console.log(reason),
       });
   }
-  
 
   getDataByLPID(emp: any) {
     this.http.getData(`Timeoff/LPID/${emp}`).subscribe({
@@ -317,15 +323,18 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.Workfromhome = response;
           this.futureDatesAllowed = parseInt(
-            this.Workfromhome?.find((item: any) => item.name === 'futureDatesAllowed')?.value ?? '0',
+            this.Workfromhome?.find(
+              (item: any) => item.name === 'futureDatesAllowed'
+            )?.value ?? '0',
             10
           );
-          
+
           this.pastDatesAllowed = parseInt(
-            this.Workfromhome?.find((item: any) => item.name === 'pastDatesAllowed')?.value ?? '0',
+            this.Workfromhome?.find(
+              (item: any) => item.name === 'pastDatesAllowed'
+            )?.value ?? '0',
             10
           );
-          
         },
         error: (reason: any) => console.log(reason),
       });
@@ -433,6 +442,6 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();
-     this.http.setEmployeeIdWFH(null);
+    this.http.setEmployeeIdWFH(null);
   }
 }

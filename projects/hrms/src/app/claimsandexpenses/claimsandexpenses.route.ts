@@ -1,4 +1,3 @@
-
 import { Route } from "@angular/router";
 import { AddClaimsandexpensesComponent } from "./add-claimsandexpenses/add-claimsandexpenses.component";
 import { ClaimsandexpensesComponent } from "./claimsandexpenses/claimsandexpenses.component";
@@ -9,12 +8,8 @@ import { ProcessedExpensesComponent } from "./claimsandexpenses/processed-expens
 import { RejectedExpensesComponent } from "./claimsandexpenses/rejected-expenses/rejected-expenses.component";
 import { PermissionsGuard } from "../guards/permissions.guard";
 
-
-
-
 export default [
     { path: 'addexpense', component: AddClaimsandexpensesComponent, canActivate: [PermissionsGuard], data: { permission: 'Expenses Module.create' } },
-
     // { path: '', redirectTo: '/claimsandexpenses/expenses', pathMatch: 'full' },
     {
         path: 'expenses', component: ClaimsandexpensesComponent, canActivate: [PermissionsGuard], data: { permission: 'Expenses Module.view' },
@@ -27,6 +22,4 @@ export default [
             // { path: '', redirectTo: 'draft', pathMatch: 'full' },
         ]
     }
-
-
 ] as Route[];

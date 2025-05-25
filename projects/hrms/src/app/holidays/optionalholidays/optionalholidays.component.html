@@ -1,9 +1,9 @@
 <div class="custom-main-component-container d-flex w-100 gap-3">
-  <div class="custom-component-left-content">
+  <div class="component-left-tabs-container">
     <app-holiday-tabs />
   </div>
 
-  <div class="card custom-component-right-content p-3">
+  <div class="holidays-content">
     <ng-container *ngIf="loading; else maincontent">
       <ng-template #loadingSpinner>
         <div class="loader-placeholder-content text-center">

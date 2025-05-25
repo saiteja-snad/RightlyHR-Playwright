@@ -1293,6 +1293,7 @@ export class LeavesComponent {
     this.leaveForm.reset();
     this.disableSubmitButton = false;
     this.modalService.dismissAll();
+    this.enableButton = false;
   }
 
   ngOnDestroy(): void {

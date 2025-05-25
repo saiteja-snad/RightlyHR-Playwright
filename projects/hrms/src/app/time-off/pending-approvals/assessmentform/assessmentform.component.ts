@@ -602,6 +602,7 @@ export class AssessmentformComponent {
       probationExtendedDate: this.selected_approve.extenddate,
       meta: this.jsonData,
       responseId: this.responseId,
+      currentStage: parseInt(this.formemployeedetails.approvalHeader?.currentapprovalStage)
     };
     if (this.selected_approve.requestSelectedType == 'Approve') {
       requestBody.status = 'Approved';
@@ -668,6 +669,7 @@ export class AssessmentformComponent {
       extendedDate: this.selected_approve.extenddate,
       meta: this.jsonData,
       responseId: this.responseId,
+      currentStage:parseInt(this.formemployeedetails.approvalHeader?.currentapprovalStage)
     };
     if (this.selected_approve.requestSelectedType == 'Approve') {
       requestBody.status = 'Processed';

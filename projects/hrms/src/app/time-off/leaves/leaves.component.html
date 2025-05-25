@@ -307,7 +307,7 @@
     </div>
 </ng-template>
 
-<ng-template #confirmationpopup let-model>
+<ng-template #confirmationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
@@ -315,8 +315,8 @@
         </div>
 
         <div class="custom-modal-footer">
-            <button type="reset" class="custom-btn btn-secondary">No</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
+            <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();modal.dismiss()">Yes</button>
         </div>
     </div>
 </ng-template>

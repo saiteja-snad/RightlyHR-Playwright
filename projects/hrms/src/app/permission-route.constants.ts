@@ -424,7 +424,8 @@ export const HOLIDAYS_SUB_TABS = [
     { permission: 'Employee Info Certification Details.view', route: '/personalinfo/job/certifications' },
     { permission: 'Employee Info Compensation Details.view', route: '/personalinfo/job/compensation-details' },
     { permission: 'Employee Info Desk Details.view', route: '/personalinfo/job/desk-details' },
-    { permission: 'Employee Info Asset Details.view', route: '/personalinfo/job/assets-details' }
+    { permission: 'Employee Info Asset Details.view', route: '/personalinfo/job/assets-details' },
+        { permission: 'Employee Info Onboarding Request Details.view', route: '/personalinfo/job/tranee-onboarding-requests' }
   ];
 
 

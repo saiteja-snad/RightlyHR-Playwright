@@ -4,7 +4,7 @@
 
             <div class="off-heading-div pt-0">
                 <span class="offBoarding-header pt-0">
-                    Off Boarding Details
+                    Offboarding Details
                 </span>
             </div>
             <!--heading ends-->
@@ -12,7 +12,7 @@
 
                 <!-- Exit Reason -->
                 <div class="mb-4">
-                    <label class="form-label custom-label mb-2">Exit Reason</label>
+                    <label class="form-label custom-label mb-2">Exit Reason<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="terminationDetails" optionLabel="reason" formControlName="exit"
                             placeholder="Please select exit reason" class="form-select custom-select"></p-select>
@@ -25,9 +25,7 @@
 
                 <!-- Eligible for Rehire -->
                 <div class="mb-4">
-                    <label class="form-label custom-label mb-2">Eligible For Rehire <span
-                            class="error-msg">*</span></label>
-
+                    <label class="form-label custom-label mb-2">Eligible For Rehire<span class="text-danger">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="rehireDetails" optionLabel="eligibleforrehire1"
                             formControlName="eligiblefor" placeholder="Please select eligible for rehire"
@@ -41,7 +39,7 @@
 
                 <!-- Status -->
                 <div class="mb-4">
-                    <label class="form-label custom-label mb-2">Status</label>
+                    <label class="form-label custom-label mb-2">Status<span class="text-danger">*</span></label>
 
                     <div class="custom-p-select-content">
                         <p-select [options]="Statusdetails" optionLabel="statusname" formControlName="status"
@@ -55,22 +53,17 @@
 
                 <!-- Last Working Day -->
                 <div class="mb-4">
-                    <label class="form-label custom-label mb-2">Last Working Day</label>
-
-
+                    <label class="form-label custom-label mb-2">Last Working Day<span class="text-danger">*</span></label>
                     <input type="date" [min]="dateOfJoining" formControlName="lastdate" class="form-control custom-input" [max]="currentDate">
-                    <div class="error-msg"
-                        *ngIf="offBoardingForm.get('lastdate')?.touched && offBoardingForm.get('lastdate')?.invalid">
+                    <div class="error-msg" *ngIf="offBoardingForm.get('lastdate')?.touched && offBoardingForm.get('lastdate')?.invalid">
                         Last Working Day is required
                     </div>
-                    <div class="error-msg" *ngIf="islastworking">Last working day should be after date of
-                        joining</div>
-
+                    <div class="error-msg" *ngIf="islastworking">Last working day should be after date of joining</div>
                 </div>
 
                 <!-- Buttons -->
                 <div class="d-flex justify-content-end gap-3 mt-4">
-                    <button type="button" (click)="openModal(confirmationpopup)" class="custom-btn btn-secondary">Close</button>
+                    <button type="button" (click)="openModal(confirmationpopup)" class="custom-btn btn-secondary">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="offBoardingForm.invalid || islastworking">Submit</button>
                 </div>
@@ -86,7 +79,7 @@
     <div class="result-popup-content" ngbAutofocus>
       <div>
         <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-        <p class="confirmation-text mb-4">Are you sure you want to close?</p>
+        <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
       </div>
   
       <div class="custom-modal-footer">

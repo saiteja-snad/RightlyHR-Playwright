@@ -59,7 +59,7 @@ export class SeparationForYourRoleRequestComponent {
     { label: 25, value: 25 },
   ];
   selectedSpRequestData: any = {
-    spsalaryhold: null,
+    spsalaryhold: undefined,
     noticperiodType: null,
     extend: false,
     discontinue: false,
@@ -91,7 +91,7 @@ export class SeparationForYourRoleRequestComponent {
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
     public rbac: RbacService,
-    private signalService:SignalsService
+    private signalService: SignalsService
   ) { }
 
   ngOnInit(): void {
@@ -110,7 +110,7 @@ export class SeparationForYourRoleRequestComponent {
       spRequestAppliedDate: null,
       spRequestLastWorkingDate: null,
       spIsEarlyRelieveing: false,
-      spsalaryhold: null
+      spsalaryhold: undefined
       // Add any other keys your form uses here
     };
     // Reset condition flags
@@ -149,15 +149,15 @@ export class SeparationForYourRoleRequestComponent {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static',});
+    this.modalService.open(content, { centered: true, backdrop: 'static', });
   }
- 
+
   openModalLarge(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',});
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static', });
   }
- 
+
   openModalXLarge(content: any) {
-    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static',});
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static', });
   }
 
   rejectpopup() {
@@ -166,14 +166,32 @@ export class SeparationForYourRoleRequestComponent {
   }
 
   approverCommentsfunction(value: any) {
-    this.myApproverComments = value.map((ele: any) => {
-      // Parse the metaData and assign it to metadata property
-      const parsedMetaData = JSON.parse(ele.metaData);
-      return {
-        ...ele, // Copy other properties from ele
-        metadata: parsedMetaData, // Assign parsed metaData to metadata property
-      };
-    });
+    const roleOrder: { [key: string]: number } = {
+      'RM': 1,
+      'TM': 2
+    };
+
+    this.myApproverComments = value
+      .map((ele: any) => {
+        const parsedMetaData = JSON.parse(ele.metaData || '{}');
+        return {
+          ...ele,
+          metadata: parsedMetaData,
+        };
+      })
+      .filter((ele: any) => {
+        const role = ele.approverRole?.toUpperCase();
+        return role === 'RM' || role === 'TM';
+      })
+      .sort((a: any, b: any) => {
+        const roleA = a.approverRole?.toUpperCase() || '';
+        const roleB = b.approverRole?.toUpperCase() || '';
+        return (roleOrder[roleA] || 99) - (roleOrder[roleB] || 99);
+      });
+  }
+
+  resetNoticePeriod() {
+    this.selectedSpRequestData.noticperiodType = null;
   }
 
   onRowsChange() {
@@ -193,7 +211,7 @@ export class SeparationForYourRoleRequestComponent {
   letters(event: KeyboardEvent): boolean {
     const charCode = event.key.charCodeAt(0);
     if ((charCode < 65 || charCode > 90) && (charCode < 97 || charCode > 122)
-       && charCode !== 32) {
+      && charCode !== 32) {
       return false;
     }
     return true;
@@ -418,13 +436,13 @@ export class SeparationForYourRoleRequestComponent {
     };
     if (this.selectedSpRequestData.requestSelectedType == 'Regular') {
       requestBody.lastWorkingDate =
-      this.selectedSpRequestData.spRequestLastWorkingDate;
+        this.selectedSpRequestData.spRequestLastWorkingDate;
       requestBody.isAcceptEarly = false;
       this.successmessage = 'Separation Request Processed Successfully'
     }
     if (this.selectedSpRequestData.requestSelectedType == 'Early') {
       requestBody.earlyRelievingDate =
-      this.selectedSpRequestData.spMangerEarlyreliveingDate;
+        this.selectedSpRequestData.spMangerEarlyreliveingDate;
       requestBody.isAcceptEarly = true;
       this.successmessage = 'Early Relieving Request Processed Successfully'
     }
@@ -475,9 +493,9 @@ export class SeparationForYourRoleRequestComponent {
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');
     return formattedDate;
   }
-isCheckBoxEnabledEarly = false;
+  isCheckBoxEnabledEarly = false;
   toggleEarly() {
-     if (!this.early) {
+    if (!this.early) {
       if (this.selectedSpRequestData.spIsEarlyRelieveing == true) {
         this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
         this.selectedSpRequestData.isAcceptEarlyRequest = 'Yes';
@@ -494,21 +512,21 @@ isCheckBoxEnabledEarly = false;
       this.clearExtendData();
       this.clearDiscontinueData();
     }
-     else {
-      if(!this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck){
-        this.early=true;
+    else {
+      if (!this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck) {
+        this.early = true;
       }
       else {
         // Toggle off Early Relieving
         this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
         this.early = false;
-        this.selectedRadio=''
+        this.selectedRadio = ''
         this.buttondisable = false;
         this.clearEarlyData();
       }
-     
+
     }
- 
+
   }
 
   toggleRegular() {

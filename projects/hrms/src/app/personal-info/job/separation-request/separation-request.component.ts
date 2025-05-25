@@ -172,6 +172,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     };
     this.subscription = this.http.postdata('NoDueClearanceForm', noduereq).subscribe({
       next: (data: any) => {
+         this.isLoading = false;
         this.profileForm.reset();
         this.formemailsfornodue.clear();
         this.modalService.dismissAll();

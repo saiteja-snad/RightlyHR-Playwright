@@ -37,7 +37,7 @@
             <td>
                 {{ item.requestedDate?(item.requestedDate | dateformat):'NA' }}
             </td>
-            <td>{{item.processedByName?item.processedByName:'NA'}}</td>
+            <td>{{item.processedByName? item.processedByName:'-'}}</td>
             <td>{{item.status?item.status:'NA'}}</td>
             <td>{{item.subStatus?item.subStatus:'NA'}}</td>
             <td>

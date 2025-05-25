@@ -15,7 +15,6 @@ import { PremissionsWaitingForApprovalComponent } from './premissions/premission
 import { PremissionsApprovedComponent } from './premissions/premissions-approved/premissions-approved.component';
 import { PremissionsRejectedComponent } from './premissions/premissions-rejected/premissions-rejected.component';
 import { OnBeHalfOfComponent } from './on-be-half-of/on-be-half-of.component';
-import { AttendanceComponent } from './attendance/attendance.component';
 import { OnBeHalfOfWaitingForApprovalComponent } from './on-be-half-of/on-be-half-of-waiting-for-approval/on-be-half-of-waiting-for-approval.component';
 import { OnBeHalfOfApprovalComponent } from './on-be-half-of/on-be-half-of-approval/on-be-half-of-approval.component';
 import { OnBeHalfOfProcessComponent } from './on-be-half-of/on-be-half-of-process/on-be-half-of-process.component';
@@ -76,7 +75,6 @@ import { TeamLeaveBalanceComponent } from './leaves/team-leave-balance/team-leav
 import { TeamLeaveSummaryComponent } from './leaves/team-leave-summary/team-leave-summary.component';
 import { CancelledComponent } from './leaves/cancelled/cancelled.component';
 import { OrgLeaveBalanceComponent } from './leaves/org-leave-balance/org-leave-balance.component';
-import { PermissionsGuard } from "../guards/permissions.guard";
 import { OnBeHalfOfCancelComponent } from './on-be-half-of/on-be-half-of-cancel/on-be-half-of-cancel.component';
 import { WfhCancellationComponent } from './work-from-home/wfh-cancellation/wfh-cancellation.component';
 import { PermissionsCancellationComponent } from './premissions/permissions-cancellation/permissions-cancellation.component';
@@ -168,7 +166,6 @@ export default [
       { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
-  { path: 'attendance', component: AttendanceComponent, data: { permission: 'Attendance Module.view' } },
   {
     path: 'pending-approvals',
     component: PendingApprovalsComponent,

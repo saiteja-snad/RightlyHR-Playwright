@@ -1,18 +1,15 @@
 <div class="custom-main-component-container">
-  <div class="custom-table-content custom-content-height17">
+  <div class="custom-table-content">
     @if(!dataload){
     <table class="w-100">
       <thead>
-        <tr>
-          <th>Worked Date</th>
-          <th>Availed</th>
-          <th>Reason</th>
-          <th>Applied Date</th>
-          <th>Status</th>
-        </tr>
+        <th>Worked Date</th>
+        <th>Availed</th>
+        <th>Reason</th>
+        <th>Applied Date</th>
+        <th>Status</th>
       </thead>
       <tbody>
-        
         <ng-container *ngIf="processedCompOffRequests!.length > 0; else noDataTemplate">
           <tr *ngFor="let compOffRequest of processedCompOffRequests; let i = index">
             <td>{{ compOffRequest.startTime ? (compOffRequest.startTime | dateformat) : ' -' }}</td>
@@ -40,14 +37,12 @@
             <td>{{ compOffRequest.status }}</td>
           </tr>
         </ng-container>
+
         <ng-template #noDataTemplate>
-          <tr>
-            <td colspan="5">
-              <app-no-data-found></app-no-data-found>
-            </td>
+          <tr class="table-placeholder">
+            <app-no-data-found></app-no-data-found>
           </tr>
         </ng-template>
-        
       </tbody>
     </table>
     }@else{

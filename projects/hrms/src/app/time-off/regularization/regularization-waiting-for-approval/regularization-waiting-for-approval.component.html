@@ -1,17 +1,15 @@
 <div class="custom-main-component-container">
-    <div class="custom-table-content custom-content-height17">
+    <div class="custom-table-content">
         @if(!dataLoad){
         <table class="w-100">
             <thead>
-                <tr>
-                    <th>Requested Date</th>
-                    <th>Regularization Date</th>
-                    <th>Duration(In Hours)</th>
-                    <th>Reason</th>
-                    <!-- <th>Rejected Reason</th> -->
-                    <th>Regularization Type</th>
-                    <th>Status</th>
-                </tr>
+                <th>Requested Date</th>
+                <th>Regularization Date</th>
+                <th>Duration(In Hours)</th>
+                <th>Reason</th>
+                <!-- <th>Rejected Reason</th> -->
+                <th>Regularization Type</th>
+                <th>Status</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="waitingForApprovalPerimisions!.length > 0; else noDataTemplate">
@@ -33,18 +31,15 @@
                         <td>{{permissionRequest.status}}</td>
                     </tr>
                 </ng-container>
-                
+
                 <ng-template #noDataTemplate>
-                    <tr>
-                        <td colspan="6">
-                            <app-no-data-found></app-no-data-found>
-                        </td>
+                    <tr class="table-placeholder">
+                        <app-no-data-found></app-no-data-found>
                     </tr>
                 </ng-template>
-                
             </tbody>
         </table>
-    }@else{
+        }@else{
         <app-data-loader-content />
         }
     </div>

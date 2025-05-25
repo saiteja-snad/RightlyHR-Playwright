@@ -240,6 +240,10 @@ export class PersonalDetailsComponent implements OnInit {
     this.disablecode=true;
      } else {
       this.personalDetailsForm.enable();
+      this.personalDetailsForm.get('subLocation')?.disable();
+      this.personalDetailsForm.get('location')?.disable();
+      this.personalDetailsForm.get('designation')?.disable();
+      this.personalDetailsForm.get('personalEmail')?.disable();
       this.disablecode=false;
     }
   }

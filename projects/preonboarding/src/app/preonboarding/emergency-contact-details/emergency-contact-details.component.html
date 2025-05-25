@@ -17,13 +17,14 @@
                     <!-- Name -->
                     <div class="col-lg-4 col-md-6 mb-3">
                         <label class="form-label custom-label mb-2">Name<span class="text-danger">*</span></label>
-                        <input type="text" class="form-control custom-input" formControlName="name"
+                        <input type="text" class="form-control custom-input"  formControlName="name"
                             placeholder="Please enter name">
                         <div class="error-msg my-1"
                             *ngIf="contactForm.get('contact1.name')?.invalid && (contactForm.get('contact1.name')?.touched || contactForm.get('contact1.name')?.dirty)">
                             <div *ngIf="contactForm.get('contact1.name')?.hasError('required')">Name is required</div>
                             <div *ngIf="contactForm.get('contact1.name')?.hasError('minlength')">Name must be at least 2
                                 characters</div>
+                                   <div *ngIf="contactForm.get('contact1.name')?.hasError('pattern')">Invalid name</div>
                         </div>
                     </div>
 
@@ -104,6 +105,7 @@
                             <div *ngIf="contactForm.get('contact2.name')?.hasError('required')">Name is required</div>
                             <div *ngIf="contactForm.get('contact2.name')?.hasError('minlength')">Name must be at least 2
                                 characters long</div>
+                                <div *ngIf="contactForm.get('contact2.name')?.hasError('pattern')">Invalid name</div>
                         </div>
                     </div>
 

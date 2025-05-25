@@ -163,8 +163,12 @@ export class AddProspectiveInternComponent {
     this.disablebutton = false;
   }
 
+  closepopup(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' })
+  }
   //function to get sublocation by id
   getSubLocationByid(ValuesForSublocation: any) {
+    this.employeeForm.get('subLocation')?.setValue(null);
     this.subscription = this.http
       .getData(
         `JobLocation/sub-location-by-joblocation/${ValuesForSublocation.id} `

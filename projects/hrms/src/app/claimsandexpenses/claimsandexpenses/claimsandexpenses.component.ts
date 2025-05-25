@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit , ViewEncapsulation } from '@angular/core';
 import { ExpenesHeaderTabsComponent } from "../../shared/claimsandexpenses-tabs/expenes-header-tabs/expenes-header-tabs.component";
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { RbacService } from '../../services/rbac.service';
@@ -10,7 +10,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
   selector: 'app-claimsandexpenses',
   imports: [ExpenesHeaderTabsComponent, RouterModule, ModuleInformationComponent],
   templateUrl: './claimsandexpenses.component.html',
-  styleUrl: './claimsandexpenses.component.scss'
+  styleUrl: './claimsandexpenses.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 export class ClaimsandexpensesComponent implements OnInit {
   moduleinfo : string = '';

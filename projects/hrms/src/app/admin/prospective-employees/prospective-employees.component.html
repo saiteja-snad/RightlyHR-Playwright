@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="component-header-content">
     <div>
       <p class="component-header mb-0">
         <i class="bi bi-arrow-90deg-left cursor me-2" (click)="navigateDashboard()"></i>{{'Prospective Employees'|
@@ -20,20 +20,18 @@
       placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
   </div>
 
-  <div class="custom-table-content custom-content-height16">
+  <div class="custom-table-content">
     @if (!loader) {
     <table class="w-100">
       <thead>
-        <tr>
-          <th>{{'Id'|translate}}</th>
-          <th>{{'Employee Name'|translate}}</th>
-          <th>{{'Personal Email'|translate}}</th>
-          <th>{{'Phone Number'|translate}}</th>
-          <th>{{'Location'|translate}}</th>
-          <th>{{'Sub Location'|translate}}</th>
-          <th>{{'Designation'|translate}}</th>
-          <th>{{'Sub Status'|translate}}</th>
-        </tr>
+        <th>{{'Id'|translate}}</th>
+        <th>{{'Employee Name'|translate}}</th>
+        <th>{{'Personal Email'|translate}}</th>
+        <th>{{'Phone Number'|translate}}</th>
+        <th>{{'Location'|translate}}</th>
+        <th>{{'Sub Location'|translate}}</th>
+        <th>{{'Designation'|translate}}</th>
+        <th>{{'Sub Status'|translate}}</th>
       </thead>
       <tbody>
         @if( ((Prospective | async) ?? []).length > 0){
@@ -73,9 +71,7 @@
         }
         @if ((((Prospective | async) ?? []) | prospective : searchValue).length === 0){
         <tr>
-          <td>
-            <app-no-data-found />
-          </td>
+          <app-no-data-found />
         </tr>
         }
       </tbody>

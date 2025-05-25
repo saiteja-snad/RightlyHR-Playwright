@@ -1,17 +1,17 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="component-header-content">
     <div>
       <p class="component-header mb-0">
         <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>
         {{'Prospective Trainees'|translate}}
       </p>
     </div>
-   @if(this.rbac.allowedToAccess('Add Prospective Trainee.view')){
+    @if(this.rbac.allowedToAccess('Add Prospective Trainee.view')){
     <div class="d-flex">
       <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
         <i class="bi bi-plus me-2"></i>{{'Add Prospective Trainee'| translate}}</button>
     </div>
-   }
+    }
   </div>
 
   <!--Input search-->
@@ -21,21 +21,19 @@
       placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
   </div>
 
-  <div class="custom-table-content custom-content-height16">
+  <div class="custom-table-content">
     @if (!loader) {
     <table class="w-100">
       <thead>
-        <tr>
-          <th>{{'Id'|translate}}</th>
-          <th>{{'Employee Name'|translate}}</th>
-          <th>{{'Personal Email'|translate}}</th>
-          <th>{{'Phone Number'|translate}}</th>
-          <th>{{'Location'|translate}}</th>
-          <th>{{'Sub Location'|translate}}</th>
-          <th>{{'Designation'|translate}}</th>
-          <th>{{'Duration Of Training'|translate}}</th>
-          <th>{{'Sub Status'|translate}}</th>
-        </tr>
+        <th>{{'Id'|translate}}</th>
+        <th>{{'Employee Name'|translate}}</th>
+        <th>{{'Personal Email'|translate}}</th>
+        <th>{{'Phone Number'|translate}}</th>
+        <th>{{'Location'|translate}}</th>
+        <th>{{'Sub Location'|translate}}</th>
+        <th>{{'Designation'|translate}}</th>
+        <th>{{'Duration Of Training'|translate}}</th>
+        <th>{{'Sub Status'|translate}}</th>
       </thead>
       <tbody>
         <tr *ngFor="let act of Trainee | activeEmployee : searchValue">
@@ -90,9 +88,7 @@
         </tr>
         @if ((Trainee | activeEmployee : searchValue).length === 0) {
         <tr>
-          <td>
-            <app-no-data-found />
-          </td>
+          <app-no-data-found />
         </tr>
         }
       </tbody>

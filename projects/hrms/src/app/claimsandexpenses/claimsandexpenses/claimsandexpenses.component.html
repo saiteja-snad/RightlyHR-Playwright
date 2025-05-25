@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="component-header-content">
         <div>
-            <p class="component-header cursor mb-0">My Expenses</p>
+            <p class="component-header mb-0">My Expenses</p>
         </div>
         @if(rbac.allowedToAccess('Expenses Module.create')){
         <div>
@@ -18,12 +18,12 @@
      </div>
 
     <div class="d-flex gap-3 w-100">
-        <div class="custom-component-left-content">
-            <app-expenes-header-tabs></app-expenes-header-tabs>
+        <div class="component-left-tabs-container">
+            <app-expenes-header-tabs/>
         </div>
 
-        <div class="card custom-component-right-content p-3">
-            <router-outlet></router-outlet>
+        <div class="component-right-content">
+            <router-outlet />
         </div>
     </div>
 </div>

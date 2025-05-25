@@ -1,4 +1,4 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -6,6 +6,7 @@
             aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
             aria-describedby="basic-addon1">
     </div>
+
     <ng-container *ngIf="loading; else maincontent">
         <ng-template #loadingSpinner>
             <div class="loader-placeholder-content text-center">
@@ -18,30 +19,24 @@
     </ng-container>
 
     <ng-template #maincontent>
-
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
-                    <tr>
-                        <th>Desk ID</th>
-                        <th>Desk Type</th>
-                     
-                        <th>Location</th>
-                        <th>Sub Location</th>
-                        <th>Desk Status</th>  
-                        @if(rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') || 
-                            rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')){    
-                        <th class="text-center">Action(s)</th>
-                        
-                            }
-                    </tr>
+                    <th>Desk ID</th>
+                    <th>Desk Type</th>
+                    <th>Location</th>
+                    <th>Sub Location</th>
+                    <th>Desk Status</th>
+                    @if(rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') ||
+                    rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')){
+                    <th class="text-center">Action(s)</th>
+                    }
                 </thead>
                 <tbody>
                     <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
                         <tr *ngFor="let desk of desklist | async">
                             <td>{{ desk.deskName }}</td>
                             <td>{{ desk.deskType }}</td>
-                           
                             <td>{{ desk.location?.jobLocationName }}</td>
                             <td>{{ desk.subLocation?.jobSubLocationName }}</td>
                             <td>{{ desk.deskStatus }}</td>
@@ -52,7 +47,6 @@
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
-
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <ng-container *ngIf="desk.deskStatus==='Available'">
                                             @if(rbac.allowedToAccess('Available Request for Allocation.view')){
@@ -79,16 +73,13 @@
                                                 </a>
                                             </li>
                                             }
-
                                         </ng-container>
-
                                         <li>
                                             <a class="dropdown-item"
                                                 (click)="viewdata(desk);navigateToAsset(desk.deskId)">
                                                 View Desk Details
                                             </a>
                                         </li>
-
                                     </ul>
                                 </div>
                             </td>
@@ -98,9 +89,7 @@
                     <!-- No Data Found Template -->
                     <ng-template #noDataTemplate>
                         <tr>
-                            <td>
-                                <app-no-data-found />
-                            </td>
+                            <app-no-data-found />
                         </tr>
                     </ng-template>
                 </tbody>
@@ -108,9 +97,7 @@
         </div>
         <div class="pagination-content pt-2 w-100" *ngIf="totalRecords > 0">
             <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                
                 <div class="d-flex align-items-center gap-3 p-2">
-                    
                     <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
                         (ngModelChange)="onRowsChange()">
                         <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
@@ -119,7 +106,6 @@
                     <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
                         totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
                 </div>
-
                 <!-- Pagination -->
                 <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
                     (onPageChange)="onPageChange($event)"></p-paginator>
@@ -127,9 +113,6 @@
         </div>
     </ng-template>
 </div>
-
-
-
 
 
 <ng-template #assigindesk let-modal>

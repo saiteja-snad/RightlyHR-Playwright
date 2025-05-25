@@ -37,6 +37,7 @@
           <td>{{item.status}}</td>
           <td class="text-center">
             @if(isBeforeToday(item.startdate)){
+              
             <div class="dropdown">
               <a type="button" data-bs-toggle="dropdown">
                 <i class="bi bi-three-dots-vertical"></i>
@@ -48,6 +49,9 @@
                 </li>
               </ul>
             </div>
+            }
+            @else {
+              -
             }
 
           </td>
@@ -74,8 +78,8 @@
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Reason for Cancellation' | translate}}<span
             class="text-danger">*</span></label>
-        <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="cancelReason"
-          maxlength="250" placeholder="Please enter leave cancellation reason....." rows="3"></textarea>
+        <textarea  pattern="^[^\s].*" class="form-control custom-input" formControlName="cancelReason"  [minlength]="10"
+          [maxlength]="250" placeholder="Please enter leave cancellation reason....." rows="3"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>
         <div class="error-msg"
@@ -83,6 +87,8 @@
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Reason for Cancellation is
             required</ng-container>
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['maxlength']">Maximum 250 characters
+            allowed</ng-container>
+            <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['minlength']">Minimum 10 characters
             allowed</ng-container>
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['pattern']">Reason for Cancellation cannot start
             with whitespace or be empty</ng-container>

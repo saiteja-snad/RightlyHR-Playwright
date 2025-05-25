@@ -175,15 +175,15 @@
         </div>
     </div>
     <ng-template #confirmationpopup let-model>
-    <div class="result-popup-content" ngbAutofocus>
-      <div>
-        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-        <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
-      </div>
-  
-      <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary">No</button>
-        <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
-      </div>
-    </div>
-  </ng-template>
+        <div class="result-popup-content" ngbAutofocus>
+            <div>
+                <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+                <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
+            </div>
+    
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
+            </div>
+        </div>
+    </ng-template>

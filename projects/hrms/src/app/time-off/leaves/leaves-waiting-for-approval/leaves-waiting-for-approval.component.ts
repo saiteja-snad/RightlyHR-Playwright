@@ -71,7 +71,7 @@ isLoading=false;
  formInializer() {
     this.cancelForm = this.fb.group({
       cancelReason: [null,
-        [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/), noWhitespaceValidator]
+        [Validators.required, Validators.maxLength(250)]
       ]
     });
   }

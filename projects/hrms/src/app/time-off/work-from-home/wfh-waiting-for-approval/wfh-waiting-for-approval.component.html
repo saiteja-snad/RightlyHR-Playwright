@@ -1,20 +1,16 @@
-
 <div class="custom-main-component-container">
-  <div class="custom-table-content custom-content-height17">
+  <div class="custom-table-content">
     @if(!dataload){
     <table class="w-100">
       <thead>
-        <tr>
-          <th>Worked Date</th>
-          <th>Availed</th>
-          <th>Reason</th>
-          <th>Applied Date</th>
-          <th>Status</th>
-          <th>Action(s)</th>
-        </tr>
+        <th>Worked Date</th>
+        <th>Availed</th>
+        <th>Reason</th>
+        <th>Applied Date</th>
+        <th>Status</th>
+        <th>Action(s)</th>
       </thead>
       <tbody>
-       
         <ng-container *ngIf="waitingForApprovalWFHs!.length > 0; else noDataTemplate">
           <tr *ngFor="let wfhRequest of waitingForApprovalWFHs; let i = index">
             <td>{{ wfhRequest.startTime ? (wfhRequest.startTime | dateformat) : ' -' }}</td>
@@ -26,57 +22,49 @@
             </td>
             <td>
               <div>
-                <span>
-                  <a *ngIf="wfhRequest.requestedComments; else noReason"
-                     type="button"
-                     [ngbPopover]="requestedComments">
-                    <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                  </a>
-                  <ng-template #requestedComments>
-                    <div>
-                      <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
-                    </div>
-                  </ng-template>
-                  <ng-template #noReason>
-                    <span>-</span>
-                  </ng-template>
-                </span>
+                <a *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
+                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
+                </a>
+                <ng-template #requestedComments>
+                  <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
+                </ng-template>
+                <ng-template #noReason>
+                  <span>-</span>
+                </ng-template>
               </div>
             </td>
             <td>{{ wfhRequest.requestedDate | dateformat }}</td>
             <td>{{ wfhRequest.status }}</td>
-           <td class="text-center">
-                      @if(isBeforeToday(wfhRequest.startTime)){
-                      <div class="dropdown">
-                        <a type="button" data-bs-toggle="dropdown">
-                          <i class="bi bi-three-dots-vertical"></i>
-                        </a>
-                        <ul class="dropdown-menu custom-dropdown-menu">
-                      
-                          <li (click)="onClick(wfhRequest,cancelModal)">
-                            <a class="dropdown-item">Cancel WFH</a>
-                          </li>
-                        </ul>
-                      </div>
-                      }
-                  
+            <td class="text-center">
+              @if(isBeforeToday(wfhRequest.startTime)){
+              <div class="dropdown">
+                <a type="button" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </a>
+                <ul class="dropdown-menu custom-dropdown-menu">
+
+                  <li (click)="onClick(wfhRequest,cancelModal)">
+                    <a class="dropdown-item">Cancel WFH</a>
+                  </li>
+                </ul>
+              </div>
+              }
+
             </td>
           </tr>
         </ng-container>
 
         <ng-template #noDataTemplate>
-          <tr>
-            <td colspan="5">
-              <app-no-data-found></app-no-data-found>
-            </td>
+          <tr class="table-placeholder">
+            <app-no-data-found></app-no-data-found>
           </tr>
         </ng-template>
-        
       </tbody>
     </table>
-  }@else{<app-data-loader-content />}
+    }@else{<app-data-loader-content />}
   </div>
 </div>
+
 <!-- cancel leave popup -->
 <ng-template #cancelModal let-modal>
   <div class="result-popup-content" ngbAutofocus>
@@ -88,8 +76,8 @@
       <div class="custom-main-popup-content">
         <label for="comments" class="form-label custom-label mb-2">{{'Reason for Cancellation' | translate}}<span
             class="text-danger">*</span></label>
-        <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="cancelReason" maxlength="250"
-          placeholder="Please enter cancellation reason....." rows="3"></textarea>
+        <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="cancelReason"
+          maxlength="250" placeholder="Please enter cancellation reason....." rows="3"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>
         <div class="error-msg"
@@ -103,13 +91,13 @@
         </div>
       </div>
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();cancelForm.reset()">{{'Close'| translate}}</button>
+        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();cancelForm.reset()">{{'Close'|
+          translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="cancelForm.invalid || isLoading">@if
           (!isLoading) { {{ 'Submit' | translate }} } @else {
-            <div class="button-loader-content">
-              <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
-              <div>{{'Submitting'|translate}}</div>
+          <div class="button-loader-content">
+            <div *ngIf="isLoading" class="spinner-border button-spinner text-light" role="status"></div>
+            <div>{{'Submitting'|translate}}</div>
           </div>
           }
         </button>

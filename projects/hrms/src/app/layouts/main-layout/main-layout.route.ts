@@ -16,6 +16,7 @@ import { OrganizationchartComponent } from "../../organizationchart/organization
 import { CalendarViewComponent } from "../../calendar/calendar-view/calendar-view.component";
 import { HolidaysLayoutComponent } from "../../holidays/holidays-layout/holidays-layout.component";
 import { ThemeLayoutComponent } from "../../theme-customization/theme-layout/theme-layout.component";
+import { AttendanceViewComponent } from "../../Attendance/attendance-view/attendance-view.component";
 
 export default [
     { path: '', redirectTo: '/admin', pathMatch: 'full' },
@@ -37,4 +38,5 @@ export default [
     { path: 'organization-chart', component: OrganizationchartComponent, canActivate: [MsalGuard]},
     { path: 'holidays', component: HolidaysLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../holidays/holidays.route')},
     { path: 'theme', component: ThemeLayoutComponent, loadChildren: () => import('../../theme-customization/theme.route')},
+    { path: 'attendance', component: AttendanceViewComponent,canActivate: [MsalGuard] }
 ] as Route[];

@@ -56,21 +56,19 @@
         </ul>
       </div>
     </div>
-
-    <div class="component-right-content">
-      <div class="tab-content">
-        <div *ngIf="activeTab === 'timeOff'">
-          <app-time-off (dataEvent)="timeoff($event)"></app-time-off>
-        </div>
-        <div *ngIf="activeTab === 'compOff'">
-          <app-comp-off-entitlement (dataEvent)="compoff($event)"></app-comp-off-entitlement>
-        </div>
-        <div *ngIf="activeTab === 'wfh'">
-          <app-wfh (dataEvent)="wfhoff($event)"></app-wfh>
-        </div>
-        <div *ngIf="activeTab === 'permissions'">
-          <app-permissions (dataEvent)="permissionsoff($event)"></app-permissions>
-        </div>
+  
+    <div class="tab-content custom-tab-content">
+      <div *ngIf="activeTab === 'timeOff'">
+        <app-time-off (dataEvent)="timeoff($event)"></app-time-off>
+      </div>
+      <div *ngIf="activeTab === 'compOff'">
+        <app-comp-off-entitlement (dataEvent)="compoff($event)"></app-comp-off-entitlement>
+      </div>
+      <div *ngIf="activeTab === 'wfh'">
+        <app-wfh (dataEvent)="wfhoff($event)"></app-wfh>
+      </div>
+      <div *ngIf="activeTab === 'permissions'">
+        <app-permissions (dataEvent)="permissionsoff($event)"></app-permissions>
       </div>
     </div>
   </div>

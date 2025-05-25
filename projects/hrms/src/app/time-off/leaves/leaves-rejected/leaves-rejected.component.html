@@ -1,18 +1,16 @@
 <div class="custom-main-component-container">
-    <div class="custom-table-content custom-content-height17">
+    <div class="custom-table-content">
         <table class="w-100">
             <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Leave Type</th>
-                    <th>Duration</th>
-                    <th>Availed</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Reason</th>
-                    <th>Rejected Reason</th>
-                    <th>Status</th>
-                </tr>
+                <th>Date</th>
+                <th>Leave Type</th>
+                <th>Duration</th>
+                <th>Availed</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Reason</th>
+                <th>Rejected Reason</th>
+                <th>Status</th>
             </thead>
             <tbody>
                 @if (rbac.allowedToAccess('Rejected (Time Off).view')) {
@@ -46,11 +44,10 @@
                         </div>
                     </td>
                     <td>{{item.status}}</td>
-
                 </tr>
                 }
                 @else {
-                <tr>
+                <tr class="table-placeholder">
                     <app-no-data-found></app-no-data-found>
                 </tr>
                 }

@@ -9,10 +9,11 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { OpenModalService } from '../../../../services/open-modal.service';
 import { RbacService } from '../../../../services/rbac.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-expenses-allowed-days',
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule,ReactiveFormsModule,TranslateModule],
   templateUrl: './expenses-allowed-days.component.html',
   styleUrl: './expenses-allowed-days.component.scss'
 })

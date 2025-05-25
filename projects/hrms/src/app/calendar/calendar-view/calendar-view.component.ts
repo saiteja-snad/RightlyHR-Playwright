@@ -17,19 +17,23 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin from '@fullcalendar/interaction';
-import { firstValueFrom, Subscription } from 'rxjs';
+import { filter, firstValueFrom, Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../Interfaces/job-model';
 import { HttpService } from '../../services/http.service';
 import { FormsModule } from '@angular/forms';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-calendar-view',
-  imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule],
+  imports: [CommonModule, TranslateModule, FullCalendarModule, FormsModule, ModuleInformationComponent],
   templateUrl: './calendar-view.component.html',
   styleUrl: './calendar-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class CalendarViewComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   calendarOptions!: CalendarOptions;
   eventsPromise!: Promise<EventInput[]>;
   @ViewChild(FullCalendarComponent) fullcalendar!: FullCalendarComponent;
@@ -50,7 +54,8 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
 
   constructor(
     private changeDetector: ChangeDetectorRef,
-    private http: HttpService
+    private http: HttpService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -59,6 +64,27 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
     const currentDate = new Date();
     this.mixedMonth = currentDate.getMonth() + 1; // getMonth() returns 0 for January, so add 1
     this.changeYear = new Date(currentDate).getFullYear();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/calendar': MODULE_INFOS.CALENDAR_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   handleDatesSet(arg: any) {

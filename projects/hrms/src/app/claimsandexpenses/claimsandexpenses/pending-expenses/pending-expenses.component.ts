@@ -1,24 +1,23 @@
 import { Component, ViewChild } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { IExpense, IExpenseHeaders, IExpenseItem, INewExpense } from '../../../Interfaces/claimsandexpenses.model';
+import { IExpense, IExpenseHeaders } from '../../../Interfaces/claimsandexpenses.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import { HttpService } from '../../../services/http.service';
-
 import { CommonModule } from '@angular/common';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
-
 @Component({
   selector: 'app-pending-expenses',
   imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent],
   templateUrl: './pending-expenses.component.html',
   styleUrl: './pending-expenses.component.scss'
 })
+
 export class PendingExpensesComponent {
   empinfo: any
   subscription!: Subscription;
@@ -29,20 +28,19 @@ export class PendingExpensesComponent {
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
   commentsrecivced = [] as any
-  searchTerm:any=''
+  searchTerm: any = ''
   approverComments = [] as any[];
-  loading=false
+  loading = false
   @ViewChild('commentspopup') modalContent: any;
-  constructor( 
-    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
- 
-    expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
+  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
   draftsCount: number = 0;
+
+  constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getexpensesheaderbyemployeeid();
   }
-
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
@@ -53,14 +51,13 @@ export class PendingExpensesComponent {
   }
 
   getexpensesheaderbyemployeeid(): void {
-    this.loading=true
+    this.loading = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Waiting for Approval&searchQuery=${cleanSearchQuery}`, ).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Waiting for Approval&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
-          this.loading=false
-          this.expenesEmplyeedata.next(data) 
-
+          this.loading = false
+          this.expenesEmplyeedata.next(data)
         }, error(err) {
           console.log("expensesheadererror", err)
         },
@@ -68,19 +65,17 @@ export class PendingExpensesComponent {
   }
 
   viewItem(expid: number,) {
-    console.log(expid);
     this.updataid = expid;
     this.subscription = this.http
       .getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
         next: (data: any) => {
           this.expenseheaderiteams = data
-
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
-
   }
+
   comments(value: any, commentspopup: any) {
     this.modalService.open(commentspopup, {
       centered: true,
@@ -88,9 +83,8 @@ export class PendingExpensesComponent {
       size: 'lg',
     });
     this.approverComments = value;
-    console.log(this.approverComments);
   }
-  
+
   onSelectDownload(file: any): void {
     this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file).subscribe({
       next: (res: any) => {
@@ -99,11 +93,9 @@ export class PendingExpensesComponent {
         if (!blob) {
           return;
         }
-
         // Extract filename from 'content-disposition' header if available
         const contentDisposition = res.headers.get('content-disposition');
         let fileName = 'defaultFileName.pdf'; // Default filename
-
         if (contentDisposition) {
           const fileNameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
           if (fileNameMatch !== null && fileNameMatch[1]) {
@@ -115,7 +107,6 @@ export class PendingExpensesComponent {
           const parts = filePath.split('/');
           fileName = parts[parts.length - 1] || 'defaultFileName.pdf';
         }
-
         // Create a link element and trigger the download
         const a = document.createElement('a');
         const url = window.URL.createObjectURL(blob);
@@ -123,7 +114,6 @@ export class PendingExpensesComponent {
         a.download = fileName;
         document.body.appendChild(a);
         a.click();
-
         // Clean up
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
@@ -136,7 +126,6 @@ export class PendingExpensesComponent {
 
   onViewAttachement(url: any) {
     const lowerUrl = url?.toLowerCase();
-  
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http
         .DownloadDataWithQuery('FileSystem/Downloadfile', url)
@@ -161,22 +150,21 @@ export class PendingExpensesComponent {
       this.toggleViewModal();
     }
   }
+
   toggleViewModal() {
     this.modalService.dismissAll();
     this.openModal(this.viewattamchment)
   }
+
   isImageFile(url: any): boolean {
     if (!url) return false;
     const lowerUrl = url.toLowerCase();
     return lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png');
   }
 
-
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
   }
-
-
 }

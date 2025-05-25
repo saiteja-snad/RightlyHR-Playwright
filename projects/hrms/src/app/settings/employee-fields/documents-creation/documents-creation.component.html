@@ -4,6 +4,11 @@
         <div class="component-header">Settings</div>
     </div>
 
+    <!--Module Information-->
+    <div>
+        <app-module-information [moduleInfo]="moduleinfo"/>
+     </div>
+
     <!--tabs content-->
     <div class="mb-3">
         <div>
@@ -103,7 +108,7 @@
                       </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary" (click)="onClose()">{{'Close'|translate}}</button>
+                    <button type="reset" class="custom-btn btn-secondary" (click)="onClose()">{{'Cancel'|translate}}</button>
                     <button type="submit" [disabled]="AddSubDirectory.invalid" class="custom-btn btn-primary">{{'Add'|translate}}</button>
                 </div>
             </form>

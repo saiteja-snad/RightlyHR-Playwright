@@ -10,7 +10,7 @@
         <ng-template #loadingSpinner>
             <div class="loader-placeholder-content text-center">
                 <div>
-                    <app-data-loader-content/>
+                    <app-data-loader-content />
                 </div>
             </div>
         </ng-template>
@@ -21,15 +21,13 @@
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
-                    <tr>
-                        <th>{{'Expense Title' | translate}}</th>
-                        <th>{{'Expense Date' | translate}}</th>
-                        <th>{{'Total Amount' | translate}}</th>
-                        <th>{{'Status'  | translate}}</th>
-                        @if(rbac.allowedToAccess('Draft Tab.update')){
-                        <th class="text-center">{{'Action(S)'  | translate}}</th>
-                        }
-                    </tr>
+                    <th>{{'Expense Title' | translate}}</th>
+                    <th>{{'Expense Date' | translate}}</th>
+                    <th>{{'Total Amount' | translate}}</th>
+                    <th>{{'Status' | translate}}</th>
+                    @if(rbac.allowedToAccess('Draft Tab.update')){
+                    <th class="text-center">{{'Action(S)' | translate}}</th>
+                    }
                 </thead>
                 <tbody>
                     <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">
@@ -46,8 +44,9 @@
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
                                     <ul class="dropdown-menu custom-dropdown-menu">
-                                        <li><a class="dropdown-item" (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
-                                            <i class="bi bi-pencil me-2"></i>{{'Update'  | translate}}</a>
+                                        <li><a class="dropdown-item"
+                                                (click)="openModal(updateModal);viewItem(exp.expenses_ID)">
+                                                <i class="bi bi-pencil me-2"></i>{{'Update' | translate}}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -58,9 +57,7 @@
                     <!-- No Data Found Template -->
                     <ng-template #noDataTemplate>
                         <tr>
-                            <td>
-                                <app-no-data-found />
-                            </td>
+                            <app-no-data-found />
                         </tr>
                     </ng-template>
                 </tbody>
@@ -73,13 +70,13 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">{{'Update Expense'  | translate}} </p>
+                <p class="popup-heading mb-0">{{'Update Expense' | translate}} </p>
             </div>
             <div>
                 <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
-        
+
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="newExpenseForm" (ngSubmit)="submitepxenses(newExpenseForm)">
                 <div class="d-flex gap-3 mb-3">
@@ -88,7 +85,8 @@
                         <label class="form-label custom-label mb-2">{{'Expense Title' | translate}}
                             <span class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="expensesTitle"
-                            placeholder="Please enter expense title" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
+                            placeholder="Please enter expense title"
+                            (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                         <div class="error-msg" *ngIf="newExpenseForm.controls['expensesTitle'].invalid && (newExpenseForm.controls['expensesTitle'].touched
                          ||  newExpenseForm.controls['expensesTitle'].dirty)">
                             <div *ngIf="newExpenseForm.controls['expensesTitle'].errors?.['required']">
@@ -120,7 +118,7 @@
                         </button>
                     </div>
                 </div>
-        
+
                 <!-- Expense Items List -->
                 <div formArrayName="expenseItems">
                     <div *ngFor="let item of expenseItems.controls; let i = index" [formGroupName]="i"
@@ -137,18 +135,20 @@
                                         {{ item.expenseType }}
                                     </option>
                                 </select>
-                                <div *ngIf="item.get('expenseId')?.invalid && item.get('expenseId')?.touched" class="error-msg">
+                                <div *ngIf="item.get('expenseId')?.invalid && item.get('expenseId')?.touched"
+                                    class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('expenseId')?.errors?.['required']">
                                         Expense Type is required</div>
                                 </div>
                             </div>
-        
+
                             <!-- Expense Item -->
                             <div class="col-md-2">
                                 <label class="form-label custom-label">{{'Expense Item' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input" formControlName="item_Name"
-                                    placeholder="Please enter expense item"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
+                                    placeholder="Please enter expense item"
+                                    (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                                 <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
                                     class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
@@ -158,7 +158,7 @@
                                     </div>
                                 </div>
                             </div>
-        
+
                             <!-- Expense Date -->
                             <div class="col-md-2">
                                 <label class="form-label custom-label">{{'Expense Date' | translate}}<span
@@ -166,7 +166,7 @@
                                 <input type="date" class="form-control custom-input" formControlName="expense_Date"
                                     onkeypress="return false;" [min]="joiningDate" [max]="currentDate" />
                             </div>
-        
+
                             <!-- Amount -->
                             <div class="col-md-2">
                                 <label class="form-label custom-label">{{'Amount' | translate}}<span
@@ -190,13 +190,14 @@
                                     </div>
                                 </div>
                             </div>
-        
+
                             <!-- Receipt Number -->
                             <div class="col-md-2">
                                 <label class="form-label custom-label">{{'Receipt Number' | translate}}<span
                                         class="text-danger">*</span></label>
-                                <input type="text" class="form-control custom-input"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" formControlName="receipt_Number"
-                                    placeholder="Please enter receipt number" />
+                                <input type="text" class="form-control custom-input"
+                                    (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"
+                                    formControlName="receipt_Number" placeholder="Please enter receipt number" />
                                 <div *ngIf="item.get('receipt_Number')?.invalid && (item.get('receipt_Number')?.touched || 
                                     item.get('receipt_Number')?.dirty)" class="error-msg">
                                     <div *ngIf="item.get('receipt_Number')?.hasError('required')">
@@ -208,10 +209,10 @@
                                 </div>
                                 <div *ngIf="item.get('receipt_Number')?.hasError('duplicate') && (item.get('receipt_Number')?.touched ||
                                  item.get('receipt_Number')?.dirty)" class="error-msg">
-                                        Receipt number should be unique
+                                    Receipt number should be unique
                                 </div>
                             </div>
-        
+
                             <!-- Delete Icon -->
                             <div class="col-md-1 mt-4 d-flex align-items-center  justify-content-end" *ngIf="i>=1">
                                 <div type="button" class="custom-icon btn" (click)="delteitem(i)">
@@ -225,12 +226,14 @@
                                 <label class="form-label custom-label">{{'Description' | translate}}</label>
                                 <div class="">
                                     <textarea class="form-control custom-input" type="text" maxlength="250"
-                                        formControlName="item_Description" [maxlength]="250"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" placeholder="Please enter description "
-                                        rows="1"></textarea>
-                                    <div class="textarea-count-text">{{ item.get("item_Description")?.value?.length || 0 }}/250</div>
+                                        formControlName="item_Description" [maxlength]="250"
+                                        (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"
+                                        placeholder="Please enter description " rows="1"></textarea>
+                                    <div class="textarea-count-text">{{ item.get("item_Description")?.value?.length || 0
+                                        }}/250</div>
                                 </div>
                             </div>
-        
+
                             <!-- File Upload -->
                             <div class="col-md-4">
                                 <label class="form-label custom-label">{{'Proof (Image and PDF only)' | translate}}<span
@@ -269,7 +272,8 @@
                         <span>{{'Save as draft'| translate}}</span>
                         }
                     </button>
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="newExpenseForm.invalid || spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="newExpenseForm.invalid || spinnerLoader">
                         @if (spinnerLoader) {
                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                         <span>{{'Loading' | translate}}...</span>
@@ -285,18 +289,20 @@
 
 <!-- Attachment View Modal -->
 <ng-template #viewattamchment let-modal>
-    <div ngbAutofocus>
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">
-                {{'My Expense Attachment' | translate}}
-            </h5>
-            <button type="button" class="btn-close"
-                (click)="modal.dismiss(); openModal(updateModal); ExpenseViewURL = null; ExpenseImageUrl = null"
-                aria-label="Close"></button>
+    <div class="custom-main-popup-container" ngbAutofocus>
+        <div class="custom-poup-header-content popup-header-border">
+            <div class="pt-2">
+                <p class="popup-heading mb-0">{{'My Expense Attachment' | translate}}</p>
+            </div>
+            <div>
+                <a (click)="modal.dismiss(); openModal(updateModal); ExpenseViewURL = null; ExpenseImageUrl = null">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+            </div>
         </div>
-        <div class="modal-body" style="text-align: center">
+        <div class="custom-main-popup-content">
             <p *ngIf="!ExpenseImageUrl; else imageView">
-                <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" style="width: 100%; height: 100vh"></ngx-doc-viewer>
+                <ngx-doc-viewer [url]="ExpenseViewURL" viewer="google" style="width: 100%; height: 100vh">
+                </ngx-doc-viewer>
             </p>
             <ng-template #imageView>
                 <img [src]="ExpenseImageUrl" alt="My Image" class="modal-image" />
@@ -308,12 +314,14 @@
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Expense item? ' | translate}}</p>
+            <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">{{'Are you sure you want to delete the Expense item? ' | translate}}</p>
         </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
-            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No' | translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="removeExpense();modal.dismiss()">{{'Yes' | translate}}</button>
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">
+                {{'No' | translate}}</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="removeExpense();modal.dismiss()">
+                {{'Yes' | translate}}</button>
         </div>
     </div>
 </ng-template>

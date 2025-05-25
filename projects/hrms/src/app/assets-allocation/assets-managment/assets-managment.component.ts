@@ -6,19 +6,22 @@ import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
-import { RouterModule } from '@angular/router';
-import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { BehaviorSubject, filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { IAsset, ICategory, IVendor } from '../../Interfaces/assets-management.model';
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-assets-managment',
-  imports: [CommonModule, TabsModule, Select, RouterModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, TabsModule, Select, RouterModule, ReactiveFormsModule, FormsModule, ModuleInformationComponent],
   templateUrl: './assets-managment.component.html',
   styleUrl: './assets-managment.component.scss'
 })
 export class AssetsManagmentComponent {
+  moduleinfo : string = '';
   navTabs: any[] = [];
   subscription!: Subscription;
   jobLocationDropDownData: any = [];
@@ -49,7 +52,8 @@ export class AssetsManagmentComponent {
   maxpurchesDate: any;
   constructor(
     private readonly fb: FormBuilder,
-    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,public formValidation: FormValidationService, public rbac : RbacService) { }
+    private http: HttpService, private modalService: NgbModal, private conformationPopup: OpenModalService,public formValidation: FormValidationService, public rbac : RbacService,
+    public readonly router: Router) { }
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.initialform()
@@ -66,6 +70,8 @@ export class AssetsManagmentComponent {
     const startOfYear = new Date(today.getFullYear(), 0, 1);
     this.minpurchesDate = startOfYear.toISOString().split('T')[0];
     this.initializeNavTabs();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeNavTabs(): void {
@@ -113,6 +119,25 @@ export class AssetsManagmentComponent {
       ]
     }
     )
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/assets-management': MODULE_INFOS.ASSET_ALLOCATION_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   intiallocationandsublocation() {

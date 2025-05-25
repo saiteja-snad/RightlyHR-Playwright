@@ -53,6 +53,9 @@ export class WfhReportComponent implements OnInit, OnDestroy {
   spinnerLoader1= false;
   spinnerLoader2= false;
   disableBtn= false;
+  getEmployeeInfo = [] as any;
+  selectLeaveEmployeeIds: number[] = [];
+  filteredleaveRecords = true;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -86,13 +89,15 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.getEmployeeId();
     this.getTeam();
+    this.getMyTeam();
   }
 
   initializeForm() {
     this.wfhReportForm = this.fb.group({
       employee: [null, Validators.required],
       manager: [null],
-      dateRange: [null]
+      dateRange: [null],
+      team:[null]
     });
 
     this.wfhReportForm.valueChanges.subscribe(()=>{
@@ -105,7 +110,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     return !(
       form.get('employee')?.value ||
       form.get('manager')?.value ||
-      form.get('dateRange')?.value
+      form.get('dateRange')?.value || form.get('team')?.value
     );
   }
 
@@ -167,7 +172,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
       !formValue.employee &&
       (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
       !formValue.month &&
-      !formValue.manager;
+      !formValue.manager && !formValue.team;
   
     if (noFilterProvided) {
       this.spinnerLoader1 = false;
@@ -177,14 +182,14 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     }
   
     const request: IWfhReportRequest = {};
-  
-    // Only include filters if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
-    }
 
-    if (formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (this.selectLeaveEmployeeIds.length >= 0) {
+      const ids = this.selectLeaveEmployeeIds?.join(',');
+      request.employeeId = ids;  // The selected employee IDs are set here
+    }
+    
+    if (formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee.employeeId;
     }
 
     if (formValue.dateRange?.startDate && formValue.dateRange?.endDate) {
@@ -199,9 +204,14 @@ export class WfhReportComponent implements OnInit, OnDestroy {
     }
 
     if (formValue.manager) {
-      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
+      request.TeamManagerSnadId = formValue.manager.employeeId;
     }
-  
+
+    // Only include filters if not "All Employees"
+    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee.employeeId;
+    }
+
     // Single API call
     this.reportsService.getWfhReports(request).subscribe({
       next: (response: any) => {
@@ -364,6 +374,51 @@ export class WfhReportComponent implements OnInit, OnDestroy {
 
     // Set minimum width to 10
     return Math.max(10, maxWidth);
+  }
+
+  onClick(employeeIds: any) {
+    if (employeeIds.value) {
+      console.log(employeeIds);
+      this.filteredleaveRecords = false;
+      this.selectLeaveEmployeeIds = [];
+      this.selectedEmployeeId = [];
+      // If "All Employees" is selected, set employeeId as an empty array or a special flag
+      if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+      } else {
+        this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
+        this.selectedEmployeeId.push(employeeIds.value.employeeId);
+      }
+    }
+  }
+
+  getMyTeam() {
+    const EmployeeId = this.loggedInUser?.employeeId;
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          if (response) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => {
+              return {
+                ...employee,
+                fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                  }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                  }${employee.lastName}`,
+              };
+            });
+
+            this.getEmployeeInfo.unshift({
+              fullName: 'All Employees',
+              fusionEmpId: this.loggedInUser.fusionEmpId,
+              employeeId: this.loggedInUser.employeeId,
+            });
+          }
+        },
+      });
   }
 
   ngOnDestroy(): void {

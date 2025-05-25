@@ -78,5 +78,11 @@ export const MODULE_INFOS = {
     ATTENDANCE_REGULARIZATION_REPORTS_MODULE_INFO : "Monitor attendance regularization requests submitted by employees and their approval status.Shows requests for attendance regularization submitted by employees for missed or incorrect entries. Includes dates, corrections made, and approval status.",
 
     //Monthly Attendance Report Module Info
-    MONTHLY_ATTENDANCE_REPORT_MODULE_INFO : "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking."
+    MONTHLY_ATTENDANCE_REPORT_MODULE_INFO : "The Monthly Attendance Report allows users to generate a consolidated view of employee attendance, including leaves, work-from-home, permissions, and regularizations. This report supports accurate payroll processing, compliance checks, and performance tracking.",
+
+    //Calendar Module Info 
+    CALENDAR_MODULE_INFO : "The Calendar page provides a monthly view highlighting key employee events such as birthdays, anniversaries, new joinees, and holidays with respective icons. It helps users stay informed and celebrate milestones by displaying detailed event information on each relevant date.",
+
+    //Policies Module Info
+    POLICIES_MODULE_INFO : "The Policies page lists all organizational policies for the selected year, including policy name, description, and downloadable attachments. Users can view specific policy documents like leave policies, holiday policies, and workplace conduct guidelines for easy reference.",
 }

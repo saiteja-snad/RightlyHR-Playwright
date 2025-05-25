@@ -39,7 +39,7 @@
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="titledetails" optionLabel="titlename" placeholder="Please select salutation"
-              formControlName="salutation"  class="form-select custom-select"
+              formControlName="salutation"  class="form-select custom-select" (onChange)="onsalutationvalidation()"
               ></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('salutation')?.invalid && basicInfoForm.get('salutation')?.touched"
@@ -84,7 +84,7 @@
           <label for="gender" class="form-label custom-label mb-2">Gender<span class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="Gender" optionLabel="genderName" optionValue="genderName"
-              placeholder="Please select gender" formControlName="gender" class="form-select custom-select"></p-select>
+              placeholder="Please select gender" (onChange)="onsalutationvalidation()" formControlName="gender" class="form-select custom-select"></p-select>
           </div>
           <div *ngIf="basicInfoForm.get('gender')?.invalid && basicInfoForm.get('gender')?.touched" class="error-msg">
             Gender is required
@@ -135,10 +135,10 @@
           <label for="maritalStatus" class="form-label custom-label mb-2">Married date<span
               class="text-danger">*</span></label>
           <input type="date" class="form-control custom-input" id="dob" formControlName="marriageDate"
-            [min]="getdateofbirth()" onkeypress="return false" />
+            [min]="getdateofbirth()"   [max]="currentdata | date:'yyyy-MM-dd'"  onkeypress="return false" />
           <div *ngIf="basicInfoForm.get('marriageDate')?.invalid && basicInfoForm.get('marriageDate')?.touched"
             class="error-msg">
-            Marriage date is required
+            Married date is required
           </div>
         </div>
       </div>

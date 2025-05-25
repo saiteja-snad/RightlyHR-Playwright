@@ -216,7 +216,7 @@ export class AddProspectiveEmployeeComponent {
         }
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal(err.error.message);
+        this.conformationPopup.openErrorModal(err.error.Message);
       },
     });
   }

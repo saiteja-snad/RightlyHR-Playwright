@@ -27,7 +27,7 @@
                                     </tr>
                                     <tr>
                                         <td>Middle Name</td>
-                                        <td>{{empDetails?.middleName ?? 'N/A'}}</td>
+                                        <td>{{empDetails?.middleName?empDetails?.middleName:'N/A'}}</td>
                                     </tr>
                                     <tr>
                                         <td>Last Name</td>
@@ -52,7 +52,7 @@
                                     </tr>
                                     <tr>
                                         <td>Blood Group</td>
-                                        <td>{{empDetails?.bloodGroup ?? 'N/A'}}</td>
+                                        <td>{{empDetails?.bloodGroup ? empDetails?.middleName: 'N/A'}}</td>
                                     </tr>
                                     <tr *ngFor="let aplication of appliccationData">
                                         <td>Location</td>
@@ -104,10 +104,13 @@
                                             <td>{{ed.degreeEndDate | dateFormat}}</td>
                                             <td>{{ed.gpa }}</td>
                                             <td>{{ed.attachment ? '' : '-'}}
-                                                <a class="view-btn" (click)="onViewClick(ed.attachment);openModal(myModall)">
+                                                <a class="view-btn" *ngIf="ed.attachment.endsWith('jpg') || ed.attachment.toLowerCase().endsWith('jpeg') || 
+                                                ed.attachment.toLowerCase().endsWith('png') ;else eddownloadView" (click)="onViewClick(ed.attachment);openModal(myModall)">
                                                     <i class="bi bi-eye-fill me-2"></i>View</a>
-                                                <ng-template #downloadView>
-                                                    <button class="view-btn" (click)="onSelectDownload(ed.attachment)">Download</button>
+                                                <ng-template #eddownloadView>
+                                                    <a class="view-btn" (click)="onSelectDownload(ed.attachment)">
+                                                           <i class="bi bi-download me-2"></i>Download</a>
+                                                    <!-- <button class="view-btn" (click)="onSelectDownload(ed.attachment)">Download</button> -->
                                                 </ng-template>
                                             </td>
                                         </tr>
@@ -160,7 +163,7 @@
                                                     <div *ngIf="exp.attachment =='' ;else documentdownload" class="centerhypen">-</div>
                                                     <ng-template #documentdownload>
                                                         <a class="view-btn" (click)="onSelectDownload(exp.attachment)">
-                                                            <i class="bi bi-eye-fill me-2"></i>View</a>
+                                                           <i class="bi bi-download me-2"></i>Download</a>
                                                     </ng-template>
                                                 </ng-template>
                                             </td>

@@ -112,7 +112,7 @@
                                 class="text-danger">*</span></label>
                         <input type="text" formControlName="identityNumber" [maxlength]="IdentityMaxNumber"
                             [minlength]="IdentityMinNumber" class="form-control custom-input"
-                            id="exampleFormControlInput1" placeholder="Please enter Identity Number">
+                            id="exampleFormControlInput1" placeholder="Please enter Identity Number" (keypress)="formValidation.restrictInput($event)">
                         <div class="error-msg"
                             *ngIf="identityForm.get('identityNumber')?.invalid && (identityForm.get('identityNumber')?.touched   || identityForm.get('identityNumber')?.dirty)">
                             <div *ngIf="identityForm.get('identityNumber')?.errors?.['required']">
@@ -127,6 +127,9 @@
                             <div class="error-msg"
                                 *ngIf="identityForm.get('identityNumber')?.errors?.['invalidIdentityNumber'] && identityForm.get('identityNumber')?.touched">
                                 Identity Number cannot be all zeroes
+                            </div>
+                               <div *ngIf="identityForm.get('identityNumber')?.errors?.['pattern']">
+                                Invalid format based on selected Identity Type.
                             </div>
                         </div>
                     </div>

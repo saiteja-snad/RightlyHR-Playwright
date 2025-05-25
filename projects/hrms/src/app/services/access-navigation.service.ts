@@ -48,7 +48,7 @@ import {
   EMPLOYEE_INFO_PERSONAL_ROUTES,
   EMPLOYEE_INFO_JOB_ROUTES,
   INVITE_NEW_USER_TABS,
-  EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES,
+
   MY_INFO_JOB_ROUTES,
   MY_INFO_PERSONAL_ROUTES,
   EMPLOYEE_INFO_DOCUMENTS_ROUTES,
@@ -598,7 +598,7 @@ export class AccessNavigationService {
           this.rbac.allowedToAccess('Employee Info Job Tab.view') ||
           this.rbac.allowedToAccess('My Info Job Tab.view')
         ) {
-          for (const item of EMPLOYEE_INFO_PERSONAL_ROUTES) {
+          for (const item of EMPLOYEE_INFO_JOB_ROUTES) {
             if (this.rbac.allowedToAccess(item.permission)) {
               return item.route;
             }
@@ -617,14 +617,7 @@ export class AccessNavigationService {
         //   return (route = '/personalinfo/team-members');
         // }
 
-        if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view') || this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-     
-          for (const item of EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES) {
-            if (this.rbac.allowedToAccess(item.permission)) {
-              return item.route;
-            }
-          }
-        }
+        
 
         if (
           this.rbac.allowedToAccess('Employee Info Onboard Request Tab.view')
@@ -779,6 +772,10 @@ export class AccessNavigationService {
           return item.route;
         }
 
+        break;
+
+      case '/settings/company-settings':
+          return '/settings/company-settings';
         break;
       case '/settings/timeoff-configurations':
         for (const item of SETTINGS_TIMEOFF_TABS) {
@@ -1432,15 +1429,7 @@ export class AccessNavigationService {
       }
       break;
 
-    case '/personalinfo/team':
-      if (this.rbac.allowedToAccess('Employee Info Team Members Tab.view') || this.rbac.allowedToAccess('My Info Team Members Tab.view')) {
-        for (const item of EMPLOYEE_INFO_TEAM_MEMBERS_ROUTES) {
-          if (this.rbac.allowedToAccess(item.permission)) {
-            return item.route;
-          }
-        }
-      }
-      break;
+
 
     }
 

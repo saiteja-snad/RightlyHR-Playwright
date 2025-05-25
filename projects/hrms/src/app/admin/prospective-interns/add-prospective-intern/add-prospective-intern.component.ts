@@ -255,7 +255,8 @@ export class AddProspectiveInternComponent {
         }
       },
       error: (err: any) => {
-        this.conformationPopup.openErrorModal(err.message);
+        this.conformationPopup.openErrorModal(err.error.Message);
+        console.log(err)
         this.spinnerLoader = false;
       },
       complete: () => {

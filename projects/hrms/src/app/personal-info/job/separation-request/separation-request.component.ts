@@ -109,6 +109,10 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     );
   }
 
+  openModallg(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size:'lg' });
+  }
+
   removeSection(index: number) {
     this.formemailsfornodue.removeAt(index);
   }

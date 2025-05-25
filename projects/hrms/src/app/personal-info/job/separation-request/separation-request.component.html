@@ -358,23 +358,25 @@
 
 <!-- modal open to raise nodue -->
 <ng-template #raiseNodue let-modal>
-  <div class="result-popup-content" ngbAutofocus>
-    <div>
-      <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Raise No Due Request</p>
-      <p class="confirmation-text">Provide your official work email addresses!</p>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">Raise No Due Request</p>
+      </div>
     </div>
-    <div class="custom-main-popup-content p-0 pt-3">
+
+    <div class="custom-main-popup-content">
+      <p class="popup-heading">Provide your official work email addresses!</p>
       <form autocomplete="off" [formGroup]="profileForm">
         <div>
           <label for="comments" class="form-label custom-label mb-2">Add Emails
             <span class="text-danger">*</span></label>
           <div class="mb-3">
-            <div class="d-flex">
+            <div class="d-flex align-items-center gap-2">
               <input name="addemail" class="form-control custom-input" placeholder="Enter email" type="text"
                 formControlName="emails" />
-              <div class="pt-2 ps-2">
-                <button type="button" class="btn-close me-2"></button>
+              <div>
+                <a><img src="/icons/cancel-circle.png" alt="Icon" class="popup-icon"></a>
               </div>
             </div>
             <!-- Error message for the main email input -->
@@ -387,11 +389,11 @@
           <!-- Dynamic email inputs from FormArray -->
           <div formArrayName="noduerequestedemails">
             <div *ngFor="let item of formemailsfornodue.controls; let i = index" class="mb-3">
-              <div class="d-flex">
+              <div class="d-flex align-items-center gap-2">
                 <input type="text" [formControlName]="i" class="form-control custom-input" placeholder="Enter email"
                   id="item-{{ i }}" />
-                <div class="pt-3 ps-2">
-                  <button type="button" class="btn-close me-2" (click)="removeSection(i)"></button>
+                <div>
+                  <a (click)="removeSection(i)"><img src="/icons/cancel-circle.png" alt="Icon" class="popup-icon"></a>
                 </div>
               </div>
               <div *ngIf="item.invalid && (item.dirty || item.touched)" class="error-msg">
@@ -403,8 +405,7 @@
           </div>
 
           <div class="d-flex justify-content-end mb-3">
-            <button type="button" class="custom-btn btn-primary text-nowrap w-25 px-2" (click)="addAlias()">+
-              Add</button>
+            <button type="button" class="custom-btn btn-primary text-nowrap px-4" (click)="addAlias()">+ Add</button>
           </div>
         </div>
         <div class="custom-modal-footer">

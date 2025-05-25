@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IJob } from '../../Interfaces/letters-model';
 import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { OpenModalService } from '../../services/open-modal.service';
 import { RbacService } from '../../services/rbac.service';
 import { WfhApprovaltabsComponent } from "../../shared/time-off-module-tabs/wfh-approvaltabs/wfh-approvaltabs.component";
@@ -16,6 +16,8 @@ import { FormValidationsService } from '../../services/form-validations.service'
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-work-from-home',
@@ -23,14 +25,16 @@ import { Select } from 'primeng/select';
     CommonModule,
     RouterModule,
     ReactiveFormsModule,
-    WfhApprovaltabsComponent,TranslateModule,DropdownModule,Select
-  ],
+    WfhApprovaltabsComponent, TranslateModule, DropdownModule, Select,
+    ModuleInformationComponent
+],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
   encapsulation:ViewEncapsulation.None
 })
 
 export class WorkFromHomeComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
    subscription!: Subscription;
   empinfo = {} as IJob;
   halfDayValue = {} as any;
@@ -65,7 +69,8 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    public formsValidation:FormValidationsService
+    public formsValidation:FormValidationsService,
+    public readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -83,6 +88,27 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
     this.getWorkfromhomeCriteria();
     this.handleAvailingChange();
     this.getTeamManagersDetails();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/wfh': MODULE_INFOS.ATTENDANCE_WFH_REPORTS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   openModal(content: any) {

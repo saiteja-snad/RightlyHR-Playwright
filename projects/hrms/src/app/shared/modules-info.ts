@@ -85,4 +85,15 @@ export const MODULE_INFOS = {
 
     //Policies Module Info
     POLICIES_MODULE_INFO : "The Policies page lists all organizational policies for the selected year, including policy name, description, and downloadable attachments. Users can view specific policy documents like leave policies, holiday policies, and workplace conduct guidelines for easy reference.",
+
+    //Time off Module Info
+    TIME_OFF_LEAVES_MODULE_INFO : "The Leave  section displays the total leaves and categorizes them into statuses like Waiting for Approval, Approved, Processed, Rejected, and Cancelled.Employees can apply for different leave types and track approvals and balances.",
+    TIME_OFF_COMPOFF_ENTITLEMENT_MODULE_INFO : "The Comp-Off section allows employees to request compensatory off and tracks requests across statuses such as Waiting for Approval, Approved, Processed, and Rejected. It lists details like Worked Date, Availed Date, Reason, Applied Date, and current Status.",
+    TIME_OFF_WFH_ONDUTY_MODULE_INFO : "The Work From Home (WFH) section allows users to request WFH and track its status, with a current month balance displayed. It shows Worked Date, Availed days, Reason, Applied Date, Status, and available actions.",
+    TIME_OFF_PERMISSION_MODULE_INFO : "The Permission section allows employees to request short-duration time off by specifying the permission date, duration in hours, reason, and permission type. Statuses like Waiting for Approval, Approved, or Rejected are shown for tracking.",
+    TIME_OFF_REGULARIZATION_MODULE_INFO : "The Regularization section enables employees to request attendance corrections, showing statuses like Waiting for Approval, Approved, Processed, and Rejected. It lists Requested Date, Regularization Date, Duration in Hours, Reason, Type, and Status.",
+    TIME_OFF_ON_BEHALF_OF_MODULE_INFO : "The On Behalf Of section allows managers or authorized users to apply for leave on behalf of selected employees. It displays leave details including Date, Leave Type, Duration, Availed, Start and End Date, Reason, and Status across various approval stages.",
+    TIME_OFF_PENDING_APPROVAL_MODULE_INFO : "The Pending Approvals section lists all employee requests (e.g., Time-Off, WFH, Comp-Off) awaiting action. It allows managers to approve or reject requests.",
+    TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO : "The On Behalf Of Approvals section allows authorized users to manage and approve requests submitted by employees. It includes categories such as Time Off, Comp Off, WFH, and Permissions, each showing the count of pending items for review.",
+    TIME_OFF_GLOBAL_PERMISSION_MODULE_INFO : "The Global Permissions section allows bulk permission requests across departments and teams. Each request includes details like requester, duration, employee list, and reason."
 }

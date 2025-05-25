@@ -650,7 +650,7 @@ expiryDatevalidate:any;
     }
     //==============================================================================================================================
     //Calculation conditions for esic contrubution of an employee
-    if (this.prospectiveEmpData.esic == true) {
+    if (this.prospectiveEmpData?.esic?.toString() == 'true') {
       if (Employee.totalGrossSalary <= 21000) {
         Employee.employeeEsi = Math.round(
           Employee.totalGrossSalary * (0.75 / 100)
@@ -703,7 +703,7 @@ expiryDatevalidate:any;
     );
     //calculation for the otherallowances
     Employee.otherAllowances = Math.round(
-      Employee.totalGrossSalary * (10 / 100)
+      Employee.totalGrossSalary * (16 / 100)
     );
     //pfcontribution per annum
     Employee.pfPreAnuum = Math.round(

@@ -1668,7 +1668,34 @@
                         </tr>
                     </ng-container>
 
+                    <!-- Monthly Attendance Reports -->
+                    <tr>
+                        <th colspan="5" class="custom-header">Attendance Reports</th>
+                    </tr>
+                    <ng-container *ngFor="let per of permissions">
+                        <tr class="text-align-center"
+                            *ngIf="per.fields === 'Attendance All Employees List(Leaves)' || per.fields === 'Attendance Team Manager List(Leaves)' || per.fields === 'My Team Report(Leave)'
+                            || per.fields === 'Attendance All Employees List(Compoff)' || per.fields === 'Attendance Team Manager List(Compoff)' || per.fields === 'My Team Report(Compoff)'
+                            || per.fields === 'Attendance All Employees List(WFH)' || per.fields === 'Attendance Team Manager List(WFH)' || per.fields === 'My Team Report(WFH)'
+                            || per.fields === 'Attendance All Employees List(Permission)' || per.fields === 'Attendance Team Manager List(Permission)' || per.fields === 'My Team Report(Permission)'
+                            || per.fields === 'Attendance All Employees List(Regularization)' || per.fields === 'Attendance Team Manager List(Regularization)' || per.fields === 'My Team Report(Regularization)'" >
 
+                            <td class="text-align-center">{{ per.fields }}</td>
+                            <td scope="row">
+                                <input type="checkbox" [(ngModel)]="per.View" name="{{ per.fields }}.view"
+                                    (change)="onCheckboxChange(per, 'View')" [disabled]="!roleToFilter?.id">
+                            </td>
+                            <td scope="row">
+                                <input type="checkbox" [(ngModel)]="per.Update" name="{{ per.fields }}.update" [disabled]="true">
+                            </td>
+                            <td scope="row">
+                                <input type="checkbox" [(ngModel)]="per.Create" name="{{ per.fields }}.create" [disabled]="true">
+                            </td>
+                            <td scope="row">
+                                <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete" [disabled]="true">
+                            </td>
+                        </tr>
+                    </ng-container>
 
                 
                     <!-- Asset Management  Tabs -->

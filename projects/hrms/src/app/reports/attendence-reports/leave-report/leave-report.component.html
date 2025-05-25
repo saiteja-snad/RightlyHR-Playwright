@@ -22,6 +22,7 @@
           </div>
 
           <!-- Employee -->
+          @if(rbac.allowedToAccess('Attendance All Employees List(Leaves).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
@@ -32,19 +33,36 @@
               </p-select>
             </div>
           </div>
-
+          }
+          
           <!-- Team Manager -->
+          @if(rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
-              <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName"
-                filterBy="fullName" formControlName="manager" placeholder="Please select manager"
-                class="form-select custom-select" filterPlaceholder="Search manager">
+              <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName" filterBy="fullName"
+                formControlName="manager" placeholder="Please select manager" class="form-select custom-select"
+                filterPlaceholder="Search manager">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                 <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
               </p-select>
             </div>
           </div>
+          }
 
+         <!--My Team-->
+         @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All Employees List(Leaves).view') 
+         && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
+         <div class="d-flex align-items-center gap-2">
+            <div class="custom-p-select-content">
+              <p-select [options]="getEmployeeInfo" [filter]="true" [showClear]="true" optionLabel="fullName"
+                filterBy="fullName" formControlName="team" placeholder="Please select employee"
+                class="form-select custom-select" filterPlaceholder="Search employee" (onChange)="onClick($event)">
+                <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
+                <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
+              </p-select>
+            </div>
+          </div>
+        }
           <!-- Leave Category -->
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">

@@ -25,12 +25,36 @@ export const MODULE_INFOS = {
 
     //Settings Asset Configuration Module Info
     SETTINGS_ASSET_CONFIGURATION_MODULE_INFO : "This module allows managing asset vendor details along with associated asset categories and subcategories. Admins can add or edit vendor information such as name, contact, status, email, and address, and organize assets under defined software and hardware categories.",
-    // SETTINGS_ASSET_CATEGORY_MODULE_INFO : "Classify assets into groups like IT, Furniture, or Transport for better tracking and reporting. Categories make it easier to manage asset lifecycle events.",
-    // SETTINGS_ASSET_SUB_CATEGORY_MODULE_INFO : "Further break down asset categories to create specific types like Laptops, Desktops, or Projectors. This enables accurate allocation and inventory planning.",
-
+    
     //Settings Dynamic Forms Module Info
     SETTINGS_DYNAMIC_FORMS_MODULE_INFO : "This module displays a categorized list of forms under Active, Inactive, and Draft statuses for PMS, allowing admins to search, view, and manage form configurations. Each form lists its module, name, creator, last updater, and current status for easy tracking and control.",
-    // SETTINGS_INACTIVE_FORMS_MODULE_INFO : "Create customized forms to collect structured employee inputs for onboarding, offboarding, or compliance. Forms can include conditional logic, validations, and be routed for approvals.",
-    // SETTINGS_DRAFT_FORMS_MODULE_INFO : "Create customized forms to collect structured employee inputs for onboarding, offboarding, or compliance. Forms can include conditional logic, validations, and be routed for approvals.",
-    // SETTINGS_FORM_SETTINGS_MODULE_INFO : "Create customized forms to collect structured employee inputs for onboarding, offboarding, or compliance. Forms can include conditional logic, validations, and be routed for approvals.",
+
+    //Expenses Module Info
+    EXPENSES_MODULE_INFO : "Expenses section allows employees to add new expenses and track their status across different stages including Draft, Approved, Pending, Processed, and Rejected. Users can search expenses and view details like Expense Title, Date, Total Amount, Status, and available actions.",
+
+    //Pms Module Info
+    PMS_REVIEW_CYCLE_LIST_MODULE_INFO : "This module enables creation and tracking of employee review cycles with department, team, and location-level mapping. Users can create review cycles and link them to specific business units in order to track their status, such as Created or Initiated.",
+    PMS_REVIEW_CYCLE_EMPLOYEE_LIST_MODULE_INFO : "This module provides a detailed listing of employees mapped to specific review cycles, with filters for department, location, and promotion status. It displays key information like review templates, current status, and final ratings to support performance evaluation tracking.",
+    PMS_MY_PERFORMACE_REVIEW_MODULE_INFO : "This screen displays the logged-in employee’s active performance review cycle, along with details such as department, team, location, due date, assigned template, and current review status. It allows employees to monitor and act on their pending assessments.",
+    PMS_MY_TEAM_PERFORMACE_REVIEW_MODULE_INFO : "This screen allows managers to view and manage performance reviews of their team members, including review cycle details, employee info, due dates, templates, and review statuses. It helps track progress and take timely actions on assessments.",
+
+    //Pms Configuration Module Info
+    PMS_CONFIGURATION_INCREMENT_PERCENTAGE_MODULE_INFO : "This screen enables configuration of increment percentages based on employee ratings within a selected review cycle. Admins can define rating scales, set percentage slabs for specific salary ranges, and associate them with departments, teams, and locations.",
+    PMS_CONFIGURATION_ASSESSOR_CONFIGURATION_MODULE_INFO : "This section allows administrators to configure assessors for a selected review cycle by mapping them to departments, teams, and locations. Each assessor can be assigned a deadline date, rating responsibility, and the ability to add comments for evaluations." ,
+
+    //Desk Allocation Module Info 
+    DESK_ALLOCATION_MODULE_INFO : "The Desk Allocation page enables efficient workspace management by displaying desk statuses and allowing actions like reallocation, inactivation, maintenance scheduling, and viewing details. Users can filter by location, desk ID, type, shift, employee, and approver for precise control.",
+
+    //Asset Allocation Module Info
+    ASSET_ALLOCATION_MODULE_INFO : "The Asset Management page offers a comprehensive view of all assets, their status, and allocation details. Users can efficiently manage assets by reallocating, releasing, updating, or marking them as inactive or under maintenance, with access to detailed records for tracking.",
+
+    //IT Support Module Info
+    IT_SUPPORT_MODULE_INFO : "The IT Support section allows users to raise new tickets by providing details such as Ticket Priority, Subject, Description, and impacted Department or Team. Users can track tickets across various statuses including All, Open, Awaiting User, Solved, and Rejected, with options to search and manage ticket actions.",
+
+    //Organizational Hierarchy Module Info
+    ORGANIZATIONAL_HIERARCHY_MODULE_INFO : "The Organizational Hierarchy view displays detailed reporting structure and compensation info for the selected employee. Options are available to download the data as PDF, JPG, or Excel.",
+
+    //Holidays Module Info
+    HOLIDAYS_MODULE_INFO : "The Holidays page displays public and optional holidays for the selected year, with the ability to change the year using a dropdown. Each holiday is shown with its name, date, and an event for easy reference."
+
 }

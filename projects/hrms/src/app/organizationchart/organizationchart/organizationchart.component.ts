@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Select } from 'primeng/select';
 import { RbacService } from '../../services/rbac.service';
 import { HttpService } from '../../services/http.service';
-import { catchError, map, Observable, of, Subscription } from 'rxjs';
+import { catchError, filter, map, Observable, of, Subscription } from 'rxjs';
 import { TreeNode } from 'primeng/api'
 import { OrganizationChartModule } from 'primeng/organizationchart';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
@@ -17,15 +17,19 @@ import * as XLSX from 'xlsx';
 import { image } from 'html2canvas/dist/types/css/types/image';
 import ExcelJS from 'exceljs';
 import * as FileSaver from 'file-saver';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-organizationchart',
-  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './organizationchart.component.html',
   styleUrl: './organizationchart.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class OrganizationchartComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   data: TreeNode[] = [];
   subscription!: Subscription;
   activeEmplist = [] as any;
@@ -46,9 +50,30 @@ export class OrganizationchartComponent implements OnInit, OnDestroy {
     if (this.selectedEmployeeId === null) {
       this.getOrghierarchy(this.employeedata.employeeId)
     }
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
-  constructor(private http: HttpService, private sanitizer: DomSanitizer, public rbac: RbacService) { }
+  constructor(private http: HttpService, private sanitizer: DomSanitizer, public rbac: RbacService, public readonly router: Router) { }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/organization-chart': MODULE_INFOS.ORGANIZATIONAL_HIERARCHY_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
 
   // function to get the data of employees by hierarchy
   getAllEmployeeDetails() {

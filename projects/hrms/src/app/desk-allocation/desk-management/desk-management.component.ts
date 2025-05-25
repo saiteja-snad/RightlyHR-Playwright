@@ -1,26 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
-import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
+import { BehaviorSubject, filter, Subject, Subscription, takeUntil } from 'rxjs';
 
 import { OpenModalService } from '../../services/open-modal.service';
 import { Select } from 'primeng/select';
 import { RbacService } from '../../services/rbac.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-desk-management',
-  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule,Select ],
+  imports: [CommonModule, TabsModule, RouterModule, ReactiveFormsModule, Select, ModuleInformationComponent],
   templateUrl: './desk-management.component.html',
   styleUrl: './desk-management.component.scss'
 })
 
 export class DeskManagementComponent {
 
-
+  moduleinfo : string = '';
   @ViewChild('createDeskModal') private readonly createDeskModal!: NgbModal;
   deskForm!: FormGroup;
   subscription!: Subscription;
@@ -58,6 +60,8 @@ export class DeskManagementComponent {
     this.getdatabyentriy()
     this.getcount(null, null)
     this.initializeNavTabs();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
 
   }
 
@@ -81,6 +85,25 @@ export class DeskManagementComponent {
 
 
  }
+
+ initiateUpdateModuleInfo(){
+  this.router.events
+  .pipe(filter(event => event instanceof NavigationEnd))
+  .subscribe(() => {
+    this.updateModuleInfo();
+  });
+}
+
+updateModuleInfo() {
+  const url = this.router.url;
+
+  const routeToInfoMap: { [key: string]: string } = {
+    '/desk/management': MODULE_INFOS.DESK_ALLOCATION_MODULE_INFO
+  };
+
+  const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+  this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+}
 
   intiallocationandsublocation() {
     this.locationfromdata = this.fb.group({

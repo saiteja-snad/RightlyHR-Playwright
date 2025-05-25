@@ -7,10 +7,11 @@
     <div class="d-flex align-items-center gap-3">
       @if(this.rbac.allowedToAccess('Organization Hierarchy - HR.view')){
       <div class="d-flex align-items-center gap-2">
-        <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Employee</b><span class="text-danger"></span></label>
+        <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Employee</b><span
+            class="text-danger"></span></label>
         <div class="custom-p-select-content ">
           <p-select [options]="activeEmplist" [filter]="true" filterBy="label" resetFilterOnHide="true"
-            optionLabel="label" optionValue="value" showClear="true"   [(ngModel)]="selectedEmployeeId"
+            optionLabel="label" optionValue="value" showClear="true" [(ngModel)]="selectedEmployeeId"
             placeholder="Please select employee" (onChange)="getOrghierarchy($event.value)"
             class="form-select custom-select"></p-select>
         </div>
@@ -19,10 +20,11 @@
 
       @if(this.rbac.allowedToAccess('Organization Hierarchy - TM.view')){
       <div class="d-flex align-items-center gap-2">
-        <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Employee</b><span class="text-danger"></span></label>
+        <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Employee</b><span
+            class="text-danger"></span></label>
         <div class="custom-p-select-content">
-          <p-select [options]="mangeractiveEmplist" showClear="true" [filter]="true" filterBy="fullName" resetFilterOnHide="true"
-            optionLabel="fullName" optionValue="employeeid" [(ngModel)]="selectedEmployeeId"
+          <p-select [options]="mangeractiveEmplist" showClear="true" [filter]="true" filterBy="fullName"
+            resetFilterOnHide="true" optionLabel="fullName" optionValue="employeeid" [(ngModel)]="selectedEmployeeId"
             placeholder="Please select employee" (onChange)="getOrghierarchy($event.value)"
             class="form-select custom-select"></p-select>
         </div>
@@ -31,7 +33,8 @@
 
       @if(this.rbac.allowedToAccess('Organization Hierarchy - Compensation.view')){
       <div class="d-flex align-items-center gap-2">
-        <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Compensation</b><span class="text-danger"></span></label>
+        <label for="education" class="form-label custom-label custom-label pt-2"><b>Select Compensation</b><span
+            class="text-danger"></span></label>
         <div class="custom-p-select-content">
           <p-select [options]="compensationOptions" optionLabel="label" optionValue="value"
             [(ngModel)]="compensationyesorno" placeholder="Please select compensation"
@@ -42,14 +45,21 @@
 
       <div>
         @if(this.rbac.allowedToAccess('Organization Hierarchy - Download PDF.view')){
-        <button class="custom-btn btn-primary me-3"   [disabled]="!data || data.length === 0" (click)="downloadChart('pdf')">Download as PDF</button>
+        <button class="custom-btn btn-primary me-3" [disabled]="!data || data.length === 0"
+          (click)="downloadChart('pdf')">Download as PDF</button>
         }
         @if(this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view')){
-        <button class="custom-btn btn-primary me-3" [disabled]="!data || data.length === 0" (click)="downloadChart('jpg')">Download as JPG</button>
+        <button class="custom-btn btn-primary me-3" [disabled]="!data || data.length === 0"
+          (click)="downloadChart('jpg')">Download as JPG</button>
         }
         <button class="custom-btn btn-primary" (click)="downloadToExcel()">Download as Excel</button>
       </div>
     </div>
+  </div>
+
+  <!--Module Information-->
+  <div>
+    <app-module-information [moduleInfo]="moduleinfo" />
   </div>
 
   <!--loader-->

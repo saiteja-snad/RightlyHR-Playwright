@@ -115,8 +115,24 @@ export const MODULE_INFOS = {
     PROBATION_CONFIRMATION_LETTER_MODULE_INFO : "Generate confirmation letters for employees who successfully complete their probation. The letter includes confirmation date and updated employment status, and can be downloaded or shared by HR.",
     PROBATION_EXTENSION_LETTER_MODULE_INFO : "Issue extension letters when an employee’s probation is extended. The letter outlines the new extension period and expectations. HR can generate it with relevant remarks and approvals.",
 
-
     //Dashboard Module Info
     PROSPECTIVE_EMPLOYEES_MODULE_INFO : "The Prospective Employees page lists candidates with details such as ID, name, personal email, phone number, location, designation, and sub-status reflecting their onboarding progress. Users can add new prospective employees and search the list for efficient candidate management.",
-    
+    ACTIVE_EMPLOYEES_MODULE_INFO : "The Active Employees page displays essential details of current employees, including ID, name, contact info, location, shift, and designation. It also allows generating documents such as address proof, bank loan letters, and promotion letters by clicking the 'Generate Document' option for each employee.",
+    INACTIVE_EMPLOYEES_MODULE_INFO : "The Inactive Employees page displays essential details of employees who are no longer active, including ID, name, work email, phone number, location, shift, and designation. It also provides an option to generate documents such as experience letters and relieving letters for each inactive employee.",
+    PROBATION_EMPLOYEES_MODULE_INFO : "The Probation Employees page displays details of employees currently on probation, including ID, name, email, phone number, probation dates, and designation. It also allows generating documents related to probation status directly from the list.",
+    PROSPECTIVE_TRAINEES_MODULE_INFO : "The Prospective Trainees page displays key details such as ID, name, email, phone number, location, designation, training duration, and sub-status. It allows adding new prospective trainees and tracking their onboarding stages.",
+    ACTIVE_TRAINEES_MODULE_INFO : "The Active Trainee page displays essential details of current trainees, including ID, name, contact information, location, training status, and designation. Clicking on a trainee’s profile navigates to a detailed view of their profile for further information.",
+    INACTIVE_TRAINEES_MODULE_INFO : "The Inactive Trainees page displays a list of trainees who are no longer active, including ID, name, personal email, phone number, location, shift, and designation. It allows users to review past trainee records for reference and administrative purposes.",
+    CURRENT_OPENINGS_MODULE_INFO : "The Current Openings section allows HR to post jobs and manage job listings categorized as Active or Inactive. It also tracks applicant statuses through stages like Applied, Interview Process, Rejected, On Hold, Request for Onboarding, Onboarded, and Archive, with search functionality for applicants.",
+
+    //Attendance Module Info 
+    ATTENDANCE_MODULE_INFO : "The Attendance module allows employees to mark their attendance, view their attendance history, and track their monthly attendance records. It provides options for marking attendance, viewing daily status, and accessing monthly summaries.",
+
+    //Pre-onboarding module info 
+    APPLICATION_SCREEN_MODULE_INFO : "This screen shows the current application progress. It visually tracks each step from shortlisting to onboarding with status indicators.",
+    PERSONAL_DETAILS_PAGE_MODULE_INFO : "Employees fill in personal, contact, and address information including name, DOB, email, location, and designation. Mandatory fields must be completed to proceed with onboarding.",
+    ONBOARDING_DOCUMENTS_PAGE_MODULE_INFO : "Employees upload documents requested by HR based on predefined settings. All listed documents must be submitted to complete the onboarding process.",
+    EMERGENCY_CONTACT_DETAILS : "Employees provide emergency contact information including name, relationship, and phone number. This ensures the company can reach out to a designated person in case of emergencies.",
+    EDUCATION_DETAILS_MODULE_PAGE : "Employees enter their academic background including degree, institution, year of passing, and specialization. This helps validate the employee’s qualifications during onboarding.",
+    EXPERIENCE_DETAILS_MODULE_PAGE : "Employees input their previous job roles, companies, tenure, and responsibilities. This data supports verification of past work experience for onboarding and compliance."
 }

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
@@ -19,6 +19,9 @@ import { IAttendanceDetails } from '../../../Interfaces/reports.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 
 
 @Component({
@@ -32,13 +35,15 @@ import { RbacService } from '../../../services/rbac.service';
     SelectModule,
     TranslateModule,
     ReactiveFormsModule, NoDataFoundComponent,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    ModuleInformationComponent
 ],
   templateUrl: './leave-report.component.html',
   styleUrl: './leave-report.component.scss'
 })
 export class LeaveReportComponent implements OnInit, OnDestroy {
 
+  moduleinfo : string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -59,6 +64,9 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   spinnerLoader1= false;
   spinnerLoader2= false;
   disableBtn= false;
+  filteredleaveRecords = false;
+  selectLeaveEmployeeIds: number[] = [];
+  getEmployeeInfo = [] as any;
 
   ranges: any = {
     Today: [dayjs(), dayjs()],
@@ -84,7 +92,8 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -93,6 +102,9 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.getAttendanceReports();
     this.getTeam();
+    this.getMyTeam();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -101,12 +113,32 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       manager: [null],
       dateRange: [null],
       leaveCategory: [null],
+      team:[null]
       // year: ['']
     });
 
     this.LeaveReportForm.valueChanges.subscribe(()=>{
       this.disableBtn= true;
     })
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/attendence-reports/leave-report': MODULE_INFOS.ATTENDANCE_LEAVE_REPORTS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   clearAllFilters(): void {
@@ -188,7 +220,8 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       form.get('employee')?.value ||
       form.get('manager')?.value ||
       form.get('dateRange')?.value ||
-      form.get('leaveCategory')?.value
+      form.get('leaveCategory')?.value ||
+      form.get('team')?.value
     );
   }
 
@@ -204,7 +237,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
       !formValue.leaveCategory &&
       (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
       !formValue.month &&
-      !formValue.manager;
+      !formValue.manager && !formValue.team;
   
     if (noFilterProvided) {
       this.filteredleaveRecord = [];
@@ -214,7 +247,11 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     }
   
     const request: IAttendanceDetails = {};
-  
+
+     if (this.selectLeaveEmployeeIds.length >= 0) {
+        const ids = this.selectLeaveEmployeeIds?.join(',');
+        request.employeeId = ids;  // The selected employee IDs are set here
+    }
     // Apply leave category if selected
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
@@ -232,10 +269,10 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     if (formValue.manager) {
       request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
-  
+
     // Only include employee filter if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee.employeeId;
     }
   
     this.reportsService.getAttendanceReports(request).subscribe({
@@ -377,6 +414,49 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
     return Math.max(10, maxWidth);
   }
 
+  onClick(employeeIds: any) {
+    if (employeeIds.value) {
+      console.log(employeeIds);
+      this.filteredleaveRecords = true;
+      this.selectLeaveEmployeeIds = [];
+      this.selectedEmployeeId = [];
+      if (employeeIds.value.employeeId== this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); 
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+      } else {
+        this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
+        this.selectedEmployeeId.push(employeeIds.value.employeeId);
+      }
+    }
+  }
+
+  getMyTeam() {
+    const EmployeeId = this.loggedInUser?.employeeId;
+    console.log(this.loggedInUser)
+    this.subscription = this.http
+      .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+      .subscribe({
+        next: (response: any) => {
+          console.log(response);
+          if (response) {
+            const myTeam = response.filter((e: any) => e.isAccess);
+            this.getEmployeeInfo = myTeam.map((employee: any) => ({
+              ...employee,
+              fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+                }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                }${employee.lastName}`,
+            }));
+
+            this.getEmployeeInfo.unshift({
+              fullName: 'All Employees',
+              fusionEmpId: this.loggedInUser.fusionEmpId,
+              employeeId: this.loggedInUser.employeeId,
+            });
+          }
+        },
+      });
+  }
+  
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

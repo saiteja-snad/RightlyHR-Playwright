@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Form, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { IemployeeDetails } from '../../../Interfaces/letters-model';
 import { IInactiveReportRequest, IWfhReportRequest } from '../../../Interfaces/reports.model';
@@ -17,16 +17,20 @@ import { SelectModule } from 'primeng/select';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../../services/rbac.service';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-inactive-employee-report',
   imports: [CommonModule,
     FormsModule,
-    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent],
+    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './inactive-employee-report.component.html',
   styleUrl: './inactive-employee-report.component.scss'
 })
 export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   subscription!: Subscription;
   loggedInUser = {} as IemployeeDetails;
   isLoading: boolean = false;
@@ -89,7 +93,8 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) { }
 
   getParsedEmployee(event: Event): any {
@@ -103,6 +108,8 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     this.getEmployeeId();
     this.getTeam();
     this.getInactiveReports();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -126,6 +133,25 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
       form.get('leaveCategory')?.value ||
       form.get('dateRange')?.value
     );
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/attendence-reports/inactive-employee-report': MODULE_INFOS.ATTENDANCE_INACTIVE_EMPLOYEE_REPORTS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getEmployeeId() {

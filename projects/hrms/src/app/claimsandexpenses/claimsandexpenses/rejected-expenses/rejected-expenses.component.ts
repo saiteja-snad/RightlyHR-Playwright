@@ -12,13 +12,13 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { TranslateModule } from '@ngx-translate/core';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
-
 @Component({
   selector: 'app-rejected-expenses',
   imports: [DateformatPipe, CommonModule, NgxDocViewerModule, FormsModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent],
   templateUrl: './rejected-expenses.component.html',
   styleUrl: './rejected-expenses.component.scss'
 })
+
 export class RejectedExpensesComponent {
   empinfo: any
   subscription!: Subscription;
@@ -28,12 +28,12 @@ export class RejectedExpensesComponent {
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   expenseheaderiteams!: IExpenseHeaders;
   updataid!: number;
-  loading=false
-  constructor(
-    private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+  loading = false;
+  searchTerm: any = '';
+  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
 
-  searchTerm: any = ''
-  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
+  constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer,) { }
+
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getexpensesheaderbyemployeeid();
@@ -46,41 +46,34 @@ export class RejectedExpensesComponent {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: "xl", backdrop: 'static' });
   }
+
   comments_Function(comments: any) {
-    this.commentsrecivced = comments
-    console.log(comments)
+    this.commentsrecivced = comments;
   }
 
-
   getexpensesheaderbyemployeeid(): void {
-    this.loading=true
+    this.loading = true
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
       .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Rejected&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
           this.expenesEmplyeedata.next(data)
-          this.loading=false
+          this.loading = false
         }, error(err) {
           console.log("expensesheadererror", err)
         },
       });
   }
 
-
-
   viewItem(expid: number,) {
-    console.log(expid);
     this.updataid = expid;
-    this.subscription = this.http
-      .getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
-        next: (data: any) => {
-          this.expenseheaderiteams = data
-
-        }, error(err) {
-          console.log("expensesheadererror", err)
-        },
-      });
-
+    this.subscription = this.http.getitembyid(`Expenses_Header/getby_Expense_ID`, expid).subscribe({
+      next: (data: any) => {
+        this.expenseheaderiteams = data
+      }, error(err) {
+        console.log("expensesheadererror", err)
+      },
+    });
   }
 
   onSelectDownload(file: any): void {
@@ -91,11 +84,9 @@ export class RejectedExpensesComponent {
         if (!blob) {
           return;
         }
-
         // Extract filename from 'content-disposition' header if available
         const contentDisposition = res.headers.get('content-disposition');
         let fileName = 'defaultFileName.pdf'; // Default filename
-
         if (contentDisposition) {
           const fileNameMatch = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
           if (fileNameMatch !== null && fileNameMatch[1]) {
@@ -107,7 +98,6 @@ export class RejectedExpensesComponent {
           const parts = filePath.split('/');
           fileName = parts[parts.length - 1] || 'defaultFileName.pdf';
         }
-
         // Create a link element and trigger the download
         const a = document.createElement('a');
         const url = window.URL.createObjectURL(blob);
@@ -115,7 +105,6 @@ export class RejectedExpensesComponent {
         a.download = fileName;
         document.body.appendChild(a);
         a.click();
-
         // Clean up
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
@@ -128,7 +117,6 @@ export class RejectedExpensesComponent {
 
   onViewAttachement(url: any) {
     const lowerUrl = url?.toLowerCase();
-
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http
         .DownloadDataWithQuery('FileSystem/Downloadfile', url)
@@ -153,19 +141,21 @@ export class RejectedExpensesComponent {
       this.toggleViewModal();
     }
   }
+
   toggleViewModal() {
     this.modalService.dismissAll();
     this.openModal(this.viewattamchment)
   }
+
   isImageFile(url: any): boolean {
     if (!url) return false;
     const lowerUrl = url.toLowerCase();
     return lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png');
   }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe()
     }
   }
-
 }

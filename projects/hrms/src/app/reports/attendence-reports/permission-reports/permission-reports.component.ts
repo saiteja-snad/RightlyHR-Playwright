@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { ReportsService } from '../../../services/reports/reports.service';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { AttandaceReportTabsComponent } from "../../../shared/reports-tabs/attandace-report-tabs/attandace-report-tabs.component";
 import { Select } from 'primeng/select';
 import { IemployeeDetails, ITeamManagerEmployees } from '../reports.modal';
@@ -16,16 +16,21 @@ import * as XLSX from 'xlsx';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-permission-reports',
-  imports: [CommonModule, ReactiveFormsModule, AttandaceReportTabsComponent, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [CommonModule, ReactiveFormsModule, AttandaceReportTabsComponent, Select, NgxDaterangepickerBootstrapDirective, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './permission-reports.component.html',
   styleUrl: './permission-reports.component.scss'
 })
 export class PermissionReportsComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
+  subscription!: Subscription;
   permissionReportForm!: FormGroup;
-  loggedInUser: IemployeeDetails | undefined;
+  loggedInUser = {} as IemployeeDetails;
   employeeDetails: IemployeeDetails[] = [];
   teamManagerDetails: ITeamManagerEmployees[] = [];
   filteredPermissionData: any[] = [];
@@ -34,7 +39,10 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
   spinnerLoader2 = false;
   disableBtn = false;
   isLoading = false;
-
+  getEmployeeInfo = [] as any;
+  selectLeaveEmployeeIds: number[] = [];
+  filteredleaveRecords = true;
+  selectedEmployeeId: any = null;
   ranges: any = {
     Today: [dayjs(), dayjs()],
     Yesterday: [dayjs().subtract(1, 'days'), dayjs().subtract(1, 'days')],
@@ -59,7 +67,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     private reportsService: ReportsService,
     private http: HttpService,
     private fb: FormBuilder,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -67,6 +76,9 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.getAllEmployees();
     this.getTeam();
+    this.getMyTeam();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
     // this.getAttendanceReports();
   }
 
@@ -74,7 +86,8 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     this.permissionReportForm = this.fb.group({
       employee: [null],
       manager: [null],
-      dateRange: [null]
+      dateRange: [null],
+      team:[null]
     });
 
     this.permissionReportForm.valueChanges.subscribe(() => {
@@ -87,8 +100,27 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     return !(
       form.get('employee')?.value ||
       form.get('manager')?.value ||
-      form.get('dateRange')?.value
+      form.get('dateRange')?.value || form.get('team')?.value
     );
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/attendence-reports/permission-report': MODULE_INFOS.ATTENDANCE_PERMISSION_REPORTS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getAllEmployees() {
@@ -157,7 +189,7 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       !formValue.leaveCategory &&
       (!formValue.dateRange?.startDate || !formValue.dateRange?.endDate) &&
       !formValue.month &&
-      !formValue.manager;
+      !formValue.manager && !formValue.team;
   
     if (noFilterProvided) {
       this.filteredPermissionData = [];
@@ -167,7 +199,11 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
     }
   
     const request: IAttendanceDetails = {};
-  
+    
+    if (this.selectLeaveEmployeeIds.length >= 0) {
+      const ids = this.selectLeaveEmployeeIds?.join(',');
+      request.employeeId = ids;  // The selected employee IDs are set here
+    }
     // Apply leave category if selected
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;
@@ -181,14 +217,14 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
       request.EndDate = endDate;
     }
     
-    // Apply manager name if provided
-    if (formValue.manager) {
-      request.teamManagerId = formValue.manager.employeeId
+   //Apply my team
+    if(formValue.team){
+      request.teamManagerEmpID =formValue.team.teamManagerEmpID;
     }
-  
+
     // Only include employee filter if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee.empoyeeId;
     }
   
     console.log(request)
@@ -323,6 +359,53 @@ export class PermissionReportsComponent implements OnInit, OnDestroy {
 
     return Math.max(10, maxWidth);
   }
+
+    onClick(employeeIds: any) {
+    if (employeeIds.value) {
+      console.log(employeeIds);
+      this.filteredleaveRecords = false;
+      this.selectLeaveEmployeeIds = [];
+      this.selectedEmployeeId = [];
+      // If "All Employees" is selected, set employeeId as an empty array or a special flag
+      if (employeeIds.value.employeeId == this.loggedInUser.employeeId) {
+        this.selectLeaveEmployeeIds = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId); // Select all employees
+        this.selectedEmployeeId = this.getEmployeeInfo.filter((employee: any) => employee.employeeId !== this.loggedInUser.employeeId).map((employee: any) => employee.employeeId);
+      } else {
+        this.selectLeaveEmployeeIds.push(employeeIds.value.employeeId);
+        this.selectedEmployeeId.push(employeeIds.value.employeeId);
+      }
+    }
+  }
+
+ getMyTeam() {
+  const EmployeeId = this.loggedInUser?.employeeId;
+  this.subscription = this.http
+    .getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`)
+    .subscribe({
+      next: (response: any) => {
+        console.log(response);
+        if (response) {
+          const myTeam = response.filter((e: any) => e.isAccess);
+          this.getEmployeeInfo = myTeam.map((employee: any) => {
+            return {
+              ...employee,
+              fullName: `${
+                employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
+              }${employee.firstName} ${
+                employee.middleName ? employee.middleName + ' ' : ''
+              }${employee.lastName}`,
+            };
+          });
+
+          this.getEmployeeInfo.unshift({
+            fullName: 'All Employees',
+            fusionEmpId: this.loggedInUser.fusionEmpId,
+            employeeId: this.loggedInUser.employeeId,
+          });
+        }
+      },
+    });
+}
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

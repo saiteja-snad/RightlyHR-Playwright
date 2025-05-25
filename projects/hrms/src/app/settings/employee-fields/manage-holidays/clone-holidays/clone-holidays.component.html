@@ -130,7 +130,7 @@
       <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
       <div class="d-flex justify-content-end gap-3 pt-4">
         <button type="button" class="custom-btn btn-secondary px-5" (click)="openmodel(cancelpopup)" id="submitButton">
-          {{'Close' | translate}}
+          {{'Cancel' | translate}}
         </button>
         <button type="submit" class="custom-btn btn-primary px-5" [disabled]="this.holidayForm.invalid">
           {{'Submit' | translate}}
@@ -145,7 +145,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to close?' | translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to cancel?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">

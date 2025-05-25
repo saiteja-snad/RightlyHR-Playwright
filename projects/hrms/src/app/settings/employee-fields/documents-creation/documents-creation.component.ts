@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { DocumentService } from '../../../services/document/document.service';
 import { LastValuePipe } from '../../../Pipes/last-value/last-value.pipe';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
@@ -14,14 +14,18 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 @Component({
   selector: 'app-documents-creation',
-  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent, CommonModule, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent, CommonModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './documents-creation.component.html',
   styleUrl: './documents-creation.component.scss'
 })
 
 export class DocumentsCreationComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   subscription!: Subscription;
   folders = [] as IFolders[];
   selectedFile = {} as IFolders;
@@ -40,11 +44,17 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
 
 
   constructor(private documentService: DocumentService, private modalService: NgbModal, private conformationPopup: OpenModalService,
-    public formValidations: FormValidationsService, public rbac: RbacService
+    public formValidations: FormValidationsService, public rbac: RbacService, public readonly router: Router
   ) { }
 
   ngOnInit(): void {
     this.getMainFolders()
+    this.updateModuleInfo();
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
   }
 
   getMainFolders(dirPath?: string, previousSelectedFolder?: IFolders) {
@@ -152,6 +162,17 @@ export class DocumentsCreationComponent implements OnInit, OnDestroy {
 
   onClose() {
     this.modalService.dismissAll();
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/settings/employee-fields/documents': MODULE_INFOS.SETTINGS_DOCUMENTS_INFO_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   ngOnDestroy(): void {

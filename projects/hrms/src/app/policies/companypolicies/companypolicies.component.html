@@ -33,7 +33,8 @@
             <td>{{item.policyName}}</td>
             <td>{{item.policyDescription}}</td>
             <td>
-              <a type="button" class="view-btn text-nowrap" (click)="onViewAttachement(item.policyAttachment)">
+              <a type="button" class="view-btn text-nowrap"
+                (click)="onViewAttachement(item.policyAttachment,item.policyName)">
                 <i class="bi bi-eye-fill me-2"></i>View
               </a>
             </td>
@@ -59,7 +60,7 @@
   <div class="custom-main-popup-container">
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">{{'Policy Details' | translate}}</p>
+        <p class="popup-heading mb-0">{{viewPolicyname}}</p>
       </div>
       <div>
         <a (click)="modal.dismiss(); ExpenseViewURL = null; ExpenseImageUrl = null"><img src="icons/close.png"

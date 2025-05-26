@@ -12,9 +12,10 @@ import { RbacService } from '../../../services/rbac.service';
 import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 import { SignalsService } from '../../../services/signals.service';
+import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
 @Component({
   selector: 'app-desk-for-your-role-request',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe, SearchfordeskPipe],
   templateUrl: './desk-for-your-role-request.component.html',
   styleUrl: './desk-for-your-role-request.component.scss'
 })

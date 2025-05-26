@@ -20,10 +20,11 @@ import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitesp
 import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model';
 import { SearchfilterPipe } from "../../../../Pipes/searchfilter.pipe";
 import { SignalsService } from '../../../../services/signals.service';
+import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe],
+    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe, SearchfordeskPipe],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
 })

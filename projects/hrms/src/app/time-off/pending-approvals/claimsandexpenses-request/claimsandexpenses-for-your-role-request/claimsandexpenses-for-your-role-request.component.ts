@@ -20,10 +20,11 @@ import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 import { SearchfilterPipe } from "../../../../Pipes/searchfilter.pipe";
 import { SignalsService } from '../../../../services/signals.service';
+import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe],
+    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe, SearchfordeskPipe],
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
 })

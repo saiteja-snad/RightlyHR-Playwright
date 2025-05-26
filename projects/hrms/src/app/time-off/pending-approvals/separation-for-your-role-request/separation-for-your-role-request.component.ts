@@ -36,7 +36,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
     NoDataFoundComponent,
     DateformatPipe,
     PendingapprovalsseparationPipe,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
   ],
   templateUrl: './separation-for-your-role-request.component.html',
   styleUrl: './separation-for-your-role-request.component.scss',
@@ -68,6 +68,12 @@ export class SeparationForYourRoleRequestComponent {
     rejectedReason: '',
     early: false,
   };
+  
+  salaryHoldOptions = [
+  { label: 'Yes', value: true },
+  { label: 'No', value: false }
+];
+
   isLoading = false;
   regular = false;
   extend = false;

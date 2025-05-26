@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div> <span class="component-sub-header">No Due Clearance Details</span></div>
      @if(canAccess('view','submissionnodue')){
-      @if(lineOrder && nodue_Clearance_Details.value.length > 0 && allApproved && empdata?.substatus?.toLowerCase()==='raised no due'){
+      @if(lineOrder && nodue_Clearance_Details.value.length > 0 && allApproved && empdata?.substatus?.toLowerCase()==='raised no due' && empdata.empstatus?.toLowerCase() != 'inactive'){
         <div class="custom-add-btn">
           <a class="dropdown-item" 
               [routerLink]="['/admin/nodue-form-details']" routerLinkActive="active" (click)="onsubmission(empdata.employeeId)">

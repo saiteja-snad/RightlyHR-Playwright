@@ -8,16 +8,16 @@ import { RbacService } from '../../../services/rbac.service';
   imports: [RouterModule, CommonModule, TabsModule],
   templateUrl: './standard-report-tabs.component.html',
   styleUrl: './standard-report-tabs.component.scss',
-  encapsulation:ViewEncapsulation.None
+  encapsulation:ViewEncapsulation.None,
 })
 
 export class StandardReportTabsComponent {
   filteredTabs: any[] = [];
   navTabs = [
-    { label: 'Employee Master Data', route: '/reports/standard-reports/employee-data', permission: { feature: 'Employee Master Data', action: 'view' } },
-    { label: 'Job Location Wise Data', route: '/reports/standard-reports/job-data', permission: { feature: 'Job Location Wise Data', action: 'view' }, },
-    { label: 'Branch Location Wise Data', route: '/reports/standard-reports/branch-data',permission: { feature: 'Branch Location Wise Data', action: 'view' } },
-    { label: 'Family Members Data', route: '/reports/standard-reports/family-data', permission: { feature: 'Family Members Data', action: 'view' } },
+    { label: 'Employee Master Data', route: '/reports/standard-reports/employee-data', icon:'/it-support-icons/employee-icon.png', permission: { feature: 'Employee Master Data', action: 'view' } },
+    { label: 'Job Location Wise Data', route: '/reports/standard-reports/job-data', icon:'/images/jobdetailes.png', permission: { feature: 'Job Location Wise Data', action: 'view' }, },
+    { label: 'Branch Location Wise Data', route: '/reports/standard-reports/branch-data', icon:'/images/address.png', permission: { feature: 'Branch Location Wise Data', action: 'view' } },
+    { label: 'Family Members Data', route: '/reports/standard-reports/family-data', icon:'/images/family.png', permission: { feature: 'Family Members Data', action: 'view' } },
   ];
 
   constructor(public rbac: RbacService) { }
@@ -29,7 +29,6 @@ export class StandardReportTabsComponent {
   filterTabsByRbac(): void {
     this.filteredTabs = this.navTabs.filter(tab => {
       if (!tab.permission) return true;
-
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);

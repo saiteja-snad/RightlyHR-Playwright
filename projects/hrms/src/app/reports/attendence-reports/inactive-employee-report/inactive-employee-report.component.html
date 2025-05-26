@@ -1,8 +1,7 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="component-header-content">
     <div class="component-header">Reports</div>
 
-    <div>
       <form autocomplete="off" [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
         <div class="d-flex align-items-center gap-3">
           @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view')){
@@ -81,7 +80,6 @@
           </div>
         </div>
       </form>
-    </div>
   </div>
 
   <!--Module Information-->
@@ -90,11 +88,10 @@
   </div>
 
   <div class="d-flex gap-3 w-100">
-    <div class="custom-component-left-content">
+    <div class="component-left-tabs-container">
       <app-attandace-report-tabs />
     </div>
-    <div class="custom-component-right-content">
-
+    <div class="component-right-content">
       @if (isLoading) {
       <div class="custom-compoent-data-loader">
         <app-data-loader-content />
@@ -103,7 +100,6 @@
       <div class="custom-table-content">
         <table id="wfhReportTable" class="content w-100">
           <thead>
-            <tr>
               <th>Employee ID</th>
               <th>Employee Name</th>
               <th>Department</th>
@@ -114,29 +110,26 @@
               <th>Entitled</th>
               <th>Availed</th>
               <th>Balance</th>
-            </tr>
           </thead>
           <tbody>
             @if (filteredInactiveRecord && filteredInactiveRecord.length > 0) {
             @for (record of filteredInactiveRecord; track record) {
             <tr>
-              <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-              <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-              <td class="td-center">{{ record.department ?? '-' }}</td>
-              <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-              <td class="td-center">{{ record.location ?? '-' }}</td>
-              <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-              <td class="td-center">{{ record.leaveType ?? '-' }}</td>
-              <td class="td-center">{{ record.entitled ?? '-' }}</td>
-              <td class="td-center">{{ record.availed ?? '-' }}</td>
-              <td class="td-center">{{ record.balanced ?? '-' }}</td>
+              <td>{{ record.fusionEmpId ?? '-' }}</td>
+              <td>{{ record.employeeName ?? '-' }}</td>
+              <td>{{ record.department ?? '-' }}</td>
+              <td>{{ record.teamManagerName ?? '-' }}</td>
+              <td>{{ record.location ?? '-' }}</td>
+              <td>{{ record.subLocation ?? '-' }}</td>
+              <td>{{ record.leaveType ?? '-' }}</td>
+              <td>{{ record.entitled ?? '-' }}</td>
+              <td>{{ record.availed ?? '-' }}</td>
+              <td>{{ record.balanced ?? '-' }}</td>
             </tr>
             }
             } @else {
             <tr>
-              <td colspan="10" class="text-center">
                 <app-no-data-found></app-no-data-found>
-              </td>
             </tr>
             }
           </tbody>

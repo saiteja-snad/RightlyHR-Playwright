@@ -120,7 +120,7 @@
     
       <div class="custom-modal-footer">
         <button type="button" class="custom-btn btn-secondary"
-          (click)="openconfirmationModelforcancle(cancel,Postincrementalpercentage)">{{'Close'|translate}}</button>
+          (click)="openconfirmationModelforcancle(cancel,Postincrementalpercentage)">{{'Cancel'|translate}}</button>
         <button type="button" class="custom-btn btn-primary"
           [disabled]="Postincrementalpercentage.invalid||!postincrementalpercentage.id||isLoading"
           (click)="openconfirmationModel(confirmationtosave)">{{'Save'|translate}}</button>
@@ -154,7 +154,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to close?</p>
+      <p class="confirmation-text">Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

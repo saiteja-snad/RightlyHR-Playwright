@@ -237,7 +237,12 @@ export class CompOffComponent implements OnInit, OnDestroy {
     return pastDate.toISOString().split('T')[0];
   }
   
-  
+    cleardata() {
+    this.modalService.dismissAll();
+    this.addCompOffForm.reset();
+    this.isWeekOffSelected = true;
+    this.isHolidaySelected = true;
+  }
  
   getFutureDate(): string {
     const days = Number(this.futureDatesAllowed ?? 0);

@@ -41,11 +41,6 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request Permission</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss();this.permissionForm.reset()">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
-                </a>
-            </div>
         </div>
 
         <div class="custom-main-popup-content">
@@ -59,7 +54,7 @@
                             [max]="getFutureDate()" />
                         <div *ngIf="permissionForm.get('permissionDate')?.touched && permissionForm.get('permissionDate')?.invalid"
                             class="error-msg">
-                            Permission Date is required.
+                            Permission Date is required
                         </div>
                     </div>
                 </div>
@@ -74,7 +69,7 @@
                         </div>
                         <div *ngIf="permissionForm.get('duration')?.touched && permissionForm.get('duration')?.invalid"
                             class="error-msg">
-                            Duration is required.
+                            Duration is required
                         </div>
                     </div>
 
@@ -88,7 +83,7 @@
                         </div>
                         <div *ngIf="permissionForm.get('leaveType')?.touched && permissionForm.get('leaveType')?.invalid"
                             class="error-msg">
-                            Permission Type is required.
+                            Permission Type is required
                         </div>
                     </div>
 
@@ -104,18 +99,18 @@
                         <div class="error-msg"
                             *ngIf="permissionForm.get('reason')?.touched && permissionForm.get('reason')?.invalid">
                             <div *ngIf="permissionForm.get('reason')?.errors?.['required']">
-                                Reason is required.
+                                Reason is required
                             </div>
                             <div *ngIf="permissionForm.get('reason')?.errors?.['maxlength']">
-                                Reason cannot exceed 250 characters.
+                                Reason cannot exceed 250 characters
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();this.permissionForm.reset()">Close</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="openModal(confirmationpopup)" [disabled]="spinnerLoader">{{'Cancel'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="permissionForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
@@ -129,6 +124,22 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</ng-template>
+
+
+
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+        </div>
+
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">Yes</button>
         </div>
     </div>
 </ng-template>

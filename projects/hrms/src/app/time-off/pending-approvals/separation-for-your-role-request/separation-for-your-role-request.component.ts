@@ -59,7 +59,7 @@ export class SeparationForYourRoleRequestComponent {
     { label: 25, value: 25 },
   ];
   selectedSpRequestData: any = {
-    spsalaryhold: undefined,
+    spsalaryhold: null,
     noticperiodType: null,
     extend: false,
     discontinue: false,
@@ -95,6 +95,7 @@ export class SeparationForYourRoleRequestComponent {
   ) { }
 
   ngOnInit(): void {
+    console.log('Initial spsalaryhold:', this.selectedSpRequestData.spsalaryhold);
     this.getseparationforrolerequests();
   }
 
@@ -110,7 +111,7 @@ export class SeparationForYourRoleRequestComponent {
       spRequestAppliedDate: null,
       spRequestLastWorkingDate: null,
       spIsEarlyRelieveing: false,
-      spsalaryhold: undefined
+      spsalaryhold: null
       // Add any other keys your form uses here
     };
     // Reset condition flags
@@ -192,6 +193,7 @@ export class SeparationForYourRoleRequestComponent {
 
   resetNoticePeriod() {
     this.selectedSpRequestData.noticperiodType = null;
+    
   }
 
   onRowsChange() {

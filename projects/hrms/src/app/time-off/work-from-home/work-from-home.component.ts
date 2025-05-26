@@ -215,7 +215,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       workedDate: ['', [Validators.required]],
       availing: ['', Validators.required],
       halfType: [''],
-      reason: ['', Validators.required],
+      reason: ['', [Validators.required, Validators.minLength(10)],],
     });
   }
 

@@ -99,6 +99,9 @@
                         <textarea class="form-control custom-input" id="reason" formControlName="reason" rows="3"
                             placeholder="Reason for comp off" maxlength="250" (input)="formsValidation.validateInput(addCompOffForm.get('reason'))"></textarea>
                         <div class="textarea-count-text">{{ addCompOffForm.get('reason')?.value?.length || 0 }}/250</div>
+                        <div class="error-msg" *ngIf="addCompOffForm.get('reason')?.errors?.['minlength']">
+                          Reason must be at least 10 characters
+                        </div>
                         <div class="error-msg" *ngIf="addCompOffForm.get('reason')?.touched && addCompOffForm.get('reason')?.invalid">
                             <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">Reason is required</div>
                             <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">Reason cannot exceed 250 characters</div>
@@ -130,7 +133,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+            <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
         </div>
 
         <div class="custom-modal-footer">

@@ -103,7 +103,7 @@ export class WfhWaitingForApprovalComponent implements OnInit, OnDestroy {
   }
   formInializer() {
     this.cancelForm = this.fb.group({
-      cancelReason: [null, [Validators.required, Validators.maxLength(250)]],
+      cancelReason: [null, [Validators.required,Validators.minLength(10), Validators.maxLength(250)]],
     });
   }
   isBeforeToday(date: string | Date): boolean {

@@ -145,7 +145,7 @@ export class PremissionsComponent implements OnInit, OnDestroy {
       permissionDate: [null, Validators.required],
       duration: [null, Validators.required],
       leaveType: [null, Validators.required],
-      reason: [null, [Validators.required, Validators.maxLength(250)]],
+      reason: [null, [Validators.required,Validators.minLength(10), Validators.maxLength(250)]],
     });
   }
 

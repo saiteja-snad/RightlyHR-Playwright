@@ -5,7 +5,7 @@
       <thead>
         <th>{{'Worked Date' | translate}}</th>
         <th>{{'Availed' | translate}}</th>
-        <th>{{'Reason' | translate}}</th>
+        <th class="text-center">{{'Reason' | translate}}</th>
         <th>{{'Applied Date' | translate }}</th>
         <th>{{'Status' | translate }}</th>
         <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
@@ -20,11 +20,11 @@
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
-            <td>
+            <td class="text-center">
               <div>
-                <a *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
-                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                </a>
+                <div *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
+                    <i class="bi bi-info-circle-fill"></i>
+                </div>
                 <ng-template #requestedComments>
                   <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
                 </ng-template>
@@ -82,6 +82,9 @@
           maxlength="250" placeholder="Please enter cancellation reason....." rows="3"  (keypress)="formsValidation.restrictInitialSpace($event)"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>
+        <div class="error-msg" *ngIf="cancelForm.get('cancelReason')?.errors?.['minlength']">
+                          Reason for Cancellation must be at least 10 characters
+                        </div>
         <div class="error-msg"
           *ngIf="cancelForm.get('cancelReason')?.touched && cancelForm.get('cancelReason')?.invalid">
           <ng-container *ngIf="cancelForm.get('cancelReason')?.errors?.['required']">Reason for Cancellation is
@@ -113,7 +116,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
         </div>
 
         <div class="custom-modal-footer">

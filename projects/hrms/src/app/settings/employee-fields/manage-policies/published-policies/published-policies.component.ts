@@ -50,14 +50,14 @@ export class PublishedPoliciesComponent implements OnInit, OnDestroy {
     })
 
   }
-  clonePolicy1(id: any): void {
-    localStorage.setItem('cloningPolicyId', id);
-    this.router.navigate(['/settings/employee-fields/clonepolices',id]);
+  clonePolicy1(id: any) {
+    localStorage.setItem('updatepolicies', JSON.stringify(id));
+    this.router.navigate(['/settings/employee-fields/clonepolices']);
   }
 
   viewPublishedPolicy(holiday: any) {
-    console.log(holiday);
-    localStorage.setItem('viewpolicies', JSON.stringify(holiday));
+    console.log('updatepolicies',holiday);
+    localStorage.setItem('updatepolicies', JSON.stringify(holiday));
     this.router.navigate(['/settings/employee-fields/viewpolices']);
     
   }

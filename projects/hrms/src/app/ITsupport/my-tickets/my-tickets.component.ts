@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
@@ -15,14 +15,14 @@ import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
-
-
 @Component({
   selector: 'app-my-tickets',
   imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DateformatPipe, ModuleInformationComponent],
   templateUrl: './my-tickets.component.html',
-  styleUrl: './my-tickets.component.scss'
+  styleUrl: './my-tickets.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
+
 export class MyTicketsComponent {
   moduleinfo : string = '';
   subscription!: Subscription;

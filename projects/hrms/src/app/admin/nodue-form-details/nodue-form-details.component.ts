@@ -148,7 +148,7 @@ FormDownload() {
         heightLeft -= pageHeight;
       }
 
-      const fileName = `${this.empdata.firstName}_${this.empdata.middleName}_${this.empdata.lastName }_${new Date().getTime()}_No Due form.pdf`;
+      const fileName = `${this.empdata.firstName}_${this.empdata.middleName? this.empdata.middleName: ''}_${this.empdata.lastName }_${new Date().getTime()}_No Due form.pdf`;
       pdf.save(fileName);
       const blob = pdf.output('blob');
       console.log(blob);

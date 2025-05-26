@@ -2,12 +2,12 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="component-sub-header">Separation Details</div>
     @if(canAccess('view','raisenodue')){
-    <ng-container *ngIf="(this.empdata.lastworkingday && nodueclearancedetails.length >= 0) && shouldShowStatusBasedButton()">
+    <ng-container *ngIf="(this.empdata.lastworkingday && nodueclearancedetails.length <= 0) && shouldShowStatusBasedButton()">
       <ng-container *ngIf="empinfo?.empstatus?.toLowerCase() !== 'prospective' &&
                        empinfo?.empstatus?.toLowerCase() !== 'trainee prospective' &&
                        empinfo?.empstatus?.toLowerCase() !== 'inactive' &&
                        empinfo?.empstatus?.toLowerCase() !== 'trainee inactive'">
-        <div class="custom-add-btn" (click)="openModal(raiseNodue)">
+        <div class="custom-add-btn" (click)="openModalLg(raiseNodue)">
           <i class="bi bi-plus plus-icon me-1"></i>Raise No Due
         </div>
       </ng-container>

@@ -57,7 +57,7 @@
                         [max]="getFutureDate()">
                     <div *ngIf="addWFHForm.get('workedDate')?.touched && addWFHForm.get('workedDate')?.invalid"
                         class="error-msg">
-                        Worked Date is required.
+                        Worked Date is required
                     </div>
                     <div *ngIf="addWFHForm.get('workedDate')?.errors?.['weekend']" class="error-msg">
                         Selected date is not eligible for WFH
@@ -104,12 +104,16 @@
                         (input)="formsValidation.validateInput(addWFHForm.get('reason'))"></textarea>
                     <!-- Character counter -->
                     <div class="textarea-count-text">{{ addWFHForm.get('reason')?.value?.length || 0 }}/250</div>
+                    <div class="error-msg" *ngIf="addWFHForm.get('reason')?.errors?.['minlength']">
+                            Reason must be at least 10 characters
+                    </div>
                     <div class="error-msg"
                         *ngIf="addWFHForm.get('reason')?.touched && addWFHForm.get('reason')?.invalid">
-                        <div *ngIf="addWFHForm.get('reason')?.errors?.['required']">Reason is required.</div>
+                        <div *ngIf="addWFHForm.get('reason')?.errors?.['required']">Reason is required</div>
                         <div *ngIf="addWFHForm.get('reason')?.errors?.['maxlength']">
-                            Reason cannot exceed 250 characters.
+                            Reason cannot exceed 250 characters
                         </div>
+                        
                     </div>
                 </div>
 
@@ -141,7 +145,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
         </div>
 
         <div class="custom-modal-footer">

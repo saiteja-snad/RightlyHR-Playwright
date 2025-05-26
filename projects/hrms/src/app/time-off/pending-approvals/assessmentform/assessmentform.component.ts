@@ -577,7 +577,7 @@ export class AssessmentformComponent {
         status: 'Confirmed',
         responseId: this.responseId,
       });
-      successMessage = 'Probation Request Approved Successfully';
+      successMessage = 'Probation request approved successfully';
     }
     if (this.selected_approve.requestSelectedType == 'Reject') {
       this.jsonData = JSON.stringify({
@@ -585,7 +585,7 @@ export class AssessmentformComponent {
         status: 'Rejected',
         responseId: this.responseId,
       });
-      successMessage = 'Probation Request Rejected Successfully';
+      successMessage = 'Probation request rejected successfully';
     }
     if (this.selected_approve.requestSelectedType == 'Extend') {
       this.jsonData = JSON.stringify({
@@ -594,7 +594,7 @@ export class AssessmentformComponent {
         status: 'Extended',
         responseId: this.responseId,
       });
-      successMessage = 'Probation Request Extended Successfully';
+      successMessage = 'Probation request extended successfully';
     }
     let requestBody = {
       status: 'Approved',
@@ -688,7 +688,7 @@ export class AssessmentformComponent {
       )
       .subscribe({
         next: (respone: any) => {
-          this.openModalService.openSuccessModal('Probation Request Processed Successfully');
+          this.openModalService.openSuccessModal('Probation request processed successfully');
 
         },
         error: (reason: any) => {

@@ -7,6 +7,7 @@
                 <th>{{'Permission Date'| translate}}</th>
                 <th>{{'Duration(In Hours)'| translate}}</th>
                 <th class="text-center">{{'Reason'| translate}}</th>
+                <th class="text-center">{{'Cancellation Reason' | translate}}</th>
                 <th>{{'Permission Type'| translate}}</th>
                 <th>{{'Status'| translate}}</th>
             </thead>
@@ -23,6 +24,16 @@
                                 </a>
                                 <ng-template #reason>
                                     <p class="mb-0">{{permissionRequest.notes}} </p>
+                                </ng-template>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div>
+                                <a type="button" [ngbPopover]="cancelledReason">
+                                    <i class="bi bi-info-circle-fill" ></i>
+                                </a>
+                                <ng-template #cancelledReason>
+                                    <p class="mb-0">{{permissionRequest.cancelledReason}} </p>
                                 </ng-template>
                             </div>
                         </td>

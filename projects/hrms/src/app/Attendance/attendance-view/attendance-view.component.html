@@ -188,11 +188,6 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request Regularization</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss();this.regularizationForm.reset()">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
-                </a>
-            </div>
         </div>
 
         <div class="custom-main-popup-content">
@@ -246,6 +241,9 @@
                         <div class="textarea-count-text">
                             {{ regularizationForm.get('reason')?.value?.length || 0 }}/250
                         </div>
+                        <div class="error-msg" *ngIf="regularizationForm.get('reason')?.errors?.['minlength']">
+                            Reason must be at least 10 characters
+                        </div>
                         <div class="error-msg"
                             *ngIf="regularizationForm.get('reason')?.touched && regularizationForm.get('reason')?.invalid">
                             <div *ngIf="regularizationForm.get('reason')?.errors?.['required']">
@@ -260,7 +258,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openModal(confirmationpopup)">Close</button>
+                        (click)="openModal(confirmationpopup)">{{'Cancel'}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="regularizationForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
@@ -427,7 +425,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text"> Are you sure you want to close ?</p>
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">

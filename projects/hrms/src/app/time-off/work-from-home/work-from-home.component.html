@@ -38,10 +38,7 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request WFH</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss();addWFHForm.reset();">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
+           
         </div>
 
         <div class="custom-main-popup-content">
@@ -117,8 +114,8 @@
                 <div *ngIf="wfhValidations.isdurationValidated">{{wfhValidations.DurationErrorMessage}}</div>
                 <!-- Action Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();this.addWFHForm.reset();availablebalance = 0">Close</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                    (click)="openModal(confirmationpopup)" [disabled]="spinnerLoader" >{{'Cancel' | translate }}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="addWFHForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
                         <div class="button-loader-content">
@@ -131,6 +128,22 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</ng-template>
+
+
+
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+        </div>
+
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">Yes</button>
         </div>
     </div>
 </ng-template>

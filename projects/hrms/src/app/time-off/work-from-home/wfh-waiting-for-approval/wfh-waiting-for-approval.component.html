@@ -3,12 +3,12 @@
     @if(!dataload){
     <table class="w-100">
       <thead>
-        <th>Worked Date</th>
-        <th>Availed</th>
-        <th>Reason</th>
-        <th>Applied Date</th>
-        <th>Status</th>
-        <th>Action(s)</th>
+        <th>{{'Worked Date' | translate}}</th>
+        <th>{{'Availed' | translate}}</th>
+        <th>{{'Reason' | translate}}</th>
+        <th>{{'Applied Date' | translate }}</th>
+        <th>{{'Status' | translate }}</th>
+        <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
       </thead>
       <tbody>
         <ng-container *ngIf="waitingForApprovalWFHs!.length > 0; else noDataTemplate">
@@ -44,10 +44,12 @@
                 <ul class="dropdown-menu custom-dropdown-menu">
 
                   <li (click)="onClick(wfhRequest,cancelModal)">
-                    <a class="dropdown-item">Cancel WFH</a>
+                    <a class="dropdown-item">{{'Cancel WFH' | translate}}</a>
                   </li>
                 </ul>
               </div>
+              }@else {
+                {{"NA"}}
               }
 
             </td>
@@ -77,7 +79,7 @@
         <label for="comments" class="form-label custom-label mb-2">{{'Reason for Cancellation' | translate}}<span
             class="text-danger">*</span></label>
         <textarea id="exampleFormControlTextarea1" class="form-control custom-input" formControlName="cancelReason"
-          maxlength="250" placeholder="Please enter cancellation reason....." rows="3"></textarea>
+          maxlength="250" placeholder="Please enter cancellation reason....." rows="3"  (keypress)="formsValidation.restrictInitialSpace($event)"></textarea>
         <!-- Character counter -->
         <div class="textarea-count-text">{{ cancelForm.get('cancelReason')?.value?.length || 0 }} /250</div>
         <div class="error-msg"
@@ -91,7 +93,7 @@
         </div>
       </div>
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss();cancelForm.reset()">{{'Close'|
+        <button type="button" class="custom-btn btn-secondary" (click)="openModal(confirmationpopup)" [disabled]="isLoading">{{'Cancel'|
           translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="cancelForm.invalid || isLoading">@if
           (!isLoading) { {{ 'Submit' | translate }} } @else {
@@ -104,4 +106,19 @@
       </div>
     </form>
   </div>
+</ng-template>
+
+
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+        </div>
+
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">Yes</button>
+        </div>
+    </div>
 </ng-template>

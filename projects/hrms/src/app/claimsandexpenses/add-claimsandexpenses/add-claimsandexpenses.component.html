@@ -30,7 +30,7 @@
                         <label class="form-label custom-label mb-2">{{'Approver Email' | translate}}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="emails" optionLabel="label" placeholder="Please select approver email"
-                                formControlName="approvalemail" class="form-select custom-select"></p-select>
+                                formControlName="approvalemail" class="form-select custom-select select-height"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="newExpenseForm.controls['approvalemail'].invalid && (newExpenseForm.controls['approvalemail'].touched || newExpenseForm.controls['approvalemail'].dirty)">

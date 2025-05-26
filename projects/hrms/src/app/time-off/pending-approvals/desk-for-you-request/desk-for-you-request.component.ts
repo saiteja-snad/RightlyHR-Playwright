@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Entity } from '../../../Interfaces/claimsandexpenses.model';
 import { HttpService } from '../../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +12,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { RbacService } from '../../../services/rbac.service';
 import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { SignalsService } from '../../../services/signals.service';
 
 @Component({
   selector: 'app-desk-for-you-request',
@@ -19,7 +21,7 @@ import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
   templateUrl: './desk-for-you-request.component.html',
   styleUrl: './desk-for-you-request.component.scss'
 })
-export class DeskForYouRequestComponent {
+export class DeskForYouRequestComponent implements OnInit, OnDestroy {
   employdata: any
   deskiteam: any
   updataid: any
@@ -31,8 +33,8 @@ export class DeskForYouRequestComponent {
   rejectForm!: FormGroup;
 searchValue: any;
 
-  constructor(private http: HttpService, private readonly modalService: NgbModal, 
-    public conformationPopup: OpenModalService, private fb: FormBuilder,public rbac: RbacService) { }
+  constructor(private http: HttpService, private readonly modalService: NgbModal,  private signalService: SignalsService,
+    public conformationPopup: OpenModalService, private fb: FormBuilder,public rbac: RbacService, public formValidation: FormValidationService) { }
 
   ngOnInit(): void {
     this.employdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -62,6 +64,10 @@ searchValue: any;
     this.expapprovalsdata = data;
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+   openconformationPopup(content: any) {
+     this.modalService.open(content, { centered: true, backdrop: 'static' });
+  };
+ 
 
   process(expid: any, exp: any): void {
     this.assiginemploye = exp.deskAllocatedTo
@@ -75,8 +81,9 @@ searchValue: any;
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
         this.conformationPopup.openSuccessModal("Request Processed Successfully")
-        this.updatedeskitem()
         this.getexpensespendingforyou()
+        this.signalService.deskForYouTriggerSignal.set(true);
+          this.updatedeskitem()
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message || 'An error occurred')
@@ -105,7 +112,7 @@ searchValue: any;
   }
 
   openmodal(content: any) {
-    this.modalService.open(content, { size: 'xl' });
+    this.modalService.open(content, { size: 'xl', backdrop: 'static' ,centered: true});
   }
 
   viewdeskitem(deskid: any) {
@@ -134,11 +141,23 @@ searchValue: any;
         this.getexpensespendingforyou();
         this.conformationPopup.openSuccessModal("Request Rejected Successfully");
         this.rejectForm.reset();
+         this.signalService.deskForYouTriggerSignal.set(true);
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message || 'An error occurred');
         console.error('Error response from API:', error);
       }
     });
+  }
+
+  cleardata() {
+    this.rejectForm.reset();
+    this.modalService.dismissAll();
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

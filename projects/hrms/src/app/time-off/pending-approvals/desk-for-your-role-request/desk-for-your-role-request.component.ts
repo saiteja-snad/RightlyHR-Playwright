@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { HttpService } from '../../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -10,14 +10,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { RbacService } from '../../../services/rbac.service';
 import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { SignalsService } from '../../../services/signals.service';
+import { SearchfordeskPipe } from "../../../Pipes/searchfordesk.pipe";
 @Component({
   selector: 'app-desk-for-your-role-request',
-  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe],
+  imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe, SearchfordeskPipe],
   templateUrl: './desk-for-your-role-request.component.html',
   styleUrl: './desk-for-your-role-request.component.scss'
 })
 
-export class DeskForYourRoleRequestComponent {
+export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
   employdata: any;
   deskiteam: any;
   updataid: any;
@@ -29,7 +32,8 @@ export class DeskForYourRoleRequestComponent {
   rejectForm!: FormGroup;
   searchValue:any
   constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService,public rbac: RbacService,
-     private fb: FormBuilder) { }
+     private fb: FormBuilder, public formValidation: FormValidationService,
+     private signalService: SignalsService,) { }
 
 
   ngOnInit(): void {
@@ -54,6 +58,9 @@ export class DeskForYourRoleRequestComponent {
       },
     });
   }
+  openconformationPopup(content: any) {
+     this.modalService.open(content, { centered: true, backdrop: 'static' });
+  };
  
   expapprovalsdata: any;
   openModal(content: any, data: any) {
@@ -73,8 +80,10 @@ export class DeskForYourRoleRequestComponent {
     this.http.putData(`PendingApproval/process/${this.deskid}`, userStatus).subscribe({
       next: (res: any) => {
         this.conformationPopup.openSuccessModal("Request Processed Successfully")
+         this.getexpensespendingforyou()
+        this.signalService.deskForRoleTriggerSignal.set(true);
         this.updatedeskitem()
-        this.getexpensespendingforyou()
+       
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal(error.error.message || 'An error occurred')
@@ -103,7 +112,7 @@ export class DeskForYourRoleRequestComponent {
   }
 
   openmodal(content: any) {
-    this.modalService.open(content, { size: 'xl' });
+    this.modalService.open(content, { size: 'xl' , backdrop: 'static', centered: true });
   }
 
   viewdeskitem(deskid: any) {
@@ -131,6 +140,7 @@ export class DeskForYourRoleRequestComponent {
       next: (res: any) => {
         this.modalService.dismissAll();
         this.getexpensespendingforyou();
+        this.signalService.deskForRoleTriggerSignal.set(true);
         this.conformationPopup.openSuccessModal("Request Rejected Successfully");
         this.rejectForm.reset();
       },
@@ -139,5 +149,14 @@ export class DeskForYourRoleRequestComponent {
         console.error('Error response from API:', error);
       }
     });
+  }
+  cleardata(){
+    this.rejectForm.reset();
+    this.modalService.dismissAll();
+  }
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

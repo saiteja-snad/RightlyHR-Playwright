@@ -28,12 +28,12 @@ import { RbacService } from '../../../services/rbac.service';
 export class DraftsExpensesComponent {
   empinfo: any
   Myexpense: any;
-  removeindex:any
+  removeindex: any
   totalexpensesamount = 0;
   selectedExpenseType: any;
   selectedexpensesid: any;
   newExpenseForm!: FormGroup;
-  spinnerLoader=false
+  spinnerLoader = false
   subscription!: Subscription;
   ExpenseImageUrl: any;
   ExpenseViewURL: any;
@@ -45,22 +45,22 @@ export class DraftsExpensesComponent {
   expenseheaderiteams: INewExpense[] = [];
   updataid!: number;
   matchingExpense: any;
-  saveasDraftloder=false
- 
+  saveasDraftloder = false
+
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   joiningDate: any;
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
-    private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer, 
+    private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,
     public formValidation: FormValidationService, public rbac: RbacService) { }
-    searchTerm: any = ''
-  expenesEmplyeedata=new BehaviorSubject< IExpense[]>([])
+  searchTerm: any = ''
+  expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
   expense = new BehaviorSubject<IExpenses[]>([])
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
 
     this.initiateForm();
-   this.getEmployeeId();
+    this.getEmployeeId();
     this.getdatabyentriy();
     this.getexpensesheaderbyemployeeid();
     this.getExpensestypestopatch();
@@ -81,7 +81,7 @@ export class DraftsExpensesComponent {
 
   createExpenseItem(): FormGroup {
     return this.fb.group({
-      expenseId: [null,Validators.required],
+      expenseId: [null, Validators.required],
       item_Name: [null, [Validators.required, Validators.maxLength(50)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
@@ -169,8 +169,8 @@ export class DraftsExpensesComponent {
     const employeeId = parseInt(this.empinfo.employeeId);
     this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
       next: (data: any) => {
-        this.joiningDate =this.formatDateToLocal(data.dateOfJoining)
-       
+        this.joiningDate = this.formatDateToLocal(data.dateOfJoining)
+
       },
       error: (reason) => console.error('Error fetching employee data:', reason),
     });
@@ -208,225 +208,251 @@ export class DraftsExpensesComponent {
 
   fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
-    if (file) {
-      const filepath = `/Expenses/${this.empinfo.employeeId}`;
-      // Upload the file
-      const fileUpload$ = this.http.uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filepath,
-        file
-      );
+    if (!file) return;
 
-      fileUpload$.subscribe({
-        next: (data: any) => {
+    // Allowed file types and size
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'application/pdf'
+    ];
+    const maxSizeInMB = 25;
+    const fileSizeInMB = file.size / (1024 * 1024);
 
-          // Assuming data.path contains the uploaded file path
-          const uploadedFilePath = data.path;
-          this.expenseItems.at(index).get('attachment_url')?.setValue(uploadedFilePath);
-        },
-        error: (error: any) => {
-          console.error('Error uploading file:', error);
-          // Handle error if needed
-        }
-      });
+    // File type validation
+    if (!allowedTypes.includes(file.type)) {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
+      this.expenseItems.at(index)?.get('attachment_url')?.reset();
+      event.target.value = ''; // Reset the file input
+      return;
     }
+
+    // File size validation
+    if (fileSizeInMB > maxSizeInMB) {
+      this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+      this.expenseItems.at(index)?.get('attachment_url')?.reset();
+      event.target.value = ''; // Reset the file input
+      return;
+    }
+
+    const filepath = `/Expenses/${this.empinfo.employeeId}`;
+    // Upload the file
+    const fileUpload$ = this.http.uploadFileWithQuery(
+      'FileSystem/uploadfiletodirectory',
+      filepath,
+      file
+    );
+
+    fileUpload$.subscribe({
+      next: (data: any) => {
+
+        // Assuming data.path contains the uploaded file path
+        const uploadedFilePath = data.path;
+        this.expenseItems.at(index).get('attachment_url')?.setValue(uploadedFilePath);
+      },
+      error: (error: any) => {
+        console.error('Error uploading file:', error);
+        // Handle error if needed
+      }
+    });
+
   }
 
   onchangeexpnes() {
     // this.selectedexpensesid = this.newExpenseForm.controls['expense'].value
-     this.expenseItems.controls.forEach((control) => {
-       const value =control.get('expenseId')?.value
-         this.selectedexpensesid=value
-       });
-     this.subscription = this.http.getData(`Expense/getbyid/${this.selectedexpensesid}`).subscribe({
-       next: (data: any) => {
-       
-       }
-     })
-   }
- 
- 
+    this.expenseItems.controls.forEach((control) => {
+      const value = control.get('expenseId')?.value
+      this.selectedexpensesid = value
+    });
+    this.subscription = this.http.getData(`Expense/getbyid/${this.selectedexpensesid}`).subscribe({
+      next: (data: any) => {
+
+      }
+    })
+  }
+
+
   submitepxenses(form: FormGroup) {
 
-      this.spinnerLoader=true
-      const payload = {
-        expenses_ID: this.updataid,
-        applied_date: new Date().toISOString(),
-        expenses_Title: form.value.expensesTitle,
-        expenseId: this.selectedexpensesid,
-        approverEmail: form.value.approvalemail.value,
-        additional_details: form.value.additional_details,
+    this.spinnerLoader = true
+    const payload = {
+      expenses_ID: this.updataid,
+      applied_date: new Date().toISOString(),
+      expenses_Title: form.value.expensesTitle,
+      expenseId: this.selectedexpensesid,
+      approverEmail: form.value.approvalemail.value,
+      additional_details: form.value.additional_details,
+      status: 'Waiting for Approval',
+      employeeId: this.empinfo.employeeId,
+      expenseitem: form.value.expenseItems.map((item: any) => ({
+        expenseId: item.expenseId,
+        item_Name: item.item_Name,
+        item_Description: item.item_Description,
+        expense_Date: item.expense_Date,
+        expense_Amount: item.expense_Amount,
+        receipt_Number: item.receipt_Number,
         status: 'Waiting for Approval',
-        employeeId: this.empinfo.employeeId,
-        expenseitem: form.value.expenseItems.map((item: any) => ({
-          expenseId: item.expenseId,
-          item_Name: item.item_Name,
-          item_Description: item.item_Description,
-          expense_Date: item.expense_Date,
-          expense_Amount: item.expense_Amount,
-          receipt_Number: item.receipt_Number,
-          status: 'Waiting for Approval',
-          attachment_url: item.attachment_url,
-        })),
-     
-      };
-      const filepath = `/Expenses/${this.empinfo.employeeId}`;
-      // Check if there is any file to upload
-      if (this.Myexpense) {
-        const fileUpload$ = this.http.uploadFileWithQuery(
-          'FileSystem/uploadfiletodirectory',
-          filepath,
-          this.Myexpense
-        )
-        fileUpload$.pipe(
-          switchMap((data: any) => {
-            // Update the payload with the uploaded file path
-            payload.expenseitem.forEach((item: { attachment_url: any; }) => {
+        attachment_url: item.attachment_url,
+      })),
 
-              if (item.attachment_url === this.Myexpense.name) {
-                item.attachment_url = data.path;
-              }
-            });
-            // Now post the updated payload
-            return this.http.putData(`Expenses_Header/${this.updataid}`, payload);
-          })
-        ).subscribe({
-          next: (data: any) => {     
-              this.modalService.dismissAll()
-              this.newExpenseForm.reset();
-              (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Expenses submitted successfully');
-              this.getexpensesheaderbyemployeeid();
-            
-          },
-          error: (error: any) => {
-            console.log('errror' + error)
-            this.conformationPopup.openErrorModal(error.error.message)
-            this.spinnerLoader=false
-          },
+    };
+    const filepath = `/Expenses/${this.empinfo.employeeId}`;
+    // Check if there is any file to upload
+    if (this.Myexpense) {
+      const fileUpload$ = this.http.uploadFileWithQuery(
+        'FileSystem/uploadfiletodirectory',
+        filepath,
+        this.Myexpense
+      )
+      fileUpload$.pipe(
+        switchMap((data: any) => {
+          // Update the payload with the uploaded file path
+          payload.expenseitem.forEach((item: { attachment_url: any; }) => {
 
-          complete:()=> {
-            this.spinnerLoader=false
-          },
-        });
-      } else {
-        // No file to upload, directly post the payload
-        this.http.putData(`Expenses_Header/${this.updataid}`, payload).subscribe({
-          next: (data: any) => {
-              this.modalService.dismissAll()
-              this.conformationPopup.openSuccessModal('Expenses submitted successfully');          
-              this.newExpenseForm.reset();
-              (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.getexpensesheaderbyemployeeid();      
-          },
-          error: (error: any) => {
-            console.log("error" + error)
-            this.conformationPopup.openErrorModal(error.error.message)
-            this.spinnerLoader=false
-          },
-          complete:()=> {
-            this.spinnerLoader=false
-          },
-        });
-      }
-    
+            if (item.attachment_url === this.Myexpense.name) {
+              item.attachment_url = data.path;
+            }
+          });
+          // Now post the updated payload
+          return this.http.putData(`Expenses_Header/${this.updataid}`, payload);
+        })
+      ).subscribe({
+        next: (data: any) => {
+          this.modalService.dismissAll()
+          this.newExpenseForm.reset();
+          (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+          this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+          this.getexpensesheaderbyemployeeid();
+
+        },
+        error: (error: any) => {
+          console.log('errror' + error)
+          this.conformationPopup.openErrorModal(error.error.message)
+          this.spinnerLoader = false
+        },
+
+        complete: () => {
+          this.spinnerLoader = false
+        },
+      });
+    } else {
+      // No file to upload, directly post the payload
+      this.http.putData(`Expenses_Header/${this.updataid}`, payload).subscribe({
+        next: (data: any) => {
+          this.modalService.dismissAll()
+          this.conformationPopup.openSuccessModal('Expenses submitted successfully');
+          this.newExpenseForm.reset();
+          (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+          this.getexpensesheaderbyemployeeid();
+        },
+        error: (error: any) => {
+          console.log("error" + error)
+          this.conformationPopup.openErrorModal(error.error.message)
+          this.spinnerLoader = false
+        },
+        complete: () => {
+          this.spinnerLoader = false
+        },
+      });
+    }
+
   }
 
 
   saveasDraft(form: FormGroup): void {
-   
-      this.saveasDraftloder=true
-      const payload = {
-        expenses_ID: this.updataid,
-        applied_date: new Date().toISOString(),
-        expenses_Title: form.value.expensesTitle,
-        expenseId: this.selectedexpensesid,
-        approverEmail: form.value.approvalemail.value,
-        additional_details: form.value.additional_details,
+
+    this.saveasDraftloder = true
+    const payload = {
+      expenses_ID: this.updataid,
+      applied_date: new Date().toISOString(),
+      expenses_Title: form.value.expensesTitle,
+      expenseId: this.selectedexpensesid,
+      approverEmail: form.value.approvalemail.value,
+      additional_details: form.value.additional_details,
+      status: 'Draft',
+      employeeId: this.empinfo.employeeId,
+      expenseitem: this.newExpenseForm.get('expenseItems')?.value.map((item: any) => ({
+        expenseId: item.expenseId,
+        item_Name: item.item_Name,
+        item_Description: item.item_Description,
+        expense_Date: item.expense_Date,
+        expense_Amount: item.expense_Amount,
+        receipt_Number: item.receipt_Number,
         status: 'Draft',
-        employeeId: this.empinfo.employeeId,
-        expenseitem: this.newExpenseForm.get('expenseItems')?.value.map((item: any) => ({
-          expenseId: item.expenseId,
-          item_Name: item.item_Name,
-          item_Description: item.item_Description,
-          expense_Date: item.expense_Date,
-          expense_Amount: item.expense_Amount,
-          receipt_Number: item.receipt_Number,
-          status: 'Draft',
-          attachment_url: item.attachment_url,
-        })),
-     
-      };
+        attachment_url: item.attachment_url,
+      })),
 
-      const filepath = `/Expenses/${this.empinfo.employeeId}`;
+    };
 
-      // Check if there is any file to upload
-      if (this.Myexpense) {
-        const fileUpload$ = this.http.uploadFileWithQuery(
-          'FileSystem/uploadfiletodirectory',
-          filepath,
-          this.Myexpense
-        );
+    const filepath = `/Expenses/${this.empinfo.employeeId}`;
 
-        fileUpload$.pipe(
-          switchMap((data: any) => {
-            // Update the payload with the uploaded file path
-            payload.expenseitem.forEach((item: { attachment_url: any; }) => {
+    // Check if there is any file to upload
+    if (this.Myexpense) {
+      const fileUpload$ = this.http.uploadFileWithQuery(
+        'FileSystem/uploadfiletodirectory',
+        filepath,
+        this.Myexpense
+      );
 
-              if (item.attachment_url === this.Myexpense.name) {
-                item.attachment_url = data.path;
-              }
-            });
+      fileUpload$.pipe(
+        switchMap((data: any) => {
+          // Update the payload with the uploaded file path
+          payload.expenseitem.forEach((item: { attachment_url: any; }) => {
 
-            // Now post the updated payload
-            return this.http.putData(`Expenses_Header/${this.updataid}`, payload);
-          })
-        ).subscribe({
-          next: (data: any) => {
-          
-              this.modalService.dismissAll()
-              this.newExpenseForm.reset();
-              (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
+            if (item.attachment_url === this.Myexpense.name) {
+              item.attachment_url = data.path;
+            }
+          });
 
-              this.getexpensesheaderbyemployeeid();
-              // Call the get function after posting
-            
-          },
-          error: (error: any) => {
-            console.log('errror' + error)
-            this.conformationPopup.openErrorModal(error.error.message)
-            this.saveasDraftloder=false
-          },
-          complete:()=> {
-            this.saveasDraftloder=false
-          },
-        });
-      } else {
-        // No file to upload, directly post the payload
-        this.http.putData(`Expenses_Header/${this.updataid}`, payload).subscribe({
-          next: (data: any) => {
-          
-              this.modalService.dismissAll()
-              this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
-           
-              this.newExpenseForm.reset();
-              (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
-              this.getexpensesheaderbyemployeeid();
-            
-          },
-          error: (error: any) => {
-            console.log("error" + error)
-            this.conformationPopup.openErrorModal(error.error.message)
-            this.saveasDraftloder=false
+          // Now post the updated payload
+          return this.http.putData(`Expenses_Header/${this.updataid}`, payload);
+        })
+      ).subscribe({
+        next: (data: any) => {
 
-          },
-          complete:()=> {
-            this.saveasDraftloder=false
-          },
-        });
-      }
-   
+          this.modalService.dismissAll()
+          this.newExpenseForm.reset();
+          (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+          this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
+
+          this.getexpensesheaderbyemployeeid();
+          // Call the get function after posting
+
+        },
+        error: (error: any) => {
+          console.log('errror' + error)
+          this.conformationPopup.openErrorModal(error.error.message)
+          this.saveasDraftloder = false
+        },
+        complete: () => {
+          this.saveasDraftloder = false
+        },
+      });
+    } else {
+      // No file to upload, directly post the payload
+      this.http.putData(`Expenses_Header/${this.updataid}`, payload).subscribe({
+        next: (data: any) => {
+
+          this.modalService.dismissAll()
+          this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
+
+          this.newExpenseForm.reset();
+          (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+          this.getexpensesheaderbyemployeeid();
+
+        },
+        error: (error: any) => {
+          console.log("error" + error)
+          this.conformationPopup.openErrorModal(error.error.message)
+          this.saveasDraftloder = false
+
+        },
+        complete: () => {
+          this.saveasDraftloder = false
+        },
+      });
+    }
+
   }
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
@@ -465,9 +491,9 @@ export class DraftsExpensesComponent {
   getexpensesheaderbyemployeeid(): void {
     const cleanSearchQuery = this.searchTerm || ''
     this.subscription = this.http
-      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Draft&searchQuery=${cleanSearchQuery}`, ).subscribe({
+      .getData(`v2/Expenses_Header/gettotalamount?EmployeeId=${this.empinfo.employeeId}&status=Draft&searchQuery=${cleanSearchQuery}`,).subscribe({
         next: (data: any) => {
-          this.expenesEmplyeedata.next(data) 
+          this.expenesEmplyeedata.next(data)
 
         }, error(err) {
           console.log("expensesheadererror", err)
@@ -497,7 +523,7 @@ export class DraftsExpensesComponent {
     // Ensure that the expenses array is populated
     const expensesArray = this.expense.getValue()
 
-    const expenseIdToFind = data.expenseitem[0].expenseId; 
+    const expenseIdToFind = data.expenseitem[0].expenseId;
 
     this.matchingExpense = expensesArray.find(exp => exp.expenseId === expenseIdToFind);
     console.log(this.matchingExpense)
@@ -505,7 +531,7 @@ export class DraftsExpensesComponent {
     console.log('Matching Expense:', this.matchingExpense);
     this.newExpenseForm.patchValue({
       expensesTitle: data.expenses_Title,
-      approvalemail: this.emails.find((email:any) => email.value === data.approverEmail),
+      approvalemail: this.emails.find((email: any) => email.value === data.approverEmail),
       // expense: matchingExpense ? matchingExpense.expenseId : null,
       additional_details: data.additional_details
     });
@@ -576,7 +602,7 @@ export class DraftsExpensesComponent {
   }
 
   onViewAttachement(url: any) {
-    if (url.endsWith('jpg') || url.endsWith('png') || url.endsWith('jpeg') ) {
+    if (url.endsWith('jpg') || url.endsWith('png') || url.endsWith('jpeg')) {
       this.subscription = this.http
         .DownloadDataWithQuery('FileSystem/Downloadfile', url)
         .subscribe({
@@ -608,15 +634,15 @@ export class DraftsExpensesComponent {
     this.opendeletModal(this.deleteconformation)
 
   }
-  
+
   removeExpense() {
     this.expenseItems.removeAt(this.removeindex);
     this.calculateTotalExpensesAmount();
     // this.modalService.dismissAll()
     this.conformationPopup.openSuccessModal("Expense item deleted successfully")
-   
+
   }
- 
+
 
 
   ngOnDestroy(): void {

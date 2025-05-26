@@ -220,7 +220,14 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="subject"
-                                placeholder="Please enter subject" pattern="^\S.*" [maxlength]="50" />
+                                placeholder="Please enter subject" [maxlength]="50" />
+                                  <div
+                                *ngIf=" itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
+                                <div class="error-msg">{{'Subject is required' | translate}}</div>
+                            </div>
+                            <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50
+                            </div>
+                          
                         </div>
                         <div
                             *ngIf="itSupportForm.get('subject')?.hasError('required') && itSupportForm.get('subject')?.touched">
@@ -238,14 +245,17 @@
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="description" pattern="^\S.*"
                             [maxlength]="250" placeholder="Please enter description"></textarea>
-                            <div
-                        *ngIf="itSupportForm.get('description')?.hasError('required') && itSupportForm.get('description')?.touched">
-                        <div class="error-msg">{{ 'Description is required' | translate }}</div>
-                    </div>
-                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250
+                             <div *ngIf="itSupportForm.get('description')?.invalid
+                     && itSupportForm.get('description')?.touched">
+                            <div class="error-msg ">{{'Description is required' | translate}}</div>
                         </div>
+                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250
+
+                        </div>
+                       
+
                     </div>
-                    
+
                 </div>
 
                 <div class="custom-modal-footer">

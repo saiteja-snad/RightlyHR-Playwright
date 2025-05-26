@@ -14,25 +14,23 @@ export class MyInfoPersonalTabsComponent implements OnInit {
   filteredTabs: any[] = [];
   columnsPerRow = 3;
   navTabs: any[] = [];
- 
-  constructor(public rbac: RbacService,public readonly router: Router) { }
+
+  constructor(public rbac: RbacService, public readonly router: Router) { }
 
   ngOnInit(): void {
- 
-    this.navTabs=[
-      { label: 'Basic Information', link: '/myinfo/personal/basic-info',icon:'images/basicinfo.png', permission: { feature: 'My Info Basic Information', action: 'view' } },
-       { label: 'Address Details', link: '/myinfo/personal/address-info',icon:'images/address.png',permission: { feature: 'My Info Address Details', action: 'view' } },
-       { label: 'Contact Details', link: '/myinfo/personal/contact-details',icon:'/images/contact-info 1.png',permission: { feature: 'My Info Contact Details', action: 'view' } },
-       { label: 'Emergency Contact Details', link: '/myinfo/personal/emergency-contact-details', icon:'/images/ambulance.png', permission: { feature: 'My Info Emergency Contact Details', action: 'view' } },
-       { label: 'Education Details', link: '/myinfo/personal/education-details',icon:'/images/education 1.png',permission: { feature: 'My Info Education Details', action: 'view' } },
-       { label: 'Identity Details', link: '/myinfo/personal/identity-details',icon:'/images/identity-verification.png',permission: { feature: 'My Info Identity Details', action: 'view' } },
-       { label: 'Family Details', link: '/myinfo/personal/family-details', icon:'images/family.png',permission: { feature: 'My Info Family Details', action: 'view' } },
-       { label: 'Bank Details', link: '/myinfo/personal/bank-details',icon:'/images/atm-card.png',permission: { feature: 'My Info Bank Details', action: 'view' } },
-       { label: 'Visa Details', link: '/myinfo/personal/visa-details',icon:'/images/visa.png', permission: { feature: 'My Info Visa Details', action: 'view' } },
-        { label: 'Team Members', link: '/myinfo/personal/team-members', icon: '/images/team-members.png', permission: { feature: 'My Info Team Members Tab', action: 'view' } }
-     ];
-     this.filterTabsByRbac();
-   
+    this.navTabs = [
+      { label: 'Basic Information', link: '/myinfo/personal/basic-info', icon: 'images/basicinfo.png', permission: { feature: 'My Info Basic Information', action: 'view' } },
+      { label: 'Address Details', link: '/myinfo/personal/address-info', icon: 'images/address.png', permission: { feature: 'My Info Address Details', action: 'view' } },
+      { label: 'Contact Details', link: '/myinfo/personal/contact-details', icon: '/images/contact-info 1.png', permission: { feature: 'My Info Contact Details', action: 'view' } },
+      { label: 'Emergency Contact Details', link: '/myinfo/personal/emergency-contact-details', icon: '/images/ambulance.png', permission: { feature: 'My Info Emergency Contact Details', action: 'view' } },
+      { label: 'Education Details', link: '/myinfo/personal/education-details', icon: '/images/education 1.png', permission: { feature: 'My Info Education Details', action: 'view' } },
+      { label: 'Identity Details', link: '/myinfo/personal/identity-details', icon: '/images/identity-verification.png', permission: { feature: 'My Info Identity Details', action: 'view' } },
+      { label: 'Family Details', link: '/myinfo/personal/family-details', icon: 'images/family.png', permission: { feature: 'My Info Family Details', action: 'view' } },
+      { label: 'Bank Details', link: '/myinfo/personal/bank-details', icon: '/images/atm-card.png', permission: { feature: 'My Info Bank Details', action: 'view' } },
+      { label: 'Visa Details', link: '/myinfo/personal/visa-details', icon: '/images/visa.png', permission: { feature: 'My Info Visa Details', action: 'view' } },
+      { label: 'Team Members', link: '/myinfo/personal/team-members', icon: '/images/Team-icon.png', permission: { feature: 'My Info Team Members Tab', action: 'view' } }
+    ];
+    this.filterTabsByRbac();
   }
 
   filterTabsByRbac(): void {
@@ -44,6 +42,7 @@ export class MyInfoPersonalTabsComponent implements OnInit {
       return this.rbac.allowedToAccess(permissionString);
     });
   }
+
   navigateToAccessedRoute(link: string): void {
     this.router.navigateByUrl(link);
   }

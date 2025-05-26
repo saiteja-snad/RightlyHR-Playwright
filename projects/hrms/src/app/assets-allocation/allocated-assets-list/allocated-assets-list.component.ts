@@ -14,7 +14,6 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
-
 @Component({
   selector: 'app-allocated-assets-list',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NoDataFoundComponent, Select, PaginatorModule, DropdownModule, DataLoaderContentComponent],
@@ -22,6 +21,7 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
   styleUrl: './allocated-assets-list.component.scss',
   providers: [DatePipe]
 })
+
 export class AllocatedAssetsListComponent {
   datesShouldNotBeEqual = false
   subscription!: Subscription;

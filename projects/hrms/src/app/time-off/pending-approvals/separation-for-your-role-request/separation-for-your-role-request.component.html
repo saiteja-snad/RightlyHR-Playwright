@@ -387,7 +387,7 @@
                     <select class="form-select custom-select" aria-label="Default select example" id="holdsalary"
                         #issalaryhold="ngModel" [(ngModel)]="selectedSpRequestData.spsalaryhold" name="holdsalary" (change)="resetNoticePeriod()"
                         required>
-                        <option [ngValue]="undefined" disabled>Select</option>
+                        <option [ngValue]="null" disabled>Select</option>
                         <option [ngValue]="true">Yes</option>
                         <option [ngValue]="false">No</option>
                     </select>
@@ -682,7 +682,7 @@
 <ng-template #rejectconfirmationpopup let-model>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">Are you sure you want to cancel?</p>
         </div>
         <div class="custom-modal-footer">

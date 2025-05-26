@@ -197,7 +197,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to Approve?' | translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to approve this request?' | translate}}</p>
     </div>
     <form autocomplete="off" [formGroup]="recallAcceptForm" (ngSubmit)="handleAccept()">
       <div class="custom-main-popup-content">
@@ -218,8 +218,8 @@
         </div>
       </div>
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();recallAcceptForm.reset()">{{'Cancel'| translate}}</button>
+        <button type="button" class="custom-btn btn-secondary"
+          (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="recallAcceptForm.invalid || isLoading">@if
           (!isLoading) { {{ 'Approve' | translate }} } @else {
             <div class="button-loader-content">
@@ -263,8 +263,8 @@
       </div>
 
       <div class="custom-modal-footer">
-        <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();rejectSeparationForm.reset()">{{'Cancel' | translate}}</button>
+        <button type="button" class="custom-btn btn-secondary"
+         (click)="openModal(rejectconfirmationpopup)">{{'Cancel' | translate}}</button>
         <button type="submit" class="custom-btn btn-primary" [disabled]="rejectSeparationForm.invalid || isLoading">
           @if (!isLoading) {
           {{ 'Reject' | translate }}
@@ -310,7 +310,7 @@
       </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary"
-          (click)="modal.dismiss();recallAcceptFormForProcess.reset()">{{'Cancel'| translate}}</button>
+          (click)="openModal(rejectconfirmationpopup)">{{'Cancel'| translate}}</button>
         <button type="submit" class="custom-btn btn-primary"
           [disabled]="recallAcceptFormForProcess.invalid || isLoading">
           @if (!isLoading) {
@@ -325,4 +325,33 @@
       </div>
     </form>
   </div>
+</ng-template>
+
+<!--confirmation Model-->
+<ng-template #confirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="resetForm()">Yes</button>
+        </div>
+    </div>
+</ng-template>
+
+<!--reject confirmation Model-->
+<ng-template #rejectconfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="button" class="custom-btn btn-primary" (click)="close()">Yes</button>
+        </div>
+    </div>
 </ng-template>

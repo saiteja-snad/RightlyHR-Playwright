@@ -158,7 +158,6 @@ export class EmployeOffBoardingComponent {
     })
   }
   postOffBoardingDetails() {
-    debugger
     if (this.offBoardingForm.valid) {
       const lastDateControl = this.offBoardingForm.get('lastdate');
       if (lastDateControl) {

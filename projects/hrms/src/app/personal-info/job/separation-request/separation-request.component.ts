@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { DropdownModule } from 'primeng/dropdown';
@@ -54,14 +54,14 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-
     this.getonboardPeriodData();
     this.formInitialization();
     this.getEmpInfoFromRoute();
   }
 
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
-    return this.permissionRouteService.canAccessField(action, permission);
+    const value = this.permissionRouteService.canAccessField(action, permission);
+    return value;
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
@@ -79,6 +79,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       this.getNodueClearance();
     }
   }
+
   formInitialization() {
     this.recallreason = this.fb.group({
       recallReason: [null, [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
@@ -87,37 +88,81 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       earlyReleivingDate: [null, [Validators.required]],
       earlyReleivingReason: [null, [Validators.required, Validators.maxLength(250), Validators.pattern(/^(?!\s).*$/)]],
     });
+    // this.profileForm = this.fb.group({
+    //   emails: ['', [Validators.required, Validators.email]],
+    //   noduerequestedemails: this.fb.array([]),
+    // });
+
     this.profileForm = this.fb.group({
-      emails: ['', [Validators.required, Validators.email]],
-      noduerequestedemails: this.fb.array([]),
+      emails: ['', [Validators.required, Validators.email, this.duplicateEmailValidator]],
+      noduerequestedemails: this.fb.array([])
     });
   }
 
-  //function to open the modal
-  openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  get formemailsfornodue(): FormArray {
+    return this.profileForm.get('noduerequestedemails') as FormArray;
+  }
+
+  addAlias() {
+    this.formemailsfornodue.push(
+      this.fb.control('', [Validators.required, Validators.email, this.duplicateEmailValidator])
+    );
+  }
+
+  openModallg(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static', size:'lg' });
   }
 
   removeSection(index: number) {
     this.formemailsfornodue.removeAt(index);
   }
 
-  get formemailsfornodue() {
-    return this.profileForm.get('noduerequestedemails') as FormArray;
+  duplicateEmailValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    if (!control?.parent) return null;
+
+    const form = control.parent;
+    const mainEmailControl = form.root.get('emails');
+    const formArray = form.root.get('noduerequestedemails') as FormArray;
+
+    if (!mainEmailControl || !formArray) return null;
+
+    const allEmails = [
+      mainEmailControl.value?.toLowerCase().trim(),
+      ...formArray.controls.map(c => c.value?.toLowerCase().trim())
+    ].filter(Boolean);
+
+    const currentEmail = control.value?.toLowerCase().trim();
+
+    const isDuplicate = allEmails.filter(email => email === currentEmail).length > 1;
+
+    return isDuplicate ? { duplicate: true } : null;
+  };
+
+  //function to open the modal
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
+
+  // removeSection(index: number) {
+  //   this.formemailsfornodue.removeAt(index);
+  // }
+
+  // get formemailsfornodue() {
+  //   return this.profileForm.get('noduerequestedemails') as FormArray;
+  // }
 
   // Convenience getter for the emails field
   get emails() {
     return this.profileForm.get('emails');
   }
 
-  addAlias() {
-    this.formemailsfornodue.push(
-      this.fb.control('', [Validators.required, Validators.email])
-    );
-  }
+  // addAlias() {
+  //   this.formemailsfornodue.push(
+  //     this.fb.control('', [Validators.required, Validators.email])
+  //   );
+  // }
 
-  closeBtn= false;
+
   requestNoDue(f: FormGroup) {
     this.isLoading = true;
     const noduereq = {
@@ -127,7 +172,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     };
     this.subscription = this.http.postdata('NoDueClearanceForm', noduereq).subscribe({
       next: (data: any) => {
-        this.closeBtn= true;
+         this.isLoading = false;
         this.profileForm.reset();
         this.formemailsfornodue.clear();
         this.modalService.dismissAll();
@@ -135,7 +180,6 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         this.conformationPopup.openSuccessModal('No Due Request Raised Successfully');
       },
       error: (reason: any) => {
-        this.closeBtn= false;
         this.conformationPopup.openErrorModal('reason.error.Message');
         const modalElement = document.getElementById('errorhide');
       },
@@ -198,15 +242,26 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     this.subscription = this.http.getData(`NoDueClearanceForm/getByEmployeeId/${employeeId}`).subscribe({
       next: (data: any) => {
         console.log(data);
-
         this.nodueclearancedetails = data;
       }
     })
   }
+
   shouldShowButton(date: string): boolean {
+    console.log(date)
     let lastworkingdate = date;
     const shouldShow = (this.isLastWorkingDate(lastworkingdate));
     return shouldShow;
+  }
+
+  shouldShowStatusBasedButton(): boolean {
+    const match = this.separationDetails?.some((detail: { status: string }) => {
+      const status = detail.status?.toLowerCase().trim();
+      console.log("Checking status:", status);
+      return status === 'processed' || status === 'early relieving processed';
+    });
+    console.log("Status match found?", match);
+    return match ?? false;
   }
 
   isLastWorkingDate(lastWorkingDate: string): boolean {
@@ -240,7 +295,8 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         if (data) {
           this.isDataLoaded = false;
-          this.separationDetails= data;
+          this.separationDetails = data;
+          this.shouldShowStatusBasedButton();
           console.log(this.separationDetails)
           this.getSeparationDetails.next(data);
           this.substatus = this.getSeparationDetails.value.map(

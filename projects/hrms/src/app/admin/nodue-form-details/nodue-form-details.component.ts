@@ -34,12 +34,15 @@ export class NodueFormDetailsComponent implements OnInit,OnDestroy {
       }
     });
   }
+
   ngOnInit(): void {
- 
+   const noDueUSer = JSON.parse(localStorage.getItem('no-due-data') || '');
+    this.getEmployeeId(noDueUSer)
   }
     //function to go back
     back(){
       this.modalService.dismissAll();
+      localStorage.removeItem('no-due-data');
       this.location.back()
     }
     //function to get employee by id
@@ -194,8 +197,8 @@ FormDownload() {
             this.isLoading=false;
             this.modalService.dismissAll();
             this.back();
+            localStorage.removeItem('no-due-data');
             this.conformationPopup.openSuccessModal("No due clearance submitted successfully")
-       
           },
           error: (reason: any) => {
             this.isLoading=false;

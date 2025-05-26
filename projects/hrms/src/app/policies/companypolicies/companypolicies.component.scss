@@ -4,6 +4,10 @@
     overflow: auto;
 }
 
+.custom-table-content{
+    height: calc(100dvh - 13rem);
+}
+
 .modal-image {
     width: inherit !important;
     max-height: 60vh;

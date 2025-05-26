@@ -3,7 +3,6 @@
     <!-- Header -->
     <div class="component-header">Reports</div>
 
-    <div>
       <form autocomplete="off" [formGroup]="permissionReportForm" (ngSubmit)="generatePermissionReport()">
         <div class="d-flex align-items-center gap-3">
           @if(rbac.allowedToAccess('Permission Report - Generate.view')){
@@ -87,7 +86,6 @@
           </div>
         </div>
       </form>
-    </div>
   </div>
 
   <!--Module Information-->
@@ -96,18 +94,18 @@
   </div>
 
   <div class="d-flex gap-3 w-100">
-    <div class="custom-component-left-content">
+    <div class="component-left-tabs-container">
       <app-attandace-report-tabs />
     </div>
-    <div class="custom-component-right-content">
 
+    <div class="component-right-content">
       @if (isLoading) {
       <div class="custom-compoent-data-loader">
         <app-data-loader-content />
       </div>
       }@else {
       <div class="custom-table-content">
-        <table id="leaveReportTable" class="content w-100">
+        <table id="leaveReportTable" class="w-100">
           <thead>
             <tr>
               <th>Employee ID</th>
@@ -131,14 +129,14 @@
             @else {
             @for (record of filteredPermissionData; track $index) {
             <tr>
-              <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-              <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-              <td class="td-center">{{ record.department ?? '-' }}</td>
-              <td class="td-center">{{ record.teamManager ?? '-' }}</td>
-              <td class="td-center">{{ record.location ?? '-' }}</td>
-              <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-              <td class="td-center">{{ record.utilizedCount ?? '-' }}</td>
-              <td class="td-center">{{record.totalDuration ?? '-' }}</td>
+              <td>{{ record.fusionEmpId ?? '-' }}</td>
+              <td>{{ record.employeeName ?? '-' }}</td>
+              <td>{{ record.department ?? '-' }}</td>
+              <td>{{ record.teamManager ?? '-' }}</td>
+              <td>{{ record.location ?? '-' }}</td>
+              <td>{{ record.subLocation ?? '-' }}</td>
+              <td>{{ record.utilizedCount ?? '-' }}</td>
+              <td>{{record.totalDuration ?? '-' }}</td>
             </tr>
             }
             }

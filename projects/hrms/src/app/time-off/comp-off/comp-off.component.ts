@@ -136,7 +136,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
       ],
       availing: ['', Validators.required],
       halfType: [''],
-      reason: ['', Validators.required],
+      reason: ['', [Validators.required, Validators.minLength(10)]],
     });
   }
 

@@ -112,6 +112,13 @@ export class PremissionsComponent implements OnInit, OnDestroy {
        },
      });
  }
+
+
+ 
+  cleardata() {
+    this.modalService.dismissAll();
+    this.permissionForm.reset();
+  }
  
   formatDate(date: Date): string {
     const year = date.getFullYear();

@@ -47,7 +47,7 @@
                     <th class="text-center">{{'Approver Comments' | translate}}</th>
                     <th>{{'Applied Date' | translate}}</th>
                     @if(!multiSelect && (rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For You (Comp Off).delete'))){
-                    <th class="text-center">{{'Action(s)' | translate}}</th>
+                    <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">{{'(s)' | translate}}</span></th>
                     }
                     </tr>
                 </ng-template>
@@ -144,16 +144,16 @@
         <form autocomplete="off" [formGroup]="approveForm" (ngSubmit)="handleAccept(approveForm)">
             <div class="custom-main-popup-content">
                 <div class="mb-3">
-                    <label for="comments" class="form-label custom-label mb-2">{{'Comments' | translate}}
+                    <label for="comments" class="form-label custom-label mb-2">{{'Approver Comments' | translate}}
                         <span class="text-danger">*</span></label>
-                    <textarea class="form-control custom-input" id="comments" placeholder="Please provide comments"
+                    <textarea class="form-control custom-input" id="comments" placeholder="Please provide approver comments"
                         formControlName="comments" maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)" ></textarea>
                     <!-- Character counter -->
                     <div class="textarea-count-text">{{ approveForm.get('comments')?.value?.length || 0 }}/250</div>
                     <div class="error-msg"
                         *ngIf="approveForm.get('comments')?.touched && approveForm.get('comments')?.invalid">
-                        <div *ngIf="approveForm.get('comments')?.errors?.['required']">Comments are required</div>
-                        <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Comments cannot exceed 250
+                        <div *ngIf="approveForm.get('comments')?.errors?.['required']">Approver Comments is required</div>
+                        <div *ngIf="approveForm.get('comments')?.errors?.['maxlength']">Approver Comments cannot exceed 250
                             characters</div>
                     </div>
                 </div>
@@ -186,19 +186,19 @@
         <form autocomplete="off" [formGroup]="rejectForm" (ngSubmit)="handleReject(rejectForm)">
             <div class="custom-main-popup-content">
                 <div class="mb-3">
-                    <label for="comments" class="form-label custom-label mb-2">{{"Comments" | translate}}
+                    <label for="comments" class="form-label custom-label mb-2">{{"Reject Reason" | translate}}
                         <span class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="comments"
-                        placeholder="Please provide comments" formControlName="comments"
+                        placeholder="Please provide reject reason" formControlName="comments"
                         maxlength="250" (keydown)="formsValidation.restrictInitialSpace($event)"></textarea>
                     <div class="textarea-count-text">{{ rejectForm.get('comments')?.value?.length || 0 }}/250</div>
                     <div class="error-msg"
                         *ngIf="rejectForm.get('comments')?.touched && rejectForm.get('comments')?.invalid">
                         <div *ngIf="rejectForm.get('comments')?.errors?.['required']">
-                            Comments are required
+                            Reject Reason is required
                         </div>
                         <div *ngIf="rejectForm.get('comments')?.errors?.['maxlength']">
-                            Comments cannot exceed 250 characters
+                            Reject Reason cannot exceed 250 characters
                         </div>
                     </div>
                 </div>

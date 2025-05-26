@@ -12,6 +12,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ICompOff } from '../../comp-off/compoff.modal';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-wfh-cancellation',
@@ -22,7 +23,9 @@ import { ICompOff } from '../../comp-off/compoff.modal';
     DropdownModule,
     DateformatPipe,
     NoDataFoundComponent,
-    DataLoaderContentComponent],
+    DataLoaderContentComponent,
+    TranslateModule
+],
   templateUrl: './wfh-cancellation.component.html',
   styleUrl: './wfh-cancellation.component.scss'
 })

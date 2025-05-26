@@ -190,7 +190,7 @@
                 }
                 @if(selectedSpRequestData.spearlyReliveingDate){
                 <div class="mb-3">
-                    <label>{{'Are you willing to accept an Early Relieving?' | translate}}</label>
+                    <!-- <label>{{'Are you willing to accept an Early Relieving?' | translate}}</label> -->
                     <div class="form-check">
                         <input type="hidden" [value]="selectedSpRequestData.spMangerEarlyreliveingDate ? 
                                       'true' : 'false'" name="isreliving">
@@ -198,7 +198,7 @@
                             [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck" #isaccept="ngModel"
                             (click)="toggleEarly()"
                             (ngModelChange)="extendCondition(selectedSpRequestData.spIsAcceptEarlyrelievingcheck)">
-                        <label class="form-check-label ms-2" for="earlyrelieving">Yes</label>
+                        <label class="form-check-label ms-2" for="earlyrelieving">{{'Are you willing to accept an Early Relieving?' | translate}}</label>
                     </div>
                 </div>
                 }

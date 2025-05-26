@@ -241,6 +241,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
       },
     });
   }
+  
   nodueclearancedetails = [] as any;
   getNodueClearance() {
     let employeeId = parseInt(this.empinfo.employeeId)

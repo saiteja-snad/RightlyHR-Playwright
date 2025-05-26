@@ -199,7 +199,6 @@ export class SeparationForYourRoleRequestComponent {
 
   resetNoticePeriod() {
     this.selectedSpRequestData.noticperiodType = null;
-    
   }
 
   onRowsChange() {
@@ -435,7 +434,7 @@ export class SeparationForYourRoleRequestComponent {
       status: 'Processed',
       comments: this.selectedSpRequestData.comments,
       isAcceptEarly: this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
-      noticePeriodType: this.selectedSpRequestData.noticperiodType,
+      noticePeriodType: this.selectedSpRequestData.noticperiodType.label,
       noticePeriodTypeDays: this.selectedSpRequestData.noticperioddays,
       salaryhold: this.selectedSpRequestData.spsalaryhold,
       meta: this.jsonData,

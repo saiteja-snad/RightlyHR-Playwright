@@ -4,7 +4,7 @@ import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { environment } from '../../../../environments/environment';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { AuthService } from '../../../services/auth.service';
 import { IemployeeDetails } from '../../../Interfaces/job-model';
 import { ReportsService } from '../../../services/reports/reports.service';
@@ -19,15 +19,19 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { OpenModalService } from '../../../services/open-modal.service';
 import { RbacService } from '../../../services/rbac.service';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 @Component({
   selector: 'app-employee-master-data',
-  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent, 
-    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [NgxDaterangepickerBootstrapDirective, FormsModule, DateformatPipe, StandardReportTabsComponent,
+    SelectModule, ReactiveFormsModule, CommonModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './employee-master-data.component.html',
   styleUrl: './employee-master-data.component.scss'
 })
 
 export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   empMasterDataDOJDateRange!: { startDate: Dayjs; endDate: Dayjs } | null;
   subscription!: Subscription
   loggedInUser = {} as IemployeeDetails
@@ -74,7 +78,8 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     private fb: FormBuilder, 
     private http: HttpService,
     private modal: OpenModalService,
-    public rbac: RbacService
+    public rbac: RbacService,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -89,6 +94,8 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
     this.masterDataForm.valueChanges.subscribe(()=>{
       this.disableBtn= true;
     })
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -96,6 +103,24 @@ export class EmployeeMasterDataComponent implements OnInit, OnDestroy {
       dateOfJoining: [null],
       empStatus: [''],
     });
+  }
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/reports/standard-reports/employee-data': MODULE_INFOS.STANDARD_REPORTS_EMPLOYEE_MASTER_DATA_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   //method to get All the reports

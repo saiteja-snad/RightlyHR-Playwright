@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
@@ -18,15 +18,18 @@ import { NgxCountriesDropdownModule } from 'ngx-countries-dropdown';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-trainee-offer-letter',
   imports: [LettersTabComponent, CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule,
-    NgxCountriesDropdownModule, LetterFooterComponent],
+    NgxCountriesDropdownModule, LetterFooterComponent, ModuleInformationComponent],
   templateUrl: './trainee-offer-letter.component.html',
   styleUrl: './trainee-offer-letter.component.scss'
 })
 
 export class TraineeOfferLetterComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   traineeEmpData = {} as any;
   result = {} as any;
@@ -123,13 +126,16 @@ export class TraineeOfferLetterComponent {
   confirmation_Msg: any;
   @ViewChild('approveModal1') approveModal1: any;
   Approvalloader = false;
-
+ issuedDatevalidate:any;
+ startDatevalidate:any;
+ expiryDatevalidate:any;
   constructor(private http: HttpService, private modalService: NgbModal, private fb: FormBuilder, private router: Router,
     private authService: AuthService, private conformationPopup: OpenModalService,) {
     this.initializeForm();
   }
 
   ngOnInit(): void {
+    this.issuedDatevalidate = moment().format('YYYY-MM-DD');
     this.Employeeinfo = JSON.parse(localStorage.getItem('fusionuser') || '{}');
     this.traineeEmpData.mobilePhoneCountryCode = 'India (+91)';
     this.traineeEmpData.title = null;
@@ -145,6 +151,8 @@ export class TraineeOfferLetterComponent {
     this.getAllWorkLocation();
     this.getAuthorityDetails();
     this.getEmployeeIdforReporting();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -182,6 +190,25 @@ export class TraineeOfferLetterComponent {
     });
   }
 
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/admin/letters/trainee-offer-letter': MODULE_INFOS.TRAINEE_OFFER_LETTER_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+
   onclickcheckempidnull(empidValue: any) {
     if (empidValue == "") {
       this.disablebuttonforemployeeid = true
@@ -213,6 +240,7 @@ export class TraineeOfferLetterComponent {
 
   onDateOfJoiningChange() {
     this.traineeEmpData.dateOfJoining = this.employeeForm.get('dateOfJoining')?.value;
+        this.expiryDatevalidate = moment(this.traineeEmpData.dateOfJoining).format('YYYY-MM-DD');
     this.calculateEndDate(this.employeeForm.get('internshipperiod')?.value);
   }
 
@@ -544,6 +572,7 @@ export class TraineeOfferLetterComponent {
 
   isDataPopulated() {
     this.traineeEmpData.offerIssuedDate = this.employeeForm.get('offerSentDate')?.value;
+    this.startDatevalidate = moment(this.traineeEmpData.offerIssuedDate).format('YYYY-MM-DD');
   }
 
   isDataPopulated1() {
@@ -724,8 +753,10 @@ export class TraineeOfferLetterComponent {
         if (res.statusCode == 409) {
           this.conformationPopup.openErrorModal(res.message);
         } else if (res.statusCode == 200) {
-          this.UpdateFieldsToRespectiveTables();
-          this.downLoadDocument(this.result);
+           this.UpdateFieldsToRespectiveTables();
+            setTimeout(() => {
+           this.downLoadDocument(this.result);
+           }, 3000); // wait 1 second (1000ms)
         } else if (res.statusCode == 1002) {
           this.confirmation_Msg = res.message;
           this.data_Storing = this.traineeEmpData;
@@ -1009,11 +1040,14 @@ export class TraineeOfferLetterComponent {
   updateEndDateValidity(): void {
     const offerExpiryDate = moment(this.employeeForm.get('offerExpiryDate')?.value);
     const offerIssuedDate = moment(this.employeeForm.get('offerSentDate')?.value);
+    if(offerIssuedDate){
+    this.expiryDatevalidate = moment(offerIssuedDate).format('YYYY-MM-DD');
+    }
     if (offerExpiryDate && offerIssuedDate) {
-      if (offerExpiryDate <= offerIssuedDate) {
-        this.isExpiryDateValid = false;
-      } else {
+      if (offerExpiryDate >= offerIssuedDate) {
         this.isExpiryDateValid = true;
+      } else {
+        this.isExpiryDateValid = false;
       }
     }
   }

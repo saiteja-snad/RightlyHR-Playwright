@@ -1,11 +1,16 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="component-header-content">
     <div>
       <p class="component-header mb-0">
         <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Inactive Trainees'|
         translate}}
       </p>
     </div>
+  </div>
+
+  <!--Module Information-->
+  <div>
+    <app-module-information [moduleInfo]="moduleinfo" />
   </div>
 
   <!--Input search-->
@@ -15,7 +20,7 @@
       placeholder="Search" aria-label="Username" aria-describedby="basic-addon1">
   </div>
 
-  <div class="custom-table-content custom-content-height16">
+  <div class="custom-table-content">
     @if (!loader) {
     <table class="w-100">
       <thead>
@@ -67,7 +72,6 @@
               <div>-</div>
             </ng-template>
           </td>
-
           <td>
             <ng-container *ngIf="act?.jobDetails; else noData">
               <div *ngFor="let jobDetail of act.jobDetails; let first = first">
@@ -108,7 +112,6 @@
                 </span>
               </div>
             </ng-container>
-
             <ng-template #noData>
               <div>-</div>
             </ng-template>
@@ -117,12 +120,9 @@
         }
         @else{
         <tr>
-          <td>
-            <app-no-data-found />
-          </td>
+          <app-no-data-found />
         </tr>
         }
-
       </tbody>
     </table>
     } @else {

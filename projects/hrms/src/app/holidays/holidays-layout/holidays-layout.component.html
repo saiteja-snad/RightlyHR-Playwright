@@ -1,11 +1,11 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="component-header-content">
         <div>
             <p class="component-header cursor mb-0">Holidays</p>
         </div>
 
         <div class="d-flex gap-2 align-items-center">
-            <label class="form-label custom-label mt-2" for="">Select Year:</label>
+            <label class="form-label custom-label m-0" for="">Select Year:</label>
             <form autocomplete="off" [formGroup]="optionalholidaysform">
                 <div class="custom-p-select-content">
                     <p-select formControlName="selectedYear" [options]="years" placeholder="Select Year"
@@ -14,6 +14,11 @@
                 </div>
             </form>
         </div>
+    </div>
+
+    <!--Module Information-->
+    <div>
+        <app-module-information [moduleInfo]="moduleinfo" />
     </div>
 
     <div>

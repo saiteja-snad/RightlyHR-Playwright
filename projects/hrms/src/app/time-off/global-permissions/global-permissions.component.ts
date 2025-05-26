@@ -6,20 +6,24 @@ import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { RbacService } from '../../services/rbac.service';
 import { GlobalpermissionsPipe } from "../../Pipes/globalpermissions.pipe";
 import { Iglobalpermissions } from './globalpermissions-modal';
 import { AddGlobalPermissionsComponent } from './add-global-permissions/add-global-permissions.component';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-global-permissions',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, ModuleInformationComponent],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })
 
 export class GlobalPermissionsComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   totalRecords = 100
   first: any = 1;
   rows: any = 10;
@@ -42,7 +46,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
-  constructor(private http: HttpService, private modalService: NgbModal, public rbac: RbacService) {
+  constructor(private http: HttpService, private modalService: NgbModal, public rbac: RbacService, public readonly router: Router) {
     // Signal reaction for employee switch
     effect(() => {
       if (this.http.tirggerCountSignal().global) {
@@ -58,6 +62,27 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getAllGlobalPermissions();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/global-permissions': MODULE_INFOS.TIME_OFF_GLOBAL_PERMISSION_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   openAdd() {

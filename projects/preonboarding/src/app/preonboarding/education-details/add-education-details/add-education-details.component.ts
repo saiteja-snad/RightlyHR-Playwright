@@ -64,6 +64,11 @@ startDatevalidate:any
     { validators: [this.DateValidator()] }
   );
   }
+  oncheckdates(value:any){
+    if(value){
+      this.educationForm.get('endDate')?.setValue(null);
+    }
+  }
 //function for the date validation
 DateValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {

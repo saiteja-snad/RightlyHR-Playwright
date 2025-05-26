@@ -5,8 +5,9 @@
         <div class="component-header">Settings</div>
     </div>
 
+    <!--Module Information-->
     <div>
-       <app-module-information/>
+       <app-module-information [moduleInfo]="moduleinfo"/>
     </div>
     
     <!--tabs content-->
@@ -16,9 +17,9 @@
     }
     <!--Content-->
     <div class="employee-fields-main-container d-flex gap-3 w-100">
-        @if (shouldShowSection() && router.url !== '/settings/employee-fields/no-due-clearnce') {
+        @if (shouldShowSection() && router.url !== '/settings/employee-fields/no-due-clearnce' ) {
         <!--sub tabs Content-->
-        <div class="custom-component-left-content">
+        <div class="custom-component-left-content" >
             <div *ngIf="isActive('/settings/employee-fields/personal')">
                 <app-settings-personal-tabs />
             </div>
@@ -26,7 +27,6 @@
             <div *ngIf="isActive('/settings/employee-fields/job')">
                 <app-settings-job-tabs />
             </div>
-
             <div *ngIf="isActive('/settings/employee-fields/manage-shifts')">
                 <app-settings-manage-shits-tabs />
             </div>

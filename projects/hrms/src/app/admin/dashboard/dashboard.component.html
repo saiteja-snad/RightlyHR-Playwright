@@ -1,6 +1,6 @@
 @if(rbac.allowedToAccess('Dashboard.view')){
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="component-header-content">
     @if(this.rbac.allowedToAccess('Dashboard Current Openings.view')
     || this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view' )
     || this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view' )
@@ -27,6 +27,11 @@
       <button type="button" class="custom-btn btn-primary" (click)="generateDocument()">Generate Documents</button>
       }
     </div>
+  </div>
+
+   <!--Module Information-->
+   <div>
+    <app-module-information [moduleInfo]="moduleinfo" />
   </div>
 
   <!--Employee Details card-->

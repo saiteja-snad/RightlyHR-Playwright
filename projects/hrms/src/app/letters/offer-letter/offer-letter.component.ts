@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { jsPDF } from "jspdf";
 import html2canvas from 'html2canvas';
-import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { AbstractControl, FormBuilder, FormGroup, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators ,MinLengthValidator} from '@angular/forms';
+import { filter, Subscription } from 'rxjs';
 import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
 import { HttpService } from '../../services/http.service';
@@ -18,15 +18,19 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
+import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, LettersTabComponent, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule,
-    LettersheaderComponent, DateformatPipe, LetterFooterComponent],
+    LettersheaderComponent, DateformatPipe, LetterFooterComponent, ModuleInformationComponent],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })
 
 export class OfferLetterComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   currentDate = moment();
   isIssuedDateValid = true;
   isExpiryDateValid = true;
@@ -120,7 +124,7 @@ issuedDatevalidate:any;
 startDatevalidate:any;
 expiryDatevalidate:any;
   constructor(private router: Router, private modalService: NgbModal, private fb: FormBuilder, private http: HttpService,
-    private authService: AuthService, private conformationPopup: OpenModalService
+    private authService: AuthService, private conformationPopup: OpenModalService,public formvalidators:FormValidationService
     // private _userAcessService: UserAccessService,
   ) { this.initializeForm(); }
 
@@ -137,6 +141,8 @@ expiryDatevalidate:any;
     this.getEmployeeId();
     this.getAllWorkLocation();
     this.getAuthorityDetails();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   navigateDashboard() {
@@ -163,9 +169,9 @@ expiryDatevalidate:any;
       jobRoleDetails: [{ value: null, disabled: true }],
       esic: [null, Validators.required],
       pf: [null, Validators.required],
-      amount: ['', Validators.required],
+      amount: ['', [Validators.required, Validators.min(0),Validators.maxLength(10),Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       isVariablePay: [null, Validators.required],
-      variablePayAmount: [{ value: null, disabled: true }, Validators.required],
+      variablePayAmount: [{ value: null, disabled: true }, [Validators.required, Validators.min(0),Validators.maxLength(10),Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       locationId: [{ value: null, disabled: true }],
       JobSubLocationName: [{ value: null, disabled: true }],
       offerIssuedDate: ['', Validators.required],
@@ -177,6 +183,25 @@ expiryDatevalidate:any;
     },
       { validators: [this.offerExpiryDateValidator(), this.offerDateofjoiningDateValidator()] } // Add the custom validators here
     );
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/admin/letters/offer-letter': MODULE_INFOS.OFFER_LETTER_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   onclickCTC(Value: any) {
@@ -650,7 +675,7 @@ expiryDatevalidate:any;
     }
     //==============================================================================================================================
     //Calculation conditions for esic contrubution of an employee
-    if (this.prospectiveEmpData.esic == true) {
+    if (this.prospectiveEmpData?.esic?.toString() == 'true') {
       if (Employee.totalGrossSalary <= 21000) {
         Employee.employeeEsi = Math.round(
           Employee.totalGrossSalary * (0.75 / 100)
@@ -703,7 +728,7 @@ expiryDatevalidate:any;
     );
     //calculation for the otherallowances
     Employee.otherAllowances = Math.round(
-      Employee.totalGrossSalary * (10 / 100)
+      Employee.totalGrossSalary * (16 / 100)
     );
     //pfcontribution per annum
     Employee.pfPreAnuum = Math.round(

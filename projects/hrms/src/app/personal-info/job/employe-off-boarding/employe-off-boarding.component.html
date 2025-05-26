@@ -19,7 +19,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="offBoardingForm.get('exit')?.touched && offBoardingForm.get('exit')?.invalid">
-                        Exit Reason is Required
+                        Exit Reason is required
                     </div>
                 </div>
 
@@ -47,7 +47,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="offBoardingForm.get('status')?.touched && offBoardingForm.get('status')?.invalid">
-                        Status is Required
+                        Status is required
                     </div>
                 </div>
 
@@ -78,7 +78,7 @@
 <ng-template #confirmationpopup let-model>
     <div class="result-popup-content" ngbAutofocus>
       <div>
-        <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+        <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
         <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
       </div>
   

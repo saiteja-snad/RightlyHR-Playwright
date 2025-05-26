@@ -3,10 +3,10 @@ import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
@@ -14,15 +14,18 @@ import { LettersheaderComponent } from '../../shared/letters-shared-content/lett
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from './bank-loan.model';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-bank-loan-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent],
   templateUrl: './bank-loan-letter.component.html',
   styleUrl: './bank-loan-letter.component.scss',
   encapsulation:ViewEncapsulation.None
 })
 
 export class BankLoanLetterComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   bankLoanTemplate: any | string | ArrayBuffer | null = null; 
   bankLoanFile!: File;
@@ -62,6 +65,8 @@ export class BankLoanLetterComponent {
     this.getBankLoanTemplate();
     this.getAllActiveEmployees();
     this.getAuthorityDetails();  
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   navigateDashboard() {
@@ -80,6 +85,25 @@ export class BankLoanLetterComponent {
     // this.employeeForm.get('dateofbankloan')?.valueChanges.subscribe((newDate) => {
     //   this.DateValidation();
     // });
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/admin/letters/bank-loan-letter': MODULE_INFOS.BANK_LOAN_LETTER_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   async getBankLoanTemplate() {

@@ -118,7 +118,7 @@
 
       <div class="d-flex gap-3 justify-content-end pt-4">
         <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">
-          {{'Close' | translate}}
+          {{'Cancel' | translate}}
         </button>
         <button type="submit" class="custom-btn btn-primary px-5" [disabled]="policyForm.invalid || !isFormEdited">
           {{'Submit' | translate}}
@@ -132,7 +132,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="/icons/reject.png" alt="delete-icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to close?'|translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to cancel?'|translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>

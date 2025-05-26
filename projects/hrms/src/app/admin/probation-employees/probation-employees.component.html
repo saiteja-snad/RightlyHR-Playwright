@@ -1,12 +1,14 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="component-header-content">
         <div>
             <p class="component-header mb-0">
-                <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Probation Employees'|translate}}
+                <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Probation
+                Employees'|translate}}
             </p>
         </div>
 
-        @if(this.rbac.allowedToAccess('Probation Confirmation Letter.view') || this.rbac.allowedToAccess('Probation Extension Letter.view')){
+        @if(this.rbac.allowedToAccess('Probation Confirmation Letter.view') || this.rbac.allowedToAccess('Probation
+        Extension Letter.view')){
         <div class="dropdown">
             <button type="button" class="custom-btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-plus me-2"></i>{{'Generate Documents'| translate}}
@@ -31,6 +33,11 @@
         }
     </div>
 
+    <!--Module Information-->
+    <div>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </div>
+
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -38,20 +45,18 @@
             placeholder="Search Here" aria-label="Username" aria-describedby="basic-addon1">
     </div>
 
-    <div class="custom-table-content custom-content-height16">
+    <div class="custom-table-content">
         @if (!loader) {
         <table class="w-100">
             <thead>
-                <tr>
-                    <th>{{'Id'|translate}}</th>
-                    <th>{{'Employee Name'|translate}}</th>
-                    <th>{{'Personal Email'|translate}}</th>
-                    <th>{{'Phone Number'|translate}}</th>
-                    <th>{{'Probation Start Date'|translate}}</th>
-                    <th>{{'Probation End Date'|translate}}</th>
-                    <th>{{'Probation Extended Date'|translate}}</th>
-                    <th>{{'Designation'|translate}}</th>
-                </tr>
+                <th>{{'Id'|translate}}</th>
+                <th>{{'Employee Name'|translate}}</th>
+                <th>{{'Personal Email'|translate}}</th>
+                <th>{{'Phone Number'|translate}}</th>
+                <th>{{'Probation Start Date'|translate}}</th>
+                <th>{{'Probation End Date'|translate}}</th>
+                <th>{{'Probation Extended Date'|translate}}</th>
+                <th>{{'Designation'|translate}}</th>
             </thead>
             <tbody>
                 <ng-container *ngIf="(probationemp | probationpipe: searchValue) as filteredData">
@@ -94,7 +99,7 @@
                         </td>
                     </tr>
                     <tr *ngIf="filteredData.length === 0">
-                        <td colspan="9"><app-no-data-found></app-no-data-found></td>
+                        <app-no-data-found></app-no-data-found>
                     </tr>
                 </ng-container>
             </tbody>

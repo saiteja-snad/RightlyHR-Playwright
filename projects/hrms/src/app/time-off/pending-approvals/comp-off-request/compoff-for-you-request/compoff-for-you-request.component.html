@@ -82,6 +82,7 @@
                             </div>
                         </div>
                         <ng-template #compoffcomments>-</ng-template>
+                        
                     </td>
                     <td>{{leave?.entity?.attendanceRequestAppliedDate | dateformat}}</td>
                     @if(!multiSelect && (rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For You (Comp Off).delete'))){

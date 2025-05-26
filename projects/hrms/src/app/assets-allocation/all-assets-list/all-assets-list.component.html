@@ -1,10 +1,11 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" class="form-control custom-input custom-input custom-search-input" placeholder="search Here"
       aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
       aria-describedby="basic-addon1">
   </div>
+
   <ng-container *ngIf="loading; else maincontent">
     <ng-template #loadingSpinner>
       <div class="loader-placeholder-content text-center">
@@ -17,11 +18,9 @@
   </ng-container>
 
   <ng-template #maincontent>
-
     <div class="custom-table-content">
       <table class="w-100">
         <thead>
-          <tr>
             <th>Asset Category</th>
             <th>Asset Sub Category</th>
             <th>Serial Number</th>
@@ -36,12 +35,10 @@
             rbac.allowedToAccess('All Mark as Active Asset.view') || rbac.allowedToAccess('All View Asset Details.view') || rbac.allowedToAccess('All Update Asset Details.view')){
             <th class="text-center">Action(s)</th>
             }
-          </tr>
         </thead>
         <tbody>
           <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
             <tr *ngFor="let asset of assetslist | async">
-
               <td>{{ asset.assetCategory }}</td>
               <td>{{ asset.assetSubCategory }}</td>
               <td>{{ asset.serialNumber }}</td>
@@ -50,7 +47,6 @@
                 <ng-container *ngIf="asset.assignedTo; else unassigned">
                   {{ asset.assignedTo.firstName }}&nbsp;{{asset.assignedTo.middleName }}&nbsp;{{
                   asset.assignedTo.lastName }}
-
                 </ng-container>
                 <ng-template #unassigned>
                   N/A
@@ -164,19 +160,16 @@
 
           <ng-template #noDataTemplate>
             <tr>
-              <td>
-                <app-no-data-found />
-              </td>
+              <app-no-data-found />
             </tr>
           </ng-template>
         </tbody>
       </table>
     </div>
+
     <div class="pagination-content pt-2 w-100">
       <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-
         <div class="d-flex align-items-center gap-3 p-2">
-
           <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
             (ngModelChange)="onRowsChange()">
             <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
@@ -185,7 +178,6 @@
           <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
             totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
         </div>
-
         <!-- Pagination -->
         <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
           (onPageChange)="onPageChange($event)"></p-paginator>
@@ -196,7 +188,6 @@
 
 <ng-template #addassetes let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
-
     <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
         <p class="popup-heading mb-0">Update an Asset</p>
@@ -462,6 +453,7 @@
 
   </div>
 </ng-template>
+
 <!-- update close button click pop up -->
 <ng-template #confirmatideleteonpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
@@ -498,6 +490,7 @@
     </div>
   </div>
 </ng-template>
+
 <!-- dELETE ASSETES -->
 <ng-template #deleteasstes let-model>
   <div class="custom-main-popup-container" ngbAutofocus>
@@ -785,7 +778,6 @@
       </form>
     </div>
   </div>
-
 </ng-template>
 
 <ng-template #updateconformation let-model>
@@ -804,7 +796,6 @@
     </div>
   </div>
 </ng-template>
-
 
 <ng-template #tranferaerasset let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
@@ -850,6 +841,7 @@
               Location is required.
             </div>
           </div>
+
           <div class="col-md-6 mb-3">
             <label for="subLocation" class="form-label custom-label mb-2">Transfer Sub Location<span
                 class="error-msg">*</span></label>
@@ -899,10 +891,8 @@
         </div>
       </form>
     </div>
-
   </div>
 </ng-template>
-
 
 <ng-template #tranferconformation let-model>
   <div class="result-popup-content" ngbAutofocus>

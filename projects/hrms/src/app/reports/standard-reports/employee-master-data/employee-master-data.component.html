@@ -78,7 +78,7 @@
           <table id="employeeMasterData" class="content w-100">
             <thead>
               <tr>
-                <th>ID</th>
+                <!-- <th>ID</th> -->
                 <th>Employee ID</th>
                 <th>Salutation</th>
                 <th>First Name</th>
@@ -156,7 +156,7 @@
                 <!-- <th>Employment Effective Date</th> -->
                 <th>Job Type</th>
                 <th>Grade Name</th>
-                <th>Job Grade</th>
+                <!-- <th>Job Grade</th> -->
                 <th>Job Effective Date</th>
                 <th>Job Role</th>
                 <th>Department</th>
@@ -186,7 +186,7 @@
               @else {
               @for (emp of employeeMasterData; track $index) {
               <tr>
-                <td>{{ emp.employeeId || '-' }}</td>
+                <!-- <td>{{ emp.employeeId || '-' }}</td> -->
                 <td>{{ emp.fusionEmpId || '-' }}</td>
                 <td>{{ emp.title || '-' }}</td>
                 <td>{{ emp.firstName || '-' }}</td>
@@ -264,7 +264,7 @@
                 <!-- <td>{{ emp.employmentEffectiveDate ? (emp.employmentEffectiveDate | dateformat) : '-' }}</td> -->
                 <td>{{ emp.jobType || '-' }}</td>
                 <td>{{ emp.gradeName || '-' }}</td>
-                <td>{{ emp.jobGrade || '-' }}</td>
+                <!-- <td>{{ emp.jobGrade || '-' }}</td> -->
                 <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | dateformat) : '-' }}</td>
                 <td>{{ emp.jobRole || '-' }}</td>
                 <td>{{ emp.departmentName || '-' }}</td>

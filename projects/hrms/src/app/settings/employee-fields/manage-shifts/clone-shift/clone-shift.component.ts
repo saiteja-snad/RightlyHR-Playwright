@@ -87,8 +87,8 @@ export class CloneShiftComponent {
   initializeForm() {
     this.shiftForm = this.fb.group({
       year: [new Date().getFullYear(), Validators.required],
-      location: ['', Validators.required],
-      subLocation: ['', Validators.required],
+      location: [null, Validators.required],
+      subLocation: [null, Validators.required],
       shifts: this.fb.array([this.createShift()])
     });
   }
@@ -127,7 +127,7 @@ export class CloneShiftComponent {
         });
         this.shiftDATA = '';
         this.selectedLocationId = data.locationId;
-        this.onLocationChange(data.locationId); // to load sublocations
+      //  this.onLocationChange(data.locationId); // to load sublocations
         const shiftArray = this.shiftForm.get('shifts') as FormArray;
         shiftArray.clear(); // remove any existing default shift
         data.orgShiftsItems.forEach((item: any) => {
@@ -254,23 +254,29 @@ export class CloneShiftComponent {
   }
 
   // location changes
-  onLocationChange(selectedLocationId: number | null) {
-    const subLocationControl = this.shiftForm.get('subLocation');
-    if (selectedLocationId) {
-      subLocationControl?.enable();
-      const selectedLocation = this.locations.find(loc => loc.id === selectedLocationId);
-      this.subLocations = selectedLocation?.subLocations || [];
-      // this.selectdata = this.subLocations.find(loc => loc.id === this.shiftDATA);
-      this.selectdata = this.subLocations.find(loc => loc.id === this.selectedLocationId);
-      if (this.selectdata) {
-        subLocationControl?.setValue(this.selectdata.id);
-      }
+onLocationChange(selectedLocationId: number | null) {
+  const subLocationControl = this.shiftForm.get('subLocation');
+  subLocationControl?.markAsTouched();
+  subLocationControl?.markAsDirty(); // Add this line
+
+  if (selectedLocationId) {
+    subLocationControl?.enable();
+    const selectedLocation = this.locations.find(loc => loc.id === selectedLocationId);
+    this.subLocations = selectedLocation?.subLocations || [];
+
+    this.selectdata = this.subLocations.find(loc => loc.id === this.selectedLocationId);
+    if (this.selectdata) {
+      subLocationControl?.setValue(this.selectdata.id);
     } else {
-      subLocationControl?.disable();
-      this.subLocations = [];
+      subLocationControl?.setValue(null); // Reset if no default found
     }
+
+  } else {
+    subLocationControl?.disable();
+    subLocationControl?.setValue(null); // Clear value
+    this.subLocations = [];
   }
-  
+}
   // sublocation
   sublocation: any;
   geAllLocations() {
@@ -285,10 +291,13 @@ export class CloneShiftComponent {
         );
         if (sublocationdata) {
           this.matchedSubLocation = sublocationdata;
-          if (this.matchedSubLocation) {
+          if (this.matchedSubLocation) {           
             this.shiftForm.patchValue({ subLocation: this.matchedSubLocation.id });
             this.matchedSubLocation = this.matchedSubLocation.jobSubLocationName;
+                   
           }
+            
+          
         }
       },
       error: (reason: any) => console.log(reason)

@@ -19,9 +19,9 @@
                 <th>Assignee</th>
                 <th>Status</th>
                 <th>Updated Date</th>
-                @if(rbac.allowedToAccess('Solved Tickets Tab.update')){
+                <!-- @if(rbac.allowedToAccess('Solved Tickets Tab.update')){
                 <th>Action(s)</th>
-                }
+                } -->
             </thead>
             <tbody>
                 <ng-container *ngIf="(tickets | itsupport: searchValue) as filteredTickets">
@@ -47,7 +47,7 @@
                         <td>{{ticket.assigneeName?.trim()?.length ? ticket.assigneeName.trim() : '-'}}</td>
                         <td>{{ticket.ticketStatus || '-'}}</td>
                         <td>{{ticket.updatedAt | dateformat}}</td>
-                        @if(rbac.allowedToAccess('Solved Tickets Tab.update')){
+                        <!-- @if(rbac.allowedToAccess('Solved Tickets Tab.update')){
                         <td class="text-center">
                             <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
@@ -62,7 +62,7 @@
                                 </ul>
                             </div>
                         </td>
-                        }
+                        } -->
                     </tr>
                     <tr *ngIf="filteredTickets.length === 0">
                         <app-no-data-found></app-no-data-found>

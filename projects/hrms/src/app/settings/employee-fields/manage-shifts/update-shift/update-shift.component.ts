@@ -41,21 +41,22 @@ export class UpdateShiftComponent {
   Status: any;
   hoildaylist: any;
   sublocatiodis = false;
-
+  disableupdate = true;
   constructor(
     private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private http: HttpService,
     private conformationPopup: OpenModalService, private modalService: NgbModal) { }
-
-  ngOnInit(): void {
-    this.initializeForm();
-    this.yearsList();
-    this.geAllLocations();
-    this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
-    const shiftId = this.route.snapshot.paramMap.get('id');
-    if (shiftId) {
-      this.getShiftById(shiftId);
-    }
+    
+ngOnInit(): void {
+  this.initializeForm();
+  this.yearsList();
+  this.Employeeinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+  const shiftId = this.route.snapshot.paramMap.get('id');
+  if (shiftId) {
+    this.geAllLocations(shiftId); // Pass ID to be handled after locations are ready
+  } else {
+    this.geAllLocations(); // No shift to patch, just load locations
   }
+}
 
   yearsList() {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
@@ -100,9 +101,9 @@ export class UpdateShiftComponent {
 
   initializeForm() {
     this.shiftForm = this.fb.group({
-      year: ['', Validators.required],
-      location: ['', Validators.required],
-      subLocation: ['', Validators.required],
+      year: [null, Validators.required],
+      location: [null, Validators.required],
+      subLocation: [null, Validators.required],
       id: [this.route.snapshot.paramMap.get('id')],
       shifts: this.fb.array([this.createShift()])
     });
@@ -139,45 +140,54 @@ export class UpdateShiftComponent {
   }
 
   getShiftById(id: string) {
-    this.http.getData(`orgShifts/getbyid/${id}`).subscribe({
-      next: (data: any) => {
-        this.shiftForm.patchValue({
-          year: data.applicableyear,
-          location: data.locationId,
-          subLocation: data.subLocationId,
-          id: data.id,
-        });
-        this.updategetdata = data;
-        this.shiftDATA = data.subLocationId;
-        this.selectedLocationId = data.locationId;
-        this.onLocationChange(data.locationId); // to load sublocations
-        const shiftArray = this.shiftForm.get('shifts') as FormArray;
-        shiftArray.clear(); // remove any existing default shift
-        data.orgShiftsItems.forEach((item: any) => {
-          shiftArray.push(this.fb.group({
-            shiftCode: [item.code, Validators.required],
-            shiftName: [item.shiftName, Validators.required],
-            color: [item.color],
-            id: [item.id],
-            headerID: [data.id],
-            startTime: [item.shiftStartTime, Validators.required],
-            endTime: [item.shiftEndTime, Validators.required],
-            gracePeriod: [item.allowedGracePeriod, Validators.required],
-            latesAllowed: [item.latesAllowed, Validators.required],
-            breakTime: [item.allowedBreakTime, Validators.required],
-            halfDayMinHrs: [item.halfDayMinHrs, Validators.required],
-            fullDayMinHrs: [item.fullDayMinHrs, Validators.required],
-          }));
-        });
-        this.shiftid = data.orgShiftsItems.forEach((items: any) => {
-          console.log('this.shiftid ', items.id);
-        });
-      },
-      error: (err: any) => console.error('Error loading shift data', err)
-    });
-  }
+  this.http.getData(`orgShifts/getbyid/${id}`).subscribe({
+    next: (data: any) => {
+      this.shiftForm.patchValue({
+        year: data.applicableyear,
+        location: data.locationId,
+        id: data.id,
+      });
 
-  //  call update time
+      this.updategetdata = data;
+      this.shiftDATA = data.subLocationId;
+      this.selectedLocationId = data.locationId;
+
+      const shiftArray = this.shiftForm.get('shifts') as FormArray;
+      shiftArray.clear();
+      data.orgShiftsItems.forEach((item: any) => {
+        shiftArray.push(this.fb.group({
+          shiftCode: [item.code, Validators.required],
+          shiftName: [item.shiftName, Validators.required],
+          color: [item.color],
+          id: [item.id],
+          headerID: [data.id],
+          startTime: [item.shiftStartTime, Validators.required],
+          endTime: [item.shiftEndTime, Validators.required],
+          gracePeriod: [item.allowedGracePeriod, Validators.required],
+          latesAllowed: [item.latesAllowed, Validators.required],
+          breakTime: [item.allowedBreakTime, Validators.required],
+          halfDayMinHrs: [item.halfDayMinHrs, Validators.required],
+          fullDayMinHrs: [item.fullDayMinHrs, Validators.required],
+        }));
+      });
+
+      // ✅ Wait for locations to be ready and then patch subLocation
+      const selectedLocation = this.locations.find(loc => loc.id === this.selectedLocationId);
+      if (selectedLocation) {
+        this.subLocations = selectedLocation.subLocations || [];
+        const matchedSub = this.subLocations.find(sub => sub.id === this.shiftDATA);
+        if (matchedSub) {
+          this.shiftForm.patchValue({ subLocation: matchedSub.id });
+        } else {
+          this.disableupdate = false;
+        }
+      }
+    },
+    error: (err: any) => console.error('Error loading shift data', err)
+  });
+}
+  // end get shift by id
+ 
   updateshift(f: FormGroup) {
     if (this.shiftForm.valid) {
       const formValue = this.shiftForm.value;
@@ -293,47 +303,86 @@ export class UpdateShiftComponent {
   }
   
   // location change
-  onLocationChange(selectedLocationId: number | null) {
-    const subLocationControl = this.shiftForm.get('subLocation');
-    if (selectedLocationId) {
+
+// onLocationChange(selectedLocationId: number | null) {
+//   const subLocationControl = this.shiftForm.get('subLocation');
+//   // Always clear and mark subLocation as touched and dirty when location changes
+//   this.subLocations = [];
+//   subLocationControl?.markAsTouched();
+//   subLocationControl?.markAsDirty();
+//  subLocationControl?.disable();
+//   this.sublocatiodis = false; // disable update button when location changes
+//   if (selectedLocationId) {
+//     // Find selected location and assign subLocations
+//     const selectedLocation = this.locations.find(loc => loc.id === selectedLocationId);
+//     this.subLocations = selectedLocation?.subLocations || [];
+//     if (this.subLocations.length > 0) {
+//       subLocationControl?.enable();
+//     } else if (this.subLocations.length === 0) {
+//       subLocationControl?.disable(); // disable if no sublocations
+//       this.shiftForm.patchValue({ subLocation: null });
+//       this.disableupdate = false; // clear subLocation value
+//     } else {
+//       subLocationControl?.disable(); // disable if no sublocations
+//     }
+//   } else {
+//     this.subLocations = [];
+//     subLocationControl?.disable();
+//   }
+// }
+
+onLocationChange(selectedLocationId: number | null) {
+  const subLocationControl = this.shiftForm.get('subLocation');
+  
+  this.subLocations = [];
+  subLocationControl?.markAsTouched();
+  subLocationControl?.markAsDirty();
+  subLocationControl?.setValue(null); // Clear previous value
+  subLocationControl?.disable();      // Disable by default
+
+  this.sublocatiodis = false; // disable update button
+
+  if (selectedLocationId) {
+    const selectedLocation = this.locations.find(loc => loc.id === selectedLocationId);
+    this.subLocations = selectedLocation?.subLocations || [];
+
+    if (this.subLocations.length > 0) {
       subLocationControl?.enable();
-      const selectedLocation = this.locations.find(loc => loc.id === selectedLocationId);
-      this.subLocations = selectedLocation?.subLocations || [];
-      this.selectdata = this.subLocations.find(loc => loc.id === this.selectedLocationId);
-      if (this.selectdata) {
-        subLocationControl?.setValue(this.selectdata.id); // ensure `optionValue="id"` is used in p-select
-      }
     } else {
       subLocationControl?.disable();
-      this.subLocations = [];
+      this.disableupdate = false;
     }
+    // Force immediate validation and show error if subLocation is required
+    subLocationControl?.updateValueAndValidity();
+  } else {
+    subLocationControl?.disable();
   }
+}
 
-  // sublocation:any;
-  geAllLocations() {
-    this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
-      next: (data: any) => {
-        this.locations = data;
-        this.sublocatiodis = true;
-        this.selectedLocation = this.locations.find(loc => loc.id === this.selectedLocationId);
-        this.subLocations = this.selectedLocation.subLocations;
-        const sublocationdata = this.subLocations.find(
-          (sub: any) => sub.id === this.shiftDATA
-        );
-        if (sublocationdata) {
-          this.matchedSubLocation = sublocationdata;
-          if (this.matchedSubLocation) {
-            // Set the value to form
-            this.shiftForm.patchValue({ subLocation: this.matchedSubLocation.id });
-            // Optionally store matched name for display/logging
-            this.matchedSubLocation = this.matchedSubLocation.jobSubLocationName;
-          }
-        }
-      },
-      error: (reason: any) => console.log(reason)
-    });
-  }
+  sublocation:any;
+  geAllLocations(shiftId?: string) {
+  this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
+    next: (data: any) => {
+      this.locations = data;
+      this.sublocatiodis = true;
 
+      if (shiftId) {
+        // Only call getShiftById once locations are ready
+        this.getShiftById(shiftId);
+      }
+    },
+    error: (reason: any) => console.log(reason)
+  });
+}
+
+onSubLocationChange(subLocationId: any) {
+    const subLocationControl = this.shiftForm.get('subLocation');
+    if (subLocationControl?.value) {
+      this.disableupdate = true; 
+    } else {
+      this.disableupdate = false; 
+    }
+}
   // cancel button click
   onDelete(modal: any) {
     modal.dismiss();

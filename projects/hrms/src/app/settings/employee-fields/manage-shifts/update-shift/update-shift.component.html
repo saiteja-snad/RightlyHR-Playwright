@@ -51,17 +51,24 @@
                     <div class="custom-p-select-content">
                         <p-select formControlName="subLocation" placeholder="Please select sub location"
                             [disabled]="sublocatiodis" optionLabel="jobSubLocationName" optionValue="id"
-                            [options]="subLocations" [disabled]="!shiftForm.get('location')?.valid"
+                            [options]="subLocations" [disabled]="!shiftForm.get('location')?.valid"  (onChange)="onSubLocationChange($event.value)"
                             class="form-select custom-select">
                         </p-select>
                     </div>
-                    <div class="error-msg"
+                    <!-- <div class="error-msg"
                         *ngIf="shiftForm.controls['subLocation'].invalid && 
                                                             (shiftForm.controls['subLocation'].touched || shiftForm.controls['subLocation'].dirty)">
                         <div *ngIf="shiftForm.controls ['subLocation'].errors?.['required']">
                             {{'Sub Location is required'|translate}}
                         </div>
-                    </div>
+                    </div> -->
+                    <div class="error-msg"
+  *ngIf="shiftForm.controls['subLocation'].invalid &&
+         (shiftForm.controls['subLocation'].touched || shiftForm.controls['subLocation'].dirty)">
+  <div *ngIf="shiftForm.controls['subLocation'].errors?.['required']">
+    {{'Sub Location is required' | translate}}
+  </div>
+</div>
                 </div>
 
                 <div class="pt-4 mt-1">
@@ -212,7 +219,7 @@
                 <button type="button" class="custom-btn clone-btn px-5" (click)="cloneshiftsPolicy1(shiftId)"
                     [disabled]="shiftForm.invalid">{{'Clone' | translate}}</button>
                 }
-                <button type="submit" class="custom-btn btn-primary px-5" [disabled]="shiftForm.invalid || isDuplicateCodeName1.includes(true) 
+                <button type="submit" class="custom-btn btn-primary px-5" [disabled]="shiftForm.invalid || isDuplicateCodeName1.includes(true) || !disableupdate
                 || isDuplicateCodeName.includes(true)">{{'Update' | translate}}
                 </button>
             </div>

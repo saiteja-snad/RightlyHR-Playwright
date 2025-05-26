@@ -151,11 +151,13 @@
                     </tbody>
                 </table>
             </div>
-    
+    <div class="text-danger mb-2">
+        {{ "Note: All Fields are Mandatory Fields" | translate }}
+    </div>
             <div class="d-flex justify-content-end gap-3 pt-4">
                 <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{"Cancel" | translate}}</button>
                 <button type="submit" class="custom-btn btn-primary px-5" [disabled]="weekendForm.invalid">
-                    {{"Save" | translate}}</button>
+                    {{"Submit" | translate}}</button>
             </div>
         </form>
     </div>

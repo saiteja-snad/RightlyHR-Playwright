@@ -7,6 +7,7 @@
             <a (click)="closepopup(confirmationpopupfornodue)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
         </div>
     </div>
+
     <div class="custom-main-popup-content">
         <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="postEmpData()">
             <div class="row">
@@ -122,6 +123,7 @@
         </form>
     </div>
 </div>
+
 <ng-template #confirmationpopupfornodue let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>

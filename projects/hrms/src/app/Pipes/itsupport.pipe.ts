@@ -11,12 +11,13 @@ export class ItsupportPipe implements PipeTransform {
         return active;
      }
      return active.filter(p =>
-      p.assigneeName?.toLowerCase().includes(searchValue.toLowerCase()) ||
+      p.assigneeName?.toLowerCase().includes(searchValue.toLowerCase()) || 
       p.employeeName?.toLowerCase().includes(searchValue.toLowerCase()) ||
       p.emailaddress?.toLowerCase().includes(searchValue.toLowerCase())||
       p.subject?.toLowerCase().includes(searchValue.toLowerCase())||
       p.workEmail?.toLowerCase().includes(searchValue.toLowerCase())||
        p.contactnumber?.toString().includes(searchValue.toLowerCase())||
+       p.id?.toString().includes(searchValue.toLowerCase())||
        p.priority?.toString().toLowerCase().includes(searchValue.toLowerCase())||
        p.ticketStatus?.toString().toLowerCase().includes(searchValue.toLowerCase())||
        p.departmentName?.toString().toLowerCase().includes(searchValue.toLowerCase())||

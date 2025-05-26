@@ -163,7 +163,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
         this.getSubLocationByid(locationId);
         this.policiesForm.get('subLocation')?.enable();
         this.policiesForm.get('shift')?.disable();
-
+        this.policiesForm.get('subLocation')?.markAsTouched();
       } else {
         this.jobLocationDropDownData = [];
         this.subLocationsDropdown=[];
@@ -219,6 +219,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
         this.getShiftBYid(subLocationId);
         this.policiesForm.get('shift')?.enable();
          this.shiftDropdown = []; 
+         this.policiesForm.get('shift')?.markAsTouched();
       } else {
         this.subLocationsDropdown=[];
          this.shiftDropdown = []; 
@@ -231,6 +232,11 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
     getShiftBYid(selectedSubLocation: any): void {
       const formValue = this.policiesForm.value;
       if (selectedSubLocation && selectedSubLocation) {
+                // Reset subLocation and shift fields when location changes
+      this.policiesForm.patchValue({
+        shift: null
+      });
+      this.shiftDropdown = [];
         const locationId = formValue.location?.id
         const subLocationId = selectedSubLocation
   

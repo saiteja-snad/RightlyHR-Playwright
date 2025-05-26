@@ -5,5 +5,7 @@ export const MODULE_INFOS = {
      ONBOARDING_DOCUMENTS_PAGE_MODULE_INFO : "Employees upload documents requested by HR based on predefined settings. All listed documents must be submitted to complete the onboarding process.",
      EMERGENCY_CONTACT_DETAILS : "Employees provide emergency contact information including name, relationship, and phone number. This ensures the company can reach out to a designated person in case of emergencies.",
      EDUCATION_DETAILS_MODULE_PAGE : "Employees enter their academic background including degree, institution, year of passing, and specialization. This helps validate the employee’s qualifications during onboarding.",
-     EXPERIENCE_DETAILS_MODULE_PAGE : "Employees input their previous job roles, companies, tenure, and responsibilities. This data supports verification of past work experience for onboarding and compliance."
+     EXPERIENCE_DETAILS_MODULE_PAGE : "Employees input their previous job roles, companies, tenure, and responsibilities. This data supports verification of past work experience for onboarding and compliance.",
+     OFFER_LETTER_MODULE_INFO : "This section displays the offer letter issued to the employee with options to view the full document. The employee can choose to either accept or reject the offer letter using the provided action buttons.",
+     REVIEW_MODULE_INFO : "This section allows the employee to review all the details provided before submitting the offer letter. It ensures accuracy by displaying the entered information for final verification and confirmation.",
 }

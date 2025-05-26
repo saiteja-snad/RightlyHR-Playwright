@@ -74,7 +74,7 @@ export class ProbationConfirmationLetterComponent {
     const url = this.router.url;
   
     const routeToInfoMap: { [key: string]: string } = {
-      '/organization-chart': MODULE_INFOS.PROBATION_CONFIRMATION_LETTER_MODULE_INFO
+      '/admin/letters/probation-confirmation-letter': MODULE_INFOS.PROBATION_CONFIRMATION_LETTER_MODULE_INFO
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

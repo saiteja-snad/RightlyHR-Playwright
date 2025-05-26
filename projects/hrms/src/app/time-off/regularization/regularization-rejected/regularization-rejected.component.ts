@@ -12,34 +12,41 @@ import { HttpService } from '../../../services/http.service';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-regularization-rejected',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent, DateformatPipe, DataLoaderContentComponent],
+  imports: [
+    CommonModule,
+    NgbPopoverModule,
+    FormsModule,
+    PaginatorModule,
+    DropdownModule,
+    NoDataFoundComponent,
+    DateformatPipe,
+    DataLoaderContentComponent,
+    TranslateModule,
+  ],
   templateUrl: './regularization-rejected.component.html',
-  styleUrl: './regularization-rejected.component.scss'
+  styleUrl: './regularization-rejected.component.scss',
 })
-export class RegularizationRejectedComponent implements OnInit,OnDestroy {
- totalRecords = 100
+export class RegularizationRejectedComponent implements OnInit, OnDestroy {
+  totalRecords = 100;
   first: any = 0;
   rows: any = 10;
   empinfo = {} as IJob;
   selectempid: any;
   destroy$: Subject<boolean> = new Subject<boolean>();
-  rejectedPerimisions: RegularizationRequest [] = [] as RegularizationRequest[];
+  rejectedPerimisions: RegularizationRequest[] = [] as RegularizationRequest[];
   dataLoad = false;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 25, value: 25 },
   ];
 
-  constructor(
-    private http: HttpService,
-    public rbac: RbacService,
-  ) {}
-
+  constructor(private http: HttpService, public rbac: RbacService) {}
 
   ngOnInit(): void {
     this.http.selectedEmployeeIdRegularization$.subscribe((id) => {
@@ -49,13 +56,13 @@ export class RegularizationRejectedComponent implements OnInit,OnDestroy {
         console.log('Updated employee ID:', id);
         // Example: this.loadEmployeeDetails(id);
         this.getDataEMPPermissions();
-      }
-      else{
-        this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
+      } else {
+        this.empinfo = JSON.parse(
+          localStorage.getItem('rightlyHrUser') ?? '{}'
+        );
         this.getDataPermissions();
       }
     });
-
   }
   onRowsChange() {
     this.first = 0;
@@ -63,43 +70,46 @@ export class RegularizationRejectedComponent implements OnInit,OnDestroy {
   onPageChange(event: PaginatorState) {
     this.first = event.first;
     this.rows = event.rows;
-
   }
   getDataPermissions() {
     let empId = this.empinfo.employeeId;
-    this.dataLoad =  true;
-    this.http.getData(`RegularizationRequests/attendance/${empId}`)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (response: any) => {
-        this.rejectedPerimisions = response.filter((element: { status: string }) => element.status === 'Rejected');
-        this.dataLoad =  false;
-
-      },
-      error: (error) => {
-        console.error('Error fetching data:', error);
-        this.dataLoad =  false;
-        this.rejectedPerimisions = []; // Set to empty array on error
-      },
-    });
+    this.dataLoad = true;
+    this.http
+      .getData(`RegularizationRequests/attendance/${empId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.rejectedPerimisions = response.filter(
+            (element: { status: string }) => element.status === 'Rejected'
+          );
+          this.dataLoad = false;
+        },
+        error: (error) => {
+          console.error('Error fetching data:', error);
+          this.dataLoad = false;
+          this.rejectedPerimisions = []; // Set to empty array on error
+        },
+      });
   }
-    getDataEMPPermissions() {
+  getDataEMPPermissions() {
     let empId = this.selectempid;
-    this.dataLoad =  true;
-    this.http.getData(`RegularizationRequests/attendance/${empId}`)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (response: any) => {
-        this.rejectedPerimisions = response.filter((element: { status: string }) => element.status === 'Rejected');
-        this.dataLoad =  false;
-
-      },
-      error: (error) => {
-        console.error('Error fetching data:', error);
-        this.dataLoad =  false;
-        this.rejectedPerimisions = []; // Set to empty array on error
-      },
-    });
+    this.dataLoad = true;
+    this.http
+      .getData(`RegularizationRequests/attendance/${empId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.rejectedPerimisions = response.filter(
+            (element: { status: string }) => element.status === 'Rejected'
+          );
+          this.dataLoad = false;
+        },
+        error: (error) => {
+          console.error('Error fetching data:', error);
+          this.dataLoad = false;
+          this.rejectedPerimisions = []; // Set to empty array on error
+        },
+      });
   }
   ngOnDestroy(): void {
     this.destroy$.next(true);

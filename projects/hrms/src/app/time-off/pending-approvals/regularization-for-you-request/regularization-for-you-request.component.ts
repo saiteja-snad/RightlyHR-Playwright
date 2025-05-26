@@ -366,7 +366,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
           requestProcessedBy: approvedBy,
           status: 'Rejected',
           comments: comments,
-          moduleId: environment.permissionsModuleId,
+          moduleId: environment.attendanceRegularizationModuleId,
           headerRequests: this.selectedProducts.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -377,7 +377,7 @@ export class RegularizationForYouRequestComponent implements OnInit, OnDestroy {
           requestProcessedBy: approvedBy,
           status: 'Rejected',
           comments: comments,
-          moduleId: environment.permissionsModuleId,
+          moduleId: environment.attendanceRegularizationModuleId,
           headerRequests: [
             {
               headerID: this.selectedLeaveData.approvalHeader.id,

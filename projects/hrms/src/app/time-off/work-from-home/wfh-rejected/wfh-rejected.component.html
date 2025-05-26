@@ -5,8 +5,8 @@
       <thead>
         <th>{{'Worked Date' | translate}}</th>
         <th>{{'Availed' | translate}}</th>
-        <th>{{'Reason' | translate}}</th>
-        <th>{{'Rejected Reason' | translate}}</th>
+        <th class="text-center">{{'Reason' | translate}}</th>
+        <th class="text-center">{{'Rejected Reason' | translate}}</th>
         <th>{{'Applied Date'| translate}}</th>
         <th>{{'Status'| translate}}</th>
       </thead>
@@ -20,13 +20,13 @@
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
-            <td>
+            <td class="text-center">
               <div>
                 <span>
-                  <a *ngIf="wfhRequest.requestedComments; else noRequestedComments" type="button"
+                  <div *ngIf="wfhRequest.requestedComments; else noRequestedComments" type="button"
                     [ngbPopover]="requestedComments">
-                    <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                  </a>
+                    <i class="bi bi-info-circle-fill"></i>
+                  </div>
                   <ng-template #requestedComments>
                     <div>
                       <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
@@ -39,12 +39,12 @@
               </div>
             </td>
 
-            <td>
+            <td class="text-center">
               <div>
                 <span>
-                  <a *ngIf="wfhRequest.reason; else noReason" type="button" [ngbPopover]="reason">
-                    <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                  </a>
+                  <dvi *ngIf="wfhRequest.reason; else noReason" type="button" [ngbPopover]="reason">
+                    <i class="bi bi-info-circle-fill"></i>
+                  </dvi>
                   <ng-template #reason>
                     <div>
                       <p class="mb-0">{{ wfhRequest.reason }}</p>

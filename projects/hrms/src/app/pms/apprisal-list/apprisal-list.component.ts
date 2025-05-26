@@ -68,6 +68,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
   employeeStatuses: string[] = [];
   allSubDepartments: any[] = [];
   allSubLocations: any[] = [];
+  selectedEmployee: any;
 
   page = 1;
   pageSize = 10;
@@ -477,6 +478,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         this.listOfAllEmployees = data.items || [];
         this.reportOfAllEmployees = data.items || [];
         this.filteredEmployees = this.listOfAllEmployees;
+        console.log(this.filteredEmployees);
         this.collectionSize = data.totalCount;
       },
       error: (err) => {

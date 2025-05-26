@@ -46,8 +46,7 @@
         @if(((getSeparationDetails | async) ?? []).length > 0) {
         @for (item of (getSeparationDetails|async); track item.id) {
         <tr>
-          <td>{{ item.appliedDate?(item.appliedDate | date):'-' }}
-          </td>
+          <td>{{ item.appliedDate?(item.appliedDate | date):'-' }}</td>
           <td>
             @if(item.recallStatus == 'Recalled'){
             <div>NA</div>

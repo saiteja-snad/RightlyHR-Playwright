@@ -1,9 +1,11 @@
-<div class="component-side-nav-tabs-container py-3">
-    <ul class="nav flex-column">
-        <li class="nav-item" *ngFor="let link of filteredTabs">
-            <a class="nav-link" [routerLink]="[link.route]" routerLinkActive="active-nav-link">
-                {{ link.label }}
-            </a>
-        </li>
-    </ul>
+<div class="custom-sub-tabs-container">
+  <ul class="nav flex-column">
+    <li class="nav-item" *ngFor="let tab of filteredTabs">
+      <div class="nav-link" [routerLink]="[tab.route]" routerLinkActive="active-nav-link">
+        <img [src]="tab.icon" alt="Icon" class="icon mb-2">
+        <div class="d-flex">{{ tab.label }}</div>
+      </div>
+      <div class="border-bottom"></div>
+    </li>
+  </ul>
 </div>

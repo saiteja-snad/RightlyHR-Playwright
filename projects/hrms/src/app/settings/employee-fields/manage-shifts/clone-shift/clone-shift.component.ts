@@ -262,15 +262,20 @@ export class CloneShiftComponent {
       this.subLocations = selectedLocation?.subLocations || [];
       // this.selectdata = this.subLocations.find(loc => loc.id === this.shiftDATA);
       this.selectdata = this.subLocations.find(loc => loc.id === this.selectedLocationId);
+       this.shiftForm.get('subLocation')?.markAsTouched();
       if (this.selectdata) {
+         this.shiftForm.get('subLocation')?.markAsTouched();
         subLocationControl?.setValue(this.selectdata.id);
+       
       }
+      
     } else {
       subLocationControl?.disable();
       this.subLocations = [];
     }
   }
-  
+
+
   // sublocation
   sublocation: any;
   geAllLocations() {
@@ -286,9 +291,13 @@ export class CloneShiftComponent {
         if (sublocationdata) {
           this.matchedSubLocation = sublocationdata;
           if (this.matchedSubLocation) {
+             this.shiftForm.get('subLocation')?.markAsTouched();
             this.shiftForm.patchValue({ subLocation: this.matchedSubLocation.id });
             this.matchedSubLocation = this.matchedSubLocation.jobSubLocationName;
+                   
           }
+            
+          
         }
       },
       error: (reason: any) => console.log(reason)

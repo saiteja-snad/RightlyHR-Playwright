@@ -40,13 +40,12 @@ export class CloneHolidaysComponent {
     const currentYear = new Date().getFullYear();
     this.yearDetails = this.generateYears(currentYear-1,currentYear+1);
     this.holidayForm = this.fb.group({
-      year: ['', Validators.required],
-      location: ['', Validators.required],
-      subLocation: [{ value: '', disabled: true }, Validators.required],
-      shift: [{ value: '', disabled: true }, Validators.required],
+      year: [null, Validators.required],
+      location: [null, Validators.required],
+      subLocation: [null, Validators.required],
+      shift: [{ value: null, disabled: true }, Validators.required],
       holidays: this.fb.array([])
     });
-
     this.holidayForm.patchValue({
       year: this.yearDetails.find((x: any) => x.value === this.updateHolidaysData.applicableyear),
     });
@@ -243,7 +242,7 @@ checkDuplicate(): void {
     });
   }
 
-  //this method used for sublocation list show in location dropdown
+  // //this method used for sublocation list show in location dropdown
   getSubLocationByid(selectedLocation: any): void {
     if (selectedLocation && selectedLocation) {
       // Reset subLocation and shift fields when location changes
@@ -263,11 +262,13 @@ checkDuplicate(): void {
               this.holidayForm.get('subLocation')?.enable();
               this.holidayForm.get('shift')?.disable()
               this.subLocationsDropdown = [];
+               this.holidayForm.get('subLocation')?.markAsTouched();
             } else {
               this.subLocationsDropdown = data.jobSubLocations;
               this.shiftDropdown = [];
               this.holidayForm.get('subLocation')?.enable();
               this.holidayForm.get('shift')?.disable()
+               this.holidayForm.get('subLocation')?.markAsTouched();
             }       
           },
           error: (err: any) => {
@@ -278,34 +279,38 @@ checkDuplicate(): void {
       this.shiftDropdown = [];
     }
   }
-  //this method used for location and sublocation wise show shifts in shiftsname dropdown
-  getShiftBYid(selectedSubLocation: any): void {
-    const formValue = this.holidayForm.value;
-    if (selectedSubLocation && selectedSubLocation) {
-      const locationId = formValue.location?.id
-      const subLocationId = formValue.subLocation.id ?? selectedSubLocation
-      this.subscription = this.http
-        .getData(
-          `orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`
-        )
-        .subscribe({
-          next: (data: any) => {
-            if (data.length === 0) {
-              this.holidayForm.get('shift')?.enable()
-              this.shiftDropdown = []; 
-            } else {
-              this.holidayForm.get('shift')?.enable()
-              this.shiftDropdown = [].concat( ...data.map((element: any) => element.orgShiftsItems)
-              ); 
-            }         
-          },
-          error: (err: any) => {
-            this.shiftDropdown = []; 
-          },
-        });
-    } else {
-      this.shiftDropdown = []; 
-    }
+  // //this method used for location and sublocation wise show shifts in shiftsname dropdown
+    getShiftBYid(selectedSubLocation: any): void {
+      const formValue = this.holidayForm.value;
+      if (selectedSubLocation) {
+        const locationId = formValue.location?.id;
+        const subLocationId = formValue.subLocation?.id ?? selectedSubLocation;
+        this.holidayForm.get('shift')?.reset(null);
+        this.holidayForm.get('shift')?.enable();
+        this.holidayForm.get('shift')?.markAsTouched(); // 👈 forces error display
+        this.holidayForm.get('shift')?.updateValueAndValidity(); // 👈 re-evaluates validators
+        this.subscription = this.http
+          .getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`)
+          .subscribe({
+            next: (data: any) => {
+              if (data.length === 0) {
+                this.shiftDropdown = [];
+              } else {
+                this.shiftDropdown = [].concat(...data.map((element: any) => element.orgShiftsItems));
+              }
+              // Again validate shift field
+              this.holidayForm.get('shift')?.updateValueAndValidity();
+            },
+            error: () => {
+              this.shiftDropdown = [];
+            },
+          });
+      } else {
+        this.shiftDropdown = [];
+        this.holidayForm.get('shift')?.reset(null);
+        this.holidayForm.get('shift')?.markAsTouched();
+        this.holidayForm.get('shift')?.updateValueAndValidity();
+      }
   }
 
   // this method is used for after submit data navigate main page 

@@ -613,7 +613,7 @@
             <label for="asseTID" class="form-label custom-label mb-2">Select Employee ID<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" [resetFilterOnHide]="true" filterBy="employeeName"
                 (onChange)="onEmployeeSelect($event)" formControlName="mReportingto"
                 placeholder="Please select employee" class="form-select custom-select"></p-select>
             </div>
@@ -623,7 +623,7 @@
           </div>
           <div class="d-flex justify-content-end gap-3">
             <button type="button" class="custom-btn btn-secondary mt-3"
-              (click)="modal.dismiss();openModal(updateconformation)">Close</button>
+              (click)="openModal(updateconformation)">Close</button>
             <button type="submit" class="custom-btn btn-primary mt-3" [disabled]="reassiginForm.invalid">Submit</button>
           </div>
         </div>

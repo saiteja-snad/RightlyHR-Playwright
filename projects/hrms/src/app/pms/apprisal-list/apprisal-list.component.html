@@ -277,7 +277,7 @@
                                         @if(rbac.allowedToAccess('Generate Appraisal Letter(Status - Completed).view')){
                                         <li class="dropdown-item"
                                             *ngIf="employee.applicableForPromotion===false && employee.status ==='Completed'"
-                                            (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Completed')">
+                                            (click)="openModal(sigleletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Completed')">
                                             <a class="dropdown-custom-btn">{{'Generate Appraisal Letter' |
                                                 translate}}</a>
                                         </li>
@@ -291,7 +291,7 @@
                                         @if(rbac.allowedToAccess('Re-Generate Appraisal Letter.view')){
                                         <li class="dropdown-item" *ngIf="employee.applicableForPromotion===false && (employee.status ==='Appraisal Letter Generated' 
                                             || employee.status ==='Appraisal Letter Sent')"
-                                            (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
+                                            (click)="openModal(sigleletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' |
                                                 translate}}</a>
                                         </li>
@@ -307,7 +307,7 @@
                                         <!-- @if(rbac.allowedToAccess('Re-Generate Appraisal Letter(Promotion Letter Generated).view')){ -->
                                         <li class="dropdown-item"
                                             *ngIf="employee.applicableForPromotion===false && (employee.status ==='Promotion Letter Generated'|| employee.status ==='Promotion Letter Sent')"
-                                            (click)="openModal(sigleletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
+                                            (click)="openModal(sigleletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Re-Generate Appraisal Letter')">
                                             <a class="dropdown-custom-btn">{{'Re-Generate Appraisal Letter' |
                                                 translate}}</a>
                                         </li>
@@ -324,7 +324,7 @@
                                         <li class="dropdown-item "
                                             *ngIf="employee.applicableForPromotion===true && employee.status ==='Completed'"
                                             (change)="onCheckboxChange($event, employee.id)"
-                                            (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Completed')">
+                                            (click)="openModal(singlepromationletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Completed')">
                                             <a class="dropdown-custom-btn">{{'Generate Promotion Letter' |
                                                 translate}}</a>
                                         </li>
@@ -332,7 +332,7 @@
                                         @if(rbac.allowedToAccess('Re-Generate Promotion Letter.view')){
                                         <li class="dropdown-item "
                                             *ngIf="employee.applicableForPromotion===true && (employee.status ==='Promotion Letter Generated'||employee.status ==='Promotion Letter Sent')"
-                                            (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
+                                            (click)="openModal(singlepromationletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
                                             <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' |
                                                 translate}}</a>
                                         </li>
@@ -354,7 +354,7 @@
                                         <!-- @if(rbac.allowedToAccess('Re-Generate Promotion Letter(Appraisal Letter Generated).view')){ -->
                                         <li class="dropdown-item "
                                             *ngIf="employee.applicableForPromotion===true && (employee.status ==='Appraisal Letter Generated'||employee.status ==='Appraisal Letter Sent')"
-                                            (click)="openModal(singlepromationletter);seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
+                                            (click)="openModal(singlepromationletter); selectedEmployee = employee; seletedid=employee.id;onclickStatusupdate('Re-Generate Promotion Letter')">
                                             <a class="dropdown-custom-btn"> {{'Re-Generate Promotion Letter' |
                                                 translate}}</a>
                                         </li>
@@ -513,7 +513,7 @@
                     <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}<span
                             class="text-danger">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE"
-                        id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
+                        id="effectiveFrom" placeholder="Effective From" onkeypress="return false" [min]="selectedEmployee?.dateofjoining | date:'yyyy-MM-dd'">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">
                         Effective From Date is required
@@ -584,7 +584,7 @@
                     <label for="" class="form-label custom-label">{{'Effective From Date' | translate}}
                         <span class="text-danger">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="effectiveFromDATE"
-                        id="effectiveFrom" placeholder="Effective From" onkeypress="return false">
+                        id="effectiveFrom" placeholder="Effective From" onkeypress="return false" [min]="selectedEmployee?.dateofjoining | date:'yyyy-MM-dd'">
                     <div *ngIf="Effectivedatefrom.get('effectiveFromDATE')?.touched && Effectivedatefrom.get('effectiveFromDATE')?.hasError('required')"
                         class="error-msg">
                         Effective From Date is required

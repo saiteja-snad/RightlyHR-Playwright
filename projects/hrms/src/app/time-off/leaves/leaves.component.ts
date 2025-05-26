@@ -834,7 +834,7 @@ export class LeavesComponent {
     this.isNonOptionalHolidaySelected = false;
     this.isHolidaySelected = false;
     this.isWeekOffSelectedEndate = false;
-    this.isWeekOffSelected = false;
+    // this.isWeekOffSelected = false;
     this.isHolidaySelectedEndate = false;
     this.onEndDateChange();
     this.updateEndDateValidity();

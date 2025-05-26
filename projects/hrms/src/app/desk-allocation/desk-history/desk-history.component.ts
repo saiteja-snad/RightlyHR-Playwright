@@ -18,8 +18,8 @@ export class DeskHistoryComponent {
   subscription!: Subscription;
   deskResponse: any;
   navTabs = [
-    { label: 'Desk Details', route: '/desk/view-desk/desk-data', },
-    { label: 'Desk History', route: '/desk/view-desk/desk-history', },
+    { label: 'Desk Details', icon: '/desk-icon/details-icon.png', route: '/desk/view-desk/desk-data', },
+    { label: 'Desk History', icon: '/desk-icon/History-icon.png', route: '/desk/view-desk/desk-history', },
   ];
   deskid: any;
   transtiondesk = new BehaviorSubject<any[]>([]);
@@ -27,7 +27,7 @@ export class DeskHistoryComponent {
 
   constructor(private readonly http: HttpService,
     public readonly route: ActivatedRoute,
-    public router: Router,) {
+    public router: Router) {
   }
 
   ngOnInit() {
@@ -44,7 +44,7 @@ export class DeskHistoryComponent {
       next: (response: any) => {
         this.deskResponse = response;
         this.transtiondesk.next(response.items);
-        this.inactivedesk.next(response.deskHistory)
+        this.inactivedesk.next(response.deskHistory);
       },
       error: (reason: any) => {
         console.log(reason);

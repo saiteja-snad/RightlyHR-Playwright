@@ -1,4 +1,4 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
     <input type="search" class="form-control custom-input custom-input custom-search-input" placeholder="search Here"
@@ -21,7 +21,6 @@
     <div class="custom-table-content">
       <table class="w-100">
         <thead>
-          <tr>
             <th>Asset Category</th>
             <th>Asset Sub Category</th>
             <th>Serial Number</th>
@@ -34,7 +33,6 @@
                 rbac.allowedToAccess('Allocated View Asset Details.view') || rbac.allowedToAccess('Allocated Update Asset Details.view')){
               <th class="text-center">Action(s)</th>
                 }          
-          </tr>
         </thead>
         <tbody>
           <ng-container *ngIf="((assetslist | async) ?? []).length > 0; else noDataTemplate">
@@ -105,9 +103,7 @@
 
           <ng-template #noDataTemplate>
             <tr>
-              <td>
-                <app-no-data-found />
-              </td>
+              <app-no-data-found />
             </tr>
           </ng-template>
         </tbody>
@@ -408,6 +404,7 @@
     </div>
   </div>
 </ng-template>
+
 <ng-template #conformationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
@@ -588,7 +585,6 @@
 </ng-template>
 <!-- allocateAnasset -->
 
-
 <ng-template #reallocateanasset let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
@@ -652,8 +648,6 @@
     </div>
   </div>
 </ng-template>
-
-
 
 <ng-template #underMaintenance let-model>
   <div class="custom-main-popup-container" ngbAutofocus>

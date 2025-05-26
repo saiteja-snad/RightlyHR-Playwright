@@ -79,6 +79,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     'First Name',
     'Middle Name',
     'Last Name',
+    'Status'
   ];
   reportFields: string[] = [];
   emp: Ipersonal[] = [];
@@ -91,6 +92,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     'First Name',
     'Middle Name',
     'Last Name',
+    'Status'
   ];
   employeeStatus!: string;
   selectedFieldsOption = [] as any;
@@ -121,6 +123,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         'First Name',
         'Middle Name',
         'Last Name',
+        'Status'
       ],
       selectAll: false,
     },
@@ -254,12 +257,6 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     offboardingDetails: {
       name: 'Offboarding Details',
       fields: ['Last Working Day', 'Eligible For Rehire', 'Exit Reason'],
-      selectedFields: [],
-      selectAll: false,
-    },
-    employmentTypeDetails: {
-      name: 'Employment Type Details',
-      fields: ['Job Type', 'Grade Name'],
       selectedFields: [],
       selectAll: false,
     },

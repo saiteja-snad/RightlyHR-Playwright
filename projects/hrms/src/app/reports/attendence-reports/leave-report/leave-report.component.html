@@ -50,8 +50,7 @@
           }
 
           <!--My Team-->
-          @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All Employees
-          List(Leaves).view')
+          @if(rbac.allowedToAccess('My Team Report(Leave).view') &&!rbac.allowedToAccess('Attendance All Employees List(Leaves).view')
           && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
@@ -80,7 +79,7 @@
           <!-- Buttons -->
           <div class="d-flex gap-2">
             @if(rbac.allowedToAccess('Leave Report - Generate.view')){
-            <button type="submit" class="custom-btn btn-secondary" [disabled]="isLeaveGenerateDisabled">
+            <button type="submit" class="custom-btn btn-secondary " [disabled]="isLeaveGenerateDisabled || !isAnyFilterApplied()">
               @if(spinnerLoader1){
               <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
               <span>{{'Loading...'}}</span>
@@ -89,8 +88,7 @@
               }
             </button>
             }
-            @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report -
-            Export.view')){
+            @if(rbac.allowedToAccess('Leave Report - Generate.view') && rbac.allowedToAccess('Leave Report - Export.view')){
             <button type="button" class="custom-btn btn-primary" (click)="exportToExcelYearly()"
               [disabled]="filteredleaveRecord.length == 0 || disableBtn">
               @if(spinnerLoader2){

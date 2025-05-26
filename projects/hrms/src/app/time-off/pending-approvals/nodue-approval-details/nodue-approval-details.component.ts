@@ -93,6 +93,10 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  openModals(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+  
   onRowsChange() {
     this.first = 0;
   }
@@ -102,6 +106,15 @@ export class NodueApprovalDetailsComponent implements OnInit, OnDestroy {
     this.rows = event.rows;
   }
 
+    resetForm(){
+    this.AcceptForm.reset();
+    this.modalService.dismissAll();
+  }
+
+  close(){
+    this.rejectForm.reset();
+    this.modalService.dismissAll();
+  }
   //function to accept the nodue
   handleAccept() {
     this.isLoading = true;

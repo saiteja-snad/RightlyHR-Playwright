@@ -1,9 +1,9 @@
 import { Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../../services/auth.service';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid, Iorgcategoryleaves, } from '../../Interfaces/timoff-model';
@@ -16,16 +16,19 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OnBeHalfOfApprovalTabsComponent } from "../../shared/time-off-module-tabs/on-be-half-of-approval-tabs/on-be-half-of-approval-tabs.component";
 import { noWhitespaceValidator } from '../../shared/nowhitespace/nowhitespace.component';
 import { RbacService } from '../../services/rbac.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-on-be-half-of',
-  imports: [CommonModule, RouterModule, TranslateModule, Select, ReactiveFormsModule, OnBeHalfOfApprovalTabsComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, Select, ReactiveFormsModule, OnBeHalfOfApprovalTabsComponent, ModuleInformationComponent],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss',
   encapsulation:ViewEncapsulation.None
 })
 
 export class OnBeHalfOfComponent {
+  moduleinfo : string = '';
   @ViewChild('halfDayRadio') halfDayRadio: any;
   @ViewChild('fullDayRadio') fullDayRadio: any;
   responseData: Iorgcategoryleaves[] = [];
@@ -143,6 +146,8 @@ export class OnBeHalfOfComponent {
     this.getgradedata = JSON.parse(localStorage.getItem("getGradedata") || '{}');
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getEmployementTypeByempId(this.empdata.employeeId)
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   initializeForm() {
@@ -192,6 +197,25 @@ export class OnBeHalfOfComponent {
   //     return null;
   //   };
   // }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/on-behalf-of': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
   
   updateHalfDayOptions() {
     const start = this.leaveForm.get('startdate')?.value;

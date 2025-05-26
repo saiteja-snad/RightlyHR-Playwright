@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, effect, ViewEncapsulation } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
@@ -14,6 +14,8 @@ import { CompOffEntitlementComponent } from "./comp-off-entitlement/comp-off-ent
 import { TimeOffComponent } from "./time-off/time-off.component";
 import { Select } from 'primeng/select';
 import { environment } from '../../../environments/environment';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -26,14 +28,16 @@ import { environment } from '../../../environments/environment';
     PermissionsComponent,
     CompOffEntitlementComponent,
     TimeOffComponent,
-    Select
-  ],
+    Select,
+    ModuleInformationComponent
+],
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss',
   encapsulation:ViewEncapsulation.None
 })
 
 export class OnbehalfOfApprovalsComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   employeedata = {} as any;
   leaves = [] as any;
@@ -48,7 +52,7 @@ export class OnbehalfOfApprovalsComponent {
   permissionsCount = 0;
   employeeiddetails = [] as any;
 
-  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService) {
+  constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService, public readonly router: Router) {
     // Signal reaction for employee switch
     effect(() => {
       if (this.http.trigger()) {
@@ -68,6 +72,27 @@ export class OnbehalfOfApprovalsComponent {
   ngOnInit(): void {
     localStorage.removeItem("onbehalfofaproverData");
     this.getEmployeeId();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/on-behalf-of-approvals': MODULE_INFOS.TIME_OFF_ON_BEHALF_OF_APPROVALS_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getEmployeeId() {

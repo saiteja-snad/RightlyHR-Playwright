@@ -1,4 +1,4 @@
-<div class="custom-main-component-container mt-3">
+<div class="custom-main-component-container">
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
@@ -6,11 +6,12 @@
             aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
             aria-describedby="basic-addon1">
     </div>
+
     <ng-container *ngIf="loading; else maincontent">
         <ng-template #loadingSpinner>
             <div class="loader-placeholder-content text-center">
                 <div>
-                    <app-data-loader-content/>
+                    <app-data-loader-content />
                 </div>
             </div>
         </ng-template>
@@ -18,41 +19,36 @@
     </ng-container>
 
     <ng-template #maincontent>
-
         <div class="custom-table-content">
             <table class="w-100">
                 <thead>
-                    <tr>
-                        <th>Desk ID</th>
-                        <th>Desk Type</th>
-                     
-                        <th>Location</th>
-                        <th>Sub Location</th>
-                        <th>Desk Status</th>  
-                        @if(rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') || 
-                            rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')){    
-                        <th class="text-center">Action(s)</th>
-                        
-                            }
-                    </tr>
+                    <th>Desk ID</th>
+                    <th>Desk Type</th>
+                    <th>Location</th>
+                    <th>Sub Location</th>
+                    <th>Desk Status</th>
+                    @if(rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') ||
+                    rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')){
+                    <th class="text-center">Action(s)</th>
+                    }
                 </thead>
                 <tbody>
                     <ng-container *ngIf="((desklist | async) ?? []).length > 0; else noDataTemplate">
                         <tr *ngFor="let desk of desklist | async">
                             <td>{{ desk.deskName }}</td>
                             <td>{{ desk.deskType }}</td>
-                           
                             <td>{{ desk.location?.jobLocationName }}</td>
                             <td>{{ desk.subLocation?.jobSubLocationName }}</td>
                             <td>{{ desk.deskStatus }}</td>
-                            @if(rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') || 
-                            rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')){
+                            @if(rbac.allowedToAccess('Available Request for Allocation.view') ||
+                            rbac.allowedToAccess('Available Inactive desk.view') ||
+                            rbac.allowedToAccess('Available Schedule for Maintenance.view') ||
+                            rbac.allowedToAccess('Available View Desk Details.view')){
                             <td class="text-center">
                                 <div class="dropdown">
                                     <a data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots-vertical"></i>
                                     </a>
-
                                     <ul class="dropdown-menu custom-dropdown-menu">
                                         <ng-container *ngIf="desk.deskStatus==='Available'">
                                             @if(rbac.allowedToAccess('Available Request for Allocation.view')){
@@ -79,28 +75,23 @@
                                                 </a>
                                             </li>
                                             }
-
                                         </ng-container>
-
                                         <li>
                                             <a class="dropdown-item"
                                                 (click)="viewdata(desk);navigateToAsset(desk.deskId)">
                                                 View Desk Details
                                             </a>
                                         </li>
-
                                     </ul>
                                 </div>
                             </td>
-                        }
+                            }
                         </tr>
                     </ng-container>
                     <!-- No Data Found Template -->
                     <ng-template #noDataTemplate>
                         <tr>
-                            <td>
-                                <app-no-data-found />
-                            </td>
+                            <app-no-data-found />
                         </tr>
                     </ng-template>
                 </tbody>
@@ -108,9 +99,7 @@
         </div>
         <div class="pagination-content pt-2 w-100" *ngIf="totalRecords > 0">
             <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                
                 <div class="d-flex align-items-center gap-3 p-2">
-                    
                     <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
                         (ngModelChange)="onRowsChange()">
                         <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
@@ -119,7 +108,6 @@
                     <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
                         totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
                 </div>
-
                 <!-- Pagination -->
                 <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
                     (onPageChange)="onPageChange($event)"></p-paginator>
@@ -128,26 +116,22 @@
     </ng-template>
 </div>
 
-
-
-
-
 <ng-template #assigindesk let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
+        <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Allocate an Desk</p>
             </div>
             <div>
-                <a (click)="openallocationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="openallocationModal(confirmationpopup)">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
             </div>
         </div>
 
-        <div class="custom-main-popup-content p-3">
-
-            <form autocomplete="off" [formGroup]="assiginForm" (ngSubmit)="postAllocateAssets(assiginForm);modal.dismiss();">
-
+        <div class="custom-main-popup-content">
+            <form autocomplete="off" [formGroup]="assiginForm"
+                (ngSubmit)="postAllocateAssets(assiginForm);modal.dismiss();">
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="subLocation" class="form-label custom-label mb-2">Select Shift<span
@@ -194,8 +178,9 @@
                     </div>
                 </div>
 
-                <div class="d-flex justify-content-end gap-3">
-                    <button type="button" class="custom-btn btn-secondary" (click)="openallocationModal(confirmationpopup)">Close</button>
+                <div class="custom-modal-footer">
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="openallocationModal(confirmationpopup)">Close</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="assiginForm.invalid">Submit</button>
                 </div>
@@ -205,26 +190,24 @@
 </ng-template>
 
 <ng-template #confirmationpopup let-model>
-  <div class="result-popup-content" ngbAutofocus>
-    <div>
-      <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to close?</p>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> Are you sure you want to close?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
+                No
+            </button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
+                Yes
+            </button>
+        </div>
     </div>
-
-    <div class="custom-modal-footer">
-      <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
-        No
-      </button>
-      <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">
-        Yes
-      </button>
-    </div>
-  </div>
 </ng-template>
 
 <ng-template #deleteasstes let-model>
     <div class="custom-main-popup-container" ngbAutofocus>
-
         <div class="text-center">
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
         </div>
@@ -253,7 +236,8 @@
                             Additional Comments
                         </label>
                         <div class="textarea-container">
-                            <textarea class="form-control custom-input" formControlName="reason" (keypress)="formValidation.blockLeadingSpace($event)"
+                            <textarea class="form-control custom-input" formControlName="reason"
+                                (keypress)="formValidation.blockLeadingSpace($event)"
                                 placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
                             <!-- Error messages -->
                             <div>
@@ -289,12 +273,10 @@
     </div>
 </ng-template>
 
-
-
 <ng-template #inativeconfromation let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-             <img src="icons/reject.png"alt="failure icon" class="confirmation-icon mb-4">
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
             <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
@@ -304,11 +286,7 @@
                 (click)="conformationpoppup();modal.dismiss()">Yes</button>
         </div>
     </div>
-
 </ng-template>
-
-
-
 
 <ng-template #undermaintance let-model>
     <div class="custom-main-popup-container" ngbAutofocus>
@@ -316,23 +294,19 @@
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
         </div>
         <div class="text-center">
-            <h5 class="confirmation-text mb-2"> Are you sure you want to Mark as Maintenance?</h5>
+            <h5 class="confirmation-text mb-2">Are you sure you want to Mark as Maintenance?</h5>
         </div>
+
         <div class="custom-main-popup-content  p-4">
-
             <form autocomplete="off" [formGroup]="undermaintancedata" (ngSubmit)="undermaintancedesk(undermaintancedata)">
-
                 <div class="row ">
                     <div class="col-md-12 mb-3">
                         <label for="Department" class="form-label custom-label mb-2">Select Reason <span
                                 class="text-danger">*</span></label>
-
                         <div class="custom-p-select-content">
-                            <p-select [options]="deskundermaintence" optionLabel="value"
-                                formControlName="assetundermatince" placeholder="Please select reason"
-                                class="form-select custom-select"></p-select>
+                            <p-select [options]="deskundermaintence" optionLabel="value" formControlName="assetundermatince"
+                                placeholder="Please select reason" class="form-select custom-select"></p-select>
                         </div>
-
                         <div class="error-msg"
                             *ngIf="undermaintancedata.controls['assetundermatince'].invalid && (undermaintancedata.controls['assetundermatince'].touched || undermaintancedata.controls['assetundermatince'].dirty)">
                             <div class="error-msg"
@@ -340,24 +314,25 @@
                                 Reason is required</div>
                         </div>
                     </div>
-
+        
                     <div class="col-12 ">
                         <label class="form-label custom-label mb-2">
                             Additional Comments
                         </label>
                         <div class="textarea-container">
-                            <textarea class="form-control custom-input" formControlName="reason" (keypress)="formValidation.blockLeadingSpace($event)"
+                            <textarea class="form-control custom-input" formControlName="reason"
+                                (keypress)="formValidation.blockLeadingSpace($event)"
                                 placeholder="Please enter additional comments" maxlength="250" rows="3"></textarea>
                             <!-- Error messages -->
                             <div>
                                 <div class="error-msg"
                                     *ngIf="undermaintancedata.get('reason')?.invalid && undermaintancedata.get('reason')?.touched">
                                     <!-- <div *ngIf="undermaintancedata.get('reason')?.errors?.['required']">
-                        Additional Comments is required.
-                      </div> -->
+                                Additional Comments is required.
+                              </div> -->
                                     <!-- <div *ngIf="undermaintancedata.get('reason')?.errors?.['maxlength']">
-                        Additional Comments not exceed 250 characters.
-                      </div> -->
+                                Additional Comments not exceed 250 characters.
+                              </div> -->
                                 </div>
                             </div>
                             <!-- Character count -->
@@ -377,13 +352,12 @@
                             <div class="error-msg">Start date is required</div>
                         </div>
                     </div>
-
+        
                     <div class="col-md-6 mb-3">
                         <label for="endate" class="form-label custom-label mb-2">End Date</label>
                         <input id="enddate" type="date" class="form-control custom-input" formControlName="enddate"
                             [min]="undermaintancedata.get('startdate')?.value" class="form-control custom-input">
-                        <div
-                            *ngIf="undermaintancedata.get('enddate')?.invalid && undermaintancedata.get('enddate')?.touched">
+                        <div *ngIf="undermaintancedata.get('enddate')?.invalid && undermaintancedata.get('enddate')?.touched">
                             <div class="error-msg">End date is required</div>
                         </div>
                         <div *ngIf="datesShouldNotBeEqual">
@@ -394,22 +368,18 @@
                 <div class="d-flex justify-content-end gap-3">
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openModal(conformationpopup);model.dismiss()">Close</button>
-                    <button type="submit" class="custom-btn btn-primary"
-                        [disabled]="undermaintancedata.invalid">Submit</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="undermaintancedata.invalid">Submit</button>
                 </div>
-
+        
             </form>
-
         </div>
     </div>
 </ng-template>
 
-
-
 <ng-template #conformationpopup let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-             <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
+            <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
             <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">

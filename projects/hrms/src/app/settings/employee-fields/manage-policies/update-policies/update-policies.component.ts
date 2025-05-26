@@ -199,19 +199,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
   }
 
   clonePolicy1(): void {
-    const policyData = localStorage.getItem('viewpolicies');
-    if (policyData) {
-      const parsedPolicy = JSON.parse(policyData);
-      const id = parsedPolicy?.id;
-      localStorage.setItem('cloningPolicyId', id);
-      if (id) {
-        this.router.navigate(['/settings/employee-fields/clonepolices', id]);
-      } else {
-        console.error('ID not found in viewpolicies localStorage.');
-      }
-    } else {
-      console.error('No viewpolicies data found in localStorage.');
-    }
+     this.router.navigate(['/settings/employee-fields/clonepolices']);
   }
 
   publish() {

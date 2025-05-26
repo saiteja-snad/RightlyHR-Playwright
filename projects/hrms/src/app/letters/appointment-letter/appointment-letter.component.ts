@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IAsset, IDepartment, IEmployeeAddress, IemployeeDetails, IEmployeeIdentity, IEmployeeJobInfo, IEmployeeProfile, IIssuelocation, IMake } from './appointment-letter-model';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -17,14 +17,17 @@ import { LettersTabComponent } from '../../shared/letters-shared-content/letters
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { IEmployeeSignatures } from '../letters.modal';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-appointment-letter',
-  imports: [CommonModule, LettersTabComponent, SelectModule, DateformatPipe, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule],
+  imports: [CommonModule, LettersTabComponent, SelectModule, DateformatPipe, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent],
   templateUrl: './appointment-letter.component.html',
   styleUrl: './appointment-letter.component.scss'
 })
 
 export class AppointmentLetterComponent {
+  moduleinfo : string = '';
   subscription!: Subscription; 
   appointmentLetterTemplate: any | string | ArrayBuffer | null = null;
   JoinDateValid: boolean = true;
@@ -73,6 +76,8 @@ export class AppointmentLetterComponent {
     this.getAllBranchLocations();
     this.getAssertType();
     this.getAuthorityDetails();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
 
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
@@ -105,6 +110,25 @@ export class AppointmentLetterComponent {
     this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
       this.JoiningDateValidation();
     });
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/admin/letters/appointment-letter': MODULE_INFOS.APPOINTMENT_LETTER_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getAllActiveEmployees() {

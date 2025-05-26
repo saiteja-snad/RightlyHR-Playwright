@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IJob } from '../../Interfaces/letters-model';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { LeaveConfigurationSetting, OrgHolidayHeader, OrgWeekendHeader } from '../../Interfaces/compoff.modal';
 import { CommonModule } from '@angular/common';
@@ -17,20 +17,24 @@ import { Subscription } from 'rxjs';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-comp-off',
   imports: [
     RouterModule,
     ReactiveFormsModule,
     CommonModule,
-    CompOffApprovalTabsComponent,DropdownModule,Select,TranslateModule
-  ],
+    CompOffApprovalTabsComponent, DropdownModule, Select, TranslateModule,
+    ModuleInformationComponent
+],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',
   encapsulation:ViewEncapsulation.None,
 })
 
 export class CompOffComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   subscription!: Subscription;
   addCompOffForm!: FormGroup;
   empinfo = {} as IJob;
@@ -61,7 +65,8 @@ export class CompOffComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private sharedModalService: OpenModalService,
     public rbac: RbacService,
-    public formsValidation:FormValidationsService
+    public formsValidation:FormValidationsService,
+    public readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -72,6 +77,27 @@ export class CompOffComponent implements OnInit, OnDestroy {
     this.getEmployeeeWeekends();
     this.handleAvailingChange();
     this.getTeamManagersDetails();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/comp-off': MODULE_INFOS.TIME_OFF_COMPOFF_ENTITLEMENT_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
   // function to get the data of employees by hierarchy
   

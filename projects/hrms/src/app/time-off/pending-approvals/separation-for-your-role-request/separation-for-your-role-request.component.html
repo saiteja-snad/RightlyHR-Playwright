@@ -10,21 +10,22 @@
         @if (!isDataLoader) {
         <table class="w-100">
             <thead>
-                    <th>{{'Employee Name' | translate}}</th>
-                    <th>{{'Employee ID' | translate}}</th>
-                    <th>{{'Department' | translate}}</th>
-                    <th>{{'Team' | translate}}</th>
-                    <th>{{'Designation' | translate}}</th>
-                    <th class="text-nowrap">{{'Raised Date' | translate}}</th>
-                    <th class="text-nowrap">{{'Last Working Day' | translate}}</th>
-                    <th class="text-nowrap">{{'Early Relieving Day' | translate}}</th>
-                    <th>{{'Separation Reason' | translate}}</th>
-                    <th>{{'Early Relieving Reason' | translate}}</th>
-                    <th>{{'Request Type' | translate}}</th>
-                    <th>{{'Approver History' | translate}}</th>
-                    @if(rbac.allowedToAccess('For Role (Separation Requests).update') || rbac.allowedToAccess('For Role (Separation Requests).delete')) {
-                    <th>Action<span class="text-lowercase">(s)</span></th>
-                    }
+                <th>{{'Employee Name' | translate}}</th>
+                <th>{{'Employee ID' | translate}}</th>
+                <th>{{'Department' | translate}}</th>
+                <th>{{'Team' | translate}}</th>
+                <th>{{'Designation' | translate}}</th>
+                <th class="text-nowrap">{{'Raised Date' | translate}}</th>
+                <th class="text-nowrap">{{'Last Working Day' | translate}}</th>
+                <th class="text-nowrap">{{'Early Relieving Day' | translate}}</th>
+                <th>{{'Separation Reason' | translate}}</th>
+                <th>{{'Early Relieving Reason' | translate}}</th>
+                <th>{{'Request Type' | translate}}</th>
+                <th>{{'Approver History' | translate}}</th>
+                @if(rbac.allowedToAccess('For Role (Separation Requests).update') || rbac.allowedToAccess('For Role
+                (Separation Requests).delete')) {
+                <th>Action<span class="text-lowercase">(s)</span></th>
+                }
             </thead>
             <tbody>
                 <ng-container
@@ -37,10 +38,13 @@
                         <td>{{item.entity?.spDepartment?item.entity?.spDepartment:'-'}}</td>
                         <td>{{item.entity?.spTeam?item.entity?.spTeam:'-'}}</td>
                         <td>{{item.entity?.spDesignation?item.entity?.spDesignation:'-'}}</td>
-                        <td class="text-nowrap">{{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|date):'-'}}</td>
-                        <td class="text-nowrap">{{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|date):'-'}}
+                        <td class="text-nowrap">
+                            {{item.entity?.spRequestAppliedDate?(item.entity?.spRequestAppliedDate|date):'-'}}</td>
+                        <td class="text-nowrap">
+                            {{item.entity?.spRequestLastWorkingDate?(item.entity?.spRequestLastWorkingDate|date):'-'}}
                         </td>
-                        <td class="text-nowrap">{{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|date):'-'}}</td>
+                        <td class="text-nowrap">
+                            {{item.entity?.spearlyReliveingDate?(item.entity?.spearlyReliveingDate|date):'-'}}</td>
                         <td class="text-center">
                             @if(item.entity?.spRequestDescription && item.entity?.sprecalledStatus=='Separation'){
                             <div>
@@ -125,7 +129,7 @@
                         }
                     </tr>
                     <tr *ngIf="filteredData.length === 0">
-                       <app-no-data-found />
+                        <app-no-data-found />
                     </tr>
                 </ng-container>
             </tbody>
@@ -215,7 +219,8 @@
                     <div class="error-msg"
                         *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptForm.submitted)">
                         <span *ngIf="earlyrelievingreason.errors?.['required']">Comments is required</span>
-                        <span *ngIf="earlyrelievingreason.errors?.['pattern']">Comments should not start with a space</span>
+                        <span *ngIf="earlyrelievingreason.errors?.['pattern']">Comments should not start with a
+                            space</span>
                     </div>
                 </div>
                 }
@@ -334,7 +339,8 @@
                         {{selectedSpRequestData?.rejectedReason?.length?selectedSpRequestData?.rejectedReason?.length:0}}/250
                     </div>
                     <div class="error-msg" *ngIf="(notes.touched && notes.invalid) || 
-                    (notes.invalid && Separationrequestrejected.submitted) || (notes.errors?.['pattern'])">Comments are required</div>
+                    (notes.invalid && Separationrequestrejected.submitted) || (notes.errors?.['pattern'])">Comments are
+                        required</div>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
@@ -383,14 +389,11 @@
             <div class="mb-3">
                 <label for="Effective Date" class="form-label custom-label mb-2">{{'Salary Hold' | translate}}<span
                         class="text-danger">*</span></label>
-                <div class="custom-p-select-content">
-                    <select class="form-select custom-select" aria-label="Default select example" id="holdsalary"
-                        #issalaryhold="ngModel" [(ngModel)]="selectedSpRequestData.spsalaryhold" name="holdsalary" (change)="resetNoticePeriod()"
-                        required>
-                        <option [ngValue]="undefined" disabled>Select</option>
-                        <option [ngValue]="true">Yes</option>
-                        <option [ngValue]="false">No</option>
-                    </select>
+                <div class="custom-p-select-content w-100">
+                    <p-dropdown class="w-100" [options]="salaryHoldOptions" [(ngModel)]="selectedSpRequestData.spsalaryhold"
+                        placeholder="Select" inputId="holdsalary" name="holdsalary" required="true"
+                        [autoDisplayFirst]="false" (onChange)="resetNoticePeriod()" #issalaryhold="ngModel">
+                    </p-dropdown>
                 </div>
                 <div class="error-msg"
                     *ngIf="(issalaryhold.touched && issalaryhold.invalid) || (issalaryhold.invalid && acceptFormforprocess.submitted)">
@@ -423,8 +426,9 @@
                 <label for="notice Type" class="form-label custom-label mb-2">{{selectedSpRequestData.noticperiodType}}
                     {{'Days' | translate}}<span class="text-danger">*</span></label>
                 <input type="number" class="form-control custom-input" id="noticperioddays" name="noticperioddays"
-                    #noticperioddays="ngModel" autocomplete="off" min="0" max="365" placeholder="Please enter notice period days"
-                    [(ngModel)]="selectedSpRequestData.noticperioddays" required>
+                    #noticperioddays="ngModel" autocomplete="off" min="0" max="365"
+                    placeholder="Please enter notice period days" [(ngModel)]="selectedSpRequestData.noticperioddays"
+                    required>
                 <div class="error-msg"
                     *ngIf="(noticperioddays.touched && noticperioddays.invalid) || (noticperioddays.invalid && acceptFormforprocess.submitted)">
                     <span *ngIf="noticperioddays.errors?.['required']">Notice Period Days are required</span>
@@ -458,11 +462,11 @@
                     </label>
                     <div>
                         <input type="date" class="form-control custom-input" id="Earlyreleiving" name="Earlyreleiving"
-                        [min]="getBlockedPastDate(selectedSpRequestData.spRequestAppliedDate)" #Earlyreleiving="ngModel"
-                        autocomplete="off" (keypress)="letters($event)"
-                        [max]="getBlockedFutureDate(selectedSpRequestData.spRequestLastWorkingDate)"
-                        [(ngModel)]="this.selectedSpRequestData.spMangerEarlyreliveingDate"
-                        (change)="earlyRelievingValidationCheck()" required>
+                            [min]="getBlockedPastDate(selectedSpRequestData.spRequestAppliedDate)"
+                            #Earlyreleiving="ngModel" autocomplete="off" (keypress)="letters($event)"
+                            [max]="getBlockedFutureDate(selectedSpRequestData.spRequestLastWorkingDate)"
+                            [(ngModel)]="this.selectedSpRequestData.spMangerEarlyreliveingDate"
+                            (change)="earlyRelievingValidationCheck()" required>
                     </div>
 
                     <div class="error-msg"
@@ -483,7 +487,8 @@
                     <div class="error-msg"
                         *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || (earlyrelievingreason.invalid && acceptFormforprocess.submitted)">
                         <span *ngIf="earlyrelievingreason.errors?.['required']">Comments are required</span>
-                        <span *ngIf="earlyrelievingreason.errors?.['pattern']">Comments should not start with a space</span>
+                        <span *ngIf="earlyrelievingreason.errors?.['pattern']">Comments should not start with a
+                            space</span>
                     </div>
                 </div>
 
@@ -682,7 +687,7 @@
 <ng-template #rejectconfirmationpopup let-model>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text">Are you sure you want to cancel?</p>
         </div>
         <div class="custom-modal-footer">

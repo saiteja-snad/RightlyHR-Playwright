@@ -101,7 +101,6 @@ export class SeparationForYourRoleRequestComponent {
   ) { }
 
   ngOnInit(): void {
-    console.log('Initial spsalaryhold:', this.selectedSpRequestData.spsalaryhold);
     this.getseparationforrolerequests();
   }
 
@@ -434,9 +433,9 @@ export class SeparationForYourRoleRequestComponent {
       status: 'Processed',
       comments: this.selectedSpRequestData.comments,
       isAcceptEarly: this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
-      noticePeriodType: this.selectedSpRequestData.noticperiodType.label,
+      noticePeriodType: this.selectedSpRequestData.noticperiodType,
       noticePeriodTypeDays: this.selectedSpRequestData.noticperioddays,
-      salaryhold: this.selectedSpRequestData.spsalaryhold,
+      salaryhold: this.selectedSpRequestData.spsalaryhold?.value,
       meta: this.jsonData,
       approvedBy: loggedInUser.employeeId.toString(),
       currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),

@@ -74,7 +74,6 @@ export class AllTicketsComponent {
       priority: [{ value: '', disabled: true }, [Validators.required]],
       subject: [{ value: '', disabled: true }, [Validators.required]],
       description: [{ value: '', disabled: true }, [Validators.required]],
-      assigneeId:[''],
       comments: [''],
       assignedto: [null],
       ticketStatus: ['', [Validators.required]]

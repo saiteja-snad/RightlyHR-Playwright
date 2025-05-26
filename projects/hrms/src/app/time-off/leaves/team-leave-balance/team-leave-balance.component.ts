@@ -3,7 +3,7 @@ import { Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation
 import { Select } from 'primeng/select';
 import { LeavesApprovaltabsComponent } from "../../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component";
 import { AccordionModule } from 'primeng/accordion';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { IEmployeeLeaveData } from '../leaves.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
@@ -11,16 +11,20 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
 import { FormsModule } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-team-leave-balance',
-  imports: [CommonModule, Select, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe],
+  imports: [CommonModule, Select, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, ModuleInformationComponent],
   templateUrl: './team-leave-balance.component.html',
   styleUrl: './team-leave-balance.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   teamLeaveBalance: IEmployeeLeaveData[] = [];
   loggedInUser: any;
   selectedYear: number | undefined;
@@ -40,7 +44,8 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpService,
-    private modal: NgbModal
+    private modal: NgbModal,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -48,11 +53,32 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
     const currentDate = new Date();
     this.selectedYear = currentDate.getFullYear();
     this.getAllTeamLeaveBalance();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
   onSelectYear(event: any) {
     this.selectedYear = event.value;
     this.getAllTeamLeaveBalance();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/leaves/team-leave-balance': MODULE_INFOS.TIME_OFF_LEAVES_TEAM_LEAVE_BALANCE_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getAllTeamLeaveBalance() {

@@ -63,11 +63,11 @@ export class DeskManagementComponent {
   initializeNavTabs(): void {
     // Populate allNavTabs with permission checks
     this.allNavTabs = [
-      { label: 'All', route: '/desk/management/all-desks', icon:'/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Desk Allocation - All', action: 'view' }, count$: this.http.deskTotalCountSubject },
-      { label: 'Available', route: '/desk/management/available-desks', icon:'/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Desk Allocation - Available', action: 'view' }, count$: this.http.deskAvailableCountSubject },
-      { label: 'Allocated', route: '/desk/management/allocated-desk', icon:'/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Desk Allocation - Allocated', action: 'view' }, count$: this.http.deskAllocatedCountSubject },
-      { label: 'Under Maintenance', route: '/desk/management/under-maintenance-desk', icon:'/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Desk Allocation - Under Maintenance', action: 'view' }, count$: this.http.deskUndermaindanaenceCountSubject },
-      { label: 'Inactive', route: '/desk/management/inactive-desk', icon:'/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Desk Allocation - Inactive', action: 'view' }, count$: this.http.deskinactiveCountSubject },
+      { label: 'All', route: '/desk/management/all-desks', icon:'/desk-icon/all-icon.png', permission: { feature: 'Desk Allocation - All', action: 'view' }, count$: this.http.deskTotalCountSubject },
+      { label: 'Available', route: '/desk/management/available-desks', icon:'/desk-icon/Available-icon.png', permission: { feature: 'Desk Allocation - Available', action: 'view' }, count$: this.http.deskAvailableCountSubject },
+      { label: 'Allocated', route: '/desk/management/allocated-desk', icon:'/desk-icon/Allocated-icon.png', permission: { feature: 'Desk Allocation - Allocated', action: 'view' }, count$: this.http.deskAllocatedCountSubject },
+      { label: 'Under Maintenance', route: '/desk/management/under-maintenance-desk', icon:'/desk-icon/Under-Maintannace-icon.png', permission: { feature: 'Desk Allocation - Under Maintenance', action: 'view' }, count$: this.http.deskUndermaindanaenceCountSubject },
+      { label: 'Inactive', route: '/desk/management/inactive-desk', icon:'/desk-icon/workspace-icon.png', permission: { feature: 'Desk Allocation - Inactive', action: 'view' }, count$: this.http.deskinactiveCountSubject },
       { label: 'Waiting For Approval', route: '/desk/management/waiting-for-approval-desks', icon:'/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Desk Allocation - Waiting For Approval', action: 'view' }, count$: this.http.deskWiatingforapprovalCountsubject }
     ];
     // Filter navTabs based on permissions

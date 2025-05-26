@@ -3,11 +3,11 @@
         <div>
             <p class="component-header mb-0">IT Support</p>
         </div>
-    
+
         @if(rbac.allowedToAccess('My Tickets Tab.create')){
         <div>
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)">
-            <i class="bi bi-plus me-2"></i>Add New Ticket</button>
+                <i class="bi bi-plus me-2"></i>Add New Ticket</button>
         </div>
         }
     </div>
@@ -216,16 +216,18 @@
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span
+                                class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="subject"
-                                placeholder="Please enter subject" pattern="^\S.*" [maxlength]="50" />
-                            <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50
-                            </div>
-                            <div
-                                *ngIf="itSupportForm.get('subject')?.errors?.['pattern'] && itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
+                                placeholder="Please enter subject" [maxlength]="50" />
+                                  <div
+                                *ngIf=" itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
                                 <div class="error-msg">{{'Subject is required' | translate}}</div>
                             </div>
+                            <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50
+                            </div>
+                          
                         </div>
                     </div>
                 </div>
@@ -236,13 +238,17 @@
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="description" pattern="^\S.*"
                             [maxlength]="250" placeholder="Please enter description"></textarea>
-                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250
-                        </div>
-                    </div>
-                    <div *ngIf="itSupportForm.get('description')?.errors?.['pattern'] && itSupportForm.get('description')?.invalid
+                             <div *ngIf="itSupportForm.get('description')?.invalid
                      && itSupportForm.get('description')?.touched">
-                        <div class="error-msg">{{'Description is required' | translate}}</div>
+                            <div class="error-msg ">{{'Description is required' | translate}}</div>
+                        </div>
+                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250
+
+                        </div>
+                       
+
                     </div>
+
                 </div>
 
                 <div class="custom-modal-footer">

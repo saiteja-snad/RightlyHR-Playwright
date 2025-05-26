@@ -182,10 +182,10 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     let requestBody = {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
-      currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
+      currentStage : parseInt(this.selectedLeaveData?.approvalHeader?.currentapprovalStage),
     };
     this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
-    this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.putData(`PendingApproval/process/${request?.approvalHeader?.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
         this.sharedModalService.openSuccessModal('Request Processed Successfully');

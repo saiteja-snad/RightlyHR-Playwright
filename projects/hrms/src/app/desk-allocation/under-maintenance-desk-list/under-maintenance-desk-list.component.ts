@@ -29,9 +29,9 @@ export class UnderMaintenanceDeskListComponent {
   deskid: any
   selectedAsset!: any
   deskiteamid: any;
-  first :any= 1;
-  rows:any = 10;
-  totalRecords = 100;
+ first: any = 0;
+  rows: any = 10;
+  totalRecords = 0;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },

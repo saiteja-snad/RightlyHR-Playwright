@@ -17,7 +17,7 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
 @Component({
   selector: 'app-all-desk-list',
   imports: [CommonModule, TabsModule, RouterModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent,
-     FormsModule, ReactiveFormsModule, Select, DataLoaderContentComponent],
+    FormsModule, ReactiveFormsModule, Select, DataLoaderContentComponent],
   templateUrl: './all-desk-list.component.html',
   styleUrl: './all-desk-list.component.scss'
 })
@@ -53,9 +53,9 @@ export class AllDeskListComponent {
   deskid: any;
   selectedAsset!: any;
   deskiteamid: any;
-  first: any = 1;
+  first: any = 0;
   rows: any = 10;
-  totalRecords = 100;
+  totalRecords = 0;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -132,7 +132,7 @@ export class AllDeskListComponent {
   getFilteredData() {
     this.subscription = this.http.desklocationId$.subscribe({
       next: (Value: any) => {
-        this.selectedLocationId= JSON.parse(localStorage.getItem('locationId') ?? 'null');
+        this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
         this.getAllDesks(this.first, this.rows, Value, this.selectedSubLocationId, this.Status);
       }
@@ -735,7 +735,7 @@ export class AllDeskListComponent {
 
   //close dailog open
   openConfirmationModal(content: any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   cleardata() {
@@ -746,12 +746,13 @@ export class AllDeskListComponent {
   // close allocation data
   //close dailog open
   openallocationModal(content: any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   cleardataallocation() {
     this.reassiginForm.reset();
     this.modalService.dismissAll();
+    this.assiginForm.reset();
   }
 
   canPerformActionsOnDesk(desk: any): boolean {

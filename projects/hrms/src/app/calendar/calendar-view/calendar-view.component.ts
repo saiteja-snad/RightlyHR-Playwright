@@ -78,11 +78,9 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/calendar': MODULE_INFOS.CALENDAR_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
@@ -219,7 +217,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
               title: (allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId})` : '') +
                 `${allEventsData[j].firstName} ${allEventsData[j].lastName}'s` + ` Birthday`,
               start: formattedBday,
-              color: 'rgb(143, 143, 204)',
+              color: '#E1E8FE',
               textColor: 'black',
               display: 'calendar/birthday.png',
             });
@@ -239,7 +237,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
                     allEventsData[j].anniversaryYearCount
                   )} Work Anniversary`,
                 start: formattedJoinDate,
-                color: 'rgb(204, 143, 143)',
+                color: '#FEE7E1',
                 textColor: 'black',
                 display: 'calendar/milestone.png',
               });
@@ -256,7 +254,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
                 (allEventsData[j].fusionEmpId ? `(${allEventsData[j].fusionEmpId})` : '') +
                 `${allEventsData[j].firstName} ${allEventsData[j].lastName} joined as ${allEventsData[j].jobRole}`,
               start: formattedJoinDate,
-              color: 'rgb(204, 204, 143)',
+              color: '#FEE1F7',
               textColor: 'black',
               display: 'calendar/new-joinees.png',
             });
@@ -284,7 +282,7 @@ export class CalendarViewComponent implements OnInit, OnDestroy {
               events.push({
                 title: eventTitle,
                 start: formattedHolidayDate,
-                color: '#28692b4d',
+                color: '#E1FEF4',
                 textColor: 'black',
                 display: 'calendar/holidays.png',
               });

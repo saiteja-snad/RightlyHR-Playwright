@@ -171,21 +171,21 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
   errorMsg = 'Special characters are not allowed';
   onClickEditDocument(data: any) {
     this.documentSelectFields = JSON.parse(JSON.stringify(data));
-    this.isMandatory = this.documentSelectFields.isMandatory;
-    if(this.isMandatory){
-      this.documentForm
-      .get('documentNumber')
-      ?.setValidators([
-        Validators.required,
-        Validators.pattern(this.pattern),
-        Validators.minLength(this.IdentityMinNumber),
-        Validators.maxLength(this.IdentityMaxNumber),
-      ]);
+    // this.isMandatory = this.documentSelectFields.isMandatory;
+    // if(this.isMandatory){
+    //   this.documentForm
+    //   .get('documentNumber')
+    //   ?.setValidators([
+    //     Validators.required,
+    //     Validators.pattern(this.pattern),
+    //     Validators.minLength(this.IdentityMinNumber),
+    //     Validators.maxLength(this.IdentityMaxNumber),
+    //   ]);
 
-    this.documentForm.get('documentNumber')?.updateValueAndValidity();
-    }else{
-      this.documentForm .get('documentNumber')?.clearValidators();
-    }
+    // this.documentForm.get('documentNumber')?.updateValueAndValidity();
+    // }else{
+    //   this.documentForm .get('documentNumber')?.clearValidators();
+    // }
     if (this.documentSelectFields.documentType?.toLowerCase() === "pan") {
       this.isMandatory = this.documentSelectFields.isMandatory
       this.IdentityMaxNumber = 10;
@@ -213,6 +213,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       }
 
     }
+    
     if (this.documentSelectFields.documentType?.toLowerCase() === "aadhaar") {
       this.isMandatory = this.documentSelectFields.isMandatory;
 
@@ -225,22 +226,23 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
       this.errorMsg = 'Alphabets and special characters are not allowed';
 
       // Apply validators dynamically
-      if(this.isMandatory){
+      if (this.isMandatory) {
         this.documentForm
-        .get('documentNumber')
-        ?.setValidators([
-          Validators.required,
-          Validators.pattern(this.pattern),
-          Validators.minLength(this.IdentityMinNumber),
-          Validators.maxLength(this.IdentityMaxNumber),
-        ]);
+          .get('documentNumber')
+          ?.setValidators([
+            Validators.required,
+            Validators.pattern(this.pattern),
+            Validators.minLength(this.IdentityMinNumber),
+            Validators.maxLength(this.IdentityMaxNumber),
+          ]);
 
-      this.documentForm.get('documentNumber')?.updateValueAndValidity();
+        this.documentForm.get('documentNumber')?.updateValueAndValidity();
+      } else {
+        this.documentForm.get('documentNumber')?.clearValidators();
+        this.documentForm.get('documentNumber')?.updateValueAndValidity();
       }
-       this.documentForm
-        .get('documentNumber')?.clearValidators();
-     
     }
+
     if (this.documentSelectFields.documentType?.toLowerCase() === "uan") {
       this.isMandatory = this.documentSelectFields.isMandatory;
       this.IdentityMaxNumber = 12;
@@ -268,6 +270,7 @@ export class OnboardingDocumentsComponent implements OnInit, OnDestroy {
          }
     }
   }
+  
 documentUrl:any;
   openModal(item: any) {
 

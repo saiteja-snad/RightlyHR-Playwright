@@ -2,8 +2,7 @@
   <div class="component-header-content">
     <div>
       <p class="component-header mb-0">
-        <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>
-        {{'Prospective Trainees'|translate}}
+        <img src="/images/back-icon.png" alt="Icon" class="back-icon" (click)="navigateDashboard()">{{'Prospective Trainees'|translate}}
       </p>
     </div>
     @if(this.rbac.allowedToAccess('Add Prospective Trainee.view')){

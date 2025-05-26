@@ -94,8 +94,9 @@ export class MyTicketsComponent {
       team: [{ value: '', disabled: true },Validators.required],
       type: ['', [Validators.required]],
       priority: ['', [Validators.required]],
-      subject: ['', [Validators.required]],
-      description: ['', [Validators.required]]
+      subject: ['', [Validators.required, Validators.pattern(/^\S.*$/)]],
+      description: ['', [Validators.required, Validators.pattern(/^\S.*$/)]],
+
     });
     this.itSupportForm.patchValue({
       employee: this.ticketFor

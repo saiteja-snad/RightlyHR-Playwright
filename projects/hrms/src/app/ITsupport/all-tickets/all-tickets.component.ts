@@ -74,6 +74,7 @@ export class AllTicketsComponent {
       priority: [{ value: '', disabled: true }, [Validators.required]],
       subject: [{ value: '', disabled: true }, [Validators.required]],
       description: [{ value: '', disabled: true }, [Validators.required]],
+      assigneeId:[''],
       comments: [''],
       assignedto: [null],
       ticketStatus: ['', [Validators.required]]
@@ -134,12 +135,11 @@ export class AllTicketsComponent {
       priority: this.selectedTickets.priority,
       subject: this.selectedTickets.subject,
       description: this.selectedTickets.description,
+      assigneeId: this.selectedTickets.assigneeId,
+      employee: this.selectedTickets.raisedFor,
       ticketStatus: this.status.find((status) => status.label === this.selectedTickets.ticketStatus),
     });
     console.log(this.itSupportForm);
-    
-   
-   
   }
 
   openConfirmationModal(content: any) {
@@ -163,7 +163,7 @@ export class AllTicketsComponent {
     this.itTicketDetails.description = this.selectedTickets.description;
     this.itTicketDetails.stepsToReplicate = this.selectedTickets.stepsToReplicate;
     this.itTicketDetails.comments = this.itSupportForm.value.comments;
-    
+    this.itTicketDetails.raisedFor = this.selectedTickets.raisedFor;
     this.itTicketDetails.attachmentUrl = null;
     this.itTicketDetails.createdAt = this.selectedTickets.createdAt;
     this.itTicketDetails.updatedAt = new Date().toISOString();

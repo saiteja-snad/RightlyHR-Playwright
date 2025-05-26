@@ -6,10 +6,10 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../../services/http.service';
 import { RbacService } from '../../../../services/rbac.service';
 import { NoDataFoundComponent } from '../../../../shared/no-data-found/no-data-found.component';
-
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-pending-shifts',
-  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule],
+  imports: [NoDataFoundComponent, CommonModule, TranslateModule, RouterModule,NgbPopoverModule],
   templateUrl: './pending-shifts.component.html',
   styleUrl: './pending-shifts.component.scss'
 })

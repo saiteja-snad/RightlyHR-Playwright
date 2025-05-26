@@ -143,6 +143,10 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  openModalLg(content: any) {
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  }
+
   // removeSection(index: number) {
   //   this.formemailsfornodue.removeAt(index);
   // }
@@ -203,6 +207,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         });
         this.noticeperiodDuration = durationValue?.duration;
         this.nodueDuration = noduevalue.duration;
+        console.log(this.nodueDuration);
         this.onCheckNotiesperiod();
       },
     });

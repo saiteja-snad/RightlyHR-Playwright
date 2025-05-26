@@ -18,7 +18,7 @@ export class AttandaceReportTabsComponent {
     { label: 'Leave Summary Report', route: '/reports/attendence-reports/leave-summary-report',permission: { feature: 'Leave Summary Report', action: 'view' } },
     { label: 'Comp Off Report', route: '/reports/attendence-reports/compoff-report',permission: { feature: 'Comp Off Report', action: 'view' } },
     { label: 'WFH Report', route: '/reports/attendence-reports/wfh-report',permission: { feature: 'WFH Report', action: 'view' } },
-    { label: 'Absent Report', route: '/reports/attendence-reports/absent-report',permission: { feature: 'Absent Report', action: 'view' } },
+    // { label: 'Absent Report', route: '/reports/attendence-reports/absent-report',permission: { feature: 'Absent Report', action: 'view' } },
     { label: 'Inactive Employee Report', route: '/reports/attendence-reports/inactive-employee-report',permission: { feature: 'Inactive Empolyee Report', action: 'view' } },
     { label: 'Yearly Summary Report', route: '/reports/attendence-reports/yearly-summary-report',permission: { feature: 'Yearly Summary Report', action: 'view' } },
     { label: 'Permission Report', route: '/reports/attendence-reports/permission-report',permission: { feature: 'Permission Report', action: 'view' } },

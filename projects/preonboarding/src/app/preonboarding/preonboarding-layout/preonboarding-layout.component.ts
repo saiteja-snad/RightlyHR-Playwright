@@ -40,7 +40,9 @@ export class PreonboardingLayoutComponent implements OnInit{
       '/document': MODULE_INFOS.ONBOARDING_DOCUMENTS_PAGE_MODULE_INFO,
       '/experience-details' : MODULE_INFOS.EXPERIENCE_DETAILS_MODULE_PAGE,
       '/education-details' : MODULE_INFOS.EDUCATION_DETAILS_MODULE_PAGE,
-      '/emergency-contact-details': MODULE_INFOS.EMERGENCY_CONTACT_DETAILS
+      '/emergency-details': MODULE_INFOS.EMERGENCY_CONTACT_DETAILS,
+      '/offer-letter' : MODULE_INFOS.OFFER_LETTER_MODULE_INFO,
+      '/review' : MODULE_INFOS.REVIEW_MODULE_INFO,
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

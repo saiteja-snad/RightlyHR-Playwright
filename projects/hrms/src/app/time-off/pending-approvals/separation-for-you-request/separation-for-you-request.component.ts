@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormsModule, NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DropdownModule } from 'primeng/dropdown';
@@ -20,6 +20,8 @@ import { RbacService } from '../../../services/rbac.service';
 import { PendingapprovalsseparationPipe } from "../../../Pipes/pendingapprovalsseparation.pipe";
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
+import { FormValidationsService } from '../../../services/form-validations.service';
+
 @Component({
   selector: 'app-separation-for-you-request',
   imports: [
@@ -31,7 +33,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
     PaginatorModule,
     DropdownModule,
     NoDataFoundComponent,
-    DateformatPipe,
+    ReactiveFormsModule,
     PendingapprovalsseparationPipe,
     DataLoaderContentComponent
 ],
@@ -78,28 +80,38 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   empdata = {} as any;
   jsonData = {} as any;
   myApproverComments = {} as any;
+  rejectForm!: FormGroup;
   @ViewChild('acceptForm') acceptForm!: NgForm;
 
   constructor(
     private authService: AuthService,
     private http: HttpService,
-    private router: Router,
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
     public rbac: RbacService,
-    private signalService:SignalsService
+    private signalService:SignalsService,
+    private fb: FormBuilder,
+     public formsValidation: FormValidationsService
   ) {}
 
   ngOnInit(): void {
+    this.initializeRejectForm();
     this.getseparationforyourequests();
   }
 
   closepopup(content:any){
-    this.isCheckBoxEnabledRegular = false;
+    // this.isCheckBoxEnabledRegular = false;
     this.modalService.open(content, {centered: true,backdrop: 'static'});
   }
 
+  initializeRejectForm() {
+    this.rejectForm = this.fb.group({
+      notes: [this.selectedSpRequestData?.rejectedReason || '', Validators.required]
+    });
+  }
+
   rejectpopup(){
+    this.rejectForm.reset();
     this.modalService.dismissAll();
   }
 
@@ -334,7 +346,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   }
   //function to send the rejected status and comments
 
-  handleReject(f: NgForm) {
+  handleReject(f: FormGroup) {
     this.isLoading = true;
     this.jsonData = JSON.stringify({
       status: 'Rejected',
@@ -342,7 +354,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     let loginuserdata = this.authService.getToken();
     let requestBody = {
       status: 'Rejected',
-      comments: this.selectedSpRequestData.rejectedReason,
+      comments: f.value.notes,
       approvedBy: loginuserdata.employeeId.toString(),
       meta: this.jsonData,
       currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),

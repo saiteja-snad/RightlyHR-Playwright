@@ -37,7 +37,7 @@
             <td>
                 {{ item.requestedDate?(item.requestedDate | dateformat):'NA' }}
             </td>
-            <td>{{item.processedByName?item.processedByName:'NA'}}</td>
+            <td>{{item.processedByName? item.processedByName:'-'}}</td>
             <td>{{item.status?item.status:'NA'}}</td>
             <td>{{item.subStatus?item.subStatus:'NA'}}</td>
             <td>
@@ -52,13 +52,16 @@
                 </span>
                 }
     
-                <ul class="dropdown-menu custom-dropdown-menu">
+                <!-- @if(canAccess('view', 'rerequest')){ -->
+                    <ul class="dropdown-menu custom-dropdown-menu">
                   <li >
                     <a class="dropdown-item" (click)="rerequestFornoDue(item)">
                       <i class="bi bi-repeat me-2 fs-5"></i>Re-request for no due
                     </a>
                   </li>
                 </ul>
+                <!-- } -->
+              
               </div>
             </td>
           }

@@ -609,7 +609,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       this.showBackIcon = true; // Show back icon for admin
       let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
 
-      if (routestatus.empType === 'Probation') {
+      if (routestatus.empType === 'Probation' && routestatus.empstatus === 'Active') {
         this.headerName = "Probation Employees";
       } else {
         switch (routestatus.empstatus) {

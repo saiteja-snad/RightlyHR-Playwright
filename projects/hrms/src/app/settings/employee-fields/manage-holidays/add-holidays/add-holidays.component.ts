@@ -40,8 +40,8 @@ export class AddHolidaysComponent {
     this.holidayForm = this.fb.group({
       year: [{ name: currentYear, value: currentYear },Validators.required],
       location: [null, Validators.required],
-      subLocation: [{ value: '', disabled: true }, Validators.required],
-      shift: [{ value: '', disabled: true }, Validators.required],
+      subLocation: [{ value: null, disabled: true }, Validators.required],
+      shift: [{ value: null, disabled: true }, Validators.required],
       holidays: this.fb.array([]),// start empty
     });
     this.yearDetails = this.generateYears(currentYear-1, currentYear+1);
@@ -238,7 +238,7 @@ checkDuplicate(): void {
       });
       this.subLocationsDropdown = [];
       this.shiftDropdown = [];
-
+       this.holidayForm.get('subLocation')?.markAsTouched();
       this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`).subscribe({
         next: (data: any) => {
           if (data.length === 0) {
@@ -262,33 +262,51 @@ checkDuplicate(): void {
       this.shiftDropdown = [];
     }
   }
-  // getSubLocationByid end 
+ 
+getShiftBYid(selectedSubLocation: any): void {
+  const formValue = this.holidayForm.value;
+  if (selectedSubLocation) {
+    const locationId = formValue.location?.id;
+    const subLocationId = selectedSubLocation;
 
-  // getShiftBYid this method used for shifts list show in shift name  dropdown
-  getShiftBYid(selectedSubLocation: any): void {
-    const formValue = this.holidayForm.value;
-    if (selectedSubLocation && selectedSubLocation) {
-      const locationId = formValue.location?.id;
-      const subLocationId = selectedSubLocation;
-      this.subscription = this.http.getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`).subscribe({
+    this.subscription = this.http
+      .getData(`orgShifts/getshiftlocation?locationId=${locationId}&subLocationId=${subLocationId}`)
+      .subscribe({
         next: (data: any) => {
+          const shiftControl = this.holidayForm.get('shift');
+
           if (data.length === 0) {
-            this.shiftDropdown = []; // Reset if no shifts are found
-            this.holidayForm.get('shift')?.enable();
+            this.shiftDropdown = [];          
+            shiftControl?.reset();             
+            shiftControl?.enable();           
+            shiftControl?.markAsTouched();      
+            shiftControl?.updateValueAndValidity(); 
           } else {
-            this.holidayForm.get('shift')?.enable();
-            this.shiftDropdown = [].concat(...data.map((element: any) => element.orgShiftsItems)
+            this.shiftDropdown = [].concat(
+              ...data.map((element: any) => element.orgShiftsItems)
             );
+            shiftControl?.reset();              
+            shiftControl?.enable();
+            shiftControl?.markAsTouched();      
+            shiftControl?.updateValueAndValidity(); 
           }
         },
-        error: (err: any) => {
+        error: () => {
+          const shiftControl = this.holidayForm.get('shift');
           this.shiftDropdown = [];
+          shiftControl?.reset();
+          shiftControl?.enable();
+          shiftControl?.markAsTouched();
+          shiftControl?.updateValueAndValidity();
         },
       });
-    } else {
-      this.shiftDropdown = [];
-    }
+  } else {
+    const shiftControl = this.holidayForm.get('shift');
+    this.shiftDropdown = [];
+    shiftControl?.reset();
+    shiftControl?.disable(); // optional
   }
+}
   //getShiftBYid  method end
 
   //cancel button click open modal dailog

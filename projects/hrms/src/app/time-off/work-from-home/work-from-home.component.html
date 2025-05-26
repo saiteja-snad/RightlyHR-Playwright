@@ -4,21 +4,26 @@
             <p class="component-header mb-0">WFH</p>
         </div>
         <div class="d-flex align-items-center gap-3">
-              <label class="form-label custom-label mt-3">{{'My Team'| translate}}</label>
-            <div class="custom-p-select-content">               
+            <label class="form-label custom-label mt-3">{{'My Team'| translate}}</label>
+            <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
-                    name="myteamemployees" 
-                    placeholder="Select Employee Name"  [filter]="true" [virtualScroll]="false"
+                    name="myteamemployees" placeholder="Select Employee Name" [filter]="true" [virtualScroll]="false"
                     [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
                 </p-select>
             </div>
-              
+
             <!-- <div class="component-sub-header" *ngIf="totalbalance">Current Month Balance: {{ availablebalance }} / {{ totalbalance }}</div> -->
             <div *ngIf="disaplyapplybutton">
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)"
-             *ngIf="rbac.allowedToAccess('Request WFH Button.view')"><i class="bi bi-plus me-2"></i>Request WFH</button>
+                <button type="button" class="custom-btn btn-primary" (click)="openModal(addwfh)"
+                    *ngIf="rbac.allowedToAccess('Request WFH Button.view')"><i class="bi bi-plus me-2"></i>Request
+                    WFH</button>
+            </div>
         </div>
-        </div>
+    </div>
+
+    <!--Module Information-->
+    <div>
+        <app-module-information [moduleInfo]="moduleinfo" />
     </div>
 
     <div class="employee-fields-main-container d-flex gap-3 w-100">
@@ -38,10 +43,7 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request WFH</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss();addWFHForm.reset();">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
+           
         </div>
 
         <div class="custom-main-popup-content">
@@ -117,8 +119,8 @@
                 <div *ngIf="wfhValidations.isdurationValidated">{{wfhValidations.DurationErrorMessage}}</div>
                 <!-- Action Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();this.addWFHForm.reset();availablebalance = 0">Close</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                    (click)="openModal(confirmationpopup)" [disabled]="spinnerLoader" >{{'Cancel' | translate }}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="addWFHForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
                         <div class="button-loader-content">
@@ -131,6 +133,22 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</ng-template>
+
+
+
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+        </div>
+
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">Yes</button>
         </div>
     </div>
 </ng-template>

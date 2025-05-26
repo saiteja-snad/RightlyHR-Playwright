@@ -18,6 +18,11 @@
         </div>
     </div>
 
+    <!--Module Information-->
+    <div>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </div>
+
     @if(categoryDetails && categoryDetails.length > 0){
     <div class="leave-cards-grid-container">
         <div class="card leaves-card" *ngFor="let box of categoryDetails;">

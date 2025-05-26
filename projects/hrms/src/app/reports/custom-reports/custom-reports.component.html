@@ -62,461 +62,444 @@
   <div>
     <app-module-information [moduleInfo]="moduleinfo" />
   </div>
-
-  <p-accordion [(value)]="activeIndex">
-    <p-accordion-panel value="0">
-      <p-accordion-header>Choose Fields</p-accordion-header>
-      <p-accordion-content>
-        <div class="employee-fields-main-container d-flex gap-3 w-100 mb-3 pt-3">
-          <div class="custom-component-left-content p-2">
-            <div class="card custom-background-card p-2 mb-3">
-              <div class="d-flex gap-2">
-                <button class="custom-btn  custom-btn-width"
-                  [ngClass]="{'btn-secondary': !showCard,'btn-primary': showCard}"
-                  (click)="showPersonalData()">Personal</button>
-                <button class="custom-btn custom-btn-width"
-                  [ngClass]="{'btn-secondary': !JobShowCard,'btn-primary': JobShowCard}"
-                  (click)="showJobData()">Job</button>
+  <div class="custom-accordian-data-content">
+    <p-accordion [(value)]="activeIndex">
+      <p-accordion-panel value="0">
+        <p-accordion-header>Choose Fields</p-accordion-header>
+        <p-accordion-content>
+          <div class="employee-fields-main-container d-flex gap-3 w-100 mb-3 pt-3">
+            <div class="custom-component-left-content p-2">
+              <div class="card custom-background-card p-2 mb-3">
+                <div class="d-flex gap-2">
+                  <button class="custom-btn  custom-btn-width"
+                    [ngClass]="{'btn-secondary': !showCard,'btn-primary': showCard}"
+                    (click)="showPersonalData()">Personal</button>
+                  <button class="custom-btn custom-btn-width"
+                    [ngClass]="{'btn-secondary': !JobShowCard,'btn-primary': JobShowCard}"
+                    (click)="showJobData()">Job</button>
+                </div>
               </div>
-            </div>
-    
-            <!--Personal Data-->
-            <div [hidden]="!showCard" class="custom-fields-content">
-              <!-- Basic Info -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Basic Information</th>
-                </thead>
-                <tbody class="p-4">
+  
+              <!--Personal Data-->
+              <div [hidden]="!showCard" class="custom-fields-content">
+                <!-- Basic Info -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Basic Information</th>
+                  </thead>
+                  <tbody class="p-4">
+                    <tr>
+                      <td>
+                        <input class="form-check-input" type="checkbox" [checked]="fieldGroups['basicInfo'].selectAll"
+                          (change)="toggleSelectAll($event, 'basicInfo')"><span class="ms-2">Select All</span>
+                      </td>
+                    </tr>
+                    <tr *ngFor="let field of fieldGroups['basicInfo'].fields">
+                      <td>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox"
+                            [checked]="fieldGroups['basicInfo'].selectedFields.includes(field)"
+                            [disabled]="isFieldLocked(field)" (change)="toggleFieldSelection(field, 'basicInfo')">
+                          <label class="form-check-label check-name">{{ field }}</label>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+  
+                <!-- Current Address -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Current Address</th>
+                  </thead>
                   <tr>
                     <td>
-                      <input class="form-check-input" type="checkbox" [checked]="fieldGroups['basicInfo'].selectAll"
-                        (change)="toggleSelectAll($event, 'basicInfo')"><span class="ms-2">Select All</span>
+                      <input class="form-check-input" type="checkbox" [checked]="fieldGroups['currentAddress'].selectAll"
+                        (change)="toggleSelectAll($event, 'currentAddress')"><span class="ms-2">Select All</span>
                     </td>
                   </tr>
-                  <tr *ngFor="let field of fieldGroups['basicInfo'].fields">
+                  <tr *ngFor="let field of fieldGroups['currentAddress'].fields">
                     <td>
                       <div class="form-check">
                         <input class="form-check-input" type="checkbox"
-                          [checked]="fieldGroups['basicInfo'].selectedFields.includes(field)"
-                          [disabled]="isFieldLocked(field)" (change)="toggleFieldSelection(field, 'basicInfo')">
+                          [checked]="fieldGroups['currentAddress'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'currentAddress')">
                         <label class="form-check-label check-name">{{ field }}</label>
                       </div>
                     </td>
                   </tr>
-                </tbody>
-              </table>
-    
-              <!-- Current Address -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Current Address</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['currentAddress'].selectAll"
-                      (change)="toggleSelectAll($event, 'currentAddress')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['currentAddress'].fields">
-                  <td>
-                    <div class="form-check">
+                </table>
+  
+                <!-- Permanent Address -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Permanent Address</th>
+                  </thead>
+                  <tr>
+                    <td>
                       <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['currentAddress'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'currentAddress')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Permanent Address -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Permanent Address</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['permanentAddress'].selectAll"
-                      (change)="toggleSelectAll($event, 'permanentAddress')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['permanentAddress'].fields">
-                  <td>
-                    <div class="form-check">
+                        [checked]="fieldGroups['permanentAddress'].selectAll"
+                        (change)="toggleSelectAll($event, 'permanentAddress')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['permanentAddress'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['permanentAddress'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'permanentAddress')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+  
+                <!-- Contact Details -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Contact Details</th>
+                  </thead>
+                  <tr>
+                    <td>
+                      <input class="form-check-input" type="checkbox" [checked]="fieldGroups['contactDetails'].selectAll"
+                        (change)="toggleSelectAll($event, 'contactDetails')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['contactDetails'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['contactDetails'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'contactDetails')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+  
+                <!-- Emergency Contact 1 -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Emergency Contact Details<br><br>Contact 1</th>
+                  </thead>
+                  <tr>
+                    <td>
                       <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['permanentAddress'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'permanentAddress')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Contact Details -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Contact Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['contactDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'contactDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['contactDetails'].fields">
-                  <td>
-                    <div class="form-check">
+                        [checked]="fieldGroups['emergencyContact1'].selectAll"
+                        (change)="toggleSelectAll($event, 'emergencyContact1')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['emergencyContact1'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['emergencyContact1'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'emergencyContact1')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+  
+                <!-- Emergency Contact 2 -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Emergency Contact Details<br><br>Contact 2</th>
+                  </thead>
+                  <tr>
+                    <td>
                       <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['contactDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'contactDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Emergency Contact 1 -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Emergency Contact Details<br><br>Contact 1</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['emergencyContact1'].selectAll"
-                      (change)="toggleSelectAll($event, 'emergencyContact1')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['emergencyContact1'].fields">
-                  <td>
-                    <div class="form-check">
+                        [checked]="fieldGroups['emergencyContact2'].selectAll"
+                        (change)="toggleSelectAll($event, 'emergencyContact2')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['emergencyContact2'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['emergencyContact2'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'emergencyContact2')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+  
+                <!-- Education Details -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Education Details</th>
+                  </thead>
+                  <tr>
+                    <td>
                       <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['emergencyContact1'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'emergencyContact1')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Emergency Contact 2 -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Emergency Contact Details<br><br>Contact 2</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['emergencyContact2'].selectAll"
-                      (change)="toggleSelectAll($event, 'emergencyContact2')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['emergencyContact2'].fields">
-                  <td>
-                    <div class="form-check">
+                        [checked]="fieldGroups['educationDetails'].selectAll"
+                        (change)="toggleSelectAll($event, 'educationDetails')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['educationDetails'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['educationDetails'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'educationDetails')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+  
+                <!-- Visa Details -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Visa Details</th>
+                  </thead>
+                  <tr>
+                    <td>
+                      <input class="form-check-input" type="checkbox" [checked]="fieldGroups['visaDetails'].selectAll"
+                        (change)="toggleSelectAll($event, 'visaDetails')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['visaDetails'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['visaDetails'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'visaDetails')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+  
+                <!-- Identity Details -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Identity Details</th>
+                  </thead>
+                  <tr>
+                    <td>
+                      <input class="form-check-input" type="checkbox" [checked]="fieldGroups['identityDetails'].selectAll"
+                        (change)="toggleSelectAll($event, 'identityDetails')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['identityDetails'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['identityDetails'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'identityDetails')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+  
+                <!-- Bank Details -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Bank Details</th>
+                  </thead>
+                  <tr>
+                    <td>
+                      <input class="form-check-input" type="checkbox" [checked]="fieldGroups['bankDetails'].selectAll"
+                        (change)="toggleSelectAll($event, 'bankDetails')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['bankDetails'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['bankDetails'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'bankDetails')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+  
+              <!--Job Data-->
+              <div [hidden]="!JobShowCard" class="custom-fields-content">
+                <!-- Pre Onboarding -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Pre Onboarding Details</th>
+                  </thead>
+                  <tr>
+                    <td>
                       <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['emergencyContact2'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'emergencyContact2')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Education Details -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Education Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['educationDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'educationDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['educationDetails'].fields">
-                  <td>
-                    <div class="form-check">
+                        [checked]="fieldGroups['preOnboardingDetails'].selectAll"
+                        (change)="toggleSelectAll($event, 'preOnboardingDetails')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['preOnboardingDetails'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['preOnboardingDetails'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'preOnboardingDetails')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+  
+                <!-- Onboarding -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Onboarding Details</th>
+                  </thead>
+                  <tr>
+                    <td>
                       <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['educationDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'educationDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Visa Details -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Visa Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['visaDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'visaDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['visaDetails'].fields">
-                  <td>
-                    <div class="form-check">
+                        [checked]="fieldGroups['onboardingDetails'].selectAll"
+                        (change)="toggleSelectAll($event, 'onboardingDetails')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['onboardingDetails'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['onboardingDetails'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'onboardingDetails')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+  
+                <!-- Offboarding -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Offboarding Details</th>
+                  </thead>
+                  <tr>
+                    <td>
                       <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['visaDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'visaDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Identity Details -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Identity Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['identityDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'identityDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['identityDetails'].fields">
-                  <td>
-                    <div class="form-check">
+                        [checked]="fieldGroups['offboardingDetails'].selectAll"
+                        (change)="toggleSelectAll($event, 'offboardingDetails')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['offboardingDetails'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['offboardingDetails'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'offboardingDetails')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+                <!-- Job Details -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Job Details</th>
+                  </thead>
+                  <tr>
+                    <td>
+                      <input class="form-check-input" type="checkbox" [checked]="fieldGroups['jobDetails'].selectAll"
+                        (change)="toggleSelectAll($event, 'jobDetails')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['jobDetails'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['jobDetails'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'jobDetails')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+  
+                <!-- Compensation -->
+                <table class="w-100 mb-3">
+                  <thead>
+                    <th>Compensation Details</th>
+                  </thead>
+                  <tr>
+                    <td>
                       <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['identityDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'identityDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Bank Details -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Bank Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['bankDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'bankDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['bankDetails'].fields">
-                  <td>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['bankDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'bankDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
+                        [checked]="fieldGroups['compensationDetails'].selectAll"
+                        (change)="toggleSelectAll($event, 'compensationDetails')"><span class="ms-2">Select All</span>
+                    </td>
+                  </tr>
+                  <tr *ngFor="let field of fieldGroups['compensationDetails'].fields">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                          [checked]="fieldGroups['compensationDetails'].selectedFields.includes(field)"
+                          (change)="toggleFieldSelection(field, 'compensationDetails')">
+                        <label class="form-check-label check-name">{{ field }}</label>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
             </div>
-    
-            <!--Job Data-->
-            <div [hidden]="!JobShowCard" class="custom-fields-content">
-              <!-- Pre Onboarding -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Pre Onboarding Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox"
-                      [checked]="fieldGroups['preOnboardingDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'preOnboardingDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['preOnboardingDetails'].fields">
-                  <td>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['preOnboardingDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'preOnboardingDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Onboarding -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Onboarding Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['onboardingDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'onboardingDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['onboardingDetails'].fields">
-                  <td>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['onboardingDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'onboardingDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Offboarding -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Offboarding Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['offboardingDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'offboardingDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['offboardingDetails'].fields">
-                  <td>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['offboardingDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'offboardingDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Employment Type -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Employment Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox"
-                      [checked]="fieldGroups['employmentTypeDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'employmentTypeDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['employmentTypeDetails'].fields">
-                  <td>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['employmentTypeDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'employmentTypeDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Job Details -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Job Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['jobDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'jobDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['jobDetails'].fields">
-                  <td>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['jobDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'jobDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
-    
-              <!-- Compensation -->
-              <table class="w-100 mb-3">
-                <thead>
-                  <th>Compensation Details</th>
-                </thead>
-                <tr>
-                  <td>
-                    <input class="form-check-input" type="checkbox" [checked]="fieldGroups['compensationDetails'].selectAll"
-                      (change)="toggleSelectAll($event, 'compensationDetails')"><span class="ms-2">Select All</span>
-                  </td>
-                </tr>
-                <tr *ngFor="let field of fieldGroups['compensationDetails'].fields">
-                  <td>
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox"
-                        [checked]="fieldGroups['compensationDetails'].selectedFields.includes(field)"
-                        (change)="toggleFieldSelection(field, 'compensationDetails')">
-                      <label class="form-check-label check-name">{{ field }}</label>
-                    </div>
-                  </td>
-                </tr>
-              </table>
+  
+            <!--selected Fields-->
+            <div class="custom-setting-right-content p-3">
+              <div class="custom-table-content selected-fields-table">
+                <table class="w-100">
+                  <thead>
+                    <tr>
+                      <th>Selected Fields</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let field of selectedFields">
+                      <td>{{ field }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-    
-          <!--selected Fields-->
-          <div class="custom-setting-right-content p-3">
-            <div class="custom-table-content selected-fields-table">
+        </p-accordion-content>
+      </p-accordion-panel>
+  
+      <p-accordion-panel value="1" [disabled]="!(reportFields.length > 0 && reportFields.length > 0)">
+        <p-accordion-header>Results</p-accordion-header>
+        <p-accordion-content>
+          <!--table content-->
+          @if(reportFields.length > 0 && reportFields.length > 0){
+          <div class="custom-data-table pt-3">
+            <div class="custom-table-content">
               <table class="w-100">
                 <thead>
                   <tr>
-                    <th>Selected Fields</th>
+                    <th *ngFor="let field of reportFields" scope="col">
+                      {{ field }}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let field of selectedFields">
-                    <td>{{ field }}</td>
-                  </tr>
+                  <ng-container *ngIf="selectedData!.length > 0; else noDataTemplate">
+                    <tr *ngFor="let data of selectedData">
+                      <td *ngFor="let field of reportFields" scope="row">
+                        {{ data[field] || '-' }}
+                      </td>
+                    </tr>
+                  </ng-container>
+  
+                  <ng-template #noDataTemplate>
+                    <tr>
+                      <td colspan="4">
+                        <app-no-data-found></app-no-data-found>
+                      </td>
+                    </tr>
+                  </ng-template>
                 </tbody>
               </table>
             </div>
           </div>
-        </div>
-      </p-accordion-content>
-    </p-accordion-panel>
-
-    <p-accordion-panel value="1" [disabled]="!(reportFields.length > 0 && reportFields.length > 0)">
-      <p-accordion-header>Results</p-accordion-header>
-      <p-accordion-content >
-        <!--table content-->
-        @if(reportFields.length > 0 && reportFields.length > 0){
-        <div class="custom-data-table pt-3">
-          <div class="custom-table-content">
-            <table class="w-100">
-              <thead>
-                <tr>
-                  <th *ngFor="let field of reportFields" scope="col">
-                    {{ field }}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <ng-container *ngIf="selectedData!.length > 0; else noDataTemplate">
-                <tr *ngFor="let data of selectedData">
-                  <td *ngFor="let field of reportFields" scope="row">
-                    {{ data[field] || '-' }}
-                  </td>
-                </tr>
-                </ng-container>
-
-                <ng-template #noDataTemplate>
-                  <tr>
-                    <td colspan="4">
-                      <app-no-data-found></app-no-data-found>
-                    </td>
-                  </tr>
-                </ng-template>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        }
-      </p-accordion-content>
-    </p-accordion-panel>
-</p-accordion>
+          }
+        </p-accordion-content>
+      </p-accordion-panel>
+    </p-accordion>
+  </div>
 </div>

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { IProbationEmployees } from './probation-emp-module';
 import { FormsModule } from '@angular/forms';
@@ -12,14 +12,17 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../services/rbac.service';
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-probation-employees',
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ProbationpipePipe, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ProbationpipePipe, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './probation-employees.component.html',
   styleUrl: './probation-employees.component.scss'
 })
 
 export class ProbationEmployeesComponent {
+  moduleinfo : string = '';
   searchValue: any;
   subscription!: Subscription
   probationemp = [] as any
@@ -32,7 +35,28 @@ export class ProbationEmployeesComponent {
   constructor(private router: Router,private http: HttpService, private modalService: NgbModal,public rbac:RbacService,private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
-    this.getProbationEmployees()
+    this.getProbationEmployees();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/admin/probation-employees': MODULE_INFOS.PROBATION_EMPLOYEES_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getProbationEmployees() {

@@ -11,7 +11,7 @@
                     (onChange)="onSelectMonth($event)" optionLabel="name" class="custom-select">
                 </p-select>
             </div>
-        
+
             <label class="form-label custom-label m-0">Year</label>
             <div class="custom-p-select-content">
                 <p-select [options]="years" optionLabel="label" optionValue="value" [(ngModel)]="selectedYear"
@@ -19,6 +19,11 @@
                 </p-select>
             </div>
         </div>
+    </div>
+
+    <!--Module Information-->
+    <div>
+        <app-module-information [moduleInfo]="moduleinfo" />
     </div>
 
     <div class="d-flex w-100 gap-3">

@@ -5,19 +5,23 @@
         </div>
         <div class="d-flex gap-3">
             <label class="form-label custom-label mt-3">{{'My Team'| translate}}</label>
-            <div class="custom-p-select-content">               
+            <div class="custom-p-select-content">
                 <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId"
-                      name="myteamemployees" 
-                    placeholder="Select Employee Name"  [filter]="true" [virtualScroll]="false"
+                    name="myteamemployees" placeholder="Select Employee Name" [filter]="true" [virtualScroll]="false"
                     [autoDisplayFirst]="false" required (onChange)="onCheckemployee($event.value)">
                 </p-select>
             </div>
-              <div *ngIf="disaplyapplybutton">
-            @if(rbac.allowedToAccess('Request Comp Off Button.view')){
-            <button type="button" (click)="openModal(addcompoff)" class="custom-btn btn-primary">
-                <i class="bi bi-plus me-2"></i>Request Comp-Off</button>}
+            <div *ngIf="disaplyapplybutton">
+                @if(rbac.allowedToAccess('Request Comp Off Button.view')){
+                <button type="button" (click)="openModal(addcompoff)" class="custom-btn btn-primary">
+                    <i class="bi bi-plus me-2"></i>Request Comp-Off</button>}
             </div>
         </div>
+    </div>
+
+    <!--Module Information-->
+    <div>
+        <app-module-information [moduleInfo]="moduleinfo" />
     </div>
 
     <div class="d-flex gap-3 w-100">
@@ -38,10 +42,6 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request Comp-Off</p>
             </div>
-            <div>
-                <a (click)="modal.dismiss();this.addCompOffForm.reset()">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
         </div>
 
         <div class="custom-main-popup-content">
@@ -56,10 +56,10 @@
                             formControlName="workedDate" required (change)="weekendAndHolidaysCheck(addCompOffForm.get('workedDate')?.value)">
                         <div *ngIf="addCompOffForm.get('workedDate')?.touched && addCompOffForm.get('workedDate')?.invalid"
                             class="error-msg">
-                            <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked Date is required.
+                            <div *ngIf="addCompOffForm.get('workedDate')?.errors?.['required']">Worked Date is required
                             </div>
                         </div>
-                        <div class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining.</div>
+                        <div class="error-msg" *ngIf="addCompOffForm.get('workedDate')?.errors?.['beforeJoining']">Date must be after your date of joining</div>
                         <div class="error-msg" *ngIf="!(isHolidaySelected || isWeekOffSelected)">Selected date is not eligible for compoff</div>    
                     </div>
                 </div>
@@ -104,28 +104,42 @@
                             placeholder="Reason for comp off" maxlength="250" (input)="formsValidation.validateInput(addCompOffForm.get('reason'))"></textarea>
                         <div class="textarea-count-text">{{ addCompOffForm.get('reason')?.value?.length || 0 }}/250</div>
                         <div class="error-msg" *ngIf="addCompOffForm.get('reason')?.touched && addCompOffForm.get('reason')?.invalid">
-                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">Reason is required.</div>
-                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">Reason cannot exceed 250 characters.</div>
+                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['required']">Reason is required</div>
+                            <div *ngIf="addCompOffForm.get('reason')?.errors?.['maxlength']">Reason cannot exceed 250 characters</div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="custom-modal-footer">
-                    <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();this.addCompOffForm.reset()">Close</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="openModal(confirmationpopup)">{{'Cancel' | translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="addCompOffForm.invalid || spinnerLoader || !(isHolidaySelected  || isWeekOffSelected)">
                         @if(spinnerLoader){
                         <div class="button-loader-content">
                             <div class="spinner-border button-spinner text-light" role="status"></div>
-                            <div>{{'Loading...'}}</div>
+                            <div>{{'Loading...'| translate}}</div>
                         </div>
                         }@else {
-                        <span>{{'Request'}}</span>
+                        <span>{{'Request' | translate}}</span>
                         }
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #confirmationpopup let-modal>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+        </div>
+
+        <div class="custom-modal-footer">
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss();">No</button>
+            <button type="submit" class="custom-btn btn-primary" (click)="cleardata()">Yes</button>
         </div>
     </div>
 </ng-template>

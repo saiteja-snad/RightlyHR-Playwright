@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import moment from 'moment';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -15,14 +15,17 @@ import { LettersheaderComponent } from '../../shared/letters-shared-content/lett
 import { TranslateModule } from '@ngx-translate/core';
 import { IEmployee } from '../probation-confirmation-letter/probation.modal';
 import { IEmployeeSignatures } from '../letters.modal';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-probation-extension-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent],
   templateUrl: './probation-extension-letter.component.html',
   styleUrl: './probation-extension-letter.component.scss'
 })
 
 export class ProbationExtensionLetterComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   employeedetails :IEmployee[]=[];
   probationExtensionLetterData = {} as any;
@@ -52,6 +55,27 @@ export class ProbationExtensionLetterComponent {
     this.getAuthorityDetails();
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/admin/letters/probation-extension-letter': MODULE_INFOS.PROBATION_EXTENSION_LETTER_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   naviagte(){

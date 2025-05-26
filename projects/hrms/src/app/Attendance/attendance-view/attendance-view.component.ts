@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import moment from 'moment';
@@ -9,7 +9,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule } from 'primeng/paginator';
 import { Select } from 'primeng/select';
-import { Subscription, BehaviorSubject, Subject } from 'rxjs';
+import { Subscription, BehaviorSubject, Subject, filter } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Ipersonal } from '../../Interfaces/members-model';
 import { LeaveType, IPermissionsvalue } from '../../Interfaces/timoff-model';
@@ -24,6 +24,8 @@ import { DataLoaderContentComponent } from '../../shared/data-loader-content/dat
 import { NoDataFoundComponent } from '../../shared/no-data-found/no-data-found.component';
 import { AddLeaveComponent } from '../../time-off/leaves/add-leave/add-leave.component';
 import { IAttendance, IdayLogs } from './attendance-modal';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-attendance-view',
@@ -42,13 +44,15 @@ import { IAttendance, IdayLogs } from './attendance-modal';
     DataLoaderContentComponent,
     TohoursPipe,
     DatePicker,
-  ],
+    ModuleInformationComponent
+],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class AttendanceViewComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   dataLoader = false;
   subscription!: Subscription;
   yearOptions = [
@@ -113,7 +117,8 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     public modalService: NgbModal,
     public rbac: RbacService,
     private fb: FormBuilder,
-    public formsValidation: FormValidationsService
+    public formsValidation: FormValidationsService,
+    public readonly router: Router
   ) {
   }
 
@@ -135,6 +140,28 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
     this.getAllEmployeeDetails();
     this.getEmployeeDetails();
     this.initializeForm();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/attendance': MODULE_INFOS.ATTENDANCE_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   checkdates(Value: any) {

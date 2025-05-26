@@ -5,10 +5,10 @@ import { FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Valid
 import { PaginatorModule } from 'primeng/paginator';
 import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ICategoryDetails, ILeaves, Ileavesdatas, ILeavesTaken, Ilpid } from '../../Interfaces/timoff-model';
 import { AuthService } from '../../services/auth.service';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import moment from 'moment';
 import { environment } from '../../../environments/environment';
@@ -19,16 +19,19 @@ import { SignalsService } from '../../services/signals.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { TabsModule } from 'primeng/tabs';
 import { ChartModule } from 'primeng/chart';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,
-    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule],
+    RouterModule, ReactiveFormsModule, TranslateModule, LeavesApprovaltabsComponent, TabsModule, ChartModule, ModuleInformationComponent],
   templateUrl: './leaves.component.html',
   styleUrl: './leaves.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 
 export class LeavesComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   categoryDetails = [] as ICategoryDetails[];
   leaveFormData = {} as Ileavesdatas;
@@ -126,6 +129,8 @@ export class LeavesComponent {
     this.getTeamManagersDetails();
     this.startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
     this.endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
 
@@ -156,6 +161,25 @@ export class LeavesComponent {
     this.getDataByLPID(this.empdata.employeeId);
     this.getCategoryDetails();
     }
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/leaves': MODULE_INFOS.TIME_OFF_LEAVES_TEAM_LEAVE_SUMMARY_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
    getDataByLPID(employeeId:any) {

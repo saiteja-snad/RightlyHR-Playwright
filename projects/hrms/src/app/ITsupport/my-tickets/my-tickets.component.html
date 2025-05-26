@@ -220,7 +220,6 @@
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="subject"
-<<<<<<< HEAD
                                 placeholder="Please enter subject" [maxlength]="50" />
                                   <div
                                 *ngIf=" itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
@@ -229,9 +228,6 @@
                             <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50
                             </div>
                           
-=======
-                                placeholder="Please enter subject" pattern="^\S.*" [maxlength]="50" />
->>>>>>> 54287b45904c37854532843425b39d819a158e6f
                         </div>
                         <div
                             *ngIf="itSupportForm.get('subject')?.hasError('required') && itSupportForm.get('subject')?.touched">
@@ -249,7 +245,6 @@
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="description" pattern="^\S.*"
                             [maxlength]="250" placeholder="Please enter description"></textarea>
-<<<<<<< HEAD
                              <div *ngIf="itSupportForm.get('description')?.invalid
                      && itSupportForm.get('description')?.touched">
                             <div class="error-msg ">{{'Description is required' | translate}}</div>
@@ -261,16 +256,6 @@
 
                     </div>
 
-=======
-                            <div
-                        *ngIf="itSupportForm.get('description')?.hasError('required') && itSupportForm.get('description')?.touched">
-                        <div class="error-msg">{{ 'Description is required' | translate }}</div>
-                    </div>
-                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250
-                        </div>
-                    </div>
-                    
->>>>>>> 54287b45904c37854532843425b39d819a158e6f
                 </div>
 
                 <div class="custom-modal-footer">

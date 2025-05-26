@@ -164,7 +164,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Reallocate a Desk</p>
+        <p class="popup-heading mb-0">Reallocate Desk</p>
       </div>
       
     </div>
@@ -191,7 +191,7 @@
             <label for="asseTID" class="form-label  custom-label mb-2">Select Employee<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" [resetFilterOnHide]="true" filterBy="employeeName"
                 (onChange)="onEmployeeSelect($event)" formControlName="employeeName"
                 placeholder="Please select employee" class="form-select custom-select"></p-select>
             </div>
@@ -206,7 +206,7 @@
               Select Approver<span class="text-danger">*</span>
             </label>
             <div class="custom-p-select-content">
-              <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+              <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true"   [resetFilterOnHide]="true" filterBy="employeeName"
                 formControlName="approvid" placeholder="Please select approver" class="form-select custom-select"
                 (onChange)="onApprovalSelects($event)"></p-select>
             </div>
@@ -231,7 +231,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to cancel ?</p>
+      <p class="confirmation-text"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
@@ -244,7 +244,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Allocate a Desk</p>
+        <p class="popup-heading mb-0">Allocate Desk</p>
       </div>
   
     </div>
@@ -259,7 +259,7 @@
                 placeholder="Please select shift" class="form-select custom-select"></p-select>
             </div>
             <div class="error-msg" *ngIf="assiginForm.get('shifts')?.invalid && assiginForm.get('shifts')?.touched">
-              shift is required
+              Shift is required
             </div>
           </div>
 
@@ -267,7 +267,7 @@
             <label for="asseTID" class="form-label custom-label mb-2">Select Employee<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"    [resetFilterOnHide]="true" filterBy="employeeName"
                 (onChange)="onEmployeeSelect($event)" formControlName="employeeid" placeholder="Please select employee"
                 class="form-select custom-select"></p-select>
             </div>
@@ -282,7 +282,7 @@
               Select Approver<span class="text-danger">*</span>
             </label>
             <div class="custom-p-select-content">
-              <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+              <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true"   [resetFilterOnHide]="true"  filterBy="employeeName"
                 formControlName="approvid" placeholder="Please select approver" class="form-select custom-select"
                 (onChange)="onApprovalSelects($event)"></p-select>
             </div>
@@ -306,7 +306,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to cancel ?</p>
+      <p class="confirmation-text"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
@@ -323,7 +323,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Release a Desk</p>
+        <p class="popup-heading mb-0">Release Desk</p>
       </div>
     
     </div>
@@ -369,7 +369,7 @@
         </div>
         <div class="d-flex justify-content-end gap-3">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="openModal(realseconforamation);modal.dismiss()">Cancel</button>
+            (click)="openModal(realseconforamation)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="realseForm.invalid">Submit</button>
         </div>
       </form>
@@ -381,7 +381,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to cancel ?</p>
+      <p class="confirmation-text">Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(relasedesk);modal.dismiss()">No</button>
@@ -394,7 +394,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div class="text-center">
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Inactive this Desk ?</p>
+      <p class="confirmation-text">Are you sure you want to mark this desk as inactive?</p>
     </div>
     <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="inactiveForm" (ngSubmit)="inactivedesk(inactiveForm)">
@@ -444,7 +444,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to cancel ?</p>
+      <p class="confirmation-text"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary"
@@ -458,7 +458,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to Mark as Maintenance?</p>
+      <p class="confirmation-text">Are you sure you want to mark this desk as under maintenance?</p>
     </div>
     <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="undermaintancedata" (ngSubmit)="undermaintancedesk(undermaintancedata)">
@@ -523,7 +523,7 @@
 
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="openModal(conformationpopup);model.dismiss()">Cancel</button>
+            (click)="openModal(conformationpopup)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="undermaintancedata.invalid">Submit</button>
         </div>
       </form>
@@ -535,7 +535,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to cancel ?</p>
+      <p class="confirmation-text">Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(undermaintance)">No</button>
@@ -548,7 +548,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">Are you sure you want to mark this Desk as Available?</p>
+      <p class="confirmation-text">Are you sure you want to mark this desk as available?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>
@@ -562,7 +562,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to mark this Desk as Active?</p>
+      <p class="confirmation-text"> Are you sure you want to mark this desk as active?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

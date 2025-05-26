@@ -11,6 +11,7 @@ import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { RbacService } from '../../../services/rbac.service';
 import { SearchfilterPipe } from "../../../Pipes/searchfilter.pipe";
 import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { SignalsService } from '../../../services/signals.service';
 @Component({
   selector: 'app-desk-for-your-role-request',
   imports: [CommonModule, NoDataFoundComponent, ReactiveFormsModule, TranslateModule, DateformatPipe, SearchfilterPipe],
@@ -30,7 +31,8 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
   rejectForm!: FormGroup;
   searchValue:any
   constructor(private http: HttpService, private readonly modalService: NgbModal, public conformationPopup: OpenModalService,public rbac: RbacService,
-     private fb: FormBuilder, public formValidation: FormValidationService) { }
+     private fb: FormBuilder, public formValidation: FormValidationService,
+     private signalService: SignalsService,) { }
 
 
   ngOnInit(): void {
@@ -78,6 +80,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.conformationPopup.openSuccessModal("Request Processed Successfully")
          this.getexpensespendingforyou()
+        this.signalService.deskForRoleTriggerSignal.set(true);
         this.updatedeskitem()
        
       },
@@ -136,6 +139,7 @@ export class DeskForYourRoleRequestComponent implements OnInit, OnDestroy {
       next: (res: any) => {
         this.modalService.dismissAll();
         this.getexpensespendingforyou();
+        this.signalService.deskForRoleTriggerSignal.set(true);
         this.conformationPopup.openSuccessModal("Request Rejected Successfully");
         this.rejectForm.reset();
       },

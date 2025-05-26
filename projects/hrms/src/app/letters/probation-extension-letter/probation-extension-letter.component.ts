@@ -71,7 +71,7 @@ export class ProbationExtensionLetterComponent {
     const url = this.router.url;
   
     const routeToInfoMap: { [key: string]: string } = {
-      '/organization-chart': MODULE_INFOS.PROBATION_EXTENSION_LETTER_MODULE_INFO
+      '/admin/letters/probation-extension-letter': MODULE_INFOS.PROBATION_EXTENSION_LETTER_MODULE_INFO
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

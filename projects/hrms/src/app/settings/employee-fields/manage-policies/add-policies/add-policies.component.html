@@ -2,7 +2,7 @@
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
       <p class="component-header mb-0" (click)="Cancel()">
-        <i class="bi bi-arrow-90deg-left me-2"></i>{{'Add Policy'| translate}}
+        <i class="bi bi-arrow-90deg-left me-2"></i>{{'Add Policies'| translate}}
       </p>
     </div>
   </div>
@@ -68,7 +68,7 @@
             {{ "Shift" | translate }}<span class="text-danger">*</span>
           </label>
           <div class="custom-p-select-content">
-            <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id" formControlName="shift"
+            <p-select [options]="shiftDropdown" optionLabel="shiftName" optionValue="id" formControlName="shift"  (onChange)="onShiftChange($event.value)"
               placeholder="Please select shift" class="form-select custom-select">
             </p-select>
           </div>
@@ -137,7 +137,7 @@
       <div class="d-flex gap-3 justify-content-end pt-4">
         <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel' |
           translate}}</button>
-        <button class="custom-btn btn-primary px-5" [disabled]="policiesForm.invalid" type="submit">{{'Submit' |
+        <button class="custom-btn btn-primary px-5" [disabled]="policiesForm.invalid || !isShiftAvailable" type="submit">{{'Submit' |
           translate}}</button>
       </div>
     </div>

@@ -377,12 +377,11 @@
             </div>
 
             <div class="mb-3" *ngIf="selectedSpRequestData.spIsEarlyRelieveing">
-                <label for="Effective Date">{{'Are you willing to accept an early Relieving?' | translate}} <span
-                        class="error-msg"></span></label>
+                <label for="Effective Date"></label>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" id="relieving" name="isreliving"
                         [(ngModel)]="selectedSpRequestData.spIsAcceptEarlyrelievingcheck" (click)="toggleEarly()">
-                    <label class="form-check-label me-2" for="relieving">Yes</label>
+                    <label class="form-check-label me-2" for="relieving">{{'Are you willing to accept an early Relieving?' | translate}} </label>
                 </div>
             </div>
 

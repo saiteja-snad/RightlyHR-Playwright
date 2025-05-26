@@ -247,16 +247,16 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
     const currentDate = moment().startOf('day');
   
     // Check for past deadline dates
-    const invalidDeadline = this.assesorDetails.some((item: any) => {
-      const deadline = moment(item.deadlineindays).startOf('day');
-      return deadline.isBefore(currentDate);
-    });
+    // const invalidDeadline = this.assesorDetails.some((item: any) => {
+    //   const deadline = moment(item.deadlineindays).startOf('day');
+    //   return deadline.isBefore(currentDate);
+    // });
   
-    if (invalidDeadline) {
-      this.isLoading = false;
-      this.conformationPopup.openErrorModal("Deadline date cannot be in the past");
-      return;
-    }
+    // if (invalidDeadline) {
+    //   this.isLoading = false;
+    //   this.conformationPopup.openErrorModal("Deadline date cannot be in the past");
+    //   return;
+    // }
   
     if (this.updateassesorConfiguration) {
       const payload = {

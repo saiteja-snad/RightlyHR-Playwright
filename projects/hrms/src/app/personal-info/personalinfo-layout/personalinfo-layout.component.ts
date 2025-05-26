@@ -121,6 +121,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
 
 
       '/personalinfo/personal/basic-info': MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
+      '/personalinfo/personal/onboarding-verification' : MODULE_INFOS.PERSONAL_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO,
       '/personalinfo/personal/address-info' : MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
       '/personalinfo/personal/contact-details' : MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
       '/personalinfo/personal/emergency-contact-details' : MODULE_INFOS.PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO,
@@ -143,6 +144,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       '/personalinfo/job/desk-details' : MODULE_INFOS.JOB_MODULE_DESK_DETAILS_MODULE_INFO,
       '/personalinfo/job/assets-details' : MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
       '/personalinfo/job/employmentType' : MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
+      '/personalinfo/job/tranee-onboarding-requests' : MODULE_INFOS.JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO,
 
       '/personalinfo/documents' : MODULE_INFOS.DOCUMENTS_MODULE_INFO,
 

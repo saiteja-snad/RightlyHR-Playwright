@@ -127,10 +127,11 @@ export const MODULE_INFOS = {
     CURRENT_OPENINGS_MODULE_INFO : "The Current Openings section allows HR to post jobs and manage job listings categorized as Active or Inactive. It also tracks applicant statuses through stages like Applied, Interview Process, Rejected, On Hold, Request for Onboarding, Onboarded, and Archive, with search functionality for applicants.",
 
     //Attendance Module Info 
-    ATTENDANCE_MODULE_INFO : "The Attendance module allows employees to mark their attendance, view their attendance history, and track their monthly attendance records. It provides options for marking attendance, viewing daily status, and accessing monthly summaries.",
+    ATTENDANCE_MODULE_INFO : "The Attendance section displays a day-wise record for the selected month (May 2025), showing check-in/out times, duration, attendance status, and actions like Apply Leave and Regularization. It also highlights weekends, holidays, and provides an Attendance Summary showing total holidays and absences.",
 
     //My info Personal Module info 
     PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO : "The Basic Information section captures essential employee details such as Employee ID, Salutation, First Name, Middle Name, Last Name, Gender, Date of Birth, Blood Group, and Marital Status. This section allows users to update these fields and save or cancel changes as needed.",
+    PERSONAL_MODULE_ONBOARDING_DOCUMENTS_MODULE_INFO :"The Onboarding Documents section displays documents uploaded by prospective employees, including Aadhaar, PAN, and others. HR can view each document and take actions such as verifying or rejecting them to ensure compliance before onboarding.",
     PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO : "The Address Details section captures the employee’s Current and Permanent addresses, including Address Lines, City, State, Country, and Zip/Postal Code. Users can enter or update these details and choose to mark the Permanent Address as the same as the Current Address for convenience.",
     PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO : "The Contact Details section captures the employee’s Work Number, Phone Number, Work Email, and Personal Email, including country code selection for phone numbers. Users can update and save these details to ensure accurate communication information.",
     PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO : "The Emergency Contact section records details of two emergency contacts, including Name, Email ID, Phone Number with country code, and Relationship. Users can add or update this information to ensure timely communication during emergencies.",
@@ -153,6 +154,7 @@ export const MODULE_INFOS = {
     JOB_MODULE_DESK_DETAILS_MODULE_INFO : "The Desk Details section provides a record of desk allocations for the employee, including desk ID, type, status, allocated date, and released date. This helps in tracking workspace assignments and availability.",
     JOB_MODULE_ASSETS_DETAILS_MODULE_INFO : "The Assets Details section displays the list of assets assigned to the employee, including asset ID, category, sub-category, model, serial number, allocated date, and released date. It ensures effective tracking and management of issued assets.",
     JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO : "The Offboarding Details section captures key information regarding an employee's exit, including the reason for leaving, eligibility for rehire, relieving type, and last working day. This ensures a structured and compliant offboarding process.",
+    JOB_MODULE_TRAINEE_ONBOARD_REQUEST_MODULE_INFO : "The Trainee Onboard Request section displays trainee onboarding details, including the request date, training start and end dates, extended dates if applicable, and current status. It also allows tracking of training feedback for evaluation and onboarding decisions.",
 
     //My Info Documents Module Info
     DOCUMENTS_MODULE_INFO : "The Document section provides categorized storage for important organizational files, including employee documents, appraisal/promotion letters, and policy documents. Users can navigate through folders and subfolders to view file details.",

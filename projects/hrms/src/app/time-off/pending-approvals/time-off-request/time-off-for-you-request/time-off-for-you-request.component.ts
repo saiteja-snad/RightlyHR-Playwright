@@ -18,6 +18,7 @@ import { Table, TableModule } from 'primeng/table';
 import { environment } from '../../../../../environments/environment';
 import { SignalsService } from '../../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-time-off-for-you-request',
   imports: [
@@ -80,6 +81,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
+    public formsValidation:FormValidationsService,
     public rbac: RbacService, private signalService: SignalsService
   ) { }
 

@@ -12,14 +12,12 @@ import { SettingsManageHolidaysTabsComponent } from "../../../shared/settings-ta
 import { SettingsManagePoliciesTabsComponent } from "../../../shared/settings-tabs/settings-manage-policies-tabs/settings-manage-policies-tabs.component";
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../../shared/modules-info';
-import { DocumentsCreationComponent } from "../documents-creation/documents-creation.component";
 import { filter } from 'rxjs';
-
 @Component({
   selector: 'app-employee-fields-layout',
   imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent,
     SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent, ManageDstTabsComponent, SettingsManageShitsTabsComponent,
-    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent, ModuleInformationComponent, DocumentsCreationComponent],
+    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent, ModuleInformationComponent],
   templateUrl: './employee-fields-layout.component.html',
   styleUrl: './employee-fields-layout.component.scss'
 })
@@ -82,7 +80,6 @@ export class EmployeeFieldsLayoutComponent implements OnInit{
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/settings/employee-fields/personal': MODULE_INFOS.SETTINGS_PERSONAL_INFO_MODULE_INFO,
       '/settings/employee-fields/job': MODULE_INFOS.SETTINGS_JOB_INFO_MODULE_INFO,
@@ -95,7 +92,6 @@ export class EmployeeFieldsLayoutComponent implements OnInit{
       '/settings/employee-fields/manage-dsts': MODULE_INFOS.SETTINGS_MANAGE_DST_INFO_MODULE_INFO,
       '/settings/employee-fields/no-due-clearnce': MODULE_INFOS.SETTINGS_NO_DUE_CLEARANCE_MODULE_INFO,
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }

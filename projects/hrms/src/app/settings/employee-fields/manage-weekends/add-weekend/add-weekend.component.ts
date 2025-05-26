@@ -141,7 +141,9 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
     if (location?.jobSubLocations?.length) {
       this.subLocationDetails = location.jobSubLocations;
       this.weekendForm.get('subLocation')?.enable();
+      this.weekendForm.get('subLocation')?.markAsTouched();
     } else {
+       this.weekendForm.get('subLocation')?.markAsTouched();
       this.subLocationDetails = [];
       this.weekendForm.get('subLocation')?.enable();
       this.weekendForm.get('subLocation')?.reset();
@@ -153,11 +155,12 @@ export class AddWeekendComponent implements OnInit, OnDestroy {
       locationId: subLocation.jobLocationId,
       subLocationId: subLocation.id
     };
-
+    this.weekendForm.get('shift')?.markAsTouched();
     this.http.getDataWithQueryParams(`orgShifts/getshiftlocation`, params)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+           this.weekendForm.get('shift')?.markAsTouched();
           this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
           this.weekendForm.get('shift')?.enable();
         },

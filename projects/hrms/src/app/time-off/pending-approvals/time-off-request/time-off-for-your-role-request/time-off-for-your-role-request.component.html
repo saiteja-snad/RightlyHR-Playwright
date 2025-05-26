@@ -216,7 +216,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Comments</p>
+                <p class="popup-heading mb-0">Leave Balance</p>
             </div>
             <div>
                 <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
@@ -284,7 +284,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        Reason is required
+                        Approve reason is required
                     </div>
                 </div>
             </div>
@@ -328,7 +328,7 @@
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                         Reason is required
+                         Reject reason is required
                     </div>
                 </div>
             </div>

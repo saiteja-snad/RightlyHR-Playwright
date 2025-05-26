@@ -9,11 +9,10 @@
             <div class="custom-p-select-content">
                 <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
                     filterBy="fullName" [showClear]="true" placeholder="Please select employee"
-                    (onChange)="Onclick($event)" class="custom-select w-100" resetFilterOnHide="true">
+                    (onChange)="Onclick($event)" class="form-select custom-select" resetFilterOnHide="true">
                 </p-select>
             </div>
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)">
-                <i class="bi bi-plus me-2"></i>Apply Leave On Behalf Of</button>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)">Apply Leave On Behalf Of</button>
             }
         </div>
     </div>

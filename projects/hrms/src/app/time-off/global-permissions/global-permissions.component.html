@@ -5,8 +5,7 @@
     </div>
     <div>
       @if(rbac.allowedToAccess('Request Global Permission Button.view')){
-      <button type="button" class="custom-btn btn-primary" (click)="openAdd()"><i class="bi bi-plus me-2"></i>Request
-        Global Permissions</button>
+      <button type="button" class="custom-btn btn-primary" (click)="openAdd()">Request Global Permissions</button>
       }
     </div>
   </div>
@@ -16,7 +15,7 @@
     <app-module-information [moduleInfo]="moduleinfo" />
   </div>
 
-  <div class="custom-table-content custom-content-height17">
+  <div class="custom-table-content">
     <table class="w-100">
       <thead>
         <tr>

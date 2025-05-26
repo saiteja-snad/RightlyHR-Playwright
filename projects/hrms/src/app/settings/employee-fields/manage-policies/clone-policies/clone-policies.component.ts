@@ -62,7 +62,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
         this.fb.group({
           policyName : [row.policyName,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
           policyFile : [row.policyAttachment],
-          policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z0-9][a-zA-Z0-9\s]*$')]],
+          policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
           policyNewFile: ['']
          
         })
@@ -249,6 +249,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
       this.policyForm.get('subLocation')?.setValue(null);
       this.policyForm.get('shift')?.setValue(null);
       this.policyForm.get('shift')?.disable();
+      this.policyForm.get('subLocation')?.markAsTouched();
     } else {
       this.jobLocationDropDownData = [];
       this.subLocationsDropdown = [];
@@ -306,6 +307,7 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
       this.policyForm.get('shift')?.enable();
       // Reset the shift value to null (allow user to select again)
       this.policyForm.get('shift')?.setValue(null);
+        this.policyForm.get('shift')?.markAsTouched();
     } else {
       // Clear shift data and reset shift field if no sublocation is selected
       this.shiftDropdown = [];

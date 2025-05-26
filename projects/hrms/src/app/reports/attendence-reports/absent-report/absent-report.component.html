@@ -1,5 +1,5 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="component-header-content">
     <!-- Header -->
     <div class="component-header">Reports</div>
 
@@ -107,11 +107,11 @@
   </div>
 
   <div class="d-flex gap-3 w-100">
-    <div class="custom-component-left-content">
+    <div class="component-left-tabs-container">
       <app-attandace-report-tabs />
     </div>
-    <div class="custom-component-right-content">
 
+    <div class="component-right-content">
       @if (isLoading) {
       <div class="custom-compoent-data-loader">
         <app-data-loader-content />
@@ -120,42 +120,38 @@
       <div class="custom-table-content">
         <table class="content w-100">
           <thead>
-            <tr>
-              <th>Employee ID</th>
-              <th>Employee Name</th>
-              <th>Department</th>
-              <th>Team Manager</th>
-              <th>Location</th>
-              <th>Sub Location</th>
-              <th>Shift</th>
-              <th>Leave Type</th>
-              <th>Leave Period</th>
-              <th>Days</th>
-            </tr>
+            <th>Employee ID</th>
+            <th>Employee Name</th>
+            <th>Department</th>
+            <th>Team Manager</th>
+            <th>Location</th>
+            <th>Sub Location</th>
+            <th>Shift</th>
+            <th>Leave Type</th>
+            <th>Leave Period</th>
+            <th>Days</th>
           </thead>
           <tbody>
             @if (filteredAbsentRecord && filteredAbsentRecord.length > 0) {
             @for (record of filteredAbsentRecord; track record) {
             <tr>
-              <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-              <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-              <td class="td-center">{{ record.department ?? '-' }}</td>
-              <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-              <td class="td-center">{{ record.location ?? '-' }}</td>
-              <td class="td-center">{{ record.sublocation ?? '-' }}</td>
-              <td class="td-center">{{ record.shift ?? '-' }}</td>
-              <td class="td-center">{{ record.leaveType ?? '-' }}</td>
-              <td class="td-center">
+              <td>{{ record.fusionEmpId ?? '-' }}</td>
+              <td>{{ record.employeeName ?? '-' }}</td>
+              <td>{{ record.department ?? '-' }}</td>
+              <td>{{ record.teamManagerName ?? '-' }}</td>
+              <td>{{ record.location ?? '-' }}</td>
+              <td>{{ record.sublocation ?? '-' }}</td>
+              <td>{{ record.shift ?? '-' }}</td>
+              <td>{{ record.leaveType ?? '-' }}</td>
+              <td>
                 {{ record.startDate ?? '-' | date:'dd-MMM-yyyy' }} to {{ record.endDate ?? '-' | date:'dd-MMM-yyyy' }}
               </td>
-              <td class="td-center">{{ record.days ?? '-' }}</td>
+              <td>{{ record.days ?? '-' }}</td>
             </tr>
             }
             } @else {
             <tr>
-              <td colspan="10" class="text-center">
-                <app-no-data-found></app-no-data-found>
-              </td>
+              <app-no-data-found></app-no-data-found>
             </tr>
             }
           </tbody>

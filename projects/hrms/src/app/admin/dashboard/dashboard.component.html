@@ -16,9 +16,9 @@
       <p class="component-header mb-0">{{'Dashboard'| translate}}</p>
     </div>}
     <div class="d-flex gap-3">
-      @if(this.rbac.allowedToAccess('Dashboard Current Openings.view')){
+      <!-- @if(this.rbac.allowedToAccess('Dashboard Current Openings.view')){
       <button type="button" class="custom-btn btn-secondary">Current Openings</button>
-      }
+      } -->
       @if(this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view' ) ||
       this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view' )
       || this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view' ) ||

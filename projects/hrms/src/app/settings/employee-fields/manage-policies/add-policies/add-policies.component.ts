@@ -33,7 +33,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
     empinfo : any;
     yearDetails: number[] = [];
     currentYear: number = new Date().getFullYear();
-  
+  isShiftAvailable: boolean = true;
   
     constructor(private fb: FormBuilder,public router:Router,private http: HttpService,
        private confirmation: OpenModalService, private modalService: NgbModal,
@@ -162,6 +162,8 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       if (locationId) {
         this.getSubLocationByid(locationId);
         this.policiesForm.get('subLocation')?.enable();
+        this.policiesForm.get('shift')?.disable();
+
       } else {
         this.jobLocationDropDownData = [];
         this.subLocationsDropdown=[];
@@ -172,6 +174,13 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
   
     getSubLocationByid(selectedLocation: any): void {
       if (selectedLocation && selectedLocation.id) {
+          // Reset subLocation and shift fields when location changes
+      this.policiesForm.patchValue({
+        subLocation: null,
+        shift: null
+      });
+      this.subLocationsDropdown = [];
+      this.shiftDropdown = [];
         this.subscription = this.http
           .getData(
             `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
@@ -180,17 +189,26 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
             next: (data: any) => {
               if (data.length === 0) {
                 this.subLocationsDropdown = [];
+                 this.shiftDropdown = []; 
+                 this.policiesForm.get('subLocation')?.enable();
+            this.policiesForm.get('shift')?.disable();
               } else {
                 this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+                 this.shiftDropdown = []; 
+                this.policiesForm.get('subLocation')?.enable();
+                this.policiesForm.get('shift')?.disable();
               }
 
             },
-            error: (err: any) => {
-             
+            error: (error: any) => {
+             if (error.error) {
+            this.confirmation.openErrorModal(error.error.Message);
+          }
             },
           });
       } else {
         this.subLocationsDropdown = [];
+        this.shiftDropdown = [];
         
       }
     }
@@ -200,8 +218,10 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       if (subLocationId) {
         this.getShiftBYid(subLocationId);
         this.policiesForm.get('shift')?.enable();
+         this.shiftDropdown = []; 
       } else {
         this.subLocationsDropdown=[];
+         this.shiftDropdown = []; 
         this.policiesForm.get('shift')?.disable();
       }
     }
@@ -223,10 +243,14 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
   
               if (data.length === 0) {
                 this.shiftDropdown = []; // Reset if no shifts are found
+                this.isShiftAvailable = false;
               } else {
+                 
                 this.shiftDropdown = [].concat(
                   ...data.map((element: any) => element.orgShiftsItems)
+                  
                 ); // Flatten the shift data
+                this.isShiftAvailable = false;
               }
             },
             error: (err: any) => {
@@ -238,7 +262,13 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
         this.shiftDropdown = []; // Reset if no sub-location is selected
       }
     }
-
+onShiftChange(shiftID:any) {
+      if (shiftID) {
+        this.isShiftAvailable = true;
+      } else {
+        this.isShiftAvailable = false;
+      }
+}
     navigation(){
       this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
     }

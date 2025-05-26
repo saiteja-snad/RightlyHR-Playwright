@@ -10,8 +10,12 @@
     min-width: 200px;
 }
 
+.component-left-tabs-container {
+    height: calc(100vh - 13rem) !important;
+}
+
 .custom-table-content {
-    height: calc(100vh - 17rem);
+    height: calc(100vh - 20rem);
 }
 
 .component-right-content {

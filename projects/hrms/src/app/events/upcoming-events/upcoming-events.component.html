@@ -5,8 +5,7 @@
     </div>
     @if(this.rbac.allowedToAccess('Events(Upcoming Events).create')){
     <div>
-      <a type="button" class="custom-add-btn" (click)="openAddProspective()">
-        <i class="bi bi-plus me-1"></i>Add Event</a>
+      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">Add Event</button>
     </div>
     }
   </div>
@@ -36,7 +35,7 @@
   <ng-template #maincontent>
     <div class="custom-events-main-content">
       <!--Todays Events-->
-      <div class="card events-section-card mb-4" *ngIf="todaysEvents.length > 0">
+      <div class="card events-section-card" *ngIf="todaysEvents.length > 0">
         <div class="mb-4">
           <p class="component-sub-header mb-0">Today's Events</p>
         </div>
@@ -88,7 +87,7 @@
       </div>
 
       <!--Upcoming Events-->
-      <div class="card events-section-card mb-4" *ngIf="(getEventsData$ | async)?.length > 0">
+      <div class="card events-section-card" *ngIf="(getEventsData$ | async)?.length > 0">
         <div class="mb-4">
           <p class="component-sub-header mb-0">Custom Events</p>
         </div>

@@ -31,8 +31,7 @@
                         }
                     </button>
                     }
-                    @if(rbac.allowedToAccess('Family Members Data - Generate.view') && rbac.allowedToAccess('Family
-                    Members Data - Export.view')){
+                    @if(rbac.allowedToAccess('Family Members Data - Generate.view') && rbac.allowedToAccess('Family Members Data - Export.view')){
                     <button type="button" class="custom-btn btn-primary"
                         [disabled]="familydata.length === 0 || disableBtn" (click)="exportAsExcelFile()">
                         @if(spinnerLoader2){
@@ -88,7 +87,7 @@
                             <ng-container *ngIf="familydata.length > 0; else noData">
                                 @for(row of familydata; track row){
                                 <tr>
-                                    <td>{{ row.fusionEmpId || "-" }}</td>
+                                    <td>{{ row.employeeId || "-" }}</td>
                                     <td>{{ row.firstName || "-" }}</td>
                                     <td>{{ row.middleName || "-" }}</td>
                                     <td>{{ row.lastName || "-" }}</td>

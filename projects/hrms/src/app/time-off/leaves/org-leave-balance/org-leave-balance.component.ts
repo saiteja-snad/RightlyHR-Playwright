@@ -85,7 +85,7 @@ export class OrgLeaveBalanceComponent {
     const url = this.router.url;
   
     const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/leaves/org-leave-balance': MODULE_INFOS.TIME_OFF_LEAVES_MODULE_INFO
+      '/time-off/leaves/org-leave-balance': MODULE_INFOS.TIME_OFF_LEAVES_ORG_LEAVE_BALANCE_MODULE_INFO
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

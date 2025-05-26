@@ -456,7 +456,12 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
         },
       });
   }
-  
+
+  isAnyFilterApplied(): boolean {
+    const form = this.LeaveReportForm.value;
+    return !!(form.dateRange || form.employee || form.manager || form.team || form.leaveCategory);
+  }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

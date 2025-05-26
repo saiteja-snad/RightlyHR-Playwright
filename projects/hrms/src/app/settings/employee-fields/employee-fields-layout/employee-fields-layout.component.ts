@@ -66,7 +66,7 @@ export class EmployeeFieldsLayoutComponent implements OnInit{
       '/settings/employee-fields/updateholidays',
       '/settings/employee-fields/viewholidays',
       '/settings/employee-fields/updatepolices',
-      `/settings/employee-fields/clonepolices/${cloningPolicyId}`,
+      `/settings/employee-fields/clonepolices`,
       '/settings/employee-fields/viewpolices',
       '/settings/employee-fields/documents',
     ];

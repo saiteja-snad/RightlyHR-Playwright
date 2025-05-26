@@ -22,6 +22,11 @@
         </div>
     </div>
 
+    <!--Module Information-->
+  <div>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </div>
+
     @if (rbac.allowedToAccess('Time Off Module.view')) {
     <div class="graph-grid w-100 mb-3">
         <div class="total-leave-balance-graph-content">

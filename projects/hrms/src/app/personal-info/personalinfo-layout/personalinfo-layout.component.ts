@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
-import { ActivatedRoute, Router, RouterOutlet } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
@@ -14,15 +14,18 @@ import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { MultiSelectModule } from 'primeng/multiselect';
 
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-personalinfo-layout',
   imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent,
-    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule],
+    FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, ModuleInformationComponent],
   templateUrl: './personalinfo-layout.component.html',
   styleUrl: './personalinfo-layout.component.scss'
 })
 
 export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
+  moduleinfo : string = '';
   teamForm!: FormGroup;
   managers: any[] = [];
   teamMembersdata: any[] = [];
@@ -74,7 +77,81 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     this.emppersonalinfo = JSON.parse(localStorage.getItem("personaldata") || '{}')
     this.getTraineeofferdetails();
     this.assignHeading();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/myinfo/personal/basic-info': MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
+      '/myinfo/personal/address-info' : MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
+      '/myinfo/personal/contact-details' : MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
+      '/myinfo/personal/emergency-contact-details' : MODULE_INFOS.PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO,
+      '/myinfo/personal/education-details' : MODULE_INFOS.PERSONAL_MODULE_EDUCATION_DETAILS_MODULE_INFO,
+      '/myinfo/personal/identity-details' : MODULE_INFOS.PERSONAL_MODULE_IDENTITY_DETAILS_MODULE_INFO,
+      '/myinfo/personal/family-details': MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
+      '/myinfo/personal/bank-details' : MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
+      '/myinfo/personal/visa-details' : MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
+      '/myinfo/personal/team-members' : MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+
+      '/myinfo/job/pre-onboarding-details': MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
+      '/myinfo/job/onboarding-details' : MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
+      '/myinfo/job/job-details' : MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
+      '/myinfo/job/separation-details' : MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
+      '/myinfo/job/no-due-clearance-details' : MODULE_INFOS.JOB_MODULE_NO_DUE_CLEARANCE_DETAILS_MODULE_INFO,
+      '/myinfo/job/probation-details' : MODULE_INFOS.JOB_MODULE_PROBATION_DETAILS_MODULE_INFO,
+      '/myinfo/job/past-experiences': MODULE_INFOS.JOB_MODULE_PREVIOUS_EXPERIENCE_DETAILS_MODULE_INFO,
+      '/myinfo/job/certifications' : MODULE_INFOS.JOB_MODULE_CERTIFICATION_DETAILS_MODULE_INFO,
+      '/myinfo/job/compensation-details' : MODULE_INFOS.JOB_MODULE_COMPENSATION_DETAILS_MODULE_INFO,
+      '/myinfo/job/desk-details' : MODULE_INFOS.JOB_MODULE_DESK_DETAILS_MODULE_INFO,
+      '/myinfo/job/assets-details' : MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
+      '/myinfo/job/employmentType' : MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
+
+      '/myinfo/documents' : MODULE_INFOS.DOCUMENTS_MODULE_INFO,
+
+
+      '/personalinfo/personal/basic-info': MODULE_INFOS.PERSONAL_MODULE_BASIC_INFORMATION_MODULE_INFO,
+      '/personalinfo/personal/address-info' : MODULE_INFOS.PERSONAL_MODULE_ADDRESS_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/contact-details' : MODULE_INFOS.PERSONAL_MODULE_CONTACT_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/emergency-contact-details' : MODULE_INFOS.PERSONAL_MODULE_EMERGENCEY_CONTACT_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/education-details' : MODULE_INFOS.PERSONAL_MODULE_EDUCATION_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/identity-details' : MODULE_INFOS.PERSONAL_MODULE_IDENTITY_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/family-details': MODULE_INFOS.PERSONAL_MODULE_FAMILY_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/bank-details' : MODULE_INFOS.PERSONAL_MODULE_BANK_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/visa-details' : MODULE_INFOS.PERSONAL_MODULE_VISA_DETAILS_MODULE_INFO,
+      '/personalinfo/personal/team-members' : MODULE_INFOS.TEAM_MEMBERS_MODULE_INFO,
+
+      '/personalinfo/job/pre-onboarding-details': MODULE_INFOS.JOB_MODULE_PRE_ONBOARDING_DETAILS_MODULE_INFO,
+      '/personalinfo/job/onboarding-details' : MODULE_INFOS.JOB_MODULE_ONBOARDING_DETAILS_MODULE_INFO,
+      '/personalinfo/job/job-details' : MODULE_INFOS.JOB_MODULE_JOB_DETAILS_MODULE_INFO,
+      '/personalinfo/job/separation-details' : MODULE_INFOS.JOB_MODULE_SEPARATION_DETAILS_MODULE_INFO,
+      '/personalinfo/job/no-due-clearance-details' : MODULE_INFOS.JOB_MODULE_NO_DUE_CLEARANCE_DETAILS_MODULE_INFO,
+      '/personalinfo/job/probation-details' : MODULE_INFOS.JOB_MODULE_PROBATION_DETAILS_MODULE_INFO,
+      '/personalinfo/job/past-experiences': MODULE_INFOS.JOB_MODULE_PREVIOUS_EXPERIENCE_DETAILS_MODULE_INFO,
+      '/personalinfo/job/certifications' : MODULE_INFOS.JOB_MODULE_CERTIFICATION_DETAILS_MODULE_INFO,
+      '/personalinfo/job/compensation-details' : MODULE_INFOS.JOB_MODULE_COMPENSATION_DETAILS_MODULE_INFO,
+      '/personalinfo/job/desk-details' : MODULE_INFOS.JOB_MODULE_DESK_DETAILS_MODULE_INFO,
+      '/personalinfo/job/assets-details' : MODULE_INFOS.JOB_MODULE_ASSETS_DETAILS_MODULE_INFO,
+      '/personalinfo/job/employmentType' : MODULE_INFOS.JOB_MODULE_OFFBOARDING_DETAILS_MODULE_INFO,
+
+      '/personalinfo/documents' : MODULE_INFOS.DOCUMENTS_MODULE_INFO,
+
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+
 
   getEmployeeId(): void {
     const employeeId = parseInt(this.empinfo.employeeId);

@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="component-header-content">
         <!--header-->
-        <div class="component-header">Monthly Attandance Report</div>
+        <div class="component-header pt-2">Monthly Attandance Report</div>
     </div>
 
     <!--Module Information-->
@@ -9,7 +9,7 @@
         <app-module-information [moduleInfo]="moduleinfo" />
     </div>
 
-    <div class="card custom-component-right-content p-3">
+    <div class="custom-component-right-content p-3">
         <!--right data-->
         <form autocomplete="off" [formGroup]="monthlyReportForm" (ngSubmit)="generateReport(monthlyReportForm)" class="custom-width">
             <div class="mb-3">

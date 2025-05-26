@@ -1,17 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { ReportsMainTabsComponent } from "../../shared/reports-tabs/reports-main-tabs/reports-main-tabs.component";
-
+import { Component, ViewEncapsulation } from '@angular/core';
+import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-reports-layout',
-  imports: [RouterModule, CommonModule, ReportsMainTabsComponent],
+  imports: [RouterModule, CommonModule],
   templateUrl: './reports-layout.component.html',
-  styleUrl: './reports-layout.component.scss'
+  styleUrl: './reports-layout.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 
 export class ReportsLayoutComponent {
-  constructor(public router: Router) {
-
-  }
+ 
 }

@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div>
             <p class="component-header mb-0" (click)="navigate()">
-                <i class="bi bi-arrow-90deg-left me-2"></i>{{'Add DST'| translate}}
+                <i class="bi bi-arrow-90deg-left me-2"></i>{{'Add New'| translate}}
             </p>
         </div>
     </div>
@@ -100,7 +100,7 @@
                 </div> -->
                 <div class="pt-4 mt-1">
                     <button type="button" class="custom-btn btn-primary px-4" (click)="addMomentRow();">
-                        + {{'Add Row' | translate}}</button>
+                        + {{'Add New' | translate}}</button>
                 </div>
             </div>
 
@@ -181,7 +181,7 @@
             <div class="d-flex gap-3 justify-content-end">
                 <button class="custom-btn btn-secondary px-5" type="button" (click)="openConfirmation()">{{'Cancel' |
                     translate}}</button>
-                <button class="custom-btn btn-primary px-5" [disabled]="dstForm.invalid">{{'Save' | translate}}</button>
+                <button class="custom-btn btn-primary px-5" [disabled]="dstForm.invalid">{{'Submit' | translate}}</button>
             </div>
         </form>
     </div>

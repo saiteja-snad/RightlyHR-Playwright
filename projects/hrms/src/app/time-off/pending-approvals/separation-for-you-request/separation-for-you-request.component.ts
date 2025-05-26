@@ -36,14 +36,14 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     ReactiveFormsModule,
     PendingapprovalsseparationPipe,
     DataLoaderContentComponent
-],
+  ],
   templateUrl: './separation-for-you-request.component.html',
   styleUrl: './separation-for-you-request.component.scss',
 })
 
 export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
-  searchValue!:string;
+  searchValue!: string;
   separation_For_You_Details = new BehaviorSubject<ISeparation[]>([]);
   totalRecords = 100;
   first: any = 0;
@@ -89,19 +89,19 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     private conformationPopup: OpenModalService,
     private modalService: NgbModal,
     public rbac: RbacService,
-    private signalService:SignalsService,
+    private signalService: SignalsService,
     private fb: FormBuilder,
-     public formsValidation: FormValidationsService
-  ) {}
+    public formsValidation: FormValidationsService
+  ) { }
 
   ngOnInit(): void {
     this.initializeRejectForm();
     this.getseparationforyourequests();
   }
 
-  closepopup(content:any){
+  closepopup(content: any) {
     // this.isCheckBoxEnabledRegular = false;
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   initializeRejectForm() {
@@ -110,12 +110,12 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
     });
   }
 
-  rejectpopup(){
+  rejectpopup() {
     this.rejectForm.reset();
     this.modalService.dismissAll();
   }
 
-  resetForm(f:NgForm) {
+  resetForm(f: NgForm) {
     f.resetForm(); // resets form state AND ngModel bindings
     // Clear the selected data structure completely and set defaults
     this.selectedSpRequestData = {
@@ -150,7 +150,7 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (data: any) => {
-          
+
           this.separation_For_You_Details.next(
             data.data.filter(
               (item: any) =>
@@ -166,15 +166,15 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true, backdrop: 'static',});
+    this.modalService.open(content, { centered: true, backdrop: 'static', });
   }
- 
+
   openModalLarge(content: any) {
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static',});
+    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static', });
   }
- 
+
   openModalXLarge(content: any) {
-    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static',});
+    this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static', });
   }
 
   approverCommentsfunction(value: any) {
@@ -448,30 +448,30 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       requestBody.isAcceptEarly = false;
     }
     this.subscription = this.http.putData(`PendingApproval/process/${this.requesthandler.approvalHeader?.id}`,
-       requestBody).subscribe({
-      next: (respone: any) => {
-        this.isLoading = false;
-        this.modalService.dismissAll();
-        this.getseparationforyourequests();
-        this.http.tirggerPendingApprovalCountSignal.update((status) => ({
-          ...status,
-          separation: true,
-        }));
-        this.conformationPopup.openSuccessModal(
-          'Separation Request Processed Successfully'
-        );
-        this.signalService.separationForYouTriggerSignal.set(true);
-        this.signalService.separationForRoleTriggerSignal.set(true);
-        this.signalService.separationSidNavCountTriggerSignal.set(true);
-      },
-      error: (reason: any) => {
-        this.isLoading = false;
-        this.conformationPopup.openErrorModal(reason.error.message);
-      },
-      complete: () => {
-        this.isLoading = false;
-      },
-    });
+      requestBody).subscribe({
+        next: (respone: any) => {
+          this.isLoading = false;
+          this.modalService.dismissAll();
+          this.getseparationforyourequests();
+          this.http.tirggerPendingApprovalCountSignal.update((status) => ({
+            ...status,
+            separation: true,
+          }));
+          this.conformationPopup.openSuccessModal(
+            'Separation Request Processed Successfully'
+          );
+          this.signalService.separationForYouTriggerSignal.set(true);
+          this.signalService.separationForRoleTriggerSignal.set(true);
+          this.signalService.separationSidNavCountTriggerSignal.set(true);
+        },
+        error: (reason: any) => {
+          this.isLoading = false;
+          this.conformationPopup.openErrorModal(reason.error.message);
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
+      });
   }
 
   getBlockedPastDate(date: string): string {
@@ -507,38 +507,53 @@ export class SeparationForYouRequestComponent implements OnInit, OnDestroy {
       this.clearExtendData();
       this.clearDiscontinueData();
     }
-     else {
-      if(!this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck){
-        this.early=true;
+    else {
+      if (!this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck) {
+        this.early = true;
       }
       else {
         // Toggle off Early Relieving
         this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
         this.early = false;
-        this.selectedRadio=''
+        this.selectedRadio = ''
         this.buttondisable = false;
         this.clearEarlyData();
       }
-     
+
     }
   }
-  earlyrelieving(){
-    if (this.selectedSpRequestData.spIsEarlyRelieveing == true) {
-      this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
-      this.selectedSpRequestData.isAcceptEarlyRequest = 'Yes';
+
+  earlyrelieving() {
+    if (!this.early) {
+      if (this.selectedSpRequestData.spIsEarlyRelieveing == true) {
+        this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = true;
+        this.selectedSpRequestData.isAcceptEarlyRequest = 'Yes';
+      } else {
+        this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
+      }
+      // this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
+      this.selectedSpRequestData.requestSelectedType = 'Early';
+      this.regular = false;
+      this.extend = false;
+      this.early = true;
+      this.buttondisable = true;
+      this.isCheckBoxEnabledEarly = true;
+      // Clear data related to Extend and Discontinue
+      this.clearExtendData();
+      this.clearDiscontinueData();
     } else {
-      this.selectedSpRequestData.isAcceptEarlyRequest = 'NO';
+      if (!this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck) {
+        this.early = true;
+      }
+      else {
+        // Toggle off Early Relieving
+        this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
+        this.early = false;
+        this.selectedRadio = ''
+        this.buttondisable = false;
+        this.clearEarlyData();
+      }
     }
-    this.selectedSpRequestData.spIsAcceptEarlyrelievingcheck = false;
-    this.selectedSpRequestData.requestSelectedType = 'Early';
-    this.regular = false;
-    this.extend = false;
-    this.early = true;
-    this.buttondisable = true;
-    this.isCheckBoxEnabledEarly = true;
-    // Clear data related to Extend and Discontinue
-    this.clearExtendData();
-    this.clearDiscontinueData();
   }
 
   isCheckBoxEnabledRegular = false

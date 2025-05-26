@@ -90,7 +90,7 @@
                 <div class="pt-4 mt-1">
                     <button type="button" class="custom-btn btn-primary px-4"
                         (click)="addMomentRow(); hidePublishCloneButtons = true">
-                        + {{'Add Row' | translate}}</button>
+                        + {{'Add New' | translate}}</button>
                 </div>
             </div>
 
@@ -173,7 +173,7 @@
                 <button class="custom-btn btn-secondary px-5" type="button" (click)="openConfirmation()">
                     {{'Cancel' | translate}}</button>
                 @if(!hidePublishCloneButtons){
-                <button class="custom-btn publish-btn px-5" type="button" (click)="publishDST()">{{'Publish' |
+                <button class="custom-btn publish-btn px-5" type="button"  [disabled]="dstForm.invalid" (click)="publishDST()">{{'Publish' |
                     translate}}</button>
                 <!-- <button class="custom-btn clone-
                     btn px-5" type="button" (click)="navigateToCloneComponent()">{{'Clone' | translate}}</button>

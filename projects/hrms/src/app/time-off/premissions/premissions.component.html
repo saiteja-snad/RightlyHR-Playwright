@@ -94,6 +94,9 @@
                         <div class="textarea-count-text">
                             {{ permissionForm.get('reason')?.value?.length || 0 }}/250
                         </div>
+                        <div class="error-msg" *ngIf="permissionForm.get('reason')?.errors?.['minlength']">
+                          Reason must be at least 10 characters
+                        </div>
                         <div class="error-msg"
                             *ngIf="permissionForm.get('reason')?.touched && permissionForm.get('reason')?.invalid">
                             <div *ngIf="permissionForm.get('reason')?.errors?.['required']">
@@ -132,7 +135,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
         </div>
 
         <div class="custom-modal-footer">

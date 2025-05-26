@@ -32,6 +32,10 @@
               (onChange)="onLocationChange($event.value)">
             </p-select>
           </div>
+          <div *ngIf="policyForm.get('location')?.touched && policyForm.get('location')?.hasError('required')"
+            class="error-msg">
+            {{'Location is required' | translate}}
+          </div>
         </div>
     
         <div>
@@ -43,6 +47,10 @@
               formControlName="subLocation" placeholder="Please select sub location"
               (onChange)="onSubLocationChange($event.value)" class="form-select custom-select"></p-select>
           </div>
+          <div *ngIf="policyForm.get('subLocation')?.touched && policyForm.get('subLocation')?.hasError('required')"
+            class="error-msg">
+            {{'Sub Location is required' | translate}}
+          </div>
         </div>
     
         <div>
@@ -52,6 +60,10 @@
           <div class="custom-p-select-content">
             <p-select [options]="shiftDropdown" optionLabel="shiftName"  formControlName="shift"
               placeholder="Select shift" class="form-select custom-select"></p-select>
+          </div>
+          <div *ngIf="policyForm.get('shift')?.touched && policyForm.get('shift')?.hasError('required')"
+            class="error-msg">
+            {{'Shift is required' | translate}}
           </div>
         </div>
     

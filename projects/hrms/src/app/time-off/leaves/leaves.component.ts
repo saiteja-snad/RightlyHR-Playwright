@@ -21,6 +21,7 @@ import { TabsModule } from 'primeng/tabs';
 import { ChartModule } from 'primeng/chart';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { FormValidationsService } from '../../services/form-validations.service';
 @Component({
   selector: 'app-leaves',
   imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, Select,
@@ -99,6 +100,7 @@ export class LeavesComponent {
     private fb: FormBuilder,
     public rbac: RbacService,
     public router: Router,
+    public formsValidation:FormValidationsService,
     private signalService: SignalsService) {
     effect(() => {
       if (this.signalService.timecountTriggerSignal()) {
@@ -356,7 +358,7 @@ export class LeavesComponent {
       halfdayavailing: ['', Validators.required],
       availing: [{ value: '', disabled: true }],
       fulldayavailing: [{ value: '', disabled: true }],
-      reason: ['', [Validators.required]]
+      reason: [null, [Validators.required]]
     });
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
@@ -530,6 +532,9 @@ export class LeavesComponent {
   }
 
   onleaveSelect(categoryId: number) {
+    this.enableButton = false;
+    this.leaveForm.get('halfdayavailing')?.setValue(null);
+    this.leaveForm.get('availing')?.setValue(null);
     this.leaveFormData.categoryId = categoryId;
     this.selectedleave = this.categoryDetails.find(c => c.category.id == categoryId) as ICategoryDetails
     this.enableHalfDayOptions = this.selectedleave?.category?.allowedHalfDay ?? false;
@@ -829,7 +834,7 @@ export class LeavesComponent {
     this.isNonOptionalHolidaySelected = false;
     this.isHolidaySelected = false;
     this.isWeekOffSelectedEndate = false;
-    this.isWeekOffSelected = false;
+    // this.isWeekOffSelected = false;
     this.isHolidaySelectedEndate = false;
     this.onEndDateChange();
     this.updateEndDateValidity();

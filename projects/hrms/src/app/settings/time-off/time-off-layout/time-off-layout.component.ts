@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule, } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SettingsTimeOffTabsComponent } from "../../../shared/settings-tabs/settings-time-off-tabs/settings-time-off-tabs.component";
@@ -11,7 +11,8 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
   selector: 'app-time-off-layout',
   imports: [RouterModule, CommonModule, SettingsTimeOffTabsComponent, AttendanceEligibilityCriteriaTabsComponent, LeaveCategoryTabsComponent, ModuleInformationComponent],
   templateUrl: './time-off-layout.component.html',
-  styleUrl: './time-off-layout.component.scss'
+  styleUrl: './time-off-layout.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 
 export class TimeOffLayoutComponent implements OnInit {

@@ -50,7 +50,7 @@
                     <th>Reason</th>
                     <th>Approver Comments</th>
                     @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For You (Time Off).delete'))){
-                    <th class="text-center">Action(S)</th>
+                    <th>Action<span class="text-lowercase">(s)</span></th>
                     }
                 </tr>
             </ng-template>
@@ -178,7 +178,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">Comments</p>
+                <p class="popup-heading mb-0">Leave Balance</p>
             </div>
             <div>
                 <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
@@ -240,7 +240,7 @@
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide approve reason"
                         name="Reasons" #Reasons="ngModel" maxlength="250" required pattern="^\S.*"
                         [(ngModel)]="selectedLeaveData.comments"
-                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3">
+                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" (keypress)="formsValidation.restrictInput($event)">
                     </textarea>
 
                     <div class="textarea-count-text">
@@ -248,7 +248,7 @@
                     </div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        Reason is required
+                        Approve reason is required
                     </div>
                 </div>
             </div>
@@ -287,12 +287,12 @@
                             class="text-danger">*</span></label>
                     <textarea class="form-control custom-input" id="Reasons" placeholder="Please provide reject reason"
                         name="Reasons" #Reasons="ngModel" maxlength="250" [(ngModel)]="selectedLeaveData.comments" pattern="^\S.*"
-                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" required></textarea>
+                        (ngModelChange)="ifreasonnull(selectedLeaveData.comments)" rows="3" (keypress)="formsValidation.restrictInput($event)" required></textarea>
                     <div class="textarea-count-text">
                         {{selectedLeaveData.comments?.length?selectedLeaveData.comments?.length:0}}/250</div>
                     <div class="error-msg"
                         *ngIf="(Reasons.touched && Reasons.invalid) || (leaveapprovee.submitted && Reasons.invalid)">
-                        Reason is required
+                        Reject reason is required
                     </div>
                 </div>
             </div>

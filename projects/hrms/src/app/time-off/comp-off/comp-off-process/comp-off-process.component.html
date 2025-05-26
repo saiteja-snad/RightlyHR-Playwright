@@ -5,7 +5,7 @@
       <thead>
         <th>{{'Worked Date'| translate}}</th>
         <th>{{'Availed'| translate}}</th>
-        <th>{{'Reason'| translate}}</th>
+        <th class="text-center">{{'Reason'| translate}}</th>
         <th>{{'Applied Date'| translate}}</th>
         <th>{{'Status'| translate}}</th>
       </thead>
@@ -19,12 +19,12 @@
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
-            <td>
+            <td class="text-center">
               <div>
-                <a *ngIf="compOffRequest.requestedComments; else noReason" type="button"
+                <div *ngIf="compOffRequest.requestedComments; else noReason" type="button"
                   [ngbPopover]="requestedComments">
-                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                </a>
+                    <i class="bi bi-info-circle-fill"></i>
+                </div>
                 <ng-template #requestedComments>
                   <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
                 </ng-template>

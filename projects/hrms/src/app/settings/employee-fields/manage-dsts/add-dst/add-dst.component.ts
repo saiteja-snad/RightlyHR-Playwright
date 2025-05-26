@@ -189,7 +189,9 @@ export class AddDstComponent implements OnInit, OnDestroy {
     if (location?.jobSubLocations?.length) {
       this.subLocationDetails = location.jobSubLocations;
       this.dstForm.get('subLocation')?.enable();
+      this.dstForm.get('subLocation')?.markAsTouched();
     } else {
+      this.dstForm.get('subLocation')?.markAsTouched();
       this.subLocationDetails = [];
       this.dstForm.get('subLocation')?.enable();
       this.dstForm.get('subLocation')?.reset();
@@ -272,7 +274,7 @@ export class AddDstComponent implements OnInit, OnDestroy {
       locationId: subLocation.jobLocationId,
       subLocationId: subLocation.id,
     };
-
+    this.dstForm.get('shift')?.markAsTouched();
     this.http
       .getDataWithQueryParams(`orgShifts/getshiftlocation`, params)
       .pipe(takeUntil(this.destroy$))
@@ -281,6 +283,7 @@ export class AddDstComponent implements OnInit, OnDestroy {
           this.shiftDetails = res.flatMap(
             (header: any) => header.orgShiftsItems || []
           );
+          this.dstForm.get('shift')?.markAsTouched();
           this.dstForm.get('shift')?.enable();
         },
         error: (err) => {

@@ -3,22 +3,26 @@ import { LeavesApprovaltabsComponent } from "../../../shared/time-off-module-tab
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { ITeamLeaveSummary } from '../leaves.model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { NavigationEnd, Router } from '@angular/router';
+import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-team-leave-summary',
-  imports: [LeavesApprovaltabsComponent, CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe],
+  imports: [LeavesApprovaltabsComponent, CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, ModuleInformationComponent],
   templateUrl: './team-leave-summary.component.html',
   styleUrl: './team-leave-summary.component.scss'
 })
 
 export class TeamLeaveSummaryComponent {
+  moduleinfo : string = '';
   teamLeaveSummary: ITeamLeaveSummary[] = [];
   loggedInUser: any;
   selectedYear: number | undefined;
@@ -63,7 +67,8 @@ export class TeamLeaveSummaryComponent {
 
   constructor(
     private http: HttpService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    public readonly router: Router
   ) { }
 
   ngOnInit(): void {
@@ -72,6 +77,27 @@ export class TeamLeaveSummaryComponent {
     this.selectedMonth = currentDate.getMonth() + 1;
     this.selectedYear = currentDate.getFullYear();
     this.getAllTeamLeaveSummary();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/leaves/team-leave-summary': MODULE_INFOS.TIME_OFF_LEAVES_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getAllTeamLeaveSummary() {

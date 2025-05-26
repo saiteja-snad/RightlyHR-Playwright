@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Iinactive } from './inactive-model';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,14 +12,17 @@ import { RbacService } from '../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { AccessNavigationService } from '../../services/access-navigation.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-inactive-employees',
-  imports: [CommonModule, RouterModule, InactiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent],
+  imports: [CommonModule, RouterModule, InactiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './inactive-employees.component.html',
   styleUrl: './inactive-employees.component.scss'
 })
 
 export class InactiveEmployeesComponent implements OnInit ,OnDestroy{
+  moduleinfo : string = '';
   subscription!: Subscription;
   InActive = [] as any;
   emp = {} as any;
@@ -30,6 +33,27 @@ export class InactiveEmployeesComponent implements OnInit ,OnDestroy{
 
   ngOnInit(): void {
     this.empdata();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/admin/inactive-employees': MODULE_INFOS.INACTIVE_EMPLOYEES_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   //function for inactive employees

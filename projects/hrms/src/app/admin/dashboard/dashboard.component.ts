@@ -1,19 +1,22 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DocumentHistoryLayoutComponent } from '../document-history/document-history-layout/document-history-layout.component';
-import { Subscription } from 'rxjs';
+import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule],
+  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, ModuleInformationComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
 
 export class DashboardComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   Inactive!: number;
   ACTDATA!: number;
@@ -45,8 +48,29 @@ export class DashboardComponent {
           `${tab.permission.feature}.${tab.permission.action}`
         )
     );
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
 
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/admin/dashboard': MODULE_INFOS.DASHBOARD_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+  
   fetchData() {
     this.empdata();
     this.activeEmpData();

@@ -5,24 +5,27 @@ import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IEmployeeLeaveData } from '../leaves.model';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { LeavesApprovaltabsComponent } from '../../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { FormControl, FormsModule } from '@angular/forms';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { AuthService } from '../../../services/auth.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
+import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-org-leave-balance',
-  imports: [CommonModule, Select, AccordionModule, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe],
+  imports: [CommonModule, Select, AccordionModule, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, ModuleInformationComponent],
   templateUrl: './org-leave-balance.component.html',
   styleUrl: './org-leave-balance.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class OrgLeaveBalanceComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   employeedata = {} as any;
   teamLeaveBalance: IEmployeeLeaveData[] = [];
@@ -66,6 +69,27 @@ export class OrgLeaveBalanceComponent {
     const currentDate = new Date();
     this.selectedYear = currentDate.getFullYear();
     this.getEmployeeId();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/time-off/leaves/org-leave-balance': MODULE_INFOS.TIME_OFF_LEAVES_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   onSelectYear(event: any) {

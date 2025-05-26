@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { HttpService } from '../../services/http.service';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
@@ -13,15 +13,18 @@ import { LettersTabComponent } from '../../shared/letters-shared-content/letters
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from './welcome-letter.model';
 import { TranslateModule } from '@ngx-translate/core';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-welcome-letter',
-  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule],
+  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent],
   templateUrl: './welcome-letter.component.html',
   styleUrl: './welcome-letter.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class WelcomeLetterComponent {
+  moduleinfo : string = '';
   subscription!: Subscription;
   bankloanLetterData = {} as any;
   bankLoanTemplate: any | string | ArrayBuffer | null = null;
@@ -54,6 +57,8 @@ export class WelcomeLetterComponent {
     this.initializeForm();
     this.getEmployees();
     this.getAuthorityDetails();
+    this.updateModuleInfo();
+    this.initiateUpdateModuleInfo();
   }
   
   initializeForm() {
@@ -63,6 +68,25 @@ export class WelcomeLetterComponent {
       authorityid: [null, Validators.required],
       jobValid: [false, Validators.requiredTrue]
     });
+  }
+
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+  
+    const routeToInfoMap: { [key: string]: string } = {
+      '/admin/letters/welcome-letter': MODULE_INFOS.WELCOME_LETTER_MODULE_INFO
+    };
+  
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getEmployees() {

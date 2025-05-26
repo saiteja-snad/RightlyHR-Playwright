@@ -12,16 +12,26 @@ import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-comp-off-approval',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, DataLoaderContentComponent],
+  imports: [
+    CommonModule,
+    NgbPopoverModule,
+    FormsModule,
+    PaginatorModule,
+    DropdownModule,
+    DateformatPipe,
+    NoDataFoundComponent,
+    DataLoaderContentComponent,
+    TranslateModule
+  ],
   templateUrl: './comp-off-approval.component.html',
-  styleUrl: './comp-off-approval.component.scss'
+  styleUrl: './comp-off-approval.component.scss',
 })
-
 export class CompOffApprovalComponent implements OnInit, OnDestroy {
-  totalRecords = 100
+  totalRecords = 100;
   first: any = 0;
   rows: any = 10;
   approvalCompOffRequests: ICompOff[] = [];
@@ -35,10 +45,10 @@ export class CompOffApprovalComponent implements OnInit, OnDestroy {
     { label: 10, value: 10 },
     { label: 15, value: 15 },
     { label: 20, value: 20 },
-    { label: 25, value: 25 }
+    { label: 25, value: 25 },
   ];
 
-  constructor(private http: HttpService, public rbac: RbacService) { }
+  constructor(private http: HttpService, public rbac: RbacService) {}
 
   ngOnInit(): void {
     this.http.selectedEmployeeIdCompOff$.subscribe((id) => {
@@ -50,7 +60,7 @@ export class CompOffApprovalComponent implements OnInit, OnDestroy {
         this.getCompOffRequest();
       }
     });
-    
+
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getCompOffRequest();
   }
@@ -67,23 +77,27 @@ export class CompOffApprovalComponent implements OnInit, OnDestroy {
   getCompOffRequest() {
     let empId = this.empinfo.employeeId || this.selectemp;
     this.dataload = true;
-    this.http.getData(`Timeoff/getCompoffRequests/${empId}`) 
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: (response: any) => {
-        this.compOff = response;
-        this.approvalCompOffRequests = this.compOff.filter((element: { status: string }) => element.status === 'Approved');
-        this.approvalCompOffRequestsCount = this.approvalCompOffRequests.length;
-      },
-      error: (error) => {
-        this.dataload = false;
-        console.error('Error fetching data:', error);
-        this.approvalCompOffRequests = []; 
-      },complete: ()  =>{
-        this.dataload = false;
-
-      },
-    });
+    this.http
+      .getData(`Timeoff/getCompoffRequests/${empId}`)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          this.compOff = response;
+          this.approvalCompOffRequests = this.compOff.filter(
+            (element: { status: string }) => element.status === 'Approved'
+          );
+          this.approvalCompOffRequestsCount =
+            this.approvalCompOffRequests.length;
+        },
+        error: (error) => {
+          this.dataload = false;
+          console.error('Error fetching data:', error);
+          this.approvalCompOffRequests = [];
+        },
+        complete: () => {
+          this.dataload = false;
+        },
+      });
   }
 
   ngOnDestroy(): void {

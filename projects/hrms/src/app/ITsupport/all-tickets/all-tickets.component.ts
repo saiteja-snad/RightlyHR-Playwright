@@ -134,12 +134,11 @@ export class AllTicketsComponent {
       priority: this.selectedTickets.priority,
       subject: this.selectedTickets.subject,
       description: this.selectedTickets.description,
+      assigneeId: this.selectedTickets.assigneeId,
+      employee: this.selectedTickets.raisedFor,
       ticketStatus: this.status.find((status) => status.label === this.selectedTickets.ticketStatus),
     });
     console.log(this.itSupportForm);
-    
-   
-   
   }
 
   openConfirmationModal(content: any) {
@@ -163,7 +162,7 @@ export class AllTicketsComponent {
     this.itTicketDetails.description = this.selectedTickets.description;
     this.itTicketDetails.stepsToReplicate = this.selectedTickets.stepsToReplicate;
     this.itTicketDetails.comments = this.itSupportForm.value.comments;
-    
+    this.itTicketDetails.raisedFor = this.selectedTickets.raisedFor;
     this.itTicketDetails.attachmentUrl = null;
     this.itTicketDetails.createdAt = this.selectedTickets.createdAt;
     this.itTicketDetails.updatedAt = new Date().toISOString();

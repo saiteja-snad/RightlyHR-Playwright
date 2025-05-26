@@ -207,6 +207,7 @@ export class SeparationRequestComponent implements OnInit, OnDestroy {
         });
         this.noticeperiodDuration = durationValue?.duration;
         this.nodueDuration = noduevalue.duration;
+        console.log(this.nodueDuration);
         this.onCheckNotiesperiod();
       },
     });

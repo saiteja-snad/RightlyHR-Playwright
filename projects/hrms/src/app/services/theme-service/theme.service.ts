@@ -32,18 +32,18 @@ export class ThemeService {
       // header 
       headerBackgroundColor: '#FFFFFF',
       //sidenav
-      sidebarBackgroundColor: '#06274F',
+      sidebarBackgroundColor: '#0B3A83',
       sidebarNavItemColor: '#EAEAEA',
-      sidebarNavItemActiveColor: '#06274F',
-      sidebarNavItemActiveBackgroundColor: '#FFFFFF',
+      sidebarNavItemActiveColor: '#0B3A83',
+      sidebarNavItemActiveBackgroundColor: '#FFFFFF4D',
       //Body
-      bodyBackgroundColor: '#F0F4F8',
+      bodyBackgroundColor: '#ECF1F5',
       // button and links
-      primaryButtonColor: '#305889',
-      secondaryButtonColor: '#F0F4F8',
+      primaryButtonColor: '#0B3A83',
+      secondaryButtonColor: '#FFFFFF',
       primaryButtonTextColor: '#FFFFFF',
-      secondaryButtonTextColor: '#305889',
-      buttonBorderColor: '#305889',
+      secondaryButtonTextColor: '#0B3A83',
+      buttonBorderColor: '#0B3A83',
     };
   }
 

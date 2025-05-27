@@ -81,7 +81,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
-    public formsValidation:FormValidationsService,
+    public formsValidation: FormValidationsService,
     public rbac: RbacService, private signalService: SignalsService
   ) { }
 
@@ -158,6 +158,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   // }
 
   selectCheck(value: any) {
+    console.log(this.selectedProducts)
     // debugger
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
@@ -244,9 +245,15 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   }
 
   getFilteredAndSortedLeaves(): any[] {
+
     const search = this.searchValue?.toLowerCase() ?? '';
     let leaves = this.leavesselect ?? [];
-    // Filter
+
+    if (search) {
+      this.selectedProducts = [];
+      this.updateTableSelectionState([]);
+    }
+
     if (search) {
       leaves = leaves.filter(item =>
         item.entity?.leavefusionempId?.toLowerCase().includes(search) ||
@@ -258,13 +265,15 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
 
     // Sort (preserve original sorting logic)
     if (!this.selectedProducts || this.selectedProducts.length === 0) {
-      return leaves;
+      this.leaves.next(leaves);
+      return this.leaves.getValue();
     }
 
     const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
     const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
     const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
-    return [...selected, ...unselected];
+    this.leaves.next([...selected, ...unselected]);
+    return this.leaves.getValue();
   }
 
 
@@ -457,7 +466,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-           this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -528,7 +537,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
             this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
-          }else {
+          } else {
             this.openModal(this.leaveSummary);
           }
         },
@@ -596,8 +605,8 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-             this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
-          }else {
+            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
+          } else {
             this.openModal(this.leaveSummary);
           }
         },

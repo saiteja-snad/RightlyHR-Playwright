@@ -189,7 +189,6 @@ private isBackspaceOrDelete(event: KeyboardEvent): boolean {
       error: (error: any) => {
         const errorMessage = error.error?.Message || 'An error occurred while adding the serving period.';
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
       }
     });
   }
@@ -229,7 +228,6 @@ private isBackspaceOrDelete(event: KeyboardEvent): boolean {
         error: (error: any) => {
           const errorMessage = error.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
-          this.resetForm();
         }
       });
     }

@@ -107,7 +107,6 @@ export class AssetVendorComponent {
             this.assetForm.reset()
           },
           error: (error) => {
-            this.modalService.dismissAll();
             if(error.status!==500){
               this.conformationPopup.openErrorModal(error.error?.message);
             }
@@ -176,7 +175,6 @@ export class AssetVendorComponent {
             this.getvendor()
           },
           error: (error) => {
-            this.modalService.dismissAll();
             this.conformationPopup.openErrorModal( 'Email address already exit.',)
           }
         });

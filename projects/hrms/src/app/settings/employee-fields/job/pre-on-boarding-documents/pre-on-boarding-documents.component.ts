@@ -154,7 +154,6 @@ export class PreOnBoardingDocumentsComponent {
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal('Insertion of data failed');
-          this.resetForm();
         },
       });
   }
@@ -213,7 +212,6 @@ export class PreOnBoardingDocumentsComponent {
           },
           error: (error: any) => {
             this.conformationPopup.openErrorModal('Update failed');
-            this.resetForm();
           },
         });
     }

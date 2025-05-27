@@ -74,7 +74,6 @@ export class ProbationstatusComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
       }
     });
   }
@@ -82,7 +81,7 @@ export class ProbationstatusComponent {
       updateprobition(modal: any) {
         if (this.updateForm.valid && this.selectedId) {
           const request: probitionData = {
-            probationstatus1: this.updateForm.value.probitiontype,
+            probationstatus1: this.updateForm.value.probitiontype.trim(),
             isdeleted: "Active",
             sno: this.selectedId
           };

@@ -104,7 +104,6 @@ export class SubLocationComponent {
       error: (error: any) => {
         const errorMessage= error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
       }
     });
   }
@@ -151,7 +150,6 @@ export class SubLocationComponent {
         error: (error: any) => {
           const errorMessage = error.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
-          // this.resetForm();
         }
       });
     }

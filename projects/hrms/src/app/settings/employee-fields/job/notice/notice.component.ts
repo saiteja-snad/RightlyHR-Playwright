@@ -70,7 +70,6 @@ export class NoticeComponent {
       error: (err : any) => {
         const errorMessage = err.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        // this.resetForm();
       }
     });
   }
@@ -90,7 +89,7 @@ export class NoticeComponent {
   updateNoticeperiod(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: NoticeData = {
-        period: this.updateForm.value.updatenoticeperiod,
+        period: this.updateForm.value.updatenoticeperiod.trim(),
         isdeleted: 'Active',
         id: this.selectedId
       };

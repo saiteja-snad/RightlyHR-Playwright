@@ -160,7 +160,7 @@ export class TeamComponent implements OnInit, OnDestroy {
       const formData = form.value
       // Create payload according to Swagger API specification
       const request = {
-        subdepartmentName: formData.teamName,
+        subdepartmentName: formData.teamName.trim(),
         departmentId: formData.departmentId, // This should be the sno value
         reportingmanagerId: formData.teamManager,
         isdeleted: false

@@ -84,20 +84,22 @@ export class BackgroundcheckComponent {
   updateBackgroundChecktype(modal: any): void {
     if (this.updateForm.valid && this.selectedId) {
       const request: backgroundcheckData = {
-        backgroundcheckstatus1: this.updateForm.value.BackgroundCheck,
+        backgroundcheckstatus1: this.updateForm.value.BackgroundCheck.trim(),
         isdeleted: 'Active',
         sno: this.selectedId
       };
 
       this.subscription = this.http.postdata('Background/UPDATER', request).subscribe({
         next: () => {
-          this.BackgroundChecktype();
           modal.close();
-          this.updateForm.reset();
           this.conformationPopup.openSuccessModal('Background Check Status updated successfully');
         },
-        error: () => {
-          this.conformationPopup.openErrorModal('Update failed. Please try again.');
+        error: (error: any) => {
+          this.conformationPopup.openErrorModal(error.error.Message? error.error.Message : 'Update failed. Please try again.');
+        },
+        complete: ()=>{
+          this.updateForm.reset();
+          this.BackgroundChecktype();
         }
       });
     }

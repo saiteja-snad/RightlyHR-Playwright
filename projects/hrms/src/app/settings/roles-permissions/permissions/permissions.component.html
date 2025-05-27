@@ -2917,7 +2917,8 @@
             </div>
             <div class="d-flex justify-content-end p-3">
                 <div>
-                    <button class="custom-btn btn-primary py-2 px-5" [disabled]="!roleToFilter?.id">Save</button>
+                     <button type="button" class="custom-btn btn-secondary py-2 px-5 me-2" (click)="openModal(cancelconfirmationpopup)" [disabled]="!isSaveButtonEnabled ">{{'Cancel' | translate}}</button>
+                    <button class="custom-btn btn-primary py-2 px-5" [disabled]="!roleToFilter?.id">{{'Save' | translate}}</button>
                 </div>
             </div>
         </form>
@@ -2930,5 +2931,19 @@
             <img src="/gifs/dot-loader.gif" alt="" class="loading-gif">
         </div>
         <p class="confirmation-text pt-4">Update in progress...</p>
+    </div>
+</ng-template>
+
+<!--reject confirmation Model-->
+<ng-template #cancelconfirmationpopup let-model>
+    <div class="result-popup-content" ngbAutofocus>
+        <div>
+            <img src="icons\reject.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
+        </div>
+        <div class="custom-modal-footer">
+            <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">No</button>
+            <button type="button" class="custom-btn btn-primary" (click)="reset()">Yes</button>
+        </div>
     </div>
 </ng-template>

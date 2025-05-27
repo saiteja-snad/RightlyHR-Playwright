@@ -72,7 +72,6 @@ export class JobtypeComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        // this.resetForm();
       }
     });
   }
@@ -80,7 +79,7 @@ export class JobtypeComponent {
     updatejobtype(modal: any) {
       if (this.updateForm.valid && this.selectedId) {
         const request: JobtypeData = {
-          jobType1: this.updateForm.value.jobtype,
+          jobType1: this.updateForm.value.jobtype.trim(),
           isdeleted: "Active",
           sno: this.selectedId
         };

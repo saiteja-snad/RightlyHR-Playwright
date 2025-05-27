@@ -69,7 +69,6 @@ export class BussinesareaComponent implements OnInit,OnDestroy{
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-         this.resetForm();
       }
     });
   }

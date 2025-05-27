@@ -67,7 +67,7 @@ export class ExpensesConfigurationComponent {
     if (f.invalid) return;
 
     const payload = {
-      expenseType: f.value.expenseType,
+      expenseType: f.value.expenseType.trim(),
       expensesCode: f.value.expensesCode.toUpperCase(),
       isdeleted: "Active"
     };
@@ -119,7 +119,7 @@ export class ExpensesConfigurationComponent {
 
     const payload = {
       
-      expenseType: this.expenseupdateForm.value.expenseTypeupdate,
+      expenseType: this.expenseupdateForm.value.expenseTypeupdate.trim(),
       expenseId: this.selectedExpensesId,
       expensesCode: this.expenseupdateForm.value.expensesCodeupade,
       isdeleted: 'Active'

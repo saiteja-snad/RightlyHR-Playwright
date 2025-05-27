@@ -38,10 +38,10 @@ export class RelationshipComponent {
   }
   ngOnInit(): void {
     this.RelationForm = this.fb.group({
-      Relationship: ['', [Validators.required, this.formValidations.maxCharactersValidator(51)]]
+      Relationship: ['', [Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      Relationship: ['', [Validators.required, this.formValidations.maxCharactersValidator(51)]]
+      Relationship: ['', [Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getRelationship();

@@ -102,7 +102,6 @@ export class GradeComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        // this.resetForm();
       },
     });
   }
@@ -144,7 +143,6 @@ export class GradeComponent {
           error: (error: any) => {
             const errorMessage = error.error?.Message;
             this.conformationPopup.openErrorModal(errorMessage);
-            // this.resetForm();
           },
         });
     }

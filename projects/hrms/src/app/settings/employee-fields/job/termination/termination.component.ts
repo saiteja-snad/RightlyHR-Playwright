@@ -69,7 +69,6 @@ export class TerminationComponent {
       error: (error: any) => {
           const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        //  this.resetForm();
       }
     });
   }

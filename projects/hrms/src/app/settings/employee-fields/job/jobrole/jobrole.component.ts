@@ -12,8 +12,6 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
 
-
-
 @Component({
   selector: 'app-jobrole',
   standalone: true,
@@ -109,7 +107,6 @@ export class JobroleComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
       }
     });
   }
@@ -148,7 +145,6 @@ export class JobroleComponent {
         error: (error: any) => {
           const errorMessage = error.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
-          this.resetForm();
         }
       });
     }

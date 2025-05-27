@@ -1,9 +1,13 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-center p-5 mx-5">
-        <div class="card custom-no-due-card">
-            <div id="content" class="p-5">
-                <p class="component-header text-uppercase text-center">NO DUE CLEARANCE FORM</p>
+    <div class="no-due-container">
+        <div class="card custom-no-due-card" id="content">
+            <div class="p-5">
+                <div class="d-flex justify-content-end mb-4">
+                    <app-lettersheader />
+                </div>
 
+                <p class="component-header text-uppercase text-center mb-5">NO DUE CLEARANCE FORM</p>
+        
                 <!--Grid content-->
                 <div class="row my-4 mx-1">
                     <div class="col-md-6 border">
@@ -17,7 +21,7 @@
                     </div>
                     <div class="col-md-6 border">
                         <div class="d-flex p-2">
-                            <div class="label-name me-1">Work Email ID:</div>
+                            <div class="label-name me-1">Work Email:</div>
                             <div class="label-text">{{this.empdata.workEmail}}</div>
                         </div>
                     </div>
@@ -94,7 +98,7 @@
                         </div>
                     </div>
                 </div>
-
+        
                 <!--table content-->
                 <div class="custom-table-content p-0">
                     <table class="w-100">
@@ -120,7 +124,7 @@
                     </table>
                 </div>
                 <!--Footer-content-->
-
+        
                 <!--Grid content-->
                 <div class="row my-4 mx-1">
                     <div class="col-md-6">
@@ -147,16 +151,18 @@
                     </div>
                 </div>
             </div>
-
-            <!--Button Content-->
-            <div class="d-flex justify-content-end gap-3 my-4 me-3">
-                <button type="button" class="custom-btn btn-secondary" (click)="openModal(cancelConfirmation)">
-                    {{'Cancel'|translate}}
-                </button>
-                <button type="button" class="custom-btn btn-primary" (click)="openModal(confirmationpopup)">
-                    {{'Submit'|translate}}
-                </button>
+            <div class="letter-footer">
+                <app-letter-footer />
             </div>
+        </div>
+        <!--Button Content-->
+        <div class="d-flex gap-3 my-4">
+            <button type="button" class="custom-btn btn-secondary px-5" (click)="openModal(cancelConfirmation)">
+                {{'Cancel'|translate}}
+            </button>
+            <button type="button" class="custom-btn btn-primary px-5" (click)="openModal(confirmationpopup)">
+                {{'Submit'|translate}}
+            </button>
         </div>
     </div>
 </div>
@@ -171,16 +177,16 @@
       <div class="d-flex justify-content-center gap-3 mt-4">
         <button type="button" class="custom-btn btn-secondary" [disabled]="isLoading" (click)="modal.dismiss()">{{'No'|translate}}</button>
         <button type="button" class="custom-btn btn-primary" [disabled]="isLoading" (click)="FormDownload()">
-                @if(!isLoading){
-                {{'Yes'|translate}}
-                }
-                @else {
-                <div class="d-flex">
-                    <div *ngIf="isLoading" class="spinner-border spinner-border text-light" role="status"></div>
-                    <div> {{'Submitting'|translate}}</div>
-                </div>
-                }
-            </button>
+            @if(!isLoading){
+            {{'Yes'|translate}}
+            }
+            @else {
+            <div class="button-loader-content" *ngIf="isLoading">
+                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                <span>{{'Submitting...'}}</span>
+            </div>
+            }
+        </button>
       </div>
     </div>
 </ng-template>

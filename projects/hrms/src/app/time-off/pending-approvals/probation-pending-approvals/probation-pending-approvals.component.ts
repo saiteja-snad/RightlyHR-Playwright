@@ -264,11 +264,14 @@ export class ProbationPendingApprovalsComponent {
 
   issubmitdiable: boolean = false;
   ifreasonnull(Value: any) {
-    if (!Value || !Value.trim()) {
-      this.issubmitdiable = true;
+       const trimmedValue = Value?.trim();
+     const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
+
+    if (!trimmedValue || startsWithSpecialChar) {
+    this.issubmitdiable = true;
     } else {
-      this.issubmitdiable = false;
-    }
+    this.issubmitdiable = false;
+     }
   }
 
   letters(event: KeyboardEvent): boolean {
@@ -279,7 +282,10 @@ export class ProbationPendingApprovalsComponent {
     return true;
   }
 
-  getBlockedFutureDate(lastWorkingDate: string): string {
+  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string): string {
+     if(extendedDate){
+      lastWorkingDate = extendedDate;
+    }
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');

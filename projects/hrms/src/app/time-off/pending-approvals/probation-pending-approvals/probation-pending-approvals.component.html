@@ -182,6 +182,7 @@
                         {{selectedData.comments?.length?selectedData.comments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || 
                     (earlyrelievingreason.invalid && ProcessacceptForm.submitted)">{{'Comments is required' | translate}}</div>
+                     <div class="error-msg" *ngIf="earlyrelievingreason.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
                 </div>
 
                 <div class="mb-3" *ngIf="extend">
@@ -190,7 +191,7 @@
                     </label>
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
                         id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
-                        (keypress)="letters($event)" [min]="getBlockedFutureDate(selectedData.probationEndDate)"
+                        (keypress)="letters($event)" [min]="getBlockedFutureDate(selectedData.probationEndDate,selectedData.probationExtendedDate)"
                         [max]="getBlockedFutureDateupto(selectedData.probationEndDate,probationExtensionDuration)"
                         [(ngModel)]="selectedData.extenddate" required>
                     <div class="error-msg"
@@ -210,6 +211,7 @@
                     <div class="textarea-count-text">{{selectedData.comments?.length?selectedData.comments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && ProcessacceptForm.submitted)
                      || (Extendreason.errors?.['pattern']) ">{{'Feedback for Extend is required' | translate}}</div>
+                      <div class="error-msg" *ngIf="Extendreason.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
                 </div>
 
                 <div class="mb-3" *ngIf="discontinue">
@@ -226,6 +228,7 @@
                         *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || (Descriptiondetails.invalid && ProcessacceptForm.submitted)">
                         {{'Reason is required' | translate}}
                     </div>
+                     <div class="error-msg" *ngIf="Descriptiondetails.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
                 </div>
             </div>
 

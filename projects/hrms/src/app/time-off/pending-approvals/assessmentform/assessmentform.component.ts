@@ -112,11 +112,14 @@ export class AssessmentformComponent {
   //function when they enter nulls in start
   ifreasonnull(Value: any) {
     //console.log(Value);
-    if (!Value || !Value.trim()) {
-      this.issubmitdiable = true;
-    } else {
-      this.issubmitdiable = false;
-    }
+    const trimmedValue = Value?.trim();
+  const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
+
+  if (!trimmedValue || startsWithSpecialChar) {
+    this.issubmitdiable = true;
+  } else {
+    this.issubmitdiable = false;
+  }
   }
 
   //function call to get the data
@@ -833,7 +836,10 @@ export class AssessmentformComponent {
     this.selected_approve.rejectedReason = '';
   }
 
-  getBlockedFutureDate(lastWorkingDate: string): string {
+  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string): string {
+    if(extendedDate){
+      lastWorkingDate = extendedDate;
+    }
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');

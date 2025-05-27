@@ -47,7 +47,7 @@ startDatevalidate:any;
   initializeEducationForm() {
     this.educationForm = this.fb.group({
       education: [this.educationData?.degree || '', Validators.required],
-      university: [this.educationData?.university || '', [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/),Validators.maxLength(100)]],
+      university: [this.educationData?.university || '', [Validators.required, Validators.pattern(/^[^\d]+$/),Validators.maxLength(100)]],
       // specialization: [this.educationData?.specialization || '', Validators.required],
       // gpa: [this.educationData?.gpa || '', Validators.required],
       specialization: [this.educationData?.specialization || '', [Validators.required, Validators.pattern(/^[A-Za-z,._-][A-Za-z ,._-]*$/),Validators.maxLength(100)]],

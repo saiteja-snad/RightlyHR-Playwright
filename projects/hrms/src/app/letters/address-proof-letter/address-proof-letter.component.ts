@@ -69,6 +69,7 @@ export class AddressProofLetterComponent {
   addressFlag = false;
   addressErrorMessage = ''; 
   spinnerLoader= false;
+  lastSelectedEmployeeId: string | null = null;
 
   constructor(
     private http: HttpService,
@@ -158,14 +159,29 @@ export class AddressProofLetterComponent {
   }
 
   Onclick(selectedEmployee: any) {
-    if (!selectedEmployee || typeof selectedEmployee !== 'object') {
+    if (!selectedEmployee || typeof selectedEmployee !== 'object' || !selectedEmployee.hasOwnProperty('employeeId')) {
       return;
     }
-
-    if (!selectedEmployee.hasOwnProperty('employeeId')) {
-      return;
+  
+    // If employee has changed, reset the dependent fields
+    if (this.lastSelectedEmployeeId && this.lastSelectedEmployeeId !== selectedEmployee.employeeId) {
+      this.employeeForm.patchValue({
+        SelectDropDown: '',
+        Documenttype: '',
+        authorityid: ''
+      });
+      ['SelectDropDown', 'Documenttype', 'authorityid'].forEach(controlName => {
+        const control = this.employeeForm.get(controlName);
+        control?.markAsPristine();
+        control?.markAsUntouched();
+        control?.updateValueAndValidity();
+      });
+    
     }
-
+  
+    // Update the last selected employeeId
+    this.lastSelectedEmployeeId = selectedEmployee.employeeId;
+  
     this.fusionEmpId = selectedEmployee.employeeId;
     this.addressLetterData = {};
 

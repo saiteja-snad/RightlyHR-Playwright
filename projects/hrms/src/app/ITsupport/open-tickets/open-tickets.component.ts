@@ -82,6 +82,7 @@ export class OpenTicketsComponent {
     this.selectedTickets = ticket;
     this.getEmployee(this.selectedTickets.empId)
     this.itSupportForm.patchValue({
+       employee: this.selectedTickets.employee === 'Self' ? 'Self' : 'Self',
       name: this.selectedTickets.employeeName,
       email: this.selectedTickets.emailaddress,
       phoneNumber: this.selectedTickets.contactnumber,

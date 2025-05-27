@@ -11,7 +11,7 @@ import { LettersLayoutComponent } from "../letters/letters-layout/letters-layout
 import { ActiveNewUserInvitationComponent } from "./invite-new-user/active-new-user-invitation/active-new-user-invitation.component";
 import { ProspectiveNewUserInvitationComponent } from "./invite-new-user/prospective-new-user-invitation/prospective-new-user-invitation.component";
 import { NodueFormDetailsComponent } from "./nodue-form-details/nodue-form-details.component";
-import { PermissionsGuard } from "../guards/permissions.guard";
+import { EmployeeDataLayoutComponent } from "./employee-data-layout/employee-data-layout.component";
 
 export default [
     { path: 'dashboard', component: DashboardComponent ,},
@@ -25,5 +25,6 @@ export default [
     { path: 'letters', component: LettersLayoutComponent,loadChildren: () => import('./../letters/letters.route'),  },
     { path: 'active-new-user', component: ActiveNewUserInvitationComponent,  },
     { path: 'prospective-new-user', component: ProspectiveNewUserInvitationComponent ,},
-    { path: 'nodue-form-details',component:NodueFormDetailsComponent,}
+    { path: 'nodue-form-details',component:NodueFormDetailsComponent,},
+    { path: 'employee-data', component: EmployeeDataLayoutComponent ,},
 ] as Route[];

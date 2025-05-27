@@ -256,7 +256,7 @@ export class CreateComponent implements OnInit, OnDestroy {
       this.http.postdata('reviewCycleHeader', reviewCycleData).subscribe({
         next: (response) => {
           this.modalService.dismissAll()
-          this.conformationPopup.openSuccessModal('Review Cycle Created Successfully');
+          this.conformationPopup.openSuccessModal('Review cycle created successfully');
           this.http.reviewCycleTriggerSignal.set(true);
         },
         error: (error) => {

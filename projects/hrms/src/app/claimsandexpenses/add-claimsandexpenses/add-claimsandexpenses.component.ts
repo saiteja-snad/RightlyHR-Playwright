@@ -316,7 +316,7 @@ expensesAttachment:any;
           status: 'Waiting for Approval',
           attachment_url: this.expensesAttachment,
         })),
-        attachment_url: undefined
+       // attachment_url: undefined
       };
       const filepath = `/Expenses/${this.empinfo.employeeId}`;
       // Check if there is any file to upload
@@ -395,7 +395,7 @@ expensesAttachment:any;
           expense_Amount: item.expense_Amount,
           receipt_Number: item.receipt_Number,
           status: 'Draft',
-          attachment_url: item.attachment_url,
+          attachment_url: this.expensesAttachment, // Use the uploaded file path or undefined if no file
         })),
         attachment_url: undefined
       };

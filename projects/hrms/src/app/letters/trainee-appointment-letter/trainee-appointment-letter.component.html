@@ -65,7 +65,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Joining Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="dateOfJoining"
-                        placeholder="Please enter joining date" onkeydown="return false;" />
+                        placeholder="Please enter joining date" onkeydown="return false;" [min]="traineeAppointmentletterData.offerIssueddate | date:'yyyy-MM-dd'" />
                     <div *ngIf="employeeForm.get('dateOfJoining')?.invalid && employeeForm.get('dateOfJoining')?.touched">
                         <div class="error-msg">Joining Date is required</div>
                     </div>
@@ -76,7 +76,7 @@
                     <div class="custom-p-select-content">
                         <p-select [options]="departmentDetails" optionLabel="departmentName" placeholder="Please select department"
                             formControlName="department" class="form-select custom-select" resetFilterOnHide="true"
-                            [filter]="true" filterBy="departmentName"></p-select>
+                            [filter]="true" filterBy="departmentName" (onChange)="onDepartmentChange($event.value)"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('department')?.invalid && employeeForm.get('department')?.touched">
                         <div class="error-msg">Department is required</div>
@@ -102,7 +102,7 @@
                     <label class="form-label custom-label mb-2">Asset Type<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
                         <p-select [options]="AssertTypeGet" optionLabel="assetType1" placeholder="Please select asset type"
-                            formControlName="asserttype" class="form-select custom-select" resetFilterOnHide="true"></p-select>
+                            formControlName="asserttype" class="form-select custom-select" resetFilterOnHide="true" (onChange)="onAssetChange($event.value)"></p-select>
                     </div>
                     <div *ngIf="employeeForm.get('asserttype')?.invalid && employeeForm.get('asserttype')?.touched">
                         <div class="error-msg">Asset Type is required</div>
@@ -112,7 +112,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Model<span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="model"
-                        placeholder="Please enter model" />
+                        placeholder="Please enter model" (input)="onModelChange()"/>
                     <div *ngIf="employeeForm.get('model')?.invalid && employeeForm.get('model')?.touched">
                         <div class="error-msg">Model is required</div>
                     </div>
@@ -189,10 +189,10 @@
                             </ng-template>
 
                             <div class="col d-flex justify-content-between">
-                                <p class="letter-sub-header">
+                                <!-- <p class="letter-sub-header">
                                     Ref: RightlyHR/{{ traineeAppointmentletterData?.branchCode }}/Employee ID:
                                     {{ traineeAppointmentletterData?.fusionEmpId }}
-                                </p>
+                                </p> -->
                                 <p class="letter-sub-header">
                                     Date: {{ traineeAppointmentletterData?.appointmentdate | dateformat }}
                                 </p>
@@ -611,9 +611,9 @@
                                 <div class="py-4">
                                     If to the Company, at:<br />
                                     RightlyHR<br />
-                                    Plot No.32, Opp. SBI<br />
-                                    Nizampet Village, Kukatpally<br />
-                                    Hyderabad, Telangana-500072-India.
+                                    Vijaya Krishna Towers, Floor#16<br />
+                                    Madhava Reddy Colony, Gachibowli<br />
+                                    Hyderabad, Telangana-500032-India.
                                 </div>
                                 <div class="mb-3">
                                     If to you, at:<br />

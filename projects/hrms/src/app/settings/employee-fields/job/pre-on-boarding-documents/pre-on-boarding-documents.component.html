@@ -14,7 +14,7 @@
                         <th>Applicable To Experienced/Fresher/Trainee</th>
                         <th>Is Mandatory</th>
                         <th>Is Identity</th>
-                        <th class="text-center">Action(S)</th>
+                        <th class="text-center">Action<span class="text-lowercase">(S)</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -103,6 +103,9 @@
                     <div *ngIf="AddForm.get('PreOnboardDocuments')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
+                    <div *ngIf="AddForm.get('PreOnboardDocuments')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
                 </div>
                 <!-- Checkbox Fields -->
                 <div class="form-check mb-3">
@@ -182,6 +185,9 @@
                     </div>
                     <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Please limit your input to 100 characters' | translate }}
+                    </div>
+                    <div *ngIf="updateForm.get('UpdatePreOnboardDocuments')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
                     </div>
                 </div>
 

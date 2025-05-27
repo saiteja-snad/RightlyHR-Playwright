@@ -278,8 +278,13 @@ export class SalaryRevisionLetterComponent {
             this.employeeForm.get('jobValid')?.setValue(false);
           }else{
             let res = data.reverse()[0];
-            this.previusSalary = data[1];
-            this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
+            if (data.length > 1) {
+              this.previusSalary = data[1];
+              this.incrementSalary = res.compensationamount - this.previusSalary.compensationamount;
+            } else {
+              this.previusSalary = { compensationamount: 0 };
+              this.incrementSalary = 0;
+            }
             this.employeeCompensationDetails = res;
             this.appraisalData.salary = res.compensationamount;
             this.appraisalData.compeffectivedate = res.compeffectivedate;

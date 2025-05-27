@@ -45,7 +45,7 @@ export class LeavesApprovalComponent {
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.empdata = this.loggedinuser;
     this.getDataByLPID();
     this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
       if (id) {

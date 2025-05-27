@@ -87,7 +87,7 @@ export class RolesComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     const request = {
-      name: this.roleForm.get('role')?.value
+      name: this.roleForm.get('role')?.value.trim()
     };
     this.subscription = this.http.postdata("FusionRole", request).subscribe({
       next: (data: any) => {
@@ -107,7 +107,7 @@ export class RolesComponent implements OnInit, OnDestroy {
 
   updateRole(modal: any): void {
     if (this.updateForm.valid) {
-      this.rolesDeletedata.name = this.updateForm.value.firstName,
+      this.rolesDeletedata.name = this.updateForm.value.firstName.trim(),
         this.subscription = this.http.postdata(`FusionRole/Update`, this.rolesDeletedata).subscribe({
           next: (data: any) => {
             this.modalService.dismissAll();
@@ -144,6 +144,22 @@ export class RolesComponent implements OnInit, OnDestroy {
     this.rolesDeletedata = roles;
     this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' });
   }
+
+  capitalizeFirstLetter(event: Event, form: string): void {
+    const inputElement = event.target as HTMLInputElement;
+    const value = inputElement.value;
+    if (value.length === 1) {
+      inputElement.value = value.charAt(0).toUpperCase() + value.slice(1);
+    } else if (value.length > 1 && value.charAt(0) !== value.charAt(0).toUpperCase()) {
+      inputElement.value = value.charAt(0).toUpperCase() + value.slice(1);
+    }
+    if(form === 'add'){
+      this.roleForm.get('role')?.setValue(inputElement.value);
+    }else if(form === 'update'){
+      this.updateForm.get('firstName')?.setValue(inputElement.value);
+    }
+  }
+  
 
   deleteRole(modal: any): void {
     const deleteRequest = {

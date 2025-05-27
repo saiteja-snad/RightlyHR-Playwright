@@ -1,5 +1,5 @@
 <div class="employee-info-nav-tabs">
-    <ul class="nav flex-row">
+    <ul class="nav flex-row justify-content-between">
         <li class="nav-item" *ngFor="let tab of navTabs">
             <a class="nav-link" (click)="navigateToAccessedRoute(tab.link)" [class.active-nav-link]="isActiveRoute(tab.link)">
                 {{ tab.label }}

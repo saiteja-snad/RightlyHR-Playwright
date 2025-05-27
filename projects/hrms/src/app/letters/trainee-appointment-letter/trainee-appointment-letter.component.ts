@@ -83,6 +83,9 @@ export class TraineeAppointmentLetterComponent {
     this.getAuthorityDetails();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe((date: string) => {
+      this.traineeAppointmentletterData.dateOfJoining = date;
+    });
   }
 
   initializeForm() {
@@ -183,6 +186,7 @@ export class TraineeAppointmentLetterComponent {
         signatureAuthority: this.traineeAppointmentletterData.authorityName,
       });
       console.log(this.employeeForm)
+      console.log(this.traineeAppointmentletterData);
       this.getJobdetails(this.traineeAppointmentletterData);
       this.getCompensationDetails(this.traineeAppointmentletterData);
       this.getEmployeeAddress(this.traineeAppointmentletterData.employeeId);
@@ -199,7 +203,7 @@ getOfferdetails(Value: any) {
   this.subscription = this.http.getData(`TraineeOfferLetter/getbyEmpidNames/${Value}`).subscribe({
     next: (data: any) => {
       this.traineeAppointmentletterData.offerIssueddate = data.offerSentDate;
-      
+      console.log(this.traineeAppointmentletterData.offerIssueddate);
     const today = moment(this.traineeAppointmentletterData.offerIssueddate);
     this.todayDate = today.toISOString().split('T')[0];
     }
@@ -542,6 +546,19 @@ getOfferdetails(Value: any) {
         console.log(reason);
       },
     });
+  }
+
+  onDepartmentChange(selectedDepartment: any) {
+    this.traineeAppointmentletterData.department = selectedDepartment?.departmentName || '';
+  }
+
+  onAssetChange(selectedAsset: any) {
+    this.traineeAppointmentletterData.asserttype = selectedAsset?.assetType1 || '';
+  }
+
+  onModelChange(): void {
+    const modelControl = this.employeeForm.get('model');
+    this.traineeAppointmentletterData.model = modelControl?.value || '';
   }
 
   ngOnDestroy(): void {

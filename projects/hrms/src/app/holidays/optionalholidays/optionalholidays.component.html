@@ -3,7 +3,7 @@
     <app-holiday-tabs />
   </div>
 
-  <div class="holidays-content">
+  <div class="holidays-container">
     <ng-container *ngIf="loading; else maincontent">
       <ng-template #loadingSpinner>
         <div class="loader-placeholder-content text-center">
@@ -17,14 +17,55 @@
 
     <ng-template #maincontent>
       <ng-container *ngIf="orgHolidayItemsArrayTrue.length > 0 ; else noDataTemplate">
-        <div *ngFor="let item of orgHolidayItemsArrayTrue" class="card holiday-card mb-3">
-          <div class="d-flex gap-3 align-items-center">
-            <div class="card holiday-icon-card">
-              <img src="icons\holidays-icon.png" alt="Event Icon" class="holiday-icon" />
-            </div>
-            <div>
-              <p class="holiday-name mb-0">{{ item.holidayName }}</p>
-              <p class="date mb-0">{{ item.holidayDate | date: 'EEEE, dd MMMM' }}</p>
+        <div class="holidays-content">
+          <div *ngFor="let item of orgHolidayItemsArrayTrue; let i = index">
+            <div class="holiday-card">
+              <div class="d-flex gap-3 mb-2">
+                <div class="calender-icon">
+                  <svg width="36" height="36" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="20.8531" cy="20.8487" r="20.3726" [attr.fill]="'url(#paint0_linear_' + i + ')'" />
+                    <path d="M26.5375 12.6367V14.3739M16.1143 12.6367V14.3739" stroke="white" stroke-width="1.95449"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                    <path
+                      d="M21.324 22.1919H21.3318M21.324 25.6663H21.3318M24.7945 22.1919H24.8023M17.8535 22.1919H17.8613M17.8535 25.6663H17.8613"
+                      stroke="white" stroke-width="1.95449" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M13.9443 17.8477H28.7105" stroke="white" stroke-width="1.95449" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                    <path
+                      d="M13.0752 21.5336C13.0752 17.7488 13.0752 15.8564 14.1628 14.6807C15.2504 13.5049 17.0008 13.5049 20.5017 13.5049H22.1521C25.653 13.5049 27.4034 13.5049 28.491 14.6807C29.5786 15.8564 29.5786 17.7488 29.5786 21.5336V21.9796C29.5786 25.7644 29.5786 27.6567 28.491 28.8325C27.4034 30.0083 25.653 30.0083 22.1521 30.0083H20.5017C17.0008 30.0083 15.2504 30.0083 14.1628 28.8325C13.0752 27.6567 13.0752 25.7644 13.0752 21.9796V21.5336Z"
+                      stroke="white" stroke-width="1.95449" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M13.5098 17.8477H29.1446" stroke="white" stroke-width="1.95449" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                    <defs>
+                      <linearGradient [attr.id]="'paint0_linear_' + i" x1="41.2257" y1="21.3225" x2="-49.2666" y2="21.3225"
+                        gradientUnits="userSpaceOnUse">
+                        <stop [attr.stop-color]="holidayColors[i % holidayColors.length]" />
+                        <stop offset="1" stop-color="white" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <div class="pt-3">
+                  <p class="holiday-name m-0 mt-1">{{ item.holidayName }}</p>
+                </div>
+              </div>
+      
+              <div class="date pt-1">
+                <p>{{ item.holidayDate | date : "EEEE, dd MMMM" }}</p>
+              </div>
+              <div class="corner-pattern">
+                <svg width="80" height="64" viewBox="0 0 60 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M34.1644 35.3311C34.1643 28.0367 42.0606 23.4777 48.3778 27.1248L66.4813 37.5767L34.1646 56.2352L34.1644 37.577L34.1644 35.3311Z"
+                    [attr.fill]="holidayColors[i % holidayColors.length]" fill-opacity="0.1" />
+                  <path
+                    d="M17.1087 44.8067C17.1087 37.5123 25.005 32.9533 31.3221 36.6004L49.4257 47.0523L17.1089 65.7108L17.1087 44.8067Z"
+                    [attr.fill]="holidayColors[i % holidayColors.length]" fill-opacity="0.1" />
+                  <path
+                    d="M50.7308 27.3262C50.7307 20.0319 58.627 15.4728 64.9442 19.1199L83.0477 29.5718L50.731 48.2303L50.7308 27.3262Z"
+                    [attr.fill]="holidayColors[i % holidayColors.length]" fill-opacity="0.1" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>

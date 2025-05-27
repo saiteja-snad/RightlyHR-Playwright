@@ -29,6 +29,17 @@ export class OptionalholidaysComponent {
   years: number[] = [];
   empinfo = {} as any;
   loading = false;
+  holidayColors: string[] = [
+    '#03A9F4',
+    '#F9D339',
+    '#E54288',
+    '#53D33A',
+    '#0B3A83',
+    '#1064CA',
+    '#FF2E22',
+    '#556CEE',
+    '#FF7133'
+  ];
 
   constructor(public router: Router, private http: HttpService) { }
 

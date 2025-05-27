@@ -206,7 +206,7 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
     this.http.postdata(`Assessor/delete?id=${this.deleteId}`, payload).subscribe({
       next: (response: any) => {
         this.getAllAssesorConfigurationdata(this.page, this.pageSize);
-        this.conformationPopup.openSuccessModal('Deleted Successfully')
+        this.conformationPopup.openSuccessModal('Deleted successfully')
       },
       error: (err: any) => {
         this.conformationPopup.openErrorModal(err.error.message)
@@ -367,7 +367,7 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
       this.deletedRows.push(deletedRow);
       this.assesorDetails.splice(index, 1);
     }
-    this.conformationPopup.openSuccessModal('Row Deleted Successfully');
+    this.conformationPopup.openSuccessModal('Row deleted successfully');
   }
 
   // Handle form submission
@@ -427,7 +427,7 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
             this.isLoading = false;
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal(
-              'Assessor Configurations Updated Successfully'
+              'Assessor configurations updated successfully'
             );
           },
           error: (err: any) => {
@@ -435,7 +435,7 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
             if (err.status === 400) {
               this.conformationPopup.openErrorModal('An Assessor cannot be added more than once');
             } else if (err.status === 409) {
-              this.conformationPopup.openErrorModal("Assessors cannot have the same Deadline Date");
+              this.conformationPopup.openErrorModal("Assessors cannot have the same deadline date");
             } else {
               this.conformationPopup.openErrorModal(err.error.Message);
             }

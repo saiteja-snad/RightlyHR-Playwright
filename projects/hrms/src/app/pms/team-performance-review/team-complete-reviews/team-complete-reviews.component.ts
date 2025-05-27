@@ -180,7 +180,7 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-        this.Status = 'Promotion Letter Downloaded Successfully';
+        this.Status = 'Promotion letter downloaded successfully';
         this.modal.openSuccessModal(this.Status);
       },
       error: (err) => {
@@ -203,7 +203,7 @@ export class TeamCompleteReviewsComponent implements OnInit, OnDestroy {
         a.click();
         document.body.removeChild(a);
         window.URL.revokeObjectURL(url);
-        this.Status = 'Appraisal Letter Downloaded Successfully';
+        this.Status = 'Appraisal letter downloaded successfully';
         this.modal.openSuccessModal(this.Status)
       },
       error: (err) => {

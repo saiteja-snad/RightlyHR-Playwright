@@ -258,7 +258,7 @@ export class ViewComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.closeModal()
           this.onCreateCycleFormSubmitted()
-          this.conformationPopup.openSuccessModal('Review Cycle Updated Successfully')
+          this.conformationPopup.openSuccessModal('Review cycle updated successfully')
         },
         error: (error) => {
           this.conformationPopup.openSuccessModal(error.error.reason)

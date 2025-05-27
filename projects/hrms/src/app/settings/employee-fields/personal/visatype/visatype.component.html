@@ -1,5 +1,6 @@
 <div class="custom-main-component-container">
-    <form autocomplete="off" [formGroup]="VisaForm" (ngSubmit)="addVisa()" *ngIf="rbac.allowedToAccess('Visa Type.create')">
+    <form autocomplete="off" [formGroup]="VisaForm" (ngSubmit)="addVisa()"
+        *ngIf="rbac.allowedToAccess('Visa Type.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
@@ -7,13 +8,17 @@
                     formControlName="Visatype" aria-label="visa" aria-describedby="visa" maxlength="51"
                     (keydown)="formValidations.restrictInputAllowSpecialChars($event)">
                 <span class="input-group-text" id="visa">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="VisaForm.invalid">{{'Add'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="VisaForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
             <div *ngIf="VisaForm.get('Visatype')?.touched && VisaForm.get('Visatype')?.invalid" class="error-msg">
                 <div *ngIf="VisaForm.get('Visatype')?.errors?.['required']">
                     {{ 'Visa Type is required' | translate }}
                 </div>
+            </div>
+            <div *ngIf="VisaForm.get('Visatype')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space' | translate }}
             </div>
             <div *ngIf="VisaForm.get('Visatype')?.errors?.['maxCharacters']" class="error-msg">
                 {{ 'Please limit your input to 50 characters' | translate }}
@@ -75,18 +80,24 @@
                     <input type="text" class="form-control custom-input" formControlName="Visatype"
                         placeholder="Please enter visa type" maxlength="51"
                         (keydown)="formValidations.restrictInput($event)">
-                        <div *ngIf="updateForm.get('Visatype')?.touched && updateForm.get('Visatype')?.invalid" class="error-msg">
-                            <div *ngIf="updateForm.get('Visatype')?.errors?.['required']">
-                                {{ 'Visa Type is required' | translate }}
-                            </div>
+                    <div *ngIf="updateForm.get('Visatype')?.touched && updateForm.get('Visatype')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="updateForm.get('Visatype')?.errors?.['required']">
+                            {{ 'Visa Type is required' | translate }}
                         </div>
-                        <div *ngIf="updateForm.get('Visatype')?.errors?.['maxCharacters']" class="error-msg">
-                            {{ 'Please limit your input to 50 characters' | translate }}
-                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('Visatype')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
+                    <div *ngIf="updateForm.get('Visatype')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 50 characters' | translate }}
+                    </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" (click)="updateVisa(modal)" [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="close(modal)">{{'Cancel'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateVisa(modal)"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -101,7 +112,8 @@
             <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

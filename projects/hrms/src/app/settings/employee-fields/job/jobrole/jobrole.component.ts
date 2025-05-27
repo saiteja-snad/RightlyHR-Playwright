@@ -12,8 +12,6 @@ import { FormValidationsService } from '../../../../services/form-validations.se
 import { RbacService } from '../../../../services/rbac.service';
 import { SelectModule } from 'primeng/select';
 
-
-
 @Component({
   selector: 'app-jobrole',
   standalone: true,
@@ -45,12 +43,12 @@ export class JobroleComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      Addjobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      Addjobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
       gradeId: ['', Validators.required],
     });
 
     this.updateForm = this.fb.group({
-      Updatejobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      Updatejobrole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
       updategradeId: ['', Validators.required],
     });
     this.getgradeid();
@@ -109,7 +107,6 @@ export class JobroleComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
       }
     });
   }
@@ -148,7 +145,6 @@ export class JobroleComponent {
         error: (error: any) => {
           const errorMessage = error.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
-          this.resetForm();
         }
       });
     }

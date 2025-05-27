@@ -38,10 +38,10 @@ export class JobtypeComponent {
   }
   ngOnInit(): void {
     this.JobtypeForm = this.fb.group({
-      jobtype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      jobtype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      jobtype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      jobtype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getJobtype();
@@ -72,7 +72,6 @@ export class JobtypeComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        // this.resetForm();
       }
     });
   }
@@ -80,7 +79,7 @@ export class JobtypeComponent {
     updatejobtype(modal: any) {
       if (this.updateForm.valid && this.selectedId) {
         const request: JobtypeData = {
-          jobType1: this.updateForm.value.jobtype,
+          jobType1: this.updateForm.value.jobtype.trim(),
           isdeleted: "Active",
           sno: this.selectedId
         };

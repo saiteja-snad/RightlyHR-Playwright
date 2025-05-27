@@ -136,7 +136,6 @@ export class ProbationDetailsComponent {
       },
       error: (error: any) => {
         this.conformationPopup.openErrorModal('Insertion of data failed');
-        this.resetForm();
       }
     });
   }
@@ -181,7 +180,6 @@ console.log("request",request);
         },
         error: (error: any) => {
           this.conformationPopup.openErrorModal('Insertion of data failed');
-          this.resetForm();
         }
       });
     }

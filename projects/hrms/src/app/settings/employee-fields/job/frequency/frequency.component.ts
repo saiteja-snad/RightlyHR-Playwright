@@ -37,10 +37,10 @@ export class FrequencyComponent {
 
   ngOnInit(): void {
     this.FrequencyForm = this.fb.group({
-      frequency: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      frequency: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      frequency: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      frequency: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getFrequencies();
@@ -69,7 +69,6 @@ export class FrequencyComponent {
       error: (err: any) => {
         const errorMessage = err.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        // this.resetForm();
       }
     });
   }
@@ -77,7 +76,7 @@ export class FrequencyComponent {
   updateFrequency(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: frequenceData = {
-        frequency1: this.updateForm.value.frequency,
+        frequency1: this.updateForm.value.frequency.trim(),
         isdeleted: 'Active',
         sno: this.selectedId
       };

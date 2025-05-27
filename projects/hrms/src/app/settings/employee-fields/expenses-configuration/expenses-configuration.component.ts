@@ -44,17 +44,15 @@ export class ExpensesConfigurationComponent {
 
   intiationalfrom() {
     this.expenseForm = this.fb.group({
-      expenseType: ['', [Validators.required, Validators.maxLength(50)]],
-      expensesCode: ['', [Validators.required, Validators.maxLength(50)]],
+      expenseType: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      expensesCode: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
     });
   }
-
-
-
+  
   intiationalupdatefrom() {
     this.expenseupdateForm = this.fb.group({
-      expenseTypeupdate: ['', [Validators.required, Validators.maxLength(50)]],
-      expensesCodeupade: ['', [Validators.required, Validators.maxLength(50)]],
+      expenseTypeupdate: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      expensesCodeupade: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
     });
   }
 
@@ -67,7 +65,7 @@ export class ExpensesConfigurationComponent {
     if (f.invalid) return;
 
     const payload = {
-      expenseType: f.value.expenseType,
+      expenseType: f.value.expenseType.trim(),
       expensesCode: f.value.expensesCode.toUpperCase(),
       isdeleted: "Active"
     };
@@ -119,7 +117,7 @@ export class ExpensesConfigurationComponent {
 
     const payload = {
       
-      expenseType: this.expenseupdateForm.value.expenseTypeupdate,
+      expenseType: this.expenseupdateForm.value.expenseTypeupdate.trim(),
       expenseId: this.selectedExpensesId,
       expensesCode: this.expenseupdateForm.value.expensesCodeupade,
       isdeleted: 'Active'

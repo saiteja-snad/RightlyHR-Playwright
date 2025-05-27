@@ -5,7 +5,7 @@
     </div>
     @if(this.rbac.allowedToAccess('Events(Upcoming Events).create')){
     <div>
-      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">Add Event</button>
+      <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()"> <i class="bi bi-plus" style="line-height: 6px;"></i>Add Event</button>
     </div>
     }
   </div>
@@ -35,7 +35,7 @@
   <ng-template #maincontent>
     <div class="custom-events-main-content">
       <!--Todays Events-->
-      <div class="card events-section-card" *ngIf="todaysEvents.length > 0">
+      <div class="card events-section-card  mb-3" *ngIf="todaysEvents.length > 0">
         <div class="mb-4">
           <p class="component-sub-header mb-0">Today's Events</p>
         </div>
@@ -212,7 +212,7 @@
         </div>
 
         <div class="custom-modal-footer">
-          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Close</button>
+          <button type="reset" class="custom-btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary"
             [disabled]="customEventupdateForm.invalid || spinnerLoader">
             @if (spinnerLoader) {

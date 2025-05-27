@@ -479,7 +479,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   onBackSubmit() {
 
       if (this.headerName === 'Team member info') {
-    this.router.navigate(['/myinfo/team/my-team-members']);
+    this.router.navigate(['/myinfo/personal/team-members']);
     return;
   }
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');

@@ -1,17 +1,35 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div>
+        <!-- <div>
             <p class="component-header mb-0">
-                <i *ngIf="showBackIcon" class="bi bi-arrow-90deg-left me-2 cursor" (click)="onBackSubmit()"></i>{{headerName}}
+                <i *ngIf="showBackIcon" class="bi bi-arrow-90deg-left me-2 cursor"
+                    (click)="onBackSubmit()"></i>{{headerName}}
             </p>
+        </div> -->
+
+        <div class="heading-content">
+            <div class="commpoment-name"><i *ngIf="showBackIcon" class="bi bi-arrow-90deg-left me-2 cursor"
+                    (click)="onBackSubmit()"></i>{{headerName}}<span class="ms-2">>></span></div>
+            <div class="component-header">{{subHeader}}</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
+        <!--Module Information-->
+        <ng-template #popContent>
+            <app-module-information [moduleInfo]="moduleinfo" />
+        </ng-template>
 
         <div class="d-flex gap-2">
-            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/job/employmentType') && 
-            empdata?.empstatus !=='Inactive' &&  empdata?.empstatus !=='Trainee Inactive' && empdata?.employeeId !==  loginEmployee.employeeId" (click)="navigation()">Inactive</button>
+            <button class="custom-btn btn-primary"
+                *ngIf="isActive('personalinfo/job/employmentType') && 
+            empdata?.empstatus !=='Inactive' &&  empdata?.empstatus !=='Trainee Inactive' && empdata?.employeeId !==  loginEmployee.employeeId"
+                (click)="navigation()">Inactive</button>
 
-            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created'
-             || empdata?.substatus=='Requested Documents') ){
+            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus
+            =='Employee Created'
+            || empdata?.substatus=='Requested Documents') ){
             <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')"
                 (click)="emailForRequestDoc()" [disabled]="isLoading">
                 <span *ngIf="!isLoading">{{'Request for Documents'|translate}}</span>
@@ -20,7 +38,7 @@
                 </div>
             </button>
             }
-            
+
             <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus == 'Prospective'
                 || emppersonalinfo.empstatus == 'Trainee Prospective')  && (emppersonalinfo?.substatus == 'Employee Created' || 
                 emppersonalinfo?.substatus=='Requested Documents' || emppersonalinfo?.substatus == 'Documents Submitted' || 
@@ -32,7 +50,8 @@
             <!-- <div *ngIf=""> -->
             @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'){
             <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' 
-            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')" (click)="openModal(revokeoffer)">
+            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
+                (click)="openModal(revokeoffer)">
                 {{' Revoke Offer'|translate}}
             </button>
             }
@@ -44,10 +63,7 @@
         </div>
     </div>
 
-    <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+
 
     <div class="d-flex gap-3">
         <!--User profile content-->

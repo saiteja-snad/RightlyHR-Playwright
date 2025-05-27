@@ -1,8 +1,13 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div>
-            <p class="component-header mb-0">My Expenses</p>
+        <div class="heading-content">
+            <div class="commpoment-name">Expenses<span class="ms-2">>></span></div>
+            <div class="component-header">My Expenses</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
         </div>
+   
         @if(rbac.allowedToAccess('Expenses Module.create')){
         <div>
             <button type="button" (click)="navigatetoAddExpenses()" class="custom-btn btn-primary">
@@ -11,15 +16,15 @@
         </div>
         }
     </div>
-
-    <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo"/>
-     </div>
+           <!--Module Information-->
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+  
 
     <div class="d-flex gap-3 w-100">
         <div class="component-left-tabs-container">
-            <app-expenes-header-tabs/>
+            <app-expenes-header-tabs />
         </div>
 
         <div class="component-right-content">

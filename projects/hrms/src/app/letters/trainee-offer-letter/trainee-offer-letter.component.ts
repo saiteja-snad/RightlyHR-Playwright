@@ -247,9 +247,13 @@ export class TraineeOfferLetterComponent {
   calculateEndDate(value: any) {
     if (this.employeeForm.get('dateOfJoining')?.value && value) {
       const doj = this.employeeForm.get('dateOfJoining')?.value;
+      console.log(doj);
       const startDate = moment(doj); // already a moment object
       const months = parseInt(value, 10);
+      this.traineeEmpData.internshipperiod = months; // save or use as needed
+      console.log(months);
       const endDate = startDate.clone().add(months, 'months'); // purely using moment
+      console.log(endDate);
       this.traineeEmpData.endDate = endDate.format('YYYY-MM-DD'); // clean format
       // Now, calculate the duration in days
       const durationInDays = endDate.diff(startDate, 'days');
@@ -519,6 +523,7 @@ export class TraineeOfferLetterComponent {
             if (Empidvalue) {
               this.disableFields = false; // User clicked "OK," enable fields
               this.traineeEmpData = data.checkofferletter;
+              console.log(this.traineeEmpData);
               this.selectedCountryCode = this.traineeEmpData?.contactnumbercountryflag;
               this.loadingCode = false;
               this.traineeEmpData.note = this.traineeEmpData.note;
@@ -550,6 +555,7 @@ export class TraineeOfferLetterComponent {
                 const months = this.getMonthsBetween(this.traineeEmpData.dateOfJoining, this.traineeEmpData.offertrainingEndDate)
                 this.traineeEmpData.internshipperiod = months;
                 this.calculateEndDate(this.traineeEmpData.internshipperiod)
+                console.log(this.traineeEmpData.internshipperiod);
               }
               this.traineeEmpData.jobLocationName = data.checkofferletter.workLocation;
               this.traineeEmpData.jobSubLocationName = data.checkofferletter.subLocation;

@@ -17,9 +17,10 @@
                 <div *ngIf="saluationForm.get('saluation')?.errors?.['required']">
                     {{ 'Salutation is required' | translate }}
                 </div>
+                 <!-- <span *ngIf="saluationForm.get('saluation')?.errors?.['pattern']">Enter valid data</span> -->
             </div>
             <div *ngIf="saluationForm.get('saluation')?.errors?.['pattern']" class="error-msg">
-                {{ 'Field cannot start with a space or period' | translate }}
+                {{ 'Field cannot start with a space' | translate }}
             </div>
             <div *ngIf="saluationForm.get('saluation')?.errors?.['maxCharacters']" class="error-msg">
                 {{ 'Please limit your input to 50 characters' | translate }}
@@ -91,7 +92,7 @@
                         </div>
                     </div>
                     <div *ngIf="updateForm.get('titlename')?.errors?.['pattern']" class="error-msg">
-                        {{ 'Field cannot start with a space or period' | translate }}
+                        {{ 'Field cannot start with a space' | translate }}
                     </div>
                     <div *ngIf="updateForm.get('titlename')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Please limit your input to 50 characters' | translate }}

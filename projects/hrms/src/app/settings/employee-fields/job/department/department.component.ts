@@ -45,7 +45,8 @@ export class DepartmentComponent {
         '',
         [
           Validators.required,
-          this.formValidations.maxCharactersValidator(51)
+          this.formValidations.maxCharactersValidator(51),
+          Validators.pattern(/^[^\s].*$/)
         ],
       ],
     });
@@ -54,7 +55,8 @@ export class DepartmentComponent {
         '',
         [
           Validators.required,
-          this.formValidations.maxCharactersValidator(51)
+          this.formValidations.maxCharactersValidator(51),
+          Validators.pattern(/^[^\s].*$/)
         ],
       ],
     });
@@ -85,7 +87,6 @@ export class DepartmentComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        // this.resetForm();
       },
     });
   }

@@ -27,9 +27,12 @@ export class UnderMaintenaceAssetsListComponent {
   subscription!: Subscription;
   selectedLocationId: any;
   selectedSubLocationId: any;
-  first:any = 1;
-  rows:any = 10;
-  totalRecords = 100;
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize!: number;
+  first = 0;
+  totalRecords = 0;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -43,14 +46,14 @@ export class UnderMaintenaceAssetsListComponent {
   isToggledWarranty = false;
   assetForm!: FormGroup;
   assetslist = new BehaviorSubject<IAsset[]>([])
-  searchQuery='';
+  searchQuery = '';
   dateMismatch = false;
   assetinactivedropdrown: any[] = []
   minEndDate = ''
   minAmcStartDate = ''
   minAmcEndDate = ''
   amcDateMismatch = false;
-    Status = 'Under Maintenance'
+  Status = 'Under Maintenance'
   destroy$: Subject<boolean> = new Subject<boolean>();
   assetsid: IAssetid[] = [];
   selectedAsset!: any;
@@ -63,7 +66,7 @@ export class UnderMaintenaceAssetsListComponent {
   vendor: IVendor[] = [];
   minpurchesDate: any;
   maxpurchesDate: any;
- 
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly http: HttpService,
@@ -86,15 +89,15 @@ export class UnderMaintenaceAssetsListComponent {
     this.getvendor()
     this.initialform();
     const today = new Date();
-  // Set max to today's date
-  this.maxpurchesDate = today.toISOString().split('T')[0];
-  // Set min to Jan 1st of the current year
-  const startOfYear = new Date(today.getFullYear(), 0, 1); 
-  this.minpurchesDate = startOfYear.toISOString().split('T')[0];
+    // Set max to today's date
+    this.maxpurchesDate = today.toISOString().split('T')[0];
+    // Set min to Jan 1st of the current year
+    const startOfYear = new Date(today.getFullYear(), 0, 1);
+    this.minpurchesDate = startOfYear.toISOString().split('T')[0];
 
   }
 
- 
+
   initialform() {
     this.assetForm = this.fb.group({
       assetModel: [null, [Validators.required, Validators.maxLength(20)]],
@@ -107,11 +110,11 @@ export class UnderMaintenaceAssetsListComponent {
       warrantystartdate: [{ value: null, disabled: true }],
       warrantyenddate: [{ value: null, disabled: true }],
       amcstartdate: [{ value: null, disabled: true }],
-      amcenddate:[{ value: null, disabled: true }],
+      amcenddate: [{ value: null, disabled: true }],
       locationId: [{ value: null, disabled: true }],
       subLocationId: [{ value: null, disabled: true }],
-      vendorname:[{ value: null, disabled: true },[]],
-      contactnumber:[{ value: null, disabled: true },[]]
+      vendorname: [{ value: null, disabled: true }, []],
+      contactnumber: [{ value: null, disabled: true }, []]
     }, {
       validators: [
         this.purchaseDateEqualWarrantyDateValidator(),
@@ -123,11 +126,11 @@ export class UnderMaintenaceAssetsListComponent {
   conformationpoppup() {
     this.modalService.dismissAll()
     this.assetForm.reset();
-   
+
   }
 
   navigateToAsset(assetId: any) {
-    this.router.navigate(['/assets-management/view-assets-details'],{ queryParams: { id: assetId }});
+    this.router.navigate(['/assets-management/view-assets-details'], { queryParams: { id: assetId } });
   }
   purchaseDateEqualWarrantyDateValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -162,7 +165,7 @@ export class UnderMaintenaceAssetsListComponent {
         this.selectedLocationId = JSON.parse(localStorage.getItem('assetlocationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('assetsublocationId') ?? 'null');
         this.getassetsdata(this.first, this.rows, Value, this.selectedSubLocationId, this.Status);
-        this.getcount(Value,  this.selectedSubLocationId,this.Status);
+        this.getcount(Value, this.selectedSubLocationId, this.Status);
       }
     })
   }
@@ -182,7 +185,7 @@ export class UnderMaintenaceAssetsListComponent {
       next: (res: any) => {
         this.assetslist.next(res.items);
         this.loading = false;
-        this.totalRecords = res.totalCount;
+        this.collectionSize = res.totalCount;
       },
       error: (error: any) => {
         this.loading = false;
@@ -248,7 +251,7 @@ export class UnderMaintenaceAssetsListComponent {
   }
 
   getSubLocationByid(selectedLocation: any): void {
-   
+
     this.assetForm.get('subLocationId')?.enable()
     if (selectedLocation && selectedLocation.id) {
       this.subscription = this.http
@@ -279,18 +282,27 @@ export class UnderMaintenaceAssetsListComponent {
   getToday(): string {
     return new Date().toISOString().split('T')[0]
   }
-   onRowsChange() {
-      this.first = 1;
-      this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-    
-    }
-    onPageChange(event: PaginatorState) {
-      this.first = event.first;
-      this.rows = event.rows;
-      this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-    
-  
-    }
+  onRowsChange() {
+    this.page = 1;
+    this.first = 0;
+    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page + 1;
+    this.pageSize = event.rows;
+    this.first = event.first;
+    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+  }
+
+  // Called when first size changes
+  onPageSizeChange(newPageSize: number) {
+    this.pageSize = newPageSize;
+    this.rows = newPageSize;
+    this.page = 1;
+    this.first = 0;
+    this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
+  }
   onSearchChange(event: any) {
 
     if (event !== '' && event.length >= 1) {
@@ -386,7 +398,7 @@ export class UnderMaintenaceAssetsListComponent {
       this.assetForm.get('amcstartdate')?.setValidators([Validators.required]);
       this.assetForm.get('amcenddate')?.setValidators([Validators.required]);
       this.assetForm.get('vendorname')?.setValidators([Validators.required, Validators.pattern(/^(?!\s*$).+/)]);
-      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]);
+      this.assetForm.get('contactnumber')?.setValidators([Validators.required, Validators.maxLength(15), Validators.minLength(10), this.allZeroesIfMaxLength()]);
     } else {
       this.assetForm.get('amcstartdate')?.disable();
       this.assetForm.get('amcenddate')?.disable();
@@ -412,15 +424,15 @@ export class UnderMaintenaceAssetsListComponent {
 
   }
   //if user put only zero multipul times mobile no field
-allZeroesIfMaxLength(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const value = String(control.value || '');
-    if (/^0{10,}$/.test(value)) {
-      return { allZeroesIfMaxLength: true };
-    }
-    return null;
-  };
-}
+  allZeroesIfMaxLength(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = String(control.value || '');
+      if (/^0{10,}$/.test(value)) {
+        return { allZeroesIfMaxLength: true };
+      }
+      return null;
+    };
+  }
   toggleAmcFields(enable: boolean, resetValues: boolean = false) {
     const amcFields = ['amcstartdate', 'amcenddate', 'vendorname', 'contactnumber'];
 
@@ -477,7 +489,7 @@ allZeroesIfMaxLength(): ValidatorFn {
 
     });
   }
- 
+
   toggleverderyFields(enable: boolean, resetValues: boolean = false) {
     const warrantyFields = ['vendorname', 'contactnumber'];
 
@@ -610,8 +622,8 @@ allZeroesIfMaxLength(): ValidatorFn {
     this.toggleWarrantyFields(this.isToggledWarranty);
   }
 
- 
- 
+
+
   avaliableassets(deletid: any) {
     const payload = {
       "asset": {
@@ -637,7 +649,7 @@ allZeroesIfMaxLength(): ValidatorFn {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Asset marked as Available Successfully ');
           this.getassetsdata(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-         this.getcount(null, null,this.Status);
+          this.getcount(null, null, this.Status);
         },
         error: (err) => {
           console.error('Error deleting asset:', err);
@@ -682,13 +694,13 @@ allZeroesIfMaxLength(): ValidatorFn {
     });
   }
   // update delet pop up
-  opendeletepopup(content:any){
- this.modalService.open(content, {centered: true,backdrop: 'static'});
+  opendeletepopup(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
-closedailog(){
+  closedailog() {
     this.assetForm.reset();
-      this.modalService.dismissAll();
-}
+    this.modalService.dismissAll();
+  }
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -72,7 +72,7 @@ export class DraftsExpensesComponent {
 
   initiateForm() {
     this.newExpenseForm = this.fb.group({
-      expensesTitle: [null, [Validators.required, Validators.maxLength(50)]],
+      expensesTitle: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
       approvalemail: [null, Validators.required],
       expenseItems: this.fb.array([], this.duplicateReceiptValidator),
       additional_details: [null]

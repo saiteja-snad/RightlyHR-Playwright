@@ -37,6 +37,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   currentDate = new Date().toISOString().split('T')[0]; // Current date in 'YYYY-MM-DD' format
   joiningDate: any
   removeindex: any
+    file: any;
   expensetype = [] as Iexpensetype[];
   expenseemployeedata: IExpense[] = [];
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
@@ -44,7 +45,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     { label: 'Create Expenses', link: '/claimsandexpenses/addexpense' },
   ];
 
-  constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
+  constructor(public router: Router,private formValidationService:FormValidationService, private fb: FormBuilder, private datepipe: DatePipe, private conformationPopup: OpenModalService,
     private http: HttpService, private modalService: NgbModal, public formValidation: FormValidationService,) { }
 
   ngOnInit(): void {
@@ -72,7 +73,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   createExpenseItem(): FormGroup {
     return this.fb.group({
       item_expense: [null, Validators.required],
-      item_Name: [null, [Validators.required, Validators.maxLength(50)]],
+      item_Name: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
@@ -211,11 +212,33 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+//  fileAttachment(event: any) {
+//     this.isfileselected = false;
+//     this.file = event.target.files[0];
+//     let d: Date = new Date()
+//      const removeSpaceFileName = this.formValidationService.sanitizeFileName(this.file.name);
+//         const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
+//     this.educationAttachment = this.renameFiles(this.file, newFileName)
+//   }
+
+  private renameFiles(originalFile: File, newName: string) {
+    return new File([originalFile], newName, {
+      type: originalFile.type,
+      lastModified: originalFile.lastModified,
+    });
+  }
+
+expensesAttachment:any;
   fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
 
-    if (!file) return;
-
+    //if (!file) return;
+let d: Date = new Date()
+     const removeSpaceFileName = this.formValidationService.sanitizeFileName(file.name);
+        const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
+    this.expensesAttachment = this.renameFiles(file, newFileName)
+  //}
     // Allowed file types and size
     const allowedTypes = [
       'image/jpeg',
@@ -246,7 +269,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     const fileUpload$ = this.http.uploadFileWithQuery(
       'FileSystem/uploadfiletodirectory',
       filepath,
-      file
+      this.expensesAttachment
     );
     fileUpload$.subscribe({
       next: (data: any) => {

@@ -1,7 +1,12 @@
 <div class="custom-main-popup-container">
   <div class="component-header-content">
-    <div>
-      <p class="component-header mb-0">Assets Management</p>
+   
+        <div class="heading-content">
+      <!-- <div class="commpoment-name">Events<span class="ms-2">>></span></div> -->
+      <div class="component-header">Assets Management</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
     </div>
 
     <div class="d-flex gap-3 align-items-center">
@@ -38,10 +43,9 @@
     </div>
   </div>
 
-  <!--Module Information-->
-  <div>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
 
   <!-- tabs -->
   <div class="d-flex gap-3 w-100">

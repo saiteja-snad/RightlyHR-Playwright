@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { HttpService } from '../../services/http.service';
 import { filter, Subscription } from 'rxjs';
 import { Iinactivetrainee } from './inactive-trainee-mod';
@@ -15,7 +15,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-inactive-interns',
-  imports: [CommonModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
+  imports: [CommonModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent,NgbPopoverModule, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './inactive-interns.component.html',
   styleUrl: './inactive-interns.component.scss'
 })

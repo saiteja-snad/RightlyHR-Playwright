@@ -607,7 +607,12 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   'probation-details': 'Probation Details',
   'separation-details': 'Separation Request Details',
   'employee-off-boarding': 'Employee Offboarding',
-  'tranee-onboarding-requests': 'Trainee Onboarding Requests'
+  'tranee-onboarding-requests': 'Trainee Onboarding Requests',
+
+  // Documents
+  'documents': 'Documents',
+
+
   };
   setSubHeader() {
     // Get the last segment of the current URL

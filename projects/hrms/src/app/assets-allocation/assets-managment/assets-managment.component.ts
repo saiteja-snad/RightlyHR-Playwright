@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
@@ -15,7 +15,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-assets-managment',
-  imports: [CommonModule, TabsModule, Select, RouterModule, ReactiveFormsModule, FormsModule, ModuleInformationComponent],
+  imports: [CommonModule, TabsModule, Select, RouterModule, ReactiveFormsModule,NgbPopoverModule, FormsModule, ModuleInformationComponent],
   templateUrl: './assets-managment.component.html',
   styleUrl: './assets-managment.component.scss',
   encapsulation:ViewEncapsulation.None,

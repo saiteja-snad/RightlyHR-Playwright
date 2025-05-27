@@ -5,7 +5,7 @@ import { HttpService } from '../../services/http.service';
 import { filter, Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment.dev';
 import { Location } from '@angular/common';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { Select } from 'primeng/select';
@@ -17,7 +17,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-companypolicies',
-  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent],
+  imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select,NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './companypolicies.component.html',
   styleUrl: './companypolicies.component.scss'
 })

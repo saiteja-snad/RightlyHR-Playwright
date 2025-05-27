@@ -39,11 +39,11 @@ export class BackgroundcheckComponent {
 
   ngOnInit(): void {
     this.BackgroundCheckForm = this.fb.group({
-      BackgroundCheck: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      BackgroundCheck: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.updateForm = this.fb.group({
-      BackgroundCheck: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      BackgroundCheck: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.BackgroundChecktype();

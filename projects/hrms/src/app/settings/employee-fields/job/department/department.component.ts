@@ -45,7 +45,8 @@ export class DepartmentComponent {
         '',
         [
           Validators.required,
-          this.formValidations.maxCharactersValidator(51)
+          this.formValidations.maxCharactersValidator(51),
+          Validators.pattern(/^[^\s].*$/)
         ],
       ],
     });
@@ -54,7 +55,8 @@ export class DepartmentComponent {
         '',
         [
           Validators.required,
-          this.formValidations.maxCharactersValidator(51)
+          this.formValidations.maxCharactersValidator(51),
+          Validators.pattern(/^[^\s].*$/)
         ],
       ],
     });

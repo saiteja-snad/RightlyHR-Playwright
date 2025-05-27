@@ -46,7 +46,8 @@ export class PreOnBoardingDocumentsComponent {
         '',
         [
           Validators.required,
-          this.formValidations.maxCharactersValidator(101)
+          this.formValidations.maxCharactersValidator(101),
+          Validators.pattern(/^[^\s].*$/)
         ],
       ],
       isApplicableFresher: [false],
@@ -61,7 +62,8 @@ export class PreOnBoardingDocumentsComponent {
         '',
         [
           Validators.required,
-          this.formValidations.maxCharactersValidator(101)
+          this.formValidations.maxCharactersValidator(101),
+          Validators.pattern(/^[^\s].*$/)
         ],
       ],
     });

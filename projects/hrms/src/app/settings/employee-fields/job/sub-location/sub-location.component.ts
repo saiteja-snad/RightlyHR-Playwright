@@ -42,12 +42,12 @@ export class SubLocationComponent {
   }
   ngOnInit(): void {
     this.AddForm = this.fb.group({
-      AddLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
-      AddSubLocation: ['', Validators.required, ],
+      AddLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
+      AddSubLocation: ['', Validators.required, Validators.pattern(/^[^\s].*$/)],
     });
 
     this.updateForm = this.fb.group({
-      UpdateSubLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      UpdateSubLocation: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
       updateLocation: [null, [Validators.required, ]],
     });
     this.getSubLocation();

@@ -38,10 +38,10 @@ export class CompensationReasonComponent {
   }
   ngOnInit(): void {
     this.CompensationForm = this.fb.group({
-      Reason: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      Reason: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      UpdateReason: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      UpdateReason: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getReason();

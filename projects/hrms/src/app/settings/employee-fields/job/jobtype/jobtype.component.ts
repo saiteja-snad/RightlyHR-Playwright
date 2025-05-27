@@ -38,10 +38,10 @@ export class JobtypeComponent {
   }
   ngOnInit(): void {
     this.JobtypeForm = this.fb.group({
-      jobtype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      jobtype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      jobtype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      jobtype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getJobtype();

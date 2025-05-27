@@ -37,10 +37,10 @@ export class FrequencyComponent {
 
   ngOnInit(): void {
     this.FrequencyForm = this.fb.group({
-      frequency: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      frequency: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      frequency: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      frequency: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getFrequencies();

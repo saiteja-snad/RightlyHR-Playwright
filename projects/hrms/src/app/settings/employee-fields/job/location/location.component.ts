@@ -46,7 +46,8 @@ export class LocationComponent implements OnInit, OnDestroy {
         '',
         [
           Validators.required,
-          this.formValidations.maxCharactersValidator(101)
+          this.formValidations.maxCharactersValidator(101),
+          Validators.pattern(/^[^\s].*$/)
         ],
       ],
     });
@@ -55,7 +56,8 @@ export class LocationComponent implements OnInit, OnDestroy {
         '',
         [
           Validators.required,
-          this.formValidations.maxCharactersValidator(101)
+          this.formValidations.maxCharactersValidator(101),
+          Validators.pattern(/^[^\s].*$/)
         ],
       ],
     });

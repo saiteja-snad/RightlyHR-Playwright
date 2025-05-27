@@ -38,10 +38,10 @@ export class EligibleForRehireComponent {
   }
   ngOnInit(): void {
     this.EligibilityForm = this.fb.group({
-      Rehire: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      Rehire: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      Rehire: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      Rehire: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getEligibility();

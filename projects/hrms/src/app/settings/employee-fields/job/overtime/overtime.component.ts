@@ -39,10 +39,10 @@ export class OvertimeComponent implements OnInit,OnDestroy {
   }
   ngOnInit(): void {
     this.OvertimeForm = this.fb.group({
-      overtime: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      overtime: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      overtime: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      overtime: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getovertime();

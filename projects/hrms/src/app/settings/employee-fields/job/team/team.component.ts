@@ -60,14 +60,14 @@ export class TeamComponent implements OnInit, OnDestroy {
     this.getTable();
 
     this.AddForm = this.fb.group({
-      teamName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      teamName: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
       departmentId: [null, [Validators.required]],
       teamManager: [null, [Validators.required]],
     });
 
     this.updateForm = this.fb.group({
       updateddepartmentId: ['', [Validators.required]],
-      UpdatedTeamName: [null, [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      UpdatedTeamName: [null, [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]],
       updatedteamManager: ['', [Validators.required]]
     });
   }

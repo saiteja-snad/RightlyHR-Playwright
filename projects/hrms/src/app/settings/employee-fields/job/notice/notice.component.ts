@@ -38,10 +38,10 @@ export class NoticeComponent {
 
   ngOnInit(): void {
     this.noticeperiodForm = this.fb.group({
-      noticeperiod: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      noticeperiod: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      updatenoticeperiod:  ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      updatenoticeperiod:  ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
 
     });
     this.getNoticeperiod();

@@ -67,10 +67,10 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Add New Ticket</p>
             </div>
-            <div>
+            <!-- <div>
                 <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon"
                         class="close-icon"></a>
-            </div>
+            </div> -->
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="itSupportForm" (ngSubmit)="onSubmit()">
@@ -253,7 +253,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmationModal(confirmationpopup)">{{'Close'}}</button>
+                        (click)="openConfirmationModal(confirmationpopup)">{{'Cancel'}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">{{'Submit'}}</span>
@@ -269,7 +269,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text"> Are you sure you want to close?</p>
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
 
         <div class="custom-modal-footer">

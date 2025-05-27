@@ -588,7 +588,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
-          this.modal.openSuccessModal('Promotion Letter Downloaded Successfully');
+          this.modal.openSuccessModal('Promotion letter downloaded successfully');
         },
         error: (err) => {
           this.modal.openErrorModal(err.error.message ? err.error.message : 'Failed to download letter');
@@ -609,7 +609,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
-          this.modal.openSuccessModal('Appraisal Letter Downloaded Successfully');
+          this.modal.openSuccessModal('Appraisal letter downloaded successfully');
         },
         error: (err) => {
           this.modal.openErrorModal('Failed to download letter');
@@ -685,7 +685,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.http.putData(`ReviewCycleItem/update/${id}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Form Assigned Successfully');
+        this.modal.openSuccessModal('Form assigned successfully');
       },
       error: (err) => {
         this.spinnerLoader = false;
@@ -736,7 +736,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modalRef.close();
         }
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Employee is Resumed Successfully');
+        this.modal.openSuccessModal('Employee resumed successfully');
       },
       error: (err) => {
         if (this.modalRef) {
@@ -797,7 +797,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.modal.openSuccessModal('Appraisal Letter Generated Successfully');
+          this.modal.openSuccessModal('Appraisal letter generated successfully');
         },
         error: (err) => {
           this.modalService.dismissAll();
@@ -890,7 +890,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.modal.openSuccessModal('Appraisal Letter Sent Successfully');
+          this.modal.openSuccessModal('Appraisal letter sent successfully');
         },
         error: (err: any) => {
           this.modalService.dismissAll();
@@ -945,7 +945,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.modalService.dismissAll();
-          this.modal.openSuccessModal('Appraisal Letter Sent Successfully');
+          this.modal.openSuccessModal('Appraisal letter sent successfully');
         },
         error: (err: any) => {
           const errorMessage = err.error?.details || 'An error occurred while sending letters';
@@ -1001,7 +1001,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.modal.openSuccessModal('Promotion Letter Generated Successfully');
+          this.modal.openSuccessModal('Promotion letter generated successfully');
         },
         error: (err) => {
           this.modalService.dismissAll();
@@ -1042,7 +1042,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${this.selectedIds || this.allSelected}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Promotion Letter Sent Successfully');
+        this.modal.openSuccessModal('Promotion letter sent successfully');
       },
       error: (err: any) => {
         this.modalService.dismissAll();
@@ -1147,7 +1147,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
           this.modalRef.close();
         }
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Employee Added Successfully');
+        this.modal.openSuccessModal('Employee added successfully');
       },
       error: (err) => {
         if (this.modalRef) {
@@ -1238,7 +1238,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Appraisal Report Downloaded Successfully');
+        this.modal.openSuccessModal('Appraisal report downloaded successfully');
       },
       error: (err: any) => {
         this.modal.openErrorModal(err.error.message ? err.error.message : 'Error exporting data')
@@ -1272,7 +1272,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$)).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll();
-          this.modal.openSuccessModal('Appraisal Letters Generated Successfully');
+          this.modal.openSuccessModal('Appraisal letters generated successfully');
         },
         error: (err: any) => {
           this.modalService.dismissAll();
@@ -1333,7 +1333,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${this.empinfo.employeeId}&lettertype=performanceappraisal&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Appraisal Letter Sent Successfully');
+        this.modal.openSuccessModal('Appraisal letter sent successfully');
       },
       error: (err: any) => {
         if (err.status === 500) {
@@ -1367,7 +1367,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.http.postletters(`AppraisalLetter/releaseappraisalletter?reviewcycleitemId=${id}&employeeId=${this.empinfo.employeeId}&lettertype=PromotionLetter&status=${this.status}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Promotion Letter Sent Successfully');
+        this.modal.openSuccessModal('Promotion letter sent successfully');
       },
       error: (err: any) => {
         if (err.status === 500) {
@@ -1411,7 +1411,7 @@ export class ApprisalListComponent implements OnInit, OnDestroy {
     this.http.getData(url).pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
         this.modalService.dismissAll();
-        this.modal.openSuccessModal('Promotion Letter Generated Successfully');
+        this.modal.openSuccessModal('Promotion letter generated successfully');
       },
       error: (err: any) => {
         this.modalService.dismissAll();

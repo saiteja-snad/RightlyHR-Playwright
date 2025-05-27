@@ -273,6 +273,9 @@
             <div *ngIf="assetForm.get('assetModel')?.hasError('maxlength') && assetForm.get('assetModel')?.touched">
               <div class="error-msg">Asset model cannot be more than 20 characters</div>
             </div>
+             <div *ngIf="assetForm.get('assetModel')?.hasError('pattern') && assetForm.get('assetModel')?.touched">
+              <div class="error-msg">Asset model is invalid</div>
+            </div>
           </div>
 
           <div class="col-md-6  mb-2">
@@ -286,6 +289,9 @@
             </div>
             <div *ngIf="assetForm.get('serialnumber')?.hasError('maxlength') && assetForm.get('serialnumber')?.touched">
               <div class="error-msg">Serial number cannot be more than 30 characters</div>
+            </div>
+            <div *ngIf="assetForm.get('serialnumber')?.hasError('pattern') && assetForm.get('serialnumber')?.touched">
+              <div class="error-msg">Serial number is invalid</div>
             </div>
 
           </div>

@@ -30,7 +30,8 @@ export class UserValidationComponent {
   }
   async postLogin() {
     await this._msalService.instance.initialize();
-    const loginResponse = await this._msalService.instance.loginPopup();
+
+  //  const loginResponse = await this._msalService.instance.loginRedirect();
     //console.log(loginResponse.accessToken);
     
     const account = this._msalService.instance.getAllAccounts()[0];

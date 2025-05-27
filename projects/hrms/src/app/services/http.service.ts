@@ -176,6 +176,15 @@ export class HttpService {
     console.log('Selected Employee Regularization ID:', id);
   }
 
+  // function for employeid itsupport team ticket
+ private refreshSubject = new Subject<void>();
+  refreshRequested$ = this.refreshSubject.asObservable();
+  // Method to update the employeeId
+   requestRefresh() {
+    console.log('Selected Employee team ticket ID:', 'refresh');
+    this.refreshSubject.next();
+    
+  }
   //function to update the desk Updatelocation
   deskUpdateLocationId(id: string | null) {
     this.desklocationIdSubject.next(id);

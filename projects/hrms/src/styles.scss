@@ -108,7 +108,7 @@
     --card-bg-color: #e2e4ea4f;
 
     //scroller colors
-    --Scroller-bar-color: #c8d1df;
+    --Scroller-bar-color: #DCE3ED;
     --scroller-bg-color: #FFF;
 
     //events bg color
@@ -279,7 +279,7 @@ body {
             position: absolute;
             top: 0;
             right: 0;
-            width: 2px;
+            width: 1px;
             height: 100%;
             z-index: 1;
         }
@@ -304,7 +304,7 @@ body {
             position: absolute;
             left: 0;
             bottom: 0;
-            height: 2px;
+            height: 1px;
             width: 100%;
             z-index: 1;
         }
@@ -388,27 +388,17 @@ body {
 //employeeinfotabs
 .employee-info-nav-tabs {
     .nav-link {
+        width: 5.5rem;
         color: #606060;
         text-decoration: none;
         font-weight: 400;
         font-size: var(--fontsize12);
         line-height: 100%;
         letter-spacing: 0%;
+        text-align: center;
         vertical-align: middle;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 0.5rem;
         border-radius: 6px;
-    }
-
-    .nav-tab-active {
-        color: #fff;
-        background: linear-gradient(90.06deg, #FFFFFF -75.59%, #0B3A83 99.95%);
-
-        font-weight: 500;
-        border-radius: 6px;
-    }
-
-    .employee-info-nav-tabs a:hover {
-        color: #fff;
     }
 
     .active-nav-link {
@@ -869,7 +859,14 @@ select:focus {
         padding: 0px !important;
     }
 
+    .p-select-option.p-select-option-selected.p-focus {
+        background: #e8f0fb !important;
+        background-color: #e8f0fb !important;
+        color: #222222 !important;
+    }
+
     .p-select-option.p-select-option-selected {
+        background: #e8f0fb !important;
         background-color: #e8f0fb !important;
         color: #222222 !important;
     }
@@ -1090,6 +1087,8 @@ select:focus {
         padding-top: 0.5rem;
         line-height: 100%;
         letter-spacing: 0%;
+        text-wrap: nowrap;
+        line-break: anywhere;
 
         .name {
             font-weight: 700;
@@ -1299,8 +1298,8 @@ select:focus {
 
 //My Info Stylings
 .user-profile-content {
-    width: 17.5rem;
-    height: calc(100dvh - 10rem);
+    width: 20rem;
+    height: calc(100dvh - 11.5rem);
     border: 1px solid #CCDAEC;
     background-color: var(--white-color);
     border-radius: 0.5rem;
@@ -1309,8 +1308,8 @@ select:focus {
 }
 
 .myinfo-main-content {
-    width: calc(100% - 17.5rem);
-    height: calc(100dvh - 10rem);
+    width: calc(100% - 20rem);
+    height: calc(100dvh - 11.5rem);
     overflow-y: auto;
     border: 1px solid #CCDAEC;
     border-radius: 0.5rem;
@@ -2181,6 +2180,9 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .menu-grid-content {
+    width: 100%;
+    height: calc(100vh - 35.5rem);
+    overflow: auto;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     border: 1px solid transparent;
@@ -2206,7 +2208,7 @@ input[type=number]::-webkit-outer-spin-button {
         position: absolute;
         top: 0;
         right: 0;
-        width: 2px;
+        width: 1px;
         height: 100%;
         z-index: 1;
     }
@@ -2231,7 +2233,7 @@ input[type=number]::-webkit-outer-spin-button {
         position: absolute;
         left: 0;
         bottom: 0;
-        height: 2px;
+        height: 1px;
         width: 100%;
         z-index: 1;
     }

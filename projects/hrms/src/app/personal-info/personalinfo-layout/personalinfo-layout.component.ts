@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -8,11 +8,9 @@ import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { CommonModule } from '@angular/common';
 import { ProfileInfoDetailsComponent } from '../../shared/profile-info-details/profile-info-details.component';
-
 import { TranslateModule } from '@ngx-translate/core';
 import { Ipersonal, Iteammembers } from '../../Interfaces/members-model';
 import { MultiSelectModule } from 'primeng/multiselect';
-
 import { AccessForEmployeeinfoService } from '../../services/access-for-employeeinfo.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
@@ -21,7 +19,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
   imports: [CommonModule, RouterOutlet, ProfileInfoDetailsComponent,
     FormsModule, ReactiveFormsModule, TranslateModule, MultiSelectModule, ModuleInformationComponent, NgbPopoverModule],
   templateUrl: './personalinfo-layout.component.html',
-  styleUrl: './personalinfo-layout.component.scss'
+  styleUrl: './personalinfo-layout.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
 
 export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {

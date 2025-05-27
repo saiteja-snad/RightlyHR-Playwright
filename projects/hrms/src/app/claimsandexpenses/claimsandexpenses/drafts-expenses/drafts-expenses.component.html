@@ -156,6 +156,11 @@
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                         Expense item must be less than 50 characters
                                     </div>
+                                     <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
+                                    class="error-msg">
+                                    <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
+                                        Expense Type is required</div>
+                                </div>
                                 </div>
                             </div>
 
@@ -238,9 +243,11 @@
                             <div class="col-md-4">
                                 <label class="form-label custom-label">{{'Proof (Image and PDF only)' | translate}}<span
                                         class="text-danger">*</span></label>
+
                                 <input type="file" class="form-control custom-input px-0"
-                                    formControlName="attachment_url" accept=".pdf, image/*"
-                                    (change)="fileupload($event, i)" />
+                                    formControlName="attachment_url" accept=".pdf, image/*">
+
+                               
                                 <div class="error-msg"
                                     *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
                                     File is required
@@ -250,7 +257,7 @@
                                         (click)="onSelectDownload(item.get('attachment_url'))">
                                         <i class="bi bi-download me-2"></i>Download
                                     </a>
-                                    <a type="button" class="download-text"
+                                    <a type="button" class="download-text"  *ngIf="isImageFile(item.get('attachment_url')?.value)"
                                         (click)="onViewAttachement(item.get('attachment_url')?.value)">
                                         <i class="bi bi-eye-fill me-2"></i>View
                                     </a>

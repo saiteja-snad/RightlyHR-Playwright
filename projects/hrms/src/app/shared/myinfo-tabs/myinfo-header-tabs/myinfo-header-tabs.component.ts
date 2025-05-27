@@ -19,25 +19,17 @@ export class MyinfoHeaderTabsComponent {
     { label: 'Job', link: '/myinfo/job',permission: { feature: 'My Info Job Tab', action: 'view' }, },
     { label: 'Documents', link: '/myinfo/documents',permission: { feature: 'My Info Documents Tab', action: 'view' }, },
     // { label: 'Team Members', link: '/myinfo/team/my-team-members', permission: { feature: 'My Info Team Members Tab', action: 'view' }},
-   
   ];
 
-  constructor(
-    private rbac: RbacService,
-    private router: Router,
-    private accessNav: AccessNavigationService
-  ) {}
+  constructor(private rbac: RbacService, private router: Router, private accessNav: AccessNavigationService) {}
 
   ngOnInit(): void {
-    
     this.navTabs = this.navTabs.filter(
       (tab) =>
         tab.permission &&
         tab.permission.feature &&
         tab.permission.action &&
-        this.rbac.allowedToAccess(
-          `${tab.permission.feature}.${tab.permission.action}`
-        )
+        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
   }
 

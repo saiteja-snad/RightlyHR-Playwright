@@ -82,7 +82,7 @@
                                 <input type="text" class="form-control custom-input" formControlName="item_Name"
                                     placeholder="Please enter expense item"
                                     (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                                <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
+                                <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty && item.get('item_Name')?.touched)"
                                     class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
                                         Expense item is required</div>
@@ -90,7 +90,7 @@
                                         Expense item must be less than 50 characters
                                     </div>
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['pattern']">
-                                          Expense item is invalid
+                                        Expense item is invalid
                                     </div>
                                 </div>
 

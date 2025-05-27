@@ -14,6 +14,11 @@
     }
 }
 
+.p-select-option.p-select-option-selected {
+    background: #e8f0fb !important;
+    color: #222222 !important;
+}
+
 .custom-expense-item-card {
     background: rgba(248, 251, 255, 1);
     border: 1px solid rgba(222, 232, 243, 1);

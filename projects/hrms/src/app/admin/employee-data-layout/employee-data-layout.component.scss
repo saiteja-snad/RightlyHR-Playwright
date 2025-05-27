@@ -1,0 +1,116 @@
+.graph-grid {
+    display: flex;
+    gap: 1rem;
+    position: relative;
+
+    .p-tablist-tab-list {
+        background-color: transparent !important;
+    }
+
+    // total leave summary
+    .total-leave-balance-graph-content {
+        width: 21rem;
+        padding: 0.75rem 1rem;
+        border-radius: 1rem;
+        border: 1px solid #DCE3E9;
+        background-color: var(--white-color);
+        display: flex;
+        align-items: center;
+
+        .chart-content {
+            position: relative;
+            width: max-content;
+            height: max-content;
+
+            .total-count-content {
+                position: absolute;
+                top: 40%;
+                left: 26%;
+                text-align: center;
+
+                .count {
+                    font-weight: 700;
+                    font-size: 16px;
+                    color: #0F358A;
+                    line-height: 100%;
+                    letter-spacing: 0%;
+                }
+
+                .total-count-text {
+                    font-weight: 400;
+                    font-size: 10px;
+                    color: #999999;
+                    line-height: 100%;
+                    letter-spacing: 0%;
+                }
+            }
+        }
+
+        canvas {
+            width: 120px !important;
+            height: 120px !important;
+        }
+
+        .bi-circle-fill {
+            font-size: 9px;
+        }
+
+        .leave-category-text {
+            font-weight: 400;
+            font-size: 11px;
+            line-height: 100%;
+            letter-spacing: 0%;
+            color: #747474;
+        }
+    }
+
+    //scrollable buttons stylings
+    .p-tablist-tab-list {
+        background: none !important;
+        border: none !important;
+    }
+
+    .p-tab {
+        padding: 0rem 1rem !important;
+        --p-tabs-active-bar-background:#FFFFFF !important;
+    }
+
+    .p-tab-active {
+        background: none !important;
+        border: 0rem !important;
+    }
+
+    .p-tablist-active-bar {
+        background: none !important;
+    }
+
+    .employee-category-container {
+        width: calc(100% - 21rem);
+
+        .employee-category-card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            width: 13.5rem !important;
+            padding: 1rem 0.75rem;
+            border: 1px solid #DCE3E9 !important;
+            border-radius: 0.625rem;
+
+            .icon {
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+
+            .content-text {
+                font-weight: 600;
+                font-size: 12px;
+                line-height: 18px;
+                letter-spacing: 0%;
+                text-align: center;
+                color: #222222;
+                text-wrap: wrap;
+            }
+        }
+    }
+}

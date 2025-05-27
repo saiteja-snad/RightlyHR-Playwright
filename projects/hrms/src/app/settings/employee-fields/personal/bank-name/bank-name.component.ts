@@ -41,10 +41,10 @@ export class BankNameComponent implements OnInit {
 
   ngOnInit(): void {
     this.bankForm = this.fb.group({
-      bank: [null, [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      bank: [null, [Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
     });
     this.updateForm = this.fb.group({
-      bankName2: ['',[Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      bankName2: ['',[Validators.required, this.formValidations.maxCharactersValidator(101), Validators.pattern(/^[^\s].*$/)]],
     });
     this.getBank();
   }

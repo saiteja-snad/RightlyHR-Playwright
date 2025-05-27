@@ -48,9 +48,9 @@ export class AssetVendorComponent {
   initialform() {
     this.assetForm = this.fb.group({
       phonenumber: [null, [Validators.required, Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]],
-      vendordetailes: [null, [Validators.required, Validators.maxLength(50)]],
+      vendordetailes: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       email: [null, [Validators.required, Validators.email, Validators.maxLength(30),this.customEmailValidator()]],
-      address: [null, [Validators.required, Validators.maxLength(50)]],
+      address: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       secondaryphonenumber: [null, [Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]],
     }
     )
@@ -59,9 +59,9 @@ export class AssetVendorComponent {
   initialvedorupdateform() {
     this.assetverderupdataform = this.fb.group({
       phonenumber: [null, [Validators.required, Validators.maxLength(15), Validators.minLength(10),Validators.pattern(/^(?!0{10,15}$)\d{10,15}$/),this.allZeroesIfMaxLength()]],
-      vendordetailes: [null, [Validators.required, Validators.maxLength(50)]],
+      vendordetailes: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       email: [null, [Validators.required, Validators.email, Validators.maxLength(30), this.customEmailValidator()]],
-      address: [null, [Validators.required, Validators.maxLength(50)]],
+      address: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
       secondaryphonenumber: [null, [Validators.maxLength(15),Validators.pattern(/^(?!0{10,15}$)\d{10,15}$/), Validators.minLength(10),this.allZeroesIfMaxLength()]],
     }
     )
@@ -102,12 +102,11 @@ export class AssetVendorComponent {
       this.http.postdata('AssetVendor', payload).pipe(takeUntil(this.destroy$)).subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Vendor Details added Successfully ');
+            this.conformationPopup.openSuccessModal('Vendor Details added successfully ');
             this.getvendor()
-            this.assetForm.reset()
+            this.assetForm.reset();
           },
           error: (error) => {
-            this.modalService.dismissAll();
             if(error.status!==500){
               this.conformationPopup.openErrorModal(error.error?.message);
             }
@@ -176,7 +175,6 @@ export class AssetVendorComponent {
             this.getvendor()
           },
           error: (error) => {
-            this.modalService.dismissAll();
             this.conformationPopup.openErrorModal( 'Email address already exit.',)
           }
         });
@@ -239,7 +237,7 @@ export class AssetVendorComponent {
         .subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal(' Vendor Details Updated Successfully ');
+            this.conformationPopup.openSuccessModal(' Vendor Details updated successfully ');
             this.getvendor()
           },
           error: (error) => {

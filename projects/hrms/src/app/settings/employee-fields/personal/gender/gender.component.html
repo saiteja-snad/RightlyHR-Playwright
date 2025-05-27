@@ -1,11 +1,13 @@
 <div class="custom-main-component-container">
-    <form autocomplete="off" [formGroup]="GenderForm" (ngSubmit)="addGender()" *ngIf="rbac.allowedToAccess('Gender.create')">
+    <form autocomplete="off" [formGroup]="GenderForm" (ngSubmit)="addGender()"
+        *ngIf="rbac.allowedToAccess('Gender.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter gender"
-                    formControlName="Gender" aria-label="Gender" 
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
+                    formControlName="Gender" aria-label="Gender"
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                    maxlength="51">
                 <span class="input-group-text" id="Gender"><button type="submit" class="custom-btn btn-primary"
                         [disabled]="GenderForm.invalid">{{'Add'|translate}}</button>
                 </span>
@@ -14,6 +16,9 @@
                 <div *ngIf="GenderForm.get('Gender')?.errors?.['required']">
                     {{ 'Gender is required' | translate }}
                 </div>
+            </div>
+            <div *ngIf="GenderForm.get('Gender')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space' | translate }}
             </div>
             <div *ngIf="GenderForm.get('Gender')?.errors?.['maxCharacters']" class="error-msg">
                 {{ 'Please limit your input to 50 characters' | translate }}
@@ -74,12 +79,16 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Gender'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Gender"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
-                     placeholder="Please enter gender" maxlength="51">
-                     <div *ngIf="updateForm.get('Gender')?.touched && updateForm.get('Gender')?.invalid" class="error-msg">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                        placeholder="Please enter gender" maxlength="51">
+                    <div *ngIf="updateForm.get('Gender')?.touched && updateForm.get('Gender')?.invalid"
+                        class="error-msg">
                         <div *ngIf="updateForm.get('Gender')?.errors?.['required']">
                             {{ 'Gender is required' | translate }}
                         </div>
+                    </div>
+                    <div *ngIf="updateForm.get('Gender')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
                     </div>
                     <div *ngIf="updateForm.get('Gender')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Please limit your input to 50 characters' | translate }}
@@ -105,7 +114,8 @@
             <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

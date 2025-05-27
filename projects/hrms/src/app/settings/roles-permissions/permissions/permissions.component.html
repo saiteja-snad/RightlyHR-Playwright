@@ -2934,6 +2934,15 @@
     </div>
 </ng-template>
 
+<ng-template #resetLoadingModal let-modal>
+  <div class="result-popup-content text-center" ngbAutofocus>
+    <div class="loading-content">
+      <img src="/gifs/dot-loader.gif" alt="Loading..." class="loading-gif mb-3">
+    </div>
+    <p class="confirmation-text pt-4">Please wait while we reset your permissions...</p>
+  </div>
+</ng-template>
+
 <!--reject confirmation Model-->
 <ng-template #cancelconfirmationpopup let-model>
     <div class="result-popup-content" ngbAutofocus>

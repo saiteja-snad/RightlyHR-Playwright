@@ -103,7 +103,7 @@
                             *ngIf="assetForm.get('vendordetailes')?.invalid && assetForm.get('vendordetailes')?.touched">
                             <!-- Required error -->
                             <div *ngIf="assetForm.get('vendordetailes')?.errors?.['required']">
-                                Vendor name is required
+                                Vendor Name is required
                             </div>
                             <div *ngIf="assetForm.get('vendordetailes')?.errors?.['whitespace']">
                                 Enter a valid Vendor name
@@ -306,7 +306,7 @@
                             *ngIf="assetverderupdataform.get('vendordetailes')?.invalid && assetverderupdataform.get('vendordetailes')?.touched">
                             <!-- Required error -->
                             <div *ngIf="assetverderupdataform.get('vendordetailes')?.errors?.['required']">
-                                Vendor name is required
+                                Vendor Name is required
                             </div>
                              <div *ngIf="assetverderupdataform.get('vendordetailes')?.errors?.['pattern']" class="error-msg">
                                 {{ 'Field cannot start with a space' | translate }}

@@ -56,10 +56,10 @@
       <div>
         <p class="popup-heading mb-0">Add Asset Sub Category</p>
       </div>
-      <div>
+      <!-- <div>
         <a (click)="openaaddmodal(confirmationadddeletepopup)"><img src="icons/close.png" alt="Close Icon"
             class="close-icon"></a>
-      </div>
+      </div> -->
     </div>
 
     <div class="custom-main-popup-content">
@@ -84,26 +84,26 @@
             <label for="assetSubCategory" class="form-label custom-label mb-2">Asset Sub Category<span
                 class="text-danger">*</span></label>
             <input class="form-control custom-input" formControlName="assetSubCategory"
-              placeholder="please enter asset sub category" type="text"
+              placeholder="Please enter asset sub category" type="text"
               (keypress)="formValidation.restrictInputallowhypen($event)" />
             <div
               *ngIf="assetcataeryForm.get('assetSubCategory')?.invalid && assetcataeryForm.get('assetSubCategory')?.touched"
               class="error-msg">
               <div *ngIf="assetcataeryForm.get('assetSubCategory')?.errors?.['required']">
-                Asset Sub category is required
+                Asset Sub Category is required
               </div>
               <div *ngIf="assetcataeryForm.get('assetSubCategory')?.errors?.['pattern']" class="error-msg">
                 {{ 'Field cannot start with a space' | translate }}
               </div>
               <div *ngIf="assetcataeryForm.get('assetSubCategory')?.errors?.['maxlength']">
-                Asset Sub category must not exceed 30 characters
+                Asset Sub Category must not exceed 30 characters
               </div>
             </div>
           </div>
         </div>
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="openaaddmodal(confirmationadddeletepopup)">Cancel</button>
+            (click)="clearadddata('add');">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="assetcataeryForm.invalid">Submit</button>
         </div>
       </form>
@@ -111,7 +111,7 @@
   </div>
 </ng-template>
 <!-- add close button click close pop up -->
-<ng-template #confirmationadddeletepopup let-model>
+<!-- <ng-template #confirmationadddeletepopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
@@ -127,17 +127,17 @@
       </button>
     </div>
   </div>
-</ng-template>
+</ng-template> -->
 <ng-template #updateassetescataerys let-modal>
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div>
         <p class="popup-heading mb-0">Update Asset Sub Category </p>
       </div>
-      <div>
+      <!-- <div>
         <a (click)="openaddventermodal(confirmationdeletepopup)"><img src="icons/close.png" alt="Close Icon"
             class="close-icon"></a>
-      </div>
+      </div> -->
     </div>
     <div class="custom-main-popup-content">
       <form autocomplete="off" [formGroup]="assetcataeryupdateForm"
@@ -154,7 +154,7 @@
             </div>
             <div class="error-msg" *ngIf="assetcataeryupdateForm.get('assetCategory')?.invalid && 
                       assetcataeryupdateForm.get('assetCategory')?.touched">
-              Asset category is required
+              Asset Category is required
             </div>
           </div>
 
@@ -163,12 +163,12 @@
             <label for="assetSubCategorys" class="form-label custom-label mb-2">Asset Sub Category<span
                 class="text-danger">*</span></label>
             <input class="form-control custom-input" formControlName="assetSubCategory"
-              placeholder="please enter asset sub category"
+              placeholder="Please enter asset sub category"
               (keypress)="formValidation.restrictInputallowhypen($event)" />
             <div *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.invalid && 
                       assetcataeryupdateForm.get('assetSubCategory')?.touched" class="error-msg">
               <div *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.errors?.['required']">
-                Asset Sub category is required
+                Asset Sub Category is required
               </div>
               <div *ngIf="assetcataeryupdateForm.get('assetSubCategory')?.errors?.['pattern']" class="error-msg">
                 {{ 'Field cannot start with a space' | translate }}
@@ -182,7 +182,7 @@
 
         <div class="custom-modal-footer">
           <button type="reset" class="custom-btn btn-secondary"
-            (click)="openaddventermodal(confirmationdeletepopup)">Cancel</button>
+            (click)="clearadddata('update')">Cancel</button>
           <button type="submit" class="custom-btn btn-primary"
             [disabled]="assetcataeryupdateForm.invalid">Update</button>
         </div>
@@ -195,7 +195,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text mb-4">Are you sure you want to delete the Asset Sub Category?</p>
+      <p class="confirmation-text mb-4">Are you sure you want to delete the asset sub category?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

@@ -102,9 +102,9 @@ export class AssetVendorComponent {
       this.http.postdata('AssetVendor', payload).pipe(takeUntil(this.destroy$)).subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Vendor Details added Successfully ');
+            this.conformationPopup.openSuccessModal('Vendor Details added successfully ');
             this.getvendor()
-            this.assetForm.reset()
+            this.assetForm.reset();
           },
           error: (error) => {
             if(error.status!==500){
@@ -237,7 +237,7 @@ export class AssetVendorComponent {
         .subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal(' Vendor Details Updated Successfully ');
+            this.conformationPopup.openSuccessModal(' Vendor Details updated successfully ');
             this.getvendor()
           },
           error: (error) => {

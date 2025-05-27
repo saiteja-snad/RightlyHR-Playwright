@@ -8,6 +8,7 @@ import { OpenModalService } from '../../../services/open-modal.service';
 import { Subscription } from 'rxjs';
 import { Ipersonal } from '../../../Interfaces/personal-modal';
 import moment from 'moment';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-offboarding-details',
@@ -29,15 +30,26 @@ export class OffboardingDetailsComponent {
     this.buttons = !this.buttons
   }
 
-  constructor(private modalService: NgbModal, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
+  constructor(private modalService: NgbModal, private router: Router, private http: HttpService, private fb: FormBuilder, private conformationPopup: OpenModalService) { }
   ngOnInit() {
     this.getRehire();
     this.getTermination();
     this.initializeForm();
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
-    this.getEmployeeId();
+    // this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+    this.getEmpInfoFromRoute();
   }
+  getEmpInfoFromRoute(): void {
+    const fullPath = this.router.url;
+    console.log('Full path:', fullPath);
 
+    if (fullPath.startsWith('/personalinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
+      this.getEmployeeId();
+    } else if (fullPath.startsWith('/myinfo')) {
+      this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
+      this.getEmployeeId();
+    }
+  }
   initializeForm(): void {
     this.offboardingForm = this.fb.group({
       exitReason: [{ value: '', disabled: true }],

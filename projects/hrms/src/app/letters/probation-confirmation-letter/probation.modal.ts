@@ -49,6 +49,7 @@ export interface IJobDetails {
     departmentId: number;
     departmentName: string;
     dateOfJoining : string;
+    probationEndDate : string;
     jobDetails: IJobDetails;
   }
   

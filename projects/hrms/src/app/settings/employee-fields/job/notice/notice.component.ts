@@ -38,10 +38,10 @@ export class NoticeComponent {
 
   ngOnInit(): void {
     this.noticeperiodForm = this.fb.group({
-      noticeperiod: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      noticeperiod: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      updatenoticeperiod:  ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      updatenoticeperiod:  ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
 
     });
     this.getNoticeperiod();
@@ -70,7 +70,6 @@ export class NoticeComponent {
       error: (err : any) => {
         const errorMessage = err.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        // this.resetForm();
       }
     });
   }
@@ -90,7 +89,7 @@ export class NoticeComponent {
   updateNoticeperiod(modal: any) {
     if (this.updateForm.valid && this.selectedId) {
       const request: NoticeData = {
-        period: this.updateForm.value.updatenoticeperiod,
+        period: this.updateForm.value.updatenoticeperiod.trim(),
         isdeleted: 'Active',
         id: this.selectedId
       };

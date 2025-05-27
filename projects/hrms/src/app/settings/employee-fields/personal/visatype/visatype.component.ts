@@ -38,10 +38,10 @@ export class VisatypeComponent {
   }
   ngOnInit(): void {
     this.VisaForm = this.fb.group({
-      Visatype: ['', [Validators.required,  this.formValidations.maxCharactersValidator(51)]]
+      Visatype: ['', [Validators.required,  this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      Visatype: ['', [Validators.required, this.formValidations.maxCharactersValidator(51)]]
+      Visatype: ['', [Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getVisa();

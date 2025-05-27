@@ -1,7 +1,17 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <p class="component-header cursor mb-0">Global Permissions</p>
+
+    <div class="component-header-content">
+
+      <div class="heading-content">
+        <div class="commpoment-name">Time off<span class="ms-2">>></span></div>
+        <div class="component-header">Global Permissions</div>
+       <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
+      </div>
+      <div>
+      </div>
     </div>
     <div>
       @if(rbac.allowedToAccess('Request Global Permission Button.view')){
@@ -11,9 +21,10 @@
   </div>
 
   <!--Module Information-->
-  <div>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo"  />
+  </ng-template>
+
 
   <div class="custom-table-content">
     <table class="w-100">
@@ -59,7 +70,7 @@
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
-                    <p class="mb-0">{{getEmployeeNames(item.employeeIds)}}</p>
+                  <p class="mb-0">{{getEmployeeNames(item.employeeIds)}}</p>
                 </ng-template>
               </span>
               <ng-template #emp>-</ng-template>
@@ -74,7 +85,7 @@
                   <img src="images\info-fill.png" alt="info icon" class="info-icon">
                 </a>
                 <ng-template #reason>
-                    <p class="mb-0">{{item.meta}}</p>
+                  <p class="mb-0">{{item.meta}}</p>
                 </ng-template>
               </span>
               <ng-template #res>-</ng-template>

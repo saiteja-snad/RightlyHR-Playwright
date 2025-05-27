@@ -46,6 +46,7 @@ export class DraftsExpensesComponent {
   updataid!: number;
   matchingExpense: any;
   saveasDraftloder = false
+  expensesAttachment: any;
 
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
@@ -72,7 +73,7 @@ export class DraftsExpensesComponent {
 
   initiateForm() {
     this.newExpenseForm = this.fb.group({
-      expensesTitle: [null, [Validators.required, Validators.maxLength(50)]],
+      expensesTitle: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
       approvalemail: [null, Validators.required],
       expenseItems: this.fb.array([], this.duplicateReceiptValidator),
       additional_details: [null]
@@ -204,12 +205,22 @@ export class DraftsExpensesComponent {
         },
       });
   }
-
+  private renameFiles(originalFile: File, newName: string) {
+    return new File([originalFile], newName, {
+      type: originalFile.type,
+      lastModified: originalFile.lastModified,
+    });
+  }
 
   fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
     if (!file) return;
-
+ 
+    //if (!file) return;
+    let d: Date = new Date()
+     const removeSpaceFileName = this.formValidation.sanitizeFileName(file.name);
+        const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
+    this.expensesAttachment = this.renameFiles(file, newFileName)
     // Allowed file types and size
     const allowedTypes = [
       'image/jpeg',
@@ -240,7 +251,7 @@ export class DraftsExpensesComponent {
     const fileUpload$ = this.http.uploadFileWithQuery(
       'FileSystem/uploadfiletodirectory',
       filepath,
-      file
+      this.expensesAttachment
     );
 
     fileUpload$.subscribe({
@@ -462,6 +473,11 @@ export class DraftsExpensesComponent {
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
+  isImageFile(url: any): boolean {
+    if (!url) return false;
+    const lowerUrl = url.toLowerCase();
+    return lowerUrl.endsWith('.jpg') || lowerUrl.endsWith('.jpeg') || lowerUrl.endsWith('.png');
+  }
 
 
   onAmountInput(event: Event): void {

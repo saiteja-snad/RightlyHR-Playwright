@@ -34,6 +34,8 @@ export class ProbationConfirmationLetterComponent {
   loading: boolean = false;
   Status: any;
   probationConfirmationForm!: FormGroup;
+  selectedEmployee: IEmployee | null = null;
+  lastSelectedEmployeeId: number | null = null;
   
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
@@ -42,6 +44,7 @@ export class ProbationConfirmationLetterComponent {
 
   todayDate!: string;
   isdateofprobation: boolean = true;
+  isdateofprobationIssued :boolean = true;
   enableBtn= false;
   spinnerLoader= false;
   releaseLoader= false;
@@ -82,7 +85,40 @@ export class ProbationConfirmationLetterComponent {
   }
 
   DateValidation() {
-    if (this.probationLetterData.dateofprobation <= this.probationLetterData.probationEndDate) {
+    const issuedDateControl = this.probationConfirmationForm.get('issuedDate');
+    const issuedDate = issuedDateControl?.value ? new Date(issuedDateControl.value) : null;
+  
+    const probationEndDate = this.selectedEmployee?.probationEndDate
+      ? new Date(this.selectedEmployee.probationEndDate)
+      : null;
+  
+    console.log('Issued Date:', issuedDate);
+    console.log('Probation End Date:', probationEndDate);
+  
+    if (issuedDate && probationEndDate && issuedDate > probationEndDate) {
+      this.isdateofprobationIssued = false;
+    } else {
+      this.isdateofprobationIssued = true;
+    }
+  }
+
+  CheckDateValidation(){
+    const effectiveDate = new Date(this.probationConfirmationForm.get('effectiveDate')?.value);
+    const joiningDate = this.selectedEmployee?.dateOfJoining
+      ? new Date(this.selectedEmployee.dateOfJoining)
+      : null;
+  
+      const probationEndDate = this.selectedEmployee?.probationEndDate
+    ? new Date(this.selectedEmployee.probationEndDate)
+    : null;
+
+    // Validate Effective Date after joining date
+    if (joiningDate && effectiveDate < joiningDate) {
+      this.jobErrorMessage = 'Effective Date must be after the employee joining date';
+    } else {
+      this.jobErrorMessage = '';
+    }
+    if (probationEndDate && effectiveDate > probationEndDate) {
       this.isdateofprobation = false;
     } else {
       this.isdateofprobation = true;
@@ -110,12 +146,14 @@ export class ProbationConfirmationLetterComponent {
 
   //get employee ids for dropdown
   getProbationEmployees() {
-    this.subscription = this.http.getData(`ProbationFlow/getAllProbationEmployees?substatus=${"Probation Confirmed"}`).subscribe({
+    this.subscription = this.http.getData(`ProbationFlow/getAllProbationEmployees?substatus=${"Probation"}`).subscribe({
       next: (data: any) => {
         this.probationemp = data.map((employee: any) => ({
           ...employee,
           fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
+
+        console.log(this.probationemp);
       },
       error: (reason: any) => {
         console.log(reason);
@@ -123,11 +161,38 @@ export class ProbationConfirmationLetterComponent {
     })
   }
 
-  onClickEmployee(event: any){
-    const empId= event.value.employeeId;
-    this.getProbationRequest(empId);
-    this.pathValuesFuction();
+  onClickEmployee(event: any) {
+  const newlySelectedEmployee = event?.value;
+  if (!newlySelectedEmployee || typeof newlySelectedEmployee !== 'object') {
+    return;
   }
+
+  // If employee has changed, reset the dependent fields
+  if (this.lastSelectedEmployeeId && this.lastSelectedEmployeeId !== newlySelectedEmployee.employeeId) {
+    this.probationConfirmationForm.patchValue({
+      issuedDate: null,
+      effectiveDate: null,
+      Documenttype: null,
+      authorityid: null
+    });
+
+    ['issuedDate', 'effectiveDate', 'Documenttype', 'authorityid'].forEach(controlName => {
+      const control = this.probationConfirmationForm.get(controlName);
+      control?.markAsPristine();
+      control?.markAsUntouched();
+      control?.updateValueAndValidity();
+    });
+
+    this.jobErrorMessage = '';
+  }
+
+  // Update tracking and continue normal processing
+  this.lastSelectedEmployeeId = newlySelectedEmployee.employeeId;
+  this.selectedEmployee = event.value;
+  const empId = event.value.employeeId;
+  this.getProbationRequest(empId);
+  this.pathValuesFuction();
+}
 
   //get offer letter Authority list 
   getAuthorityDetails() {
@@ -174,14 +239,16 @@ export class ProbationConfirmationLetterComponent {
         this.uploadProbationLetter();
       });
     }
+    this.openModalService.openSuccessModal("Probation Confirmation Letter Generated Successfully");
   }
 
   uploadProbationLetter() {
     let filePath = `/FusionDocuments/Employee Documents/Probation Documents/${this.probationLetterData.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.probationFile).subscribe({
       next: (data: any) => {
+        this.openModalService.openSuccessModal("Probation Confirmation Letter Generated Successfully");
         if (data) {
-          this.postProbationDetails(data.path);
+          this.postProbationDetails(data.path); 
         }
       },
       error: (reason: any) => {

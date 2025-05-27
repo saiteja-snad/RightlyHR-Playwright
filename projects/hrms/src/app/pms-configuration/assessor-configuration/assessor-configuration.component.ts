@@ -435,7 +435,7 @@ export class AssessorConfigurationComponent implements OnInit, OnDestroy {
             if (err.status === 400) {
               this.conformationPopup.openErrorModal('An Assessor cannot be added more than once');
             } else if (err.status === 409) {
-              this.conformationPopup.openErrorModal("Assessors cannot have the same Deadline Date");
+              this.conformationPopup.openErrorModal("Assessors cannot have the same deadline date");
             } else {
               this.conformationPopup.openErrorModal(err.error.Message);
             }

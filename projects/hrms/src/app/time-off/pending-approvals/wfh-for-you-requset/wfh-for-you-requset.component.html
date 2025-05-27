@@ -27,7 +27,7 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
+            placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off"  (ngModelChange)="onSearchChange()">
     </div>
 
     <div class="custom-p-multi-select-table">

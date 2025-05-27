@@ -124,12 +124,12 @@ export class AllAssetsListComponent {
 
   initialform() {
     this.assetForm = this.fb.group({
-      assetModel: [null, [Validators.required, Validators.maxLength(20)]],
+      assetModel: [null, [Validators.required, Validators.maxLength(20),Validators.pattern(/^[^\s].*$/)]],
       assetCategory: [{ value: null, disabled: true }, Validators.required],
       assetSubCategory: [{ value: null, disabled: true }, Validators.required],
       assetID: [null],
       vendordetailes: [{ value: null, disabled: true }, Validators.required],
-      serialnumber: [null, [Validators.required, Validators.maxLength(30)]],
+      serialnumber: [null, [Validators.required, Validators.maxLength(30),Validators.pattern(/^[^\s].*$/)]],
       purchasedate: [null, Validators.required],
       warrantystartdate: [{ value: null, disabled: true }],
       warrantyenddate: [{ value: null, disabled: true }],
@@ -396,22 +396,40 @@ export class AllAssetsListComponent {
       });
   }
 
-  onassetsubcategory() {
-    this.assetForm.get('assetSubCategory')?.enable()
-    const selectedId = this.assetForm.get('assetCategory')?.value
-    this.http.getData(`AssetCategory?parentId=${selectedId}`)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.assetSubCategory = data;
-          let selectname = this.assetSubCategory.value.find((item: any) => item.id === selectedId)?.name
-        },
+  // onassetsubcategory() {
+  //   this.assetForm.get('assetSubCategory')?.enable()
+  //   const selectedId = this.assetForm.get('assetCategory')?.value
+  //   this.http.getData(`AssetCategory?parentId=${selectedId}`)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (data: any) => {
+  //         this.assetSubCategory = data;
+  //         let selectname = this.assetSubCategory.value.find((item: any) => item.id === selectedId)?.name
+  //       },
 
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
+  //       error: (reason: any) => {
+  //         console.log(reason);
+  //       },
+  //     });
+  // }
+onassetsubcategory() {
+  this.assetForm.get('assetSubCategory')?.reset(); // Reset previous value
+  this.assetForm.get('assetSubCategory')?.markAsTouched(); // Mark as touched to trigger validation
+  this.assetForm.get('assetSubCategory')?.enable();
+
+  const selectedId = this.assetForm.get('assetCategory')?.value
+
+  this.http.getData(`AssetCategory?parentId=${selectedId}`).pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data: any) => {
+        this.assetSubCategory = data;
+        let selectname = this.assetSubCategory.value.find((item: any) => item.id === selectedId)?.name
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
+}
 
   getjobLocationList() {
     this.subscription = this.http

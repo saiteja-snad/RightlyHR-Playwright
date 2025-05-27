@@ -44,17 +44,15 @@ export class ExpensesConfigurationComponent {
 
   intiationalfrom() {
     this.expenseForm = this.fb.group({
-      expenseType: ['', [Validators.required, Validators.maxLength(50)]],
-      expensesCode: ['', [Validators.required, Validators.maxLength(50)]],
+      expenseType: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      expensesCode: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
     });
   }
-
-
-
+  
   intiationalupdatefrom() {
     this.expenseupdateForm = this.fb.group({
-      expenseTypeupdate: ['', [Validators.required, Validators.maxLength(50)]],
-      expensesCodeupade: ['', [Validators.required, Validators.maxLength(50)]],
+      expenseTypeupdate: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
+      expensesCodeupade: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
     });
   }
 

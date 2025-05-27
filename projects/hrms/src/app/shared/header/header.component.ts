@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -20,7 +20,7 @@ import { ItsuporrtHeaderTabsComponent } from "../itsuporrt-header-tabs/itsuporrt
   styleUrl: './header.component.scss'
 })
 
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy {
   empinfo: any;
   imageUrl: any;
   empdata = {} as any;
@@ -35,6 +35,7 @@ export class HeaderComponent {
    private authService: AuthService, private modalservie: NgbModal, private conformationPopup: OpenModalService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
+
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getEmployeeId()
     this.getJobDetails()
@@ -42,6 +43,8 @@ export class HeaderComponent {
       this.getEmployeeId();
     });
   }
+
+  
 
   onSelectprofilePicDownload(employee: any) {
     if (employee.profileUrl) {
@@ -190,5 +193,11 @@ export class HeaderComponent {
 
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
+  }
+
+   ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 }

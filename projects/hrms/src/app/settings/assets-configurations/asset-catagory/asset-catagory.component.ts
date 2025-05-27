@@ -39,14 +39,14 @@ export class AssetCatagoryComponent {
 
   initialassetform() {
     this.assetCategorydata = this.fb.group({
-      assetcaassetCategory: [null, [Validators.required, Validators.maxLength(30)]],
+      assetcaassetCategory: [null, [Validators.required, Validators.maxLength(30), Validators.pattern(/^[^\s].*$/)]],
     }
     )
   }
 
   initialassetformdata() {
     this.assetCategorydataForm = this.fb.group({
-      assetcaassetCategorydata: [null, [Validators.required, Validators.maxLength(30),]],
+      assetcaassetCategorydata: [null, [Validators.required, Validators.maxLength(30), Validators.pattern(/^[^\s].*$/)]],
     }
     )
   }

@@ -23,8 +23,8 @@
                      }
             </thead>
             <tbody>
-                <ng-container *ngIf="(deskheaderpending | searchfordesk : searchValue : ['entity.deskallocatedtoname', 'entity.deskType','entity.locationName','entity.sublocationName','entity.shiftName']).length > 0; else noDataTemplate">
-                <tr *ngFor="let exp of deskheaderpending   | searchfordesk: searchValue : ['entity.deskallocatedtoname', 'entity.deskType','entity.locationName','entity.sublocationName','entity.shiftName']">
+                <ng-container *ngIf="(deskheaderpending | searchfordesk : searchValue : ['entity.deskallocatedtoname','entity.deskname', 'entity.deskType','entity.locationName','entity.sublocationName','entity.shiftName']).length > 0; else noDataTemplate">
+                <tr *ngFor="let exp of deskheaderpending   | searchfordesk: searchValue : ['entity.deskallocatedtoname','entity.deskname', 'entity.deskType','entity.locationName','entity.sublocationName','entity.shiftName']">
                     <td>{{exp.entity?.deskallocatedtoname}}</td>
                     <td>{{exp.entity?.deskname}}</td>
                     <td>{{exp.entity?.deskType}}</td>

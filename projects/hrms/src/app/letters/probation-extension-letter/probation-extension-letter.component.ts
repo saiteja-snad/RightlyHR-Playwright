@@ -46,6 +46,7 @@ export class ProbationExtensionLetterComponent {
     { name: 'Hard Copy', value: false },
   ];
   todayDate!: string;
+   lastSelectedEmployeeId: number | null = null;
 
   constructor(private http: HttpService, private router: Router, private fb: FormBuilder, private openModalService: OpenModalService) { }
 
@@ -153,7 +154,33 @@ export class ProbationExtensionLetterComponent {
   }
 
   onClickEmployee(event: any){
-    const empId= event.value.employeeId;
+    const newlySelectedEmployee = event?.value;
+    if (!newlySelectedEmployee || typeof newlySelectedEmployee !== 'object') {
+      return;
+    }
+
+    // Reset dependent fields if employee changes
+    if (
+      this.lastSelectedEmployeeId &&
+      this.lastSelectedEmployeeId !== newlySelectedEmployee.employeeId
+    ) {
+      this.probationExtensionForm.patchValue({
+        issuedDate: null,
+        Documenttype: null,
+        authorityid: null,
+      });
+
+      ['issuedDate', 'Documenttype', 'authorityid'].forEach((controlName) => {
+        const control = this.probationExtensionForm.get(controlName);
+        control?.markAsPristine();
+        control?.markAsUntouched();
+        control?.updateValueAndValidity();
+      });
+    }
+
+    this.lastSelectedEmployeeId = newlySelectedEmployee.employeeId;
+
+    const empId = event.value.employeeId;
     this.getProbationRequest(empId);
     this.pathValuesFuction();
   }
@@ -205,6 +232,7 @@ export class ProbationExtensionLetterComponent {
         this.uploadprobationextentionLetter();
       });
     }
+    this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
   }
 
   //function to get the separation request details
@@ -230,7 +258,9 @@ export class ProbationExtensionLetterComponent {
         if (data) {
           this.enableBtn= true;
           this.postProbationDetails(data.path);
+          // this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
         }
+        
       },
       error: (reason: any) => {
         this.spinnerLoader= false;
@@ -244,6 +274,7 @@ export class ProbationExtensionLetterComponent {
 
   Documenturlresult: any;
   postProbationDetails(docurl: string) {
+    debugger
     let payload = {
       probationId : this.getProbationDetails.probationId,
       formId : this.getProbationDetails.formId,

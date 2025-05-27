@@ -37,12 +37,16 @@ export class LoginComponent {
 
   ngOnInit():void{
     if(this.http.isLoggedIn()){
-      this.router.navigate(['/admin']);
+      this.router.navigate(['/uservalidation']);
     }
     this.returnUrl = this.activatedRoute.snapshot.queryParamMap.get("returnUrl")
   }
   openmodel(content: any) {
     this.modalService.open(content, { centered: true })
+  }
+
+  goToUserValidate(){
+    this.router.navigate(['/uservalidation'])
   }
 
   dataSuccessMsg(msg:string){

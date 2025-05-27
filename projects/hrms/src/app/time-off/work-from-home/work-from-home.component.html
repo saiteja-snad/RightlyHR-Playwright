@@ -1,8 +1,12 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div>
-            <p class="component-header mb-0">WFH</p>
+        <div class="heading-content">
+            <div class="commpoment-name">Time off<span class="ms-2">>></span></div>
+            <div class="component-header">{{'WFH'|translate}}</div>
+            <div><i class="bi bi-info-circle-fill cursor" [autoClose]="false" #p="ngbPopover" triggers="manual"
+                placement="bottom" (click)="p.open()" [ngbPopover]="popContent"></i></div>
         </div>
+
         <div class="d-flex align-items-center gap-3">
             <label class="form-label custom-label m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
@@ -20,9 +24,9 @@
     </div>
 
     <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" (closePopover)="p.close()" />
+    </ng-template>
 
     <div class="employee-fields-main-container d-flex gap-3 w-100">
         <div class="component-left-tabs-container">

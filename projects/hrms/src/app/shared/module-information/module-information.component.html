@@ -1,6 +1,11 @@
-<div class="module-information-content">
-    <div>
-        <img src="/images/Module-Info.png" alt="Icon" class="question-icon">
+<div class="module-information-content w-100">
+    <div class="d-flex align-items-center gap-2">
+        <div>
+            <img src="/images/Module-Info.png" alt="Icon" class="question-icon">
+        </div>
+        <div class="info-text">{{moduleInfo | translate}}</div>
     </div>
-    <div class="info-text">{{moduleInfo | translate}}</div>
+    <div>
+        <img src="/icons/close.png" alt="Icon" class="close-icon"  (click)="onClose()">
+    </div>
 </div>

@@ -72,7 +72,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   createExpenseItem(): FormGroup {
     return this.fb.group({
       item_expense: [null, Validators.required],
-      item_Name: [null, [Validators.required, Validators.maxLength(50)]],
+      item_Name: [null, [Validators.required,Validators.pattern('^[a-zA-Z\\s]*$'), Validators.maxLength(50)]],
       item_Description: [null, Validators.maxLength(250)],
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],

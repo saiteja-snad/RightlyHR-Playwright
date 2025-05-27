@@ -568,7 +568,7 @@
             <label for="asseTID" class="form-label custom-label mb-2">Select Employee ID<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" [resetFilterOnHide]="true" filterBy="employeeName"
                 (onChange)="onEmployeeSelect($event)" formControlName="mReportingto"
                 placeholder="Please select employee" class="form-select custom-select"></p-select>
             </div>

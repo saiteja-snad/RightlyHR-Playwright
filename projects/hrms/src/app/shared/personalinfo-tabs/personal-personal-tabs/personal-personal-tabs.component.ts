@@ -28,7 +28,7 @@ export class PersonalPersonalTabsComponent {
       { label: 'Family Details', link: '/personalinfo/personal/family-details', icon: 'images/family.png', permission: { feature: 'Employee Info Family Details', action: 'view' } },
       { label: 'Bank Details', link: '/personalinfo/personal/bank-details', icon: '/images/atm-card.png', permission: { feature: 'Employee Info Bank Details', action: 'view' } },
       { label: 'Visa Details', link: '/personalinfo/personal/visa-details', icon: '/images/visa.png', permission: { feature: 'Employee Info Visa Details', action: 'view' } },
-      { label: 'Team Members', link: '/personalinfo/personal/team-members', icon: '/images/team-members.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' } }
+      { label: 'Team Members', link: '/personalinfo/personal/team-members', icon: 'images/Team-icon.png', permission: { feature: 'Employee Info Team Members Tab', action: 'view' } }
 
     ];
     this.filterTabsByRbac();

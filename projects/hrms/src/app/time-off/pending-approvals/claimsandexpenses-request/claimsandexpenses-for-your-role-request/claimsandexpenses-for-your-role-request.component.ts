@@ -19,10 +19,12 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 import { SearchfilterPipe } from "../../../../Pipes/searchfilter.pipe";
+import { SignalsService } from '../../../../services/signals.service';
+import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 @Component({
   selector: 'app-claimsandexpenses-for-your-role-request',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe],
+    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe, SearchfordeskPipe],
   templateUrl: './claimsandexpenses-for-your-role-request.component.html',
   styleUrl: './claimsandexpenses-for-your-role-request.component.scss',
 })
@@ -56,7 +58,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
   @ViewChild('commentspopup') modalContent: any;
   subscription!: Subscription;
 
-  constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private sharedModalService: OpenModalService,
+  constructor(private modalService: NgbModal,private signalService: SignalsService, private fb: FormBuilder, private http: HttpService, private sharedModalService: OpenModalService,
      private sanitizer: DomSanitizer, public rbac: RbacService) { }
 
   ngOnInit(): void {
@@ -127,6 +129,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
           this.sharedModalService.openSuccessModal('Request Approved Successfully');
           this.approveForm.reset();
           this.selectedLeaveData = {} as ExpenseApprovalResponse;
@@ -159,6 +162,7 @@ export class ClaimsandexpensesForYourRoleRequestComponent
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
           this.sharedModalService.openSuccessModal('Request Rejected Successfully');
           this.rejectForm.reset();
           this.selectedLeaveData = {} as ExpenseApprovalResponse;
@@ -182,12 +186,13 @@ export class ClaimsandexpensesForYourRoleRequestComponent
     let requestBody = {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
-      currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
+      currentStage : parseInt(this.selectedLeaveData?.approvalHeader?.currentapprovalStage),
     };
     this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
-    this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.putData(`PendingApproval/process/${request?.approvalHeader?.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
+        this.signalService.claimsandexpensesForRoleTriggerSignal.set(true);
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,

@@ -211,29 +211,55 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       },
     });
   }
-
   fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
-    if (file) {
-      const filepath = `/Expenses/${this.empinfo.employeeId}`;
-      // Upload the file
-      const fileUpload$ = this.http.uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filepath,
-        file
-      );
-      fileUpload$.subscribe({
-        next: (data: any) => {
-          // Assuming data.path contains the uploaded file path
-          const uploadedFilePath = data.path;
-          this.expenseItems.at(index)?.get('attachment_url')?.setValue(uploadedFilePath);
-        },
-        error: (error: any) => {
-          console.error('Error uploading file:', error);
-          // Handle error if needed
-        }
-      });
+
+    if (!file) return;
+
+    // Allowed file types and size
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'application/pdf'
+    ];
+    const maxSizeInMB = 25;
+    const fileSizeInMB = file.size / (1024 * 1024);
+
+    // File type validation
+    if (!allowedTypes.includes(file.type)) {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
+      this.expenseItems.at(index)?.get('attachment_url')?.reset();
+      event.target.value = ''; // Reset the file input
+      return;
     }
+
+    // File size validation
+    if (fileSizeInMB > maxSizeInMB) {
+      this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+      this.expenseItems.at(index)?.get('attachment_url')?.reset();
+      event.target.value = ''; // Reset the file input
+      return;
+    }
+
+    const filepath = `/Expenses/${this.empinfo.employeeId}`;
+    // Upload the file
+    const fileUpload$ = this.http.uploadFileWithQuery(
+      'FileSystem/uploadfiletodirectory',
+      filepath,
+      file
+    );
+    fileUpload$.subscribe({
+      next: (data: any) => {
+        // Assuming data.path contains the uploaded file path
+        const uploadedFilePath = data.path;
+        this.expenseItems.at(index)?.get('attachment_url')?.setValue(uploadedFilePath);
+      },
+      error: (error: any) => {
+        console.error('Error uploading file:', error);
+        this.conformationPopup.openErrorModal('Error uploading file.');
+        this.expenseItems.at(index)?.get('attachment_url')?.setValue('');
+      }
+    });
   }
 
   onchangeexpnes(event: any, index: number) {
@@ -281,7 +307,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       // Check if there is any file to upload
       if (this.Myexpense) {
         const fileUpload$ = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory',
-         filepath, this.Myexpense);
+          filepath, this.Myexpense);
         fileUpload$.pipe(
           switchMap((data: any) => {
             // Update the payload with the uploaded file path

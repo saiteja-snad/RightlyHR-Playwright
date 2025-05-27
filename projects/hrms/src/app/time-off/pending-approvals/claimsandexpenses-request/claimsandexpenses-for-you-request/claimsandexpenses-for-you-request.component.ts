@@ -19,10 +19,12 @@ import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model';
 import { SearchfilterPipe } from "../../../../Pipes/searchfilter.pipe";
+import { SignalsService } from '../../../../services/signals.service';
+import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe],
+    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe, SearchfordeskPipe],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
 })
@@ -56,7 +58,7 @@ export class ClaimsandexpensesForYouRequestComponent
   @ViewChild('commentspopup') modalContent: any;
 
   constructor(private modalService: NgbModal, private fb: FormBuilder, private http: HttpService, private sharedModalService: OpenModalService,
-    private sanitizer: DomSanitizer, public rbac: RbacService) { }
+    private sanitizer: DomSanitizer, public rbac: RbacService,private signalService: SignalsService) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
@@ -129,6 +131,7 @@ export class ClaimsandexpensesForYouRequestComponent
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           this.sharedModalService.openSuccessModal('Request Approved Successfully');
           this.approveForm.reset();
           this.selectedLeaveData = {} as ExpenseApprovalResponse;
@@ -161,6 +164,7 @@ export class ClaimsandexpensesForYouRequestComponent
       this.http.putData(`PendingApproval/${this.selectedLeaveData.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
+          this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
           this.sharedModalService.openSuccessModal('Request Rejected Successfully');
           this.rejectForm.reset();
           this.selectedLeaveData = {} as ExpenseApprovalResponse;
@@ -168,6 +172,7 @@ export class ClaimsandexpensesForYouRequestComponent
             ...status,
             expenses: true,
           }));
+          
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -184,12 +189,13 @@ export class ClaimsandexpensesForYouRequestComponent
     let requestBody = {
       status: 'Processed',
       approvedBy: this.empinfo.employeeId.toString(),
-      currentStage : parseInt(this.selectedLeaveData.approvalHeader.currentapprovalStage),
+      currentStage : parseInt(this.selectedLeaveData?.approvalHeader?.currentapprovalStage),
     };
     this.sharedModalService.openLoaderModal('Processing Request, Please wait...');
-    this.http.putData(`PendingApproval/process/${request.approvalHeader.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
+    this.http.putData(`PendingApproval/process/${request.approvalHeader?.id}`, requestBody).pipe(takeUntil(this.destroy$)).subscribe({
       next: (respone: any) => {
         this.modalService.dismissAll();
+        this.signalService.clamisandexpensesForYouTriggerSignal.set(true);
         this.sharedModalService.openSuccessModal('Request Processed Successfully');
         this.http.tirggerPendingApprovalCountSignal.update((status) => ({
           ...status,

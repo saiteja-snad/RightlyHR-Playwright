@@ -1,5 +1,5 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
@@ -16,7 +16,8 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
   imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, CommonModule, TabsModule],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
-  providers: [DatePipe]
+  providers: [DatePipe],
+  encapsulation:ViewEncapsulation.None
 })
 
 export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {

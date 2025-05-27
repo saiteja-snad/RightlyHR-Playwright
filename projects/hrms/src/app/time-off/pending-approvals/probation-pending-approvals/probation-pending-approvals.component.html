@@ -157,13 +157,13 @@
                             (click)="toggleApprove()">
                         <label class="form-check-label ms-2" for="flexRadioEarly">{{'Process' | translate}}</label>
                     </div>
-
+                     @if(selectedData.probationextendedcount<=probationExtensionTimes){
                     <div class="form-check form-check-inline ms-3">
                         <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend"
                             (click)="toggleExtend()">
                         <label class="form-check-label ms-2" for="flexRadioExtend">{{'Extend' | translate}}</label>
                     </div>
-
+                    }
                     <div class="form-check form-check-inline ms-3">
                         <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDiscontinue"
                             (click)="toggleDiscontinue()">
@@ -184,7 +184,7 @@
                     (earlyrelievingreason.invalid && ProcessacceptForm.submitted)">{{'Comments is required' | translate}}</div>
                      <div class="error-msg" *ngIf="earlyrelievingreason.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
                 </div>
-
+             @if(selectedData.probationextendedcount<=probationExtensionTimes){
                 <div class="mb-3" *ngIf="extend">
                     <label for="exampleFormControlInput1" class="form-label custom-label">{{'Extend Date' |
                         translate}}<span class="text-danger">*</span>
@@ -213,7 +213,7 @@
                      || (Extendreason.errors?.['pattern']) ">{{'Feedback for Extend is required' | translate}}</div>
                       <div class="error-msg" *ngIf="Extendreason.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
                 </div>
-
+            }
                 <div class="mb-3" *ngIf="discontinue">
                     <label for="Descriptiondetails" type="Notes" class="form-label custom-label">{{'Reject Reason' | translate}}
                         <span class="text-danger">*</span></label>

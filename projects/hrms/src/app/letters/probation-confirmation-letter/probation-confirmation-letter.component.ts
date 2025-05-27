@@ -245,7 +245,7 @@ export class ProbationConfirmationLetterComponent {
         this.loading = false;
         this.enableBtn= true;
         this.openModalService.openSuccessModal("Probation Extension Letter Generated Successfully");
-        // this.probationConfirmationemail();
+        this.probationConfirmationemail();
       },
       error: (reason: any) => {
         this.spinnerLoader= false;

@@ -50,6 +50,7 @@ export class AssessmentformComponent {
   formFile = {} as any;
   probationExtensiondays = [] as any;
   probationExtensionDuration!: number;
+  probationExtensionTimes!: number;
   overallRatingcount: number = 0;
   sectionRatings: { [key: number]: number } = {}; // Object to hold ratings for each section
   @ViewChild('formsavepopup') formsavepopup!: any;
@@ -97,6 +98,7 @@ export class AssessmentformComponent {
 
   getProbationExtendDays() {
     let extensionId = environment.ProbationExtensionId;
+    let extensionPeriodTimes = environment.ProbationExtendPeriodTimes;
     this.subscription = this.http
       .getData(`ProbationFlow/settingsprobationconfiggetall`)
       .subscribe({
@@ -105,6 +107,11 @@ export class AssessmentformComponent {
             return ele.configValueId === extensionId;
           });
           this.probationExtensionDuration = duration.noOfDays;
+            let extendTimes = data.find((ele: any) => {
+            return ele.configValueId === extensionPeriodTimes;
+          });
+          this.probationExtensionTimes = extendTimes.noOfDays;
+          console.log(this.probationExtensionTimes);
         },
       });
   }

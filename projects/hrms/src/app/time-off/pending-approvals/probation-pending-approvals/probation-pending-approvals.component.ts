@@ -19,6 +19,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
+import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-probation-pending-approvals',
   imports: [
@@ -44,6 +45,7 @@ export class ProbationPendingApprovalsComponent {
   subscription!: Subscription;
   probationDetails = [] as any;
   probationExtensionDuration!: number;
+  probationExtensionTimes!: number;
   searchValue: any;
   LOGIN: any;
   totalRecords = 100;
@@ -183,7 +185,8 @@ export class ProbationPendingApprovalsComponent {
   }
 
   getProbationExtendDays() {
-    const ProbationExtensionId: number = 2;
+    const ProbationExtensionId=environment.ProbationExtensionId;
+    const extensionPeriodTimes = environment.ProbationExtendPeriodTimes;
     this.subscription = this.http
       .getData(`ProbationFlow/settingsprobationconfiggetall`)
       .subscribe({
@@ -192,6 +195,11 @@ export class ProbationPendingApprovalsComponent {
             return ele.configValueId === ProbationExtensionId;
           });
           this.probationExtensionDuration = duration.noOfDays;
+              let extendTimes = data.find((ele: any) => {
+            return ele.configValueId === extensionPeriodTimes;
+          });
+          this.probationExtensionTimes = extendTimes.noOfDays;
+          console.log(this.probationExtensionTimes);
         },
       });
   }

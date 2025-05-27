@@ -934,7 +934,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
         if (this.modalRef) {
           this.modalRef.close(); 
         }
-        this.Status = 'Submitted Successfully'
+        this.Status = 'Form submitted successfully'
         this.sharedModalService.openSuccessModal(this.Status);
         setTimeout(() => {
           this.location.back();
@@ -1008,7 +1008,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
           if (this.modalRef) {
             this.modalRef.close();  
           }
-          this.Status = 'Submitted Successfully';
+          this.Status = 'Form submitted successfully';
           this.sharedModalService.openSuccessModal(this.Status);
           setTimeout(() => {
             this.location.back();
@@ -1084,7 +1084,7 @@ export class AssessmentFormComponent implements OnInit, OnDestroy {
         if (this.modalRef) {
           this.modalRef.close();  
         }
-        this.Status = 'Saved as Draft Successfully'
+        this.Status = 'Saved as draft successfully'
         this.sharedModalService.openSuccessModal(this.Status);
         
         setTimeout(() => {

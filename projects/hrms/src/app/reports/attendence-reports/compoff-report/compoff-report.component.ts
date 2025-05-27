@@ -243,7 +243,7 @@ export class CompoffReportComponent implements OnInit, OnDestroy {
       request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
     }
 
-  // Only include filters if not "All Employees"
+   // Only include filters if not "All Employees"
     if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
       request.employeeId = formValue.employee.employeeId;
     }

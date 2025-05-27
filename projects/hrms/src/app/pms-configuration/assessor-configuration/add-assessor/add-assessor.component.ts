@@ -197,7 +197,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
   // Delete Row from FormArray
   deleteRow(index: number): void {
     this.assesorDetails.splice(index, 1);
-    this.conformationPopup.openSuccessModal('Row Deleted Successfully');
+    this.conformationPopup.openSuccessModal('Row deleted successfully');
   }
 
   // Handle form submission
@@ -235,7 +235,7 @@ export class AddAssessorComponent implements OnInit, OnDestroy {
       this.http.postdata(`Assessor/AddAssessor`, payload).subscribe({
         next: (response: any) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Assessor Configurations Added Successfully');
+          this.conformationPopup.openSuccessModal('Assessor configurations added successfully');
         },
         error: (err: any) => {
           this.isLoading = false;

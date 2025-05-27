@@ -213,15 +213,6 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     });
   }
 
-//  fileAttachment(event: any) {
-//     this.isfileselected = false;
-//     this.file = event.target.files[0];
-//     let d: Date = new Date()
-//      const removeSpaceFileName = this.formValidationService.sanitizeFileName(this.file.name);
-//         const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
-//     this.educationAttachment = this.renameFiles(this.file, newFileName)
-//   }
-
   private renameFiles(originalFile: File, newName: string) {
     return new File([originalFile], newName, {
       type: originalFile.type,
@@ -234,7 +225,7 @@ expensesAttachment:any;
     const file = event.target.files[0]; // Get the selected file
 
     //if (!file) return;
-let d: Date = new Date()
+    let d: Date = new Date()
      const removeSpaceFileName = this.formValidationService.sanitizeFileName(file.name);
         const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
     this.expensesAttachment = this.renameFiles(file, newFileName)

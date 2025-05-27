@@ -42,7 +42,8 @@ export class ServingPeriodComponent {
     this.AddForm = this.fb.group({
       addServingPeriod: ['', [
         Validators.required,
-        this.formValidations.maxCharactersValidator(101)
+        this.formValidations.maxCharactersValidator(101),
+        Validators.pattern(/^[^\s].*$/)
       ]],
       Duration: ['', [
         Validators.required, 
@@ -52,7 +53,8 @@ export class ServingPeriodComponent {
     this.updateForm = this.fb.group({ 
       UpdateServingPeriod: ['', [
         Validators.required, // Only letters and spaces
-        this.formValidations.maxCharactersValidator(101)
+        this.formValidations.maxCharactersValidator(101),
+        Validators.pattern(/^[^\s].*$/)
       ]],
       UpdateDuration: ['', [
         Validators.required
@@ -189,7 +191,6 @@ private isBackspaceOrDelete(event: KeyboardEvent): boolean {
       error: (error: any) => {
         const errorMessage = error.error?.Message || 'An error occurred while adding the serving period.';
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
       }
     });
   }
@@ -229,7 +230,6 @@ private isBackspaceOrDelete(event: KeyboardEvent): boolean {
         error: (error: any) => {
           const errorMessage = error.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
-          this.resetForm();
         }
       });
     }

@@ -10,7 +10,7 @@
         </div>
         <div class="d-flex align-items-center gap-3">
             @if(rbac.allowedToAccess('Request On Behalf Button.view')) {
-            <label class="form-label custom-label m-0">Select Employee</label>
+            <label class="form-label component-sub-header m-0">Select Employee</label>
             <div class="custom-p-select-content">
                 <p-select [options]="employeeiddetails" optionValue="employeeId" optionLabel="fullName" [filter]="true"
                     filterBy="fullName" [showClear]="true" placeholder="Please select employee"
@@ -72,9 +72,6 @@
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">Request Leave On Behalf Of</p>
-            </div>
-            <div>
-                <a (click)="cleardata()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
 
@@ -214,13 +211,13 @@
                     </div>
 
                     <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-2">Reason<span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" placeholder="Please enter reason" maxlength="250"
+                        <label class="form-label custom-label mb-2">Comments<span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" placeholder="Please enter comments" maxlength="250"
                             formControlName="reason"></textarea>
                         <div class="textarea-count-text">{{ leaveForm.get('reason')?.value?.length ?? 0 }}/250</div>
                         <div *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched"
                             class="error-msg">
-                            Reason is required
+                            Comments  is required
                         </div>
                     </div>
                 </div>
@@ -244,7 +241,7 @@
                 </div>
                 <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss();cleardata()">{{'Close'|
+                        (click)="openModal(confirmationpopup)">{{'Cancel'|
                         translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="
@@ -261,3 +258,17 @@
         </div>
     </div>
 </ng-template>
+
+ <ng-template #confirmationpopup let-model>
+        <div class="result-popup-content" ngbAutofocus>
+            <div>
+                <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
+                <p class="confirmation-text mb-4">Are you sure you want to cancel?</p>
+            </div>
+    
+            <div class="custom-modal-footer">
+                <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">No</button>
+                <button type="submit" class="custom-btn btn-primary" (click)="cleardata();model.dismiss()">Yes</button>
+            </div>
+        </div>
+    </ng-template>

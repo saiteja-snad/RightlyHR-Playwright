@@ -38,10 +38,10 @@ export class PaytypeComponent {
   }
   ngOnInit(): void {
     this.PaytypeForm = this.fb.group({
-      Paytype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      Paytype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      Paytype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      Paytype: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.gePayType();
@@ -68,7 +68,6 @@ export class PaytypeComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        // this.resetForm();
       }
     });
   }

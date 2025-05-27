@@ -152,6 +152,9 @@
             <div *ngIf="assetForm.get('assetModel')?.hasError('maxlength') && assetForm.get('assetModel')?.touched">
               <div class="error-msg">Asset model cannot be more than 20 characters</div>
             </div>
+            <div *ngIf="assetForm.get('assetModel')?.hasError('pattern') && assetForm.get('assetModel')?.touched">
+              <div class="error-msg">Asset model is invalid</div>
+            </div>
           </div>
 
           <div class="col-md-6 mb-2">
@@ -322,11 +325,17 @@
 
         <div class="d-flex justify-content-end gap-3">
           <button type="button" class="custom-btn btn-secondary "
-            (click)="openConfirmationModal(confirmationpopup)">Close</button>
-          <button type="submit" class="custom-btn btn-primary "
+            (click)="openConfirmationModal(confirmationpopup)">Cancel</button>
+          <!-- <button type="submit" class="custom-btn btn-primary "
             [disabled]="assetForm.invalid || 
             (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
-            Submit</button>
+            Submit</button> -->
+            <button type="submit" class="custom-btn btn-primary"
+            [disabled]="assetForm.invalid ||
+            assetForm.get('subLocationId')?.invalid ||
+           (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) ||
+             (isToggledamc && assetForm.get('amcstartdate')?.invalid)">Submit</button>
+
         </div>
       </form>
     </div>
@@ -337,7 +346,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text"> Are you sure you want to close?</p>
+      <p class="confirmation-text"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">

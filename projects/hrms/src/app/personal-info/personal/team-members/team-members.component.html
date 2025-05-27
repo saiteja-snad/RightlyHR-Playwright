@@ -69,18 +69,13 @@
                     </tr>
                 </ng-container>
             </tbody>
-
             <ng-template #noData>
                 <tr>
                     <td colspan="6" class="text-center"> <app-no-data-found></app-no-data-found></td>
                 </tr>
             </ng-template>
-
         </table>
-
-
     </div>
-
 </div>
 
 
@@ -90,10 +85,6 @@
             @if(canAccess('view','team-managers')){
             <div class="pt-2">
                 <p class="popup-heading mb-0"> {{'Change TM'|translate}}</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss();requestForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
             </div>
             }
         </div>
@@ -113,7 +104,7 @@
                         </div>
                         <div *ngIf="requestForm.get('teamEmpselectedOptions')?.touched && requestForm.get('teamEmpselectedOptions')?.invalid"
                             class="error-msg">
-                            Please select at least one employee.
+                            Please select at least one employee
                         </div>
                     </div>
                     <div class="col-6 mb-3">
@@ -123,7 +114,7 @@
                             onkeypress="return false" formControlName="effectiveDate" />
                         <div *ngIf="requestForm.get('effectiveDate')?.touched && requestForm.get('effectiveDate')?.invalid"
                             class="error-msg">
-                            Effective date is required.
+                            Effective date is required
                         </div>
                     </div>
 
@@ -139,7 +130,7 @@
 
                         <div *ngIf="requestForm.get('department')?.touched && requestForm.get('department')?.invalid"
                             class="error-msg">
-                            Department is required.
+                            Department is required
                         </div>
                     </div>
 
@@ -155,7 +146,7 @@
                         </div>
                         <div *ngIf="requestForm.get('teamSelectedOptions')?.touched && requestForm.get('teamSelectedOptions')?.invalid"
                             class="error-msg">
-                            Team is required.
+                            Team is required
                         </div>
                     </div>
 
@@ -167,14 +158,14 @@
                             formControlName="teamManagerName" [disabled]="true" />
                         <div *ngIf="requestForm.get('teamManagerName')?.touched && requestForm.get('teamManagerName')?.invalid"
                             class="error-msg">
-                            Team manager is required.
+                            Team manager is required
                         </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary px-4"
-                        (click)="modal.dismiss();requestForm.reset()">{{'Close'|translate}}</button>
+                        (click)="modal.dismiss();requestForm.reset()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="requestForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
@@ -194,20 +185,11 @@
     </div>
 </ng-template>
 
-
-
-
-
-
 <ng-template #changetmmodalforsingle let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0"> {{'Change TM'|translate}}</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss();foremployeeForm.reset()"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -223,7 +205,7 @@
                         </div>
                         <div *ngIf="foremployeeForm.get('teamEmpselectedOptions')?.touched && foremployeeForm.get('teamEmpselectedOptions')?.invalid"
                             class="error-msg">
-                            Please select at least one employee.
+                            Please select at least one employee
                         </div>
                     </div>
                     <div class="col-6 mb-3">
@@ -233,7 +215,7 @@
                             onkeypress="return false" formControlName="effectiveDate" />
                         <div *ngIf="foremployeeForm.get('effectiveDate')?.touched && foremployeeForm.get('effectiveDate')?.invalid"
                             class="error-msg">
-                            Effective date is required.
+                            Effective date is required
                         </div>
                     </div>
 
@@ -249,7 +231,7 @@
 
                         <div *ngIf="foremployeeForm.get('department')?.touched && foremployeeForm.get('department')?.invalid"
                             class="error-msg">
-                            Department is required.
+                            Department is required
                         </div>
                     </div>
 
@@ -266,7 +248,7 @@
                         </div>
                         <div *ngIf="foremployeeForm.get('teamSelectedOptions')?.touched && foremployeeForm.get('teamSelectedOptions')?.invalid"
                             class="error-msg">
-                            Team is required.
+                            Team is required
                         </div>
                     </div>
 
@@ -278,14 +260,14 @@
                             formControlName="teamManagerName" [disabled]="true" />
                         <div *ngIf="foremployeeForm.get('teamManagerName')?.touched && foremployeeForm.get('teamManagerName')?.invalid"
                             class="error-msg">
-                            Team manager is required.
+                            Team manager is required
                         </div>
                     </div>
                 </div>
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary px-4"
-                        (click)="modal.dismiss();foremployeeForm.reset()">{{'Close'|translate}}</button>
+                        (click)="modal.dismiss();foremployeeForm.reset()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="foremployeeForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
@@ -314,9 +296,6 @@
                 <p class="popup-heading mb-0">Change RM</p>
             </div>
             }
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
         </div>
 
         <div class="custom-main-popup-content p-4">
@@ -336,7 +315,7 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="reset" class="custom-btn btn-secondary"
-                        (click)="modal.dismiss()">{{'Close'|translate}}</button>
+                        (click)="modal.dismiss()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="rmForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
                         <div class="button-loader-content">
@@ -354,16 +333,11 @@
     </div>
 </ng-template>
 
-
-
 <ng-template #changermmodals let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="d-flex justify-content-between popup-header-border p-3">
             <div class="pt-2">
                 <p class="popup-heading mb-0"> {{'Change RM'|translate}}</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -404,7 +378,7 @@
                 <!-- Buttons -->
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary px-4"
-                        (click)="modal.dismiss();teamForm.reset()">{{'Close'|translate}}</button>
+                        (click)="modal.dismiss();teamForm.reset()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="teamForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
                         <div class="button-loader-content">

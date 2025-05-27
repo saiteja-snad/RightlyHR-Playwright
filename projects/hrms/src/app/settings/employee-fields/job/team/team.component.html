@@ -13,7 +13,7 @@
             <th>Team Name</th>
             <th>Team Manager</th>
             <th class="text-center" *ngIf="rbac.allowedToAccess('Team.update') || 
-              rbac.allowedToAccess('Team.delete')">Action(S)</th>
+              rbac.allowedToAccess('Team.delete')">Action<span class="text-lowercase">(S)</span></th>
           </tr>
         </thead>
         <tbody>
@@ -96,6 +96,9 @@
           <div *ngIf="AddForm.get('teamName')?.errors?.['maxCharacters']" class="error-msg">
             {{ 'Please limit your input to 100 characters' | translate }}
           </div>
+          <div *ngIf="AddForm.get('teamName')?.errors?.['pattern']" class="error-msg">
+                    {{ 'Field cannot start with a space' | translate }}
+            </div>
         </div>
       
         <!-- Team Manager dropdown -->
@@ -186,6 +189,9 @@
             </div>
             <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['maxCharacters']" class="error-msg">
               {{ 'Please limit your input to 100 characters' | translate }}
+            </div>
+            <div *ngIf="updateForm.get('UpdatedTeamName')?.errors?.['pattern']" class="error-msg">
+                    {{ 'Field cannot start with a space' | translate }}
             </div>
         </div>
 

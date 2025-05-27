@@ -1,7 +1,7 @@
 <div class="custom-main-component-container w-100">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
-      <p class="component-header mb-0" (click)="Cancel()">
+      <p class="component-header cursor mb-0" (click)="Cancel()">
         <i class="bi bi-arrow-90deg-left me-2"></i>{{'Add Policies'| translate}}
       </p>
     </div>
@@ -133,9 +133,7 @@
           </div>
         </div>
       </div>
-      <div class="text-danger mb-2">
-        {{ "Note: All Fields are Mandatory Fields" | translate }}
-      </div>
+     <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
       <div class="d-flex gap-3 justify-content-end pt-4">
         <button type="button" class="custom-btn btn-secondary px-5" (click)="Cancel()">{{'Cancel' |
           translate}}</button>

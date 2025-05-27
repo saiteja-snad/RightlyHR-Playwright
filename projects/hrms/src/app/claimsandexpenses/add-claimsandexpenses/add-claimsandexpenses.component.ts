@@ -314,7 +314,7 @@ expensesAttachment:any;
           expense_Amount: item.expense_Amount,
           receipt_Number: item.receipt_Number,
           status: 'Waiting for Approval',
-          attachment_url: item.attachment_url,
+          attachment_url: this.expensesAttachment,
         })),
         attachment_url: undefined
       };

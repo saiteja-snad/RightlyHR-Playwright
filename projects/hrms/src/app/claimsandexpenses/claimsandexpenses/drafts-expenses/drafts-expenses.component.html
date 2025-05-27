@@ -252,6 +252,7 @@
                                     *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
                                     File is required
                                 </div>
+                                <div *ngIf="filehidedonload">
                                 <div class="d-flex gap-3 mt-3" *ngIf="item.get('attachment_url')?.value">
                                     <a type="button" class="download-text"
                                         (click)="onSelectDownload(item.get('attachment_url'))">
@@ -261,6 +262,7 @@
                                         (click)="onViewAttachement(item.get('attachment_url')?.value)">
                                         <i class="bi bi-eye-fill me-2"></i>View
                                     </a>
+                                </div>
                                 </div>
                             </div>
                         </div>

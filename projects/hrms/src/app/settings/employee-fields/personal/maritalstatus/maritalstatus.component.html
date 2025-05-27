@@ -6,15 +6,21 @@
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter marital status"
                     formControlName="MaritalStatus" aria-label="status" aria-describedby="status"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                    maxlength="51">
                 <span class="input-group-text" id="status">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="MaritalStatusForm.invalid">{{'Add'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="MaritalStatusForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
-            <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.touched && MaritalStatusForm.get('MaritalStatus')?.invalid" class="error-msg">
+            <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.touched && MaritalStatusForm.get('MaritalStatus')?.invalid"
+                class="error-msg">
                 <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.errors?.['required']">
                     {{ 'Marital Status is required' | translate }}
                 </div>
+            </div>
+            <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space' | translate }}
             </div>
             <div *ngIf="MaritalStatusForm.get('MaritalStatus')?.errors?.['maxCharacters']" class="error-msg">
                 {{ 'Please limit your input to 50 characters' | translate }}
@@ -60,7 +66,7 @@
 <!--Update popup-->
 <ng-template #updatepopup let-modal>
     <form autocomplete="off" [formGroup]="updateForm">
-        <div class="custom-main-popup-container"ngbAutofocus>
+        <div class="custom-main-popup-container" ngbAutofocus>
             <div class="custom-poup-header-content popup-header-border">
                 <div>
                     <p class="popup-heading mb-0">{{'Update Marital Status'|translate}}</p>
@@ -71,25 +77,32 @@
             </div>
             <div class="custom-main-popup-content">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Marital Status'|translate}}
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Marital
+                        Status'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="MaritalStatus"
-                        placeholder="Please enter marital status" 
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
-                        <div *ngIf="updateForm.get('MaritalStatus')?.touched && updateForm.get('MaritalStatus')?.invalid" class="error-msg">
-                            <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['required']">
-                                {{ 'Marital Status is required' | translate }}
-                            </div>
+                        placeholder="Please enter marital status"
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                        maxlength="51">
+                    <div *ngIf="updateForm.get('MaritalStatus')?.touched && updateForm.get('MaritalStatus')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['required']">
+                            {{ 'Marital Status is required' | translate }}
                         </div>
-                        <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['maxCharacters']" class="error-msg">
-                            {{ 'Please limit your input to 50 characters' | translate }}
-                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
+                    <div *ngIf="updateForm.get('MaritalStatus')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 50 characters' | translate }}
+                    </div>
                 </div>
 
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" (click)="updateMaritalStatus(modal)" 
-                    [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="close(modal)">{{'Cancel'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateMaritalStatus(modal)"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -104,7 +117,8 @@
             <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

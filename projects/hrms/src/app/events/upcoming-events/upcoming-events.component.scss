@@ -3,11 +3,11 @@
 }
 
 .events-section-card {
+    overflow-y: auto;
     width: 100%;
-    height: calc(100dvh - 13rem);
+    height: max-content;
     padding: 1rem;
     border-radius: 0.5rem;
-    overflow-y: auto;
     border: 1px solid var(--border-color);
 }
 

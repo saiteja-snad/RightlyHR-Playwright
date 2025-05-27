@@ -1,25 +1,70 @@
-.custom-no-due-card {
-    width: 270mm;
-    border: none !important;
-    border-radius: 0.5rem;
+.no-due-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    overflow: auto;
 
-    .border {
-        border: 1px solid #000;
-    }
+    .custom-no-due-card {
+        width: 270mm;
+        border: none !important;
+        border-radius: 0.5rem;
+        height: 380mm;
+        position: relative;
+        background-image: url('/images/water-mark.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        overflow: hidden;
 
-    .label-name {
-        font-size: var(--fontsize16);
-        font-weight: 600;
-        color: #000;
-    }
+        .border {
+            border: 1px solid #000;
+        }
 
-    .label-text {
-        font-size: var(--fontsize16);
-        font-weight: 500;
-        color: #000;
-    }
+        .label-name {
+            font-size: var(--fontsize14);
+            font-weight: 600;
+            color: #000;
+            text-wrap: nowrap;
+        }
 
-    .custom-table-content {
-        height: max-content !important;
+        .label-text {
+            font-size: var(--fontsize14);
+            font-weight: 500;
+            color: #000;
+            text-wrap: nowrap;
+            line-break: anywhere;
+        }
+
+        .custom-table-content {
+            height: max-content !important;
+            border: 1px solid var(--table-header-bg-color) !important;
+        }
+
+        .letter-signature {
+            font-size: var(--fontsize24) !important;
+        }
+
+        .letter-footer {
+            width: 270mm;
+            background-color: var(--primary-color);
+            color: #fff;
+            position: absolute;
+            bottom: 0px;
+            padding: 0.625rem;
+
+            .company-name {
+                font-size: var(--fontsize14) !important;
+                font-weight: 600;
+                margin: 0.5rem !important;
+            }
+
+            .company-address {
+                font-size: var(--fontsize12);
+                font-weight: 500;
+            }
+        }
     }
 }

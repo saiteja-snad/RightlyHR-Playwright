@@ -21,17 +21,17 @@ export class ThemeCreationComponent {
   // header 
   headerBackgroundColor: string = '#FFFFFF';
   //sidenav
-  sidebarBackgroundColor: string = '#06274F';
+  sidebarBackgroundColor: string = '#0B3A83';
   sidebarNavItemColor: string = '#EAEAEA';
-  sidebarNavItemActiveColor: string = '#06274F';
-  sidebarNavItemActiveBackgroundColor: string = '#FFFFFF';
+  sidebarNavItemActiveColor: string = '#0B3A83';
+  sidebarNavItemActiveBackgroundColor: string = '#FFFFFF4D';
   //Body
-  bodyBackgroundColor: string = '#F0F4F8';
+  bodyBackgroundColor: string = '#ECF1F5';
   // button and links
-  primaryButtonColor: string = '#305889';
-  secondaryButtonColor: string = '#F0F4F8';
+  primaryButtonColor: string = '#0B3A83';
+  secondaryButtonColor: string = '#FFFFFF';
   primaryButtonTextColor: string = '#FFFFFF';
-  secondaryButtonTextColor: string = '#305889';
+  secondaryButtonTextColor: string = '#0B3A83';
   buttonBorderColor: string = '#305889';
   //popup variables
   @ViewChild('addTheme') addTheme: any;

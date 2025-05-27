@@ -1,19 +1,25 @@
 <div class="custom-main-component-container">
     <!-- Add Input-->
     <div class="mb-3">
-        <form autocomplete="off" [formGroup]="assetCategorydata" (ngSubmit)="postasset(assetCategorydata)" 
-        *ngIf="rbac.allowedToAccess('Asset Catagory.create')">
+        <form autocomplete="off" [formGroup]="assetCategorydata" (ngSubmit)="postasset(assetCategorydata)"
+            *ngIf="rbac.allowedToAccess('Asset Catagory.create')">
             <div class="custom-settings-add-input input-group w-50">
                 <input type="text" class="form-control custom-input" placeholder="Please enter asset category"
-                    aria-label="role" aria-describedby="role" formControlName="assetcaassetCategory" (keypress)="formValidation.restrictInput($event)" >
+                    aria-label="role" aria-describedby="role" formControlName="assetcaassetCategory"
+                    (keypress)="formValidation.restrictInput($event)">
                 <span class="input-group-text" id="role">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="assetCategorydata.invalid">{{'Add'| translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary" [disabled]="assetCategorydata.invalid">{{'Add'|
+                        translate}}</button>
                 </span>
             </div>
             <div *ngIf="assetCategorydata.get('assetcaassetCategory')?.touched || assetCategorydata.get('assetcaassetCategory')?.dirty"
                 class="error-msg">
                 <!-- Required validation message -->
-                <div *ngIf="assetCategorydata.get('assetcaassetCategory')?.hasError('required')">Asset Category is required</div>
+                <div *ngIf="assetCategorydata.get('assetcaassetCategory')?.hasError('required')">Asset Category is
+                    required</div>
+            </div>
+            <div *ngIf="assetCategorydata.get('assetcaassetCategory')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space' | translate }}
             </div>
             <div class="error-msg" *ngIf="assetCategorydata.controls['assetcaassetCategory'].errors?.['maxlength']">
                 Asset Category should not exceed 30 characters
@@ -43,7 +49,8 @@
                                 </div>
                                 <div *ngIf="rbac.allowedToAccess('Asset Catagory.delete')">
                                     <a (click)="opendelete(deleteconformation,asset)">
-                                        <img src="/settings-icon/trash-2.png" alt="edit icon" class="settings-common-icon">
+                                        <img src="/settings-icon/trash-2.png" alt="edit icon"
+                                            class="settings-common-icon">
                                     </a>
                                 </div>
                             </div>
@@ -69,20 +76,28 @@
                 <p class="popup-heading mb-0">Update Asset Category</p>
             </div>
             <div>
-                <a (click)="openaddmodal(confirmationdeletepopup)"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                <a (click)="openaddmodal(confirmationdeletepopup)"><img src="icons/close.png" alt="Close Icon"
+                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content ">
-            <form autocomplete="off" [formGroup]="assetCategorydataForm" (ngSubmit)="updateassetscategory(assetCategorydataForm);modal.dismiss()">
+            <form autocomplete="off" [formGroup]="assetCategorydataForm"
+                (ngSubmit)="updateassetscategory(assetCategorydataForm);modal.dismiss()">
                 <div class="mb-3">
                     <label for="assetCategory" class="form-label custom-label mb-2">Asset Category
                         <span class="text-danger">*</span></label>
                     <input type="text" id="assetCategory" formControlName="assetcaassetCategorydata"
-                        class="form-control custom-input" placeholder="Please enter asset category" (keypress)="formValidation.restrictInput($event)" />
-                    <div class="error-msg" *ngIf="assetCategorydataForm.get('assetcaassetCategorydata')?.errors?.['required']">
+                        class="form-control custom-input" placeholder="Please enter asset category"
+                        (keypress)="formValidation.restrictInput($event)" />
+                    <div class="error-msg"
+                        *ngIf="assetCategorydataForm.get('assetcaassetCategorydata')?.errors?.['required']">
                         Asset Category is required
                     </div>
-                    <div class="error-msg" *ngIf="assetCategorydataForm.controls['assetcaassetCategorydata'].errors?.['maxlength']">
+                    <div *ngIf="assetCategorydataForm.get('assetcaassetCategorydata')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
+                    <div class="error-msg"
+                        *ngIf="assetCategorydataForm.controls['assetcaassetCategorydata'].errors?.['maxlength']">
                         Asset Category should not exceed 30 characters
                     </div>
                 </div>
@@ -103,7 +118,7 @@
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
             <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
-  
+
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
                 No
@@ -113,7 +128,7 @@
             </button>
         </div>
     </div>
-  </ng-template>
+</ng-template>
 
 <ng-template #deleteconformation let-modal>
     <div class="result-popup-content" ngbAutofocus>

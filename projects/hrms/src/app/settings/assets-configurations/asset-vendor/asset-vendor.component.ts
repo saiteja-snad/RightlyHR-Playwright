@@ -48,9 +48,9 @@ export class AssetVendorComponent {
   initialform() {
     this.assetForm = this.fb.group({
       phonenumber: [null, [Validators.required, Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]],
-      vendordetailes: [null, [Validators.required, Validators.maxLength(50)]],
+      vendordetailes: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       email: [null, [Validators.required, Validators.email, Validators.maxLength(30),this.customEmailValidator()]],
-      address: [null, [Validators.required, Validators.maxLength(50)]],
+      address: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       secondaryphonenumber: [null, [Validators.maxLength(15), Validators.minLength(10),this.allZeroesIfMaxLength()]],
     }
     )
@@ -59,9 +59,9 @@ export class AssetVendorComponent {
   initialvedorupdateform() {
     this.assetverderupdataform = this.fb.group({
       phonenumber: [null, [Validators.required, Validators.maxLength(15), Validators.minLength(10),Validators.pattern(/^(?!0{10,15}$)\d{10,15}$/),this.allZeroesIfMaxLength()]],
-      vendordetailes: [null, [Validators.required, Validators.maxLength(50)]],
+      vendordetailes: [null, [Validators.required, Validators.maxLength(50), Validators.pattern(/^[^\s].*$/)]],
       email: [null, [Validators.required, Validators.email, Validators.maxLength(30), this.customEmailValidator()]],
-      address: [null, [Validators.required, Validators.maxLength(50)]],
+      address: [null, [Validators.required, Validators.maxLength(50),Validators.pattern(/^[^\s].*$/)]],
       secondaryphonenumber: [null, [Validators.maxLength(15),Validators.pattern(/^(?!0{10,15}$)\d{10,15}$/), Validators.minLength(10),this.allZeroesIfMaxLength()]],
     }
     )

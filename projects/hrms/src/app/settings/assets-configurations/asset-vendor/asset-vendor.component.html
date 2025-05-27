@@ -108,6 +108,9 @@
                             <div *ngIf="assetForm.get('vendordetailes')?.errors?.['whitespace']">
                                 Enter a valid Vendor name
                             </div>
+                            <div *ngIf="assetForm.get('vendordetailes')?.errors?.['pattern']" class="error-msg">
+                                {{ 'Field cannot start with a space' | translate }}
+                            </div>
                             <!-- Maxlength error -->
                             <div *ngIf="assetForm.get('vendordetailes')?.errors?.['maxlength']">
                                 Vendor name must not exceed 50 characters
@@ -174,6 +177,9 @@
                             <!-- Required error -->
                             <div *ngIf="assetForm.get('address')?.errors?.['required']">
                                 Address is required
+                            </div>
+                             <div *ngIf="assetForm.get('address')?.errors?.['pattern']" class="error-msg">
+                                {{ 'Field cannot start with a space' | translate }}
                             </div>
                             <!-- Maxlength error -->
                             <div *ngIf="assetForm.get('address')?.errors?.['maxlength']">
@@ -302,6 +308,9 @@
                             <div *ngIf="assetverderupdataform.get('vendordetailes')?.errors?.['required']">
                                 Vendor name is required
                             </div>
+                             <div *ngIf="assetverderupdataform.get('vendordetailes')?.errors?.['pattern']" class="error-msg">
+                                {{ 'Field cannot start with a space' | translate }}
+                            </div>
                             <div *ngIf="assetverderupdataform.get('vendordetailes')?.errors?.['whitespace']">
                                 Enter a valid Vendor name
                             </div>
@@ -370,6 +379,9 @@
                             <!-- Required error -->
                             <div *ngIf="assetverderupdataform.get('address')?.errors?.['required']">
                                 Address is required
+                            </div>
+                             <div *ngIf="assetverderupdataform.get('address')?.errors?.['pattern']" class="error-msg">
+                                {{ 'Field cannot start with a space' | translate }}
                             </div>
                             <!-- Maxlength error -->
                             <div *ngIf="assetverderupdataform.get('address')?.errors?.['maxlength']">

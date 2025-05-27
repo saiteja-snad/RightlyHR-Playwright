@@ -52,14 +52,14 @@ export class SubCatagoryComponent {
   intialasetsubcatary() {
     this.assetcataeryForm = this.fb.group({
       assetCategoryvalue: [null, Validators.required],
-      assetSubCategory: [{ value: null, disabled: true }, [Validators.required, Validators.maxLength(30)]],
+      assetSubCategory: [{ value: null, disabled: true }, [Validators.required, Validators.maxLength(30), Validators.pattern(/^[^\s].*$/)]],
     })
   }
 
   intialupdateasetsubcatarys() {
     this.assetcataeryupdateForm = this.fb.group({
       assetCategory: [{ value: null, disabled: true }, Validators.required],
-      assetSubCategory: [null, [Validators.required, Validators.maxLength(30)]],
+      assetSubCategory: [null, [Validators.required, Validators.maxLength(30), Validators.pattern(/^[^\s].*$/)]],
     })
   }
 

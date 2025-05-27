@@ -48,6 +48,7 @@ export interface IJobDetails {
     empType: string;
     departmentId: number;
     departmentName: string;
+    dateOfJoining : string;
     jobDetails: IJobDetails;
   }
   

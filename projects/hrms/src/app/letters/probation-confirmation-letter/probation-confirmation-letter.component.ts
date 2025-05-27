@@ -34,6 +34,7 @@ export class ProbationConfirmationLetterComponent {
   loading: boolean = false;
   Status: any;
   probationConfirmationForm!: FormGroup;
+  selectedEmployee: IEmployee | null = null;
   
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
@@ -82,12 +83,16 @@ export class ProbationConfirmationLetterComponent {
   }
 
   DateValidation() {
-    const relievingDate = new Date(this.probationConfirmationForm.get('dateofRelieving')?.value);
-    const joiningDate = new Date;
-    if (relievingDate <= joiningDate) {
-      this.jobErrorMessage = 'Relieving issued date must be after the employee joining date.';
+    const effectiveDate = new Date(this.probationConfirmationForm.get('effectiveDate')?.value);
+    const joiningDate = this.selectedEmployee?.dateOfJoining
+      ? new Date(this.selectedEmployee.dateOfJoining)
+      : null;
+  
+    // Validate Effective Date after joining date
+    if (joiningDate && effectiveDate < joiningDate) {
+      this.jobErrorMessage = 'Effective Date must be after the employee joining date';
     } else {
-      this.jobErrorMessage = '';  
+      this.jobErrorMessage = '';
     }
 
     if (this.probationLetterData.dateofprobation <= this.probationLetterData.probationEndDate) {
@@ -124,6 +129,8 @@ export class ProbationConfirmationLetterComponent {
           ...employee,
           fullName: `${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''}${employee.lastName}`
         }));
+
+        console.log(this.probationemp);
       },
       error: (reason: any) => {
         console.log(reason);
@@ -132,6 +139,7 @@ export class ProbationConfirmationLetterComponent {
   }
 
   onClickEmployee(event: any){
+    this.selectedEmployee = event.value;
     const empId= event.value.employeeId;
     this.getProbationRequest(empId);
     this.pathValuesFuction();

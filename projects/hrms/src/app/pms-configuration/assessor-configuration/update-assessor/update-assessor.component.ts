@@ -238,7 +238,7 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
       this.deletedRows.push(deletedRow);
       this.assesorDetails.splice(index, 1);
     }
-    this.conformationPopup.openSuccessModal('Row Deleted Successfully');
+    this.conformationPopup.openSuccessModal('Row deleted successfully');
   }
   // Handle form submission
   Updateassessor() {
@@ -297,7 +297,7 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
             this.isLoading = false;
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal(
-              'Assessor Configurations Updated Successfully'
+              'Assessor configurations updated successfully'
             );
           },
           error: (err: any) => {

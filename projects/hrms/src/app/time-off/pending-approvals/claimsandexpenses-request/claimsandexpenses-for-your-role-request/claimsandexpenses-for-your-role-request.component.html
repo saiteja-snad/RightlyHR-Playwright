@@ -21,8 +21,8 @@
         }
       </thead>
       <tbody>
-          <ng-container *ngIf="(expenseheaderpending | searchfilter: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status']).length > 0; else noDataTemplate">
-          <tr *ngFor="let leave of expenseheaderpending  | searchfilter: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status'];  let i = index">
+          <ng-container *ngIf="(expenseheaderpending | searchfordesk: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status']).length > 0; else noDataTemplate">
+          <tr *ngFor="let leave of expenseheaderpending  | searchfordesk: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status'];  let i = index">
             <td>{{ leave.entity.employeeName }}</td>
             <td>{{ leave.entity.expenses_Title }}</td>
             <td>{{ leave.entity.applied_date | dateformat }}</td>

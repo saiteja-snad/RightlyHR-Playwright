@@ -29,9 +29,9 @@ export class UnderMaintenanceDeskListComponent {
   deskid: any
   selectedAsset!: any
   deskiteamid: any;
-  first :any= 1;
-  rows:any = 10;
-  totalRecords = 100;
+ first: any = 0;
+  rows: any = 10;
+  totalRecords = 0;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -192,7 +192,7 @@ export class UnderMaintenanceDeskListComponent {
       next: (res) => {
         console.log(res);
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Desk marked as Active Successfully')
+        this.conformationPopup.openSuccessModal('Desk marked as available successfully')
         // this.getAllDesks(this.first, this.rows);
         this.getAllDesks(this.first, this.rows, null, null, this.Status)
         this.getcount(null, null, this.Status);

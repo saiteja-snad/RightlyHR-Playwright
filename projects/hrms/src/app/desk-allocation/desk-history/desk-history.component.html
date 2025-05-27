@@ -82,7 +82,7 @@
                                                 <p class="component-sub-header mb-0">Desk Status</p>{{ desk.status }}
                                             </div>
                                             <div class="col-4" *ngIf="desk.status !== 'Inactive'">
-                                                <p>From
+                                                <p class="component-sub-header mb-0">From
                                                     Date</p>{{ desk.fromDate ? (desk.fromDate | dateformat) : 'N/A' }}
                                             </div>
                                             <div class="col-4" *ngIf="desk.status !== 'Inactive'">

@@ -479,7 +479,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   onBackSubmit() {
 
       if (this.headerName === 'Team member info') {
-    this.router.navigate(['/myinfo/team/my-team-members']);
+    this.router.navigate(['/myinfo/personal/team-members']);
     return;
   }
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
@@ -538,20 +538,20 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
 
       if (routestatus.empType === 'Probation' && routestatus.empstatus === 'Active') {
-        this.headerName = "Probation Employees";
+        this.headerName = "Probation Employee";
       } else {
         switch (routestatus.empstatus) {
           case 'Prospective':
-            this.headerName = "Prospective Employees";
+            this.headerName = "Prospective Employee";
             break;
           case 'Active':
-            this.headerName = "Active Employees";
+            this.headerName = "Active Employee";
             break;
           case 'Probation':
-            this.headerName = "Probation Employees";
+            this.headerName = "Probation Employee";
             break;
           case 'Inactive':
-            this.headerName = "Inactive Employees";
+            this.headerName = "Inactive Employee";
             break;
           case 'Trainee Prospective':
             this.headerName = "Prospective Trainee";

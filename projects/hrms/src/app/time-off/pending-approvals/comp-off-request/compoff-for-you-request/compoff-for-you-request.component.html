@@ -82,6 +82,7 @@
                             </div>
                         </div>
                         <ng-template #compoffcomments>-</ng-template>
+                        
                     </td>
                     <td>{{leave?.entity?.attendanceRequestAppliedDate | dateformat}}</td>
                     @if(!multiSelect && (rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For You (Comp Off).delete'))){
@@ -222,7 +223,7 @@
     </div>
 </ng-template>
 
-<!-- commentspopup -->
+<!-- Comments Popup-->
 <ng-template #commentspopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
@@ -230,19 +231,19 @@
                 <p class="popup-heading mb-0">{{'Approver Comments'| translate}}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
             </div>
         </div>
-
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content" *ngFor="let comment of approverComments">
             <div class="card p-3">
-                <div *ngFor="let comment of approverComments">
+                <div>
                     <div class="mb-0">
-                        <p><b>{{'Comments' | translate}}:</b> {{ comment?.comments }} </p>
-                        <p><b>{{'Commented By'|translate}}:</b> {{ comment?.addedName }}</p>
-                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment?.addedDate | dateformat }}</p>
-                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment?.addedByFusionEmpId }}</p>
+                        <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
+                        <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
+                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
+                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
                     </div>
                 </div>
             </div>

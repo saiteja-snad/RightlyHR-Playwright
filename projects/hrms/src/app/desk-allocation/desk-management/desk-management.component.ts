@@ -351,6 +351,7 @@ export class DeskManagementComponent {
             this.getcount(null, null);
             this.navigateToAsset();
             this.deskForm.reset();
+            this.isToggled = false;
             this.http.setnewdeskDetails();
           },
           error: (error: any) => {
@@ -460,6 +461,7 @@ export class DeskManagementComponent {
   cleardata() {
     this.deskForm.reset();
     this.modalService.dismissAll();
+    this.isToggled = false;
   }
 
   ngOnDestroy(): void {

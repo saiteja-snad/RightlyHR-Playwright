@@ -55,13 +55,20 @@
                             class="form-select custom-select">
                         </p-select>
                     </div>
-                    <div class="error-msg"
+                    <!-- <div class="error-msg"
                         *ngIf="shiftForm.controls['subLocation'].invalid && 
                                                             (shiftForm.controls['subLocation'].touched || shiftForm.controls['subLocation'].dirty)">
                         <div *ngIf="shiftForm.controls ['subLocation'].errors?.['required']">
                             {{'Sub Location is required'|translate}}
                         </div>
-                    </div>
+                    </div> -->
+                    <div class="error-msg"
+  *ngIf="shiftForm.controls['subLocation'].invalid &&
+         (shiftForm.controls['subLocation'].touched || shiftForm.controls['subLocation'].dirty)">
+  <div *ngIf="shiftForm.controls['subLocation'].errors?.['required']">
+    {{'Sub Location is required' | translate}}
+  </div>
+</div>
                 </div>
 
                 <div class="pt-4 mt-1">

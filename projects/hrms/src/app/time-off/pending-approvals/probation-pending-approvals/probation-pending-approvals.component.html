@@ -15,7 +15,7 @@
                     <th>{{'Probation End Date' | translate}}</th>
                     <th class="text-center">{{'Approved History' | translate}}</th>
                     @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
-                    <th class="text-center">Action(s)</th>
+                    <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">{{'(s)'  | translate}}</span></th>
                     }
             </thead>
             <tbody>
@@ -81,7 +81,7 @@
                     <thead>
                         <tr>
                             <th>Approver Role</th>
-                            <th>Over all Rating</th>
+                            <th>Overall Rating</th>
                             <th>Status</th>
                             <th>Extended Date</th>
                             <th>Comments </th>

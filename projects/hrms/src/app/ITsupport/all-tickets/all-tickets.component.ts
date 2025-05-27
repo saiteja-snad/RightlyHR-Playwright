@@ -122,7 +122,7 @@ export class AllTicketsComponent {
     console.log(this.selectedTickets);
     console.log(this.allAssigneeEmployees);
     
-    this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
+  
     this.itSupportForm.patchValue({
       name: this.selectedTickets.employeeName,
       email: this.selectedTickets.emailaddress,
@@ -136,6 +136,7 @@ export class AllTicketsComponent {
       description: this.selectedTickets.description,
       ticketStatus: this.status.find((status) => status.label === this.selectedTickets.ticketStatus),
     });
+      this.modalService.open(content, { centered: true, size: 'lg', backdrop: 'static' });
     console.log(this.itSupportForm);
     
    

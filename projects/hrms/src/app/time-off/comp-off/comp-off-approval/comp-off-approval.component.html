@@ -6,8 +6,8 @@
         <th>{{'Worked Date'| translate}}</th>
         <th>{{'Availed'| translate}}</th>
         <th>{{'Applied Date'| translate}}</th>
-        <th>{{'Reason'| translate}}</th>
-        <th>{{'Approver Reason'| translate}}</th>
+        <th class="text-center">{{'Reason'| translate}}</th>
+        <th class="text-center">{{'Approver Reason'| translate}}</th>
         <th>{{'Status'| translate}}</th>
       </thead>
       
@@ -22,12 +22,12 @@
               <span *ngSwitchDefault>-</span>
             </td>
             <td>{{ compOffRequest.requestedDate | dateformat }}</td>
-            <td>
+            <td class="text-center">
               <div>
-                <a *ngIf="compOffRequest.requestedComments; else noRequestedComments" type="button"
+                <div *ngIf="compOffRequest.requestedComments; else noRequestedComments" type="button"
                   [ngbPopover]="requestedComments">
-                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                </a>
+                    <i class="bi bi-info-circle-fill"></i>
+                </div>
                 <ng-template #requestedComments>
                   <p class="mb-0">{{ compOffRequest.requestedComments }}</p>
                 </ng-template>
@@ -36,11 +36,11 @@
                 </ng-template>
               </div>
             </td>
-            <td>
+            <td class="text-center">
               <div>
-                <a *ngIf="compOffRequest.reason; else noReason" type="button" [ngbPopover]="reason">
-                  <img src="images/info-fill.png" alt="info icon" class="info-icon">
-                </a>
+                <div *ngIf="compOffRequest.reason; else noReason" type="button" [ngbPopover]="reason">
+                    <i class="bi bi-info-circle-fill"></i>
+                </div>
                 <ng-template #reason>
                   <p class="mb-0">{{ compOffRequest.reason }}</p>
                 </ng-template>

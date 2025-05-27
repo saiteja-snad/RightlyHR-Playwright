@@ -305,7 +305,7 @@ export class ProbationPendingApprovalsComponent {
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation Request Processed Successfully';
+      successMessage = 'Probation request processed successfully';
     }
     if (this.selectedData.requestSelectedType == 'Reject') {
       this.jsonData = JSON.stringify({
@@ -313,7 +313,7 @@ export class ProbationPendingApprovalsComponent {
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation Request Rejected Successfully';
+      successMessage = 'Probation request rejected successfully';
     }
     if (this.selectedData.requestSelectedType == 'Extend') {
       this.jsonData = JSON.stringify({
@@ -322,7 +322,7 @@ export class ProbationPendingApprovalsComponent {
         responseId: this.selectedData.responseId,
         Overallrating: this.selectedData.overAllRating,
       });
-      successMessage = 'Probation Extended Processed Successfully';
+      successMessage = 'Probation extended successfully';
     }
     let requestBody = {
       status: 'Processed',

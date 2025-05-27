@@ -375,7 +375,7 @@
         </div>
 
         <div class="custom-modal-footer">
-          <button type="button" class="custom-btn btn-secondary " (click)="openclosemodal(updatecloseconformation)">Close</button>
+          <button type="button" class="custom-btn btn-secondary " (click)="openclosemodal(updatecloseconformation)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid
            || (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
            (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
@@ -392,7 +392,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png"  alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
@@ -409,7 +409,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(underMaintenance)">
@@ -478,7 +478,7 @@
 
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary "
-            (click)="openModal(inativeconfromation);model.dismiss()">Cancel</button>
+            (click)="openModal(inativeconfromation)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="inactiveForm.invalid">Submit</button>
         </div>
       </form>
@@ -490,10 +490,10 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="openModal(deleteasstes)">
+      <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
         No
       </button>
       <button type="submit" class="custom-btn btn-primary" (click)="conformationpoppup();model.dismiss()">
@@ -559,7 +559,7 @@
         </div>
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary"
-            (click)="openModal(relaseconformation);modal.dismiss()">Close</button>
+            (click)="openModal(relaseconformation)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="releaseform.invalid">Submit</button>
         </div>
       </form>
@@ -571,10 +571,10 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png"  alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
     </div>
     <div class="custom-modal-footer">
-      <button type="button" class="custom-btn btn-secondary" (click)="openModal(releaseassets)">
+      <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
         No
       </button>
       <button type="submit" class="custom-btn btn-primary" (click)="model.dismiss()">
@@ -613,7 +613,7 @@
             <label for="asseTID" class="form-label custom-label mb-2">Select Employee ID<span
                 class="text-danger">*</span></label>
             <div class="custom-p-select-content">
-              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" filterBy="employeeName"
+              <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true" [resetFilterOnHide]="true" filterBy="employeeName"
                 (onChange)="onEmployeeSelect($event)" formControlName="mReportingto"
                 placeholder="Please select employee" class="form-select custom-select"></p-select>
             </div>
@@ -623,7 +623,7 @@
           </div>
           <div class="d-flex justify-content-end gap-3">
             <button type="button" class="custom-btn btn-secondary mt-3"
-              (click)="modal.dismiss();openModal(updateconformation)">Close</button>
+              (click)="openModal(updateconformation)">Cancel</button>
             <button type="submit" class="custom-btn btn-primary mt-3" [disabled]="reassiginForm.invalid">Submit</button>
           </div>
         </div>
@@ -636,10 +636,10 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to close?</p>
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
-      <button type="button" class="custom-btn btn-secondary" (click)="openModal(reallocateanasset);model.dismiss()">
+      <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
         No
       </button>
       <button type="submit" class="custom-btn btn-primary" (click)="resetassiginform();model.dismiss()">
@@ -689,10 +689,10 @@
                 <div class="error-msg"
                   *ngIf="undermainteenceForm.get('comments')?.invalid && undermainteenceForm.get('comments')?.touched">
                   <div *ngIf="undermainteenceForm.get('comments')?.errors?.['required']">
-                    Additional Comments is required.
+                    Additional Comments is required
                   </div>
                   <div *ngIf="undermainteenceForm.get('comments')?.errors?.['maxlength']">
-                    Additional Comments must not exceed 250 characters.
+                    Additional Comments must not exceed 250 characters
                   </div>
                 </div>
               </div>

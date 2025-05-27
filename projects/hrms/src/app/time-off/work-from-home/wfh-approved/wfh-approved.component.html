@@ -5,8 +5,8 @@
       <thead>
         <th>{{'Worked Date' | translate}}</th>
         <th>{{'Availed' | translate}}</th>
-        <th>{{'Reason' | translate}}</th>
-        <th>{{'Approver Reason' | translate}}</th>
+        <th class="text-center">{{'Reason' | translate}}</th>
+        <th class="text-center">{{'Approver Reason' | translate}}</th>
         <th>{{'Applied Date'| translate}}</th>
         <th>{{'Status'| translate}}</th>
       </thead>
@@ -20,20 +20,20 @@
               <span *ngSwitchCase="2">Full Day</span>
               <span *ngSwitchDefault>-</span>
             </td>
-            <td>
+            <td class="text-center">
               <div>
                 <a type="button" [ngbPopover]="requestedComments">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                  <i class="bi bi-info-circle-fill"></i>
                 </a>
                 <ng-template #requestedComments>
                   <p class="mb-0">{{wfhRequest.requestedComments}}</p>
                 </ng-template>
               </div>
             </td>
-            <td>
+            <td class="text-center">
               <div>
                 <a type="button" [ngbPopover]="reason">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                  <i class="bi bi-info-circle-fill"></i>
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{wfhRequest.reason}}</p>

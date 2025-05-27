@@ -49,14 +49,13 @@ export class DraftsExpensesComponent {
   matchingExpense: any;
   saveasDraftloder = false;
   expensesAttachment: any;
-
+  filehidedonload = true;
   @ViewChild('deleteconformation') private deleteconformation!: NgbModal;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
   joiningDate: any;
   searchTerm: any = '';
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([]);
   expense = new BehaviorSubject<IExpenses[]>([]);
-
   constructor(public router: Router, private fb: FormBuilder, private datepipe: DatePipe,
     private http: HttpService, private conformationPopup: OpenModalService, private modalService: NgbModal, private sanitizer: DomSanitizer,
     public formValidation: FormValidationService, public rbac: RbacService) { }
@@ -245,6 +244,7 @@ export class DraftsExpensesComponent {
       next: (data: any) => {
         // Assuming data.path contains the uploaded file path
         const uploadedFilePath = data.path;
+        this.filehidedonload= false;
         this.expenseItems.at(index).get('attachment_url')?.setValue(uploadedFilePath);
       },
       error: (error: any) => {
@@ -417,6 +417,8 @@ export class DraftsExpensesComponent {
   }
 
   openModal(content: any) {
+    this.filehidedonload= true;
+
     this.modalService.open(content, { centered: true, size: 'xl', backdrop: 'static' });
   }
 

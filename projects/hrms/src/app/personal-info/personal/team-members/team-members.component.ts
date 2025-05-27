@@ -444,7 +444,7 @@ onSubDepartmentNameChange(selectedSubDepartment: any): void {
   updateRM() {
     this.spinnerLoader = true;
     let jobid = this.selectedEmployeeDetails.id;
-    let ManagerEmployeeId = this.rmForm.get('mReportingto')?.value?.reportingToEmployeeId;
+    let ManagerEmployeeId = this.rmForm.get('mReportingto')?.value?.employeeId;
     this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
       next: (data: any) => {
         console.log('Next callback');

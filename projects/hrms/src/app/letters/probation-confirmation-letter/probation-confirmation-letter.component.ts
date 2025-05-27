@@ -82,6 +82,14 @@ export class ProbationConfirmationLetterComponent {
   }
 
   DateValidation() {
+    const relievingDate = new Date(this.probationConfirmationForm.get('dateofRelieving')?.value);
+    const joiningDate = new Date;
+    if (relievingDate <= joiningDate) {
+      this.jobErrorMessage = 'Relieving issued date must be after the employee joining date.';
+    } else {
+      this.jobErrorMessage = '';  
+    }
+
     if (this.probationLetterData.dateofprobation <= this.probationLetterData.probationEndDate) {
       this.isdateofprobation = false;
     } else {
@@ -110,7 +118,7 @@ export class ProbationConfirmationLetterComponent {
 
   //get employee ids for dropdown
   getProbationEmployees() {
-    this.subscription = this.http.getData(`ProbationFlow/getAllProbationEmployees?substatus=${"Probation Confirmed"}`).subscribe({
+    this.subscription = this.http.getData(`ProbationFlow/getAllProbationEmployees?substatus=${"Probation"}`).subscribe({
       next: (data: any) => {
         this.probationemp = data.map((employee: any) => ({
           ...employee,

@@ -38,10 +38,10 @@ export class IdentitytypeComponent {
   }
   ngOnInit(): void {
     this.IdentityForm = this.fb.group({
-      IdentityType: ['', [Validators.required,this.formValidations.maxCharactersValidator(51)]]
+      IdentityType: ['', [Validators.required,this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      IdentityType: ['', [Validators.required, this.formValidations.maxCharactersValidator(51)]]
+      IdentityType: ['', [Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getIdentityType();

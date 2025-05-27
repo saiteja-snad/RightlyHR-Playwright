@@ -396,7 +396,7 @@
               <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
               <span>{{'Loading...'}}</span>
             </div>
-            }@else { Request For Approval }
+            }@else { {{'Request For Approval'|translate}} }
           </button>
         </div>
       </form>
@@ -566,7 +566,7 @@
                 </p>
   
                 <p>We wish you a long, rewarding and fulfilling career experience and look
-                  forward to having you on board with us. Please visit our website <a href="">www.rightlyhr.com</a>
+                  forward to having you on board with us. Please visit our website <a href="" target="_blank" rel="noopener noreferrer">www.rightlyhr.com</a>
                   for more information about our Company. </p>
   
                 <p>All other detailed terms and conditions of your employment will be specified
@@ -582,7 +582,7 @@
                   intentions any-time before your joining date. </p>
   
                 <p>For any further information or clarification required, please feel free to
-                  reach us on our email at <a href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D"> hr&#64;rightlyhr.com</a></p>
+                  reach us on our email at <a href="https://outlook.office.com/mail/AAMkAGYyMmMwMWFkLTNkN2QtNDliZS04ZTU3LWZkN2RlMGZiMjViYgAuAAAAAAC91%2BzN6GlARq3GyPAD%2BMs8AQBvgEHYmw1qR7DZmmvDGPheAABPqtehAAA%3D" target="_blank" rel="noopener noreferrer"> hr&#64;rightlyhr.com</a></p>
               </div>
             </div>
             <div class="letter-footer">
@@ -821,7 +821,7 @@
                         </td>
                       </tr>
                       <tr>
-                        <td><b>Total Deductions (PF+ESI)</b></td>
+                        <td><b>Total Deductions (PF+ESI+PT)</b></td>
                         <td><span *ngIf="!prospectiveEmpData.totalDeduction; else totdec">
                           </span>
                           <ng-template #totdec>{{ prospectiveEmpData.totalDeduction }}</ng-template>

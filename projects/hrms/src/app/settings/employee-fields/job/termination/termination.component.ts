@@ -38,10 +38,10 @@ export class TerminationComponent {
   ngOnInit(): void {
     this.ExistForm = this.fb.group({
 
-      TERMINATION: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      TERMINATION: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      TERMINATION: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]]
+      TERMINATION: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),Validators.pattern(/^[^\s].*$/)]]
     });
 
     this.getTermination();
@@ -69,7 +69,6 @@ export class TerminationComponent {
       error: (error: any) => {
           const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        //  this.resetForm();
       }
     });
   }

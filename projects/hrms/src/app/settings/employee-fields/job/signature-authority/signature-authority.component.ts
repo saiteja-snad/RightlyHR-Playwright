@@ -154,7 +154,6 @@ export class SignatureAuthorityComponent implements OnInit {
           // this.modalService.dismissAll();
           const errorMessage = error?.error?.Message;
           this.conformationPopup.openErrorModal(errorMessage);
-          this.AddForm.reset();
         },
       });
   }
@@ -217,7 +216,6 @@ export class SignatureAuthorityComponent implements OnInit {
           // modalRef.dismiss();
           const errorMessage = error.error?.message
           this.conformationPopup.openErrorModal(errorMessage);
-          this.UpdateForm.reset();
         }
       });
   }

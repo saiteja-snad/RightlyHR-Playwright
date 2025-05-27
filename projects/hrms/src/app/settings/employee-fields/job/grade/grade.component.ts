@@ -48,9 +48,10 @@ export class GradeComponent {
         [
           Validators.required,
           this.formValidations.maxCharactersValidator(101),
+          Validators.pattern(/^[^\s].*$/)
         ],
       ],
-      jobgrade: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      jobgrade: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),  Validators.pattern(/^[^\s].*$/)]],
     });
 
     this.updateForm = this.fb.group({
@@ -59,9 +60,10 @@ export class GradeComponent {
         [
           Validators.required,
           this.formValidations.maxCharactersValidator(101),
+          Validators.pattern(/^[^\s].*$/)
         ],
       ],
-      updategraderole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101)]],
+      updategraderole: ['', [Validators.required, this.formValidations.maxCharactersValidator(101),  Validators.pattern(/^[^\s].*$/)]],
     });
     this.getgradeid();
   }
@@ -102,7 +104,6 @@ export class GradeComponent {
       error: (error: any) => {
         const errorMessage = error.error?.Message;
         this.conformationPopup.openErrorModal(errorMessage);
-        // this.resetForm();
       },
     });
   }
@@ -144,7 +145,6 @@ export class GradeComponent {
           error: (error: any) => {
             const errorMessage = error.error?.Message;
             this.conformationPopup.openErrorModal(errorMessage);
-            // this.resetForm();
           },
         });
     }

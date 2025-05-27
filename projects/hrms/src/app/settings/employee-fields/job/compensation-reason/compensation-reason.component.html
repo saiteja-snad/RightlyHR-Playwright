@@ -18,6 +18,9 @@
             <div *ngIf="CompensationForm.get('Reason')?.errors?.['maxCharacters']" class="error-msg">
                 {{ 'Please limit your input to 100 characters' | translate }}
             </div>
+            <div *ngIf="CompensationForm.get('Reason')?.errors?.['pattern']" class="error-msg">
+                    {{ 'Field cannot start with a space' | translate }}
+            </div>
         </div>
     </form>
 
@@ -82,6 +85,9 @@
                         </div>
                         <div *ngIf="updateForm.get('UpdateReason')?.errors?.['maxCharacters']" class="error-msg">
                             {{ 'Please limit your input to 100 characters' | translate }}
+                        </div>
+                        <div *ngIf="updateForm.get('UpdateReason')?.errors?.['pattern']" class="error-msg">
+                            {{ 'Field cannot start with a space' | translate }}
                         </div>
                 </div>
                 <div class="custom-modal-footer">

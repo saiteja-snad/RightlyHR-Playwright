@@ -12,7 +12,7 @@
                         <th>Location</th>
                         <th>Sub Location</th>
                         <th class="text-center" *ngIf="rbac.allowedToAccess('Sub Location.update') || 
-                        rbac.allowedToAccess('Sub Location.delete')">Action(S)</th>
+                        rbac.allowedToAccess('Sub Location.delete')">Action<span class="text-lowercase">(S)</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,6 +95,9 @@
                     <div *ngIf="AddForm.get('AddLocation')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
+                    <div *ngIf="AddForm.get('AddLocation')?.errors?.['pattern']" class="error-msg">
+                            {{ 'Field cannot start with a space' | translate }}
+                     </div>
                 </div>
 
                 <!-- Buttons -->
@@ -165,6 +168,9 @@
                     <div *ngIf="updateForm.get('UpdateSubLocation')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Please limit your input to 100 characters' | translate }}
                     </div>
+                     <div *ngIf="updateForm.get('UpdateSubLocation')?.errors?.['pattern']" class="error-msg">
+                            {{ 'Field cannot start with a space' | translate }}
+                     </div>
                 </div>
 
                 <!-- Modal Footer with Buttons -->

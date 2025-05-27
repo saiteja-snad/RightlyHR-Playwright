@@ -1,10 +1,11 @@
 <div class="custom-main-component-container">
-    <form autocomplete="off" [formGroup]="statusForm" (ngSubmit)="onSubmit()" *ngIf="rbac.allowedToAccess('Status.create')">
+    <form autocomplete="off" [formGroup]="statusForm" (ngSubmit)="onSubmit()"
+        *ngIf="rbac.allowedToAccess('Status.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
-                <input type="text" class="form-control custom-input" placeholder="Please enter status" formControlName="status"
-                    aria-label="stat" (keydown)="formValidations.restrictInput($event); 
+                <input type="text" class="form-control custom-input" placeholder="Please enter status"
+                    formControlName="status" aria-label="stat" (keydown)="formValidations.restrictInput($event); 
                                     formValidations.blockNonAlphabets($event)" maxlength="51">
                 <span class="input-group-text" id="stat">
                     <button type="submit" class="custom-btn btn-primary"
@@ -16,7 +17,7 @@
                 </div>
             </div>
             <div *ngIf="statusForm.get('status')?.errors?.['pattern']" class="error-msg">
-                {{ 'Field cannot start with a space or period' | translate }}
+                {{ 'Field cannot start with a space' | translate }}
             </div>
             <div *ngIf="statusForm.get('status')?.errors?.['maxCharacters']" class="error-msg">
                 {{ 'Please limit your input to 50 characters' | translate }}
@@ -78,18 +79,24 @@
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="statusname"
                         placeholder="Please enter status"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
-                    <div *ngIf="updateForm.get('statusname')?.touched && updateForm.get('statusname')?.invalid" class="error-msg">
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                        maxlength="51">
+                    <div *ngIf="updateForm.get('statusname')?.touched && updateForm.get('statusname')?.invalid"
+                        class="error-msg">
                         <div *ngIf="updateForm.get('statusname')?.errors?.['required']">
                             {{ 'Status is required' | translate }}
                         </div>
+                    </div>
+                    <div *ngIf="updateForm.get('statusname')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
                     </div>
                     <div *ngIf="updateForm.get('statusname')?.errors?.['maxCharacters']" class="error-msg">
                         {{ 'Please limit your input to 50 characters' | translate }}
                     </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="close(modal)">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
@@ -107,7 +114,8 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.close()">{{'No'|translate}}</button>
-            <button type="button" class="custom-btn btn-primary" (click)="deleteStatus(statusDeletedata)">{{'Yes'|translate}}</button>
+            <button type="button" class="custom-btn btn-primary"
+                (click)="deleteStatus(statusDeletedata)">{{'Yes'|translate}}</button>
         </div>
     </div>
 </ng-template>

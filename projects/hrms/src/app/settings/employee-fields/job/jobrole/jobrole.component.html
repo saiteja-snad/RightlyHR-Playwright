@@ -13,7 +13,7 @@
             <th>{{'Job Role' | translate}}</th>
             <th>{{'Grade Name' | translate}}</th>
             <th class="text-center" *ngIf="rbac.allowedToAccess('Job Role.update') || rbac.allowedToAccess('Job Role.delete')">
-              {{'Action(S)' | translate}}</th>
+              {{'Action' | translate}}<span class="text-lowercase">{{'(s)'}}</span></th>
           </tr>
         </thead>
         
@@ -79,6 +79,9 @@
                   {{ 'Job Role is required' | translate }}
               </div>
           </div>
+          <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space' | translate }}
+            </div>
           <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxCharacters']" class="error-msg">
               {{ 'Please limit your input to 100 characters' | translate }}
           </div>
@@ -140,6 +143,10 @@
                   {{ 'Job Role is required' | translate }}
               </div>
           </div>
+           <div *ngIf="AddForm.get('Addjobrole')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space' | translate }}
+            </div>
+ 
           <div *ngIf="AddForm.get('Addjobrole')?.errors?.['maxCharacters']" class="error-msg">
               {{ 'Please limit your input to 100 characters' | translate }}
           </div>

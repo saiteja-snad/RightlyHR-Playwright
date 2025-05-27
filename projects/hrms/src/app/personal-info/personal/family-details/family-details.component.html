@@ -19,7 +19,7 @@
                          @if(canAccess('update','family') || canAccess('delete','family') ){
                         @if((employedata?.empstatus?.toLowerCase() !== 'prospective' && employedata?.empstatus?.toLowerCase() !== 'trainee prospective' 
                         && employedata?.empstatus?.toLowerCase() !== 'inactive' && employedata?.empstatus?.toLowerCase() !== 'trainee inactive')){
-                            <th class="text-center">Action(s)</th>
+                              <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
                         }}
                     </tr>
                 </thead>

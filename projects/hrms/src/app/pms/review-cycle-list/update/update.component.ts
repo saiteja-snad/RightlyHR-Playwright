@@ -105,7 +105,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
       this.http.putData(`reviewCycleHeader/update/${this.reviewCycleForm.value.id}`, reviewCycleData).subscribe({
         next: (response) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Review Cycle Updated Successfully')
+          this.conformationPopup.openSuccessModal('Review cycle updated successfully')
         },
         error: (error) => {
           this.conformationPopup.openErrorModal(error.error.reason)
@@ -423,7 +423,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
           console.log('Success:', response);
           this.closeModal()
           this.onCreateCycleFormSubmitted()
-          this.conformationPopup.openSuccessModal('Review Cycle Updated Successfully')
+          this.conformationPopup.openSuccessModal('Review cycle updated successfully')
         },
         error: (error) => {
           this.conformationPopup.openErrorModal(error.error.reason)

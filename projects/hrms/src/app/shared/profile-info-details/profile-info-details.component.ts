@@ -64,7 +64,16 @@ export class ProfileInfoDetailsComponent {
       this.getJobDetails();
     }
   }
-
+  getEmployeeId() {
+    let employeeId = parseInt(this.empinfo.employeeId);
+    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
+      next: (data: any) => {
+        this.empdata = data;
+        if (this.empdata.profileUrl) this.onSelectprofilePicDownload(this.empdata)
+      },
+      error: reason => console.log(reason)
+    });
+  }
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
   }
@@ -95,7 +104,7 @@ export class ProfileInfoDetailsComponent {
   }
 
   chooseNewProfile(event: any) {
-       this.getEmpInfoFromRoute();
+   
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -132,18 +141,20 @@ export class ProfileInfoDetailsComponent {
   }
 
   postUploadprofilePic() {
-    let filePath = `/Profilepics/${this.empinfo.employeeId}`;
+    let filePath = `/Profilepics/${this.empdata.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.profilePic).subscribe({
       next: (data: any) => {
         if (data) {
-          this.empinfo.employeeId = this.empinfo.employeeId
-          this.empinfo.profileUrl = data.path;
-          this.subscription = this.http.postdata("Employeedata/UPDATER", this.empinfo).subscribe({
+          this.empdata.profileUrl = data.path;
+          this.subscription = this.http.postdata("Employeedata/UPDATER", this.empdata).subscribe({
             next: (data: any) => {
-              this.http.setprofileDetails()
+
               this.getEmployeeId();
               this.onSelectprofilePicDownload(this.empdata)
               this.conformationPopup.openSuccessModal('Profile picture updated successfully')
+              if (this.router.url.startsWith('/myinfo')) {
+                this.http.setprofileDetails()
+              }
 
             },
             error: (reason: any) => {
@@ -166,14 +177,5 @@ export class ProfileInfoDetailsComponent {
     });
   }
 
-  getEmployeeId() {
-    let employeeId = parseInt(this.empinfo.employeeId);
-    this.subscription = this.http.getData(`Employeedata/${employeeId}`).subscribe({
-      next: (data: any) => {
-        this.empdata = data;
-        if (this.empdata.profileUrl) this.onSelectprofilePicDownload(this.empdata)
-      },
-      error: reason => console.log(reason)
-    });
-  }
+
 }

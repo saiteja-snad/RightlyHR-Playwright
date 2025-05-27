@@ -158,10 +158,10 @@ export class AwaitOnUserTicketsComponent {
     if(this.itSupportForm.value.assignedto !== null && this.itSupportForm.value.assignedto !== "" && this.itSupportForm.value.assignedto !== undefined){
       this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.assigneeId.toString();
     }
-    if(this.itSupportForm.value.assignedto === undefined){
-      this.itTicketDetails.assigneeId = null;
-    }
-    console.log(this.itSupportForm.value.assignedto.assigneeId.toString());
+    // if(this.itSupportForm.value.assignedto === undefined){
+    //   this.itTicketDetails.assigneeId = null;
+    // }
+    // console.log(this.itSupportForm.value.assignedto.assigneeId.toString());
     
     this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({
       next: (data: any) => {

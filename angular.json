@@ -74,6 +74,27 @@
                 }
               ]
             },
+            "uat-internal-alpha": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "10mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "10mb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "projects/preonboarding/environments/environment.ts",
+                  "with": "projects/preonboarding/environments/environment.uat.internal.alpha.ts"
+                }
+              ]
+            },
             "dev": {
               "budgets": [
                 {
@@ -197,6 +218,27 @@
                 {
                   "replace": "projects/hrms/src/environments/environment.ts",
                   "with": "projects/hrms/src/environments/environment.qa.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "50mb",
+                  "maximumError": "50mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "50mb",
+                  "maximumError": "50mb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "uat-internal-alpha": {
+              "fileReplacements": [
+                {
+                  "replace": "projects/hrms/src/environments/environment.ts",
+                  "with": "projects/hrms/src/environments/environment.uat.internal.alpha.ts"
                 }
               ],
               "budgets": [

@@ -9,10 +9,12 @@
     "build": "ng build hrms --configuration production",
     "qa": "ng build hrms --configuration qa",
     "dev": "ng build hrms --configuration dev",
+    "uat-internal-alpha": "ng build hrms --configuration uat-internal-alpha",
     "snad-rightlyhr": "ng build --configuration snad-rightlyhr",
     "preonboarding-build": "ng build preonboarding --configuration production",
     "preonboarding-qa": "ng build preonboarding --configuration qa",
     "preonboarding-dev": "ng build preonboarding --configuration dev",
+    "preonboarding-uat-internal-alpha": "ng build preonboarding --configuration uat-internal-alpha",
     "preonboarding-snad-rightlyhr": "ng build preonboarding --configuration snad-rightlyhr"
   },
   "private": true,

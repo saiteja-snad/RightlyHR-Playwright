@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { DomSanitizer } from '@angular/platform-browser';
@@ -21,7 +21,7 @@ import { PersonalJobTabsComponent } from "../personalinfo-tabs/personal-job-tabs
   styleUrl: './profile-info-details.component.scss'
 })
 
-export class ProfileInfoDetailsComponent {
+export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
   empinfo: any;
   subscription!: Subscription;
   jobdata: any;
@@ -42,13 +42,8 @@ export class ProfileInfoDetailsComponent {
 
   ngOnInit(): void {
     this.getEmpInfoFromRoute();
-    this.http.basicDetailesadded$.subscribe(() => {
-      this.getJobDetails();
-      this.getEmployeeId();
-    });
-    this.http.profliepicadd$.subscribe(() => {
-      this.getEmployeeId();
-    });
+
+
   }
   getEmpInfoFromRoute(): void {
     const fullPath = this.router.url;
@@ -58,10 +53,24 @@ export class ProfileInfoDetailsComponent {
       this.empinfo = JSON.parse(localStorage.getItem("personaldata") || '{}');
       this.getEmployeeId();
       this.getJobDetails();
+      this.http.profliepicadd$.subscribe(() => {
+        this.getEmployeeId();
+      });
+      this.http.basicDetailesadded$.subscribe(() => {
+        this.getJobDetails();
+        this.getEmployeeId();
+      });
     } else if (fullPath.startsWith('/myinfo')) {
       this.empinfo = JSON.parse(localStorage.getItem("rightlyHrUser") || '{}');
       this.getEmployeeId();
       this.getJobDetails();
+      this.http.profliepicadd$.subscribe(() => {
+        this.getEmployeeId();
+      });
+      this.http.basicDetailesadded$.subscribe(() => {
+        this.getJobDetails();
+        this.getEmployeeId();
+      });
     }
   }
   getEmployeeId() {
@@ -74,6 +83,7 @@ export class ProfileInfoDetailsComponent {
       error: reason => console.log(reason)
     });
   }
+
   isActive(route: string): boolean {
     return this.router.url.includes(route); //based on the route, header tab will be changes
   }
@@ -104,7 +114,7 @@ export class ProfileInfoDetailsComponent {
   }
 
   chooseNewProfile(event: any) {
-   
+
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -141,7 +151,7 @@ export class ProfileInfoDetailsComponent {
   }
 
   postUploadprofilePic() {
-    let filePath = `/Profilepics/${this.empdata.employeeId}`;
+    let filePath = `/Profilepics/${this.empinfo.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.profilePic).subscribe({
       next: (data: any) => {
         if (data) {
@@ -177,5 +187,10 @@ export class ProfileInfoDetailsComponent {
     });
   }
 
+  ngOnDestroy(): void {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+  }
 
 }

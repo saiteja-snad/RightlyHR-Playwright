@@ -238,7 +238,7 @@ export class WelcomeLetterComponent {
       },
       complete: () => {
         setTimeout(() => {
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/admin/dashboard']);
         }, 2000)
         this.spinnerLoader= false;
         this.employeeForm.reset();

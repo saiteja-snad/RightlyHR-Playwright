@@ -7,6 +7,7 @@ import { Ilpid } from '../../../Interfaces/timoff-model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { CancelledComponent } from '../../../time-off/leaves/cancelled/cancelled.component';
 @Component({
   selector: 'app-on-be-half-of-approval-tabs',
   imports: [CommonModule, RouterModule, TabsModule],
@@ -24,6 +25,7 @@ export class OnBeHalfOfApprovalTabsComponent {
   waitingForApprovalCount: any;
   approvedCount: any;
   rejectedCount: any;
+  cancelledCount: any;
   navLinks: any[] = [
     { label: 'Waiting For Approval', route: 'waiting-for-approval', icon: '/time-off-icon/waiting-for-approval-icon.png', permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' } },
     { label: 'Approved', route: 'approved', icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
@@ -70,13 +72,14 @@ export class OnBeHalfOfApprovalTabsComponent {
           const approved = response.filter(item => item.status === 'Approved');
           const rejected = response.filter(item => item.status === 'Rejected');
           const processed = response.filter(item => item.status === 'Processed');
+          const Cancelled = response.filter(item => item.status === 'Cancelled');
           // Set counts
           this.navLinks = [
             { label: 'Waiting For Approval', route: 'waiting-for-approval', icon: '/time-off-icon/waiting-for-approval-icon.png', count: waiting.length, permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' } },
             { label: 'Approved', route: 'approved', count: approved.length, icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
             { label: 'Processed', route: 'processed', count: processed.length, icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed (On Behalf Of)', action: 'view' } },
             { label: 'Rejected', route: 'rejected', count: rejected.length, icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } },
-            { label: 'Rejected', route: 'rejected', count: rejected.length, icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } },
+            { label: 'Cancelled', route: 'cancel', count: Cancelled.length, icon: '/time-off-icon/cancelled-icon.png', permission: { feature: 'Cancelled (On Behalf Of)', action: 'view' } },
 
           ];
           this.filterTabsByRbac();

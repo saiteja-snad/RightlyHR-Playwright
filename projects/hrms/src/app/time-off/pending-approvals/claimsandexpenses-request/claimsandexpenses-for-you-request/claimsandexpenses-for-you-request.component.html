@@ -187,47 +187,51 @@
       </div>
     </div>
 
-    <div class="d-flex gap-5 pt-3 ps-4">
-      <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams?.expenses_Title }}</b>
-      <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
-    </div>
-    <div class="custom-table p-3">
-      <table class="w-100">
-        <thead>
-          <tr>
-            <th>Expense Type</th>
-            <th>Expense Name</th>
-            <th>Expense Date</th>
-            <th>Expense Amount</th>
-            <th>Status</th>
-            <th>Receipt Number</th>
-            <th class="text-center">Action(S)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
-            <td>{{ item?.expenseType }}</td>
-            <td>{{ item?.item_Name }}</td>
-            <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
-            <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
-            <td>{{ item?.status }}</td>
-            <td>{{ item?.receipt_Number }}</td>
-            <td class="text-center">
-              <div class="d-flex gap-2">
-                <a type="button" class="me-2 download-text text-nowrap" (click)="onSelectDownload(item?.attachment_url)">
-                  <i class="bi bi-download me-2"></i>Download
-                </a>
-                <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
-                  (click)="onViewAttachement(item?.attachment_url)">
-                  <i class="bi bi-eye-fill me-2"></i>View
-                </a>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="text-center mt-3">
-        <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+   <div class="custom-main-popup-content">
+      <div class="mb-3 d-flex gap-3">
+        <b class="expenses-title-text">Expense Title : {{ expenseheaderiteams.expenses_Title }}</b>
+        <!-- <b class="expenses-title-text">Approval Email : {{ expenseheaderiteams.approverEmail }}</b> -->
+      </div>
+
+      <div class="custom-table">
+        <table class="w-100">
+          <thead>
+            <tr>
+              <th>Expense Type</th>
+              <th>Expense Name</th>
+              <th>Expense Date</th>
+              <th>Expense Amount</th>
+              <th>Status</th>
+              <th>Receipt Number</th>
+              <th class="text-center">Action(S)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of expenseheaderiteams?.expenseitem">
+              <td>{{ item?.expenseType }}</td>
+              <td>{{ item?.item_Name }}</td>
+              <td>{{ item?.expense_Date | date: 'dd-MM-yyyy' }}</td>
+              <td>{{ item?.expense_Amount | number: '1.2-2' }}</td>
+              <td>{{ item?.status }}</td>
+              <td>{{ item?.receipt_Number }}</td>
+              <td class="text-center">
+                <div class="d-flex gap-2">
+                  <a type="button" class="me-2 download-text text-nowrap"
+                    (click)="onSelectDownload(item?.attachment_url)">
+                    <i class="bi bi-download me-2"></i>Download
+                  </a>
+                  <a type="button" class="download-text text-nowrap" *ngIf="isImageFile(item?.attachment_url)"
+                    (click)="onViewAttachement(item?.attachment_url)">
+                    <i class="bi bi-eye-fill me-2"></i>View
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="text-center mt-3">
+          <b>Total Amount : {{expenseheaderiteams?.expense_Amount | number: '1.2-2'}}</b>
+        </div>
       </div>
     </div>
   </div>

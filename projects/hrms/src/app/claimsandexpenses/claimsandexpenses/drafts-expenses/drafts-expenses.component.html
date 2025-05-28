@@ -247,10 +247,11 @@
                                 <input type="file" class="form-control custom-input px-0"
                                      accept=".pdf, image/*" (change)="fileupload($event, i)">
 
-                               
+                                <div *ngIf="fileuploadhide">
                                 <div class="error-msg"
                                     *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
                                     File is required
+                                </div>
                                 </div>
                                 <div *ngIf="filehidedonload">
                                 <div class="d-flex gap-3 mt-3" *ngIf="item.get('attachment_url')?.value">

@@ -203,9 +203,11 @@
                                         class="text-danger">*</span></label>
                                 <input type="file" class="form-control custom-input px-0"  accept=".pdf, image/*"
                                     (change)="fileupload($event, i)" />
+                                    <div *ngIf="fileuploadhide">
                                 <div class="error-msg"
                                     *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
                                     File is required
+                                </div>
                                 </div>
                             </div>
                         </div>

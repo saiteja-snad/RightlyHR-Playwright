@@ -207,11 +207,11 @@ export class DraftsExpensesComponent {
     const file = event.target.files[0]; // Get the selected file
     if (!file) return;
     //if (!file) return;
-    let d: Date = new Date()
-     const removeSpaceFileName = this.formValidation.sanitizeFileName(file.name);
-        const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
-    this.expensesAttachment = this.renameFiles(file, newFileName)
-    console.log('this.expensesAttachment', this.expensesAttachment);
+    // let d: Date = new Date()
+    //  const removeSpaceFileName = this.formValidation.sanitizeFileName(file.name);
+    //     const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
+    // this.expensesAttachment = this.renameFiles(file, newFileName)
+    // console.log('this.expensesAttachment', this.expensesAttachment);
     // Allowed file types and size
     const allowedTypes = [
       'image/jpeg',
@@ -239,7 +239,7 @@ export class DraftsExpensesComponent {
     const fileUpload$ = this.http.uploadFileWithQuery(
       'FileSystem/uploadfiletodirectory',
       filepath,
-      this.expensesAttachment
+      file
     );
     fileUpload$.subscribe({
       next: (data: any) => {
@@ -269,6 +269,7 @@ export class DraftsExpensesComponent {
 
   submitepxenses(form: FormGroup) {
     this.spinnerLoader = true
+      const filepath = `/Expenses/${this.empinfo.employeeId}`;
     const payload = {
       expenses_ID: this.updataid,
       applied_date: new Date().toISOString(),
@@ -286,10 +287,10 @@ export class DraftsExpensesComponent {
         expense_Amount: item.expense_Amount,
         receipt_Number: item.receipt_Number,
         status: 'Waiting for Approval',
-        attachment_url: this.expensesAttachment?.name || item.attachment_url,
+        attachment_url:  item.attachment_url,
       })),
     };
-    const filepath = `/Expenses/${this.empinfo.employeeId}`;
+  
     // Check if there is any file to upload
     if (this.Myexpense) {
       const fileUpload$ = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, this.Myexpense)
@@ -360,7 +361,7 @@ export class DraftsExpensesComponent {
         expense_Amount: item.expense_Amount,
         receipt_Number: item.receipt_Number,
         status: 'Draft',
-        attachment_url: this.expensesAttachment?.name || item.attachment_url,
+        attachment_url: item.attachment_url,
       })),
     };
     const filepath = `/Expenses/${this.empinfo.employeeId}`;
@@ -509,7 +510,7 @@ export class DraftsExpensesComponent {
   }
 
   onSelectDownload(file: any): void {
-    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.value).subscribe({
+    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile',file.value).subscribe({
       next: (res: any) => {
         // Check if the response body is of type Blob
         const blob: Blob = res.body as Blob;

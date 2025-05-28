@@ -339,6 +339,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.permissionForYouTriggerSignal.set(true);
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
+            this.getAllPendingApprovals();
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
@@ -473,6 +474,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.permissionForYouTriggerSignal.set(true);
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
+            this.getAllPendingApprovals();
           },
           error: (reason: any) => {
             this.modalService.dismissAll();

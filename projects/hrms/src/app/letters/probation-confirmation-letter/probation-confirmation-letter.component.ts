@@ -147,7 +147,7 @@ export class ProbationConfirmationLetterComponent {
 
   //get employee ids for dropdown
   getProbationEmployees() {
-    this.subscription = this.http.getData(`ProbationFlow/getAllProbationEmployees?substatus=${"Probation"}`).subscribe({
+    this.subscription = this.http.getData(`ProbationFlow/getAllProbationEmployees?substatus=${"Probation Confirmed"}`).subscribe({
       next: (data: any) => {
         this.probationemp = data.map((employee: any) => ({
           ...employee,

@@ -95,22 +95,22 @@ export class CloneLeavecategoryComponent {
       isApplicableProRataLeave: [undefined, Validators.required],
       // Future Dates
       futureDatesAllowed: [undefined, Validators.required],
-      futureDatesAllowedDays: [{value:null,disabled:true}, [this.dependentRequiredValidator('futureDatesAllowed')]],
+      futureDatesAllowedDays: [null, [this.dependentRequiredValidator('futureDatesAllowed')]],
       // Past Dates
       pastDateAllowed: [undefined, Validators.required],
-      pastDatesAllowedDays: [{value:null,disabled:true}, [this.dependentRequiredValidator('pastDateAllowed')]],
+      pastDatesAllowedDays: [null, [this.dependentRequiredValidator('pastDateAllowed')]],
       // Carry Forward
       carryForwardAllowed: [undefined, Validators.required],
-      carryForwardAllowedValue: [{value:null,disabled:true}, [this.dependentRequiredValidator('carryForwardAllowed')]],
+      carryForwardAllowedValue: [null, [this.dependentRequiredValidator('carryForwardAllowed')]],
       // Encash
       encashAllowedType: [undefined, Validators.required],
-      encashAllowedValue: [{value:null,disabled:true}, [this.dependentRequiredValidator('encashAllowedType')]],
+      encashAllowedValue: [null, [this.dependentRequiredValidator('encashAllowedType')]],
       // Notice Period
       noticeperiodAllowedType: [undefined, Validators.required],
-      noticePeriodAllowedValue: [{value:null,disabled:true}, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
+      noticePeriodAllowedValue: [null, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
       // Probation Period
       isProbationAllowed: [undefined, Validators.required],
-      probationDays: [{value:null,disabled:true}, [this.dependentRequiredValidator('isProbationAllowed')]]
+      probationDays: [null, [this.dependentRequiredValidator('isProbationAllowed')]]
     });
   }
 
@@ -208,7 +208,7 @@ export class CloneLeavecategoryComponent {
       const daysControl = this.leavePolicyForm.get('futureDatesAllowedDays');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(0)]);
+        daysControl?.setValidators([Validators.required, Validators.min(1)]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
@@ -221,7 +221,7 @@ export class CloneLeavecategoryComponent {
       const daysControl = this.leavePolicyForm.get('pastDatesAllowedDays');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(0)]);
+        daysControl?.setValidators([Validators.required, Validators.min(1)]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
@@ -233,7 +233,7 @@ export class CloneLeavecategoryComponent {
       const daysControl = this.leavePolicyForm.get('carryForwardAllowedValue');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(0)]);
+        daysControl?.setValidators([Validators.required, Validators.min(1)]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
@@ -246,7 +246,7 @@ export class CloneLeavecategoryComponent {
       const daysControl = this.leavePolicyForm.get('encashAllowedValue');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(0)]);
+        daysControl?.setValidators([Validators.required, Validators.min(1)]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
@@ -259,7 +259,7 @@ export class CloneLeavecategoryComponent {
       const daysControl = this.leavePolicyForm.get('noticePeriodAllowedValue');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(0)]);
+        daysControl?.setValidators([Validators.required, Validators.min(1)]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
@@ -272,7 +272,7 @@ export class CloneLeavecategoryComponent {
       const daysControl = this.leavePolicyForm.get('probationDays');
       if (value) {
         daysControl?.enable();
-        daysControl?.setValidators([Validators.required, Validators.min(0)]);
+        daysControl?.setValidators([Validators.required, Validators.min(1)]);
       } else {
         daysControl?.disable();
         daysControl?.clearValidators();
@@ -335,7 +335,7 @@ export class CloneLeavecategoryComponent {
       isProbationAllowed: data.isProbationAllowed,
       probationDays: data.probationDays
     });
-
+    this.setupDependentFieldListeners(); 
     // Manually trigger value changes for dependent fields
     this.leavePolicyForm?.get('futureDatesAllowed')?.updateValueAndValidity();
     this.leavePolicyForm?.get('pastDateAllowed')?.updateValueAndValidity();

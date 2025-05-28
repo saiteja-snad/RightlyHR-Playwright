@@ -247,7 +247,7 @@
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2"> {{'Offer Issued Date'|translate}}<span
                             class="error-msg">*</span></label>
-                    <input type="date" class="form-control custom-input" formControlName="offerSentDate"  [min]="issuedDatevalidate" (change)="updateEndDateValidityupdate();updateEndDateValidityForExpectedStartDate()"
+                    <input type="date" class="form-control custom-input" formControlName="offerSentDate"  [min]="issuedDatevalidate" (change)="updateEndDateValidityupdate();updateEndDateValidityForExpectedStartDate();updateEndDateValidity()"
                         placeholder="Please enter offer issued date" onkeydown="return false;" (change)="isDataPopulated()" />
                     <div *ngIf="employeeForm.get('offerSentDate')?.invalid && employeeForm.get('offerSentDate')?.touched">
                         <div class="error-msg">Offer Issued Date is required</div>
@@ -272,11 +272,11 @@
                     <label class="form-label custom-label mb-2"> {{'Offer Expiry Date'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="offerExpiryDate"
-                        placeholder="Please enter offer expiry date" [min]="expiryDatevalidate"  (change)="updateEndDateValidity()" onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
+                        placeholder="Please enter offer expiry date" (change)="updateEndDateValidity()" onkeydown="return false;" min="traineeEmpData.offerIssuedDate" />
                     <div *ngIf="employeeForm.get('offerExpiryDate')?.invalid && employeeForm.get('offerExpiryDate')?.touched">
                         <div class="error-msg">Offer Expiry Date is required</div>
                     </div>
-                    <div *ngIf="!isExpiryDateValid" class="error-msg">Offer Expiry Date should be after the
+                    <div *ngIf="isExpiryDateValid" class="error-msg">Offer Expiry Date should be after the
                         Offer Issued Date</div>
                         <!-- <div *ngIf="!isStartDateValidofexpected" class="error-msg">Offer Expiry Date should be after the
                             Expected Start Date</div> -->

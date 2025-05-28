@@ -27,7 +27,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     TranslateModule,
     DataLoaderContentComponent,
     NoDataFoundComponent,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    NgbPopoverModule
 ],
   templateUrl: './review-cycle-list.component.html',
   styleUrl: './review-cycle-list.component.scss',

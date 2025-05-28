@@ -1,15 +1,21 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0">My Team Performance Review</p>
+    <div class="component-header-content">
+        
+          <div class="heading-content">
+            <div class="commpoment-name ">PMS <span class="ms-2">>></span></div>
+            <div class="component-header">{{'My Team Performance Review' | translate}}</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
     </div>
 
-     <!--Module Information-->
-     <div>
+      <!--Module Information-->
+    <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
-    
+    </ng-template>
+
     <div class="mb-3">
         <app-team-performance-tabs />
     </div>

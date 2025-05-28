@@ -203,7 +203,7 @@
           <div class="error-msg">
              <div *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || 
           (earlyrelievingreason.invalid && acceptForm.submitted)">{{'Comment is required' | translate}}</div>
-             <div  *ngIf="earlyrelievingreason.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
+             <div  *ngIf="earlyrelievingreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
             </div>
         
          
@@ -242,7 +242,7 @@
              <div  *ngIf="(Extendreason.touched && Extendreason.invalid) || 
              (Extendreason.invalid && acceptForm.submitted) || (Extendreason.errors?.['pattern'])">
             {{'Feedback for Extend is required' | translate}}</div>
-             <div  *ngIf="Extendreason.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
+             <div  *ngIf="Extendreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
             </div>
        
         </div>
@@ -263,7 +263,7 @@
               <div  *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || 
           (Descriptiondetails.invalid && selectedData.submitted)">{{'Reason is required' | translate}}
           </div>
-          <div *ngIf="Descriptiondetails.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
+          <div *ngIf="Descriptiondetails.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
             </div>
           </div>
           </div>

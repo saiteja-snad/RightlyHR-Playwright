@@ -17,7 +17,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AddLeavecategoryComponent {
   
-  leavePolicyForm: FormGroup;
+  leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
   jobLocationDropDownData: any[] = [];
@@ -51,7 +51,19 @@ export class AddLeavecategoryComponent {
   constructor(private fb: FormBuilder,private http: HttpService,private confirmation: OpenModalService,private router: Router,private modalService: NgbModal) {
     
 
-    this.leavePolicyForm = this.fb.group({
+   
+    
+  }
+
+  ngOnInit(): void {
+    this.setupDependentFieldListeners();
+    this.jobLocationList();
+    this.getOrgLeavesCategories();
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear; year >= currentYear - 10; year--) {
+      this.years.push({ label: year.toString(), value: year });
+    }
+     this.leavePolicyForm = this.fb.group({
       // Location/Shift Section
       applicableYear: [undefined, Validators.required],
       locationID: [undefined, Validators.required],
@@ -99,17 +111,25 @@ export class AddLeavecategoryComponent {
       isProbationAllowed: [undefined, Validators.required],
       probationDays: [undefined, [this.dependentRequiredValidator('isProbationAllowed')]]
     });
-    
-  }
-
-  ngOnInit(): void {
-    this.setupDependentFieldListeners();
-    this.jobLocationList();
-    this.getOrgLeavesCategories();
-    const currentYear = new Date().getFullYear();
-    for (let year = currentYear; year >= currentYear - 10; year--) {
-      this.years.push({ label: year.toString(), value: year });
-    }
+    this.leavePolicyForm.get('locationID')?.valueChanges.subscribe((value: any) => {
+    //  const shift =   this.leavePolicyForm?.get('shiftId');
+     const subLocation =  this.leavePolicyForm?.get('subLocation');
+      if(!value) {
+       subLocation?.reset();
+       subLocation?.disable();
+      }else{
+       subLocation?.enable();
+      }
+    });
+    this.leavePolicyForm.get('subLocation')?.valueChanges.subscribe((value: any) => {
+     const shift =   this.leavePolicyForm?.get('shiftId');
+      if(!value) {
+       shift?.reset();
+      //  shift?.disable();
+      }else{
+       shift?.enable();
+      }
+    });
   }
 
   jobLocationList() {
@@ -134,7 +154,7 @@ export class AddLeavecategoryComponent {
   }
   
   subloactionid(id?: any) {
-      const sublocationId = this.subLocationsDropdown.find((c: any) => parseInt(c.id) === parseInt(id));
+      const sublocationId = this.subLocationsDropdown?.find((c: any) => parseInt(c.id) === parseInt(id));
       this.getShiftBYid(sublocationId);
   }
 
@@ -182,7 +202,7 @@ export class AddLeavecategoryComponent {
   }
 
   private setupDependentFieldListeners() {
-    this.leavePolicyForm.get('futureDatesAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('futureDatesAllowed')?.valueChanges.subscribe((value :any) => {
       const daysControl = this.leavePolicyForm.get('futureDatesAllowedDays');
       if (value) {
         daysControl?.enable();
@@ -195,7 +215,7 @@ export class AddLeavecategoryComponent {
       daysControl?.updateValueAndValidity();
     });
 
-    this.leavePolicyForm.get('pastDateAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('pastDateAllowed')?.valueChanges.subscribe((value :any) => {
       const daysControl = this.leavePolicyForm.get('pastDatesAllowedDays');
       if (value) {
         daysControl?.enable();
@@ -207,7 +227,7 @@ export class AddLeavecategoryComponent {
       }
       daysControl?.updateValueAndValidity();
     });
-    this.leavePolicyForm.get('carryForwardAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('carryForwardAllowed')?.valueChanges.subscribe((value :any) => {
       const daysControl = this.leavePolicyForm.get('carryForwardAllowedValue');
       if (value) {
         daysControl?.enable();
@@ -220,7 +240,7 @@ export class AddLeavecategoryComponent {
       daysControl?.updateValueAndValidity();
     });
 
-    this.leavePolicyForm.get('encashAllowedType')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('encashAllowedType')?.valueChanges.subscribe((value :any) => {
       const daysControl = this.leavePolicyForm.get('encashAllowedValue');
       if (value) {
         daysControl?.enable();
@@ -233,7 +253,7 @@ export class AddLeavecategoryComponent {
       daysControl?.updateValueAndValidity();
     });
 
-    this.leavePolicyForm.get('noticeperiodAllowedType')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('noticeperiodAllowedType')?.valueChanges.subscribe((value :any) => {
       const daysControl = this.leavePolicyForm.get('noticePeriodAllowedValue');
       if (value) {
         daysControl?.enable();
@@ -246,7 +266,7 @@ export class AddLeavecategoryComponent {
       daysControl?.updateValueAndValidity();
     });
 
-    this.leavePolicyForm.get('isProbationAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('isProbationAllowed')?.valueChanges.subscribe((value :any) => {
       const daysControl = this.leavePolicyForm.get('probationDays');
       if (value) {
         daysControl?.enable();

@@ -125,7 +125,9 @@ export class CloneLeavecategoryComponent {
     this.getSubLocationByid(locationID);
   }
   getSubLocationByid(locationID: any) {
-    let sublocid = locationID ?? this.updatecloneLeaveCategoryData.locationID
+    console.log(locationID);
+    
+    let sublocid = locationID?.id ?? this.updatecloneLeaveCategoryData.locationID
     this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${sublocid}`).subscribe({
       next: (data: any) => {
         this.subLocationsDropdown = data.jobSubLocations;

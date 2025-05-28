@@ -1,23 +1,30 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="d-flex gap-2">
+    <div class="component-header-content">
+        <div class="heading-content">
+             <div class="commpoment-name ">Attendance<span class="ms-2">>></span></div>
             <p class="component-header cursor mb-0 text-nowrap">Attendance @if(empName){( {{empName}} )}</p>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
+
         <div class="d-flex align-items-center flex-wrap gap-3">
             <label class="form-label custom-label pt-2" for="">Select</label>
             <div class="custom-year-month-picker">
-                <p-datepicker [(ngModel)]="date"placeholder="Select month and year"
-                    (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month" dateFormat="mm/yy" [readonlyInput]="true" />
+                <p-datepicker [(ngModel)]="date" placeholder="Select month and year"
+                    (ngModelChange)="checkdates($event)" [showIcon]="true" [selectOtherMonths]="true" view="month"
+                    dateFormat="mm/yy" [readonlyInput]="true" />
             </div>
-        
+
             <!-- select all employees drop down for HR code start -->
             @if(this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
             <label class="form-label custom-label pt-2" for="">Select Employee</label>
             <div class="custom-p-select-content">
                 <p-select [options]="getAllEmployeeInfo" [filter]="true" filterBy="fullName" [showClear]="false"
                     [(ngModel)]="selectedEmployee" placeholder="Select Employee"
-                    (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null" optionLabel="fullName"
-                    class="custom-select">
+                    (onChange)="getAttendnaceData(selectedEmployee);this.selectedEmployeeOfHr=null"
+                    optionLabel="fullName" class="custom-select">
                 </p-select>
             </div>
             }
@@ -28,8 +35,8 @@
             <div class="custom-p-select-content">
                 <p-select [options]="get_Employeelist_forTM" [filter]="true" filterBy="fullName" [showClear]="false"
                     [(ngModel)]="selectedEmployeeOfHr" placeholder="Select Employee"
-                    (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null" optionLabel="fullName"
-                    class="custom-select">
+                    (onChange)="getAttendnaceData(selectedEmployeeOfHr);this.selectedEmployee=null"
+                    optionLabel="fullName" class="custom-select">
                 </p-select>
             </div>
             }
@@ -46,9 +53,10 @@
     </div>
 
     <!--Module Information-->
-  <div>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+
 
     <div class="row">
         <div class="col-9">

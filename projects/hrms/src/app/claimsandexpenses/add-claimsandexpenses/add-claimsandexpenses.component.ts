@@ -226,11 +226,11 @@ expensesAttachment:any;
     const file = event.target.files[0]; // Get the selected file
 
     //if (!file) return;
-    let d: Date = new Date()
-     const removeSpaceFileName = this.formValidationService.sanitizeFileName(file.name);
-        const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
-    this.expensesAttachment = this.renameFiles(file, newFileName)
-    console.log('this.expensesAttachment',this.expensesAttachment);
+    // let d: Date = new Date()
+    //  const removeSpaceFileName = this.formValidationService.sanitizeFileName(file.name);
+    //     const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
+    // this.expensesAttachment = this.renameFiles(file, newFileName)
+    // console.log('this.expensesAttachment',this.expensesAttachment);
   //}
     // Allowed file types and size
     const allowedTypes = [
@@ -262,7 +262,7 @@ expensesAttachment:any;
     const fileUpload$ = this.http.uploadFileWithQuery(
       'FileSystem/uploadfiletodirectory',
       filepath,
-      this.expensesAttachment
+      file
     );
     fileUpload$.subscribe({
       next: (data: any) => {
@@ -315,7 +315,7 @@ expensesAttachment:any;
           expense_Amount: item.expense_Amount,
           receipt_Number: item.receipt_Number,
           status: 'Waiting for Approval',
-          attachment_url: this.expensesAttachment?.name,
+          attachment_url: item.attachment_url,
         })),
         attachment_url: undefined
       };
@@ -396,7 +396,7 @@ expensesAttachment:any;
           expense_Amount: item.expense_Amount,
           receipt_Number: item.receipt_Number,
           status: 'Draft',
-          attachment_url: this.expensesAttachment?.name, // Use the uploaded file path or undefined if no file
+          attachment_url: item.attachment_url // Use the uploaded file path or undefined if no file
         })),
         attachment_url: undefined
       };

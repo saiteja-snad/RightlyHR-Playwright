@@ -182,7 +182,7 @@
                         {{selectedData.comments?.length?selectedData.comments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || 
                     (earlyrelievingreason.invalid && ProcessacceptForm.submitted)">{{'Comments is required' | translate}}</div>
-                     <div class="error-msg" *ngIf="earlyrelievingreason.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
+                     <div class="error-msg" *ngIf="earlyrelievingreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
                 </div>
              @if(selectedData.probationextendedcount<=probationExtensionTimes){
                 <div class="mb-3" *ngIf="extend">
@@ -205,13 +205,13 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">{{'Feedback for Extend' |
                         translate}}<span class="error-msg">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
+                        placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedData.comments" maxlength="250"
                         (ngModelChange)="ifreasonnull(selectedData.comments)" required rows="3"></textarea>
                     <div class="textarea-count-text">{{selectedData.comments?.length?selectedData.comments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && ProcessacceptForm.submitted)
                      || (Extendreason.errors?.['pattern']) ">{{'Feedback for Extend is required' | translate}}</div>
-                      <div class="error-msg" *ngIf="Extendreason.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
+                      <div class="error-msg" *ngIf="Extendreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
                 </div>
             }
                 <div class="mb-3" *ngIf="discontinue">
@@ -228,7 +228,7 @@
                         *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || (Descriptiondetails.invalid && ProcessacceptForm.submitted)">
                         {{'Reason is required' | translate}}
                     </div>
-                     <div class="error-msg" *ngIf="Descriptiondetails.dirty &&issubmitdiable">Special characters and spaces are not allowed at the beginning</div>
+                     <div class="error-msg" *ngIf="Descriptiondetails.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
                 </div>
             </div>
 

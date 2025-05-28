@@ -5,12 +5,16 @@ export interface IAttendance {
     lastLogout: Date,
     duration: any,
     status: string,
+    colour: string,
     subStatus?: [],
     tags: Itags[],
     dayLogs: IdayLogs[],
     biometricLogs: [],
     permissions: [],
-    regularizations: []
+    regularizations: [],
+    displayStatus:any,
+    isRegularizationApplicable: boolean,
+    isLeaveApplicable: boolean,
 }
 export interface IdayLogs {
     in: any;

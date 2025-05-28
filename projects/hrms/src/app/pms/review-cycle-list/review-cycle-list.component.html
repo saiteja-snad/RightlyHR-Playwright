@@ -1,17 +1,25 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="component-header">{{'Review Cycle List' | translate}}</div>
-        @if(rbac.allowedToAccess('Create Review Cycle.view')){
+    <div class="component-header-content">
+    <div class="heading-content">
+        <div class="commpoment-name cursor">PMS<span class="ms-2">>></span></div>
+        <div class="component-header"> {{'Review Cycle List' | translate}}</div>
         <div>
-            <button class="custom-btn btn-primary" (click)="openAdd()">{{'Create Review Cycle'|translate}}</button>
+            <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                class="module-icon">
+        </div>
+    </div>
+    @if(rbac.allowedToAccess('Create Review Cycle.view')){
+        <div>
+            <button class="custom-btn btn-primary" (click)="openAdd()">{{'Review Cycle List' | translate}}</button>
         </div>
         }
     </div>
-
+   
     <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo"/>
-     </div>
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+
 
     <!--Search input-->
     <div class="input-group custom-search mb-3">
@@ -31,7 +39,8 @@
                     <th>{{'Location'|translate}}</th>
                     <th>{{'Sub Location'|translate}}</th>
                     <th>{{'Status'|translate}}</th>
-                    @if(rbac.allowedToAccess('Hold.view') || rbac.allowedToAccess('Resume.view') || rbac.allowedToAccess('Update.view') ||
+                    @if(rbac.allowedToAccess('Hold.view') || rbac.allowedToAccess('Resume.view') ||
+                    rbac.allowedToAccess('Update.view') ||
                     rbac.allowedToAccess('View.view') || rbac.allowedToAccess('Initiate.view')){
                     <th class="text-center">Action(S)</th>
                     }
@@ -46,53 +55,55 @@
                     <td>{{ getNamesAsString(cycle.locations, 'locations') }}</td>
                     <td>{{ getNamesAsString(cycle.sublocations, 'subLocations') }}</td>
                     <td>{{ cycle.status }}</td>
-                    @if(rbac.allowedToAccess('Hold.view') || rbac.allowedToAccess('Resume.view') || rbac.allowedToAccess('Update.view') ||
+                    @if(rbac.allowedToAccess('Hold.view') || rbac.allowedToAccess('Resume.view') ||
+                    rbac.allowedToAccess('Update.view') ||
                     rbac.allowedToAccess('View.view') || rbac.allowedToAccess('Initiate.view')){
                     <td class="text-center">
                         @if(canPerformActionsOnCycle(cycle)){
-                            <div class="dropdown">
-                                <span type="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </span>
-                                <ul class="dropdown-menu custom-dropdown-menu">
-                                    @if(rbac.allowedToAccess('Hold.view')){
-                                    @if(cycle.status==='Initiated'){
-                                    <li class="dropdown-item border-bottom" (click)="openModal(holdconformation);seletedid=cycle">
-                                        <a class="dropdown-custom-btn">Hold</a>
-                                    </li>
-                                    }
-                                    }
-                                    @if(rbac.allowedToAccess('Resume.view')){
-                                    @if(cycle.status==='Review on Hold'){
-                                    <li class="dropdown-item" (click)="openModal(Resumeconformation);seletedid=cycle">
-                                        <a class="dropdown-custom-btn">Resume</a>
-                                    </li>
-                                    }
-                                    }
-                                    @if(rbac.allowedToAccess('Update.view')){
-                                    @if(cycle.status !=='Initiated' && cycle.status !=='Review on Hold'){
-                                    <li class="dropdown-item" (click)="onUpdate(cycle)">
-                                        <a class="dropdown-custom-btn">Update</a>
-                                    </li>
-                                    }
-                                    }
-                                    @if(rbac.allowedToAccess('View.view')){
-                                    @if(cycle.status ==='Initiated'){
-                                    <li class="dropdown-item" (click)="onClickView(cycle)">
-                                        <a class="dropdown-custom-btn">View</a>
-                                    </li>
-                                    }
-                                    }
-                                    @if(rbac.allowedToAccess('Initiate.view')){
-                                    @if(cycle.status==='Created'){
-                                    <li class="dropdown-item" (click)="openModal(intialconformation);seletedid=cycle">
-                                        <a class="dropdown-custom-btn"></a>Initiate
-                                    </li>
-                                    }
-                                    }
-                                </ul>
-                            </div>
-                        }   
+                        <div class="dropdown">
+                            <span type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </span>
+                            <ul class="dropdown-menu custom-dropdown-menu">
+                                @if(rbac.allowedToAccess('Hold.view')){
+                                @if(cycle.status==='Initiated'){
+                                <li class="dropdown-item border-bottom"
+                                    (click)="openModal(holdconformation);seletedid=cycle">
+                                    <a class="dropdown-custom-btn">Hold</a>
+                                </li>
+                                }
+                                }
+                                @if(rbac.allowedToAccess('Resume.view')){
+                                @if(cycle.status==='Review on Hold'){
+                                <li class="dropdown-item" (click)="openModal(Resumeconformation);seletedid=cycle">
+                                    <a class="dropdown-custom-btn">Resume</a>
+                                </li>
+                                }
+                                }
+                                @if(rbac.allowedToAccess('Update.view')){
+                                @if(cycle.status !=='Initiated' && cycle.status !=='Review on Hold'){
+                                <li class="dropdown-item" (click)="onUpdate(cycle)">
+                                    <a class="dropdown-custom-btn">Update</a>
+                                </li>
+                                }
+                                }
+                                @if(rbac.allowedToAccess('View.view')){
+                                @if(cycle.status ==='Initiated'){
+                                <li class="dropdown-item" (click)="onClickView(cycle)">
+                                    <a class="dropdown-custom-btn">View</a>
+                                </li>
+                                }
+                                }
+                                @if(rbac.allowedToAccess('Initiate.view')){
+                                @if(cycle.status==='Created'){
+                                <li class="dropdown-item" (click)="openModal(intialconformation);seletedid=cycle">
+                                    <a class="dropdown-custom-btn"></a>Initiate
+                                </li>
+                                }
+                                }
+                            </ul>
+                        </div>
+                        }
                     </td>
                     }
                 </tr>
@@ -102,7 +113,7 @@
             </tbody>
         </table>
     </div>
-    
+
     @if(filteredDetails.length > 0){
     <div class="pagination-content">
         <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
@@ -113,7 +124,8 @@
                     </option>
                 </select>
                 <span class="pagination-label text-nowrap">
-                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{ collectionSize }}
+                    Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows)
+                    }} of {{ collectionSize }}
                 </span>
             </div>
             <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
@@ -122,9 +134,9 @@
     </div>
     }
     }@else{
-        <div class="custom-compoent-data-loader">
-            <app-data-loader-content />
-        </div>
+    <div class="custom-compoent-data-loader">
+        <app-data-loader-content />
+    </div>
     }
 </div>
 
@@ -179,7 +191,8 @@
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
-            <button type="submit" class="custom-btn btn-primary" (click)="initiateReviewCycle(seletedid);modal.dismiss()">
+            <button type="submit" class="custom-btn btn-primary"
+                (click)="initiateReviewCycle(seletedid);modal.dismiss()">
                 {{'Yes'|translate}}
             </button>
         </div>

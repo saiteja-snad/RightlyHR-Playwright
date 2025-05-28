@@ -56,6 +56,7 @@ export class OnBeHalfOfCancelComponent implements OnInit,OnDestroy{
       let empid = this.empdata.employeeId;
       this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
         next: (response: any) => {
+          console.log(response);
           if (Array.isArray(response)) {
             this.lpdata = response.filter(item => item.status === 'Cancelled');
           } else {

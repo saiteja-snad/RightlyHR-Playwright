@@ -202,7 +202,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       backdrop: 'static',
     });
   }
-
+//function to get the attendance criteria
   getAttendanceCriteria() {
     const params = 'AttendanceRegularization';
     const param = [
@@ -431,7 +431,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
                 return {
                   ...employee,
                   fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                    }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                    }${employee.firstName??''} ${employee.middleName ? employee.middleName + ' ' : ''
                     }${employee.lastName}`,
                 };
               });

@@ -5,7 +5,7 @@ import { NgbPopoverModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import moment from 'moment';
 import { DropdownModule } from 'primeng/dropdown';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription, takeUntil } from 'rxjs';
 import { LeaveApproval, LeaveApproverComment } from '../../../Interfaces/pendingapprovalsmodel';
 import { ICategoryDetails } from '../../../Interfaces/timoff-model';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
@@ -35,7 +35,8 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   LOGIN: any;
   subscription!: Subscription;
   searchValue: any;
-  leaves = [] as LeaveApproval[];
+  leaves = new BehaviorSubject<LeaveApproval[]>([]);
+  leavesselect!: LeaveApproval[];
   empinfo = {} as IemployeeDetails
   responseSummary!: any;
   approverComments = [] as LeaveApproverComment[];
@@ -81,7 +82,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
           console.log('const')
           this.getAllPendingApprovals();
         } else {
-          this.leaves = [];
+          this.leaves.next([]);
         }
         this.http.resetTriggerSignal();
         if (this.selectedProducts?.length > 0) {
@@ -102,7 +103,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
       this.LOGIN = storedEmployee;
       this.getAllPendingApprovals();
     } else {
-      this.leaves = [];
+       this.leaves.next([]);
     }
   }
 
@@ -111,7 +112,8 @@ export class TimeOffComponent implements OnInit, OnDestroy {
     this.dataLoad = true;
     this.subscription = this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.leavesModuleId}`).subscribe({
       next: (response: any) => {
-        this.leaves = response.data as LeaveApproval[];
+        this.leaves.next(response.data);
+        this.leavesselect = response.data;
       },
       error: (reason) => {
         this.dataLoad = false;
@@ -335,7 +337,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
     });
 
     const stages = Object.keys(stageMap);
-    const totalAvailable = this.leaves.length || 0;
+    const totalAvailable = this.leaves?.getValue().length || 0;
     const totalSelected = value.length;
     const isBulkSelect = totalSelected === totalAvailable;
 
@@ -393,6 +395,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
+      this.multiSelect= false;
       this.selectedProducts = [];
       this.hasSelectedAllOnce = false;
       this.updateTableSelectionState([]);
@@ -401,11 +404,10 @@ export class TimeOffComponent implements OnInit, OnDestroy {
 
   getFilteredAndSortedLeaves(): LeaveApproval[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-    let filteredLeaves = [...this.leaves]; // make a copy to avoid modifying the original array
+    let leaves = this.leavesselect ?? [];
 
-    // 🔍 Apply search filter
     if (search) {
-      filteredLeaves = filteredLeaves.filter(item =>
+      leaves = leaves.filter(item =>
         item.entity?.leavefusionempId?.toLowerCase().includes(search) ||
         item.entity?.employeeName?.toLowerCase().includes(search) ||
         item.entity?.leaveDurationType?.toLowerCase().includes(search) ||
@@ -413,15 +415,16 @@ export class TimeOffComponent implements OnInit, OnDestroy {
       );
     }
 
-    // 🔼 Move selected items to top
-    if (this.selectedProducts?.length > 0) {
-      const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
-      const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
-      const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
-      return [...selected, ...unselected];
+    if (!this.selectedProducts || this.selectedProducts.length === 0) {
+      this.leaves.next(leaves);
+      return this.leaves.getValue();
     }
 
-    return filteredLeaves;
+    const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
+    const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+    const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+    this.leaves.next([...selected, ...unselected]);
+    return this.leaves.getValue();
   }
 
 

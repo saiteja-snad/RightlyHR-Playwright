@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Iinactive } from './inactive-model';
@@ -16,7 +16,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-inactive-employees',
-  imports: [CommonModule, RouterModule, InactiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
+  imports: [CommonModule, RouterModule, InactiveEmployeePipe, TranslateModule,NgbPopoverModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './inactive-employees.component.html',
   styleUrl: './inactive-employees.component.scss'
 })

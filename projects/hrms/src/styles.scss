@@ -570,6 +570,48 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1rem;
+    
+}
+
+.heading-content {
+    display: flex;
+    gap: 0.5rem;
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+
+    .commpoment-name {
+        font-weight: 400;
+        font-size: var(--fontsize14);
+        color: #5C5C5C;
+    }
+
+    .component-header {
+        font-family: var(--font-family);
+        font-weight: 700;
+        font-size: var(--fontsize18);
+        color: var(--primary-color);
+    }
+
+    .popover {
+        --bs-popover-max-width: 25rem !important;
+        --bs-popover-border-color: var(--module-info-bg);
+        width: 25rem !important;
+    }
+
+    .bs-popover-bottom>.popover-arrow::after {
+        border-bottom-color: var(--module-info-bg) !important;
+    }
+
+    .popover-body {
+        padding: 0rem !important;
+    }
+
+    .module-icon {
+        width: 1.125rem;
+        height: 1.125rem;
+        cursor: pointer;
+    }
 }
 
 .custom-main-component-container {
@@ -803,8 +845,9 @@ select:focus {
     font-size: var(--fontsize14);
     vertical-align: middle;
     color: #222222;
-    
+
 }
+
 // Select Styling 
 
 // p select stylings
@@ -925,6 +968,7 @@ select:focus {
         background-color: #F0F4F8;
     }
 }
+
 // Select Styling 
 
 // table stylings
@@ -1004,6 +1048,7 @@ select:focus {
         padding: 0.75rem;
     }
 }
+
 // My Info Stylings
 
 // User Profile Card Stylings
@@ -1069,6 +1114,7 @@ select:focus {
         }
     }
 }
+
 // My Info Stylings Ends
 
 // letter main content
@@ -1162,13 +1208,16 @@ select:focus {
 // salary details table
 .salary-details-table {
 
-    table, th, td {
+    table,
+    th,
+    td {
         border: 1px solid #474747;
         border-collapse: collapse;
         color: #000;
     }
 
-    th, td {
+    th,
+    td {
         padding: 0.25rem 0.625rem;
         text-align: center;
         font-size: var(--fontsize14) !important;
@@ -1178,7 +1227,8 @@ select:focus {
         font-weight: bold;
     }
 
-    tr:nth-child(4), tr:nth-child(9) {
+    tr:nth-child(4),
+    tr:nth-child(9) {
         background: rgba(255, 255, 204, 255);
     }
 
@@ -1229,6 +1279,7 @@ select:focus {
     font-size: var(--fontsize32) !important;
     font-family: "autographsignatureFont" !important;
 }
+
 // letter stylings
 
 // note text stylings
@@ -1242,6 +1293,7 @@ select:focus {
         font-weight: 700;
     }
 }
+
 // note text stylings
 
 //My Info Stylings
@@ -1418,8 +1470,10 @@ input[type="file"] {
             }
         }
 
-        .p-paginator-first,.p-paginator-prev,
-        .p-paginator-next,.p-paginator-last {
+        .p-paginator-first,
+        .p-paginator-prev,
+        .p-paginator-next,
+        .p-paginator-last {
             border-radius: 50%;
             width: 1.25rem;
             height: 1.25rem;
@@ -1428,14 +1482,17 @@ input[type="file"] {
             color: #333;
         }
 
-        .p-paginator-first.p-disabled,.p-paginator-prev.p-disabled,
-        .p-paginator-next.p-disabled,.p-paginator-last.p-disabled {
+        .p-paginator-first.p-disabled,
+        .p-paginator-prev.p-disabled,
+        .p-paginator-next.p-disabled,
+        .p-paginator-last.p-disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
     }
 
 }
+
 //pagenation stylings
 
 // login components stylings
@@ -1457,6 +1514,7 @@ input[type="file"] {
         font-weight: 500;
     }
 }
+
 // login components stylings
 
 // custom phone number input with country code stylings
@@ -1511,6 +1569,7 @@ input[type="file"] {
         min-width: 350px !important;
     }
 }
+
 // custom phone number input with country code stylings
 
 //ERROR MESSAGE
@@ -1643,6 +1702,7 @@ input[type="file"] {
     padding: 1rem;
     overflow: auto;
 }
+
 // popup stylings ends
 
 // download text
@@ -1678,6 +1738,7 @@ input[type="file"] {
         text-align: right;
     }
 }
+
 //styles for popup table
 
 // styles for expenses
@@ -1695,7 +1756,8 @@ input[type="file"] {
         z-index: 1;
     }
 
-    th, td {
+    th,
+    td {
         font-weight: 400;
         font-size: var(--fontsize14);
         line-height: 100%;
@@ -1791,6 +1853,7 @@ input[type="file"] {
         }
     }
 }
+
 // Settings Stylings Ends
 
 // red trash icon
@@ -2023,7 +2086,8 @@ input[type=number]::-webkit-outer-spin-button {
             font-weight: 500;
         }
 
-        th,td {
+        th,
+        td {
             padding: 1rem;
             text-align: center;
             line-height: 100%;
@@ -2200,24 +2264,15 @@ input[type=number]::-webkit-outer-spin-button {
 
 //module information 
 .module-information-content {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    width: 100%;
+    height: 100%;
     background-color: var(--module-info-bg);
-    border: 1px solid var(--module-info-border);
     padding: 0.625rem;
     border-radius: 0.5rem;
-    margin-bottom: 0.5rem;
-
-    .question-icon {
-        width: 1.125rem;
-        height: 1.125rem;
-    }
 
     .info-text {
         font-weight: 400;
-        font-size: 11px;
-        line-height: 100%;
+        font-size: var(--fontsize13);
         letter-spacing: 0%;
         color: var(--module-info-text-color);
     }

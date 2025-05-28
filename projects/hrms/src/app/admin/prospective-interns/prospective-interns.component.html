@@ -1,10 +1,13 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
-    <div>
-      <p class="component-header mb-0">
-        <img src="/images/back-icon.png" alt="Icon" class="back-icon" (click)="navigateDashboard()">{{'Prospective Trainees'|translate}}
-      </p>
-    </div>
+  
+     <div class="heading-content">
+            <div class="commpoment-name"><img src="/images/back-icon.png" alt="Icon" class="back-icon" (click)="navigateDashboard()">Dashboard<span class="ms-2">>></span></div>
+            <div class="component-header">   {{'Prospective Trainees'|translate}}</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
+        </div>
     @if(this.rbac.allowedToAccess('Add Prospective Trainee.view')){
     <div class="d-flex">
       <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
@@ -13,10 +16,10 @@
     }
   </div>
 
-  <!--Module Information-->
-  <div>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+        
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
 
   <!--Input search-->
   <div class="input-group custom-search mb-3">

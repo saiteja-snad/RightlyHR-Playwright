@@ -12,9 +12,13 @@
     || this.rbac.allowedToAccess('Dashboard Prospective Trainee Card.view' )
     || this.rbac.allowedToAccess('Dashboard Inactive Employees Card.view' )
     || this.rbac.allowedToAccess('Dashboard Prospective Employees Card.view' )){
-    <div>
-      <p class="component-header mb-0">{{'Dashboard'| translate}}</p>
-    </div>}
+     <div class="heading-content">
+            <div class="commpoment-name">Dashboard<span class="ms-2">>></span></div>
+            <div class="component-header">Dashboard</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
+        </div>}
     <div class="d-flex gap-3">
       <!-- @if(this.rbac.allowedToAccess('Dashboard Current Openings.view')){
       <button type="button" class="custom-btn btn-secondary">Current Openings</button>
@@ -29,10 +33,10 @@
     </div>
   </div>
 
-   <!--Module Information-->
-   <div>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+             <!--Module Information-->
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
 
   <!--Employee Details card-->
   <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-4">

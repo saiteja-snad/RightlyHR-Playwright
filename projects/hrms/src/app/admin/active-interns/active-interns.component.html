@@ -1,14 +1,20 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
-    <p class="component-header mb-0">
-      <img src="/images/back-icon.png" alt="Icon" class="back-icon" (click)="navigateDashboard()">{{'Active Trainees'|translate}}
-    </p>
+      <div class="heading-content">
+    <div class="commpoment-name"><img src="/images/back-icon.png" alt="Icon" class="back-icon" (click)="navigateDashboard()">Dashboard<span class="ms-2">>></span></div>
+    <div class="component-header">{{'Active Trainees'|translate}}</div>
+    <div>
+      <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+    </div>
+  </div>
   </div>
 
+
+
   <!--Module Information-->
-  <div>
+  <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+  </ng-template>
 
   <!--Input search-->
   <div class="input-group custom-search mb-3">

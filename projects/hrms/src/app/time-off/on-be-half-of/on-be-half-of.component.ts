@@ -654,7 +654,7 @@ export class OnBeHalfOfComponent {
               setTimeout(() => {
                 this.modalService.dismissAll();
                 this.leaveForm.reset();
-                window.location.reload();
+                // window.location.reload();
               }, 2000);
               this.startdatevalid = true
               this.disableSubmitButton = true

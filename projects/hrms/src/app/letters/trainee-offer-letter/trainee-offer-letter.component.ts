@@ -69,7 +69,7 @@ export class TraineeOfferLetterComponent {
   JobroleDetails = [] as IRole[];
   disablebuttonfordesignation: boolean = true; //variable to disable the fields
   isIssuedDateValid: boolean = true;
-  isExpiryDateValid: boolean = true;
+  isExpiryDateValid: boolean = false;
   isStartDateValid: boolean = true;
   isStartDateValidofexpected: boolean = true;
   isSearchFeatureDisabled: boolean = true;
@@ -1048,11 +1048,8 @@ export class TraineeOfferLetterComponent {
   updateEndDateValidity(): void {
     const offerExpiryDate = moment(this.employeeForm.get('offerExpiryDate')?.value);
     const offerIssuedDate = moment(this.employeeForm.get('offerSentDate')?.value);
-    if(offerIssuedDate){
-    this.expiryDatevalidate = moment(offerIssuedDate).format('YYYY-MM-DD');
-    }
     if (offerExpiryDate && offerIssuedDate) {
-      if (offerExpiryDate >= offerIssuedDate) {
+      if (offerExpiryDate <= offerIssuedDate) {
         this.isExpiryDateValid = true;
       } else {
         this.isExpiryDateValid = false;

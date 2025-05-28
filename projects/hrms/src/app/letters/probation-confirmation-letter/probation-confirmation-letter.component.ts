@@ -16,9 +16,10 @@ import { IEmployee } from './probation.modal';
 import { IEmployeeSignatures } from '../letters.modal';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-probation-confirmation-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './probation-confirmation-letter.component.html',
   styleUrl: './probation-confirmation-letter.component.scss'
 })

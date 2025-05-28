@@ -1,13 +1,21 @@
 <div class="custom-main-component-container">
     <!--header-->
     <div class="mb-3">
-        <div class="component-header">Settings</div>
+         <div class="heading-content">
+            <div class="commpoment-name">Settings<span class="ms-2">>></span></div>
+            <div class="component-header">Employee Fields</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
     </div>
 
+  
     <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo"/>
-     </div>
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
 
     <!--tabs content-->
     <div class="mb-3">

@@ -12,7 +12,8 @@ export interface Iofferletter {
     approver: any,
     comments: string,
     candidateStatus?: string
-    candidateComments?: string
+    candidateComments?: string,
+    documentURL?: string,
 }
 export interface IJobDetails {
     id: number,

@@ -17,6 +17,7 @@ import { FormValidationsService } from '../../services/form-validations.service'
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-premissions',
   imports: [
@@ -25,7 +26,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     ReactiveFormsModule,
     CommonModule,
     PremissionsTabsComponent, TranslateModule,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    NgbPopoverModule
 ],
   templateUrl: './premissions.component.html',
   styleUrl: './premissions.component.scss',

@@ -50,6 +50,7 @@ export class AssessmentformComponent {
   formFile = {} as any;
   probationExtensiondays = [] as any;
   probationExtensionDuration!: number;
+  probationExtensionTimes!: number;
   overallRatingcount: number = 0;
   sectionRatings: { [key: number]: number } = {}; // Object to hold ratings for each section
   @ViewChild('formsavepopup') formsavepopup!: any;
@@ -97,6 +98,7 @@ export class AssessmentformComponent {
 
   getProbationExtendDays() {
     let extensionId = environment.ProbationExtensionId;
+    let extensionPeriodTimes = environment.ProbationExtendPeriodTimes;
     this.subscription = this.http
       .getData(`ProbationFlow/settingsprobationconfiggetall`)
       .subscribe({
@@ -105,6 +107,11 @@ export class AssessmentformComponent {
             return ele.configValueId === extensionId;
           });
           this.probationExtensionDuration = duration.noOfDays;
+            let extendTimes = data.find((ele: any) => {
+            return ele.configValueId === extensionPeriodTimes;
+          });
+          this.probationExtensionTimes = extendTimes.noOfDays;
+          console.log(this.probationExtensionTimes);
         },
       });
   }
@@ -112,11 +119,14 @@ export class AssessmentformComponent {
   //function when they enter nulls in start
   ifreasonnull(Value: any) {
     //console.log(Value);
-    if (!Value || !Value.trim()) {
-      this.issubmitdiable = true;
-    } else {
-      this.issubmitdiable = false;
-    }
+    const trimmedValue = Value?.trim();
+  const startsWithSpecialChar = /^[^a-zA-Z0-9]/.test(trimmedValue);
+
+  if (!trimmedValue || startsWithSpecialChar) {
+    this.issubmitdiable = true;
+  } else {
+    this.issubmitdiable = false;
+  }
   }
 
   //function call to get the data
@@ -833,7 +843,10 @@ export class AssessmentformComponent {
     this.selected_approve.rejectedReason = '';
   }
 
-  getBlockedFutureDate(lastWorkingDate: string): string {
+  getBlockedFutureDate(lastWorkingDate: string,extendedDate:string): string {
+    if(extendedDate){
+      lastWorkingDate = extendedDate;
+    }
     const lastWorkingDateObj = moment(lastWorkingDate).startOf('day').add(1, 'day');; // Set time to start of day (midnight)
     // Format the date as "YYYY-MM-DD"
     const formattedDate = lastWorkingDateObj.format('YYYY-MM-DD');

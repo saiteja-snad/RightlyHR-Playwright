@@ -43,6 +43,7 @@ export class PreonboardingLayoutComponent implements OnInit{
       '/emergency-details': MODULE_INFOS.EMERGENCY_CONTACT_DETAILS,
       '/offer-letter' : MODULE_INFOS.OFFER_LETTER_MODULE_INFO,
       '/review' : MODULE_INFOS.REVIEW_MODULE_INFO,
+      '/trainee-offerletter' :  MODULE_INFOS.OFFER_LETTER_MODULE_INFO
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

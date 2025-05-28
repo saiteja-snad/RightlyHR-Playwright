@@ -33,10 +33,10 @@ export class StatusComponent {
 
   ngOnInit(): void {
     this.statusForm = this.fb.group({
-      status: [null, [Validators.required, this.formValidations.maxCharactersValidator(51)]]
+      status: [null, [Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
     this.updateForm = this.fb.group({
-      statusname: ['', [Validators.required, this.formValidations.maxCharactersValidator(51)]]
+      statusname: ['', [Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)]]
     });
     this.getstatus();
   }
@@ -55,7 +55,7 @@ export class StatusComponent {
   onSubmit() {
     const request = {
       isdeleted: 'Active',
-      statusname: this.statusForm.get('status')?.value
+      statusname: this.statusForm.get('status')?.value.trim()
     };
 
     this.subscription = this.http.postdata('Status', request).subscribe({
@@ -94,7 +94,7 @@ export class StatusComponent {
 
   updateStatus(): void {
     if (this.updateForm.valid) {
-      this.statusDeletedata.statusname = this.updateForm.get('statusname')?.value;
+      this.statusDeletedata.statusname = this.updateForm.get('statusname')?.value.trim();
       this.subscription = this.http.postdata('Status/UPDATER', this.statusDeletedata).subscribe({
         next: (data: any) => {
           this.getstatus();

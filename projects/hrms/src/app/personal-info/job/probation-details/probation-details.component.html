@@ -60,8 +60,7 @@
                                 }}
                                 <!--status extended-->
                                  @if(canAccess('view','request')){
-                                @if(probation.status === 'Extended' && shouldprobationShowButton(empdata.probationEndDate)
-                                && probation.probationExtendCount < probationExtendTimes){ 
+                                @if(probation.status === 'Extended' && shouldprobationShowButton(empdata.probationEndDate)){ 
                                 <li>
                                     <a (click)="requestforconfirmationWhenExtended(probation)" class="dropdown-item">
                                         <i class="bi bi-repeat me-2"></i>Request for Probation Confirmation</a>
@@ -69,7 +68,8 @@
                                 }
                             </ul>
                         </div>
-                        } @else {
+                        }
+                         @else {
                         <div>-</div>
                         }
                     </td>

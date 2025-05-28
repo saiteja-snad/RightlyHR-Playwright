@@ -42,13 +42,13 @@ constructor(
     this.saluationForm = this.fb.group({
       saluation: [
         '',
-        [Validators.required, this.formValidations.maxCharactersValidator(51)],
+        [Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)],
       ],
     });
     this.updateForm = this.fb.group({
       titlename: [
         '',
-        [Validators.required, this.formValidations.maxCharactersValidator(51)],
+        [Validators.required, this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)],
       ],
     });
     this.getsaluation();
@@ -67,7 +67,7 @@ constructor(
    }
 onSubmit() {
     const request = {
-      titlename: this.saluationForm?.get('saluation')?.value,
+      titlename: this.saluationForm?.get('saluation')?.value.trim(),
       isdeleted: "Active"
     }; 
   
@@ -81,7 +81,6 @@ onSubmit() {
       error: (reason: any) => {
         const errorMessage = reason.error?.Message
         this.conformationPopup.openErrorModal(errorMessage);
-        this.resetForm();
       }
     });
     
@@ -105,7 +104,7 @@ this.modalService.open(this.deletepopup, { centered: true, backdrop: 'static' })
   updateSal(): void {
     if (this.updateForm.valid) {
       
-      this.updatesalutation.titlename = this.updateForm.get('titlename')?.value;
+      this.updatesalutation.titlename = this.updateForm.get('titlename')?.value.trim();
       this.subscription = this.http.postdata(`Title/UPDATER`, this.updatesalutation).subscribe({
         next: (data: any) => {
           this.updateForm.reset(); 

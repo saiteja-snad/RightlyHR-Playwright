@@ -156,6 +156,11 @@
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                         Expense item must be less than 50 characters
                                     </div>
+                                     <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
+                                    class="error-msg">
+                                    <div class="error-msg" *ngIf="item.get('item_expense')?.errors?.['required']">
+                                        Expense Type is required</div>
+                                </div>
                                 </div>
                             </div>
 
@@ -224,7 +229,7 @@
                             <!-- Description -->
                             <div class="col-md-4">
                                 <label class="form-label custom-label">{{'Description' | translate}}</label>
-                                <div >
+                                <div>
                                     <textarea class="form-control custom-input" type="text" maxlength="250"
                                         formControlName="item_Description" [maxlength]="250"
                                         (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"
@@ -238,21 +243,26 @@
                             <div class="col-md-4">
                                 <label class="form-label custom-label">{{'Proof (Image and PDF only)' | translate}}<span
                                         class="text-danger">*</span></label>
-                                <input type="file" class="form-control custom-input px-0" accept=".pdf, image/*"
-                                    (change)="fileupload($event, i)" />
+
+                                <input type="file" class="form-control custom-input px-0"
+                                    formControlName="attachment_url" accept=".pdf, image/*">
+
+                               
                                 <div class="error-msg"
-                                    *ngIf="item.get('attachment_url')?.invalid && item.get('attachment_url')?.touched">
-                                    Please choose a file
+                                    *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
+                                    File is required
                                 </div>
+                                <div *ngIf="filehidedonload">
                                 <div class="d-flex gap-3 mt-3" *ngIf="item.get('attachment_url')?.value">
                                     <a type="button" class="download-text"
                                         (click)="onSelectDownload(item.get('attachment_url'))">
                                         <i class="bi bi-download me-2"></i>Download
                                     </a>
-                                    <a type="button" class="download-text"
+                                    <a type="button" class="download-text"  *ngIf="isImageFile(item.get('attachment_url')?.value)"
                                         (click)="onViewAttachement(item.get('attachment_url')?.value)">
                                         <i class="bi bi-eye-fill me-2"></i>View
                                     </a>
+                                </div>
                                 </div>
                             </div>
                         </div>

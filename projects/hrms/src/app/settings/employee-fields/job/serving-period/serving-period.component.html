@@ -12,7 +12,7 @@
             <th>Serving Period Type</th>
             <th>Duration</th>
             <th class="text-center" *ngIf="rbac.allowedToAccess('Serving Period.update') || 
-            rbac.allowedToAccess('Serving Period.delete')">Action(S)</th>
+            rbac.allowedToAccess('Serving Period.delete')">Action<span class="text-lowercase">(S)</span></th>
           </tr>
         </thead>
         <tbody>
@@ -80,6 +80,9 @@
           <div *ngIf="AddForm.get('addServingPeriod')?.errors?.['maxCharacters']" class="error-msg">
             {{ 'Please limit your input to 100 characters' | translate }}
           </div>
+          <div *ngIf="AddForm.get('addServingPeriod')?.errors?.['pattern']" class="error-msg">
+            {{ 'Field cannot start with a space' | translate }}
+          </div>
         </div>
 
         <!-- Duration Field -->
@@ -143,6 +146,9 @@
           </div>
           <div *ngIf="updateForm.get('UpdateServingPeriod')?.errors?.['maxCharacters']" class="error-msg">
             {{ 'Please limit your input to 100 characters' | translate }}
+          </div>
+          <div *ngIf="updateForm.get('UpdateServingPeriod')?.errors?.['pattern']" class="error-msg">
+            {{ 'Field cannot start with a space' | translate }}
           </div>
         </div>
       

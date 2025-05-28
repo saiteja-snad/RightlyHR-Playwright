@@ -52,27 +52,32 @@ export class SubCatagoryComponent {
   intialasetsubcatary() {
     this.assetcataeryForm = this.fb.group({
       assetCategoryvalue: [null, Validators.required],
-      assetSubCategory: [{ value: null, disabled: true }, [Validators.required, Validators.maxLength(30)]],
+      assetSubCategory: [{ value: null, disabled: true }, [Validators.required, Validators.maxLength(30), Validators.pattern(/^[^\s].*$/)]],
     })
   }
 
   intialupdateasetsubcatarys() {
     this.assetcataeryupdateForm = this.fb.group({
       assetCategory: [{ value: null, disabled: true }, Validators.required],
-      assetSubCategory: [null, [Validators.required, Validators.maxLength(30)]],
+      assetSubCategory: [null, [Validators.required, Validators.maxLength(30), Validators.pattern(/^[^\s].*$/)]],
     })
   }
 
   openModal(content: any) {
-    this.modalService.open(content, { centered: true })
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
    //add close button click open delet pop up dailog add vender
    openaaddmodal(content:any){
   this.modalService.open(content, { centered: true, backdrop: 'static' });
 }
 //no button click close the  dailog add vender
-clearadddata(){
- this.assetcataeryForm.reset()
+clearadddata(form: string){
+  if(form === 'add'){
+     this.assetcataeryForm.reset();
+    this.assetcataeryForm.get('assetSubCategory')?.disable()
+  }else if(form === 'update'){
+    this.assetcataeryupdateForm.reset()
+  }
   this.modalService.dismissAll();
 }
  //update close  button click open delet pop up dailog add vender
@@ -157,9 +162,11 @@ cleardata(){
         .subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal('Asset Sub category added Successfully ');
+            this.conformationPopup.openSuccessModal('Asset sub category added successfully ');
             this.getsubcategorys()
-            this.assetcataeryForm.reset()
+            this.assetcataeryForm.reset();
+            this.intialasetsubcatary();
+
           },
           error: (error) => {
             this.conformationPopup.openErrorModal(error.error?.message)
@@ -210,7 +217,7 @@ cleardata(){
         .subscribe({
           next: (res: any) => {
             this.modalService.dismissAll();
-            this.conformationPopup.openSuccessModal(' Asset Sub category Updated successfully ');
+            this.conformationPopup.openSuccessModal(' Asset sub category updated successfully ');
             this.getsubcategorys()
             this.assetcataeryForm.reset()
           },
@@ -235,7 +242,7 @@ cleardata(){
       .subscribe({
         next: (response) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal(' Asset Category Deleted successfully');
+          this.conformationPopup.openSuccessModal(' Asset sub category deleted successfully');
           this.getsubcategorys()
         },
         error: (error) => {

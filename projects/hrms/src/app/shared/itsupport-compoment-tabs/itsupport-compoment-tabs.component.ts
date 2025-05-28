@@ -32,7 +32,7 @@ export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
     { label: 'All Tickets', link: '/it-support/team-tickets/all-tickets', countKey: 'AllCount', icon: '/desk-icon/all-icon.png', permission: { feature: 'All Tickets Tab', action: 'view' } },
     { label: 'Open Tickets', link: '/it-support/team-tickets/open-tickets', countKey: 'openTicketCount', icon: '/it-support-icons/open-icon.png', permission: { feature: 'Open Tickets Tab', action: 'view' } },
     { label: 'Await On User Tickets', link: '/it-support/team-tickets/await-on-user-tickets', countKey: 'awaitingOnUserTicketCount', icon: '/it-support-icons/Await-icon.png', permission: { feature: 'Await On User Tickets Tab', action: 'view' } },
-    { label: 'Close Tickets', link: '/it-support/team-tickets/solved-tickets', countKey: 'closedTicketCount', icon: '/it-support-icons/solved-icon.png', permission: { feature: 'Solved Tickets Tab', action: 'view' } },
+    { label: 'Closed Tickets', link: '/it-support/team-tickets/solved-tickets', countKey: 'closedTicketCount', icon: '/it-support-icons/solved-icon.png', permission: { feature: 'Solved Tickets Tab', action: 'view' } },
     { label: 'Rejected Tickets', link: '/it-support/team-tickets/rejected-tickets', countKey: 'rejectedTicketCount', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tickets Tab', action: 'view' } }
   ];
 

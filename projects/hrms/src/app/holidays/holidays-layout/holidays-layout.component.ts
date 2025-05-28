@@ -7,10 +7,11 @@ import { HttpService } from '../../services/http.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-holidays-layout',
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, Select, ModuleInformationComponent],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, Select,NgbPopoverModule, ModuleInformationComponent],
   templateUrl: './holidays-layout.component.html',
   styleUrl: './holidays-layout.component.scss'
 })

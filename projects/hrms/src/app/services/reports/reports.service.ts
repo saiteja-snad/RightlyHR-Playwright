@@ -185,7 +185,7 @@ export class ReportsService {
     
     let params = new HttpParams();
     // if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
-    if (request.employeeId) params = params.set('employeeId', request.employeeId);
+    if (request.employeeId) params = params.set('EmployeeId', request.employeeId);
     if (request.teamManagerID)params =params.set('teamManagerID',request.teamManagerID);
     if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
     if (request.LeaveName) params = params.set('LeaveName', request.LeaveName);
@@ -203,8 +203,8 @@ export class ReportsService {
   getLeaveSummaryReport(request: ILeavesummery) {
     let params = new HttpParams();
     
-    if (request.FusionEmpId) params = params.set('FusionEmpId', request.FusionEmpId);
-    if (request.TeamManagerSnadId) params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
+    if (request.EmployeeId) params = params.set('EmployeeId', request.EmployeeId);
+    if (request.teamManagerID) params = params.set('teamManagerID', request.teamManagerID);
     if (request.LeaveName) params = params.set('LeaveType', request.LeaveName);
     return this.http.get('Reports/LeaveSummaryReports', { params });
   }
@@ -214,11 +214,11 @@ export class ReportsService {
     let params = new HttpParams();
   
     if (request.employeeId) {
-      params = params.set('employeeId', request.employeeId);
+      params = params.set('EmployeeId', request.employeeId.toString());
     }
   
-    if (request.TeamManagerSnadId) {
-      params = params.set('TeamManagerFusionEmpId', request.TeamManagerSnadId);
+    if (request.teamManagerID) {
+      params = params.set('teamManagerID', request.teamManagerID);
     }
   
     if (request.StartDate && request.EndDate) {

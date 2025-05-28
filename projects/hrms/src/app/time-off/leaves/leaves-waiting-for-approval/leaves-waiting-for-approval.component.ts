@@ -19,12 +19,12 @@ import { SignalsService } from '../../../services/signals.service';
 import { FormValidationsService } from '../../../services/form-validations.service';
 @Component({
   selector: 'app-leaves-waiting-for-approval',
-  imports: [CommonModule,TranslateModule,ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, TranslateModule, ReactiveFormsModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
   templateUrl: './leaves-waiting-for-approval.component.html',
   styleUrl: './leaves-waiting-for-approval.component.scss'
 })
 
-export class LeavesWaitingForApprovalComponent implements OnInit,OnDestroy{
+export class LeavesWaitingForApprovalComponent implements OnInit, OnDestroy {
   totalRecords = 100
   first: any = 0;
   rows: any = 10;
@@ -32,7 +32,7 @@ export class LeavesWaitingForApprovalComponent implements OnInit,OnDestroy{
   empdata = {} as any;
   subscription!: Subscription;
   lpdata = [] as Ilpid[];
-  cancelForm!:FormGroup;
+  cancelForm!: FormGroup;
   selectedFields = {} as any;
   options = [
     { label: 10, value: 10 },
@@ -48,12 +48,12 @@ export class LeavesWaitingForApprovalComponent implements OnInit,OnDestroy{
     this.first = event.first;
     this.rows = event.rows;
   }
-isLoading=false;
-  constructor(private http: HttpService, public formsValidation:FormValidationsService,private signalService:SignalsService, private modalService: NgbModal,private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService,private fb:FormBuilder) { }
+  isLoading = false;
+  constructor(private http: HttpService, public formsValidation: FormValidationsService, private signalService: SignalsService, private modalService: NgbModal, private conformationPopup: OpenModalService, private authService: AuthService, public rbac: RbacService, private fb: FormBuilder) { }
 
   ngOnInit(): void {
 
-       this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
+    this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
       if (id) {
         // Use the new employee ID here
         this.selectempid = id;
@@ -61,15 +61,15 @@ isLoading=false;
         // Example: this.loadEmployeeDetails(id);
         this.getDataByLPEMPID();
       }
-      else{
-    this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getDataByLPID();
-    this.formInializer();
+      else {
+        this.loggedinuser = this.authService.getToken();
+        this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+        this.getDataByLPID();
+        this.formInializer();
       }
     });
   }
- formInializer() {
+  formInializer() {
     this.cancelForm = this.fb.group({
       cancelReason: [null,
         [Validators.required, Validators.maxLength(250)]
@@ -77,54 +77,54 @@ isLoading=false;
     });
   }
   isBeforeToday(date: string | Date): boolean {
-  return moment().isSameOrBefore(moment(date), 'day');
-}
-    onClick(data: any,content:any) {
+    return moment().isSameOrBefore(moment(date), 'day');
+  }
+  onClick(data: any, content: any) {
     this.selectedFields = data
     console.log(this.selectedFields);
     this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
   //function to cancle the leave
-  cancelLeaveSubmit(){
-    this.isLoading=true;
-    const currentDate=moment()
- const payload={
-       "cancelledDate": currentDate,
-        "rejectedReason": this.cancelForm.get('cancelReason')?.value,
-        "cancelledBy": this.empdata.employeeId
+  cancelLeaveSubmit() {
+    this.isLoading = true;
+    const currentDate = moment()
+    const payload = {
+      "cancelledDate": currentDate,
+      "rejectedReason": this.cancelForm.get('cancelReason')?.value,
+      "cancelledBy": this.empdata.employeeId
     }
-    this.subscription=this.http.putData(`Timeoff/cancel?id=${this.selectedFields.id}`,payload).subscribe({
-      next:(res:any)=>{
+    this.subscription = this.http.putData(`Timeoff/cancel?id=${this.selectedFields.id}`, payload).subscribe({
+      next: (res: any) => {
         console.log(res);
-        if(res){
+        if (res) {
           this.cancelForm.reset();
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Leave cancelled successfully')
-            this.getDataByLPID();
-            setTimeout(() => {
-               window.location.reload();
-            }, 2000);
-            
-          
+          this.getDataByLPID();
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+
+
         }
-       this.signalService.timecountTriggerSignal.set(true);
-      
+        this.signalService.timecountTriggerSignal.set(true);
+
       },
-      error:(err:any)=>{
+      error: (err: any) => {
         console.log(err)
-        this.isLoading=false;
-         this.cancelForm.reset();
-          this.modalService.dismissAll();
-            this.getDataByLPID();
-            this.signalService.timecountTriggerSignal.set(true);
+        this.isLoading = false;
+        this.cancelForm.reset();
+        this.modalService.dismissAll();
+        this.getDataByLPID();
+        this.signalService.timecountTriggerSignal.set(true);
         this.conformationPopup.openErrorModal(err.error.message);
         setTimeout(() => {
-               window.location.reload();
-            }, 2000);
+          window.location.reload();
+        }, 2000);
       },
-      complete:()=> {
-        this.isLoading=false;
-         this.getDataByLPID();
+      complete: () => {
+        this.isLoading = false;
+        this.getDataByLPID();
       },
 
     })
@@ -135,7 +135,7 @@ isLoading=false;
       next: (response: any) => {
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Waiting for Approval');
-              console.error("Invalid response this lpdata ",this.lpdata );
+          console.error("Invalid response this lpdata ", this.lpdata);
         } else {
           console.error("Invalid response format");
         }
@@ -150,7 +150,7 @@ isLoading=false;
       next: (response: any) => {
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Waiting for Approval');
-              console.error("Invalid response this lpdata ",this.lpdata );
+          console.error("Invalid response this lpdata ", this.lpdata);
         } else {
           console.error("Invalid response format");
         }
@@ -158,13 +158,12 @@ isLoading=false;
       error: (reason: any) => console.log(reason)
     });
   }
-    ngOnDestroy(): void {
+  ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
   }
 }
-  
 
-  
+

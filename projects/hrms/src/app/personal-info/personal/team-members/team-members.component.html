@@ -36,8 +36,8 @@
                     <th class="text-center">Action</th>}
                 </tr>
             </thead>
-            <tbody
-                *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
+            <tbody *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
+
                 <ng-container *ngIf="filteredMembers.length > 0; else noData">
                     <tr *ngFor="let details of filteredMembers">
                         <td>{{ details.fusionEmpId || 'N/A' }}</td>

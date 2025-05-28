@@ -163,7 +163,7 @@ export default [
       { path: 'processed', component: OnBeHalfOfProcessComponent },
       { path: 'rejected', component: OnBeHalfOfRejectComponent },
        { path: 'cancel', component: OnBeHalfOfCancelComponent },
-      { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
+      // { path: '', redirectTo: 'waiting-for-approval', pathMatch: 'full' },
     ],
   },
   {

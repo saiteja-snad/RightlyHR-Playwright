@@ -46,7 +46,7 @@ export class LeavesProcessedComponent {
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-   // this.getDataByLPID();
+    this.getDataByLPID();
 
        this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
     if (id) {
@@ -60,9 +60,10 @@ export class LeavesProcessedComponent {
   }
 
   getDataByLPID() {
-    let empid = this.selectempid ||this.empdata.employeeId;
+    let empid = this.empdata.employeeId ?? this.selectempid;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
+        console.log("Response from getDataByLPID:", response);
         if (Array.isArray(response)) {
           this.lpdata = response.filter(item => item.status === 'Processed');
         } else {

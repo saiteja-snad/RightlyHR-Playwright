@@ -220,6 +220,8 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
       next: (respone) => {
         if (respone) {
           this.updatedOfferLetterDetails = respone as Iofferletter
+          console.log(this.updatedOfferLetterDetails);
+          
         }
       },
       error: (reason: any) => {
@@ -304,17 +306,16 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   downloadoffer() {
-    debugger
-    const fileurl = localStorage.getItem('offerletterurl') || '';
+    const fileurl = this.updatedOfferLetterDetails.documentURL ?? '';
     this.subscription = this.http.DownloadDataWithQuery('PreonboardingFilesystem/Downloadfile', fileurl).subscribe({
       next: (res: any) => {
-        let fileName = res.headers.get('content-disposition')?.split(':')[1].split('=')[1];
-        let blob: Blob = res.body as Blob;
-        let a = document.createElement('a');
-        a.href = window.URL.createObjectURL(blob);
-        let filename = fileurl.split('/')[fileurl.split('/').length - 1];
-        a.download = filename;
+        const blob: Blob = res.body as Blob;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileurl.substring(fileurl.lastIndexOf('/') + 1);
         a.click();
+        window.URL.revokeObjectURL(url);
       },
       error: (reason) => console.log(reason),
     });

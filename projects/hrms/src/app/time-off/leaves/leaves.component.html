@@ -168,10 +168,10 @@
                             *ngIf="leaveForm.get('startdate')?.invalid && leaveForm.get('startdate')?.touched">
                             Start Date is required
                         </div>
-                        <div class="error-msg"
+                        <!-- <div class="error-msg"
                             *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('startdate')?.value">
                             Please select optional holiday
-                        </div>
+                        </div> -->
                         <div class="error-msg" *ngIf="(isHolidaySelected || isNonOptionalHolidaySelected)">
                             Selected date is a holiday
                         </div>
@@ -183,6 +183,9 @@
                         </div>
                         <div class="error-msg" *ngIf="!isstimeoffValid && leaveForm.get('startdate')?.value">
                             The start date must be after the date of joining.
+                        </div>
+                        <div class="error-msg">
+                            {{startDateErrorMessage}}
                         </div>
                     </div>
 
@@ -209,12 +212,15 @@
                         <div class="error-msg" *ngIf="leaveForm.get('enddate')?.value && !issEndDategreater">
                             End Date is less than Start Date
                         </div>
-                        <div class="error-msg"
+                        <!-- <div class="error-msg"
                             *ngIf="isoptionalnotallowedatWorkingdate && leaveForm.get('enddate')?.value">
                             Please select optional holiday
-                        </div>
+                        </div> -->
                         <div class="error-msg" *ngIf="isHolidaySelectedEndate">
                             Selected date is a holiday
+                        </div>
+                        <div class="error-msg">
+                            {{endDateErrorMessage}}
                         </div>
                     </div>
                 </div>
@@ -305,7 +311,7 @@
                     <button type="button" class="custom-btn btn-secondary"
                         (click)="openModal(confirmationpopup)">{{'Cancel'| translate}}</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="(leaveForm.invalid || isWeekOffSelected || disableSubmitButton || !isstimeoffValid || isWeekOffSelectedEndate || 
-                        isHolidaySelectedEndate || isoptionalnotallowedatWorkingdate || !issEndDategreater || !startdatevalid || 
+                        isHolidaySelectedEndate || this.startDateErrorMessage || this.endDateErrorMessage || !issEndDategreater || !startdatevalid || 
                         isNonOptionalHolidaySelected || (leaveFormData.isDaytype ? (dateDifference / 2) > remainingLeaves : dateDifference > 
                         remainingLeaves) ) || isLoading">
                         <span *ngIf="!isLoading">{{'Submit'| translate}}</span>

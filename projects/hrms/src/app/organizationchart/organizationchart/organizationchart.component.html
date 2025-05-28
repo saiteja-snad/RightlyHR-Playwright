@@ -1,8 +1,14 @@
 <div class="custom-main-component-container">
   <div class="component-header-content flex-wrap m-0">
     <!--Header-->
-    <div class="component-header mb-3">Organizational Hierarchy</div>
-
+   
+        <div class="heading-content">
+      <!-- <div class="commpoment-name">Events<span class="ms-2">>></span></div> -->
+      <div class="component-header">Organizational Hierarchy</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
     <!--Dropdown Content-->
     <div class="d-flex align-items-center gap-3 mb-3">
       @if(this.rbac.allowedToAccess('Organization Hierarchy - HR.view')){
@@ -51,28 +57,17 @@
           @if(this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view') && data.length != 0){
           <li><a class="dropdown-item" (click)="downloadChart('jpg')">{{'Download as JPG'| translate}}</a></li>
           }
-          <li><a class="dropdown-item" (click)="downloadToExcel()">{{'Download as Excel'| translate}}</a></li>
+          <!-- <li><a class="dropdown-item" (click)="downloadToExcel()">{{'Download as Excel'| translate}}</a></li> -->
         </ul>
       </div>
 
-      <!-- <div>
-        @if(this.rbac.allowedToAccess('Organization Hierarchy - Download PDF.view')){
-        <button class="custom-btn btn-primary me-3" [disabled]="!data || data.length === 0"
-          (click)="downloadChart('pdf')">Download as PDF</button>
-        }
-        @if(this.rbac.allowedToAccess('Organization Hierarchy - Download JPG.view')){
-        <button class="custom-btn btn-primary me-3" [disabled]="!data || data.length === 0"
-          (click)="downloadChart('jpg')">Download as JPG</button>
-        }
-        <button class="custom-btn btn-primary" (click)="downloadToExcel()">Download as Excel</button>
-      </div> -->
+   
     </div>
   </div>
 
-  <!--Module Information-->
-  <div>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+      <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
 
   <!--loader-->
   <ng-container *ngIf="dataload; else maincontent">

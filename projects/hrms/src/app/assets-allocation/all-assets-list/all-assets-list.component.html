@@ -448,13 +448,18 @@
         <div class="d-flex justify-content-end gap-3">
           <button type="button" class="custom-btn btn-secondary "
             (click)="openConfirmationModal(confirmatideleteonpopup)">Cancel</button>
-          <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
+          <!-- <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
                                  ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
                                  (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
             Submit
-          </button>
-
+          </button> -->
+                <button type="submit" class="custom-btn btn-primary"[disabled]=" assetForm.invalid ||
+                 (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) ||
+                  (isToggledamc && assetForm.get('amcstartdate')?.invalid) ||
+            assetSubCategory.length === 0">Submit</button>
         </div>
+ 
+ 
       </form>
     </div>
 

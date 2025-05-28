@@ -8,9 +8,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })

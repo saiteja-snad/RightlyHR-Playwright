@@ -5,10 +5,11 @@ import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-claimsandexpenses',
-  imports: [ExpenesHeaderTabsComponent, RouterModule, ModuleInformationComponent],
+  imports: [ExpenesHeaderTabsComponent, RouterModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './claimsandexpenses.component.html',
   styleUrl: './claimsandexpenses.component.scss',
   encapsulation: ViewEncapsulation.None

@@ -1,8 +1,13 @@
 <div class="custom-main-popup-container">
     <div class="component-header-content">
-        <div>
-            <p class="component-header mb-0">Desk Management</p>
-        </div>
+        
+               <div class="heading-content">
+                <div class="commpoment-name">Desk<span class="ms-2">>></span></div>
+                <div class="component-header">Desk Management</div>
+               <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
+            </div>
 
         <div class="d-flex gap-3 align-items-center">
             <form autocomplete="off" [formGroup]="locationfromdata">
@@ -39,10 +44,10 @@
         </div>
     </div>
 
-    <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+         <!--Module Information-->
+    <ng-template #popContent>
+            <app-module-information [moduleInfo]="moduleinfo"  />
+        </ng-template>
 
     <div class="d-flex w-100 gap-3">
         <div class="component-left-tabs-container">

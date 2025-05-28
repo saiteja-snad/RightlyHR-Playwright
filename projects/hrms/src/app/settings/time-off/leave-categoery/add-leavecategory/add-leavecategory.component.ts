@@ -56,7 +56,6 @@ export class AddLeavecategoryComponent {
   }
 
   ngOnInit(): void {
-    this.setupDependentFieldListeners();
     this.jobLocationList();
     this.getOrgLeavesCategories();
     const currentYear = new Date().getFullYear();
@@ -89,47 +88,33 @@ export class AddLeavecategoryComponent {
       
       // Future Dates
       futureDatesAllowed: [undefined, Validators.required],
-      futureDatesAllowedDays: [undefined, [this.dependentRequiredValidator('futureDatesAllowed')]],
+      futureDatesAllowedDays: [{value:null,disabled:true}, [this.dependentRequiredValidator('futureDatesAllowed')]],
       
       // Past Dates
       pastDateAllowed: [undefined, Validators.required],
-      pastDatesAllowedDays: [undefined, [this.dependentRequiredValidator('pastDateAllowed')]],
+      pastDatesAllowedDays: [{value:null,disabled:true}, [this.dependentRequiredValidator('pastDateAllowed')]],
       
       // Carry Forward
       carryForwardAllowed: [undefined, Validators.required],
-      carryForwardAllowedValue: [undefined, [this.dependentRequiredValidator('carryForwardAllowed')]],
+      carryForwardAllowedValue: [{value:null,disabled:true}, [this.dependentRequiredValidator('carryForwardAllowed')]],
       
       // Encash
       encashAllowedType: [undefined, Validators.required],
-      encashAllowedValue: [undefined, [this.dependentRequiredValidator('encashAllowedType')]],
+      encashAllowedValue: [{value:null,disabled:true}, [this.dependentRequiredValidator('encashAllowedType')]],
       
       // Notice Period
       noticeperiodAllowedType: [undefined, Validators.required],
-      noticePeriodAllowedValue: [undefined, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
+      noticePeriodAllowedValue: [{value:null,disabled:true}, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
       
       // Probation Period
       isProbationAllowed: [undefined, Validators.required],
-      probationDays: [undefined, [this.dependentRequiredValidator('isProbationAllowed')]]
+      probationDays: [{value:null,disabled:true}, [this.dependentRequiredValidator('isProbationAllowed')]]
     });
-    this.leavePolicyForm.get('locationID')?.valueChanges.subscribe((value: any) => {
-    //  const shift =   this.leavePolicyForm?.get('shiftId');
-     const subLocation =  this.leavePolicyForm?.get('subLocation');
-      if(!value) {
-       subLocation?.reset();
-       subLocation?.disable();
-      }else{
-       subLocation?.enable();
-      }
-    });
-    this.leavePolicyForm.get('subLocation')?.valueChanges.subscribe((value: any) => {
-     const shift =   this.leavePolicyForm?.get('shiftId');
-      if(!value) {
-       shift?.reset();
-      //  shift?.disable();
-      }else{
-       shift?.enable();
-      }
-    });
+
+
+    this.setupDependentFieldListeners();
+
+    
   }
 
   jobLocationList() {
@@ -142,6 +127,8 @@ export class AddLeavecategoryComponent {
   OnClickLocation(id :any) {
     const locationID = id;
     console.log(locationID);
+    this.leavePolicyForm.get('subLocation')?.reset();
+    this.leavePolicyForm.get('shiftId')?.reset(); 
     this.getSubLocationByid(locationID);
   }
   getSubLocationByid(locationID: any) {
@@ -278,6 +265,8 @@ export class AddLeavecategoryComponent {
       }
       daysControl?.updateValueAndValidity();
     });
+
+    
   }
 
   restrictInputValidator(control: AbstractControl) {

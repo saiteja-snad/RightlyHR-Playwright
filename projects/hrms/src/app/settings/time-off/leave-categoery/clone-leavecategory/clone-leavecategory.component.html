@@ -281,7 +281,7 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="gender">Days<span class="text-danger">*</span></label>
           <input type="number" formControlName="futureDatesAllowedDays" class="form-control custom-input"
-            id="FutureDatesAllowedUnits" placeholder="No. of days" autocomplete="off" min="1">
+            id="FutureDatesAllowedUnits" placeholder="No. of days" autocomplete="off" min="0">
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('futureDatesAllowed')?.value === true && 
                                               leavePolicyForm.get('futureDatesAllowedDays')?.invalid && 
@@ -290,7 +290,7 @@
               Future Dates Allowed days are required
             </span>
             <span *ngIf="leavePolicyForm.get('futureDatesAllowedDays')?.errors?.['min']">
-              Future Dates Allowed days must be at least 1
+              Future Dates Allowed days must be at least 0
             </span>
           </div>
         </div>
@@ -316,7 +316,7 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="pastdatesdays">Days<span class="text-danger">*</span></label>
           <input type="number" formControlName="pastDatesAllowedDays" class="form-control custom-input"
-            id="PastDatesAllowedUnits" placeholder="No. of days" autocomplete="off" min="1">
+            id="PastDatesAllowedUnits" placeholder="No. of days" autocomplete="off" min="0">
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('pastDateAllowed')?.value === true && 
                                               leavePolicyForm.get('pastDatesAllowedDays')?.invalid && 
@@ -325,7 +325,7 @@
               Past Dates Allowed days are required
             </span>
             <span *ngIf="leavePolicyForm.get('pastDatesAllowedDays')?.errors?.['min']">
-              Past Dates Allowed days must be at least 1
+              Past Dates Allowed days must be at least 0
             </span>
           </div>
         </div>
@@ -351,7 +351,7 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="gender">Days<span class="text-danger">*</span></label>
           <input type="number" formControlName="carryForwardAllowedValue" class="form-control custom-input"
-            id="CarryForwardLeaveUnits" placeholder="No. of days" autocomplete="off" min="1">
+            id="CarryForwardLeaveUnits" placeholder="No. of days" autocomplete="off" min="0">
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('carryForwardAllowed')?.value === true && 
                                               leavePolicyForm.get('carryForwardAllowedValue')?.invalid && 
@@ -360,7 +360,7 @@
               Carry Forward days are required
             </span>
             <span *ngIf="leavePolicyForm.get('carryForwardAllowedValue')?.errors?.['min']">
-              Carry Forward days must be at least 1
+              Carry Forward days must be at least 0
             </span>
           </div>
         </div>
@@ -386,7 +386,7 @@
         <div class="col-md-3 mb-3">
           <label class="form-label custom-label mb-2" for="gender">Days<span class="text-danger">*</span></label>
           <input type="number" formControlName="encashAllowedValue" class="form-control custom-input"
-            id="EncashLeaveUnits" placeholder="No. of days" autocomplete="off" min="1">
+            id="EncashLeaveUnits" placeholder="No. of days" autocomplete="off" min="0">
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('encashAllowedType')?.value === true && 
                                               leavePolicyForm.get('encashAllowedValue')?.invalid && 
@@ -395,7 +395,7 @@
               Encash days are required
             </span>
             <span *ngIf="leavePolicyForm.get('encashAllowedValue')?.errors?.['min']">
-              Encash days must be at least 1
+              Encash days must be at least 0
             </span>
           </div>
         </div>
@@ -421,7 +421,7 @@
           <label class="form-label custom-label mb-2" for="gender">Maximum Leaves Allowed Per Month<span
               class="text-danger">*</span></label>
           <input type="number" formControlName="noticePeriodAllowedValue" class="form-control custom-input"
-            id="NoticePeriodUnits" placeholder="No. of days" autocomplete="off" min="1">
+            id="NoticePeriodUnits" placeholder="No. of days" autocomplete="off" min="0">
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.value === true && 
                                               leavePolicyForm.get('noticePeriodAllowedValue')?.invalid && 
@@ -430,7 +430,7 @@
               Maximum Leaves Allowed Per Month is required
             </span>
             <span *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['min']">
-              Maximum Leaves Allowed Per Month must be at least 1
+              Maximum Leaves Allowed Per Month must be at least 0
             </span>
           </div>
         </div>
@@ -455,7 +455,7 @@
           <label class="form-label custom-label mb-2" for="gender">Maximum Leaves Allowed Per Month<span
               class="text-danger">*</span></label>
           <input type="number" formControlName="probationDays" class="form-control custom-input"
-            id="ProbationPeriodUnits" placeholder="No. of days" autocomplete="off" min="1">
+            id="ProbationPeriodUnits" placeholder="No. of days" autocomplete="off" min="0">
           <div class="error-msg"
             *ngIf="leavePolicyForm.get('isProbationAllowed')?.value === true && 
                                               leavePolicyForm.get('probationDays')?.invalid && 
@@ -464,7 +464,7 @@
               Maximum Leaves Allowed Per Month is required
             </span>
             <span *ngIf="leavePolicyForm.get('probationDays')?.errors?.['min']">
-              Maximum Leaves Allowed Per Month must be at least 1
+              Maximum Leaves Allowed Per Month must be at least 0
             </span>
           </div>
         </div>
@@ -474,7 +474,7 @@
     <!-- Form submission buttons -->
     <div class="d-flex justify-content-end gap-3 pt-3">
       <button type="button" class="custom-btn btn-secondary px-5" (click)="resetForm(confirmationpopup)">Cancel</button>
-      <button type="submit" class="custom-btn btn-primary px-5">Save</button>
+      <button type="submit" class="custom-btn btn-primary px-5" [disabled]="leavePolicyForm.invalid" >Save</button>
     </div>
   </form>
 </div>

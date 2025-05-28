@@ -270,8 +270,10 @@ export class OnBeHalfOfComponent {
     return percentage * 360;
   }
 
-
+ selectedEmployeeId: string | null = null;
   Onclick(fusionemployeeId: any): void {
+    this.selectedEmployeeId = fusionemployeeId?.value || null;
+    this.selectedEmployeeName = fusionemployeeId?.label || '';
     if (!fusionemployeeId || !fusionemployeeId.value) {
       // Employee deselected (cleared)
       this.resetOnBehalfOfData();

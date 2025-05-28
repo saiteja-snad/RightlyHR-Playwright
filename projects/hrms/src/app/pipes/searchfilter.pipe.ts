@@ -4,27 +4,30 @@ import { Pipe, PipeTransform } from '@angular/core';
   name: 'searchfilter'
 })
 export class SearchfilterPipe implements PipeTransform {
+transform(items: any[], searchText: string, searchProperties: string[] = []): any[] {
+  if (!items || !searchText || !searchProperties.length) {
+      return items;
+  }
 
-  transform(items: any[], searchText: string, searchProperties: string[] = []): any[] {
-    console.log("searchTokens",searchText);
-    if (!items || !searchText || !searchProperties.length) {
-        return items;
-    }
+  const searchTokens = searchText.toLowerCase().split(/\s+/);
 
-    const searchTokens = searchText.toLowerCase().split(/\s+/);
-    console.log("searchTokens",searchTokens);
+  return items.filter(item => {
+    return searchTokens.every(token => {
+      return searchProperties.some(property => {
+        let value = '';
 
-    return items.filter(item => {
-        return searchTokens.every(token => {
-            return searchProperties.some(property => {
-                const value = (item[property] || '').toString().toLowerCase();
-                return value.includes(token);
-            });
-        });
+        if (property === 'employeeName') {
+          // Construct full name from multiple fields
+          value = `${item.firstName || ''} ${item.middleName || ''} ${item.lastName || ''}`.toLowerCase();
+        } else {
+          value = (item[property] || '').toString().toLowerCase();
+        }
+
+        return value.includes(token);
+      });
     });
-
-
-    
+  });
 }
+
 
 }

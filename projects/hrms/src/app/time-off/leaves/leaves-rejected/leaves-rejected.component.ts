@@ -46,7 +46,7 @@ export class LeavesRejectedComponent {
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
     this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    //this.getDataByLPID();
+    this.getDataByLPID();
     this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
       if (id) {
         // Use the new employee ID here
@@ -59,7 +59,7 @@ export class LeavesRejectedComponent {
   }
 
   getDataByLPID() {
-    let empid =  this.selectempid || this.empdata.employeeId;
+    let empid =  this.empdata.employeeId ?? this.selectempid;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {

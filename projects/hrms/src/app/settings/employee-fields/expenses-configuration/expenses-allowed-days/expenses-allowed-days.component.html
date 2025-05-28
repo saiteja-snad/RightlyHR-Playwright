@@ -50,7 +50,7 @@
                 <div class="mb-3">
                     <label for="value" class="form-label custom-label mb-2">Duration <span
                             class="text-danger">*</span></label>
-                    <input type="text" id="value" formControlName="value" placeholder="Please enter Duration"
+                    <input type="text" id="value" formControlName="value" placeholder="Please enter duration"
                         class="form-control custom-input" maxlength="3" (keypress)="validateNumberInput($event)">
                     <div class="error-msg" *ngIf="dateconfigurationForm.controls['value'].invalid && (dateconfigurationForm.controls['value'].touched || 
                        dateconfigurationForm.controls['value'].dirty)">

@@ -173,6 +173,7 @@ openModalView(){
   }
 
   getComments(value: any) {
+    console.log(value);
     this.myApproverComments = value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property
       const parsedMetaData = JSON.parse(ele.meta);

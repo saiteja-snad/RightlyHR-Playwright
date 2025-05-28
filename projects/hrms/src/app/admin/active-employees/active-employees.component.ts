@@ -59,7 +59,7 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
   //function for active Employees
   empdata() {
     this.loader = true;
-    this.subscription = this.http.getData(`Employeedata/ActiveEmployeeswithJobDetails`).subscribe({
+    this.subscription = this.http.getData(`v2/Employeedata/ActiveEmployeeswithJobDetailsData`).subscribe({
       next: (data: any) => {
         this.Active = data as Iactive[];
         this.loader = false;

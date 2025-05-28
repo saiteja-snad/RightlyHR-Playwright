@@ -1,29 +1,34 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0">
-                <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="naviagte()"></i>Probation Confirmation Letter
-            </p>
+    <div class="component-header-content">
+
+        <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="naviagte()">Dashboard<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">Probation Confirmation Letter</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
+        <ng-template #popContent>
+            <app-module-information [moduleInfo]="moduleinfo" />
+        </ng-template>
     </div>
 
-    <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+
 
     <!--letter main container-->
     <div class="main-letter-content gap-4 d-flex w-100">
         <!-- letter content-->
         <div class="card letter-fields-content p-4">
-            <form autocomplete="off" [formGroup]="probationConfirmationForm" (ngSubmit)="postProbationLetterFormSubmit()">
+            <form autocomplete="off" [formGroup]="probationConfirmationForm"
+                (ngSubmit)="postProbationLetterFormSubmit()">
                 <!-- Employee Name -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="probationemp" optionLabel="fullName" [filter]="true" showClear="true" filterBy="fullName"
-                             placeholder="Please select employee" formControlName="employeeId" resetFilterOnHide="true"
-                            (onChange)="onClickEmployee($event)" class="custom-select w-100">
+                        <p-select [options]="probationemp" optionLabel="fullName" [filter]="true" showClear="true"
+                            filterBy="fullName" placeholder="Please select employee" formControlName="employeeId"
+                            resetFilterOnHide="true" (onChange)="onClickEmployee($event)" class="custom-select w-100">
                         </p-select>
                     </div>
                     <div *ngIf="probationConfirmationForm.get('employeeId')?.invalid && probationConfirmationForm.get('employeeId')?.touched"
@@ -31,12 +36,13 @@
                         Employee is required
                     </div>
                 </div>
-        
+
                 <!-- Issued Date -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
                     <input type="date" class="form-control custom-input" formControlName="issuedDate"
-                        placeholder="Please enter Date" [min]="todayDate" (change)="pathValuesFuction();DateValidation()"  (keydown)="preventTyping($event)"/>
+                        placeholder="Please enter Date" [min]="todayDate"
+                        (change)="pathValuesFuction();DateValidation()" (keydown)="preventTyping($event)" />
                     <div class="error-msg">
                         <div
                             *ngIf="probationConfirmationForm.get('issuedDate')?.invalid && probationConfirmationForm.get('issuedDate')?.touched">
@@ -45,11 +51,12 @@
                         <!-- Custom validation error from DateValidation -->
                         <!-- <div class="error-msg" *ngIf="!isdateofprobation">Issued Date should not be after Probation End Date
                         </div> -->
-                        <div class="error-msg" *ngIf="!isdateofprobationIssued">Issued Date should not be after Probation End Date
+                        <div class="error-msg" *ngIf="!isdateofprobationIssued">Issued Date should not be after
+                            Probation End Date
                         </div>
                     </div>
                 </div>
-        
+
                 <!-- Effective Date -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Effective Date<span class="error-msg">*</span></label>
@@ -63,7 +70,7 @@
                         <div *ngIf="!isdateofprobation">Effective Date should not be after Probation End Date</div>
                     </div>
                 </div>
-        
+
                 <!-- Document Type -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Document Type<span class="error-msg">*</span></label>
@@ -78,14 +85,16 @@
                         Document Type is required
                     </div>
                 </div>
-        
+
                 <!-- Signature Authority name -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Signature Authority Name<span
+                            class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                             placeholder="Please select signature authority name" formControlName="authorityid"
-                            (onChange)="pathValuesFuction()" class="custom-select w-100" resetFilterOnHide="true">
+                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
+                            filterBy="fullName" placeholder="Please select signature authority name"
+                            formControlName="authorityid" (onChange)="pathValuesFuction()" class="custom-select w-100"
+                            resetFilterOnHide="true">
                         </p-select>
                     </div>
                     <div
@@ -97,12 +106,14 @@
                 <div *ngIf="jobErrorMessage" class="error-msg mb-4">
                     {{ jobErrorMessage }}
                 </div>
-        
+
                 <div class="d-flex flex-wrap gap-3">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="probationConfirmationForm.invalid || spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="probationConfirmationForm.invalid || spinnerLoader || jobErrorMessage">
                         <ng-container *ngIf="spinnerLoader; else addText">
                             <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
                                 <span>{{'Loading...'}}</span>
                             </div>
                         </ng-container>
@@ -115,7 +126,8 @@
                         [disabled]="!enableBtn || releaseLoader">
                         <ng-container *ngIf="releaseLoader; else releaseText">
                             <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
                                 <span>{{'Loading...'}}</span>
                             </div>
                         </ng-container>
@@ -156,38 +168,41 @@
                                         <li>{{probationLetterData.workLocation}}</li>
                                     </ul>
                                     <div>
-                                        <p><span class="letter-sub-header">Issued Date:</span> {{probationLetterData.issuedDate | dateformat }}</p>
+                                        <p><span class="letter-sub-header">Issued Date:</span>
+                                            {{probationLetterData.issuedDate | dateformat }}</p>
                                     </div>
                                 </div>
-                            
+
                                 <p class="letter-sub-header mb-3">Dear {{probationLetterData.firstName}}
                                     {{probationLetterData.middleName}} {{probationLetterData.lastName}},</p>
-                            
+
                                 <p class="mb-4">We are pleased to inform you that, following a comprehensive
                                     assessment of your performance during the probationary period, you have successfully
                                     completed your probationary period with RightlyHR. </p>
-                            
+
                                 <p class="mb-4">
                                     Effective from {{probationLetterData.effectiveDate|dateformat}}, your position as
-                                    <b>{{probationLetterData.jobRole}}</b> within our organization is officially confirmed,
+                                    <b>{{probationLetterData.jobRole}}</b> within our organization is officially
+                                    confirmed,
                                     and your terms and conditions of employment will remain unchanged.
                                 </p>
-                            
+
                                 <p class="mb-4">
                                     We believe that your continued presence at RightlyHR will
                                     further contribute to our success, and we look forward to seeing your continued
                                     growth and contributions to the organization.
                                 </p>
-                            
+
                                 <p class="mb-4">
                                     Congratulations on this milestone in your career, and we look forward to a
                                     successful and rewarding journey together.
                                 </p>
-                            
+
                                 <p class="mb-2 pt-4">Sincerely,</p>
                                 <p class="letter-sub-header"><b>for RightlyHR</b></p>
                                 <!-- Show "Authority Signature" only when no authority is selected -->
-                                <div *ngIf="!probationLetterData.authorityName" class="letter-sub-header pt-4">Authority Signature</div>
+                                <div *ngIf="!probationLetterData.authorityName" class="letter-sub-header pt-4">Authority
+                                    Signature</div>
                                 <!-- Show Name & Designation only when authorityName is set -->
                                 <div *ngIf="!probationLetterData.authorityName">
                                     <p class="letter-sub-header m-0">Authority Name</p>

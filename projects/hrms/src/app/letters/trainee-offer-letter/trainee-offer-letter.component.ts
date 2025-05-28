@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AuthService } from '../../services/auth.service';
@@ -20,12 +20,14 @@ import { LettersTabComponent } from '../../shared/letters-shared-content/letters
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+
 @Component({
   selector: 'app-trainee-offer-letter',
   imports: [LettersTabComponent, CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule,
-    NgxCountriesDropdownModule, LetterFooterComponent, ModuleInformationComponent],
+    NgxCountriesDropdownModule, LetterFooterComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './trainee-offer-letter.component.html',
-  styleUrl: './trainee-offer-letter.component.scss'
+  styleUrl: './trainee-offer-letter.component.scss',
+ 
 })
 
 export class TraineeOfferLetterComponent {
@@ -67,7 +69,7 @@ export class TraineeOfferLetterComponent {
   JobroleDetails = [] as IRole[];
   disablebuttonfordesignation: boolean = true; //variable to disable the fields
   isIssuedDateValid: boolean = true;
-  isExpiryDateValid: boolean = true;
+  isExpiryDateValid: boolean = false;
   isStartDateValid: boolean = true;
   isStartDateValidofexpected: boolean = true;
   isSearchFeatureDisabled: boolean = true;
@@ -1046,11 +1048,8 @@ export class TraineeOfferLetterComponent {
   updateEndDateValidity(): void {
     const offerExpiryDate = moment(this.employeeForm.get('offerExpiryDate')?.value);
     const offerIssuedDate = moment(this.employeeForm.get('offerSentDate')?.value);
-    if(offerIssuedDate){
-    this.expiryDatevalidate = moment(offerIssuedDate).format('YYYY-MM-DD');
-    }
     if (offerExpiryDate && offerIssuedDate) {
-      if (offerExpiryDate >= offerIssuedDate) {
+      if (offerExpiryDate <= offerIssuedDate) {
         this.isExpiryDateValid = true;
       } else {
         this.isExpiryDateValid = false;

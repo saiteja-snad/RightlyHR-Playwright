@@ -181,7 +181,7 @@
 
             </div>
             <div *ngIf="assetForm.get('assetCategory')?.invalid && assetForm.get('assetCategory')?.touched">
-              <div class="error-msg">Asset category is required</div>
+              <div class="error-msg">Asset Category is required</div>
             </div>
 
           </div>
@@ -197,7 +197,7 @@
                 class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="assetForm.get('assetSubCategory')?.invalid && assetForm.get('assetSubCategory')?.touched">
-              <div class="error-msg">Asset sub category is required</div>
+              <div class="error-msg">Asset Sub Category is required</div>
             </div>
           </div>
 
@@ -209,10 +209,10 @@
             <input id="assetModel" formControlName="assetModel" (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" autocomplete="off" class="form-control custom-input custom-input"
               placeholder="Enter asset model">
             <div *ngIf="assetForm.get('assetModel')?.hasError('required') && assetForm.get('assetModel')?.touched">
-              <div class="error-msg">Asset model is required</div>
+              <div class="error-msg">Asset Model is required</div>
             </div>
             <div *ngIf="assetForm.get('assetModel')?.hasError('maxlength') && assetForm.get('assetModel')?.touched">
-              <div class="error-msg">Asset model cannot be more than 20 characters</div>
+              <div class="error-msg">Asset Model cannot be more than 20 characters</div>
             </div>
           </div>
 
@@ -222,10 +222,10 @@
             <input id="serialnumber" formControlName="serialnumber" (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)" class="form-control custom-input custom-input"
               placeholder="Enter serial number">
             <div *ngIf="assetForm.get('serialnumber')?.hasError('required') && assetForm.get('serialnumber')?.touched">
-              <div class="error-msg">Serial number is required</div>
+              <div class="error-msg">Serial Number is required</div>
             </div>
             <div *ngIf="assetForm.get('serialnumber')?.hasError('maxlength') && assetForm.get('serialnumber')?.touched">
-              <div class="error-msg">Serial number cannot be more than 30 characters</div>
+              <div class="error-msg">Serial Number cannot be more than 30 characters</div>
             </div>
 
           </div>
@@ -238,7 +238,7 @@
                 placeholder="Please select vendor name" class="form-select custom-select"></p-select>
             </div>
             <div *ngIf="assetForm.get('vendordetailes')?.touched && assetForm.get('vendordetailes')?.invalid">
-              <div class="error-msg">Vendor name is required</div>
+              <div class="error-msg">Vendor Name is required</div>
             </div>
           </div>
 
@@ -248,7 +248,7 @@
             <input id="purchasedate" type="date" formControlName="purchasedate" onkeypress="return false;"
               class="form-control custom-input custom-input"  [min]="minpurchesDate"[max]="maxpurchesDate">
             <div *ngIf="assetForm.get('purchasedate')?.invalid && assetForm.get('purchasedate')?.touched">
-              <div class="error-msg">Purchase date is required</div>
+              <div class="error-msg">Purchase Date is required</div>
             </div>
           </div>
 
@@ -271,11 +271,11 @@
               class="form-control custom-input custom-input" [min]="assetForm.get('purchasedate')?.value"
               (change)="onStartDateChange()">
             <div *ngIf="assetForm.get('warrantystartdate')?.invalid && assetForm.get('warrantystartdate')?.touched">
-              <div class="error-msg">Warranty start date is required</div>
+              <div class="error-msg">Warranty Start Date is required</div>
             </div>
             <!-- Custom error message for mismatched dates -->
             <div *ngIf="dateMismatch">
-              <div class="error-msg">Warranty Start date must be equal to the Purchase date</div>
+              <div class="error-msg">Warranty Start Date must be equal to the Purchase Date</div>
             </div>
           </div>
 
@@ -287,10 +287,10 @@
               class="form-control custom-input custom-input" [min]="assetForm.get('warrantystartdate')?.value"
               (change)="checkDateMismatch()">
             <div *ngIf="assetForm.get('warrantyenddate')?.invalid && assetForm.get('warrantyenddate')?.touched">
-              <div class="error-msg">Warranty expiry date is required</div>
+              <div class="error-msg">Warranty Expiry Date is required</div>
             </div>
             <div *ngIf="warrantydateMismatch">
-              <div class="error-msg">Warranty expiry date must be greater than warranty start date</div>
+              <div class="error-msg">Warranty Expiry Date must be greater than warranty start date</div>
             </div>
           </div>
 
@@ -316,10 +316,10 @@
               class="form-control custom-input custom-input" [min]="assetForm.get('warrantyenddate')?.value"
               (change)="onStartDateChangeamc()" />
             <div *ngIf="assetForm.get('amcstartdate')?.invalid && assetForm.get('amcstartdate')?.touched">
-              <div class="error-msg">AMC start date is required</div>
+              <div class="error-msg">AMC Start Date is required</div>
             </div>
             <div *ngIf="amcDateMismatch">
-              <div class="error-msg">AMC start date must be equal to or greater than the warranty expiry
+              <div class="error-msg">AMC Start Date must be equal to or greater than the warranty expiry
                 date</div>
             </div>
           </div>
@@ -334,10 +334,10 @@
               class="form-control custom-input custom-input" onkeypress="return false;"
               [min]="assetForm.get('amcstartdate')?.value" (change)="checkAmcDateMismatch()" />
             <div *ngIf="assetForm.get('amcenddate')?.invalid && assetForm.get('amcenddate')?.touched">
-              <div class="error-msg">AMC expiry date is required</div>
+              <div class="error-msg">AMC Expiry Date is required</div>
             </div>
             <div *ngIf="amcDateMismatch">
-              <div class="error-msg">AMC expiry date must be greater than AMC start date</div>
+              <div class="error-msg">AMC Expiry Date must be greater than AMC start date</div>
             </div>
           </div>
 
@@ -361,17 +361,17 @@
               (keypress)="formValidation.restrictAlphabets($event)" autocomplete="off" placeholder="AMC Vendor Contact" />
             <div class="error-msg"
               *ngIf="assetForm.get('contactnumber')?.errors?.['required'] && assetForm.get('contactnumber')?.touched">
-              AMC vendor contact is required
+              AMC Vendor Contact is required
             </div>
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['minlength'] ">
-              AMC vendor contact must be 10 to 15 digits
+              AMC vendor Contact must be 10 to 15 digits
             </div>
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['maxlength'] ">
-              AMC vendor contact must be 10 to 15 digits
+              AMC Vendor Contact must be 10 to 15 digits
             </div>
              <!-- Pattern error for Mobile number length -->
              <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['allZeroesIfMaxLength']">
-              AMC vendor Contact is not valid
+              AMC Vendor Contact is not valid
             </div>
           </div>
         </div>

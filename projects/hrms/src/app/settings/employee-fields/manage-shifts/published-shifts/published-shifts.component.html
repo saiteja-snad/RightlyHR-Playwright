@@ -13,10 +13,10 @@
                     <th>{{'Year'|translate}}</th>
                     <th>{{'Location'|translate}}</th>
                     <th>{{'Sub Location'|translate}}</th>
-                    <th>{{'Shift Name'|translate}}</th>
+                    <th class="text-center">{{'Shift Name'|translate}}</th>
                     <th>{{'Status'|translate}}</th>
                     <th>{{'Added By'|translate}}</th>
-                    <th class="text-center">{{'Action(S)'|translate}}</th>
+                    <th class="text-center">{{'Action'|translate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,8 +26,8 @@
                     <td>{{ shift.applicableyear }}</td>
                     <td>{{ shift.locationName }}</td>
                     <td>{{ shift.subLocationName }}</td>
-                    <td>
-                        <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip"
+                    <td class="text-center">
+                        <i class="bi bi-info-circle-fill cursor" data-toggle="tooltip"
                             title="{{getShiftNames(shift)}}"></i>
                     </td>
                     <td>{{ shift.status }}</td>

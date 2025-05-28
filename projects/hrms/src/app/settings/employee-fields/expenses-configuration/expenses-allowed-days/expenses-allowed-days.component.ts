@@ -105,8 +105,7 @@ export class ExpensesAllowedDaysComponent {
           next: (data: any) => {
             console.log(data)
             if (data) {
-              this.conformationPopup.openSuccessModal('Data updated successfully')
-              
+              this.conformationPopup.openSuccessModal('Expense Duration updated successfully')
               this.getdatabyentriy();
               formdata.reset()
             }

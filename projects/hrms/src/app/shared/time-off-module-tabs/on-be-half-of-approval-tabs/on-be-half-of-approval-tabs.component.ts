@@ -75,7 +75,9 @@ export class OnBeHalfOfApprovalTabsComponent {
             { label: 'Waiting For Approval', route: 'waiting-for-approval', icon: '/time-off-icon/waiting-for-approval-icon.png', count: waiting.length, permission: { feature: 'Waiting For Approval (On Behalf Of)', action: 'view' } },
             { label: 'Approved', route: 'approved', count: approved.length, icon: '/time-off-icon/approved-icon.png', permission: { feature: 'Approved (On Behalf Of)', action: 'view' } },
             { label: 'Processed', route: 'processed', count: processed.length, icon: '/time-off-icon/processed-icon.png', permission: { feature: 'Processed (On Behalf Of)', action: 'view' } },
-            { label: 'Rejected', route: 'rejected', count: rejected.length, icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } }
+            { label: 'Rejected', route: 'rejected', count: rejected.length, icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } },
+            { label: 'Rejected', route: 'rejected', count: rejected.length, icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected (On Behalf Of)', action: 'view' } },
+
           ];
           this.filterTabsByRbac();
         } else {

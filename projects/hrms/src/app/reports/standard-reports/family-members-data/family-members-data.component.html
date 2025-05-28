@@ -1,14 +1,15 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
         <!--header-->
-      
-           <div class="heading-content">
-      <div class="commpoment-name ">Custom Reports<span class="ms-2">>></span></div>
-      <div class="component-header">Family Members Data</div>
-      <div>
-        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-      </div>
-    </div>
+
+        <div class="heading-content">
+            <div class="commpoment-name ">Standard Reports<span class="ms-2">>></span></div>
+            <div class="component-header">Family Members Data</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
 
         <!--right data-->
         <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
@@ -38,7 +39,8 @@
                         }
                     </button>
                     }
-                    @if(rbac.allowedToAccess('Family Members Data - Generate.view') && rbac.allowedToAccess('Family Members Data - Export.view')){
+                    @if(rbac.allowedToAccess('Family Members Data - Generate.view') && rbac.allowedToAccess('Family
+                    Members Data - Export.view')){
                     <button type="button" class="custom-btn btn-primary"
                         [disabled]="familydata.length === 0 || disableBtn" (click)="exportAsExcelFile()">
                         @if(spinnerLoader2){
@@ -55,15 +57,15 @@
     </div>
 
     <!--Module Information-->
-  <ng-template #popContent>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </ng-template>
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
 
     <div class="d-flex gap-3 w-100">
         <div class="component-left-tabs-container">
             <app-standard-report-tabs />
         </div>
-        
+
         <div class="component-right-content">
             <ng-container *ngIf="dataload; else maincontent">
                 <ng-template #loadingSpinner>
@@ -78,16 +80,16 @@
                 <div class="custom-table-content">
                     <table class="w-100">
                         <thead>
-                                <th>{{ "Employee ID" }}</th>
-                                <th>{{ "First Name" }}</th>
-                                <th>{{ "Middle Name" }}</th>
-                                <th>{{ "Last Name" }}</th>
-                                <th>{{ "Work Email" }}</th>
-                                <th>{{ "Employee Status" }}</th>
-                                <th>{{ "Name" }}</th>
-                                <th>{{ "Relation" }}</th>
-                                <th>{{ "Date of Birth" }}</th>
-                                <th>{{ "Dependent" }}</th>
+                            <th>{{ "Employee ID" }}</th>
+                            <th>{{ "First Name" }}</th>
+                            <th>{{ "Middle Name" }}</th>
+                            <th>{{ "Last Name" }}</th>
+                            <th>{{ "Work Email" }}</th>
+                            <th>{{ "Employee Status" }}</th>
+                            <th>{{ "Name" }}</th>
+                            <th>{{ "Relation" }}</th>
+                            <th>{{ "Date of Birth" }}</th>
+                            <th>{{ "Dependent" }}</th>
                         </thead>
                         <tbody>
                             <ng-container *ngIf="familydata.length > 0; else noData">

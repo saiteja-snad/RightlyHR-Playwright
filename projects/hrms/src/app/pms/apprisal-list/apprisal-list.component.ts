@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
@@ -7,7 +7,7 @@ import { SelectModule } from 'primeng/select';
 import { TranslateModule } from '@ngx-translate/core';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { environment } from '../../../environments/environment';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { OpenModalService } from '../../services/open-modal.service';
 import { EmployeeQueryParams, IReviewCycleEmployee } from './review-cycle-emp.model';
 import { PaginatorModule } from 'primeng/paginator';
@@ -20,9 +20,10 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-apprisal-list',
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, TranslateModule, MultiSelectModule, PaginatorModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './apprisal-list.component.html',
-  styleUrl: './apprisal-list.component.scss'
+  styleUrl: './apprisal-list.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class ApprisalListComponent implements OnInit, OnDestroy {
   moduleinfo : string = '';

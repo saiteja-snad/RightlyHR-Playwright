@@ -1,36 +1,42 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0">
-                <i class="bi bi-arrow-90deg-left me-2" (click)="navigateDashboard()"></i>Promotion Letter
-            </p>
+    <div class="component-header-content">
+
+        <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="navigateDashboard()">Dashboard<span class="ms-2">>></span>
+            </div>
+            <div class="component-header">Promotion Letter</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
     </div>
 
-    <!--Module Information-->
-    <div>
+    <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    </ng-template>
 
     <!--letter content-->
     <div class="main-letter-content gap-4 d-flex w-100">
         <div class="card letter-fields-content p-4">
-            <form autocomplete="off" [formGroup]="employeeForm" (ngSubmit)="postPromotionLetterFormSubmit(employeeForm)">
+            <form autocomplete="off" [formGroup]="employeeForm"
+                (ngSubmit)="postPromotionLetterFormSubmit(employeeForm)">
                 <div class="row">
                     <div class="mb-3">
                         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">
                             {{'Select Employee'| translate }}<span class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="employeeiddetails" optionLabel="fullName" [filter]="true"
-                                filterBy="fullName" placeholder="Please select employee"
-                                formControlName="fusionEmpId" class="custom-select w-100" resetFilterOnHide="true"
+                                filterBy="fullName" placeholder="Please select employee" formControlName="fusionEmpId"
+                                class="custom-select w-100" resetFilterOnHide="true"
                                 (onChange)="Onclick(employeeForm.get('fusionEmpId')?.value)">
                             </p-select>
                             <div
                                 *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
                                 <div class="error-msg">{{'Employee is required'| translate }}</div>
                             </div>
-                            <div *ngIf="!disablebuttonforemployeeid" class="error-msg">{{'No results found'| translate }}</div>
+                            <div *ngIf="!disablebuttonforemployeeid" class="error-msg">{{'No results found'| translate
+                                }}</div>
                         </div>
                     </div>
 
@@ -39,7 +45,7 @@
                                 class="error-msg">*</span></label>
                         <input type="date" class="form-control custom-input" id="relievingDate"
                             formControlName="dateofpromotion" [(ngModel)]="promotiondata.dateofpromotion"
-                            placeholder="Please enter Date" (change)="DateValidation()" onkeydown="return false"/>
+                            placeholder="Please enter Date" (change)="DateValidation()" onkeydown="return false" />
                         <!-- Error block shows for both required and custom logic -->
                         <div *ngIf="employeeForm.get('dateofpromotion')?.touched">
                             <div *ngIf="employeeForm.get('dateofpromotion')?.hasError('required')" class="error-msg">
@@ -52,13 +58,16 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label custom-label mb-2">Document Type <span class="error-msg">*</span></label>
+                        <label class="form-label custom-label mb-2">Document Type <span
+                                class="error-msg">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="documentType" optionLabel="name" placeholder="Please select document type"
-                                formControlName="Documenttype" class="custom-select w-100" resetFilterOnHide="true">
+                            <p-select [options]="documentType" optionLabel="name"
+                                placeholder="Please select document type" formControlName="Documenttype"
+                                class="custom-select w-100" resetFilterOnHide="true">
                             </p-select>
                         </div>
-                        <div *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
+                        <div
+                            *ngIf="employeeForm.get('Documenttype')?.invalid && employeeForm.get('Documenttype')?.touched">
                             <div class="error-msg">Document Type is required</div>
                         </div>
                     </div>
@@ -67,7 +76,8 @@
                         <label class="form-label custom-label mb-2">{{'Note'| translate }}</label>
                         <textarea class="form-control custom-input" formControlName="note" maxlength="250"
                             [(ngModel)]="promotiondata.notes" placeholder="Leave a comment here"></textarea>
-                        <div class="textarea-count-text">{{promotiondata.notes?.length?promotiondata.notes?.length:0}}/250</div>
+                        <div class="textarea-count-text">
+                            {{promotiondata.notes?.length?promotiondata.notes?.length:0}}/250</div>
                         <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">
                             <div class="error-msg">{{'Note is required'| translate }}</div>
                         </div>
@@ -81,7 +91,7 @@
                                 placeholder="Please select signature authority name" class="custom-select w-100"
                                 [(ngModel)]="promotiondata.authorityid" formControlName="authorityid"
                                 (onChange)="onclickDesignation()" resetFilterOnHide="true" [filter]="true"
-                                filterBy="fullName"/>
+                                filterBy="fullName" />
                         </div>
                         <div
                             *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched">
@@ -96,7 +106,8 @@
 
                 <div>
                     <p class="note-text"><span class="note me-2">{{'Note'| translate }}:</span>Please update the
-                        Employee Name, Address, Mobile Number, Email ID, Designation, PT, PF, ESIC, Place(work location),
+                        Employee Name, Address, Mobile Number, Email ID, Designation, PT, PF, ESIC, Place(work
+                        location),
                         Salary in Personal and Job Tabs Before Generating the Document.</p>
                 </div>
 
@@ -105,7 +116,8 @@
                         [disabled]="employeeForm.invalid || spinnerLoader || !isdateofpromotion">
                         <ng-container *ngIf="spinnerLoader; else addText">
                             <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
                                 <span>{{'Loading...'}}</span>
                             </div>
                         </ng-container>
@@ -123,7 +135,8 @@
                     <!--page-1-->
                     <div class="letter-page-content" id="pdfContent1">
                         <div class="letter-page-sub-content">
-                            <div *ngIf="employeeForm.get('Documenttype')?.value?.value === true; else doc" class="soft-copy-letter">
+                            <div *ngIf="employeeForm.get('Documenttype')?.value?.value === true; else doc"
+                                class="soft-copy-letter">
                                 <app-lettersheader></app-lettersheader>
                             </div>
                             <ng-template #doc>
@@ -145,10 +158,13 @@
                                 <b>{{promotiondata.jobRole}}</b>.
                                 As a token of our appreciation for your exceptional performance, we are pleased to
                                 inform you that you will be receiving a salary increase. Your new salary shall be
-                                effective from <span *ngIf="!promotiondata.compeffectivedate;else effectivedate">_______________________</span>
-                                <ng-template #effectivedate><b>{{promotiondata.compeffectivedate | dateformat}}</b></ng-template> 
-                                & with revised annual CTC of<b><span *ngIf="!promotiondata.salary;else grossperanum"> </span>
-                                <ng-template #grossperanum> &#8377;{{promotiondata.salary }}/-.</ng-template></b>
+                                effective from <span
+                                    *ngIf="!promotiondata.compeffectivedate;else effectivedate">_______________________</span>
+                                <ng-template #effectivedate><b>{{promotiondata.compeffectivedate |
+                                        dateformat}}</b></ng-template>
+                                & with revised annual CTC of<b><span *ngIf="!promotiondata.salary;else grossperanum">
+                                    </span>
+                                    <ng-template #grossperanum> &#8377;{{promotiondata.salary }}/-.</ng-template></b>
                             </p>
                             <!-- <div class="table-scroll"> -->
                             <!-- start of  first table -->
@@ -192,8 +208,10 @@
                                                 <ng-template #educ>{{promotiondata.educationAllowances}}</ng-template>
                                             </td>
                                             <td class="text-end p-1">
-                                                <span *ngIf="!promotiondata.educationallowancesPerAnnum;else educper"></span>
-                                                <ng-template #educper>{{promotiondata.educationallowancesPerAnnum}}</ng-template>
+                                                <span
+                                                    *ngIf="!promotiondata.educationallowancesPerAnnum;else educper"></span>
+                                                <ng-template
+                                                    #educper>{{promotiondata.educationallowancesPerAnnum}}</ng-template>
                                             </td>
                                         </tr>
                                         <tr>
@@ -214,19 +232,24 @@
                                                 <ng-template #other>{{promotiondata.otherAllowances}}</ng-template>
                                             </td>
                                             <td class="text-end p-1">
-                                                <span *ngIf="!promotiondata.otherAllowancesPerAnnum;else otherper"></span>
-                                                <ng-template #otherper>{{promotiondata.otherAllowancesPerAnnum}}</ng-template>
+                                                <span
+                                                    *ngIf="!promotiondata.otherAllowancesPerAnnum;else otherper"></span>
+                                                <ng-template
+                                                    #otherper>{{promotiondata.otherAllowancesPerAnnum}}</ng-template>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td class="p-1"><b>Total Gross Salary</b></td>
                                             <td class="text-end p-1 bold">
                                                 <span *ngIf="!promotiondata.totalGrossSalary;else totalgross"> </span>
-                                                <ng-template #totalgross>{{promotiondata.totalGrossSalary}}</ng-template>
+                                                <ng-template
+                                                    #totalgross>{{promotiondata.totalGrossSalary}}</ng-template>
                                             </td>
                                             <td class="text-end p-1 bold">
-                                                <span *ngIf="!promotiondata.totalGrossPerAnnum;else totalgrossper"></span>
-                                                <ng-template #totalgrossper>{{promotiondata.totalGrossPerAnnum}}</ng-template>
+                                                <span
+                                                    *ngIf="!promotiondata.totalGrossPerAnnum;else totalgrossper"></span>
+                                                <ng-template
+                                                    #totalgrossper>{{promotiondata.totalGrossPerAnnum}}</ng-template>
                                             </td>
                                         </tr>
                                         <tr>
@@ -247,8 +270,10 @@
                                                 <ng-template #esiemployees>{{promotiondata.employeeEsi}}</ng-template>
                                             </td>
                                             <td class="text-end p-1">
-                                                <span *ngIf="!promotiondata.esiPerAnnumemployee;else esiemployee"></span>
-                                                <ng-template #esiemployee>{{promotiondata.esiPerAnnumemployee}}</ng-template>
+                                                <span
+                                                    *ngIf="!promotiondata.esiPerAnnumemployee;else esiemployee"></span>
+                                                <ng-template
+                                                    #esiemployee>{{promotiondata.esiPerAnnumemployee}}</ng-template>
                                             </td>
                                         </tr>
                                         <tr>
@@ -259,7 +284,8 @@
                                             </td>
                                             <td class="text-end p-1">
                                                 <span *ngIf="!promotiondata.professionalPerAnnum;else pftaxper"> </span>
-                                                <ng-template #pftaxper>{{promotiondata.professionalPerAnnum}}</ng-template>
+                                                <ng-template
+                                                    #pftaxper>{{promotiondata.professionalPerAnnum}}</ng-template>
                                             </td>
                                         </tr>
                                         <tr>
@@ -271,7 +297,8 @@
                                             <td class="text-end p-1 bold">
                                                 <span *ngIf="!promotiondata.totalDeductionsPerAnnum;else totdecper">
                                                 </span>
-                                                <ng-template #totdecper>{{promotiondata.totalDeductionsPerAnnum}}</ng-template>
+                                                <ng-template
+                                                    #totdecper>{{promotiondata.totalDeductionsPerAnnum}}</ng-template>
                                             </td>
                                         </tr>
                                         <tr>
@@ -335,8 +362,10 @@
                             <br>
                             <p>{{promotiondata.notes}}</p>
                             <div>
-                                <p> We hope that you will continue your progress with the same dedication and commitment. </p>
-                                <p>Once again, congratulations on your success and cheers to more good work in the future. </p>
+                                <p> We hope that you will continue your progress with the same dedication and
+                                    commitment. </p>
+                                <p>Once again, congratulations on your success and cheers to more good work in the
+                                    future. </p>
                                 <p>We wish you all the best.</p>
                             </div>
 

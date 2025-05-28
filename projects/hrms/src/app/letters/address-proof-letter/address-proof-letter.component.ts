@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
@@ -19,9 +19,12 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+
+
+
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })

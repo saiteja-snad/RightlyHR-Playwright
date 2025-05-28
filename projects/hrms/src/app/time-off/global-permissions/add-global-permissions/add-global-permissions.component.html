@@ -27,7 +27,7 @@
         </div>
 
         <!-- Multi-select Dropdown for Options -->
-        <ng-container *ngIf="requestForm.get('selectType')?.value==='Location/Sublocation'">
+        <ng-container *ngIf="requestForm.get('selectType')?.value==='Location/Sub Location'">
           <div class="mb-3">
             <label for="location" class="form-label custom-label">Location <span class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
@@ -42,11 +42,11 @@
           </div>
 
           <div class="mb-3">
-            <label for="sublocation" class="form-label custom-label">Sub location <span
+            <label for="sublocation" class="form-label custom-label">Sub Location <span
                 class="error-msg">*</span></label>
             <div class="custom-p-multiSelect-content">
               <p-multiSelect [options]="subLocationsDropdown" optionValue="id" optionLabel="jobSubLocationName"
-                [filter]="true" filterBy="name" [showClear]="true" [resetFilterOnHide]="true" placeholder="Select Sublocation"
+                [filter]="true" filterBy="name" [showClear]="true" [resetFilterOnHide]="true" placeholder="Select Sub Location"
                 formControlName="sublocation" (onChange)="getEmployeesLocationwise()" class="custom-select w-100" [selectedItemsLabel]="`${requestForm.get('sublocation')?.value?.length} Sublocations selected`">
               </p-multiSelect>
             </div>

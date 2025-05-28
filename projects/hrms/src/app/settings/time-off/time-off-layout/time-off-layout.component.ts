@@ -7,9 +7,10 @@ import { LeaveCategoryTabsComponent } from "../../../shared/settings-tabs/leave-
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-time-off-layout',
-  imports: [RouterModule, CommonModule, SettingsTimeOffTabsComponent, AttendanceEligibilityCriteriaTabsComponent, LeaveCategoryTabsComponent, ModuleInformationComponent],
+  imports: [RouterModule, CommonModule, SettingsTimeOffTabsComponent, AttendanceEligibilityCriteriaTabsComponent, LeaveCategoryTabsComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './time-off-layout.component.html',
   styleUrl: './time-off-layout.component.scss',
   encapsulation:ViewEncapsulation.None

@@ -2,8 +2,15 @@
     @if (router.url !== '/settings/dynamic-forms/create-form' && router.url !== '/settings/dynamic-forms/view-form'
     && router.url !== '/settings/dynamic-forms/update-form') {
     <!--header-->
-    <div class="d-flex align-items-center justify-content-between mb-3">
-        <div class="component-header">Settings</div>
+    <div class="component-header-content">
+         <div class="heading-content">
+            <div class="commpoment-name cursor">Settings<span class="ms-2">>></span></div>
+            <div class="component-header">Dynamic Forms</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
 
         <div>
             @if (rbac.allowedToAccess('Dynamic Forms Module.create')) {
@@ -12,9 +19,10 @@
         </div>
     </div>
     <!--Module Information-->
-    <div>
+    <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    </ng-template>
+
 
     <div class="d-flex gap-3 w-100">
         <!--tabs content-->

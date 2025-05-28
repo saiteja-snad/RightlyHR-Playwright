@@ -26,8 +26,8 @@
                     <th>{{'Total Amount' | translate}}</th>
                     <th>{{'Status' | translate}}</th>
                     @if(rbac.allowedToAccess('Draft Tab.update')){
-                    <th class="text-center">{{'Action(S)' | translate}}</th>
-                    }
+                    <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+                       }
                 </thead>
                 <tbody>
                     <ng-container *ngIf="((expenesEmplyeedata | async) ?? []).length > 0; else noDataTemplate">

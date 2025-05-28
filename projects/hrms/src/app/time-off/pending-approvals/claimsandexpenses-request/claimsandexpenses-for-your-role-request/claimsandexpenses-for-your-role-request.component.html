@@ -17,8 +17,8 @@
         <th class="text-center">View Expense </th>
         <th class="text-center">Approver Comments</th>
         @if(rbac.allowedToAccess('For Role (Claims and Expenses).update') || rbac.allowedToAccess('For Role (Claims and Expenses).delete')) {
-        <th class="text-center">Action(s)</th>
-        }
+        <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
+          }
       </thead>
       <tbody>
           <ng-container *ngIf="(expenseheaderpending | searchfordesk: searchValue : ['entity.employeeName', 'entity.expenses_Title','entity.totalExpenseAmount','entity.status']).length > 0; else noDataTemplate">

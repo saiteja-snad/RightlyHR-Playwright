@@ -47,10 +47,10 @@
                     <th>Applied Date</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    <th>Reason</th>
-                    <th>Approver Comments</th>
+                    <th class="text-center">Reason</th>
+                    <th class="text-center">Approver Comments</th>
                     @if(!multiSelect &&(rbac.allowedToAccess('For You (Time Off).update') || rbac.allowedToAccess('For You (Time Off).delete'))){
-                    <th>Action<span class="text-lowercase">(s)</span></th>
+                    <th>Action</th>
                     }
                 </tr>
             </ng-template>

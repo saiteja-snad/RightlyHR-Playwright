@@ -131,7 +131,8 @@
                                     @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&
                                     (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs &&
                                         item.status!=='Weekend' && currentMonth==selectedMonth
-                                        &&item.regularizations.length<=0 && item.employeeId==empdata.employeeId){ <a
+                                        &&item.regularizations.length<=0 && item.employeeId==empdata.employeeId){ 
+                                            <a
                                         class="application-btn"
                                         (click)="openModal(raiseregularization); onclickRegularization(item.date)">
                                         <u>Regularization</u></a>

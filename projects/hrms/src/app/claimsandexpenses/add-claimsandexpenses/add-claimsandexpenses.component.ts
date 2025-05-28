@@ -1,19 +1,21 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { IExpense, Iexpensetype, } from '../../Interfaces/claimsandexpenses.model';
-import { Subscription, switchMap } from 'rxjs';
+import { filter, Subscription, switchMap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TabsModule } from 'primeng/tabs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-add-claimsandexpenses',
-  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, CommonModule, TabsModule],
+  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule,NgbPopoverModule, CommonModule, TabsModule, ModuleInformationComponent],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
   providers: [DatePipe]
@@ -22,6 +24,7 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
 export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   empinfo: any;
   Myexpense: any;
+  moduleinfo: any
   totalexpensesamount = 0;
   selectedExpenseType: any;
   selectedexpensesid: any;
@@ -53,6 +56,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     this.initiateForm();
     this.getExpensetype();
     this.getdatabyentriy();
+    this.updateModuleInfo();
     this.getexpensesheaderbyid(this.empinfo.employeeid)
     this.setDate()
     this.newExpenseForm.valueChanges.subscribe(() => {
@@ -92,6 +96,23 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
 
   navigateMyexpenses() {
     this.router.navigate(['/claimsandexpenses/expenses/draft'])
+  }
+  
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+    const routeToInfoMap: { [key: string]: string } = {
+      '/claimsandexpenses/addexpense':MODULE_INFOS.EXPENSES_MODULE_INFO
+    };
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   calculateTotalExpensesAmount(): void {

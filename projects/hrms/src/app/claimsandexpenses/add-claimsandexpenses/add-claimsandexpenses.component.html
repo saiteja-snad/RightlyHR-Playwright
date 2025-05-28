@@ -1,11 +1,22 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header cursor mb-0">
-                <i class="bi bi-arrow-90deg-left me-2" (click)="navigateMyexpenses()"></i>{{'Create Expense' |
-                translate}}
-            </p>
+
+    <div class="d-flex justify-content-between align-items-center pt-2 mb-3">
+        <div class="heading-content">
+            <div class="commpoment-name" (click)="navigateMyexpenses()">Expenses<span class="ms-1"><i
+                        class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{'Create Expense' |
+                translate}}s</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
+        <!--Module Information-->
+        <ng-template #popContent>
+            <app-module-information [moduleInfo]="moduleinfo" />
+        </ng-template>
+
+
     </div>
 
     <div class="card custom-card ">
@@ -201,7 +212,7 @@
                             <div class="col-md-4">
                                 <label class="form-label custom-label">{{'Proof (Image and PDF only)' | translate}}<span
                                         class="text-danger">*</span></label>
-                                <input type="file" class="form-control custom-input px-0"  accept=".pdf, image/*"
+                                <input type="file" class="form-control custom-input px-0" accept=".pdf, image/*"
                                     (change)="fileupload($event, i)" />
                                 <div class="error-msg"
                                     *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">

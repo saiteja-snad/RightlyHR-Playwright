@@ -13,11 +13,12 @@ import { SettingsManagePoliciesTabsComponent } from "../../../shared/settings-ta
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { filter } from 'rxjs';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-employee-fields-layout',
   imports: [CommonModule, RouterModule, SettingsEmployeeFieldsModuleTabsComponent, SettingsPersonalTabsComponent, SettingsJobTabsComponent,
     SettingsExpenesConfigurtionsTabsComponent, ManageWeekendsTabsComponent, ManageDstTabsComponent, SettingsManageShitsTabsComponent,
-    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent, ModuleInformationComponent],
+    SettingsManageHolidaysTabsComponent, SettingsManagePoliciesTabsComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './employee-fields-layout.component.html',
   styleUrl: './employee-fields-layout.component.scss'
 })

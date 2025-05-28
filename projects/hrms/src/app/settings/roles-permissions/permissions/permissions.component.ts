@@ -21,6 +21,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { ModuleInformationComponent } from '../../../shared/module-information/module-information.component';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-permissions',
   imports: [
@@ -31,6 +32,7 @@ import { TranslateModule } from '@ngx-translate/core';
     DataLoaderContentComponent,
     ModuleInformationComponent,
     TranslateModule,
+    NgbPopoverModule
   ],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',

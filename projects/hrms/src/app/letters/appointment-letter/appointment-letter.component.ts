@@ -19,9 +19,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IEmployeeSignatures } from '../letters.modal';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-appointment-letter',
-  imports: [CommonModule, LettersTabComponent, SelectModule, DateformatPipe, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, LettersTabComponent, SelectModule, DateformatPipe, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './appointment-letter.component.html',
   styleUrl: './appointment-letter.component.scss'
 })

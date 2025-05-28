@@ -393,7 +393,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary "
-                        (click)="opendeletepopup(updateconformation)">Close</button>
+                        (click)="opendeletepopup(updateconformation)">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
                                    ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
                                    (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
@@ -411,7 +411,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">

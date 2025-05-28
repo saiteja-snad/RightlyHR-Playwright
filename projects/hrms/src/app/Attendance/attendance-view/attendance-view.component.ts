@@ -124,7 +124,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log(this.date);
     // Get current date
     const now = moment().startOf('month'); // ← important!
     this.date = now.toDate();
@@ -170,7 +169,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       const selectedDate = moment(Value);
       this.selectedYear = selectedDate.year();
       this.selectedMonth = selectedDate.month() + 1; // month() is 0-based
-      console.log(this.selectedYear + this.selectedMonth);
       this.getAttendnaceData(this.getSelectedEmployee());
     }
   }
@@ -203,7 +201,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       backdrop: 'static',
     });
   }
-
+//function to get the attendance criteria
   getAttendanceCriteria() {
     const params = 'AttendanceRegularization';
     const param = [
@@ -432,7 +430,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
                 return {
                   ...employee,
                   fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                    }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                    }${employee.firstName??''} ${employee.middleName ? employee.middleName + ' ' : ''
                     }${employee.lastName}`,
                 };
               });

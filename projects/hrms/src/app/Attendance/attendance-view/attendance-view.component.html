@@ -33,8 +33,8 @@
                 </p-select>
             </div>
             }
-            @if(this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')||
-            this.rbac.allowedToAccess('Attendance Select Employee For HR.view')){
+            @if((this.rbac.allowedToAccess('Attendance Select Employee For Manager.view')||
+            this.rbac.allowedToAccess('Attendance Select Employee For HR.view'))&&((selectedEmployeeOfHr?.employeeId!= empdata.employeeId&&selectedEmployeeOfHr!=null)||(selectedEmployee?.employeeId!= empdata.employeeId&&selectedEmployee!=null))){
             <button type="button" class="custom-btn btn-primary" 
                 (click)="getAttendnaceData(empdata);this.selectedEmployee=null;this.selectedEmployeeOfHr=null">
                 <img src="icons/finger-print.png" alt="" class="finger-icon me-1">

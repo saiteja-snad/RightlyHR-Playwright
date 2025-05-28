@@ -1040,6 +1040,9 @@ export class LeavesComponent {
     }
   }
 
+  startDateErrorMessage = '';
+  endDateErrorMessage = '';
+  
   calculateDateDifference(startDate: string, endDate: string) {
     var date1 = moment(startDate, 'YYYY-MM-DD');
     var date2 = moment(endDate, 'YYYY-MM-DD');
@@ -1111,6 +1114,24 @@ export class LeavesComponent {
           this.isoptionalnotallowedatWorkingdate = false;
         }
       }
+      else if (this.selectedleave?.category?.isOptionalHoliday === false) {
+        const startDate = moment(this.leaveForm.get('startdate')?.value).format('YYYY-MM-DD');
+        const endDate = moment(this.leaveForm.get('enddate')?.value).format('YYYY-MM-DD');
+        const isStartDateOptionalHoliday = this.orgholidays?.orgHolidaysItems.find((ele: any) => {
+          return ele.isOptional === true && this.isSameDate(ele.holidayDate, startDate);
+        });
+
+        const isEndDateOptionalHoliday = this.orgholidays?.orgHolidaysItems.find((ele: any) => {
+          return ele.isOptional === true && this.isSameDate(ele.holidayDate, endDate);
+        });
+
+        this.startDateErrorMessage = isStartDateOptionalHoliday ? 'Selected start date is not allowed as it is an optional holiday' : '';
+
+        this.endDateErrorMessage = isEndDateOptionalHoliday ? 'Selected end date is not allowed as it is an optional holiday' : '';
+        if (isStartDateOptionalHoliday || isEndDateOptionalHoliday) {
+          return;
+        }
+      }
       else {
         this.isoptionalnotallowedatWorkingdate = false;
       }
@@ -1131,6 +1152,13 @@ export class LeavesComponent {
       this.dateDiff = this.leaveFormData.isDaytype ? this.dateDifference / 2 : this.dateDifference;
     }
   }
+  isSameDate(date1: any, date2: any): boolean {
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  return d1.getFullYear() === d2.getFullYear() &&
+         d1.getMonth() === d2.getMonth() &&
+         d1.getDate() === d2.getDate();
+}
 
   chooseDayType(daytype: any) {
     this.isDayTypeselected = true;

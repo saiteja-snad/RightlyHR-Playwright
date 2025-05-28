@@ -1,13 +1,13 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
-  
-     <div class="heading-content">
-            <div class="commpoment-name"><img src="/images/back-icon.png" alt="Icon" class="back-icon" (click)="navigateDashboard()">Dashboard<span class="ms-2">>></span></div>
-            <div class="component-header">   {{'Prospective Trainees'|translate}}</div>
-            <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
-            </div>
-        </div>
+
+    <div class="heading-content">
+      <div class="commpoment-name cursor" (click)="navigateDashboard()">Dashboard<span class="ms-2">>></span></div>
+      <div class="component-header"> {{'Prospective Trainees'|translate}}</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
     @if(this.rbac.allowedToAccess('Add Prospective Trainee.view')){
     <div class="d-flex">
       <button type="button" class="custom-btn btn-primary" (click)="openAddProspective()">
@@ -16,10 +16,10 @@
     }
   </div>
 
-        
-    <ng-template #popContent>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </ng-template>
+
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
 
   <!--Input search-->
   <div class="input-group custom-search mb-3">

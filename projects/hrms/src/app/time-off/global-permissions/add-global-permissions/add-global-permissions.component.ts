@@ -28,7 +28,7 @@ export class AddGlobalPermissionsComponent implements OnInit,OnDestroy {
   issubmitdiable = false;
   requestForm!: FormGroup;
   selectTypes = [
-    { sno: 1,  Value:'Location/Sublocation', item_text: 'Select by Location/Sublocation', selectedAllGroup: 'Group 1' },
+    { sno: 1,  Value:'Location/Sub Location', item_text: 'Select by Location/Sub Location', selectedAllGroup: 'Group 1' },
     { sno: 2, Value:'Department/Team', item_text: 'Select by Department/Team', selectedAllGroup: 'Group 1' },
     { sno: 3, Value:'Employees', item_text: 'Select by Employees', selectedAllGroup: 'Group 1' }
 

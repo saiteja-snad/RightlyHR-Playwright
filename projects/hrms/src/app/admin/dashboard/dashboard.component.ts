@@ -131,7 +131,7 @@ export class DashboardComponent {
 
   //   function for active Employees
   activeEmpData() {
-    this.subscription = this.http.getData(`Employeedata/ActiveEmployees`).subscribe({
+    this.subscription = this.http.getData(`v2/Employeedata/ActiveEmployeesData`).subscribe({
       next: (data: any) => {
         this.Active = data.length;
         this.updateCardItems();

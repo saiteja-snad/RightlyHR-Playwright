@@ -89,7 +89,7 @@ export class DraftsExpensesComponent {
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
       receipt_Number: [null, [Validators.required, Validators.maxLength(18)]],
-      attachment_url: [null, Validators.required]
+      attachment_url: ['', Validators.required]
     });
   }
 
@@ -202,17 +202,17 @@ export class DraftsExpensesComponent {
       lastModified: originalFile.lastModified,
     });
   }
-
+fileuploadhide :any;
   fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
-    if (!file) return;
     //if (!file) return;
-    let d: Date = new Date()
-     const removeSpaceFileName = this.formValidation.sanitizeFileName(file.name);
-        const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
-    this.expensesAttachment = this.renameFiles(file, newFileName)
-    console.log('this.expensesAttachment', this.expensesAttachment);
-    // Allowed file types and size
+    if (!file) {
+        this.fileuploadhide = true;
+    //    const control = this.expenseItems.at(index)?.get('attachment_url');
+    // control?.setValue(null);
+    // control?.markAsTouched();
+     //control?.updateValueAndValidity();
+     }
     const allowedTypes = [
       'image/jpeg',
       'image/png',
@@ -239,8 +239,9 @@ export class DraftsExpensesComponent {
     const fileUpload$ = this.http.uploadFileWithQuery(
       'FileSystem/uploadfiletodirectory',
       filepath,
-      this.expensesAttachment
+      file
     );
+      this.fileuploadhide = false;
     fileUpload$.subscribe({
       next: (data: any) => {
         // Assuming data.path contains the uploaded file path
@@ -269,6 +270,7 @@ export class DraftsExpensesComponent {
 
   submitepxenses(form: FormGroup) {
     this.spinnerLoader = true
+      const filepath = `/Expenses/${this.empinfo.employeeId}`;
     const payload = {
       expenses_ID: this.updataid,
       applied_date: new Date().toISOString(),
@@ -286,10 +288,10 @@ export class DraftsExpensesComponent {
         expense_Amount: item.expense_Amount,
         receipt_Number: item.receipt_Number,
         status: 'Waiting for Approval',
-        attachment_url: this.expensesAttachment?.name || item.attachment_url,
+        attachment_url:  item.attachment_url,
       })),
     };
-    const filepath = `/Expenses/${this.empinfo.employeeId}`;
+  
     // Check if there is any file to upload
     if (this.Myexpense) {
       const fileUpload$ = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filepath, this.Myexpense)
@@ -308,6 +310,7 @@ export class DraftsExpensesComponent {
         next: (data: any) => {
           this.modalService.dismissAll();
           this.newExpenseForm.reset();
+          this.http.setnewcountDetails();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.conformationPopup.openSuccessModal('Expenses submitted successfully');
           this.getexpensesheaderbyemployeeid();
@@ -325,6 +328,7 @@ export class DraftsExpensesComponent {
       this.http.putData(`Expenses_Header/${this.updataid}`, payload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll()
+          this.http.setnewcountDetails();
           this.conformationPopup.openSuccessModal('Expenses submitted successfully');
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
@@ -360,7 +364,7 @@ export class DraftsExpensesComponent {
         expense_Amount: item.expense_Amount,
         receipt_Number: item.receipt_Number,
         status: 'Draft',
-        attachment_url: this.expensesAttachment?.name || item.attachment_url,
+        attachment_url: item.attachment_url,
       })),
     };
     const filepath = `/Expenses/${this.empinfo.employeeId}`;
@@ -383,6 +387,7 @@ export class DraftsExpensesComponent {
           this.modalService.dismissAll()
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+          this.http.setnewcountDetails();
           this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
           this.getexpensesheaderbyemployeeid();
           // Call the get function after posting
@@ -400,6 +405,7 @@ export class DraftsExpensesComponent {
       // No file to upload, directly post the payload
       this.http.putData(`Expenses_Header/${this.updataid}`, payload).subscribe({
         next: (data: any) => {
+          this.http.setnewcountDetails();
           this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
           this.newExpenseForm.reset();
@@ -509,7 +515,7 @@ export class DraftsExpensesComponent {
   }
 
   onSelectDownload(file: any): void {
-    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file.value).subscribe({
+    this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile',file.value).subscribe({
       next: (res: any) => {
         // Check if the response body is of type Blob
         const blob: Blob = res.body as Blob;

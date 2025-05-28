@@ -31,12 +31,12 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" class="form-control custom-search-input" placeholder="Search here" aria-label="search"
-            #search="ngModel" [(ngModel)]="searchValue" autocomplete="off">
+            #search="ngModel" [(ngModel)]="searchValue" autocomplete="off" (ngModelChange)="onSearchChange()">
     </div>
 
     <div class="custom-p-multi-select-table">
         @if(!dataload){
-        <p-table [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
+        <p-table #dt [value]="getFilteredAndSortedLeaves()" (selectionChange)="selectCheck($event)" [(selection)]="selectedLeavesItems"
             dataKey="approvalHeader.id" [tableStyle]="{'min-width': '50rem'}">
             <ng-template #header>
                 <tr>
@@ -45,12 +45,12 @@
                     <th>{{'Employee Name' | translate}}</th>
                     <th>{{'Requested Date' | translate}}</th>
                     <th>{{'Permission Date' | translate}}</th>
-                    <th>{{'Duration(InHours)' | translate}}</th>
+                    <th>{{'Duration(In Hrs)' | translate}}</th>
                     <th>{{'Permission Type' | translate}}</th>
                     <th class="text-center">{{'Reason' | translate}}</th>
                     <th class="text-center">{{'Approver Comments' | translate}}</th>
                     @if(!multiSelect &&(rbac.allowedToAccess('For Role (Permission).update') || rbac.allowedToAccess('For Role (Permission).delete'))){
-                    <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">{{'(s)' | translate}}</span></th>
+                    <th class="text-center">{{'Action' | translate}}</th>
                     }
                 </tr>
             </ng-template>

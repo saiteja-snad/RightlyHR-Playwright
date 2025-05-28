@@ -174,6 +174,17 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
     this.selectedLeaveData = request;
   }
 
+  previousSearchValue: string = '';
+  hasSelectedAllOnce = false;
+  onSearchChange(): void {
+    if (this.searchValue !== this.previousSearchValue) {
+      this.previousSearchValue = this.searchValue;
+      this.multiSelect = false;
+      this.selectedProducts = [];
+      this.hasSelectedAllOnce = false;
+    }
+  }
+
   getFilteredAndSortedLeaves(): any[] {
     const search = this.searchValue?.toLowerCase() ?? '';
     let leaves = this.regularizationselect ?? [];
@@ -186,6 +197,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
       );
     }
 
+    // Sort (preserve original sorting logic)
     if (!this.selectedProducts || this.selectedProducts.length === 0) {
       this.leaves.next(leaves);
       return this.leaves.getValue();
@@ -197,6 +209,30 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
     this.leaves.next([...selected, ...unselected]);
     return this.leaves.getValue();
   }
+
+  // getFilteredAndSortedLeaves(): any[] {
+  //   const search = this.searchValue?.toLowerCase() ?? '';
+  //   let leaves = this.regularizationselect ?? [];
+
+  //   if (search) {
+  //     leaves = leaves.filter(item =>
+  //       item.entity?.fusionempId.toLowerCase().includes(search) ||
+  //       item.entity?.raisedForName?.toLowerCase().includes(search) ||
+  //       item.entity?.type?.toLowerCase().includes(search)
+  //     );
+  //   }
+
+  //   if (!this.selectedProducts || this.selectedProducts.length === 0) {
+  //     this.leaves.next(leaves);
+  //     return this.leaves.getValue();
+  //   }
+
+  //   const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
+  //   const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+  //   const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+  //   this.leaves.next([...selected, ...unselected]);
+  //   return this.leaves.getValue();
+  // }
 
   removeLeadingWhitespace(control: AbstractControl | null): void {
     if (control) {

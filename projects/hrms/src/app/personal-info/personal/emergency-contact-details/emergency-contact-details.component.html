@@ -3,7 +3,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
   
       <div>
-        <span class="component-sub-header">Emergency Contact 1</span>
+        <span class="component-sub-header">Emergency Contact Details</span>
       </div>
       @if(!buttons && canAccess('update','emergency')){
       @if((employedata?.empstatus?.toLowerCase() !== 'inactive' &&
@@ -19,7 +19,11 @@
           (click)="saveForm()">Save</button>
       </div>
     </div>
-
+     <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <span class="component-sub-header">Emergency Contact #1</span>
+      </div>
+    </div>
     <!-- Reactive Form -->
     <form autocomplete="off" [formGroup]="emergencyContactForm">
       <div class="row">
@@ -94,7 +98,7 @@
   <div class="card custom-background-card p-4 mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
-        <span class="component-sub-header">Emergency Contact 2</span>
+        <span class="component-sub-header">Emergency Contact #2</span>
       </div>
     </div>
 

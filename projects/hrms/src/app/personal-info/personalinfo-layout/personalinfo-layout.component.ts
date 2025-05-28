@@ -582,7 +582,7 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
   // Map route paths to sub-header names
   subHeaderMap: { [key: string]: string } = {
     'basic-info': 'Basic Info',
-    'address-info': 'Address Info',
+    'address-info': 'Address Details',
     'family-details': 'Family Details',
     'identity-details': 'Identity Details',
     'education-details': 'Education Details',

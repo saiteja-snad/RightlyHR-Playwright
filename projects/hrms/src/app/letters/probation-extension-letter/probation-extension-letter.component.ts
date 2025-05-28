@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { filter, Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { SelectModule } from 'primeng/select';
@@ -17,11 +17,14 @@ import { IEmployee } from '../probation-confirmation-letter/probation.modal';
 import { IEmployeeSignatures } from '../letters.modal';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
   selector: 'app-probation-extension-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './probation-extension-letter.component.html',
-  styleUrl: './probation-extension-letter.component.scss'
+  styleUrl: './probation-extension-letter.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ProbationExtensionLetterComponent {

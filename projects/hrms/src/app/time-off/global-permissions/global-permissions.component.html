@@ -4,7 +4,7 @@
   <div class="component-header-content">
 
     <div class="heading-content">
-      <div class="commpoment-name">Time off<span class="ms-2">>></span></div>
+      <div class="commpoment-name">Time off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">Global Permissions</div>
       <div>
         <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
@@ -12,11 +12,21 @@
     </div>
     <div>
     </div>
-      <div>
+    <div class="d-flex align-items-center gap-2">
+      <!-- <div class="d-flex gap-2 align-item-center custom-p-select-content w-100">
+        <label for="location" class="form-label custom-label text-nowrap m-0 p-2">Locations</label>
+           <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
+                [filter]="true" filterBy="jobLocationName" [resetFilterOnHide]="true" [showClear]="true" placeholder="Select Location"
+                  class="custom-select w-100">
+              </p-select>
+      </div> -->
+  <div>
     @if(rbac.allowedToAccess('Request Global Permission Button.view')){
-    <button type="button" class="custom-btn btn-primary" (click)="openAdd()">Request Global Permissions</button>
+    <button type="button" class="custom-btn btn-primary" (click)="openAdd()">Request Global Permission</button>
     }
   </div>
+    </div>
+    
   </div>
 
 
@@ -31,16 +41,16 @@
     <table class="w-100">
       <thead>
         <tr>
-          <th>Applied Date</th>
+          <th>Request Raised Date</th>
           <th>Permission Requested Date</th>
           <th>Requested By</th>
           <th>Request Type</th>
           <th>Department/Location</th>
-          <th>Team/Sublocation</th>
-          <th>Selected Type</th>
+          <th>Team/Sub Location</th>
+          <th>Applicable For</th>
           <th>List of Employees</th>
           <th>Permission Type</th>
-          <th>Duration(In Hours)</th>
+          <th>Duration(In Hrs)</th>
           <th>Reason</th>
           <th></th>
         </tr>
@@ -64,7 +74,7 @@
           <td>{{item.deptId_locationIdName?item.deptId_locationIdName:'-'}}</td>
           <td>{{item.teamId_sublocIdName?item.teamId_sublocIdName:'-'}}</td>
           <td>{{item.selectType?item.selectType:'-'}}</td>
-          <td>
+          <td class="text-center">
             <div>
               <span *ngIf="item.employeeIds.length > 0; else emp">
                 <a type="button" [ngbPopover]="reason">
@@ -79,7 +89,7 @@
           </td>
           <td>{{item.requestType?item.requestType:'-'}}</td>
           <td>{{item.duration?(item.duration * 60 * 60 * 1000 | date:'HH:mm':'UTC'):'-'}}</td>
-          <td>
+          <td class="text-center">
             <div>
               <span *ngIf="item.meta;else res">
                 <a type="button" [ngbPopover]="reason">

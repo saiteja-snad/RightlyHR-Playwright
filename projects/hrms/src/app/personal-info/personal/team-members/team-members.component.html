@@ -36,8 +36,8 @@
                     <th class="text-center">Action</th>}
                 </tr>
             </thead>
-            <tbody
-                *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
+            <tbody *ngIf="(getTeamMemberArray | searchfilter: searchValue : ['fusionEmpId', 'employeeName', 'workEmail', 'contactnumber']) as filteredMembers">
+
                 <ng-container *ngIf="filteredMembers.length > 0; else noData">
                     <tr *ngFor="let details of filteredMembers">
                         <td>{{ details.fusionEmpId || 'N/A' }}</td>
@@ -165,7 +165,7 @@
 
                 <div class="d-flex justify-content-end gap-3">
                     <button type="reset" class="custom-btn btn-secondary px-4"
-                        (click)="modal.dismiss();requestForm.reset()">{{'Cancel'|translate}}</button>
+                        (click)="clearData()">{{'Cancel'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="requestForm.invalid || spinnerLoader">
                         @if(spinnerLoader){
@@ -257,7 +257,7 @@
                         <label for="teamManagerName" class="form-label custom-label mb-2">Team Manager<span
                                 class="text-danger">*</span></label>
                         <input id="teamManagerName" placeholder="Team manager" class="form-select custom-input"
-                            formControlName="teamManagerName" [disabled]="true" />
+                            formControlName="teamManagerName"  />
                         <div *ngIf="foremployeeForm.get('teamManagerName')?.touched && foremployeeForm.get('teamManagerName')?.invalid"
                             class="error-msg">
                             Team manager is required

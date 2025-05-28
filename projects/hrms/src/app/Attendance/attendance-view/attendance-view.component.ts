@@ -123,7 +123,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log(this.date);
     // Get current date
     const now = moment().startOf('month'); // ← important!
     this.date = now.toDate();
@@ -169,7 +168,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       const selectedDate = moment(Value);
       this.selectedYear = selectedDate.year();
       this.selectedMonth = selectedDate.month() + 1; // month() is 0-based
-      console.log(this.selectedYear + this.selectedMonth);
       this.getAttendnaceData(this.getSelectedEmployee());
     }
   }

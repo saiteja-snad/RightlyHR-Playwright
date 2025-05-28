@@ -211,6 +211,7 @@ export class DraftsExpensesComponent {
      const removeSpaceFileName = this.formValidation.sanitizeFileName(file.name);
         const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
     this.expensesAttachment = this.renameFiles(file, newFileName)
+    console.log('this.expensesAttachment', this.expensesAttachment);
     // Allowed file types and size
     const allowedTypes = [
       'image/jpeg',
@@ -285,7 +286,7 @@ export class DraftsExpensesComponent {
         expense_Amount: item.expense_Amount,
         receipt_Number: item.receipt_Number,
         status: 'Waiting for Approval',
-        attachment_url: this.expensesAttachment,
+        attachment_url: this.expensesAttachment?.name || item.attachment_url,
       })),
     };
     const filepath = `/Expenses/${this.empinfo.employeeId}`;
@@ -359,7 +360,7 @@ export class DraftsExpensesComponent {
         expense_Amount: item.expense_Amount,
         receipt_Number: item.receipt_Number,
         status: 'Draft',
-        attachment_url: item.attachment_url,
+        attachment_url: this.expensesAttachment?.name || item.attachment_url,
       })),
     };
     const filepath = `/Expenses/${this.empinfo.employeeId}`;
@@ -545,7 +546,6 @@ export class DraftsExpensesComponent {
       }
     });
   }
-
   onViewAttachement(url: any) {
     if (url.endsWith('jpg') || url.endsWith('png') || url.endsWith('jpeg')) {
       this.subscription = this.http

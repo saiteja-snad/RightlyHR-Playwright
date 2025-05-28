@@ -230,6 +230,7 @@ expensesAttachment:any;
      const removeSpaceFileName = this.formValidationService.sanitizeFileName(file.name);
         const newFileName = `${this.empinfo.employeeId}_${d.getTime()}_${removeSpaceFileName}`;
     this.expensesAttachment = this.renameFiles(file, newFileName)
+    console.log('this.expensesAttachment',this.expensesAttachment);
   //}
     // Allowed file types and size
     const allowedTypes = [
@@ -314,7 +315,7 @@ expensesAttachment:any;
           expense_Amount: item.expense_Amount,
           receipt_Number: item.receipt_Number,
           status: 'Waiting for Approval',
-          attachment_url: this.expensesAttachment,
+          attachment_url: this.expensesAttachment?.name,
         })),
         attachment_url: undefined
       };
@@ -395,7 +396,7 @@ expensesAttachment:any;
           expense_Amount: item.expense_Amount,
           receipt_Number: item.receipt_Number,
           status: 'Draft',
-          attachment_url: item.attachment_url,
+          attachment_url: this.expensesAttachment?.name, // Use the uploaded file path or undefined if no file
         })),
         attachment_url: undefined
       };

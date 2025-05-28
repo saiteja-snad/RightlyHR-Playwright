@@ -100,6 +100,13 @@ export class HttpService {
       this.assetsadded.next();
     }
   
+        // Function to set the communication service data for basic info 
+    expensescount = new Subject<void>();
+    expensesprocesscount$ = this.expensescount.asObservable();
+    setnewcountDetails() {
+      this.expensescount.next();
+    }
+  
 
   //holidays year
   public selectedYearSubject = new BehaviorSubject<number | null>(null);

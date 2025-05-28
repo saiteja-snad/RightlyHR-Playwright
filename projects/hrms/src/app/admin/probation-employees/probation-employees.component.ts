@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -16,7 +16,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-probation-employees',
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, ProbationpipePipe, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule,NgbPopoverModule, ProbationpipePipe, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './probation-employees.component.html',
   styleUrl: './probation-employees.component.scss'
 })

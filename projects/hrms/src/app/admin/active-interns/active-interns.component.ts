@@ -12,9 +12,10 @@ import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.c
 import { AccessNavigationService } from '../../services/access-navigation.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-active-interns',
-  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
+  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent,NgbPopoverModule, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './active-interns.component.html',
   styleUrl: './active-interns.component.scss',
   encapsulation:ViewEncapsulation.None

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AddProspectiveInternComponent } from './add-prospective-intern/add-prospective-intern.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, Subscription } from 'rxjs';
@@ -18,7 +18,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-prospective-interns',
-  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
+  imports: [CommonModule, TranslateModule, ActiveEmployeePipe, FormsModule,NgbPopoverModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './prospective-interns.component.html',
   styleUrl: './prospective-interns.component.scss'
 })

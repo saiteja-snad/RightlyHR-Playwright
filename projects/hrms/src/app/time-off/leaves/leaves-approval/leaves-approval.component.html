@@ -8,8 +8,8 @@
                 <th>Availed</th>
                 <th>Start Date</th>
                 <th>End Date</th>
-                <th>Reason</th>
-                <th>Approved Reason</th>
+                <th class="text-center">Reason</th>
+                <th class="text-center">Approved Reason</th>
                 <th>Status</th>
             </thead>
             <tbody>
@@ -24,21 +24,21 @@
                     </td>
                     <td>{{item.startdate | dateformat}}</td>
                     <td>{{item.enddate | dateformat}}</td>
-                    <td>
+                    <td class="text-center">
                         <div>
-                            <a type="button" [ngbPopover]="reason">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                            </a>
+                            <div type="button" [ngbPopover]="reason">
+                                 <i class="bi bi-info-circle-fill"></i>
+                            </div>
                             <ng-template #reason>
                                 <p class="mb-0">{{item.notes}}</p>
                             </ng-template>
                         </div>
                     </td>
-                    <td>
+                    <td class="text-center">
                         <div>
-                            <a type="button" [ngbPopover]="approvereason">
-                                <img src="images\info-fill.png" alt="info icon" class="info-icon">
-                            </a>
+                            <div type="button" [ngbPopover]="approvereason">
+                                 <i class="bi bi-info-circle-fill"></i>
+                            </div>
                             <ng-template #approvereason>
                                 <p class="mb-0">{{item.rejectedReason}}</p>
                             </ng-template>

@@ -62,6 +62,21 @@ export class TeamMembersComponent {
     this.formsubmit();
     this.formsubmits();
     this.getEmployee();
+    this.requestForm.get('department')?.valueChanges.subscribe((department) => {
+      const teamControl = this.requestForm.get('teamSelectedOptions');
+
+      if (!department) {
+        teamControl?.disable();
+        teamControl?.reset(); // Optionally clear selected team
+      } else {
+        teamControl?.enable();
+      }
+    });
+
+    // Initially disable team if department is not set
+    if (!this.requestForm.get('department')?.value) {
+      this.requestForm.get('teamSelectedOptions')?.disable();
+    }
   }
   canAccess(action: 'view' | 'create' | 'update' | 'delete', permission: string) {
     return this.permissionRouteService.canAccessField(action, permission);
@@ -98,7 +113,8 @@ export class TeamMembersComponent {
       effectiveDate: [null, Validators.required],
       teamEmpselectedOptions: [[], Validators.required],
       department: [null, Validators.required],
-      teamSelectedOptions: [null, Validators.required],
+      // teamSelectedOptions: [null, Validators.required],
+      teamSelectedOptions: [{ value: null, disabled: true }, Validators.required],
       teamManagerName: [{ value: null, disabled: true }, Validators.required],
 
     });
@@ -142,12 +158,13 @@ export class TeamMembersComponent {
     const EmployeeId = this.empinfo.employeeId;
     this.subscription = this.http.getData(`Employeedata/getEmployeesByhierarchy/${EmployeeId}`).subscribe(
       (responseData: any) => {
+        console.log(responseData);
         const filteredData = (responseData as Iteammembers[]).filter(member => member['isAccess'] === true);
         this.teamMemberArray = filteredData
           .map((employee: any) => ({
             ...employee,
             jobDetails: employee.jobDetails ?? [], // Default to [] if undefined
-            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ?? ''} ${employee.lastName ?? ''} ${employee.lastName ?? ''}`,
+            fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''}${employee.firstName ?? ''} ${employee.middleName ?? ''} ${employee.lastName ?? ''}`,
             selectedAllGroup: 'Group 1',
           }));
         ;
@@ -202,47 +219,112 @@ export class TeamMembersComponent {
     this.modalService.open(content, { size: 'lg', centered: true, scrollable: true });
   }
 
+  // onDepartmentChange(selectedDepartment: any): void {
+  //   const selectedDepartmentId = selectedDepartment.sno; // Get the sno of the selected department
+  //   // Fetch the teams based on the selected department ID
+  //   this.subscription = this.http.getData(`Subdepartments/Getnames/${selectedDepartmentId}`).subscribe({
+  //     next: (data: any) => {
+  //       if (data) {
+  //         this.teamDropdownValues = data; // Update the team dropdown values
+  //       } else {
+  //         this.teamDropdownValues = []; // Reset if no teams are found
+  //       }
+  //     },
+  //     error: (err: any) => {
+  //       this.teamDropdownValues = []; // Reset on error
+
+  //     }
+  //   });
+    
+  // }
+
+  // onSubDepartmentNameChange(selectedSubDepartment: any): void {
+  //   const selectedSubDepartmentId = selectedSubDepartment.subdepartmentId;
+  //   this.subscription = this.http.getData(`Subdepartments/${selectedSubDepartmentId}`).subscribe({
+  //     next: (data: any) => {
+  //       this.subdeparmentSingleobj = data;
+  //       // Update the team manager dropdown values
+  //       this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
+  //         id: manager.reportingmanagerId,
+  //         name: manager.middleName ? `${manager.firstName} ${manager.middleName} ${manager.lastName}`
+  //           : `${manager.firstName} ${manager.lastName}` || '',
+  //       }));
+  //       this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
+  //       // Reset the team manager selection
+  //       this.requestForm.patchValue({ teamManagerName: this.teamManagerDropdownValues[0].name ?? '' });
+
+  //     },
+  //     error: (err: any) => {
+  //       this.teamManagerDropdownValues = []; // Reset on error
+  //       this.requestForm.patchValue({ teamManagerName: null }); // Reset the team manager selection
+
+  //     },
+  //   });
+  // }
+
   onDepartmentChange(selectedDepartment: any): void {
-    const selectedDepartmentId = selectedDepartment.sno; // Get the sno of the selected department
-    // Fetch the teams based on the selected department ID
-    this.subscription = this.http.getData(`Subdepartments/Getnames/${selectedDepartmentId}`).subscribe({
-      next: (data: any) => {
-        if (data) {
-          this.teamDropdownValues = data; // Update the team dropdown values
-        } else {
-          this.teamDropdownValues = []; // Reset if no teams are found
-        }
-      },
-      error: (err: any) => {
-        this.teamDropdownValues = []; // Reset on error
+  const selectedDepartmentId = selectedDepartment?.sno;
 
-      }
-    });
+  // Reset team and manager
+  this.requestForm.patchValue({
+    teamSelectedOptions: null,
+    teamManagerName: ''
+  });
+  this.teamDropdownValues = [];
+
+  if (!selectedDepartmentId) return;
+
+  this.subscription = this.http.getData(`Subdepartments/Getnames/${selectedDepartmentId}`).subscribe({
+    next: (data: any) => {
+      this.teamDropdownValues = data || [];
+    },
+    error: () => {
+      this.teamDropdownValues = [];
+    }
+  });
+}
+
+onSubDepartmentNameChange(selectedSubDepartment: any): void {
+  // If no subdepartment selected, reset and return
+  if (!selectedSubDepartment || !selectedSubDepartment.subdepartmentId) {
+    this.requestForm.patchValue({ teamManagerName: '' });
+    this.teamManagerDropdownValues = [];
+    return;
   }
 
-  onSubDepartmentNameChange(selectedSubDepartment: any): void {
-    const selectedSubDepartmentId = selectedSubDepartment.subdepartmentId;
-    this.subscription = this.http.getData(`Subdepartments/${selectedSubDepartmentId}`).subscribe({
-      next: (data: any) => {
-        this.subdeparmentSingleobj = data;
-        // Update the team manager dropdown values
-        this.teamManagerDropdownValues = this.subdeparmentSingleobj.map((manager: any) => ({
+  const selectedSubDepartmentId = selectedSubDepartment.subdepartmentId;
+
+  // Clear team manager initially
+  this.requestForm.patchValue({ teamManagerName: '' });
+  this.teamManagerDropdownValues = [];
+
+  this.subscription = this.http.getData(`Subdepartments/${selectedSubDepartmentId}`).subscribe({
+    next: (data: any) => {
+      if (Array.isArray(data) && data.length > 0) {
+        this.teamManagerDropdownValues = data.map((manager: any) => ({
           id: manager.reportingmanagerId,
-          name: manager.middleName ? `${manager.firstName} ${manager.middleName} ${manager.lastName}`
-            : `${manager.firstName} ${manager.lastName}` || '',
+          name: manager.middleName
+            ? `${manager.firstName} ${manager.middleName} ${manager.lastName}`
+            : `${manager.firstName} ${manager.lastName}`,
         }));
-        this.teammangerid = this.teamManagerDropdownValues[0].id; // Set the default team manager ID
-        // Reset the team manager selection
-        this.requestForm.patchValue({ teamManagerName: this.teamManagerDropdownValues[0].name ?? '' });
 
-      },
-      error: (err: any) => {
-        this.teamManagerDropdownValues = []; // Reset on error
-        this.requestForm.patchValue({ teamManagerName: null }); // Reset the team manager selection
+        // Set the first manager as default
+        const defaultManager = this.teamManagerDropdownValues[0];
+        this.teammangerid = defaultManager.id;
+        this.requestForm.patchValue({ teamManagerName: defaultManager.name });
+      } else {
+        // No managers returned
+        this.requestForm.patchValue({ teamManagerName: '' });
+      }
+    },
+    error: () => {
+      // On error, reset team manager
+      this.teamManagerDropdownValues = [];
+      this.requestForm.patchValue({ teamManagerName: '' });
+    },
+  });
+}
 
-      },
-    });
-  }
 
   onSubDepartmentNameChangeforsingleemploye(selectedSubDepartment: any): void {
     const selectedSubDepartmentId = selectedSubDepartment.subdepartmentId;
@@ -362,7 +444,7 @@ export class TeamMembersComponent {
   updateRM() {
     this.spinnerLoader = true;
     let jobid = this.selectedEmployeeDetails.id;
-    let ManagerEmployeeId = this.rmForm.get('mReportingto')?.value?.reportingToEmployeeId;
+    let ManagerEmployeeId = this.rmForm.get('mReportingto')?.value?.employeeId;
     this.subscription = this.http.postdata(`Employeedata/TeammemberUpdate?jobid=${jobid}&ManagerEmployeeId=${ManagerEmployeeId}`, this.selectedData).subscribe({
       next: (data: any) => {
         console.log('Next callback');

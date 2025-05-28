@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-input custom-input custom-search-input" placeholder="search Here"
+    <input type="search" class="form-control custom-input custom-input custom-search-input" placeholder="Search here"
       aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
       aria-describedby="basic-addon1">
   </div>
@@ -404,7 +404,7 @@
 
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary "
-            (click)="openupdatepopup(updateconformation)">Close</button>
+            (click)="openupdatepopup(updateconformation)">Cancel</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="assetForm.invalid 
                                      ||  (isToggledWarranty && assetForm.get('warrantystartdate')?.invalid) || 
                                      (isToggledamc && assetForm.get('amcstartdate')?.invalid)">
@@ -421,7 +421,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="model.dismiss()">
@@ -438,7 +438,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-4">
@@ -509,7 +509,7 @@
 
         <div class="d-flex justify-content-end gap-3">
           <button type="button" class="custom-btn btn-secondary "
-            (click)="openModal(inativeconfromation);model.dismiss()">Close</button>
+            (click)="openModal(inativeconfromation);model.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary" [disabled]="inactiveForm.invalid">Submit</button>
         </div>
 
@@ -523,7 +523,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(deleteasstes)">
@@ -541,7 +541,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="custom-poup-header-content popup-header-border">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Allocate an Asset</p>
+        <p class="popup-heading mb-0">Allocate  Asset</p>
       </div>
       <div>
         <a (click)="modal.dismiss();assiginForm.reset();openModal(assiginconformation)"><img src="icons/close.png"
@@ -581,7 +581,7 @@
 
           <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary mt-3"
-              (click)="modal.dismiss();openModal(assiginconformation)">Close</button>
+              (click)="modal.dismiss();openModal(assiginconformation)">Cancel</button>
             <button type="submit" class="custom-btn btn-primary mt-3" [disabled]="assiginForm.invalid">Submit</button>
           </div>
 
@@ -598,7 +598,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
     </div>
 
     <div class="d-flex justify-content-center gap-3 mt-4">
@@ -699,7 +699,7 @@
 
           <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary"
-              (click)="modal.dismiss();openModal(tranferconformation)">Close</button>
+              (click)="modal.dismiss();openModal(tranferconformation)">Cancel</button>
             <button type="submit" class="custom-btn btn-primary" [disabled]="locationfromdata.invalid">Submit</button>
           </div>
         </div>
@@ -713,7 +713,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-      <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+      <p class="confirmation-text mb-4"> Are you sure you want to cancel ?</p>
     </div>
     <div class="d-flex justify-content-center gap-3 mt-4">
       <button type="button" class="custom-btn btn-secondary" (click)="openModal(tranferaerasset)">
@@ -865,7 +865,7 @@
         </div>
         <div class="custom-modal-footer">
           <button type="button" class="custom-btn btn-secondary "
-            (click)="openModal(conformationpopup);model.dismiss()">Close</button>
+            (click)="openModal(conformationpopup);model.dismiss()">Cancel</button>
           <button type="submit" class="custom-btn btn-primary " [disabled]="undermainteenceForm.invalid">Submit</button>
         </div>
       </form>

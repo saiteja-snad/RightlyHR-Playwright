@@ -5,9 +5,10 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-pending-approvals',
-  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, ModuleInformationComponent],
+  imports: [RouterModule, PendingApprovalsTabsComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './pending-approvals.component.html',
   styleUrl: './pending-approvals.component.scss',
   encapsulation:ViewEncapsulation.None,

@@ -361,7 +361,7 @@
                         }@else { {{buttonValue}} }
                     </button>
                     <button type="button" class="custom-btn btn-primary"
-                        [disabled]="employeeForm.invalid || Approvalloader || disableFieldsForApproval" (click)="emailSendingforApprover()">
+                        [disabled]="employeeForm.invalid || Approvalloader || disableFieldsForApproval || loading" (click)="emailSendingforApprover()">
                         @if(Approvalloader){
                         <div class="button-loader-content">
                             <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
@@ -413,8 +413,8 @@
                                     <li class="mb-2">
                                         <b>{{'Start Date and Duration' | translate}}: </b>Your internship
                                         will commence on <u><b>{{traineeEmpData.dateOfJoining | dateformat}}</b></u> and is
-                                        expected to complete on <!-- <u> <b>{{traineeEmpData.endDate | dateformat}}</b></u> -->
-                                        lasting for a period of <b>{{traineeEmpData.endDate | dateformat}} Months</b>.
+                                        expected to complete on <u> <b>{{traineeEmpData.endDate | dateformat}}</b></u>
+                                        lasting for a period of <b>{{traineeEmpData.internshipperiod | number:'1.0-0'}} Months</b>.
                                     </li>
                                     <li class="mb-2"><b>{{'Working Hours and Location'|translate}}:
                                         </b>The standard working hours are (10:00 AM to 7:00 PM), from (Monday to Friday), at our office located at RightlyHR, Floor#16, Vijay Krishna Towers, 

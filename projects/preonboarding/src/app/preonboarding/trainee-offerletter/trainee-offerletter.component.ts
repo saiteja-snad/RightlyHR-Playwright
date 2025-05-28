@@ -304,6 +304,7 @@ export class TraineeOfferletterComponent implements OnInit, OnDestroy {
   }
 
   downloadoffer() {
+    debugger
     const fileurl = localStorage.getItem('offerletterurl') || '';
     this.subscription = this.http.DownloadDataWithQuery('PreonboardingFilesystem/Downloadfile', fileurl).subscribe({
       next: (res: any) => {

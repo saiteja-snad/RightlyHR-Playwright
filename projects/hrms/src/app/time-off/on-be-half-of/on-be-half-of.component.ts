@@ -18,10 +18,11 @@ import { noWhitespaceValidator } from '../../shared/nowhitespace/nowhitespace.co
 import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-on-be-half-of',
-  imports: [CommonModule, RouterModule, TranslateModule, Select, ReactiveFormsModule, OnBeHalfOfApprovalTabsComponent, ModuleInformationComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, Select, ReactiveFormsModule, OnBeHalfOfApprovalTabsComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './on-be-half-of.component.html',
   styleUrl: './on-be-half-of.component.scss',
   encapsulation:ViewEncapsulation.None
@@ -163,40 +164,6 @@ export class OnBeHalfOfComponent {
     this.leaveForm.get('startdate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
     this.leaveForm.get('enddate')?.valueChanges.subscribe(() => this.updateHalfDayOptions());
   }
-  // initializeForm() {
-  //   this.leaveForm = this.fb.group({
-  //     leaveType: [null, Validators.required],
-  //     startdate: [null, Validators.required],
-  //     enddate: [null, Validators.required],
-  //     halfdayavailing: ['', Validators.required],
-  //     availing: [{ value: '', disabled: true }, Validators.required],
-  //     fulldayavailing: [{ value: '', disabled: true }, Validators.required],
-  //     reason: ['', [Validators.required, Validators.maxLength(250),noWhitespaceValidator]],
-  //   }, {
-  //     validators: this.startDateBeforeEndDateValidator()
-  //   });
-  
-  //   this.leaveForm.get('startdate')?.valueChanges.subscribe(() => {
-  //     this.updateHalfDayOptions();
-  //     this.leaveForm.updateValueAndValidity(); // triggers validation again
-  //   });
-  
-  //   this.leaveForm.get('enddate')?.valueChanges.subscribe(() => {
-  //     this.updateHalfDayOptions();
-  //     this.leaveForm.updateValueAndValidity(); // triggers validation again
-  //   });
-  // }
-  // startDateBeforeEndDateValidator(): ValidatorFn {
-  //   return (group: AbstractControl): ValidationErrors | null => {
-  //     const start = group.get('startdate')?.value;
-  //     const end = group.get('enddate')?.value;
-  
-  //     if (start && end && new Date(start) > new Date(end)) {
-  //       return { dateOrderInvalid: true };
-  //     }
-  //     return null;
-  //   };
-  // }
 
   initiateUpdateModuleInfo(){
     this.router.events

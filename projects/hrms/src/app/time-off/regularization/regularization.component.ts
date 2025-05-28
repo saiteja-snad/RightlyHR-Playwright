@@ -10,9 +10,10 @@ import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-regularization',
-  imports: [RouterModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent],
+  imports: [RouterModule, RegularizationTabsComponent, TranslateModule, CommonModule, Select, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './regularization.component.html',
   styleUrl: './regularization.component.scss',
   encapsulation: ViewEncapsulation.None,

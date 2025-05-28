@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
   <div class="input-group custom-search mb-3">
     <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-    <input type="search" class="form-control custom-input custom-input custom-search-input" placeholder="search Here"
+    <input type="search" class="form-control custom-input custom-input custom-search-input" placeholder="Search here"
       aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
       aria-describedby="basic-addon1">
   </div>
@@ -591,7 +591,7 @@
   <div class="custom-main-popup-container" ngbAutofocus>
     <div class="d-flex justify-content-between popup-header-border p-3">
       <div class="pt-2">
-        <p class="popup-heading mb-0">Reallocate An Asset</p>
+        <p class="popup-heading mb-0">Reallocate Asset</p>
       </div>
       <div>
         <a (click)="modal.dismiss();assiginForm.reset();;openModal(updateconformation)"><img src="icons/close.png"

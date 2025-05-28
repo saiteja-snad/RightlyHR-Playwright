@@ -19,6 +19,9 @@
             <div *ngIf="PaytypeForm.get('Paytype')?.errors?.['maxCharacters']" class="error-msg">
                 {{ 'Please limit your input to 100 characters' | translate }}
             </div>
+            <div *ngIf="PaytypeForm.get('Paytype')?.errors?.['pattern']" class="error-msg">
+                    {{ 'Field cannot start with a space' | translate }}
+            </div>
         </div>
     </form>
 
@@ -81,6 +84,9 @@
                 <div *ngIf="updateForm.get('Paytype')?.errors?.['required']">
                     {{ 'Pay Type is required' | translate }}
                 </div>
+                 <div *ngIf="updateForm.get('Paytype')?.errors?.['pattern']" class="error-msg">
+                    {{ 'Field cannot start with a space' | translate }}
+            </div>
             </div>
             <div *ngIf="updateForm.get('Paytype')?.errors?.['maxCharacters']" class="error-msg">
                 {{ 'Please limit your input to 100 characters' | translate }}

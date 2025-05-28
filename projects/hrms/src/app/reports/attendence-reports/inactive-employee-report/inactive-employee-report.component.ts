@@ -20,12 +20,13 @@ import { RbacService } from '../../../services/rbac.service';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-inactive-employee-report',
   imports: [CommonModule,
     FormsModule,
-    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
+    AttandaceReportTabsComponent, DropdownModule, SelectModule, TranslateModule, ReactiveFormsModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './inactive-employee-report.component.html',
   styleUrl: './inactive-employee-report.component.scss'
 })

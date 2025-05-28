@@ -1,7 +1,11 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
-    <div>
-      <p class="component-header mb-0">Team Leave Balance</p>
+    <div class="heading-content">
+      <div class="commpoment-name">Time off<span class="ms-2">>></span></div>
+      <div class="component-header">Team Leave Balance</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
     </div>
 
     <div class="d-flex align-items-center flex-wrap gap-3">
@@ -16,10 +20,11 @@
     </div>
   </div>
 
+
   <!--Module Information-->
-  <div>
+  <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+  </ng-template>
 
   <div class="d-flex w-100 gap-3">
     <div class="component-left-tabs-container">

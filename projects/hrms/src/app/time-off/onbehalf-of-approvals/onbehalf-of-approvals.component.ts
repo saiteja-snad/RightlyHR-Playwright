@@ -16,6 +16,7 @@ import { Select } from 'primeng/select';
 import { environment } from '../../../environments/environment';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-onbehalf-of-approvals',
   imports: [
@@ -29,7 +30,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     CompOffEntitlementComponent,
     TimeOffComponent,
     Select,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    NgbPopoverModule
 ],
   templateUrl: './onbehalf-of-approvals.component.html',
   styleUrl: './onbehalf-of-approvals.component.scss',

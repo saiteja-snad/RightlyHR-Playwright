@@ -1,19 +1,26 @@
 <div class="custom-main-component-container">
-    <form autocomplete="off" [formGroup]="RelationForm" (ngSubmit)="addRelationship()" *ngIf="rbac.allowedToAccess('Relationship.create')">
+    <form autocomplete="off" [formGroup]="RelationForm" (ngSubmit)="addRelationship()"
+        *ngIf="rbac.allowedToAccess('Relationship.create')">
         <!-- Add Input-->
         <div class="mb-4">
             <div class="custom-settings-add-input input-group">
                 <input type="text" class="form-control custom-input" placeholder="Please enter relationship"
                     formControlName="Relationship" aria-label="relation" aria-describedby="relation"
-                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
+                    (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                    maxlength="51">
                 <span class="input-group-text" id="gender">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="RelationForm.invalid">{{'Add'|translate}}</button>
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="RelationForm.invalid">{{'Add'|translate}}</button>
                 </span>
             </div>
-            <div *ngIf="RelationForm.get('Relationship')?.touched && RelationForm.get('Relationship')?.invalid" class="error-msg">
+            <div *ngIf="RelationForm.get('Relationship')?.touched && RelationForm.get('Relationship')?.invalid"
+                class="error-msg">
                 <div *ngIf="RelationForm.get('Relationship')?.errors?.['required']">
                     {{ 'Relationship is required' | translate }}
                 </div>
+            </div>
+            <div *ngIf="RelationForm.get('Relationship')?.errors?.['pattern']" class="error-msg">
+                {{ 'Field cannot start with a space' | translate }}
             </div>
             <div *ngIf="RelationForm.get('Relationship')?.errors?.['maxCharacters']" class="error-msg">
                 {{ 'Please limit your input to 50 characters' | translate }}
@@ -70,24 +77,31 @@
             </div>
             <div class="custom-main-popup-content">
                 <div class="mb-4">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Relationship'|translate}}
+                    <label for="exampleFormControlInput1"
+                        class="form-label custom-label mb-2">{{'Relationship'|translate}}
                         <span class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="Relationship"
                         placeholder="Please enter relationship"
-                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)" maxlength="51">
-                        <div *ngIf="updateForm.get('Relationship')?.touched && updateForm.get('Relationship')?.invalid" class="error-msg">
-                            <div *ngIf="updateForm.get('Relationship')?.errors?.['required']">
-                                {{ 'Relationship is required' | translate }}
-                            </div>
+                        (keydown)="formValidations.restrictInput($event); formValidations.blockNonAlphabets($event)"
+                        maxlength="51">
+                    <div *ngIf="updateForm.get('Relationship')?.touched && updateForm.get('Relationship')?.invalid"
+                        class="error-msg">
+                        <div *ngIf="updateForm.get('Relationship')?.errors?.['required']">
+                            {{ 'Relationship is required' | translate }}
                         </div>
-                        <div *ngIf="updateForm.get('Relationship')?.errors?.['maxCharacters']" class="error-msg">
-                            {{ 'Please limit your input to 50 characters' | translate }}
-                        </div>
+                    </div>
+                    <div *ngIf="updateForm.get('Relationship')?.errors?.['pattern']" class="error-msg">
+                        {{ 'Field cannot start with a space' | translate }}
+                    </div>
+                    <div *ngIf="updateForm.get('Relationship')?.errors?.['maxCharacters']" class="error-msg">
+                        {{ 'Please limit your input to 50 characters' | translate }}
+                    </div>
                 </div>
                 <div class="custom-modal-footer">
-                    <button type="button" class="custom-btn btn-secondary" (click)="close(modal)">{{'Cancel'|translate}}</button>
-                    <button type="button" class="custom-btn btn-primary" (click)="updateRelation(modal)" 
-                    [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
+                    <button type="button" class="custom-btn btn-secondary"
+                        (click)="close(modal)">{{'Cancel'|translate}}</button>
+                    <button type="button" class="custom-btn btn-primary" (click)="updateRelation(modal)"
+                        [disabled]="updateForm.invalid">{{'Update'|translate}}</button>
                 </div>
             </div>
         </div>
@@ -102,7 +116,8 @@
             <p class="confirmation-text">{{'Are you sure you want to delete?'|translate}}</p>
         </div>
         <div class="custom-modal-footer">
-            <button type="button" class="custom-btn btn-secondary" (click)="closeDelete(modal)">{{'No'|translate}}</button>
+            <button type="button" class="custom-btn btn-secondary"
+                (click)="closeDelete(modal)">{{'No'|translate}}</button>
             <button type="button" class="custom-btn btn-primary" (click)="onDelete(modal)">{{'Yes'|translate}}</button>
         </div>
     </div>

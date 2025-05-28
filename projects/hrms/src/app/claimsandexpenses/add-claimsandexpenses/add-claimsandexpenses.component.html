@@ -205,7 +205,7 @@
                                     (change)="fileupload($event, i)" />
                                 <div class="error-msg"
                                     *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
-                                    Please choose a file
+                                    File is required
                                 </div>
                             </div>
                         </div>

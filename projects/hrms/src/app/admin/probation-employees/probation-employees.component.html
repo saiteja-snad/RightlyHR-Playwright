@@ -1,13 +1,16 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div>
-            <p class="component-header mb-0">
-                <img src="/images/back-icon.png" alt="Icon" class="back-icon" (click)="navigateDashboard()">
-                {{'Probation Employees'|translate}}
-            </p>
+      
+        <div class="heading-content">
+            <div class="commpoment-name cursor"  (click)="navigateDashboard()">Dashboard<span class="ms-2">>></span></div>
+            <div class="component-header"> {{'Probation Employees'|translate}}</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
 
-        @if(this.rbac.allowedToAccess('Probation Confirmation Letter.view') || 
+        @if(this.rbac.allowedToAccess('Probation Confirmation Letter.view') ||
         this.rbac.allowedToAccess('Probation Extension Letter.view')){
         <div class="dropdown">
             <button type="button" class="custom-btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
@@ -33,10 +36,9 @@
         }
     </div>
 
-    <!--Module Information-->
-    <div>
+     <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    </ng-template>
 
     <!--Input search-->
     <div class="input-group custom-search mb-3">

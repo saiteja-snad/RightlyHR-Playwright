@@ -21,6 +21,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-family-members-data',
@@ -33,7 +34,8 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
     StandardReportTabsComponent,
     DateformatPipe,
     DataLoaderContentComponent,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    NgbPopoverModule
 ],
   templateUrl: './family-members-data.component.html',
   styleUrl: './family-members-data.component.scss',

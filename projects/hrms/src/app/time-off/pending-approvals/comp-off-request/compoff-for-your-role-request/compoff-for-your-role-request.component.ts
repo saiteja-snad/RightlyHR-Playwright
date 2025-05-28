@@ -156,10 +156,17 @@ export class CompoffForYourRoleRequestComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.leaves.next(response.data);
-          this.compOffselect = response.data;
+          if(response.data.length > 0){
+            this.leaves.next(response.data);
+            this.compOffselect = response.data;
+          }else{
+            this.leaves.next([]);
+            this.compOffselect  = [];
+          }
         },
-        error: (reason) => console.error(reason),
+        error: (reason) => {
+          this.dataload = false;
+          console.error(reason)},
         complete: () => {
           this.dataload = false;
         },

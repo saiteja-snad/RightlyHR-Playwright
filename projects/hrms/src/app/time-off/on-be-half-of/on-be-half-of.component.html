@@ -3,7 +3,7 @@
       
         <div class="heading-content">
             <div class="commpoment-name">Time off<span class="ms-2">>></span></div>
-            <div class="component-header">On Behalf Of</div>
+            <div class="component-header">Leave On Behalf Of</div>
            <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
             </div>
@@ -17,7 +17,7 @@
                     (onChange)="Onclick($event)" class="form-select custom-select" resetFilterOnHide="true">
                 </p-select>
             </div>
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)">Apply Leave On Behalf
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)">Request Leave On Behalf
                 Of</button>
             }
         </div>
@@ -210,7 +210,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-12 mb-3">
+                    <!-- <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">Comments<span class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" placeholder="Please enter comments" maxlength="250"
                             formControlName="reason"></textarea>
@@ -218,6 +218,14 @@
                         <div *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched"
                             class="error-msg">
                             Comments  is required
+                        </div>
+                    </div> -->
+                    <div class="col-md-12 mb-3">
+                        <label class="form-label custom-label mb-2">{{'Comments'| translate}}<span class="text-danger">*</span></label>
+                        <textarea class="form-control custom-input" [maxlength]="250" formControlName="reason" placeholder="Please enter comments"></textarea>
+                        <div class="textarea-count-text">{{ leaveForm.get('reason')?.value?.length ?? 0 }}/250</div>
+                        <div class="error-msg" *ngIf="(leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched)">
+                            Comment is required
                         </div>
                     </div>
                 </div>

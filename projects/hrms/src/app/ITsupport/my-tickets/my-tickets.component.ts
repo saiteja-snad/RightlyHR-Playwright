@@ -1,6 +1,6 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { HttpService } from '../../services/http.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Ipersonal } from '../../Interfaces/members-model';
 import { CommonModule } from '@angular/common';
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
@@ -17,7 +17,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-my-tickets',
-  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent, TranslateModule, DateformatPipe, ModuleInformationComponent],
+  imports: [CommonModule, Select, RouterModule, ReactiveFormsModule, NoDataFoundComponent,NgbPopoverModule, TranslateModule, DateformatPipe, ModuleInformationComponent],
   templateUrl: './my-tickets.component.html',
   styleUrl: './my-tickets.component.scss',
   encapsulation:ViewEncapsulation.None

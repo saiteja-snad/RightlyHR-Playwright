@@ -92,14 +92,14 @@
                     <td>
                         <p-tableCheckbox [value]="item" (selectionChange)="selectCheck($event)" />
                     </td>
-                    <td>{{item.entity.leavefusionempId}}</td>
-                    <td>{{item.entity.employeeName}}</td>
-                    <td>{{item.entity.leaveCategoryName}}</td>
-                    <td>{{item.entity.leaveDuration}}</td>
-                    <td>{{item.entity.leaveDurationType}}</td>
-                    <td class="text-nowrap">{{item.entity.appliedDate | dateformat}}</td>
-                    <td class="text-nowrap">{{item.entity.leaveStartDate | dateformat}}</td>
-                    <td class="text-nowrap">{{item.entity.leaveEndDate | dateformat}}</td>
+                    <td>{{item.entity?.leavefusionempId}}</td>
+                    <td>{{item.entity?.employeeName}}</td>
+                    <td>{{item.entity?.leaveCategoryName}}</td>
+                    <td>{{item.entity?.leaveDuration}}</td>
+                    <td>{{item.entity?.leaveDurationType}}</td>
+                    <td class="text-nowrap">{{item.entity?.appliedDate | dateformat}}</td>
+                    <td class="text-nowrap">{{item.entity?.leaveStartDate | dateformat}}</td>
+                    <td class="text-nowrap">{{item.entity?.leaveEndDate | dateformat}}</td>
                     <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="reason">
@@ -111,8 +111,8 @@
                         </div>
                     </td>
                     <td class="text-center">
-                        <div *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
-                            <div type="button" (click)="comments(item.entity.leaveApproverComments, commentspopup)">
+                        <div *ngIf="item.entity?.leaveApproverComments[0]?.comments?.trim(); else noComments">
+                            <div type="button" (click)="comments(item.entity?.leaveApproverComments, commentspopup)">
                                 <i class="bi bi-info-circle-fill"></i>
                             </div>
                         </div>
@@ -127,12 +127,12 @@
                                 <i class="bi bi-three-dots-vertical"></i>
                             </span>
                             <ul class="dropdown-menu custom-dropdown-menu">
-                                <li>
+                                <!-- <li>
                                     <a class="dropdown-item"
                                         *ngIf="item.approvalHeader.currentapprovalStage == item.approvalHeader.finalapprovalStage"
                                         (click)="checkLeaveBalance(item,checkbalancepopup)">
                                         <i class="bi bi-calendar-check me-2"></i>Check Balance</a>
-                                </li>
+                                </li> -->
 
                                 <li>
                                     <a class="dropdown-item" (click)="approveleave(approverPopup,item)"

@@ -1,7 +1,13 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <!--header-->
-        <div class="component-header">Reports</div>
+        <div class="heading-content">
+            <div class="commpoment-name">Standard Reports<span class="ms-2">>></span></div>
+            <div class="component-header">Branch Location Wise Data</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
 
         <!--right data-->
         <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
@@ -60,9 +66,9 @@
     </div>
 
     <!--Module Information-->
-    <div>
+    <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    </ng-template>
 
     <div class="d-flex gap-3 w-100">
         <div class="component-left-tabs-container">
@@ -83,36 +89,36 @@
                 <div class="custom-table-content">
                     <table class="w-100" id="branchLocation">
                         <thead>
-                                <th>{{ "Employee ID" }}</th>
-                                <th>{{ "Salutation" }}</th>
-                                <th>{{ "First Name" }}</th>
-                                <th>{{ "Middle Name" }}</th>
-                                <th>{{ "Last Name" }}</th>
-                                <th>{{ "Status" }}</th>
-                                <th>{{ "Date Of Joining" }}</th>
-                                <th>{{ "Address Line 1(current)" }}</th>
-                                <th>{{ "Address Line 2(current)" }}</th>
-                                <th>{{ "City(current)" }}</th>
-                                <th>{{ "State(current)" }}</th>
-                                <th>{{ "Country(current)" }}</th>
-                                <th>{{ "ZipCode(current)" }}</th>
-                                <th>{{ "Address Line 1(permanent)" }}</th>
-                                <th>{{ "Address Line 2(permanent)" }}</th>
-                                <th>{{ "City(permanent)" }}</th>
-                                <th>{{ "State(permanent)" }}</th>
-                                <th>{{ "Country(permanent)" }}</th>
-                                <th>{{ "ZipCode(permanent)" }}</th>
-                                <th>{{ "Work Number" }}</th>
-                                <th>{{ 'Work Mail-Id'}}</th>
-                                <th>{{ "Mobile Phone" }}</th>
-                                <th>{{ "Branch Location/Code" }}</th>
-                                <th>{{ "Grade Name" }}</th>
-                                <th>{{ "Department" }}</th>
-                                <th>{{ "Location" }}</th>
-                                <th>{{ "Sub Location" }}</th>
-                                <th>{{ "Shift" }}</th>
-                                <th>{{ "Shift Code" }}</th>
-                                <th>{{ "Job Type" }}</th>
+                            <th>{{ "Employee ID" }}</th>
+                            <th>{{ "Salutation" }}</th>
+                            <th>{{ "First Name" }}</th>
+                            <th>{{ "Middle Name" }}</th>
+                            <th>{{ "Last Name" }}</th>
+                            <th>{{ "Status" }}</th>
+                            <th>{{ "Date Of Joining" }}</th>
+                            <th>{{ "Address Line 1(current)" }}</th>
+                            <th>{{ "Address Line 2(current)" }}</th>
+                            <th>{{ "City(current)" }}</th>
+                            <th>{{ "State(current)" }}</th>
+                            <th>{{ "Country(current)" }}</th>
+                            <th>{{ "ZipCode(current)" }}</th>
+                            <th>{{ "Address Line 1(permanent)" }}</th>
+                            <th>{{ "Address Line 2(permanent)" }}</th>
+                            <th>{{ "City(permanent)" }}</th>
+                            <th>{{ "State(permanent)" }}</th>
+                            <th>{{ "Country(permanent)" }}</th>
+                            <th>{{ "ZipCode(permanent)" }}</th>
+                            <th>{{ "Work Number" }}</th>
+                            <th>{{ 'Work Mail-Id'}}</th>
+                            <th>{{ "Mobile Phone" }}</th>
+                            <th>{{ "Branch Location/Code" }}</th>
+                            <th>{{ "Grade Name" }}</th>
+                            <th>{{ "Department" }}</th>
+                            <th>{{ "Location" }}</th>
+                            <th>{{ "Sub Location" }}</th>
+                            <th>{{ "Shift" }}</th>
+                            <th>{{ "Shift Code" }}</th>
+                            <th>{{ "Job Type" }}</th>
                         </thead>
                         <tbody>
                             <ng-container *ngIf="standardReportData.length > 0; else noData">

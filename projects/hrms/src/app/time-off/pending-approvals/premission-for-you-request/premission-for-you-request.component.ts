@@ -65,11 +65,12 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   searchValue: any | null;
   spinnerLoader = false;
   dataload = false;
-  permissionsselect!: LeaveApproval[];
-  selectedLeavesItems: LeaveApproval[] = [];
+  permissionsselect!: PermissionRequestResponse[];
+  selectedLeavesItems: PermissionRequestResponse[] = [];
   multiSelect = false;
   requestBody = {} as any;
-  
+  hasSelectedAllOnce = false; 
+  previousSearchValue: string = '';
   constructor(
     private modalService: NgbModal,
     private fb: FormBuilder,
@@ -84,89 +85,89 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.getAllPendingApprovals();
   }
+  
+
   selectCheck(value: any) {
-  this.multiSelect = Array.isArray(value) && value.length > 0;
+    this.multiSelect = Array.isArray(value) && value.length > 0;
 
-  if (!value || value.length === 0) {
-    this.selectedLeavesItems = [];
-    return;
-  }
-
-  const stageMap: { [stage: string]: any[] } = {};
-
-  // Group items by their approval stage
-  value.forEach((item: any) => {
-    const stage = item.approvalHeader?.currentapprovalStage;
-    if (!stageMap[stage]) {
-      stageMap[stage] = [];
+    if (!value || value.length === 0) {
+      this.selectedLeavesItems = [];
+      this.hasSelectedAllOnce = false; 
+      return;
     }
-    stageMap[stage].push(item);
-  });
 
-  const stages = Object.keys(stageMap);
-  const totalAvailable = this.leaves?.getValue().length || 0;
-  const totalSelected = value.length;
-  const isBulkSelect = totalSelected === totalAvailable;
+    const stageMap: { [stage: string]: any[] } = {};
 
-  // Get the dominant stage (most frequent)
-  let dominantStage = stages[0];
-  let maxCount = stageMap[dominantStage].length;
-  for (const stage of stages) {
-    const count = stageMap[stage].length;
-    if (count > maxCount) {
-      dominantStage = stage;
-      maxCount = count;
-    } else if (count === maxCount && stage === '1') {
-      dominantStage = stage;
+    value.forEach((item: any) => {
+      const stage = item.approvalHeader?.currentapprovalStage;
+      if (!stageMap[stage]) {
+        stageMap[stage] = [];
+      }
+      stageMap[stage].push(item);
+    });
+
+    const stages = Object.keys(stageMap);
+    const totalAvailable = this.leaves?.getValue().length || 0;
+    const totalSelected = value.length;
+    const isBulkSelect = totalSelected === totalAvailable;
+
+    if (isBulkSelect && stages.length > 1) {
+      if (this.hasSelectedAllOnce) {
+        this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
+      }
+
+      this.hasSelectedAllOnce = true; 
+
+      let dominantStage = stages[0];
+      let maxCount = stageMap[dominantStage].length;
+
+      for (const stage of stages) {
+        const count = stageMap[stage].length;
+        if (count > maxCount || (count === maxCount && stage === '1')) {
+          dominantStage = stage;
+          maxCount = count;
+        }
+      }
+
+      const dominantItems = stageMap[dominantStage];
+      this.selectedLeavesItems = [...dominantItems];
+      setTimeout(() => this.updateTableSelectionState(dominantItems));
+      return;
     }
+
+    if (!isBulkSelect && stages.length > 1) {
+      this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
+      const validStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
+      const newSelection = value.filter(
+        (item: { approvalHeader: { currentapprovalStage: string; }; }) => item.approvalHeader?.currentapprovalStage === validStage
+      );
+      this.selectedLeavesItems = [...newSelection];
+      setTimeout(() => this.updateTableSelectionState(newSelection));
+      return;
+    }
+
+    this.selectedLeavesItems = [...value];
   }
 
-  const lastSelected = value[value.length - 1];
-  const lastSelectedStage = lastSelected.approvalHeader?.currentapprovalStage;
 
-  // Scenario 1: Progressive Selection (mixing stages)
-  const existingStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
-  if (
-    this.selectedLeavesItems.length > 0 &&
-    lastSelectedStage &&
-    existingStage &&
-    lastSelectedStage !== existingStage
-  ) {
-    this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
-    const newSelection = this.selectedLeavesItems.filter(
-      item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
-    );
-    this.selectedLeavesItems = [...newSelection];
-    setTimeout(() => this.updateTableSelectionState(newSelection));
-    return;
-  }
-
-  // Scenario 2: Bulk select - filter by dominant stage only
-  if (isBulkSelect && stages.length > 1) {
-    const dominantItems = [...stageMap[dominantStage]];
-    this.selectedLeavesItems = dominantItems;
-
-
-    setTimeout(() => this.updateTableSelectionState(dominantItems));
-    return;
-  }
-
-  // Valid multi-select with same stage
-  this.selectedLeavesItems = [...value];
-}
-
-
-private updateTableSelectionState(selectedItems: any[]) {
-    // Create a new array reference to force change detection
+  private updateTableSelectionState(selectedItems: any[]) {
     this.selectedLeavesItems = [...selectedItems];
-    
-    // If using PrimeNG table with dataKey
+
     if (this.table) {
-      // Clear and reset selection to ensure checkbox states update
       this.table.selection = null;
       setTimeout(() => {
         this.table.selection = selectedItems;
       });
+    }
+  }
+
+  onSearchChange(): void {
+    if (this.searchValue !== this.previousSearchValue) {
+      this.previousSearchValue = this.searchValue;
+      this.selectedLeavesItems = [];
+      this.hasSelectedAllOnce = false; 
+      this.multiSelect = false;
+      this.updateTableSelectionState([]);
     }
   }
   bulkapprove(approverPopup: any) {
@@ -225,8 +226,13 @@ private updateTableSelectionState(selectedItems: any[]) {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.leaves.next(response.data);
-          this.permissionsselect = response.data;
+          if(response.data.length > 0){
+            this.leaves.next(response.data);
+            this.permissionsselect = response.data;
+          }else{
+            this.leaves.next([]);
+            this.permissionsselect  = [];
+          }
         },
         error: (reason) => {
           console.error(reason);
@@ -238,31 +244,33 @@ private updateTableSelectionState(selectedItems: any[]) {
       });
   }
 
-  getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
-  const search = this.searchValue?.toLowerCase() ?? '';
-  const allLeaves = this.leaves?.getValue() ?? [];
 
-  // Filter
-  let filteredLeaves = allLeaves;
-  if (search) {
-    filteredLeaves = filteredLeaves.filter((item: PermissionRequestResponse) =>
-      item.entity?.fusionempId?.toLowerCase().includes(search) ||
+
+
+getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
+    const search = this.searchValue?.toLowerCase() ?? '';
+    let leaves = this.permissionsselect ?? [];
+
+    if (search) {
+      leaves = leaves.filter(item =>
+         item.entity?.fusionempId?.toLowerCase().includes(search) ||
       item.entity?.raisedForName?.toLowerCase().includes(search) ||
       item.entity?.type?.toLowerCase().includes(search)
-    );
+      );
+    }
+
+    // Sort (preserve original sorting logic)
+    if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
+      this.leaves.next(leaves);
+      return this.leaves.getValue();
+    }
+
+    const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
+    const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+    const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+    this.leaves.next([...selected, ...unselected]);
+    return this.leaves.getValue();
   }
-
-  // Sort
-  if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
-    return filteredLeaves;
-  }
-
-  const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
-  const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
-  const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
-
-  return [...selected, ...unselected];
-}
 
   openModal(content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static',size:'lg' });
@@ -326,6 +334,11 @@ private updateTableSelectionState(selectedItems: any[]) {
             } else {
               this.openModal(this.leaveSummary);
             }
+            this.selectedLeavesItems = [];
+            this.multiSelect = false;
+            this.selectedLeaveData = {} as PermissionRequestResponse;
+            this.signalService.permissionForYouTriggerSignal.set(true);
+            this.signalService.permissionSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
@@ -334,12 +347,7 @@ private updateTableSelectionState(selectedItems: any[]) {
             this.spinnerLoader = false;
           },
           complete: () => {
-            this.selectedLeavesItems = [];
             this.multiSelect = false;
-            this.selectedLeaveData = {} as PermissionRequestResponse;
-            this.signalService.permissionForYouTriggerSignal.set(true);
-            this.signalService.permissionSidNavCountTriggerSignal.set(true);
-            this.getAllPendingApprovals();
             this.spinnerLoader = false;
             this.searchValue = null;
           },
@@ -395,7 +403,10 @@ private updateTableSelectionState(selectedItems: any[]) {
           } else {
             this.openModal(this.leaveSummary);
           }
-         
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
+          this.signalService.permissionForYouTriggerSignal.set(true);
+          this.signalService.permissionSidNavCountTriggerSignal.set(true);
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -456,15 +467,15 @@ private updateTableSelectionState(selectedItems: any[]) {
             } else {
               this.openModal(this.leaveSummary);
             }
-          },
-          error: (reason: any) => {
-            this.modalService.dismissAll();
             this.selectedLeavesItems = [];
             this.multiSelect = false;
             this.rejectForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.permissionForYouTriggerSignal.set(true);
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
           },

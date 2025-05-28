@@ -5,10 +5,14 @@
             @if(this.rbac.allowedToAccess('Dashboard.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/admin');resetDropdown()"
                 [class.active-nav-link]="isActiveRoute('/admin')">
-                <img src="main-menu-icons/dashboard-square.png"
-                    alt="Icon" class="main-menu-icon">Dashboard
+                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">Dashboard
             </li>
             }
+            <!--Employee Management-->
+            <li class="nav-item menu-item-clear" [routerLink]="'/employee-management'" routerLinkActive="active-nav-link"
+                (click)="resetDropdown()">
+                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">Employee Management
+            </li>
             <!--My Info-->
             <!-- @if(this.rbac.allowedToAccess('My Info.view')){
             <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/myinfo');resetDropdown()"

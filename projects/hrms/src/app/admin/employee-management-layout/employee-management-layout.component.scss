@@ -89,8 +89,18 @@
         border: 0rem !important;
     }
 
+    .p-tablist-nav-button {
+        box-shadow: none !important;
+    }
+
     .p-tablist-active-bar {
         background: none !important;
+    }
+
+    .p-icon {
+        width: 1.5rem;
+        height: 1.5rem;
+        color: var(--primary-color);
     }
 
     .employee-category-container {
@@ -127,4 +137,12 @@
             }
         }
     }
+}
+
+.component-header-content {
+    height: 2.375rem;
+}
+
+.custom-table-content {
+    height: calc(100dvh - 23.5rem);
 }

@@ -37,6 +37,7 @@
     --header-background-color: #FFFFFF;
     --btn-header-color: #0B3A83;
     --notification-border-color: #CFE0F5;
+    --header-info-border-color: #dae4f4;
     // header colors ends
 
     //sidebar colors
@@ -579,6 +580,7 @@ body {
     line-height: 100%;
     letter-spacing: 0%;
     vertical-align: middle;
+    align-items: center;
 
     .commpoment-name {
         font-weight: 400;
@@ -707,7 +709,6 @@ a {
     background: var(--Scroller-bar-color);
     min-height: 4rem !important;
 }
-
 // scroll bar stylings ends
 
 // button stylings
@@ -968,16 +969,9 @@ select:focus {
         background-color: #F0F4F8;
     }
 }
-
 // Select Styling 
 
 // table stylings
-.custom-data-content-container {
-    background-color: var(--white-color);
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-}
-
 .custom-table-content {
     width: 100%;
     height: calc(100dvh - 10rem);
@@ -1299,7 +1293,7 @@ select:focus {
 //My Info Stylings
 .user-profile-content {
     width: 20rem;
-    height: calc(100dvh - 11.5rem);
+    height: calc(100dvh - 9rem);
     border: 1px solid #CCDAEC;
     background-color: var(--white-color);
     border-radius: 0.5rem;
@@ -1309,7 +1303,7 @@ select:focus {
 
 .myinfo-main-content {
     width: calc(100% - 20rem);
-    height: calc(100dvh - 11.5rem);
+    height: calc(100dvh - 9rem);
     overflow-y: auto;
     border: 1px solid #CCDAEC;
     border-radius: 0.5rem;
@@ -1602,7 +1596,7 @@ input[type="file"] {
 
     .popup-header-border {
         border-bottom: 3px solid transparent;
-        border-image-source: linear-gradient(90deg, var(--white-color) -6.98%, #858585 50.67%, var(--white-color) 108.91%);
+        border-image-source: linear-gradient(90deg, var(--white-color) -6.98%, #94B1DE 50.67%, var(--white-color) 108.91%);
         border-image-slice: 1;
         vertical-align: middle;
     }

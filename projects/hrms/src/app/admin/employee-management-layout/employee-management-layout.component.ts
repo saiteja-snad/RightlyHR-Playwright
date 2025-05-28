@@ -1,16 +1,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { ChartModule } from 'primeng/chart';
 import { TabsModule } from 'primeng/tabs';
-
+import { AllEmployeesHeaderComponent } from "../../shared/Employee-management-content/all-employees-header/all-employees-header.component";
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { AddProspectiveEmployeeComponent } from '../prospective-employees/add-prospective-employee/add-prospective-employee.component';
+import { AddProspectiveInternComponent } from '../prospective-interns/add-prospective-intern/add-prospective-intern.component';
 @Component({
   selector: 'app-employee-management-layout',
-  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule,],
+  imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule, AllEmployeesHeaderComponent],
   templateUrl: './employee-management-layout.component.html',
   styleUrl: './employee-management-layout.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -38,7 +41,7 @@ export class EmployeeManagementLayoutComponent {
   EmployeeInfoDataOptions: any;
   totalEmployeesCount: any;
 
-  constructor(private http: HttpService, public rbac: RbacService) { }
+  constructor(private http: HttpService, public rbac: RbacService, private modalService: NgbModal, public router: Router) { }
 
   ngOnInit(): void {
     this.fetchData();
@@ -239,12 +242,6 @@ export class EmployeeManagementLayoutComponent {
         employeementTypeColor: '#53D33A',
         permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
       },
-      // {
-      //   label: 'Current Openings',
-      //   link: '/employee-management/timeoff',
-      //   count: this.activeCount,
-      //   permission: { feature: 'Dashboard Current Openings Card', action: 'view' }
-      // },
     ];
     // this.filterTabsByRbac();
     this.initChart();
@@ -274,5 +271,13 @@ export class EmployeeManagementLayoutComponent {
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+  }
+
+  openAddProspective() {
+    this.modalService.open(AddProspectiveEmployeeComponent, { centered: true, backdrop: 'static', size: 'lg' });
+  }
+
+  openAddProspectiveIntern() {
+    this.modalService.open(AddProspectiveInternComponent, { centered: true, backdrop: 'static', size: 'lg' });
   }
 }

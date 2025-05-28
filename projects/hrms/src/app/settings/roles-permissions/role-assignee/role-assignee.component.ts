@@ -151,8 +151,9 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.modal.openSuccessModal('Assignee Added Successfully');
       },
-      error: (err) => {
-        this.modal.openErrorModal('Assignee Assignment Failed');
+      error: (err: any) => {
+        const msg = err.error.Message? err.error.Message : 'Assignee Assignment Failed'
+        this.modal.openErrorModal(msg);
       },
       complete: () => {
         this.createAssigneeForm.reset();

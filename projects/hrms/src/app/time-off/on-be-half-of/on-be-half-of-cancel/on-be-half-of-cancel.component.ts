@@ -46,14 +46,14 @@ export class OnBeHalfOfCancelComponent implements OnInit,OnDestroy{
     ngOnInit(): void {
       this.loggedinuser = this.authService.getToken();
        this.cadidateEmployeeId =parseInt(localStorage.getItem('onbehalfof') as string) ;
-    if(this.cadidateEmployeeId){
-      this.getDataByLPID();
+      if(this.cadidateEmployeeId){
+        this.getDataByLPID();
 
-    }
+      }
     }
   
     getDataByLPID() {
-      let empid = this.empdata.employeeId;
+      let empid = this.cadidateEmployeeId;
       this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
         next: (response: any) => {
           console.log(response);

@@ -100,7 +100,7 @@
                                 <div class="d-flex justify-content-end">
                                     @if(item.status !== '-'){
                                     <ul class="ps-0 mb-2">
-                                        <li class="main-status-text" [ngClass]="getStatusClass(item.status)">
+                                        <li class="main-status-text" [ngStyle]="{ color: item.displayStatus.colour }">
                                             {{item?.status}}</li>
                                     </ul>
                                     }
@@ -122,14 +122,14 @@
                                 <!-- action btns content-->
                                 <div class="d-flex gap-3 justify-content-end">
                                     @if(rbac.allowedToAccess('Request Leave.view')){
-                                    @if(item.status == 'Absent' && item.duration.totalDuration >= '00:00:00' &&
+                                    @if(item.isLeaveApplicable && item.duration.totalDuration >= '00:00:00' &&
                                     currentMonth==selectedMonth && item.employeeId == empdata.employeeId){
                                     <a class="application-btn" (click)="navigateToLeave(item)"><u>Apply Leave</u> </a>
                                     }
                                     }
                                     @if(rbac.allowedToAccess('Request Regularization.view')){
                                     @if(item.duration.totalDuration >= '00:00:00' &&isPastOrToday(item.date) &&
-                                    (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs &&
+                                    (item.duration.totalDuration|tohours) < shiftDetails.fullDayMinHrs && item.isRegularizationApplicable&&
                                         item.status!=='Weekend' && currentMonth==selectedMonth
                                         &&item.regularizations.length<=0 && item.employeeId==empdata.employeeId){ 
                                             <a

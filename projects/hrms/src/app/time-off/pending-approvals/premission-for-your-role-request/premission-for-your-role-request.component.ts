@@ -158,8 +158,13 @@ export class PremissionForYourRoleRequestComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.leaves.next(response.data);
-          this.permissionsselect = response.data;
+           if(response.data.length > 0){
+            this.leaves.next(response.data);
+            this.permissionsselect = response.data;
+          }else{
+            this.leaves.next([]);
+            this.permissionsselect  = [];
+          }
         },
         error: (reason) => {
           console.error(reason);
@@ -257,20 +262,21 @@ export class PremissionForYourRoleRequestComponent
             } else {
               this.openModal(this.leaveSummary);
             }
+            this.selectedLeavesItems = [];
+            this.approveForm.reset();
+            this.selectedLeaveData = {} as PermissionRequestResponse;
+            this.signalService.permissionForYouTriggerSignal.set(true);
+            this.signalService.permissionSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
             this.approveForm.reset();
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
+            this.searchValue = null;
           },
           complete: () => {
-            this.selectedLeavesItems = [];
             this.multiSelect = false;
-            this.approveForm.reset();
-            this.selectedLeaveData = {} as PermissionRequestResponse;
-            this.signalService.permissionForYouTriggerSignal.set(true);
-            this.signalService.permissionSidNavCountTriggerSignal.set(true);
             this.getAllPendingApprovals();
             this.spinnerLoader = false;
             this.searchValue = null;

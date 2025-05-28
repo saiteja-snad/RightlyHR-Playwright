@@ -1,7 +1,12 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div>
-            <p class="component-header mb-0">On Behalf Of</p>
+      
+        <div class="heading-content">
+            <div class="commpoment-name">Time off<span class="ms-2">>></span></div>
+            <div class="component-header">On Behalf Of</div>
+           <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
         </div>
         <div class="d-flex align-items-center gap-3">
             @if(rbac.allowedToAccess('Request On Behalf Button.view')) {
@@ -12,15 +17,18 @@
                     (onChange)="Onclick($event)" class="form-select custom-select" resetFilterOnHide="true">
                 </p-select>
             </div>
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)">Apply Leave On Behalf Of</button>
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)">Apply Leave On Behalf
+                Of</button>
             }
         </div>
     </div>
 
     <!--Module Information-->
-    <div>
+    <!--Module Information-->
+    <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    </ng-template>
+
 
     @if(categoryDetails && categoryDetails.length > 0){
     <div class="leave-cards-grid-container">

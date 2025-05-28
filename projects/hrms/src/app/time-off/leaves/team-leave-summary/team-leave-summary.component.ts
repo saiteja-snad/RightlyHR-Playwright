@@ -7,16 +7,17 @@ import { filter, Subject, takeUntil } from 'rxjs';
 import { ITeamLeaveSummary } from '../leaves.model';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal ,NgbPopoverModule} from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 
+
 @Component({
   selector: 'app-team-leave-summary',
-  imports: [LeavesApprovaltabsComponent, CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, ModuleInformationComponent],
+  imports: [LeavesApprovaltabsComponent, CommonModule, Select, DataLoaderContentComponent, NoDataFoundComponent, FormsModule, DateformatPipe, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './team-leave-summary.component.html',
   styleUrl: './team-leave-summary.component.scss'
 })

@@ -3,7 +3,7 @@ import { Component, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/c
 import { AccordionModule } from 'primeng/accordion';
 import { Select } from 'primeng/select';
 import { HttpService } from '../../../services/http.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IEmployeeLeaveData } from '../leaves.model';
 import { filter, Subject, Subscription, takeUntil } from 'rxjs';
 import { LeavesApprovaltabsComponent } from '../../../shared/time-off-module-tabs/leaves-approvaltabs/leaves-approvaltabs.component';
@@ -18,7 +18,7 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-org-leave-balance',
-  imports: [CommonModule, Select, AccordionModule, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, ModuleInformationComponent],
+  imports: [CommonModule, Select, AccordionModule, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './org-leave-balance.component.html',
   styleUrl: './org-leave-balance.component.scss',
   encapsulation: ViewEncapsulation.None

@@ -1,7 +1,12 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div>
-            <p class="component-header cursor mb-0">Holidays</p>
+        <div class="heading-content">
+            <!-- <div class="commpoment-name">Holidays<span class="ms-2">>></span></div> -->
+            <div class="component-header">Holidays</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
 
         <div class="d-flex gap-2 align-items-center">
@@ -16,10 +21,9 @@
         </div>
     </div>
 
-    <!--Module Information-->
-    <div>
+    <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    </ng-template>
 
     <div>
         <router-outlet></router-outlet>

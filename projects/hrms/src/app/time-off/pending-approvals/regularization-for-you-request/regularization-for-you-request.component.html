@@ -1,7 +1,7 @@
 <div class="custom-main-component-container">
     @if (selectedProducts && selectedProducts.length > 0 &&multiSelect) {
     <div class="component-header-content">
-        <p><b>Selected Records:</b> {{selectedProducts.length}}</p>
+        <div class="component-sub-header">Selected Records: {{selectedProducts.length}}</div>
         <div class="d-flex gap-3">
             @if (canBulkApprove()) {
             @if(rbac.allowedToAccess('For You (Regularization).update')){
@@ -42,13 +42,13 @@
                     <th>{{'Employee Name' | translate}}</th>
                     <th>{{'Requested Date' | translate}}</th>
                     <th>{{'Regularization Date' | translate}}</th>
-                    <th>{{'Duration(InHours)' | translate}}</th>
+                    <th>{{'Duration(In Hrs)' | translate}}</th>
                     <th>{{'Regularization Type' | translate}}</th>
-                    <th>{{'Reason' | translate}}</th>
-                    <th>{{'Approver Comments' | translate}}</th>
+                    <th class="text-center">{{'Reason' | translate}}</th>
+                    <th class="text-center">{{'Approver Comments' | translate}}</th>
                     @if(!multiSelect &&(rbac.allowedToAccess('For You (Regularization).update') ||
                     rbac.allowedToAccess('For You (Regularization).delete'))){
-                    <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">{{'(s)' | translate}}</span></th>
+                    <th class="text-center">{{'Action' | translate}}</th>
                     }
                 </tr>
             </ng-template>

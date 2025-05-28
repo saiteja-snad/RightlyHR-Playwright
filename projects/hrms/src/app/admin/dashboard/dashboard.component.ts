@@ -1,24 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DocumentHistoryLayoutComponent } from '../document-history/document-history-layout/document-history-layout.component';
 import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { Carousel } from 'primeng/carousel';
+import { ChartModule } from 'primeng/chart';
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, NgbPopoverModule, Carousel, ChartModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 
 export class DashboardComponent {
   moduleinfo: string = '';
   subscription!: Subscription;
+  employeedata: any;
   Inactive!: number;
   ACTDATA!: number;
   Active!: number;
@@ -34,23 +37,30 @@ export class DashboardComponent {
     return index;
   }
   cardItems: any[] = [];
+  eventItems: any[] = [];
+  EmployeeInfoData: any;
+  EmployeeInfoDataOptions: any;
+  totalEmployeesCount: any;
+  currentTime: Date = new Date();
+  iconPath: string = '';
 
   constructor(private router: Router, private http: HttpService, private cdr: ChangeDetectorRef,
     public rbac: RbacService) { }
 
   ngOnInit(): void {
+    this.employeedata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.fetchData();
     this.cardItems = this.cardItems.filter(
       (tab) =>
         tab.permission &&
         tab.permission.feature &&
         tab.permission.action &&
-        this.rbac.allowedToAccess(
-          `${tab.permission.feature}.${tab.permission.action}`
-        )
+        this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
+    this.eventsData();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.setIconBasedOnTime();
   }
 
   initiateUpdateModuleInfo() {
@@ -66,6 +76,35 @@ export class DashboardComponent {
     };
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
+  }
+
+  //function for prospective employee
+  eventsData() {
+    this.subscription = this.http.getData(`EmployeeData/Quotation`).subscribe({
+      next: (data: any) => {
+        const shuffled = data.sort(() => 0.5 - Math.random());
+        this.eventItems = shuffled.slice(0, 3);
+      },
+      error: (reason) => console.log(reason),
+    });
+  }
+
+  setIconBasedOnTime() {
+    const hour = new Date().getHours();
+
+    if (hour >= 5 && hour < 12) {
+      // Morning
+      this.iconPath = '/dashboard-icon/morning-icon.png';
+    } else if (hour >= 12 && hour < 17) {
+      // Afternoon
+      this.iconPath = '/dashboard-icon/afternoon-icon.png';
+    } else if (hour >= 17 && hour < 20) {
+      // Evening
+      this.iconPath = '/dashboard-icon/sunset-icon.png';
+    } else {
+      // Night
+      this.iconPath = '/dashboard-icon/night-icon.png';
+    }
   }
 
   fetchData() {
@@ -190,87 +229,96 @@ export class DashboardComponent {
     });
   }
 
-  generateDocument() {
-    if (this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view')) {
-      this.router.navigate(['/admin/letters/offer-letter']);
-    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view')) {
-      this.router.navigate(['/admin/letters/trainee-appointment-letter']);
-    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view')) {
-      this.router.navigate(['/admin/letters/trainee-offer-letter']);
-    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view')) {
-      this.router.navigate(['/admin/letters/appointment-letter']);
-    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view')) {
-      this.router.navigate(['/admin/letters/welcome-letter']);
-    }
-  }
-
   updateCardItems() {
     this.cardItems = [
       {
-        label: 'Prospective Employees',
-        link: '/admin/prospective-employees',
-        count: this.ACTDATA,
-        backgroundColor: '#E1E8FE',
-        profileColor: '#06274F', permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
-      },
-      {
-        label: 'Active Employees',
-        link: '/admin/active-employees',
+        label: 'Active',
+        sublabel: 'Employees',
         count: this.Active,
-        backgroundColor: '#FEEFE1',
-        profileColor: '#A95200', permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
+        icon: '/employee-data/active-employees-icon.png',
+        employeementTypeColor: '#F9D339',
+        permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
-        label: 'Inactive Employees',
-        link: '/admin/inactive-employees',
+        label: 'Inactive',
+        sublabel: 'Employees',
+        link: '/employee-management/inactive-employees',
         count: this.Inactive,
-        backgroundColor: '#E1FEF4',
-        profileColor: '#2B8D6B', permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
+        icon: '/employee-data/inactive-employee-icon.png',
+        employeementTypeColor: '#E54288',
+        permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
       },
       {
-        label: 'Prospective Trainees',
-        link: '/admin/prospective-interns',
-        count: this.Trainee,
-        backgroundColor: '#FEE1F7',
-        profileColor: '#95267A', permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
+        label: 'Prospective',
+        sublabel: 'Employees',
+        link: '/employee-management/prospective-employees',
+        count: this.ACTDATA,
+        icon: '/employee-data/prospective-employee-icon.png',
+        employeementTypeColor: '#03A9F4',
+        permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
       },
       {
-        label: 'Active Trainees',
-        link: '/admin/active-interns',
-        count: this.traineeactive,
-        backgroundColor: '#FEE7E1',
-        profileColor: '#994530', permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
-      },
-      {
-        label: 'Inactive Trainees',
-        link: '/admin/inactive-interns',
-        count: this.traineeInactive,
-        backgroundColor: '#FEE1F1',
-        profileColor: '#760C46', permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
-      },
-      // {
-      //   label: 'Current Openings',
-      //   link: '/admin/timeoff',
-      //   count: this.activeCount,
-      //   backgroundColor: '#FEEFE1',
-      //   profileColor: '#A95200', permission: { feature: 'Dashboard Current Openings Card', action: 'view' }
-      // },
-      {
-        label: 'Probation Employees',
-        link: '/admin/probation-employees',
+        label: 'Probation',
+        sublabel: 'Employees',
+        link: '/employee-management/probation-employees',
         count: this.PROBDATA,
-        backgroundColor: '#E1FEE1',
-        profileColor: '#0A850A', permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
+        icon: '/employee-data/Probation-Employee-icon.png',
+        employeementTypeColor: '#FF2E22',
+        permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
+      },
+
+      {
+        label: 'Active',
+        sublabel: 'Trainees',
+        link: '/employee-management/active-interns',
+        count: this.traineeactive,
+        icon: '/employee-data/active-trainee-icon.png',
+        employeementTypeColor: '#0B3A83',
+        permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
+      },
+      {
+        label: 'Inactive',
+        sublabel: 'Trainees',
+        link: '/employee-management/inactive-interns',
+        count: this.traineeInactive,
+        icon: '/employee-data/inactive-trainee-icon.png',
+        employeementTypeColor: '#1064CA',
+        permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
+      },
+      {
+        label: 'Prospective',
+        sublabel: 'Trainees',
+        link: '/employee-management/prospective-interns',
+        count: this.Trainee,
+        icon: '/employee-data/prospective-trainee-icon.png',
+        employeementTypeColor: '#53D33A',
+        permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
       },
     ];
-    this.filterTabsByRbac();
-    // this.cdr.detectChanges();
+    // this.filterTabsByRbac();
+    this.initChart();
+  }
+
+  initChart() {
+    const backgroundColors = this.cardItems.map(item => item.employeementTypeColor);
+    this.totalEmployeesCount = this.ACTDATA + this.Active + this.Inactive + this.Trainee + this.traineeactive + this.traineeInactive;
+    this.EmployeeInfoData = {
+      datasets: [
+        {
+          data: [this.ACTDATA, this.Active, this.Inactive, this.Trainee, this.traineeactive, this.traineeInactive, this.PROBDATA],
+          backgroundColor: backgroundColors,
+          borderWidth: 0,
+        }
+      ]
+    };
+    this.EmployeeInfoDataOptions = {
+      cutout: '70%',
+    };
   }
 
   filterTabsByRbac(): void {
     this.cardItems = this.cardItems.filter(tab => {
       if (!tab.permission) return true;
-
       const { feature, action } = tab.permission;
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);

@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { IProbationEmployees } from './probation-emp-module';
 import { FormsModule } from '@angular/forms';
@@ -12,51 +12,28 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
 import { NoDataFoundComponent } from "../../shared/no-data-found/no-data-found.component";
 import { RbacService } from '../../services/rbac.service';
 import { AccessNavigationService } from '../../services/access-navigation.service';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-probation-employees',
-  imports: [CommonModule, RouterModule, TranslateModule, FormsModule,NgbPopoverModule, ProbationpipePipe, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
+  imports: [CommonModule, RouterModule, TranslateModule, FormsModule, NgbPopoverModule, ProbationpipePipe, DataLoaderContentComponent, NoDataFoundComponent],
   templateUrl: './probation-employees.component.html',
   styleUrl: './probation-employees.component.scss'
 })
 
 export class ProbationEmployeesComponent {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   searchValue: any;
   subscription!: Subscription
   probationemp = [] as any
   emp = {} as any;
   empinfo = {} as IProbationEmployees;
-  StatusMsg : any;
-  probationDuration:any;
+  StatusMsg: any;
+  probationDuration: any;
   loader = false;
-  
-  constructor(private router: Router,private http: HttpService, private modalService: NgbModal,public rbac:RbacService,private accessNav: AccessNavigationService) { }
+
+  constructor(private router: Router, private http: HttpService, private modalService: NgbModal, public rbac: RbacService, private accessNav: AccessNavigationService) { }
 
   ngOnInit(): void {
     this.getProbationEmployees();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/probation-employees': MODULE_INFOS.PROBATION_EMPLOYEES_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getProbationEmployees() {
@@ -64,7 +41,7 @@ export class ProbationEmployeesComponent {
     this.subscription = this.http.getData(`ProbationFlow/getProbationEmployeesStatus`).subscribe({
       next: (data: any) => {
         this.probationemp = data as IProbationEmployees[]
-        this.probationemp.probationEndDate=this.formatDate(this.probationemp.probationEndDate);
+        this.probationemp.probationEndDate = this.formatDate(this.probationemp.probationEndDate);
         this.loader = false;
       }
     })
@@ -73,13 +50,14 @@ export class ProbationEmployeesComponent {
   select(act: any) {
     this.emp = localStorage.setItem('personaldata', JSON.stringify(act));
     // this.router.navigate(['/personalinfo']);
-     this.goToAccessibleRoute('/personalinfo');
+    this.goToAccessibleRoute('/personalinfo');
   }
-   goToAccessibleRoute(actualRoute: string) {
+
+  goToAccessibleRoute(actualRoute: string) {
     const route = this.accessNav.navigateToAccessedHeaderRoute(actualRoute);
     if (route) {
       this.router.navigate([route]);
-    }else {
+    } else {
       this.router.navigate(['/unauthorized']);
     }
   }
@@ -87,6 +65,7 @@ export class ProbationEmployeesComponent {
   isActiveRoute(link: string): boolean {
     return this.router.url.includes(link);
   }
+
   formatDate(data: any): any {
     if (data) {
       // return moment(data).format('YYYY-MM-DD');

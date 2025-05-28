@@ -124,13 +124,13 @@ export class ProbationConfirmationLetterComponent {
 
     // Validation: Effective Date >= Joining Date
     if (joiningDate && effectiveDate < joiningDate) {
-      this.jobErrorMessage = 'Effective Date must be on or after the employee joining date';
+      this.jobErrorMessage = 'Effective Date must be after the employee joining date';
       return;
     }
 
     // Validation: Effective Date >= Probation Start Date
     if (probationStartDate && effectiveDate < probationStartDate) {
-      this.jobErrorMessage = 'Effective Date must be on or after the probation start date';
+      this.jobErrorMessage = 'Effective Date must be after the probation start date';
       return;
     }
 

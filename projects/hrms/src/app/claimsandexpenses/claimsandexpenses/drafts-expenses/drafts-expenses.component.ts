@@ -310,6 +310,7 @@ fileuploadhide :any;
         next: (data: any) => {
           this.modalService.dismissAll();
           this.newExpenseForm.reset();
+          this.http.setnewcountDetails();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.conformationPopup.openSuccessModal('Expenses submitted successfully');
           this.getexpensesheaderbyemployeeid();
@@ -327,6 +328,7 @@ fileuploadhide :any;
       this.http.putData(`Expenses_Header/${this.updataid}`, payload).subscribe({
         next: (data: any) => {
           this.modalService.dismissAll()
+          this.http.setnewcountDetails();
           this.conformationPopup.openSuccessModal('Expenses submitted successfully');
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
@@ -385,6 +387,7 @@ fileuploadhide :any;
           this.modalService.dismissAll()
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+          this.http.setnewcountDetails();
           this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
           this.getexpensesheaderbyemployeeid();
           // Call the get function after posting
@@ -402,6 +405,7 @@ fileuploadhide :any;
       // No file to upload, directly post the payload
       this.http.putData(`Expenses_Header/${this.updataid}`, payload).subscribe({
         next: (data: any) => {
+          this.http.setnewcountDetails();
           this.modalService.dismissAll()
           this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
           this.newExpenseForm.reset();

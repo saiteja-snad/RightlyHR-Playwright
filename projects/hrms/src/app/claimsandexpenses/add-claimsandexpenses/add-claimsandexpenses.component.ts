@@ -375,6 +375,7 @@ fileuploadhide :any;
             if (data) {
               this.conformationPopup.openSuccessModal('Expenses submitted successfully');
               this.newExpenseForm.reset();
+              this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               this.spinnerLoader = false;
@@ -440,6 +441,7 @@ fileuploadhide :any;
         ).subscribe({
           next: (data: any) => {
             if (data) {
+              this.http.setnewcountDetails();
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal(' Expenses saved as draft successfully ');

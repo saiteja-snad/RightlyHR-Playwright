@@ -40,7 +40,6 @@ export class ProbationformViewComponent {
 
   //function when they enter nulls in start
   ifreasonnull(Value:any){
-    console.log(Value)
     if (!Value || !Value.trim()) {
       this.issubmitdiable = true;
     } else {
@@ -51,7 +50,6 @@ export class ProbationformViewComponent {
   functioncall() {
     this.subscription = this.http.communicationService.subscribe({
       next: (response: any) => {
-        console.log(response);
         this.getFormDetails(response.employeeId,response.responseId);
       },
       error: (err: any) => {
@@ -103,7 +101,6 @@ export class ProbationformViewComponent {
 overallRating: number = 0;
 sectionRatings: { [key: number]: number } = {}; // Object to hold ratings for each section
 onCheckboxChange(questions: any, rating: string, optionId: number, section: any, sectionId: number,quetsionId:number,meta:any): void {
-  console.log(optionId);
   
   // Initialize section rating for the current section if it's not set
   if (!this.sectionRatings[sectionId]) {
@@ -163,22 +160,18 @@ if(hasdata.length>0){
 
   })
 }
-  console.log(this.selected_questions);
   
   // Calculate overall rating by summing section ratings
   this.overallRating = 0;
   Object.keys(this.sectionRatings).forEach((key: string) => {
     this.overallRating += this.sectionRatings[parseInt(key, 10)]/this.dynamicFormDetails.overAllRating;
   });
- console.log(this.dynamicFormQuestions);
  
  // console.log('Overall Rating:', this.overallRating);
 }
 getFormDetails(employeeId:any,responseId:any){
   this.subscription=this.http.getData(`ProbationFlow/getFormResponseByEmployeeId/${employeeId}?formId=1&responseId=${responseId}`).subscribe({
     next:(response:any)=>{
-      console.log(response);
-     
       // .filter((ele: any) => {
         // Parse the metaData and assign it to metadata property
          const parsedMetaData = JSON.parse(response.meta);
@@ -188,7 +181,7 @@ getFormDetails(employeeId:any,responseId:any){
         //  };
         // });
         this.dynamicFormDetails = response
-      this.dynamicFormQuestions= response.sectionDetails.filter((ele: any) => ele.sectionName !== 'Header' && ele.sectionName !== 'Overall Rating')
+      this.dynamicFormQuestions= response?.sectionDetails.filter((ele: any) => ele.sectionName !== 'Header' && ele.sectionName !== 'Overall Rating')
       .map((section: any) => ({
         ...section,
         questions: section?.questions?.map((question: any) => ({
@@ -199,18 +192,13 @@ getFormDetails(employeeId:any,responseId:any){
           }))
         }))
       }));
-      console.log(this.dynamicFormDetails);
-      console.log(this.dynamicFormQuestions);
-      
-      this.dynamicFormHeader= response.sectionDetails.filter((ele: any) => {
+      this.dynamicFormHeader= response?.sectionDetails.filter((ele: any) => {
         return ele.sectionName === 'Header' ;
       });
-      console.log( this.dynamicFormHeader);
       
-      this.dynamicFormFooter= response.sectionDetails.filter((ele: any) => {
+      this.dynamicFormFooter= response?.sectionDetails.filter((ele: any) => {
         return ele.sectionName === 'Overall Rating' ;
       });
-      console.log(this.dynamicFormFooter)
     },
     error:(err:any)=>{
       console.log(err);

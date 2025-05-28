@@ -3,7 +3,7 @@
       
         <div class="heading-content">
             <div class="commpoment-name">Time off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header">Leave On Behalf Of</div>
+            <div class="component-header">On Behalf Of Leave</div>
            <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
             </div>
@@ -128,7 +128,7 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Apply On Behalf Of <span>{{selectedEmployeeName}}</span></p>
+                <p class="popup-heading mb-0">Apply Leave On Behalf Of - <span>{{selectedEmployeeName}}</span></p>
             </div>
         </div>
 
@@ -267,27 +267,17 @@
                         </div>
                     </div>
 
-                    <!-- <div class="col-md-12 mb-3">
-                        <label class="form-label custom-label mb-2">Comments<span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input" placeholder="Please enter comments" maxlength="250"
-                            formControlName="reason"></textarea>
-                        <div class="textarea-count-text">{{ leaveForm.get('reason')?.value?.length ?? 0 }}/250</div>
-                        <div *ngIf="leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched"
-                            class="error-msg">
-                            Comments  is required
-                        </div>
-                    </div> -->
                     <div class="col-md-12 mb-3">
                         <label class="form-label custom-label mb-2">{{'Comments'| translate}}<span class="text-danger">*</span></label>
-                        <textarea class="form-control custom-input"  (input)="formsValidation.validateInput(leaveForm.get('reason'))" [maxlength]="250" formControlName="reason" placeholder="Please enter comments"></textarea>
+                        <textarea class="form-control custom-input"  (input)="formsValidation.validateInput(leaveForm.get('reason'))"[minlength]="10" [maxlength]="250" formControlName="reason" placeholder="Please enter comments"></textarea>
                         <div class="textarea-count-text">{{ leaveForm.get('reason')?.value?.length ?? 0 }}/250</div>
                         <div class="error-msg" *ngIf="(leaveForm.get('reason')?.invalid && leaveForm.get('reason')?.touched)">
-                            Comment is required
+                            Comments are required
                         </div>
                     </div>
                 </div>
                 <div *ngIf="dateDifference &&  isDayTypeselected">
-                    <div *ngIf="dateDifference &&  isDayTypeselected">
+                    <div *ngIf="dateDifference &&  isDayTypeselected" class="custom-label">
                         <ng-container
                             *ngIf="leaveFormData.isDaytype ? (dateDifference / 2) <= remainingLeaves : dateDifference <= remainingLeaves; else error">
                             Booked {{ selectedleave?.category?.name }} : {{ leaveFormData.isDaytype ?
@@ -302,7 +292,7 @@
                         <p class="error-msg" *ngIf="!leaveFormData.isDaytype && isDayTypeselected">
                             The leave balance for {{ selectedleave.category?.name }} is insufficient.</p>
                     </ng-template>
-                    <p>Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
+                    <p class="custom-label">Balance {{ selectedleave.category?.name }} : {{ remainingLeaves }}</p>
                 </div>
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"

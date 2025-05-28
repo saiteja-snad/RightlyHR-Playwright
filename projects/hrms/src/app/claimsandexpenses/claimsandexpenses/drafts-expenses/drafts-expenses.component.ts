@@ -310,6 +310,7 @@ fileuploadhide :any;
         next: (data: any) => {
           this.modalService.dismissAll();
           this.newExpenseForm.reset();
+          this.http.setnewcountDetails();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
           this.conformationPopup.openSuccessModal('Expenses submitted successfully');
           this.getexpensesheaderbyemployeeid();
@@ -385,6 +386,7 @@ fileuploadhide :any;
           this.modalService.dismissAll()
           this.newExpenseForm.reset();
           (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
+          this.http.setnewcountDetails();
           this.conformationPopup.openSuccessModal('Expenses saved as draft successfully');
           this.getexpensesheaderbyemployeeid();
           // Call the get function after posting

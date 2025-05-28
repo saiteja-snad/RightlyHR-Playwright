@@ -972,7 +972,7 @@ export class OnBeHalfOfComponent {
       employeeId: this.leaveapplication.employeeId,
       enddate: Value.enddate,
       startdate: Value.startdate,
-      currentApprover: this.empdata.employeeId,
+      currentApprover: this.empdata.employeeId.toString(),
       appliedDate: this.leaveFormData.date
     }
     //Third Step is to send the email and attachment to Directreportee

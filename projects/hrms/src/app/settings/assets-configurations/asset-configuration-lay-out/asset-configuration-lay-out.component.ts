@@ -4,9 +4,10 @@ import { SettingsAssetsConfigurationsTabsComponent } from "../../../shared/setti
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-asset-configuration-lay-out',
-  imports: [RouterModule, SettingsAssetsConfigurationsTabsComponent, ModuleInformationComponent],
+  imports: [RouterModule, SettingsAssetsConfigurationsTabsComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './asset-configuration-lay-out.component.html',
   styleUrl: './asset-configuration-lay-out.component.scss',
   encapsulation: ViewEncapsulation.None

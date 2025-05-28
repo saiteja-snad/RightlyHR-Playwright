@@ -21,10 +21,11 @@ import { LettersheaderComponent } from '../../shared/letters-shared-content/lett
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-offer-letter',
   imports: [CommonModule, LettersTabComponent, TranslateModule, Select, NgxCountriesDropdownModule, ReactiveFormsModule,
-    LettersheaderComponent, DateformatPipe, LetterFooterComponent, ModuleInformationComponent],
+    LettersheaderComponent, DateformatPipe, LetterFooterComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './offer-letter.component.html',
   styleUrl: './offer-letter.component.scss',
 })

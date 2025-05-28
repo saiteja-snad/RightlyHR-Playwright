@@ -544,6 +544,7 @@ export class LeavesComponent {
     if (this.selectedleave && this.selectedleave.category && this.selectedleave.category.excludeWeekends) {
       this.getweekendbyempid();
     }
+    
     const maxDays = this.selectedleave?.allowedDays;
     const leavesTaken = this.selectedleave?.utilizedDays;
     const booked = this.selectedleave?.booked;
@@ -589,6 +590,29 @@ export class LeavesComponent {
     this.checkWeekends(action);
     this.dateCheckWithHolidayOrWeekend(action);
     this.issEndDategreater = true;
+    if (this.selectedleave?.category?.isOptionalHoliday === true) {
+      const startDate = this.leaveForm.get('startdate')?.value;
+      const endDateControl = this.leaveForm.get('enddate');
+      const halfDayControl = this.leaveForm.get('halfdayavailing');
+
+      if (startDate && endDateControl) {
+        endDateControl.setValue(startDate); 
+        endDateControl.disable();
+        halfDayControl?.disable();
+        this.disableSubmitButton = false;
+        this.leaveForm.patchValue({ fulldayavailing: '2' });
+      }
+    }
+    else{
+      const endDateControl = this.leaveForm.get('enddate');
+      const halfDayControl = this.leaveForm.get('halfdayavailing');
+      if (endDateControl) {
+        endDateControl.enable();
+        halfDayControl?.enable();
+        this.disableSubmitButton = true;
+        this.leaveForm.patchValue({ fulldayavailing: null });
+      }
+    }
     // if(this.leaveForm.get('availing')?.value === null || this.leaveForm.get('fulldayavailing')?.value === null){
     //   this.disableSubmitButton = false;
     // }

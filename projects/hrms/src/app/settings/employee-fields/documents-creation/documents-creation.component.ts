@@ -4,7 +4,7 @@ import { DocumentService } from '../../../services/document/document.service';
 import { LastValuePipe } from '../../../Pipes/last-value/last-value.pipe';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { FormsModule, NgForm } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SettingsEmployeeFieldsModuleTabsComponent } from "../../../shared/settings-tabs/settings-employee-fields-module-tabs/settings-employee-fields-module-tabs.component";
 import { OpenModalService } from '../../../services/open-modal.service';
@@ -19,7 +19,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 @Component({
   selector: 'app-documents-creation',
-  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent, CommonModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
+  imports: [LastValuePipe, DateformatPipe, FormsModule, TranslatePipe, SettingsEmployeeFieldsModuleTabsComponent, CommonModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './documents-creation.component.html',
   styleUrl: './documents-creation.component.scss'
 })

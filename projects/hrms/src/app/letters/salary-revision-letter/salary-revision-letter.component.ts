@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -18,11 +18,13 @@ import { LetterFooterComponent } from '../../shared/letters-shared-content/lette
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-salary-revision-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, ModuleInformationComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './salary-revision-letter.component.html',
-  styleUrl: './salary-revision-letter.component.scss'
+  styleUrl: './salary-revision-letter.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class SalaryRevisionLetterComponent {

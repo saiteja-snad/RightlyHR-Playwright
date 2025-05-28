@@ -13,11 +13,11 @@
             <th>{{'Year'|translate}}</th>
             <th>{{'Location'|translate}}</th>
             <th>{{'Sub Location'|translate}}</th>
-            <th>{{'Shift Name'|translate}}</th>
-            <th>{{'STATUS'|translate}}</th>
+            <th class="text-center">{{'Shift Name'|translate}}</th>
+            <th>{{'Status'|translate}}</th>
             <th>{{'Added By'|translate}}</th>
             @if(rbac.allowedToAccess('Shifts Pending Tab.update')){
-            <th class="text-center">{{'Action(S)'|translate}}</th>
+            <th class="text-center">{{'Action'|translate}}</th>
             }
           </tr>
         </thead>
@@ -31,8 +31,8 @@
             <!-- <td>
               <i class="bi bi-info-circle-fill info-icon" data-toggle="tooltip" title="{{getShiftNames(shift)}}"></i>
             </td> -->
-             <td>
-                                <div class="d-flex align-items-center gap-1">
+             <td class="text-center">
+                                <div>
                                    <!-- <div>{{ shift.orgWeekendItems.length }}</div> -->
                                    <div [ngbPopover]="popContent" *ngIf="getShiftNames(shift) !== null"><i class="bi bi-info-circle-fill cursor"></i></div>
                                 </div>

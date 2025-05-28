@@ -232,14 +232,17 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       },
     });
   }
-
+fileuploadhide :any;
     fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
      const d: Date = new Date();
-    if (!file) {
-      this.expenseItems.at(index)?.get('attachment_url')?.reset();
-this.expenseItems.at(index)?.get('attachment_url')?.markAsTouched();
-    }
+     if (!file) {
+        this.fileuploadhide = true;
+    //    const control = this.expenseItems.at(index)?.get('attachment_url');
+    // control?.setValue(null);
+    // control?.markAsTouched();
+     //control?.updateValueAndValidity();
+     }
  
  
     const allowedTypes = [
@@ -372,6 +375,7 @@ this.expenseItems.at(index)?.get('attachment_url')?.markAsTouched();
             if (data) {
               this.conformationPopup.openSuccessModal('Expenses submitted successfully');
               this.newExpenseForm.reset();
+              this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               this.spinnerLoader = false;
@@ -437,6 +441,7 @@ this.expenseItems.at(index)?.get('attachment_url')?.markAsTouched();
         ).subscribe({
           next: (data: any) => {
             if (data) {
+              this.http.setnewcountDetails();
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal(' Expenses saved as draft successfully ');

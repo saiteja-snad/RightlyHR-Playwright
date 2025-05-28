@@ -368,49 +368,51 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
         },
       });
   }
-
+getStatusClass(color:any){
+return color
+}
   //function to bind color for the each status
-  getStatusClass(status: string): string {
-    switch (status?.toLowerCase()) {
-      case 'present':
-        return 'status-present';
-      case 'half day present':
-        return 'status-halfdaypresent';
-      case 'absent':
-      case 'absent(permission)':
-        return 'status-absent';
-      case 'leave':
-        return 'status-leave';
-      case 'half day leave':
-        return 'status-leave';
-      case 'first half leave':
-        return 'status-leave';
-      case 'second half leave':
-        return 'status-leave';
-      case 'wfh':
-        return 'status-wfh';
-      case 'first half wfh':
-        return 'status-wfh';
-      case 'second half wfh':
-        return 'status-wfh';
-      case 'half day wfh':
-        return 'status-wfh';
-      case 'compoff':
-        return 'status-compoff';
-      case 'holiday':
-        return 'status-holiday';
-      case 'weekend':
-        return 'status-weekend';
-      case 'half day remote':
-        return 'status-remote';
-      case 'half day':
-        return 'status-halfday';
-      case 'norecords':
-        return 'status-norecords';
-      default:
-        return '';
-    }
-  }
+  // getStatusClass(status: string): string {
+  //   switch (status?.toLowerCase()) {
+  //     case 'present':
+  //       return 'status-present';
+  //     case 'half day present':
+  //       return 'status-halfdaypresent';
+  //     case 'absent':
+  //     case 'absent(permission)':
+  //       return 'status-absent';
+  //     case 'leave':
+  //       return 'status-leave';
+  //     case 'half day leave':
+  //       return 'status-leave';
+  //     case 'first half leave':
+  //       return 'status-leave';
+  //     case 'second half leave':
+  //       return 'status-leave';
+  //     case 'wfh':
+  //       return 'status-wfh';
+  //     case 'first half wfh':
+  //       return 'status-wfh';
+  //     case 'second half wfh':
+  //       return 'status-wfh';
+  //     case 'half day wfh':
+  //       return 'status-wfh';
+  //     case 'compoff':
+  //       return 'status-compoff';
+  //     case 'holiday':
+  //       return 'status-holiday';
+  //     case 'weekend':
+  //       return 'status-weekend';
+  //     case 'half day remote':
+  //       return 'status-remote';
+  //     case 'half day':
+  //       return 'status-halfday';
+  //     case 'norecords':
+  //       return 'status-norecords';
+  //     default:
+  //       return '';
+  //   }
+  // }
 
   // function to get the data of employees by hierarchy
   getAllEmployeeDetails() {

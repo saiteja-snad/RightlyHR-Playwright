@@ -12,11 +12,21 @@
     </div>
     <div>
     </div>
-      <div>
+    <div class="d-flex align-items-center gap-2">
+      <!-- <div class="d-flex gap-2 align-item-center custom-p-select-content w-100">
+        <label for="location" class="form-label custom-label text-nowrap m-0 p-2">Locations</label>
+           <p-select [options]="jobLocationDropDownData" optionValue="id" optionLabel="jobLocationName"
+                [filter]="true" filterBy="jobLocationName" [resetFilterOnHide]="true" [showClear]="true" placeholder="Select Location"
+                  class="custom-select w-100">
+              </p-select>
+      </div> -->
+  <div>
     @if(rbac.allowedToAccess('Request Global Permission Button.view')){
     <button type="button" class="custom-btn btn-primary" (click)="openAdd()">Request Global Permission</button>
     }
   </div>
+    </div>
+    
   </div>
 
 

@@ -17,7 +17,10 @@
                     (onChange)="Onclick($event)" class="form-select custom-select" resetFilterOnHide="true">
                 </p-select>
             </div>
-            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)">Apply On Behalf Of</button>
+            <!-- @if(showbutton){ -->
+            <button type="button" class="custom-btn btn-primary" (click)="openModal(addleave)" [disabled]="!selectedEmployeeId"
+      >Apply On Behalf Of</button>
+            <!-- } -->
             }
         </div>
     </div>

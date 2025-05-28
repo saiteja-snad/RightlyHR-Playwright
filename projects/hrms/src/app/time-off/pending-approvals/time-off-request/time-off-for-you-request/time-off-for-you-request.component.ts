@@ -236,12 +236,12 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;
+      this.multiSelect= false;
       this.selectedProducts = [];
       this.hasSelectedAllOnce = false; 
       this.updateTableSelectionState([]);
     }
   }
-
 
   getFilteredAndSortedLeaves(): any[] {
     const search = this.searchValue?.toLowerCase() ?? '';

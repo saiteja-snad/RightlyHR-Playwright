@@ -80,8 +80,8 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   searchValue: any | null;
   spinnerLoader = false;
   dataload = false;
-  compOffselect!: LeaveApproval[];
-  selectedLeavesItems: LeaveApproval[] = [];
+  compOffselect!: AttendanceRequest[];
+  selectedLeavesItems: AttendanceRequest[] = [];
   multiSelect = false;
   requestBody = {} as any;
 
@@ -181,6 +181,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
       this.hasSelectedAllOnce = false; 
+      this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
   }
@@ -240,10 +241,17 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.leaves.next(response.data);
-          this.compOffselect = response.data;
+           if(response.data.length > 0){
+            this.leaves.next(response.data);
+            this.compOffselect = response.data;
+          }else{
+            this.leaves.next([]);
+            this.compOffselect  = [];
+          }
         },
-        error: (reason) => console.error(reason),
+        error: (reason) =>{
+          this.dataload = false;
+           console.error(reason)},
         complete: () => {
           this.dataload = false;
         },
@@ -270,7 +278,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
 
   getFilteredAndSortedLeaves(): AttendanceRequest[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-    let leaves = this.leaves?.getValue() ?? [];
+    let leaves =  this.compOffselect ?? [];
 
     if (search) {
       leaves = leaves.filter(item =>

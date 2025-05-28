@@ -74,6 +74,7 @@ export class PermissionsComponent {
   multiSelect = false;
   selectedLeavesItems: LeaveApproval[] = [];
   permissionsselect!: PermissionRequestResponse;
+  permissionsselects!: PermissionRequestResponse[];
   requestBody = {} as any;
   requestSummary!: any;
   dataload = false;
@@ -122,13 +123,13 @@ export class PermissionsComponent {
 
   getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-    let leaves = this.leaves?.getValue() ?? [];
+    let leaves = this.permissionsselects ?? [];
 
     if (search) {
       leaves = leaves.filter(item =>
-         item.entity?.fusionempId?.toLowerCase().includes(search) ||
-      item.entity?.raisedForName?.toLowerCase().includes(search) ||
-      item.entity?.type?.toLowerCase().includes(search)
+        item.entity?.fusionempId?.toLowerCase().includes(search) ||
+        item.entity?.raisedForName?.toLowerCase().includes(search) ||
+        item.entity?.type?.toLowerCase().includes(search)
       );
     }
 
@@ -228,6 +229,7 @@ export class PermissionsComponent {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
       this.hasSelectedAllOnce = false; 
+      this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
   }
@@ -260,10 +262,17 @@ export class PermissionsComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.leaves.next(response.data);
-          this.permissionsselect = response.data;
+          if(response.data.length > 0){
+            this.leaves.next(response.data);
+            this.permissionsselects = response.data;
+          }else{
+            this.leaves.next([]);
+            this.permissionsselects=[];
+          }
         },
-        error: (reason) => console.log(reason),
+        error: (reason) => {
+          this.dataload = false;
+          console.log(reason)},
         complete : () =>{
           this.dataload = false;
         }
@@ -447,7 +456,10 @@ export class PermissionsComponent {
           this.modalService.dismissAll();
           this.sharedModalService.openErrorModal(reason.error.Message);
         },
-        complete: () => {this.searchValue = null;},
+        complete: () => {
+          this.searchValue = null;
+          this.multiSelect = false;
+        },
       });
   }
 

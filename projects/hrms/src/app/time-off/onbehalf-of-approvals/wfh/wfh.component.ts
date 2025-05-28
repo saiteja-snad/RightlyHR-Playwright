@@ -56,8 +56,9 @@ export class WfhComponent {
   searchValue: any | null;
   spinnerLoader = false;
   multiSelect = false;
-  selectedLeavesItems: LeaveApproval[] =[];
+  selectedLeavesItems: AttendanceRequest[] =[];
   wfhsselect!: AttendanceRequest;
+  wfhsSelects : AttendanceRequest[] = [];
   requestBody = {} as any;
   dataload = false;
   requestSummary!:any;
@@ -181,6 +182,7 @@ export class WfhComponent {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
       this.hasSelectedAllOnce = false; 
+      this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
   }
@@ -202,20 +204,27 @@ export class WfhComponent {
     this.dataload = true;
     this.http.getData(`PendingApproval/employee/${EmployeeId}?moduleId=${environment.wfhModuleId}`).pipe(takeUntil(this.destroy$)).subscribe({
       next: (response: any) => {
-        console.log(response.data);
-        this.leaves.next(response.data);
-        this.wfhsselect = response.data;
+        if(response.data.length > 0){
+            this.leaves.next(response.data);
+            this.wfhsSelects = response.data;
+          }else{
+            this.leaves.next([]);
+            this.wfhsSelects  = [];
+          }
       },
-      error: (reason) => console.log(reason),
+      error: (reason) => {
+        this.dataload = false;
+        console.log(reason)},
       complete: () => {
         this.dataload =  false;
       },
     });
   }
 
+
   getFilteredAndSortedLeaves(): AttendanceRequest[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-    let leaves = this.leaves?.getValue() ?? [];
+    let leaves =  this.wfhsSelects ?? [];
 
     if (search) {
       leaves = leaves.filter(item =>

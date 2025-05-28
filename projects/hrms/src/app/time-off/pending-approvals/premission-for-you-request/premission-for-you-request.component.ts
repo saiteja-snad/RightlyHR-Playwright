@@ -65,8 +65,8 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
   searchValue: any | null;
   spinnerLoader = false;
   dataload = false;
-  permissionsselect!: LeaveApproval[];
-  selectedLeavesItems: LeaveApproval[] = [];
+  permissionsselect!: PermissionRequestResponse[];
+  selectedLeavesItems: PermissionRequestResponse[] = [];
   multiSelect = false;
   requestBody = {} as any;
   hasSelectedAllOnce = false; 
@@ -166,6 +166,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
       this.previousSearchValue = this.searchValue;
       this.selectedLeavesItems = [];
       this.hasSelectedAllOnce = false; 
+      this.multiSelect = false;
       this.updateTableSelectionState([]);
     }
   }
@@ -225,8 +226,13 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.leaves.next(response.data);
-          this.permissionsselect = response.data;
+          if(response.data.length > 0){
+            this.leaves.next(response.data);
+            this.permissionsselect = response.data;
+          }else{
+            this.leaves.next([]);
+            this.permissionsselect  = [];
+          }
         },
         error: (reason) => {
           console.error(reason);
@@ -243,7 +249,7 @@ export class PremissionForYouRequestComponent implements OnInit, OnDestroy {
 
 getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-    let leaves = this.leaves?.getValue() ?? [];
+    let leaves = this.permissionsselect ?? [];
 
     if (search) {
       leaves = leaves.filter(item =>
@@ -328,6 +334,11 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
             } else {
               this.openModal(this.leaveSummary);
             }
+            this.selectedLeavesItems = [];
+            this.multiSelect = false;
+            this.selectedLeaveData = {} as PermissionRequestResponse;
+            this.signalService.permissionForYouTriggerSignal.set(true);
+            this.signalService.permissionSidNavCountTriggerSignal.set(true);
           },
           error: (reason: any) => {
             this.modalService.dismissAll();
@@ -336,12 +347,7 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
             this.spinnerLoader = false;
           },
           complete: () => {
-            this.selectedLeavesItems = [];
             this.multiSelect = false;
-            this.selectedLeaveData = {} as PermissionRequestResponse;
-            this.signalService.permissionForYouTriggerSignal.set(true);
-            this.signalService.permissionSidNavCountTriggerSignal.set(true);
-            this.getAllPendingApprovals();
             this.spinnerLoader = false;
             this.searchValue = null;
           },
@@ -397,7 +403,10 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
           } else {
             this.openModal(this.leaveSummary);
           }
-         
+          this.selectedLeavesItems = [];
+          this.multiSelect = false;
+          this.signalService.permissionForYouTriggerSignal.set(true);
+          this.signalService.permissionSidNavCountTriggerSignal.set(true);
         },
         error: (reason: any) => {
           this.modalService.dismissAll();
@@ -458,15 +467,15 @@ getFilteredAndSortedLeaves(): PermissionRequestResponse[] {
             } else {
               this.openModal(this.leaveSummary);
             }
-          },
-          error: (reason: any) => {
-            this.modalService.dismissAll();
             this.selectedLeavesItems = [];
             this.multiSelect = false;
             this.rejectForm.reset();
             this.selectedLeaveData = {} as PermissionRequestResponse;
             this.signalService.permissionForYouTriggerSignal.set(true);
             this.signalService.permissionSidNavCountTriggerSignal.set(true);
+          },
+          error: (reason: any) => {
+            this.modalService.dismissAll();
             this.sharedModalService.openErrorModal(reason.error.Message);
             this.spinnerLoader = false;
           },

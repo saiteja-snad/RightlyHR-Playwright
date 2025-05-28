@@ -134,8 +134,11 @@ export class ProbationPendingApprovalsComponent {
     });
     this.modalService.open(this.commentspopup, { size: 'xl', centered: true, backdrop: 'static' })
   }
-
+openModalView(){
+  this.modalService.open(this.commentspopup, { size: 'xl', centered: true, backdrop: 'static' })
+}
   openview() {
+    this.modalService.dismissAll();
     this.modalService.open(this.assessmentForm, { centered: true, backdrop: 'static', size: 'xl' });
   }
 

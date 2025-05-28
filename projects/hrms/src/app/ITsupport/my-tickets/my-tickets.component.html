@@ -1,8 +1,13 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div>
-            <p class="component-header mb-0">IT Support</p>
-        </div>
+    
+            <div class="heading-content">
+      <div class="commpoment-name">IT Support<span class="ms-2">>></span></div>
+      <div class="component-header">My Tickets</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
 
         @if(rbac.allowedToAccess('My Tickets Tab.create')){
         <div>
@@ -13,9 +18,9 @@
     </div>
 
     <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
 
     <div class="custom-table-content">
         <table class="w-100">

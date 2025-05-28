@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, Subscription } from 'rxjs';
 import { Iroles } from './roles.model';
@@ -18,7 +18,7 @@ import { ModuleInformationComponent } from "../../../shared/module-information/m
 @Component({
   selector: 'app-roles',
   imports: [CommonModule, TranslateModule, ReactiveFormsModule, DataLoaderContentComponent, NoDataFoundComponent,
-    SettingsRolePermissionsModuleTabsComponent, ModuleInformationComponent],
+    SettingsRolePermissionsModuleTabsComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './roles.component.html',
   styleUrl: './roles.component.scss',
   encapsulation:ViewEncapsulation.None

@@ -7,9 +7,10 @@ import { ModuleInformationComponent } from "../../../shared/module-information/m
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-dynamic-forms-layout',
-  imports: [SettingDynamicFormsTabsComponent, CommonModule, RouterModule, ModuleInformationComponent, TranslateModule],
+  imports: [SettingDynamicFormsTabsComponent, CommonModule, RouterModule, ModuleInformationComponent, TranslateModule,NgbPopoverModule],
   templateUrl: './dynamic-forms-layout.component.html',
   styleUrl: './dynamic-forms-layout.component.scss',
   encapsulation: ViewEncapsulation.None

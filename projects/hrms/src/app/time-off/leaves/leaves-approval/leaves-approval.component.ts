@@ -59,7 +59,7 @@ export class LeavesApprovalComponent {
   }
 
   getDataByLPID() {
-    let empid =  this.selectempid || this.empdata.employeeId;
+    let empid = this.empdata.employeeId ?? this.selectempid;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {

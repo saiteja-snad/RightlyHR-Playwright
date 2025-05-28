@@ -45,7 +45,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     TohoursPipe,
     DatePicker,
     ModuleInformationComponent,
-    NgbPopoverModule
+    
 ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',

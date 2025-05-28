@@ -1,15 +1,19 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header cursor mb-0" (click)="navigateDashboard()">
-                <i class="bi bi-arrow-90deg-left me-2"></i>{{'Welcome Letter'|translate}}</p>
+    <div class="component-header-content">
+
+        <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="navigateDashboard()">Dashboard<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <div class="component-header">{{'Welcome Letter'|translate}}r</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
     </div>
-
-    <!--Module Information-->
-  <div>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
 
     <!--tabs content-->
     <div class="mb-3">
@@ -29,31 +33,39 @@
                             class="custom-select w-100" (onChange)="onClickEmployee($event)" resetFilterOnHide="true">
                         </p-select>
                     </div>
-                    <div class="error-msg" *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
+                    <div class="error-msg"
+                        *ngIf="employeeForm.get('fusionEmpId')?.invalid && employeeForm.get('fusionEmpId')?.touched">
                         Employee is required</div>
                 </div>
 
                 <!-- Key Responsibitites -->
                 <div class="mb-3">
-                    <label for="note" class="form-label custom-label mb-2">Key Responsibility<span class="error-msg">*</span></label>
+                    <label for="note" class="form-label custom-label mb-2">Key Responsibility<span
+                            class="error-msg">*</span></label>
                     <textarea formControlName="note" placeholder="Please enter key responsibility" maxlength="250"
                         autocomplete="off" class="form-control custom-input" id="note" rows="2" required></textarea>
                     <div class="textarea-count-text">{{ employeeForm.get('note')?.value?.length || 0 }}/250</div>
                     <div class="error-msg">
-                        <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">Key Responsibility is required</div>
-                        <div *ngIf="employeeForm.get('note')?.errors?.['maxlength']">Roles and Responsibilities cannot exceed 250 characters</div>
+                        <div *ngIf="employeeForm.get('note')?.invalid && employeeForm.get('note')?.touched">Key
+                            Responsibility is required</div>
+                        <div *ngIf="employeeForm.get('note')?.errors?.['maxlength']">Roles and Responsibilities cannot
+                            exceed 250 characters</div>
                     </div>
                 </div>
 
                 <!-- Signature Authority -->
                 <div class="mb-3">
-                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
+                    <label for="exampleFormControlInput1" class="form-label custom-label mb-2">Signature Authority
+                        Name<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="signatureAuthorityDetails" optionLabel="fullName" placeholder="Please select signature authority name"
-                            class="custom-select w-100" formControlName="authorityid" (onChange)="onclickDesignation($event)" [filter]="true" filterBy="fullName">
+                        <p-select [options]="signatureAuthorityDetails" optionLabel="fullName"
+                            placeholder="Please select signature authority name" class="custom-select w-100"
+                            formControlName="authorityid" (onChange)="onclickDesignation($event)" [filter]="true"
+                            filterBy="fullName">
                         </p-select>
                     </div>
-                    <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched" class="error-msg">
+                    <div *ngIf="employeeForm.get('authorityid')?.invalid && employeeForm.get('authorityid')?.touched"
+                        class="error-msg">
                         Signature Authority Name is required
                     </div>
                 </div>
@@ -61,10 +73,12 @@
                 <div *ngIf="jobErrorMessage" class="error-msg">{{ jobErrorMessage }}</div>
 
                 <div class="d-flex flex-wrap gap-3 pt-4">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="employeeForm.invalid || spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="employeeForm.invalid || spinnerLoader">
                         <ng-container *ngIf="spinnerLoader; else addText">
                             <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
                                 <span>{{'Loading...'}}</span>
                             </div>
                         </ng-container>
@@ -89,7 +103,7 @@
                                 <div class="address-content mt-5 pt-4">
                                     <ul class="list-style-none ps-0">
                                         <li>RightlyHR</li>
-                                        <li>Vijaya Krishna Towers, Floor#16, <br>Madhava Reddy Colony, Gachibowli, 
+                                        <li>Vijaya Krishna Towers, Floor#16, <br>Madhava Reddy Colony, Gachibowli,
                                             HYD - 500032</li>
                                         <li>+91 (703) 636-0933</li>
                                         <li>admin&#64;rightlyhr.com</li>
@@ -103,24 +117,33 @@
                             <div>
                                 <p><b>Dear<span class="ms-1">{{employeeFullname}},</span></b></p>
                                 <p class="mb-4"><b>Welcome to RightlyHR.!</b></p>
-                                <p>We are excited to have you onboard and look forward to the remarkable contributions you will make as part of our team. 
-                                    As the new <span *ngIf="selectedEmployeeJobDetails?.jobRole"><b>{{selectedEmployeeJobDetails.jobRole}}</b></span>,
-                                    you’ll be joining a group of dedicated and talented professionals committed to delivering excellence in everything we do.</p>
-                                <p>At RightlyHR, we pride ourselves on fostering a positive, collaborative work environment where everyone can grow and succeed
-                                    together. With your expertise, we are confident that you will play a pivotal role in shaping the future of our ERP Services.</p>
-                                <p *ngIf="employeeForm.get('note')?.value">{{employeeForm.get('note')?.value}}</p>
-                                <p>We understand that starting a new position can sometimes feel overwhelming, but please know that we are here to support 
-                                    you every step of the way. If you have any questions or need guidance, feel free to reach out to me or your colleagues.</p>
-                                <p>Once again, welcome to the team! We are thrilled to have you with us and can’t wait to see what we will achieve together.</p>
+                                <p>We are excited to have you onboard and look forward to the remarkable contributions
+                                    you will make as part of our team.
+                                    As the new <span
+                                        *ngIf="selectedEmployeeJobDetails?.jobRole"><b>{{selectedEmployeeJobDetails.jobRole}}</b></span>,
+                                    you’ll be joining a group of dedicated and talented professionals committed to
+                                    delivering excellence in everything we do.</p>
+                                <p>At RightlyHR, we pride ourselves on fostering a positive, collaborative work
+                                    environment where everyone can grow and succeed
+                                    together. With your expertise, we are confident that you will play a pivotal role in
+                                    shaping the future of our ERP Services <span *ngIf="employeeForm.get('note')?.value">- {{ employeeForm.get('note')?.value }}.</span></p>
+                                <p>We understand that starting a new position can sometimes feel overwhelming, but
+                                    please know that we are here to support
+                                    you every step of the way. If you have any questions or need guidance, feel free to
+                                    reach out to me or your colleagues.</p>
+                                <p>Once again, welcome to the team! We are thrilled to have you with us and can’t wait
+                                    to see what we will achieve together.</p>
                                 <p class="pt-4">Best wishes,</p>
                                 <ul class="list-style-none ps-0 pt-3">
                                     <li *ngIf="authorityFullName && authorityFullName" class="letter-signature mb-2">
                                         {{ authorityFullName }}
                                     </li>
-                                    <li *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
+                                    <li
+                                        *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
                                         {{ authorityFullName }}
                                     </li>
-                                    <li *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
+                                    <li
+                                        *ngIf="authorityFullName && selectedAuthority.designation && selectedAuthority.designation">
                                         {{ selectedAuthority.designation }}
                                     </li>
                                     <!-- <li *ngIf="authorityFullName && selectedEmployee.workEmail && selectedEmployee.workEmail">

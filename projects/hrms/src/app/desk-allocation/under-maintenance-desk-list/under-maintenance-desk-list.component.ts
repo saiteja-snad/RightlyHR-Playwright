@@ -86,8 +86,8 @@ export class UnderMaintenanceDeskListComponent {
   getAllDesks(pagenum: number, pagesize: number, locationid: any, sublocationid: any, Deskstatus: any) {
 
     const params = {
-      first: pagenum,
-      rows: pagesize,
+      page: pagenum,
+      pageSize: pagesize,
       locationid: locationid,
       sublocationid: sublocationid,
       status: Deskstatus,
@@ -95,7 +95,7 @@ export class UnderMaintenanceDeskListComponent {
 
     };
     this.loading = true
-    this.subscription = this.http.getstatusdesk("DeskAllocationHeader", params.locationid, params.sublocationid, params.status, params.first, params.rows, params.searchQuery)
+    this.subscription = this.http.getstatusdesk("DeskAllocationHeader", params.locationid, params.sublocationid, params.status, params.page, params.pageSize, params.searchQuery)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: any) => {

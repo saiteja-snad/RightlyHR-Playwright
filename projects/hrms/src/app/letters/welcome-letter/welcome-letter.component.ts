@@ -15,9 +15,10 @@ import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from './we
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-welcome-letter',
-  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './welcome-letter.component.html',
   styleUrl: './welcome-letter.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -237,7 +238,7 @@ export class WelcomeLetterComponent {
       },
       complete: () => {
         setTimeout(() => {
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/admin/dashboard']);
         }, 2000)
         this.spinnerLoader= false;
         this.employeeForm.reset();

@@ -134,8 +134,11 @@ export class ProbationPendingApprovalsComponent {
     });
     this.modalService.open(this.commentspopup, { size: 'xl', centered: true, backdrop: 'static' })
   }
-
+openModalView(){
+  this.modalService.open(this.commentspopup, { size: 'xl', centered: true, backdrop: 'static' })
+}
   openview() {
+    this.modalService.dismissAll();
     this.modalService.open(this.assessmentForm, { centered: true, backdrop: 'static', size: 'xl' });
   }
 
@@ -170,6 +173,7 @@ export class ProbationPendingApprovalsComponent {
   }
 
   getComments(value: any) {
+    console.log(value);
     this.myApproverComments = value.map((ele: any) => {
       // Parse the metaData and assign it to metadata property
       const parsedMetaData = JSON.parse(ele.meta);

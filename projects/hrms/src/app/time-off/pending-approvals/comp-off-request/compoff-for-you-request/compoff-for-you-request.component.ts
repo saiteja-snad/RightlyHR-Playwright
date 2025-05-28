@@ -84,7 +84,8 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   selectedLeavesItems: AttendanceRequest[] = [];
   multiSelect = false;
   requestBody = {} as any;
-
+  hasSelectedAllOnce = false; 
+  previousSearchValue: string = '';
   requestSummary!: any;
   constructor(
     private modalService: NgbModal,
@@ -100,7 +101,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.getAllPendingApprovals();
     this.intializeApproveForm();
   }
-  hasSelectedAllOnce = false; 
+  
   selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
@@ -175,7 +176,7 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-  previousSearchValue: string = '';
+  
   onSearchChange(): void {
     if (this.searchValue !== this.previousSearchValue) {
       this.previousSearchValue = this.searchValue;

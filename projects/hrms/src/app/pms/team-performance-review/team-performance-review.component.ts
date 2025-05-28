@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TeamPerformanceTabsComponent } from "../../shared/pms-module-tabs/team-performance-tabs/team-performance-tabs.component";
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-team-performance-review',
-  imports: [RouterOutlet, TeamPerformanceTabsComponent, ModuleInformationComponent],
+  imports: [RouterOutlet, TeamPerformanceTabsComponent, ModuleInformationComponent,TranslateModule,NgbPopoverModule],
   templateUrl: './team-performance-review.component.html',
-  styleUrl: './team-performance-review.component.scss'
+  styleUrl: './team-performance-review.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class TeamPerformanceReviewComponent implements OnInit {
   moduleinfo : string = '';

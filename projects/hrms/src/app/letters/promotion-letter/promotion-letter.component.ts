@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import html2canvas from 'html2canvas';
@@ -16,11 +16,13 @@ import { LetterFooterComponent } from '../../shared/letters-shared-content/lette
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-promotion-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, ModuleInformationComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './promotion-letter.component.html',
-  styleUrl: './promotion-letter.component.scss'
+  styleUrl: './promotion-letter.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class PromotionLetterComponent {
   moduleinfo : string = '';

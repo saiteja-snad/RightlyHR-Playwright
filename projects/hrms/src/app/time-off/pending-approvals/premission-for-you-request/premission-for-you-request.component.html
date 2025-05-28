@@ -42,12 +42,12 @@
                     <th>{{'Employee Name' | translate}}</th>
                     <th>{{'Requested Date' | translate}}</th>
                     <th>{{'Permission Date' | translate}}</th>
-                    <th>{{'Duration(InHours)' | translate}}</th>
+                    <th>{{'Duration(In Hrs)' | translate}}</th>
                     <th>{{'Permission Type' | translate}}</th>
                     <th class="text-center">{{'Reason' | translate}}</th>
                     <th class="text-center">{{'Approver Comments' | translate}}</th>
                     @if(!multiSelect &&  (rbac.allowedToAccess('For You (Permission).update') || rbac.allowedToAccess('For You (Permission).delete'))){
-                    <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">{{'(s)' | translate}}</span></th>
+                    <th class="text-center">{{'Action' | translate}}</th>
                     }
                 </tr>
             </ng-template>

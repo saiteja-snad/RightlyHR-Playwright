@@ -1,5 +1,6 @@
 .graph-grid {
     display: flex;
+    align-items: center;
     gap: 1rem;
     position: relative;
 
@@ -17,6 +18,16 @@
         display: flex;
         align-items: center;
 
+        li {
+            height: 1.125rem;
+        }
+
+        li:last-child {
+            .employee-type-text:last-child {
+                margin-bottom: 0rem;
+            }
+        }
+
         .chart-content {
             position: relative;
             width: max-content;
@@ -25,7 +36,7 @@
             .total-count-content {
                 position: absolute;
                 top: 40%;
-                left: 26%;
+                left: 30%;
                 text-align: center;
 
                 .count {
@@ -52,13 +63,12 @@
         }
 
         .bi-circle-fill {
-            font-size: 9px;
+            font-size: 8px;
         }
 
-        .leave-category-text {
+        .employee-type-text {
             font-weight: 400;
-            font-size: 11px;
-            line-height: 100%;
+            font-size: 10px;
             letter-spacing: 0%;
             color: #747474;
         }
@@ -71,8 +81,7 @@
     }
 
     .p-tab {
-        padding: 0rem 1rem !important;
-        --p-tabs-active-bar-background:#FFFFFF !important;
+        padding: 0rem 0.5rem !important;
     }
 
     .p-tab-active {
@@ -87,6 +96,10 @@
     .employee-category-container {
         width: calc(100% - 21rem);
 
+        .active-nav-link {
+            box-shadow: 0px 0px 10px 0px #0B3A8340;
+        }
+
         .employee-category-card {
             display: flex;
             justify-content: center;
@@ -96,6 +109,7 @@
             padding: 1rem 0.75rem;
             border: 1px solid #DCE3E9 !important;
             border-radius: 0.625rem;
+            margin: 0.25rem;
 
             .icon {
                 width: 2.5rem;

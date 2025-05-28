@@ -1,0 +1,49 @@
+<div class="custom-main-component-container">
+    <div class="component-header-content">
+        <div>
+            <p class="component-header mb-0">{{'All Employees'| translate}}</p>
+        </div>
+    </div>
+
+    <div class="graph-grid w-100 mb-3">
+        <div class="total-leave-balance-graph-content">
+            <div class="chart-content">
+                <p-chart type="doughnut" [data]="EmployeeInfoData" [options]="EmployeeInfoDataOptions" class="doughnut-chart" />
+                <div class="total-count-content">
+                    <p class="count m-0 p-0 mb-1">{{totalEmployeesCount}}</p>
+                    <p class="total-count-text m-0 p-0">Total <br>Employees</p>
+                </div>
+            </div>
+            <ul class="mb-0 list-style-none ps-3 pb-2">
+                @for (item of cardItems; track $index) {
+                <li>
+                    <div class="d-flex align-items-center gap-2">
+                        <div [style.color]="item.employeementTypeColor"><i class="bi bi-circle-fill"></i></div>
+                        <div class="employee-type-text">{{ item.label }} {{item.sublabel}}</div>
+                    </div>
+                </li>
+                }
+            </ul>
+        </div>
+        <div class="employee-category-container">
+            <p-tabs scrollable>
+                <p-tablist>
+                    @for (item of cardItems; track $index) {
+                    <p-tab>
+                        <div class="card employee-category-card" [routerLink]="[item.link]" routerLinkActive="active-nav-link">
+                            <img [src]="item.icon" alt="Icon" class="icon mb-3">
+                            <p class="content-text m-0">{{ item.label }}</p>
+                            <p class="content-text m-0">{{item.sublabel}} ({{ item.count }})</p>
+                        </div>
+                    </p-tab>
+                    }
+                </p-tablist>
+            </p-tabs>
+        </div>
+    </div>
+
+    <!--Main Content-->
+    <div class="main-content">
+        <router-outlet />
+    </div>
+</div>

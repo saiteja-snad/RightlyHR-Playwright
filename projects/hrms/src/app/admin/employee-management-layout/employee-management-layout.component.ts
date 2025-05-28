@@ -1,22 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { filter, Subscription } from 'rxjs';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { RouterModule } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
-import { MODULE_INFOS } from '../../shared/modules-info';
 import { ChartModule } from 'primeng/chart';
 import { TabsModule } from 'primeng/tabs';
 
 @Component({
-  selector: 'app-employee-data-layout',
+  selector: 'app-employee-management-layout',
   imports: [CommonModule, RouterModule, TranslateModule, TabsModule, ChartModule,],
-  templateUrl: './employee-data-layout.component.html',
-  styleUrl: './employee-data-layout.component.scss'
+  templateUrl: './employee-management-layout.component.html',
+  styleUrl: './employee-management-layout.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
-export class EmployeeDataLayoutComponent {
+export class EmployeeManagementLayoutComponent {
   moduleinfo: string = '';
   subscription!: Subscription;
   Inactive!: number;
@@ -30,13 +30,15 @@ export class EmployeeDataLayoutComponent {
   activeCount: number = 0;
   jobdata = {} as any;
   filtredActivedata = {} as any;
-  trackByFn(index: number, item: any): number {
+  trackByFn(index: number): number {
     return index;
   }
   cardItems: any[] = [];
+  EmployeeInfoData: any;
+  EmployeeInfoDataOptions: any;
+  totalEmployeesCount: any;
 
-  constructor(private router: Router, private http: HttpService, private cdr: ChangeDetectorRef,
-    public rbac: RbacService) { }
+  constructor(private http: HttpService, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.fetchData();
@@ -47,23 +49,6 @@ export class EmployeeDataLayoutComponent {
         tab.permission.action &&
         this.rbac.allowedToAccess(`${tab.permission.feature}.${tab.permission.action}`)
     );
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-  }
-
-  initiateUpdateModuleInfo() {
-    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/dashboard': MODULE_INFOS.DASHBOARD_MODULE_INFO
-    };
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   fetchData() {
@@ -77,7 +62,7 @@ export class EmployeeDataLayoutComponent {
     this.probationemployees();
   }
 
-  //function for prospective employee
+  // function for prospective employee
   empdata() {
     this.subscription = this.http.getData(`Employeedata/ProspectiveEmployees`).subscribe({
       next: (data: any) => {
@@ -88,7 +73,7 @@ export class EmployeeDataLayoutComponent {
     });
   }
 
-  //   function for active Employees
+  // function for active Employees
   activeEmpData() {
     this.subscription = this.http.getData(`Employeedata/ActiveEmployees`).subscribe({
       next: (data: any) => {
@@ -110,7 +95,7 @@ export class EmployeeDataLayoutComponent {
     });
   }
 
-  //  function for prospective employee
+  // function for prospective employee
   empdataTrainee() {
     this.subscription = this.http.getData(`Employeedata/TrainingEmployees`).subscribe({
       next: (data: any) => {
@@ -126,7 +111,7 @@ export class EmployeeDataLayoutComponent {
     });
   }
 
-  //  function for Active Trainee employee
+  // function for Active Trainee employee
   empdataTraineeActive(status: string) {
     this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
       next: (data: any) => {
@@ -137,7 +122,7 @@ export class EmployeeDataLayoutComponent {
     });
   }
 
-  //  function for InActive Trainee employee
+  // function for InActive Trainee employee
   empdataTraineeInActive(status: string) {
     this.subscription = this.http.getData(`Employeedata/TraineeActiveEmployees/${status}`).subscribe({
       next: (data: any) => {
@@ -188,87 +173,98 @@ export class EmployeeDataLayoutComponent {
     });
   }
 
-  generateDocument() {
-    if (this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view')) {
-      this.router.navigate(['/admin/letters/offer-letter']);
-    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view')) {
-      this.router.navigate(['/admin/letters/trainee-appointment-letter']);
-    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view')) {
-      this.router.navigate(['/admin/letters/trainee-offer-letter']);
-    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view')) {
-      this.router.navigate(['/admin/letters/appointment-letter']);
-    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view')) {
-      this.router.navigate(['/admin/letters/welcome-letter']);
-    }
-  }
-
   updateCardItems() {
     this.cardItems = [
       {
-        label: 'Prospective',
-        sublabel: 'Employees',
-        link: '/admin/prospective-employees',
-        count: this.ACTDATA,
-        icon: '/employee-data/prospective-employee-icon.png',
-        permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
-      },
-      {
         label: 'Active',
         sublabel: 'Employees',
-        link: '/admin/active-employees',
+        link: '/employee-management/active-employees',
         count: this.Active,
         icon: '/employee-data/active-employees-icon.png',
+        employeementTypeColor: '#F9D339',
         permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
         label: 'Inactive',
         sublabel: 'Employees',
-        link: '/admin/inactive-employees',
+        link: '/employee-management/inactive-employees',
         count: this.Inactive,
         icon: '/employee-data/inactive-employee-icon.png',
+        employeementTypeColor: '#E54288',
         permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
       },
       {
         label: 'Prospective',
-        sublabel: 'Trainees',
-        link: '/admin/prospective-interns',
-        count: this.Trainee,
-        icon: '/employee-data/prospective-trainee-icon.png',
-        permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
+        sublabel: 'Employees',
+        link: '/employee-management/prospective-employees',
+        count: this.ACTDATA,
+        icon: '/employee-data/prospective-employee-icon.png',
+        employeementTypeColor: '#03A9F4',
+        permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
       },
+      {
+        label: 'Probation',
+        sublabel: 'Employees',
+        link: '/employee-management/probation-employees',
+        count: this.PROBDATA,
+        icon: '/employee-data/Probation-Employee-icon.png',
+        employeementTypeColor: '#FF2E22',
+        permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
+      },
+
       {
         label: 'Active',
         sublabel: 'Trainees',
-        link: '/admin/active-interns',
+        link: '/employee-management/active-interns',
         count: this.traineeactive,
         icon: '/employee-data/active-trainee-icon.png',
+        employeementTypeColor: '#0B3A83',
         permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
       },
       {
         label: 'Inactive',
         sublabel: 'Trainees',
-        link: '/admin/inactive-interns',
+        link: '/employee-management/inactive-interns',
         count: this.traineeInactive,
         icon: '/employee-data/inactive-trainee-icon.png',
+        employeementTypeColor: '#1064CA',
         permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
+      },
+      {
+        label: 'Prospective',
+        sublabel: 'Trainees',
+        link: '/employee-management/prospective-interns',
+        count: this.Trainee,
+        icon: '/employee-data/prospective-trainee-icon.png',
+        employeementTypeColor: '#53D33A',
+        permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
       },
       // {
       //   label: 'Current Openings',
-      //   link: '/admin/timeoff',
+      //   link: '/employee-management/timeoff',
       //   count: this.activeCount,
       //   permission: { feature: 'Dashboard Current Openings Card', action: 'view' }
       // },
-      {
-        label: 'Probation',
-        sublabel: 'Employees',
-        link: '/admin/probation-employees',
-        count: this.PROBDATA,
-        icon: '/employee-data/Probation-Employee-icon.png',
-        permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
-      },
     ];
-    this.filterTabsByRbac();
-    // this.cdr.detectChanges();
+    // this.filterTabsByRbac();
+    this.initChart();
+  }
+
+  initChart() {
+    const backgroundColors = this.cardItems.map(item => item.employeementTypeColor);
+    this.totalEmployeesCount = this.ACTDATA + this.Active + this.Inactive + this.Trainee + this.traineeactive + this.traineeInactive;
+    this.EmployeeInfoData = {
+      datasets: [
+        {
+          data: [this.ACTDATA, this.Active, this.Inactive, this.Trainee, this.traineeactive, this.traineeInactive, this.PROBDATA],
+          backgroundColor: backgroundColors,
+          borderWidth: 0,
+        }
+      ]
+    };
+    this.EmployeeInfoDataOptions = {
+      cutout: '70%',
+    };
   }
 
   filterTabsByRbac(): void {

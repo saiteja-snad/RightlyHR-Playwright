@@ -1,15 +1,17 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <!-- <div>
-            <p class="component-header mb-0">
-                <i *ngIf="showBackIcon" class="bi bi-arrow-90deg-left me-2 cursor"
-                    (click)="onBackSubmit()"></i>{{headerName}}
-            </p>
-        </div> -->
+
 
         <div class="heading-content">
-            <div class="commpoment-name"><i *ngIf="showBackIcon" class="bi bi-arrow-90deg-left me-2 cursor"
-                    (click)="onBackSubmit()"></i>{{headerName}}<span class="ms-2">>></span></div>
+            <div *ngIf="headerName !== 'My Info'; else nonClickableHeader" class="commpoment-name cursor"
+                (click)="onBackSubmit()">
+                {{headerName}}<span class="ms-2">>></span>
+            </div>
+            <ng-template #nonClickableHeader>
+                <div class="commpoment-name">
+                    {{headerName}}<span class="ms-2">>></span>
+                </div>
+            </ng-template>
             <div class="component-header">{{subHeader}}</div>
             <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"

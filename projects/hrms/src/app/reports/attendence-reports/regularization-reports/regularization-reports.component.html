@@ -1,7 +1,14 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <!-- Header -->
-    <div class="component-header">Reports</div>
+   
+         <div class="heading-content">
+      <div class="commpoment-name">Attandance Reports<span class="ms-2">>></span></div>
+      <div class="component-header">Regularization Report</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
 
       <form autocomplete="off" [formGroup]="regularizationReportForm" (ngSubmit)="generateRegularizationReport()">
         <div class="d-flex align-items-center gap-3">
@@ -89,10 +96,12 @@
       </form>
   </div>
 
-  <!--Module Information-->
-  <div>
+
+ <!--Module Information-->
+  <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+  </ng-template>
+
   
   <div class="d-flex gap-3 w-100">
     <div class="component-left-tabs-container">

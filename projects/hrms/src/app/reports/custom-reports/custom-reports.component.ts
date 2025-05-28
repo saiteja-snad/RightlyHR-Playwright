@@ -17,6 +17,7 @@ import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 interface FieldGroup {
   name: string;
   fields: string[];
@@ -34,7 +35,8 @@ interface FieldGroup {
     NgxDaterangepickerBootstrapDirective,
     AccordionModule,
     NoDataFoundComponent,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    NgbPopoverModule
 ],
   templateUrl: './custom-reports.component.html',
   styleUrl: './custom-reports.component.scss',

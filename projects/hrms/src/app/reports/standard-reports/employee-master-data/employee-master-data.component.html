@@ -1,7 +1,14 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
     <!--header-->
-    <div class="component-header">Reports</div>
+   
+        <div class="heading-content">
+      <div class="commpoment-name">Standard Reports<span class="ms-2">>></span></div>
+      <div class="component-header">Employee Master Data</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
     <form autocomplete="off" [formGroup]="masterDataForm" (ngSubmit)="onSubmit(masterDataForm)">
       <!-- DOJ -->
       <div class="d-flex gap-3">
@@ -55,9 +62,9 @@
   </div>
 
   <!--Module Information-->
-  <div>
+  <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+  </ng-template>
 
   <div class="d-flex gap-3 w-100">
     <div class="component-left-tabs-container">

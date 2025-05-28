@@ -268,7 +268,7 @@
               (keypress)="formValidation.restrictInputAllowAlphaNumericAndCommonSpecialChars($event)"
               class="form-control custom-input custom-input" placeholder="Please enter asset model">
             <div *ngIf="assetForm.get('assetModel')?.hasError('required') && assetForm.get('assetModel')?.touched">
-              <div class="error-msg">Asset <Mark></Mark>odel is required</div>
+              <div class="error-msg">Asset Model is required</div>
             </div>
             <div *ngIf="assetForm.get('assetModel')?.hasError('maxlength') && assetForm.get('assetModel')?.touched">
               <div class="error-msg">Asset Model cannot be more than 20 characters</div>
@@ -401,7 +401,7 @@
               class="form-control custom-input custom-input" onkeypress="return false;"
               [min]="assetForm.get('amcstartdate')?.value" (change)="checkAmcDateMismatch()" />
             <div *ngIf="assetForm.get('amcenddate')?.invalid && assetForm.get('amcenddate')?.touched">
-              <div class="error-msg">AMC expiry date is required</div>
+              <div class="error-msg">AMC Expiry Date is required</div>
             </div>
             <div *ngIf="amcDateMismatch">
               <div class="error-msg">AMC Expiry Date must be greater than AMC start date</div>
@@ -430,7 +430,7 @@
               maxlength="15" minlength="10" placeholder="AMC Vendor Contact" />
             <div class="error-msg"
               *ngIf="assetForm.get('contactnumber')?.errors?.['required'] && assetForm.get('contactnumber')?.touched">
-              AMC Vendor contact is required
+              AMC Vendor Contact is required
             </div>
 
             <div class="error-msg" *ngIf="assetForm.get('contactnumber')?.errors?.['minlength'] ">

@@ -233,6 +233,9 @@ export interface ILeavesummery{
   TeamManagerSnadId?: string;
   TeamManagerFusionEmpId?:string;
   employeeId?:string;
+  EmployeeId?:any;
+  teamManagerID? : any;
+
 }
 //comp-off
 export interface ICompoffDetails{
@@ -256,4 +259,5 @@ export interface ICompoffDetails{
   TeamManagerSnadId?: string;
   teamManagerEmpID?:string;
   employeeId?:string;
+  teamManagerID? : any;
 }

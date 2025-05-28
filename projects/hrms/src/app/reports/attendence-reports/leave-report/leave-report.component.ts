@@ -145,6 +145,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.LeaveReportForm.reset();
+    this.filteredleaveRecord = [];
   }
 
   getEmployeeId() {
@@ -269,7 +270,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   
     // Apply manager name if provided
     if (formValue.manager) {
-      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
+      request.teamManagerID = formValue.manager.employeeId;
     }
 
     // Only include employee filter if not "All Employees"

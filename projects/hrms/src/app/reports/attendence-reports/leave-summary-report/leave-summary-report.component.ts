@@ -101,6 +101,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.lvSummeryReportForm.reset();
+    this.filterlvsumRecord = [];
   }
 
   initializeForm() {
@@ -239,13 +240,13 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
     const request: ILeavesummery = {};
 
-    if (formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (formValue.employee?.employeeId) {
+      request.EmployeeId = formValue.employee.employeeId;
     }
 
     // Manager full name
     if (formValue.manager) {
-      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
+      request.teamManagerID = formValue.manager.employeeId;
     }
 
     // Leave category
@@ -258,8 +259,8 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       request.Year = formValue.year;
     }
 
-    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
+      request.EmployeeId = formValue.employee.employeeId;
     }
 
     // Call service with the constructed request

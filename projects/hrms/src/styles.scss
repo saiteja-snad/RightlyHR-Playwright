@@ -594,9 +594,11 @@ body {
     }
 
     .popover {
+      
         --bs-popover-max-width: 25rem !important;
         --bs-popover-border-color: var(--module-info-bg);
         width: 25rem !important;
+
    
        
     }
@@ -623,8 +625,7 @@ body {
     background-color: var(--module-info-bg);
     padding: 0.625rem;
     border-radius: 0.5rem;
-         border: 2px solid #FFFFFF;
-
+        border: 2px solid #FFFFFF;
     .info-text {
         font-weight: 400;
         font-size: var(--fontsize13);

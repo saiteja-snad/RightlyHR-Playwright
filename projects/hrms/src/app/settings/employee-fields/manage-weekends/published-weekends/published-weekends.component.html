@@ -16,7 +16,7 @@
                     <th>{{"weekends" | translate}}</th>
                     <th>{{"status" | translate}}</th>
                     <th>{{"added by" | translate}}</th>
-                    <th class="text-center">{{"action(s)" | translate}}</th>
+                    <th class="text-center">{{"Action" | translate}}</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,7 +27,7 @@
                             <td>{{ weekend.jobLocationName }}</td>
                             <td>{{ weekend.jobSubLocationName }}</td>
                             <td>{{ weekend.shiftName }}</td>
-                            <td>
+                            <td class="text-center">
                                 <div class="d-flex align-items-center gap-1">
                                     <div>{{ weekend.orgWeekendItems.length }}</div>
                                     <div [ngbPopover]="popContent" *ngIf="getShiftNames(weekend) !== null">

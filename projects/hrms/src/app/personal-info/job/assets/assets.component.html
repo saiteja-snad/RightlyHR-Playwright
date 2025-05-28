@@ -9,8 +9,8 @@
             <thead>
                 <tr>
 
-                    <th>Asset Id</th>
-                    <th>Assets Category</th>
+                    <th>Asset ID</th>
+                    <th>Asset Category</th>
                     <th>Asset Sub Category</th>
                     <th>Asset Model</th>
                     <th>Serial Number</th>
@@ -29,6 +29,7 @@
 
                         <td>{{ data.assetMaster[0]?.serialNumber }}</td>
                         <!-- <td>{{ data.assetMaster[0]?.createdBy }}</td> -->
+                        
                         <td>{{ data.allocatedDate |dateformat }}</td>
                         <td>{{ data.returnDate ? (data.returnDate | dateformat) : 'N/A'}}</td>
 

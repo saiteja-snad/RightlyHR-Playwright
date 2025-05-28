@@ -15,9 +15,11 @@ import { AddGlobalPermissionsComponent } from './add-global-permissions/add-glob
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { Select } from 'primeng/select';
 @Component({
   selector: 'app-global-permissions',
-  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, ModuleInformationComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule,Select, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, ModuleInformationComponent],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })
@@ -31,6 +33,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
   subscription!: Subscription;
   searchValue: any;
   globalpermissions = [] as Iglobalpermissions[];
+  jobLocationDropDownData: any[] = [];
   @ViewChild('commentspopup') modalContent: any;
   options = [
     { label: 10, value: 10 },
@@ -64,8 +67,19 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     this.getAllGlobalPermissions();
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
+    this.getjobLocationList();
   }
-
+  
+  getjobLocationList() {
+    this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
+      next: (data: any) => {
+        this.jobLocationDropDownData = data
+      },
+    });
+  }
+ onLocationChange() {
+   
+  }
   initiateUpdateModuleInfo(){
     this.router.events
     .pipe(filter(event => event instanceof NavigationEnd))

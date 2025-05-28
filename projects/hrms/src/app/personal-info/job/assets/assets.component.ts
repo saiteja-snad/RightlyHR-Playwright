@@ -22,7 +22,7 @@ export class AssetsComponent implements OnInit,OnDestroy {
     private router: Router,
    ) { }
   ngOnInit() {
-    this.empinfo = JSON.parse(localStorage.getItem('personaldata') ?? '{}');
+   this.getEmpInfoFromRoute();
   
    
   }

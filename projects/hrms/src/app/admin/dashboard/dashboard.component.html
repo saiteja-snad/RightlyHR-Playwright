@@ -1,6 +1,7 @@
 @if(rbac.allowedToAccess('Dashboard.view')){
 <div class="custom-main-component-container">
   <!--Dashboard main Section-->
+
   <div class="dashboard-diplay-section">
     <div class="welcome-text d-flex align-items-center gap-1 mb-3">
       <div>{{greetingMessage}},</div>
@@ -10,7 +11,7 @@
     <div class="row">
       <!--Time Display-->
       <div class="col-md-3">
-        <div class="gesture-text mb-3">Have nice day at work</div>
+        <div class="gesture-text mb-3">Have a nice day at work</div>
         <div class="content-card present-day-content">
           <div class="day-date-content">
             <div>
@@ -25,8 +26,9 @@
       </div>
 
       <!--Attendance Display-->
-      @if(attendanceData){
-      <div class="col-md-3" >
+      @if(this.rbac.allowedToAccess('Attendance.view')){
+      <div class="col-md-3">
+         @if(!attendanceLoader){
         <div class="content-card attendance-content">
           <div class="status">{{ attendanceData.data.attendanceData[0].status }}</div>
           <div class="d-flex justify-content-center gap-3 pt-4 mt-2">
@@ -36,32 +38,38 @@
             <div>
               <div class="date mb-2">{{ attendanceData.data.attendanceData[0].date | date: 'MMMM d, y' }}</div>
               <div class="d-flex align-items-center gap-2">
-                <div class="start-end-time-text">In: <span class="time">{{ attendanceData.data.attendanceData[0].biometricLogs[0].in || '-' }}</span></div>
-                <div class="start-end-time-text">Out: <span class="time">{{ attendanceData.data.attendanceData[0].biometricLogs[0].out || '-' }}</span></div>
+                <div class="start-end-time-text">First In: <span class="time">{{ attendanceData.data.attendanceData[0].firstLogin ?
+                    (attendanceData.data.attendanceData[0].firstLogin | date:'HH:mm:ss') : '-' }}</span></div>
+                <div class="start-end-time-text">Last Out: <span class="time"> {{ attendanceData.data.attendanceData[0].lastLogout
+                    ? (attendanceData.data.attendanceData[0].lastLogout | date:'HH:mm:ss') : '-' }} </span></div>
                 @if( attendanceData.data.attendanceData[0].status !== 'WFH'
                 && attendanceData.data.attendanceData[0].status !== 'Leave'
                 && attendanceData.data.attendanceData[0].status !== 'Absent'){
                 <div>
                   <img src="/dashboard-icon/info.png" alt="Icon" class="info-icon" (click)="openModalLarge(punchintimes);dayLogsData(
-                                    attendanceData.data.attendanceData[0].biometricLogs,
-                                  attendanceData.data.attendanceData[0].date,
-                                   attendanceData.data.attendanceData[0].duration.biometricDuration,
-                                  attendanceData.data.attendanceData[0].permissions,
-                                  attendanceData.data.attendanceData[0].regularizations)">
+                                                      attendanceData.data.attendanceData[0].biometricLogs,
+                                                    attendanceData.data.attendanceData[0].date,
+                                                     attendanceData.data.attendanceData[0].duration.biometricDuration,
+                                                    attendanceData.data.attendanceData[0].permissions,
+                                                    attendanceData.data.attendanceData[0].regularizations)">
                 </div>
                 }
               </div>
             </div>
           </div>
-            <div class="d-flex justify-content-center">
+          <div class="d-flex justify-content-center">
             <button class="custom-btn btn-primary" (click)="navigateToAttendance()">View Attendance</button>
           </div>
         </div>
+        }@else {
+          <p-skeleton width="25rem" height="11.5rem" />
+          } 
       </div>
       }
-
+      
       <!--Employee List Display-->
       <div class="col-md-3">
+         @if(!chartLoader ){
         <div class="content-card employees-list-content">
           <div class="all-text">All Employees</div>
           <div class="total-leave-balance-graph-content">
@@ -85,10 +93,14 @@
             </ul>
           </div>
         </div>
+        }@else {
+          <p-skeleton width="25rem" height="11.5rem" />
+          } 
       </div>
 
       <!--Events Display-->
       <div class="col-md-3">
+         @if(!eventsLoader){
         <div class="content-card events-content">
           <div class="celebration-img">
             <img src="/dashboard-icon/celebration-icon.png" alt="Icon" class="icon">
@@ -110,10 +122,14 @@
             </p-carousel>
           </div>
         </div>
+      }@else { 
+          <p-skeleton width="25rem" height="11.5rem" />
+          } 
       </div>
 
     </div>
   </div>
+
 
   <!--Document History-->
   @if(rbac.allowedToAccess('Documents History Offer Letter.view') || rbac.allowedToAccess('Documents History AppointmentLetter.view')

@@ -81,6 +81,7 @@ export interface AttendanceEntry {
   duration: Duration;
   status: string;
   displayStatus: DisplayStatus;
+  lastLogout:string;
   tags: Tag[];
   biometricLogs: BiometricLog[];
   regularizations: any[]; // If the structure is known, replace `any` with the proper interface

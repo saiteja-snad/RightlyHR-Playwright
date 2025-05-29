@@ -13,6 +13,7 @@ import { ChartModule } from 'primeng/chart';
 import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDaysData, IMarriageAnniversary, INewJoinee, IOrgHolidaysHeader, Permission } from '../../Interfaces/dashboard.modal';
 import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
+import { Skeleton } from 'primeng/skeleton';
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -23,7 +24,8 @@ import { DateformatPipe } from "../../Pipes/dateformat.pipe";
     NgbPopoverModule,
     Carousel,
     ChartModule,
-    DateformatPipe
+    DateformatPipe,
+    Skeleton
 ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
@@ -70,6 +72,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   regularization_list:Permission[] = [];
   marriageAnniversaryData:IMarriageAnniversary[] = [];
   employeesStatusCount:EmployeeStatusCount = {} as EmployeeStatusCount;
+  attendanceLoader = false;
+  chartLoader = false;
+  eventsLoader = false;
 
 
   constructor(
@@ -134,23 +139,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   //function for prospective employee
   quotationsData() {
+    this.eventsLoader = true;
     this.subscription = this.http.getData(`EmployeeData/Quotation`).subscribe({
       next: (data: any) => {
         const shuffled = data.sort(() => 0.5 - Math.random());
         this.eventItems = shuffled.slice(0, 3);
+        this.eventsLoader = false;
       },
-      error: (reason) => console.log(reason),
+      error: (reason) =>{
+        this.eventsLoader = false;
+        console.log(reason)},
     });
   }
 
   //function for to get the Employees count based on the status
   getEmployeeStatusCount() {
+  this.chartLoader = true;
   this.subscription = this.http.getData(`Employeedata/get-employees-status-count`).subscribe({
     next: (data: any) => {
       this.employeesStatusCount = data.data as EmployeeStatusCount;
-      console.log(this.employeesStatusCount);
-
-      // Reset counts
+      this.chartLoader = false;
       this.Active = 0;
       this.Inactive = 0;
       this.ACTDATA = 0;
@@ -158,9 +166,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.traineeactive = 0;
       this.traineeInactive = 0;
       this.Trainee = 0;
-
       const statusList = this.employeesStatusCount?.statusWiseCount;
-
       if (Array.isArray(statusList)) {
         for (const statusItem of statusList) {
           switch (statusItem.status) {
@@ -190,12 +196,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       } else {
         console.warn('statusWiseCount is not an array:', statusList);
       }
-
-      this.updateCardItems();  // Update cards
-      // this.initChart();     // Call this here if needed
+      this.updateCardItems();  
 
     },
-    error: (reason) => console.log(reason),
+    error: (reason) => {
+      this.chartLoader = false;
+      console.log(reason)},
   });
 }
 
@@ -222,18 +228,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  fetchData() {
-    this.empdata();
-    this.activeEmpData();
-    this.InActiveEmpData();
-    this.empdataTrainee();
-    this.empdataTraineeActive('Trainee Active');
-    this.empdataTraineeInActive('Trainee Inactive');
-    this.getjobList();
-    this.probationemployees();
-  }
+
 
   loadEvents() {
+    this.eventsLoader = true;
       forkJoin([
       this.http.getData(
         `Employeedata/ActiveEmployeesbday?months=${this.currentMonth}`
@@ -321,14 +319,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
           ...newJoineeEvents,
           ...marriageAnniversariesEvent
         ];
-
+        this.eventsLoader = false;
         if (events.length) {
           this.eventItems = events;
         } else {
           this.quotationsData();
         }
+     
       },
       (err: any) => {
+        this.eventsLoader = false;
         console.error(err);
         this.quotationsData();
       }
@@ -369,104 +369,7 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
   }
 
 
-  //function for prospective employee
-  empdata() {
-    this.subscription = this.http
-      .getData(`Employeedata/ProspectiveEmployees`)
-      .subscribe({
-        next: (data: any) => {
-          this.ACTDATA = data.length;
-          this.updateCardItems();
-        },
-        error: (reason) => console.log(reason),
-      });
-  }
-
-  //   function for active Employees
-  activeEmpData() {
-    this.subscription = this.http
-      .getData(`v2/Employeedata/ActiveEmployeesData`)
-      .subscribe({
-        next: (data: any) => {
-          this.Active = data.length;
-          this.updateCardItems();
-        },
-        error: (reason) => console.log(reason),
-      });
-  }
-
-  // function for Inactive Employees
-  InActiveEmpData() {
-    this.subscription = this.http
-      .getData(`Employeedata/InactiveEmployees`)
-      .subscribe({
-        next: (data: any) => {
-          this.Inactive = data.length;
-          this.updateCardItems();
-        },
-        error: (reason) => console.log(reason),
-      });
-  }
-
-  //  function for prospective employee
-  empdataTrainee() {
-    this.subscription = this.http
-      .getData(`Employeedata/TrainingEmployees`)
-      .subscribe({
-        next: (data: any) => {
-          let actdat = data.filter((ele: any) => {
-            if (ele.empstatus === 'Trainee Prospective') {
-              return ele;
-            }
-          });
-          this.Trainee = actdat.length;
-          this.updateCardItems();
-        },
-        error: (reason) => console.log(reason),
-      });
-  }
-
-  //  function for Active Trainee employee
-  empdataTraineeActive(status: string) {
-    this.subscription = this.http
-      .getData(`Employeedata/TraineeActiveEmployees/${status}`)
-      .subscribe({
-        next: (data: any) => {
-          this.traineeactive = data.length;
-          this.updateCardItems();
-        },
-        error: (reason: any) => console.log(reason),
-      });
-  }
-
-  //  function for InActive Trainee employee
-  empdataTraineeInActive(status: string) {
-    this.subscription = this.http
-      .getData(`Employeedata/TraineeActiveEmployees/${status}`)
-      .subscribe({
-        next: (data: any) => {
-          this.traineeInactive = data.length;
-          this.updateCardItems();
-        },
-        error: (reason: any) => console.log(reason),
-      });
-  }
-
-  // function to get getjobList Current Openings
-  getjobList() {
-    this.subscription = this.http.getData(`JobPosting`).subscribe({
-      next: (data: any) => {
-        this.jobdata = data;
-        this.filtredActivedata = this.filterJobsByStatus(this.active).reverse();
-        this.activeCount = this.getStatusCount(this.active);
-        this.updateCardItems();
-      },
-      error: (err: any) => {
-        console.log(err);
-      },
-    });
-  }
-
+  
   filterJobsByStatus(status: string): any[] {
     return this.jobdata.filter(
       (job: { status: string }) => job.status === status
@@ -482,17 +385,7 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
     }, 0);
   }
 
-  probationemployees() {
-    this.subscription = this.http
-      .getData(`ProbationFlow/getProbationEmployeesStatus`)
-      .subscribe({
-        next: (data: any) => {
-          this.PROBDATA = data.length;
-          this.updateCardItems();
-        },
-        error: (reason) => console.log(reason),
-      });
-  }
+ 
 
   getAttendenceLogsOfLoginedUser(
     empId: number,
@@ -500,16 +393,20 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
     currentMonth: number,
     currentDay: number
   ) {
+    this.attendanceLoader = true;
     this.subscription = this.http
       .getData(
         `v2/AttendanceData/employee/${empId}?year=${currentYear}&month=${currentMonth}&date=${currentDay}`
       )
       .subscribe({
         next: (data: any) => {
+          this.attendanceLoader = false;
           this.attendanceData = data;
           console.log(this.attendanceData);
         },
-        error: (reason) => console.log(reason),
+        error: (reason) => {
+          this.attendanceLoader = false;
+          console.log(reason)},
       });
   }
 

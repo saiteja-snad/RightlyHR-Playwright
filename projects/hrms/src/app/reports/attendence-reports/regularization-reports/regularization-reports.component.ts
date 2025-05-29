@@ -205,7 +205,9 @@ export class RegularizationReportsComponent implements OnInit, OnDestroy{
         const ids = this.selectLeaveEmployeeIds?.join(',');
         request.employeeId = ids;  // The selected employee IDs are set here
     }
-
+    if (formValue.employee?.employeeId !== 'all' && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee?.employeeId;
+    }
     // Apply leave category if selected
     if (formValue.leaveCategory) {
       request.LeaveName = formValue.leaveCategory.value;

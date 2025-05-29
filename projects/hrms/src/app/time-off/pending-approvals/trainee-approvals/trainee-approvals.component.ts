@@ -17,12 +17,12 @@ import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { RbacService } from '../../../services/rbac.service';
 import { TraineeApprovalsTabsComponent } from "../../../shared/time-off-module-tabs/pending-approvals-tabs/trainee-approvals-tabs/trainee-approvals-tabs.component";
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
-import moment from 'moment';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-trainee-approvals',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, NgbPopoverModule, PaginatorModule, FormsModule, TranslateModule,
-     NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent],
+    NoDataFoundComponent, TraineesearchfilterPipe, TraineeApprovalsTabsComponent, InfoIconComponent],
   templateUrl: './trainee-approvals.component.html',
   styleUrl: './trainee-approvals.component.scss'
 })
@@ -63,7 +63,7 @@ export class TraineeApprovalsComponent {
   ];
 
   constructor(private conformationPopup: OpenModalService, private http: HttpService, private fb: FormBuilder, private modalService: NgbModal,
-     private authService: AuthService, public rbac: RbacService) {
+    private authService: AuthService, public rbac: RbacService) {
     this.customsetup = environment.dateformat;
     this.datePipe = new DatePipe('en-US');
   }
@@ -71,6 +71,7 @@ export class TraineeApprovalsComponent {
   ngOnInit(): void {
     this.getAllPendingApprovals();
   }
+
   initaializeextendForm() {
     this.rejectForm = this.fb.group({
       extenddate: ['', Validators.required],
@@ -83,6 +84,7 @@ export class TraineeApprovalsComponent {
       this.selectedLeaveData.rejectedReason = val.rejectedReason;
     });
   }
+
   blockLeadingSpace(event: Event, value: string) {
     const inputElement = event.target as HTMLTextAreaElement;
     if (inputElement.value.startsWith(' ')) {
@@ -92,13 +94,15 @@ export class TraineeApprovalsComponent {
       inputElement.dispatchEvent(nativeEvent);
     }
   }
+  
   transform(value: any, ...args: unknown[]): unknown {
     if (value) {
       return this.datePipe.transform(value, this.customsetup);
     }
     return null;
   }
-  reload(acceptForm:NgForm): void {
+
+  reload(acceptForm: NgForm): void {
     acceptForm.resetForm();
     this.discontinue = false;
     this.extend = false;
@@ -107,7 +111,7 @@ export class TraineeApprovalsComponent {
   }
 
   comment = [] as any;
-  commentsFunction(Value: any,content: any) {
+  commentsFunction(Value: any, content: any) {
     this.modalService.open(content, { centered: true, backdrop: 'static', size: 'lg' });
     this.comment = Value;
   }
@@ -136,7 +140,8 @@ export class TraineeApprovalsComponent {
     this.selectedLeaveData.reasonForExtend = '';
     this.selectedLeaveData.trcomments = '';
   }
-  minExtendDate:any;
+
+  minExtendDate: any;
   updateExtendDateValidity(): void {
     if (this.empdata.trainingEndDate > this.selectedLeaveData.extenddate) {
       this.isempeffectivevaild = false;
@@ -209,7 +214,6 @@ export class TraineeApprovalsComponent {
         this.isLoading = false;
         this.getAllPendingApprovals();
         this.selectedLeaveData = {};
-        
       },
     });
   }
@@ -251,7 +255,7 @@ export class TraineeApprovalsComponent {
   }
 
   openModal(content: any) {
-    this.modalService.open(content, {centered: true, backdrop: 'static'});
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   issubmitdiable: boolean = false;
@@ -286,7 +290,7 @@ export class TraineeApprovalsComponent {
       complete: () => {
         this.getAllPendingApprovals();
         this.selectedLeaveData = {};
-      
+
       },
     });
   }

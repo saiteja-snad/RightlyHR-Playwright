@@ -31,7 +31,7 @@ export default [
     { path: 'events', component: EventsLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../events/events.route') },
     { path: 'claimsandexpenses', component: ClaimsandexpensesLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../claimsandexpenses/claimsandexpenses.route') },
     { path: 'pms', component: PmsLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../pms/pms.route') },
-    { path: 'calendar', component: CalendarViewComponent, canActivate: [MsalGuard] },
+    { path: 'calendar-view', component: CalendarViewComponent, canActivate: [MsalGuard] },
     { path: 'policies', component: PolicieslayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../policies/policies.route') },
     { path: 'desk', component: DeskAlloctionLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../desk-allocation/desk.route') },
     { path: 'reports', component: ReportsLayoutComponent, canActivate: [MsalGuard], loadChildren: () => import('../../reports/reports.routes') },

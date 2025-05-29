@@ -13,6 +13,7 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { ICompOff } from '../../comp-off/compoff.modal';
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-remote-waiting-for-approval',
@@ -22,7 +23,7 @@ import { DataLoaderContentComponent } from "../../../shared/data-loader-content/
     PaginatorModule,
     DropdownModule,
     DateformatPipe,
-    NoDataFoundComponent, DataLoaderContentComponent],
+    NoDataFoundComponent, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './remote-waiting-for-approval.component.html',
   styleUrl: './remote-waiting-for-approval.component.scss'
 })

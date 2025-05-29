@@ -44,9 +44,9 @@ export class LeavesProcessedComponent {
   constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService,) { }
 
   ngOnInit(): void {
-    this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
-    this.getDataByLPID();
+    // this.loggedinuser = this.authService.getToken();
+    // this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    // this.getDataByLPID();
 
        this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
     if (id) {
@@ -54,13 +54,32 @@ export class LeavesProcessedComponent {
       this.selectempid = id;
       console.log('Updated employee ID:', id);
       // Example: this.loadEmployeeDetails(id);
-       this.getDataByLPID();
+       this.getDataByEMPLPID();
+    }else{
+  this.loggedinuser = this.authService.getToken();
+    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.getDataByLPID();
     }
   });
   }
 
   getDataByLPID() {
-    let empid = this.empdata.employeeId ?? this.selectempid;
+    let empid = this.empdata.employeeId;
+    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+      next: (response: any) => {
+        console.log("Response from getDataByLPID:", response);
+        if (Array.isArray(response)) {
+          this.lpdata = response.filter(item => item.status === 'Processed');
+        } else {
+          console.error("Invalid response format");
+        }
+      },
+      error: (reason: any) => console.log(reason)
+    });
+  }
+
+    getDataByEMPLPID() {
+    let empid = this.selectempid;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         console.log("Response from getDataByLPID:", response);

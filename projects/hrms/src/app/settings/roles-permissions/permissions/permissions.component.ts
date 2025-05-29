@@ -810,6 +810,62 @@ attendanceReportsTabsFields = [
   'Regularization Report - Generate',
   'Regularization Report - Export'
 ];
+attendanceReportsEmployeeTeamTabsFields = [
+  'Attendance All Employees List(Leaves)',
+  'Attendance Team Manager List(Leaves)',
+  'My Team Report(Leave)',
+  'Attendance All Employees List(Compoff)',
+  'Attendance Team Manager List(Compoff)',
+  'My Team Report(Compoff)',
+  'Attendance All Employees List(WFH)',
+  'Attendance Team Manager List(WFH)',
+  'My Team Report(WFH)',
+  'Attendance All Employees List(Permission)',
+  'Attendance Team Manager List(Permission)',
+  'My Team Report(Permission)',
+  'Attendance All Employees List(Regularization)',
+  'Attendance Team Manager List(Regularization)',
+  'My Team Report(Regularization)'
+];
+assetManagementTabsFields = [
+  'Asset Management - Create',
+  'Asset Management - All',
+  'Asset Management - Available',
+  'Asset Management - Allocated',
+  'Asset Management - Under Maintenance',
+  'Asset Management - Inactive'
+];
+assetManagementAllTabActions = [
+  'All Allocate Asset',
+  'All Inactive Asset',
+  'All Mark as Maintenance',
+  'All Transfer Asset',
+  'All Reallocate Asset',
+  'All Release Asset',
+  'All Mark as Available Asset',
+  'All Mark as Active Asset',
+  'All View Asset Details',
+  'All Update Asset Details'
+];
+assetManagementAvailableTabActions = [
+  'Available Allocate Asset',
+  'Available Inactive Asset',
+  'Available Mark as Maintenance Asset',
+  'Available Transfer Asset',
+  'Available View Asset Details',
+  'Available Update Asset Details'
+];
+assetManagementAllocatedTabActions = [
+  'Allocated Reallocate Asset',
+  'Allocated Release Asset',
+  'Allocated View Asset Details',
+  'Allocated Update Asset Details'
+];
+assetManagementUnderMaintenanceTabActions = [
+  'Under Maintenance Mark as Available Asset',
+  'Under Maintenance View Asset Details',
+  'Under Maintenance Update'
+];
   // Generic toggle function for checkboxes
   toggleSelectAll(
     fields: string[],

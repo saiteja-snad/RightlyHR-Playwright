@@ -1931,7 +1931,12 @@
 
                         <!-- Reports Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Reports</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallreportstabs
+                                    (change)="toggleSelectAll(reportsTabsFields, selectallreportstabs?.checked, isonlyviewfunction.bind(this))"
+                                    [checked]="isAllSelected(reportsTabsFields)"
+                                    [indeterminate]="isSomeSelected(reportsTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1962,7 +1967,12 @@
 
                         <!-- Standard Reports Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Standard Reports</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallreportssubtabs
+                                    (change)="toggleSelectAll(standardReportsTabsFields, selectallreportssubtabs?.checked, isonlyviewfunction.bind(this))"
+                                    [checked]="isAllSelected(standardReportsTabsFields)"
+                                    [indeterminate]="isSomeSelected(standardReportsTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Standard Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1995,7 +2005,12 @@
 
                         <!-- Custom Reports -->
                         <tr>
-                            <th colspan="5" class="custom-header">Custom Reports</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallcustomreports
+                                    (change)="toggleSelectAll(customReportsTabsFields, selectallcustomreports?.checked, isonlyviewfunction.bind(this))"
+                                    [checked]="isAllSelected(customReportsTabsFields)"
+                                    [indeterminate]="isSomeSelected(customReportsTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Custom Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2023,7 +2038,12 @@
 
                         <!-- Attendance Reports -->
                         <tr>
-                            <th colspan="5" class="custom-header">Attendance Reports</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallforattendancereports
+                                    (change)="toggleSelectAll(attendanceReportsTabsFields, selectallforattendancereports?.checked, isonlyviewfunction.bind(this))"
+                                    [checked]="isAllSelected(attendanceReportsTabsFields)"
+                                    [indeterminate]="isSomeSelected(attendanceReportsTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Attendance Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2088,7 +2108,12 @@
 
                         <!-- Monthly Attendance Reports -->
                         <tr>
-                            <th colspan="5" class="custom-header">Attendance Reports</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallreportsforemployee
+                                    (change)="toggleSelectAll(attendanceReportsEmployeeTeamTabsFields, selectallreportsforemployee?.checked, isonlyviewfunction.bind(this))"
+                                    [checked]="isAllSelected(attendanceReportsEmployeeTeamTabsFields)"
+                                    [indeterminate]="isSomeSelected(attendanceReportsEmployeeTeamTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Attendance Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"

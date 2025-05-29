@@ -20,6 +20,7 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { Table, TableModule } from 'primeng/table';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
+import { AuthService } from '../../../services/auth.service';
 @Component({
   selector: 'app-time-off',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe,
@@ -67,6 +68,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
 
   constructor(
     private http: HttpService,
+    private authservice: AuthService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
     public rbac: RbacService,
@@ -554,7 +556,8 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   handleAccept(form: any) {
     console.log(this.selectedLeaveData)
     this.spinnerLoader = true;
-    let approvedBy = this.LOGIN.employeeId.toString();
+    let loggedinuser=this.authservice.getToken();
+    let approvedBy = loggedinuser.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
     if (this.selectedProducts && this.selectedProducts.length > 0) {
       this.requestBody = {
@@ -622,7 +625,8 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   handleReject(form: any) {
     console.log(this.selectedLeaveData)
     this.spinnerLoader = true;
-    let approvedBy = this.LOGIN.employeeId.toString();
+      let loggedinuser=this.authservice.getToken();
+    let approvedBy = loggedinuser.employeeId.toString();
     let comments = this.selectedLeaveData?.comments || '';
     if (this.selectedProducts && this.selectedProducts.length > 0) {
       this.requestBody = {
@@ -691,7 +695,8 @@ export class TimeOffComponent implements OnInit, OnDestroy {
   handleProcess(selecteddata: any) {
     this.selectedLeaveData = selecteddata;
     console.log(this.selectedLeaveData)
-    let approvedBy = this.LOGIN.employeeId.toString();
+     let loggedinuser=this.authservice.getToken();
+    let approvedBy = loggedinuser.employeeId.toString();
     let message = null;
     if (this.selectedProducts && this.selectedProducts.length > 0) {
       this.requestBody = {

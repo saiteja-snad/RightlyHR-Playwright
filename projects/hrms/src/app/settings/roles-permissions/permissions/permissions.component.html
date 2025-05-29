@@ -1131,7 +1131,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                  <input type="checkbox" #selectAlltimeofftabs
-                                    (change)="toggleSelectAll(timeOffTabsFields, selectAlltimeofftabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(timeOffTabsFields, selectAlltimeofftabs?.checked, isonlyviewfunction.bind(this))"
                                     [checked]="isAllSelected(timeOffTabsFields)"
                                     [indeterminate]="isSomeSelected(timeOffTabsFields)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Time Off Tabs</th>
@@ -1166,7 +1166,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                  <input type="checkbox" #selectAlltimeoffsubtabs
-                                    (change)="toggleSelectAll(timeOffModuleSubTabs, selectAlltimeoffsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(timeOffModuleSubTabs, selectAlltimeoffsubtabs?.checked, isonlyviewfunction.bind(this))"
                                     [checked]="isAllSelected(timeOffModuleSubTabs)"
                                     [indeterminate]="isSomeSelected(timeOffModuleSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Time Off Module Sub Tabs</th>
@@ -1202,7 +1202,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                     <input type="checkbox" #selectwfhsubtabs
-                                    (change)="toggleSelectAll(WFHModuleSubTabs, selectwfhsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(WFHModuleSubTabs, selectwfhsubtabs?.checked, isonlyviewfunction.bind(this))"
                                     [checked]="isAllSelected(WFHModuleSubTabs)"
                                     [indeterminate]="isSomeSelected(WFHModuleSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">WFH Module Sub Tabs</th>
@@ -1263,7 +1263,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                     <input type="checkbox" #selectAllcompoffsubtabs
-                                    (change)="toggleSelectAll(compOffModuleSubTabs, selectAllcompoffsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(compOffModuleSubTabs, selectAllcompoffsubtabs?.checked, isonlyviewfunction.bind(this))"
                                     [checked]="isAllSelected(compOffModuleSubTabs)"
                                     [indeterminate]="isSomeSelected(compOffModuleSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Comp Off Module Sub Tabs</th>
@@ -1299,7 +1299,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                  <input type="checkbox" #selectallpermissionssubtabs
-                                    (change)="toggleSelectAll(permissionsModuleSubTabs, selectallpermissionssubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(permissionsModuleSubTabs, selectallpermissionssubtabs?.checked, isonlyviewfunction.bind(this))"
                                     [checked]="isAllSelected(permissionsModuleSubTabs)"
                                     [indeterminate]="isSomeSelected(permissionsModuleSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Permissions Module Sub Tabs</th>
@@ -1334,7 +1334,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                  <input type="checkbox" #selectallregularizationsubtabs
-                                    (change)="toggleSelectAll(regularizationModuleSubTabs, selectallregularizationsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(regularizationModuleSubTabs, selectallregularizationsubtabs?.checked, isonlyviewfunction.bind(this))"
                                     [checked]="isAllSelected(regularizationModuleSubTabs)"
                                     [indeterminate]="isSomeSelected(regularizationModuleSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Regularization Module Sub Tabs</th>
@@ -1370,7 +1370,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                <input type="checkbox" #selectallonbeofsubtabs
-                                    (change)="toggleSelectAll(onBehalfOfModuleSubTabs, selectallonbeofsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(onBehalfOfModuleSubTabs, selectallonbeofsubtabs?.checked, isonlyviewfunction.bind(this))"
                                     [checked]="isAllSelected(onBehalfOfModuleSubTabs)"
                                     [indeterminate]="isSomeSelected(onBehalfOfModuleSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">  On Behalf Of Module Sub Tabs</th>
@@ -1406,7 +1406,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                    <input type="checkbox" #selectallattendance
-                                    (change)="toggleSelectAll(attendanceModuleSubTabs, selectallattendance?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(attendanceModuleSubTabs, selectallattendance?.checked, isonlyviewfunction.bind(this))"
                                     [checked]="isAllSelected(attendanceModuleSubTabs)"
                                     [indeterminate]="isSomeSelected(attendanceModuleSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Attendance
@@ -1443,7 +1443,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                  <input type="checkbox" #selectgobalsubtabs
-                                    (change)="toggleSelectAll(globalPermissionModuleSubTabs, selectgobalsubtabs?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(globalPermissionModuleSubTabs, selectgobalsubtabs?.checked, isonlyviewfunction.bind(this))"
                                     [checked]="isAllSelected(globalPermissionModuleSubTabs)"
                                     [indeterminate]="isSomeSelected(globalPermissionModuleSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Global Permission</th>
@@ -1477,7 +1477,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                               <input type="checkbox" #selectallpendingapproval
-                                    (change)="toggleSelectAll(pendingApprovalsSubTabs, selectallpendingapproval?.checked, istimeoffforviewcheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(pendingApprovalsSubTabs, selectallpendingapproval?.checked, isonlyviewfunction.bind(this))"
                                     [checked]="isAllSelected(pendingApprovalsSubTabs)"
                                     [indeterminate]="isSomeSelected(pendingApprovalsSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">   Pending Approvals Sub Tabs</th>
@@ -1514,7 +1514,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                    <input type="checkbox" #selectallpremissionsfortimeoff
-                                    (change)="toggleSelectAll(pendingApprovalTimeOffSubTabs, selectallpremissionsfortimeoff?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(pendingApprovalTimeOffSubTabs, selectallpremissionsfortimeoff?.checked, isonlycreatfunction.bind(this))"
                                     [checked]="isAllSelected(pendingApprovalTimeOffSubTabs)"
                                     [indeterminate]="isSomeSelected(pendingApprovalTimeOffSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Pending Approval Time Off</th>
@@ -1548,7 +1548,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                <input type="checkbox" #selectallpremissionsforwfh
-                                    (change)="toggleSelectAll(pendingApprovalWFHSubTabs, selectallpremissionsforwfh?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(pendingApprovalWFHSubTabs, selectallpremissionsforwfh?.checked, isonlycreatfunction.bind(this))"
                                     [checked]="isAllSelected(pendingApprovalWFHSubTabs)"
                                     [indeterminate]="isSomeSelected(pendingApprovalWFHSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2"> Pending Approval WFH</th>
@@ -1581,7 +1581,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <input type="checkbox" #selectallpremissionsforcompoff
-                                    (change)="toggleSelectAll(pendingApprovalCompOffSubTabs, selectallpremissionsforcompoff?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(pendingApprovalCompOffSubTabs, selectallpremissionsforcompoff?.checked, isonlycreatfunction.bind(this))"
                                     [checked]="isAllSelected(pendingApprovalCompOffSubTabs)"
                                     [indeterminate]="isSomeSelected(pendingApprovalCompOffSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Pending Approval Comp Off</th>
@@ -1615,7 +1615,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <input type="checkbox" #selectallpremissions
-                                    (change)="toggleSelectAll(pendingApprovalPermissionSubTabs, selectallpremissions?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(pendingApprovalPermissionSubTabs, selectallpremissions?.checked, isonlycreatfunction.bind(this))"
                                     [checked]="isAllSelected(pendingApprovalTimeOffSubTabs)"
                                     [indeterminate]="isSomeSelected(pendingApprovalTimeOffSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Pending Approval Permission</th>
@@ -1649,7 +1649,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <input type="checkbox" #selectallpremissionsforregularization
-                                    (change)="toggleSelectAll(pendingApprovalRegularizationSubTabs, selectallpremissionsforregularization?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(pendingApprovalRegularizationSubTabs, selectallpremissionsforregularization?.checked, isonlycreatfunction.bind(this))"
                                     [checked]="isAllSelected(pendingApprovalRegularizationSubTabs)"
                                     [indeterminate]="isSomeSelected(pendingApprovalRegularizationSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Pending Approval Regularization</th>
@@ -1683,7 +1683,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <input type="checkbox" #selectallpremissionsforseparation
-                                    (change)="toggleSelectAll(pendingApprovalSeparationRequestsSubTabs, selectallpremissionsforseparation?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(pendingApprovalSeparationRequestsSubTabs, selectallpremissionsforseparation?.checked, isonlycreatfunction.bind(this))"
                                     [checked]="isAllSelected(pendingApprovalSeparationRequestsSubTabs)"
                                     [indeterminate]="isSomeSelected(pendingApprovalSeparationRequestsSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Pending Approval Separation Requests</th>
@@ -1716,7 +1716,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <input type="checkbox" #selectallpremissionsforrecall
-                                    (change)="toggleSelectAll(pendingApprovalRecallRequestsSubTabs, selectallpremissionsforrecall?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(pendingApprovalRecallRequestsSubTabs, selectallpremissionsforrecall?.checked, isonlycreatfunction.bind(this))"
                                     [checked]="isAllSelected(pendingApprovalRecallRequestsSubTabs)"
                                     [indeterminate]="isSomeSelected(pendingApprovalRecallRequestsSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Pending Approval Recall Requests</th>
@@ -1804,7 +1804,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <input type="checkbox" #selectallpremissionsforexpenses
-                                    (change)="toggleSelectAll(pendingApprovalClaimsAndExpensesSubTabs, selectallpremissionsforexpenses?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(pendingApprovalClaimsAndExpensesSubTabs, selectallpremissionsforexpenses?.checked, isonlycreatfunction.bind(this))"
                                     [checked]="isAllSelected(pendingApprovalClaimsAndExpensesSubTabs)"
                                     [indeterminate]="isSomeSelected(pendingApprovalClaimsAndExpensesSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Pending Approval Claims and Expenses</th>
@@ -1837,7 +1837,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <input type="checkbox" #selectallpremissionsfordesk
-                                    (change)="toggleSelectAll(pendingApprovalDeskRequestsSubTabs, selectallpremissionsfordesk?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(pendingApprovalDeskRequestsSubTabs, selectallpremissionsfordesk?.checked, isonlycreatfunction.bind(this))"
                                     [checked]="isAllSelected(pendingApprovalDeskRequestsSubTabs)"
                                     [indeterminate]="isSomeSelected(pendingApprovalDeskRequestsSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">Pending Approval Desk Requests</th>
@@ -1898,7 +1898,7 @@
                         <tr>
                             <th colspan="5" class="custom-header">
                                 <input type="checkbox" #selectallpremissionsallforonbehalf
-                                    (change)="toggleSelectAll(onBehalfOfApprovalsSubTabs, selectallpremissionsallforonbehalf?.checked, isforallpendingapprovaltabsCheckboxDisabled.bind(this))"
+                                    (change)="toggleSelectAll(onBehalfOfApprovalsSubTabs, selectallpremissionsallforonbehalf?.checked, isonlycreatfunction.bind(this))"
                                     [checked]="isAllSelected(onBehalfOfApprovalsSubTabs)"
                                     [indeterminate]="isSomeSelected(onBehalfOfApprovalsSubTabs)" [disabled]="!roleToFilter?.id"
                                     class="me-2 mt-2">On Behalf Of Approvals</th>
@@ -1931,7 +1931,12 @@
 
                         <!-- Reports Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Reports</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallreportstabs
+                                    (change)="toggleSelectAll(reportsTabsFields, selectallreportstabs?.checked, isonlyviewfunction.bind(this))"
+                                    [checked]="isAllSelected(reportsTabsFields)"
+                                    [indeterminate]="isSomeSelected(reportsTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1962,7 +1967,12 @@
 
                         <!-- Standard Reports Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Standard Reports</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallreportssubtabs
+                                    (change)="toggleSelectAll(standardReportsTabsFields, selectallreportssubtabs?.checked, isonlyviewfunction.bind(this))"
+                                    [checked]="isAllSelected(standardReportsTabsFields)"
+                                    [indeterminate]="isSomeSelected(standardReportsTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Standard Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -1995,7 +2005,12 @@
 
                         <!-- Custom Reports -->
                         <tr>
-                            <th colspan="5" class="custom-header">Custom Reports</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallcustomreports
+                                    (change)="toggleSelectAll(customReportsTabsFields, selectallcustomreports?.checked, isonlyviewfunction.bind(this))"
+                                    [checked]="isAllSelected(customReportsTabsFields)"
+                                    [indeterminate]="isSomeSelected(customReportsTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Custom Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2023,7 +2038,12 @@
 
                         <!-- Attendance Reports -->
                         <tr>
-                            <th colspan="5" class="custom-header">Attendance Reports</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallforattendancereports
+                                    (change)="toggleSelectAll(attendanceReportsTabsFields, selectallforattendancereports?.checked, isonlyviewfunction.bind(this))"
+                                    [checked]="isAllSelected(attendanceReportsTabsFields)"
+                                    [indeterminate]="isSomeSelected(attendanceReportsTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Attendance Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2088,7 +2108,12 @@
 
                         <!-- Monthly Attendance Reports -->
                         <tr>
-                            <th colspan="5" class="custom-header">Attendance Reports</th>
+                            <th colspan="5" class="custom-header">
+                                 <input type="checkbox" #selectallreportsforemployee
+                                    (change)="toggleSelectAll(attendanceReportsEmployeeTeamTabsFields, selectallreportsforemployee?.checked, isonlyviewfunction.bind(this))"
+                                    [checked]="isAllSelected(attendanceReportsEmployeeTeamTabsFields)"
+                                    [indeterminate]="isSomeSelected(attendanceReportsEmployeeTeamTabsFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">Attendance Reports</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"

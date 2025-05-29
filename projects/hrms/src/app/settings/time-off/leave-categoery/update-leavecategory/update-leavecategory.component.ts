@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -12,7 +12,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   selector: 'app-update-leavecategory',
   imports: [CommonModule, Select, ReactiveFormsModule],
   templateUrl: './update-leavecategory.component.html',
-  styleUrl: './update-leavecategory.component.scss'
+  styleUrl: './update-leavecategory.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class UpdateLeavecategoryComponent {
@@ -45,7 +46,7 @@ export class UpdateLeavecategoryComponent {
   shiftsArray = [] as any[];
   updateLeaveCategoryData = {} as Iorgcategoryleaves
 
-  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService, private router: Router,private modalService: NgbModal,) {
+  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService, private router: Router, private modalService: NgbModal,) {
     this.leavePolicyForm = this.fb.group({
       // Location/Shift Section
       applicableYear: [undefined, Validators.required],
@@ -117,7 +118,7 @@ export class UpdateLeavecategoryComponent {
     })
   }
 
-  navigate(){
+  navigate() {
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
   }
   getSubLocationByid(locationID: any) {
@@ -329,7 +330,7 @@ export class UpdateLeavecategoryComponent {
   onSubmit() {
     const formData = this.leavePolicyForm.value;
     let payload = {
-      id : this.updateLeaveCategoryData.id,
+      id: this.updateLeaveCategoryData.id,
       applicableYear: this.leavePolicyForm.value.applicableYear ?? this.updateLeaveCategoryData.applicableYear,
       locationID: this.leavePolicyForm.value.locationID.id ?? this.updateLeaveCategoryData.locationID,
       subLocation: this.leavePolicyForm.value.subLocation.id ?? this.updateLeaveCategoryData.subLocation,
@@ -433,15 +434,17 @@ export class UpdateLeavecategoryComponent {
     localStorage.setItem('cloneleavecategory', JSON.stringify(this.updateLeaveCategoryData));
     this.router.navigate(['/settings/timeoff-configurations/cloneleavecategory']);
   }
-  
-  resetForm(content:any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+
+  resetForm(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.leavePolicyForm.reset();
   }
-  cancel(){
+  
+  cancel() {
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
   }
-  closepopup(){
+
+  closepopup() {
     this.modalService.dismissAll();
   }
 }

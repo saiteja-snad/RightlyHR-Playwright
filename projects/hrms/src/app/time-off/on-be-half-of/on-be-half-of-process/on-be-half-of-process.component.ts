@@ -9,9 +9,10 @@ import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-on-be-half-of-process',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
   templateUrl: './on-be-half-of-process.component.html',
   styleUrl: './on-be-half-of-process.component.scss'
 })

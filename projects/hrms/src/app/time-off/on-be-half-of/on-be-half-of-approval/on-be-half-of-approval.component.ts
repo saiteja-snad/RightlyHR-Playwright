@@ -10,9 +10,10 @@ import { FormsModule } from '@angular/forms';
 import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common';
 import { RbacService } from '../../../services/rbac.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-on-be-half-of-approval',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
   templateUrl: './on-be-half-of-approval.component.html',
   styleUrl: './on-be-half-of-approval.component.scss'
 })
@@ -58,7 +59,6 @@ export class OnBeHalfOfApprovalComponent {
     this.cadidateEmployeeId =parseInt(localStorage.getItem('onbehalfof') as string) ;
     if(this.cadidateEmployeeId){
       this.getDataByLPID();
-
     }
   }
 

@@ -24,7 +24,7 @@
               <div>
                 <div *ngIf="wfhRequest.requestedComments; else noRequestedComments" type="button"
                   [ngbPopover]="requestedComments">
-                  <i class="bi bi-info-circle-fill"></i>
+                  <app-info-icon />
                 </div>
                 <ng-template #requestedComments>
                   <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
@@ -38,7 +38,7 @@
               <div>
                 <div *ngIf="wfhRequest.reason; else noRequestedComments" type="button"
                   [ngbPopover]="reason">
-                  <i class="bi bi-info-circle-fill"></i>
+                  <app-info-icon />
                 </div>
                 <ng-template #reason>
                   <p class="mb-0">{{ wfhRequest.reason }}</p>

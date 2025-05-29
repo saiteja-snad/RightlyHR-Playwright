@@ -19,6 +19,7 @@ import { environment } from '../../../../../environments/environment';
 import { SignalsService } from '../../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-time-off-for-you-request',
   imports: [
@@ -31,8 +32,9 @@ import { FormValidationsService } from '../../../../services/form-validations.se
     DateformatPipe,
     NoDataFoundComponent,
     TableModule,
-    DataLoaderContentComponent
-  ],
+    DataLoaderContentComponent,
+    InfoIconComponent
+],
   templateUrl: './time-off-for-you-request.component.html',
   styleUrl: './time-off-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,

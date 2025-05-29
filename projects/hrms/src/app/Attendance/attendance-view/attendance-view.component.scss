@@ -2,6 +2,12 @@
   padding: 0.35rem 1rem;
 }
 
+.custom-p-select-content {
+  .p-select {
+    min-width: 16rem !important;
+  }
+}
+
 .main-status-text {
   font-weight: 700;
   font-size: var(--fontsize14);
@@ -56,7 +62,7 @@
 
 .custom-table-content {
   text-align: center !important;
-  height: calc(100dvh - 12rem);
+  height: calc(100dvh - 9.5rem);
 }
 
 .substatus-card {
@@ -82,15 +88,15 @@
   border: 1px solid #CCDAEC;
   background-color: #fff;
   border-radius: 0.5rem;
+  width: 25rem;
   min-height: 40dvh;
+  height: max-content;
+  line-height: 100%;
+  letter-spacing: 0%;
+
 
   tr {
     border-bottom: 1px solid #EFEFEF !important;
-  }
-
-  th,td {
-    line-height: 100%;
-    letter-spacing: 0%;
   }
 
   th {
@@ -160,6 +166,8 @@
 }
 
 .custom-year-month-picker {
+  width: 10rem;
+
   .p-inputtext {
     border: 1px solid #DEE8F3 !important;
     padding: 0.5rem 0.75rem !important;
@@ -170,6 +178,8 @@
     color: #222222 !important;
     background-color: #F8FBFF !important;
     cursor: pointer !important;
+    border-top-right-radius: 0rem !important;
+    border-bottom-right-radius: 0rem !important;
   }
 
   .p-datepicker-month-selected {
@@ -191,4 +201,8 @@
 .finger-icon {
   width: 1rem;
   height: 1rem;
+}
+
+.attendance-log-content {
+  width: 100%;
 }

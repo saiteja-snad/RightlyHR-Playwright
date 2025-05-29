@@ -18,13 +18,13 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { RbacService } from '../../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../../shared/nowhitespace/nowhitespace.component';
 import { IExpenseHeaders } from '../../../../Interfaces/claimsandexpenses.model';
-import { SearchfilterPipe } from "../../../../Pipes/searchfilter.pipe";
 import { SignalsService } from '../../../../services/signals.service';
 import { SearchfordeskPipe } from "../../../../Pipes/searchfordesk.pipe";
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-claimsandexpenses-for-you-request',
   imports: [DateformatPipe, CommonModule, ReactiveFormsModule, FormsModule, NoDataFoundComponent, PaginatorModule,
-    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfilterPipe, SearchfordeskPipe],
+    DropdownModule, NgbPopoverModule, TranslateModule, NgxDocViewerModule, SearchfordeskPipe, InfoIconComponent],
   templateUrl: './claimsandexpenses-for-you-request.component.html',
   styleUrl: './claimsandexpenses-for-you-request.component.scss',
 })

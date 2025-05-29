@@ -656,6 +656,107 @@ timeOffModuleSubTabs = [
   'Team Leave Balance Summary (Time Off)',
   'Team Leave Balance (Time Off)'
 ];
+WFHModuleSubTabs = [
+  'Waiting For Approval (WFH)',
+  'Approved (WFH)',
+  'Processed (WFH)',
+  'Cancel (WFH)',
+  'Rejected (WFH)',
+  'Request WFH Button'
+];
+compOffModuleSubTabs = [
+  'Waiting For Approval (Comp Off)',
+  'Approved (Comp Off)',
+  'Processed (Comp Off)',
+  'Rejected (Comp Off)',
+  'Request Comp Off Button'
+];
+permissionsModuleSubTabs = [
+  'Waiting For Approval (Permissions)',
+  'Approved (Permissions)',
+  'Cancel (Permissions)',
+  'Rejected (Permissions)',
+  'Request Permission Button'
+];
+regularizationModuleSubTabs = [
+  'Waiting For Approval (Regularization)',
+  'Approved (Regularization)',
+  'Rejected (Regularization)',
+  'Processed (Regularization)'
+];
+onBehalfOfModuleSubTabs = [
+  'Waiting For Approval (On Behalf Of)',
+  'Approved (On Behalf Of)',
+  'Request On Behalf Button',
+  'Rejected (On Behalf Of)',
+  'Processed (On Behalf Of)'
+];
+attendanceModuleSubTabs = [
+  'Request Regularization',
+  'Request Leave',
+  'Attendance Select Employee For Manager',
+  'Attendance Select Employee For HR'
+];
+globalPermissionModuleSubTabs = [
+  'Global Permissions',
+  'Request Global Permission Button'
+];
+pendingApprovalsSubTabs = [
+  'Time Off Tab',
+  'WFH Tab',
+  'Comp Off Tab',
+  'Permissions Tab',
+  'Regularization Tab',
+  'Separation Request Tab',
+  'Recall Request Tab',
+  'Trainee Details Tab',
+  'No Due Clearence Requests Tab',
+  'Claims and Expenses Tab',
+  'Desk Requests Tab',
+  'Probation Details Tab'
+];
+pendingApprovalTimeOffSubTabs = [
+  'For You (Time Off)',
+  'For Role (Time Off)'
+];
+pendingApprovalWFHSubTabs = [
+  'For You (WFH)',
+  'For Role (WFH)'
+];
+pendingApprovalCompOffSubTabs = [
+  'For You (Comp Off)',
+  'For Role (Comp Off)'
+];
+  pendingApprovalPermissionSubTabs = [
+  'For You (Permission)',
+  'For Role (Permission)'
+];
+pendingApprovalRegularizationSubTabs = [
+  'For You (Regularization)',
+  'For Role (Regularization)'
+];
+pendingApprovalSeparationRequestsSubTabs = [
+  'For You (Separation Requests)',
+  'For Role (Separation Requests)'
+];
+pendingApprovalRecallRequestsSubTabs = [
+  'For You (Recall Requests)',
+  'For Role (Recall Requests)'
+];
+pendingApprovalClaimsAndExpensesSubTabs = [
+  'For You (Claims and Expenses)',
+  'For Role (Claims and Expenses)'
+];
+pendingApprovalDeskRequestsSubTabs = [
+  'For You (Desk Requests)',
+  'For Role (Desk Requests)'
+];
+onBehalfOfApprovalsSubTabs = [
+  'Time Off (On Behalf Of Approvals)',
+  'WFH (On Behalf Of Approvals)',
+  'Comp Off (On Behalf Of Approvals)',
+  'Permission (On Behalf Of Approvals)'
+];
   // Generic toggle function for checkboxes
   toggleSelectAll(
     fields: string[],
@@ -1124,7 +1225,7 @@ timeOffModuleSubTabs = [
     return false;
   }
 
-  istimeoffcheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  istimeoffforviewcheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1133,16 +1234,20 @@ timeOffModuleSubTabs = [
     }
     return false;
   }
-    istimeoffsubtabscheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
-    if (action === 'View') {
-      return !this.roleToFilter?.id;
+
+
+  isforallpendingapprovaltabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Create') {
+      return true;
     }
-    if (action === 'Update' || action === 'Create' || action === 'Delete') {
-      return true; // Always disabled
+    if (action === 'Update' || action === 'View' || action === 'Delete') {
+     return !this.roleToFilter?.id;
     }
     return false;
+    return false;
   }
-  
+
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

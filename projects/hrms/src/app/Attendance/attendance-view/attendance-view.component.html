@@ -89,7 +89,7 @@
                                 <div>
                                     <a type="button" (click)="openModalLarge(punchintimes);dayLogsData(item.biometricLogs,item.date,item.duration?.biometricDuration,
                                         item.permissions,item.regularizations)">
-                                        <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                                        <app-info-icon />
                                     </a>
                                 </div>
                                 }
@@ -115,7 +115,6 @@
                                     @for(item of item.tags; track $index){
                                     <div class="card substatus-card">{{item?.name}}</div>
                                     }
-
                                 </div>
                                 }
 

@@ -26,6 +26,7 @@ import { AddLeaveComponent } from '../../time-off/leaves/add-leave/add-leave.com
 import { IAttendance, IdayLogs } from './attendance-modal';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-attendance-view',
@@ -45,7 +46,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     TohoursPipe,
     DatePicker,
     ModuleInformationComponent,
-    
+    InfoIconComponent
 ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',

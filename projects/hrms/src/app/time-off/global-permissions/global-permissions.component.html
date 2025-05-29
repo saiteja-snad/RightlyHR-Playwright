@@ -78,7 +78,7 @@
             <div>
               <span *ngIf="item.employeeIds.length > 0; else emp">
                 <a type="button" [ngbPopover]="reason">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                  <app-info-icon />
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{getEmployeeNames(item.employeeIds)}}</p>
@@ -93,7 +93,7 @@
             <div>
               <span *ngIf="item.meta;else res">
                 <a type="button" [ngbPopover]="reason">
-                  <img src="images\info-fill.png" alt="info icon" class="info-icon">
+                  <app-info-icon />
                 </a>
                 <ng-template #reason>
                   <p class="mb-0">{{item.meta}}</p>

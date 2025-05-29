@@ -304,7 +304,10 @@ openModalView(){
     return formattedDate;
   }
 
-  getBlockedFutureDateupto(startDate: string, duration: number): string {
+  getBlockedFutureDateupto(startDate: string, duration: number,extendedDate:string): string {
+      if(extendedDate){
+      startDate = extendedDate;
+    }
     const startDateObj = moment(startDate).startOf('day'); // Set time to start of day (midnight)
     // Add the duration (e.g., 90 days) to the start date
     const futureDate = startDateObj.add(duration, 'days');

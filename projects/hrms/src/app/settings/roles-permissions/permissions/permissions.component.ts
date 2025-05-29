@@ -866,6 +866,11 @@ assetManagementUnderMaintenanceTabActions = [
   'Under Maintenance View Asset Details',
   'Under Maintenance Update'
 ];
+assetManagementInactiveTabActions = [
+  'Inactive Mark as Active Asset',
+  'Inactive View Asset Details',
+  'Inactive Update Asset Details'
+];
   // Generic toggle function for checkboxes
   toggleSelectAll(
     fields: string[],

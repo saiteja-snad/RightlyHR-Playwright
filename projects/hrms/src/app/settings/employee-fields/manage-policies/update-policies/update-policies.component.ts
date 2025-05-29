@@ -83,8 +83,8 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
             [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)],
           ],
           policyNewFile: [''],
-          acknowledged : [row.acknowledged],
-          notification : [row.notification],
+          acknowledged : [row.requiresAcknowledgment],
+          notification : [row.sendEmailNotification],
         })
       );
     });
@@ -190,7 +190,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
         sendEmailNotification: item.notification,
         sendPushNotification : false,
         sendNotification: item.notification,
-        Status: 'Published',
+        Status: 'Pending for submission',
         // holidayColor: 'string',
         HeaderID: this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
       })),

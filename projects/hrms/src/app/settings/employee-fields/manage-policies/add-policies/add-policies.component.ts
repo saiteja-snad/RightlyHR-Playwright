@@ -157,6 +157,7 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       this.subscription = this.http.postdata('orgPolicies/Post', payload).subscribe({
         next: (response: any) => {
           localStorage.setItem('personaldata', JSON.stringify(response))
+          localStorage.setItem('updatepolicies', JSON.stringify(response))
           this.confirmation.openSuccessModal('Policy added successfully');
           this.router.navigate(['/settings/employee-fields/manage-policies/pending-for-submit']);
         },

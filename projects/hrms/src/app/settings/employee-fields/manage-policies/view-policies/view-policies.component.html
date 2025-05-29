@@ -85,6 +85,20 @@
                             <input type="text" formControlName="policyDescription" class="form-control custom-input w-100"
                                 placeholder="Please enter description">
                         </div>
+
+                        <div class="w-100">
+                            <div class="d-flex justify-content-between">
+                            <label class="form-label custom-label">{{'Acknowledgement Required' | translate}}</label>
+                              </div>
+                            <p-toggleswitch formControlName="acknowledged"/>
+                          </div>
+
+                          <div class="w-100">
+                            <div class="d-flex justify-content-between">
+                              <label class="form-label custom-label">{{'Email Notification' | translate}}</label>
+                            </div>
+                            <p-toggleswitch formControlName="notification"/>
+                          </div>
                     </div>
                 </div>
             </div>

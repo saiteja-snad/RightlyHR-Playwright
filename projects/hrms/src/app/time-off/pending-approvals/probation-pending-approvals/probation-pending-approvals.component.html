@@ -192,7 +192,7 @@
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
                         id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
                         (keypress)="letters($event)" [min]="getBlockedFutureDate(selectedData.probationEndDate,selectedData.probationExtendedDate)"
-                        [max]="getBlockedFutureDateupto(selectedData.probationEndDate,probationExtensionDuration)"
+                        [max]="getBlockedFutureDateupto(selectedData.probationEndDate,probationExtensionDuration,selectedData.probationExtendedDate)"
                         [(ngModel)]="selectedData.extenddate" required>
                     <div class="error-msg"
                         *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && ProcessacceptForm.submitted)">
@@ -219,7 +219,7 @@
                         <span class="text-danger">*</span></label>
                     <textarea type="text" class="form-control custom-input" id="Descriptiondetails"
                         name="Descriptiondetails" aria-label="Description" rows="3" maxlength="250"
-                        placeholder="Please Provide Reason" #Descriptiondetails="ngModel" autocomplete="off"
+                        placeholder="Please provide reason" #Descriptiondetails="ngModel" autocomplete="off"
                         (ngModelChange)="ifreasonnull(selectedData.rejectedReason)"
                         [(ngModel)]="selectedData.rejectedReason" required></textarea>
                     <div class="textarea-count-text">{{selectedData.rejectedReason?.length ?

@@ -16,9 +16,9 @@ import { RbacService } from '../../../services/rbac.service';
 import { PermissionsearchPipe } from '../../../Pipes/permissionsearch.pipe';
 import { SignalsService } from '../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
-import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { Table, TableModule } from 'primeng/table';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-regularization-for-you-request',
   imports: [
@@ -33,8 +33,9 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
     PermissionsearchPipe,
     DataLoaderContentComponent,
     TableModule,
-    NoDataFoundComponent
-  ],
+    NoDataFoundComponent,
+    InfoIconComponent
+],
   templateUrl: './regularization-for-you-request.component.html',
   styleUrl: './regularization-for-you-request.component.scss',
   encapsulation: ViewEncapsulation.None,

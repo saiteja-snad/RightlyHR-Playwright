@@ -13,6 +13,7 @@ import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-foun
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-wfh-approved',
   imports: [
@@ -24,7 +25,8 @@ import { TranslateModule } from '@ngx-translate/core';
     DateformatPipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    TranslateModule
+    TranslateModule,
+    InfoIconComponent
 ],
   templateUrl: './wfh-approved.component.html',
   styleUrl: './wfh-approved.component.scss',

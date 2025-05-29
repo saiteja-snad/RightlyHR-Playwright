@@ -23,7 +23,7 @@
             <td class="text-center">
               <div>
                 <div *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
-                    <i class="bi bi-info-circle-fill"></i>
+                  <app-info-icon />
                 </div>
                 <ng-template #requestedComments>
                   <p class="mb-0">{{ wfhRequest.requestedComments }}</p>
@@ -42,7 +42,6 @@
                   <i class="bi bi-three-dots-vertical"></i>
                 </a>
                 <ul class="dropdown-menu custom-dropdown-menu">
-
                   <li (click)="onClick(wfhRequest,cancelModal)">
                     <a class="dropdown-item">{{'Cancel WFH' | translate}}</a>
                   </li>
@@ -51,7 +50,6 @@
               }@else {
                 {{"NA"}}
               }
-
             </td>
           </tr>
         </ng-container>

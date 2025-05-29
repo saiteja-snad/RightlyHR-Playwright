@@ -20,10 +20,11 @@ import { FormValidationService } from '../../../../../../preonboarding/src/app/c
 import { Table, TableModule } from 'primeng/table';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-time-off',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe,
-    NoDataFoundComponent, TranslateModule, TableModule, DataLoaderContentComponent],
+    NoDataFoundComponent, TranslateModule, TableModule, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './time-off.component.html',
   styleUrl: './time-off.component.scss'
 })

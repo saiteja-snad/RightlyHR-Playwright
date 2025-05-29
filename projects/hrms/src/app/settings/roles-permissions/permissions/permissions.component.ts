@@ -757,6 +757,59 @@ onBehalfOfApprovalsSubTabs = [
   'Comp Off (On Behalf Of Approvals)',
   'Permission (On Behalf Of Approvals)'
 ];
+reportsTabsFields = [
+  'Standard Reports',
+  'Custom Reports',
+  'Attendance reports',
+  'Monthly Attendance Reports'
+];
+standardReportsTabsFields = [
+  'Employee Master Data',
+  'Employee Master Data - Generate',
+  'Employee Master Data - Export',
+  'Job Location Wise Data',
+  'Job Location Wise Data - Generate',
+  'Job Location Wise Data - Export',
+  'Branch Location Wise Data',
+  'Branch Location Wise Data - Generate',
+  'Branch Location Wise Data - Export',
+  'Family Members Data',
+  'Family Members Data - Generate',
+  'Family Members Data - Export'
+];
+customReportsTabsFields = [
+  'Custom Reports - Generate',
+  'Custom Reports - Export'
+];
+attendanceReportsTabsFields = [
+  'Leave Report',
+  'Leave Report - Generate',
+  'Leave Report - Export',
+  'Leave Summary Report',
+  'Leave Summary Report - Generate',
+  'Leave Summary Report - Export',
+  'Comp Off Report',
+  'Comp Off Report - Generate',
+  'Comp Off Report - Export',
+  'WFH Report',
+  'WFH Report - Generate',
+  'WFH Report - Export',
+  'Absent Report',
+  'Absent Report - Generate',
+  'Absent Report - Export',
+  'Inactive Empolyee Report',
+  'Inactive Empolyee Report - Generate',
+  'Inactive Empolyee Report - Export',
+  'Yearly Summary Report',
+  'Yearly Summary Report - Generate',
+  'Yearly Summary Report - Export',
+  'Permission Report',
+  'Permission Report - Generate',
+  'Permission Report - Export',
+  'Regularization Report',
+  'Regularization Report - Generate',
+  'Regularization Report - Export'
+];
   // Generic toggle function for checkboxes
   toggleSelectAll(
     fields: string[],
@@ -1225,7 +1278,7 @@ onBehalfOfApprovalsSubTabs = [
     return false;
   }
 
-  istimeoffforviewcheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isonlyviewfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'View') {
       return !this.roleToFilter?.id;
     }
@@ -1236,7 +1289,7 @@ onBehalfOfApprovalsSubTabs = [
   }
 
 
-  isforallpendingapprovaltabsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
     if (action === 'Create') {
       return true;
     }

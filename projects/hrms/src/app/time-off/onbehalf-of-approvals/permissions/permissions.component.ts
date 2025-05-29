@@ -103,6 +103,7 @@ export class PermissionsComponent {
           this.getAllPendingApprovals();
         } else {
           this.leaves.next([]);
+          this.permissionsselects = [];
         }
         this.http.resetTriggerSignal();
       }

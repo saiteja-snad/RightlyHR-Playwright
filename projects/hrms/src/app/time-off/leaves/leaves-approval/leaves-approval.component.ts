@@ -45,22 +45,40 @@ export class LeavesApprovalComponent {
   constructor(private http: HttpService, private authService: AuthService, public rbac: RbacService) { }
 
   ngOnInit(): void {
-    this.loggedinuser = this.authService.getToken();
-    this.empdata = this.loggedinuser;
-    this.getDataByLPID();
+    // this.loggedinuser = this.authService.getToken();
+    // this.empdata = this.loggedinuser;
+    // this.getDataByLPID();
     this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
       if (id) {
         // Use the new employee ID here
         this.selectempid = id;
         console.log('Updated employee ID:', id);
         // Example: this.loadEmployeeDetails(id);
-        this.getDataByLPID();
+        this.getDataByEmpLPID();
+      }else{
+   this.loggedinuser = this.authService.getToken();
+    this.empdata = this.loggedinuser;
+    this.getDataByLPID();
       }
     });
   }
 
   getDataByLPID() {
-    let empid = this.empdata.employeeId ?? this.selectempid;
+    let empid = this.empdata.employeeId;
+    this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
+      next: (response: any) => {
+        if (Array.isArray(response)) {
+          this.lpdata = response.filter(item => item.status === 'Approved');
+        } else {
+          console.error("Invalid response format");
+        }
+      },
+      error: (reason: any) => console.log(reason)
+    });
+  }
+
+    getDataByEmpLPID() {
+    let empid = this.selectempid;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {

@@ -241,7 +241,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
     const request: ILeavesummery = {};
 
     if (formValue.employee?.employeeId) {
-      request.EmployeeId = formValue.employee.employeeId;
+      request.EmployeeId = formValue.employee.employeeId !== 'all';
     }
 
     // Manager full name

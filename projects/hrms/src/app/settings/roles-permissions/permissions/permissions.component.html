@@ -58,7 +58,7 @@
                                     (change)="toggleSelectAll(sidebarFields, selectall?.checked, isSidebarCheckboxDisabled.bind(this))"
                                     [checked]="isAllSelected(sidebarFields)"
                                     [indeterminate]="isSomeSelected(sidebarFields)"
-                                    [disabled]="!roleToFilter?.id">Settings Sidebar</th>
+                                    [disabled]="!roleToFilter?.id" class="check-box-selectall"> Settings Sidebar</th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"

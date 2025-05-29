@@ -225,7 +225,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     this.isLoading = true;
 
     const formValue = this.inactiveReportForm.value;
-    const isAllEmployeesSelected = formValue.employee?.employeeId === 'all';
+    const isAllEmployeesSelected = formValue.employee?.employeeId !== 'all';
     // Check if no filter is provided
     const noFilterProvided =
       !formValue.employee &&
@@ -245,7 +245,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
     const request: IInactiveReportRequest = {};
 
     if (formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+      request.employeeId = formValue.employee.employeeId;
     }
 
     // Month filter
@@ -255,13 +255,13 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
 
     // Manager full name
     if (formValue.manager) {
-      request.TeamManagerSnadId  = formValue.manager.fusionEmployeeId;
+      request.teamManagerID  = formValue.manager.employeeId;
     }
 
 
     // Only include employee filter if not "All Employees"
-    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
+      request.employeeId = formValue.employee.fusionEmpId;
     }
 
     // Call service with the constructed request
@@ -285,6 +285,7 @@ export class InactiveEmployeeReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.inactiveReportForm.reset();
+    this.filteredInactiveRecord = [];
   }
 
   formatDate(date: Date): string {

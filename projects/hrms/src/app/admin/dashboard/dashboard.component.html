@@ -1,11 +1,11 @@
 @if(rbac.allowedToAccess('Dashboard.view')){
 <div class="custom-main-component-container">
   <!--Dashboard main Section-->
-
   <div class="dashboard-diplay-section">
     <div class="welcome-text d-flex align-items-center gap-1 mb-3">
       <div>{{greetingMessage}},</div>
-      <div class="name">{{this.employeedata.firstName}} {{this.employeedata.middleName}} {{this.employeedata.lastName}}</div>
+      <div class="name">{{this.employeedata.firstName}} {{this.employeedata.middleName}} {{this.employeedata.lastName}}
+      </div>
     </div>
 
     <div class="row">
@@ -28,7 +28,7 @@
       <!--Attendance Display-->
       @if(this.rbac.allowedToAccess('Attendance.view')){
       <div class="col-md-3">
-         @if(!attendanceLoader){
+        @if(!attendanceLoader && attendanceData?.data?.attendanceData?.length){
         <div class="content-card attendance-content">
           <div class="status">{{ attendanceData.data.attendanceData[0].status }}</div>
           <div class="d-flex justify-content-center gap-3 pt-4 mt-2">
@@ -39,19 +39,16 @@
               <div class="date mb-2">{{ attendanceData.data.attendanceData[0].date | date: 'MMMM d, y' }}</div>
               <div class="d-flex align-items-center gap-2">
                 <div class="start-end-time-text">First In: <span class="time">{{ attendanceData.data.attendanceData[0].firstLogin ?
-                    (attendanceData.data.attendanceData[0].firstLogin | date:'HH:mm:ss') : '-' }}</span></div>
-                <div class="start-end-time-text">Last Out: <span class="time"> {{ attendanceData.data.attendanceData[0].lastLogout
-                    ? (attendanceData.data.attendanceData[0].lastLogout | date:'HH:mm:ss') : '-' }} </span></div>
-                @if( attendanceData.data.attendanceData[0].status !== 'WFH'
-                && attendanceData.data.attendanceData[0].status !== 'Leave'
+                (attendanceData.data.attendanceData[0].firstLogin | date:'HH:mm:ss') : '-' }}</span></div>
+                <div class="start-end-time-text">Last Out: <span class="time"> {{ attendanceData.data.attendanceData[0].lastLogout ? 
+                (attendanceData.data.attendanceData[0].lastLogout | date:'HH:mm:ss') : '-' }} </span></div>
+                @if( attendanceData.data.attendanceData[0].status !== 'WFH' && attendanceData.data.attendanceData[0].status !== 'Leave'
                 && attendanceData.data.attendanceData[0].status !== 'Absent'){
                 <div>
-                  <img src="/dashboard-icon/info.png" alt="Icon" class="info-icon" (click)="openModalLarge(punchintimes);dayLogsData(
-                                                      attendanceData.data.attendanceData[0].biometricLogs,
-                                                    attendanceData.data.attendanceData[0].date,
-                                                     attendanceData.data.attendanceData[0].duration.biometricDuration,
-                                                    attendanceData.data.attendanceData[0].permissions,
-                                                    attendanceData.data.attendanceData[0].regularizations)">
+                  <img src="/dashboard-icon/info.png" alt="Icon" class="info-icon" (click)="openModalLarge(punchintimes);
+                  dayLogsData(attendanceData.data.attendanceData[0].biometricLogs,attendanceData.data.attendanceData[0].date,
+                  attendanceData.data.attendanceData[0].duration.biometricDuration,attendanceData.data.attendanceData[0].permissions,
+                  attendanceData.data.attendanceData[0].regularizations)">
                 </div>
                 }
               </div>
@@ -62,14 +59,14 @@
           </div>
         </div>
         }@else {
-          <p-skeleton width="25rem" height="11.5rem" />
-          } 
+        <p-skeleton height="11rem" />
+        }
       </div>
       }
-      
+
       <!--Employee List Display-->
       <div class="col-md-3">
-         @if(!chartLoader ){
+        @if(!chartLoader ){
         <div class="content-card employees-list-content">
           <div class="all-text">All Employees</div>
           <div class="total-leave-balance-graph-content">
@@ -77,8 +74,7 @@
               <p-chart type="doughnut" [data]="EmployeeInfoData" [options]="EmployeeInfoDataOptions"
                 class="doughnut-chart" />
               <div class="total-count-content">
-                <p class="count m-0 p-0 mb-1">{{totalEmployeesCount}}</p>
-                <p class="total-count-text m-0 p-0">Total <br>Employees</p>
+                <p class="count m-0 p-0">{{totalEmployeesCount}}</p>
               </div>
             </div>
             <ul class="mb-0 list-style-none ps-3 pb-2">
@@ -94,13 +90,13 @@
           </div>
         </div>
         }@else {
-          <p-skeleton width="25rem" height="11.5rem" />
-          } 
+        <p-skeleton height="11rem" />
+        }
       </div>
 
       <!--Events Display-->
       <div class="col-md-3">
-         @if(!eventsLoader){
+        @if(!eventsLoader){
         <div class="content-card events-content">
           <div class="celebration-img">
             <img src="/dashboard-icon/celebration-icon.png" alt="Icon" class="icon">
@@ -122,22 +118,12 @@
             </p-carousel>
           </div>
         </div>
-      }@else { 
-          <p-skeleton width="25rem" height="11.5rem" />
-          } 
+        }@else {
+        <p-skeleton height="11rem" />
+        }
       </div>
-
     </div>
   </div>
-
-
-  <!--Document History-->
-  @if(rbac.allowedToAccess('Documents History Offer Letter.view') || rbac.allowedToAccess('Documents History AppointmentLetter.view')
-  || rbac.allowedToAccess('Documents History Trainee Offer Letter.view') || rbac.allowedToAccess('Documents History Trainee Appointment Letter.view')) {
-  <div class="mb-3">
-    <p class="component-header mb-0">{{'Document History' | translate}}</p>
-  </div>
-  }
 
   <!--Document History Content-->
   <div class="Document-history-content">
@@ -149,90 +135,90 @@
 
 <!--Attendance Logs popup-->
 <ng-template #punchintimes let-modal>
-    <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="custom-poup-header-content popup-header-border">
-            <div class="pt-2">
-                <p class="popup-heading mb-0">{{'Logs Information'| translate}} ({{selectedDate|dateformat}})</p>
-            </div>
-            <div>
-                <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
-            </div>
-        </div>
-        <div class="custom-main-popup-content">
-            @if(punchPairs.length>0){
-            <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="custom-popup-header">{{'Biometric Logs'| translate}}</th>
-                            </tr>
-                            <tr>
-                                <th>{{'In' | translate}}</th>
-                                <th>{{'Out' | translate}}</th>
-                                <th>{{'Duration' |translate}}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let log of punchPairs">
-                                <td class="log-time">{{ log.in }}</td>
-                                <td class="log-time">{{ log.out }}</td>
-                                <td class="duration-time">{{ log.duration }}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" class="popup-td">{{'Total Duration:' | translate}} <b>{{ logsDuration }}</b></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            }
-            @if(permissions_list.length>0){
-            <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="custom-popup-header">{{'Permission(s)'| translate}}</th>
-                            </tr>
-                            <tr>
-                                <th>{{'Type'| translate}}</th>
-                                <th>{{'Duration'| translate}}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let log of permissions_list">
-                                <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                <td class="duration-time">{{ log.duration ? log.duration + ' HR(s)' : '-' }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            }
-            @if(regularization_list.length>0){
-            <div class="popup-table-wrapper">
-                <div class="popup-table-content">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th colspan="3" class="custom-popup-header">{{'Regularization(s)'| translate}}</th>
-                            </tr>
-                            <tr>
-                                <th>{{'Type'| translate}}</th>
-                                <th>{{'Duration'| translate}}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let log of regularization_list">
-                                <td class="log-time">{{ log.type?log.type:'-' }}</td>
-                                <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            }
-        </div>
+  <div class="custom-main-popup-container" ngbAutofocus>
+    <div class="custom-poup-header-content popup-header-border">
+      <div class="pt-2">
+        <p class="popup-heading mb-0">{{'Logs Information'| translate}} ({{selectedDate|dateformat}})</p>
+      </div>
+      <div>
+        <a (click)="modal.dismiss()"><img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+      </div>
     </div>
+    <div class="custom-main-popup-content">
+      @if(punchPairs.length>0){
+      <div class="popup-table-wrapper">
+        <div class="popup-table-content">
+          <table>
+            <thead>
+              <tr>
+                <th colspan="3" class="custom-popup-header">{{'Biometric Logs'| translate}}</th>
+              </tr>
+              <tr>
+                <th>{{'In' | translate}}</th>
+                <th>{{'Out' | translate}}</th>
+                <th>{{'Duration' |translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of punchPairs">
+                <td class="log-time">{{ log.in }}</td>
+                <td class="log-time">{{ log.out }}</td>
+                <td class="duration-time">{{ log.duration }}</td>
+              </tr>
+              <tr>
+                <td colspan="3" class="popup-td">{{'Total Duration:' | translate}} <b>{{ logsDuration }}</b></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      }
+      @if(permissions_list.length>0){
+      <div class="popup-table-wrapper">
+        <div class="popup-table-content">
+          <table>
+            <thead>
+              <tr>
+                <th colspan="3" class="custom-popup-header">{{'Permission(s)'| translate}}</th>
+              </tr>
+              <tr>
+                <th>{{'Type'| translate}}</th>
+                <th>{{'Duration'| translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of permissions_list">
+                <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                <td class="duration-time">{{ log.duration ? log.duration + ' HR(s)' : '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      }
+      @if(regularization_list.length>0){
+      <div class="popup-table-wrapper">
+        <div class="popup-table-content">
+          <table>
+            <thead>
+              <tr>
+                <th colspan="3" class="custom-popup-header">{{'Regularization(s)'| translate}}</th>
+              </tr>
+              <tr>
+                <th>{{'Type'| translate}}</th>
+                <th>{{'Duration'| translate}}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of regularization_list">
+                <td class="log-time">{{ log.type?log.type:'-' }}</td>
+                <td class="duration-time">{{ log.duration ? log.duration + ' HR(S)' : '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
 </ng-template>

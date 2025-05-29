@@ -13,9 +13,11 @@
     .welcome-text {
         font-weight: 500;
         font-size: var(--fontsize20);
+        color: #000000;
 
         .name {
             color: var(--primary-color);
+            font-weight: 700;
         }
     }
 
@@ -151,13 +153,13 @@
 
                 .total-count-content {
                     position: absolute;
-                    top: 40%;
-                    left: 30%;
+                    top: 50%;
+                    left: 35%;
                     text-align: center;
 
                     .count {
                         font-weight: 700;
-                        font-size: var(--fontsize10);
+                        font-size: var(--fontsize16);
                         color: #0F358A;
                     }
 

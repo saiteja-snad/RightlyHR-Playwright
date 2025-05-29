@@ -10,7 +10,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Carousel } from 'primeng/carousel';
 import { ChartModule } from 'primeng/chart';
-import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDaysData, IMarriageAnniversary, INewJoinee, IOrgHolidaysHeader, Permission } from '../../Interfaces/dashboard.modal';
+import { AttendanceResponse, EmployeeStatusCount, IAnniversariesData, IBirthDaysData, IMarriageAnniversary, INewJoinee, Permission } from '../../Interfaces/dashboard.modal';
 import { IdayLogs } from '../../Attendance/attendance-view/attendance-modal';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { Skeleton } from 'primeng/skeleton';
@@ -26,7 +26,7 @@ import { Skeleton } from 'primeng/skeleton';
     ChartModule,
     DateformatPipe,
     Skeleton
-],
+  ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
   encapsulation: ViewEncapsulation.None,
@@ -64,18 +64,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
   birthDaysData: IBirthDaysData[] = [];
   anniversariesData: IAnniversariesData[] = [];
   newJoineesData: INewJoinee[] = [];
-  attendanceData!:AttendanceResponse; 
+  attendanceData: AttendanceResponse = {}  as AttendanceResponse;
   punchPairs = [] as IdayLogs[];
   logsDuration!: string;
   selectedDate!: Date;
-  permissions_list:Permission[] = [];
-  regularization_list:Permission[] = [];
-  marriageAnniversaryData:IMarriageAnniversary[] = [];
-  employeesStatusCount:EmployeeStatusCount = {} as EmployeeStatusCount;
+  permissions_list: Permission[] = [];
+  regularization_list: Permission[] = [];
+  marriageAnniversaryData: IMarriageAnniversary[] = [];
+  employeesStatusCount: EmployeeStatusCount = {} as EmployeeStatusCount;
   attendanceLoader = false;
   chartLoader = false;
   eventsLoader = false;
-
 
   constructor(
     private router: Router,
@@ -83,7 +82,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     public rbac: RbacService,
     public modalService: NgbModal,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.employeedata = JSON.parse(
@@ -146,69 +145,66 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.eventItems = shuffled.slice(0, 3);
         this.eventsLoader = false;
       },
-      error: (reason) =>{
+      error: (reason) => {
         this.eventsLoader = false;
-        console.log(reason)},
+      },
     });
   }
 
   //function for to get the Employees count based on the status
   getEmployeeStatusCount() {
-  this.chartLoader = true;
-  this.subscription = this.http.getData(`Employeedata/get-employees-status-count`).subscribe({
-    next: (data: any) => {
-      this.employeesStatusCount = data.data as EmployeeStatusCount;
-      this.chartLoader = false;
-      this.Active = 0;
-      this.Inactive = 0;
-      this.ACTDATA = 0;
-      this.PROBDATA = 0;
-      this.traineeactive = 0;
-      this.traineeInactive = 0;
-      this.Trainee = 0;
-      const statusList = this.employeesStatusCount?.statusWiseCount;
-      if (Array.isArray(statusList)) {
-        for (const statusItem of statusList) {
-          switch (statusItem.status) {
-            case 'Active Employees':
-              this.Active = statusItem.count;
-              break;
-            case 'Inactive Employees':
-              this.Inactive = statusItem.count;
-              break;
-            case 'Prospective Employees':
-              this.ACTDATA = statusItem.count;
-              break;
-            case 'Probation Employees':
-              this.PROBDATA = statusItem.count;
-              break;
-            case 'Active Trainees':
-              this.traineeactive = statusItem.count;
-              break;
-            case 'Inactive Trainees':
-              this.traineeInactive = statusItem.count;
-              break;
-            case 'Prospective Trainees':
-              this.Trainee = statusItem.count;
-              break;
+    this.chartLoader = true;
+    this.subscription = this.http.getData(`Employeedata/get-employees-status-count`).subscribe({
+      next: (data: any) => {
+        this.employeesStatusCount = data.data as EmployeeStatusCount;
+        this.chartLoader = false;
+        this.Active = 0;
+        this.Inactive = 0;
+        this.ACTDATA = 0;
+        this.PROBDATA = 0;
+        this.traineeactive = 0;
+        this.traineeInactive = 0;
+        this.Trainee = 0;
+        const statusList = this.employeesStatusCount?.statusWiseCount;
+        if (Array.isArray(statusList)) {
+          for (const statusItem of statusList) {
+            switch (statusItem.status) {
+              case 'Active Employees':
+                this.Active = statusItem.count;
+                break;
+              case 'Inactive Employees':
+                this.Inactive = statusItem.count;
+                break;
+              case 'Prospective Employees':
+                this.ACTDATA = statusItem.count;
+                break;
+              case 'Probation Employees':
+                this.PROBDATA = statusItem.count;
+                break;
+              case 'Active Trainees':
+                this.traineeactive = statusItem.count;
+                break;
+              case 'Inactive Trainees':
+                this.traineeInactive = statusItem.count;
+                break;
+              case 'Prospective Trainees':
+                this.Trainee = statusItem.count;
+                break;
+            }
           }
+        } else {
+          console.warn('statusWiseCount is not an array:', statusList);
         }
-      } else {
-        console.warn('statusWiseCount is not an array:', statusList);
-      }
-      this.updateCardItems();  
-
-    },
-    error: (reason) => {
-      this.chartLoader = false;
-      console.log(reason)},
-  });
-}
-
+        this.updateCardItems();
+      },
+      error: (reason) => {
+        this.chartLoader = false;
+      },
+    });
+  }
 
   setIconBasedOnTime() {
     const hour = new Date().getHours();
-
     if (hour >= 5 && hour < 12) {
       // Morning
       this.greetingMessage = 'Good Morning';
@@ -228,11 +224,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-
-
   loadEvents() {
     this.eventsLoader = true;
-      forkJoin([
+    forkJoin([
       this.http.getData(
         `Employeedata/ActiveEmployeesbday?months=${this.currentMonth}`
       ) as Observable<IBirthDaysData[]>,
@@ -247,11 +241,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       ) as Observable<IMarriageAnniversary[]>
       ,
     ]).subscribe(
-      ([birthdays, anniversaries, newJoinees,marriageAnniversary]) => {
+      ([birthdays, anniversaries, newJoinees, marriageAnniversary]) => {
         const today = new Date();
         const todayDay = today.getDate();
         const todayMonth = today.getMonth(); // 0-based
-
         const birthDayEvents = birthdays
           .filter((b) => {
             const dob = new Date(b.dob);
@@ -266,7 +259,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             }),
             date: b.dob,
           }));
-
         const anniversaryEvents = anniversaries
           .filter((a) => {
             const doj = new Date(a.dateOfJoining);
@@ -282,8 +274,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             yearCount: a.anniversaryYearCount,
             date: a.dateOfJoining,
           }));
-
-
         const marriageAnniversariesEvent = marriageAnniversary
           .filter((a) => {
             const doj = new Date(a.marriedDate);
@@ -298,9 +288,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             }),
             date: a.marriedDate,
           }));
-
         const todayString = today.toISOString().split('T')[0];
-
         const newJoineeEvents = newJoinees
           .filter((n) => n.dateOfJoining?.split('T')[0] === todayString)
           .map((n) => ({
@@ -312,7 +300,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             }),
             doj: n.dateOfJoining,
           }));
-
         const events = [
           ...birthDayEvents,
           ...anniversaryEvents,
@@ -325,7 +312,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         } else {
           this.quotationsData();
         }
-     
       },
       (err: any) => {
         this.eventsLoader = false;
@@ -333,16 +319,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.quotationsData();
       }
     );
-}
+  }
 
-getFullName(b: { firstName: string; middleName?: string; lastName: string }): string {
-  return [b.firstName, b.middleName, b.lastName]
-    .filter(Boolean) // removes undefined or empty strings
-    .join(' ');
-}
+  getFullName(b: { firstName: string; middleName?: string; lastName: string }): string {
+    return [b.firstName, b.middleName, b.lastName]
+      .filter(Boolean) // removes undefined or empty strings
+      .join(' ');
+  }
 
-
- openModalLarge(content: any) {
+  openModalLarge(content: any) {
     this.modalService.open(content, {
       centered: true,
       size: 'lg',
@@ -368,8 +353,6 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
     }
   }
 
-
-  
   filterJobsByStatus(status: string): any[] {
     return this.jobdata.filter(
       (job: { status: string }) => job.status === status
@@ -385,8 +368,6 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
     }, 0);
   }
 
- 
-
   getAttendenceLogsOfLoginedUser(
     empId: number,
     currentYear: number,
@@ -394,19 +375,17 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
     currentDay: number
   ) {
     this.attendanceLoader = true;
-    this.subscription = this.http
-      .getData(
+    this.subscription = this.http.getData(
         `v2/AttendanceData/employee/${empId}?year=${currentYear}&month=${currentMonth}&date=${currentDay}`
       )
       .subscribe({
         next: (data: any) => {
           this.attendanceLoader = false;
           this.attendanceData = data;
-          console.log(this.attendanceData);
         },
         error: (reason) => {
           this.attendanceLoader = false;
-          console.log(reason)},
+        },
       });
   }
 
@@ -419,13 +398,11 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
       {
         label: 'Active',
         sublabel: 'Employees',
-        count: this.employeesStatusCount.statusWiseCount.find((item)=> item.status === 'Active Employees'),
+        link: '/employee-management/active-employees',
+        count: this.Active,
         icon: '/employee-data/active-employees-icon.png',
         employeementTypeColor: '#F9D339',
-        permission: {
-          feature: 'Dashboard Active Employees Card',
-          action: 'view',
-        },
+        permission: { feature: 'Dashboard Active Employees Card', action: 'view' }
       },
       {
         label: 'Inactive',
@@ -434,10 +411,7 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
         count: this.Inactive,
         icon: '/employee-data/inactive-employee-icon.png',
         employeementTypeColor: '#E54288',
-        permission: {
-          feature: 'Dashboard Inactive Employees Card',
-          action: 'view',
-        },
+        permission: { feature: 'Dashboard Inactive Employees Card', action: 'view' }
       },
       {
         label: 'Prospective',
@@ -446,10 +420,7 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
         count: this.ACTDATA,
         icon: '/employee-data/prospective-employee-icon.png',
         employeementTypeColor: '#03A9F4',
-        permission: {
-          feature: 'Dashboard Prospective Employees Card',
-          action: 'view',
-        },
+        permission: { feature: 'Dashboard Prospective Employees Card', action: 'view' }
       },
       {
         label: 'Probation',
@@ -458,10 +429,7 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
         count: this.PROBDATA,
         icon: '/employee-data/Probation-Employee-icon.png',
         employeementTypeColor: '#FF2E22',
-        permission: {
-          feature: 'Dashboard Probation Employees Card',
-          action: 'view',
-        },
+        permission: { feature: 'Dashboard Probation Employees Card', action: 'view' }
       },
 
       {
@@ -471,10 +439,7 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
         count: this.traineeactive,
         icon: '/employee-data/active-trainee-icon.png',
         employeementTypeColor: '#0B3A83',
-        permission: {
-          feature: 'Dashboard Active Trainees Card',
-          action: 'view',
-        },
+        permission: { feature: 'Dashboard Active Trainees Card', action: 'view' }
       },
       {
         label: 'Inactive',
@@ -483,10 +448,7 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
         count: this.traineeInactive,
         icon: '/employee-data/inactive-trainee-icon.png',
         employeementTypeColor: '#1064CA',
-        permission: {
-          feature: 'Dashboard Inactive Trainees Card',
-          action: 'view',
-        },
+        permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
       },
       {
         label: 'Prospective',
@@ -495,10 +457,7 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
         count: this.Trainee,
         icon: '/employee-data/prospective-trainee-icon.png',
         employeementTypeColor: '#53D33A',
-        permission: {
-          feature: 'Dashboard Prospective Trainee Card',
-          action: 'view',
-        },
+        permission: { feature: 'Dashboard Prospective Trainee Card', action: 'view' }
       },
     ];
     // this.filterTabsByRbac();
@@ -545,7 +504,6 @@ getFullName(b: { firstName: string; middleName?: string; lastName: string }): st
     if (this.intervalId) {
       clearInterval(this.intervalId);
     }
-
     if (this.subscription) {
       this.subscription.unsubscribe();
     }

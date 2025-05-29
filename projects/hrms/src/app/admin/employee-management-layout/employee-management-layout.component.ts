@@ -41,7 +41,7 @@ export class EmployeeManagementLayoutComponent {
   EmployeeInfoData: any;
   EmployeeInfoDataOptions: any;
   totalEmployeesCount: any;
-  employeesStatusCount:EmployeeStatusCount = {} as EmployeeStatusCount;
+  employeesStatusCount: EmployeeStatusCount = {} as EmployeeStatusCount;
 
   constructor(private http: HttpService, public rbac: RbacService, private modalService: NgbModal, public router: Router) { }
 
@@ -56,59 +56,54 @@ export class EmployeeManagementLayoutComponent {
     this.getEmployeeStatusCount();
   }
 
-
-  
-    //function for to get the Employees count based on the status
+  //function for to get the Employees count based on the status
   getEmployeeStatusCount() {
-  this.subscription = this.http.getData(`Employeedata/get-employees-status-count`).subscribe({
-    next: (data: any) => {
-      this.employeesStatusCount = data.data as EmployeeStatusCount;
-      this.Active = 0;
-      this.Inactive = 0;
-      this.ACTDATA = 0;
-      this.PROBDATA = 0;
-      this.traineeactive = 0;
-      this.traineeInactive = 0;
-      this.Trainee = 0;
-      const statusList = this.employeesStatusCount?.statusWiseCount;
-      if (Array.isArray(statusList)) {
-        for (const statusItem of statusList) {
-          switch (statusItem.status) {
-            case 'Active Employees':
-              this.Active = statusItem.count;
-              break;
-            case 'Inactive Employees':
-              this.Inactive = statusItem.count;
-              break;
-            case 'Prospective Employees':
-              this.ACTDATA = statusItem.count;
-              break;
-            case 'Probation Employees':
-              this.PROBDATA = statusItem.count;
-              break;
-            case 'Active Trainees':
-              this.traineeactive = statusItem.count;
-              break;
-            case 'Inactive Trainees':
-              this.traineeInactive = statusItem.count;
-              break;
-            case 'Prospective Trainees':
-              this.Trainee = statusItem.count;
-              break;
+    this.subscription = this.http.getData(`Employeedata/get-employees-status-count`).subscribe({
+      next: (data: any) => {
+        this.employeesStatusCount = data.data as EmployeeStatusCount;
+        this.Active = 0;
+        this.Inactive = 0;
+        this.ACTDATA = 0;
+        this.PROBDATA = 0;
+        this.traineeactive = 0;
+        this.traineeInactive = 0;
+        this.Trainee = 0;
+        const statusList = this.employeesStatusCount?.statusWiseCount;
+        if (Array.isArray(statusList)) {
+          for (const statusItem of statusList) {
+            switch (statusItem.status) {
+              case 'Active Employees':
+                this.Active = statusItem.count;
+                break;
+              case 'Inactive Employees':
+                this.Inactive = statusItem.count;
+                break;
+              case 'Prospective Employees':
+                this.ACTDATA = statusItem.count;
+                break;
+              case 'Probation Employees':
+                this.PROBDATA = statusItem.count;
+                break;
+              case 'Active Trainees':
+                this.traineeactive = statusItem.count;
+                break;
+              case 'Inactive Trainees':
+                this.traineeInactive = statusItem.count;
+                break;
+              case 'Prospective Trainees':
+                this.Trainee = statusItem.count;
+                break;
+            }
           }
+        } else {
+          console.warn('statusWiseCount is not an array:', statusList);
         }
-      } else {
-        console.warn('statusWiseCount is not an array:', statusList);
-      }
-      this.updateCardItems();  
+        this.updateCardItems();
 
-    },
-    error: (reason) => console.log(reason),
-  });
-}
-
-
-  
+      },
+      error: (reason) => console.log(reason),
+    });
+  }
 
   filterJobsByStatus(status: string): any[] {
     return this.jobdata.filter(
@@ -124,8 +119,6 @@ export class EmployeeManagementLayoutComponent {
       return count;
     }, 0);
   }
-
-
 
   updateCardItems() {
     this.cardItems = [

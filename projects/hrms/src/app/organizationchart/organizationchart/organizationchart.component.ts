@@ -19,9 +19,10 @@ import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 @Component({
   selector: 'app-organizationchart',
-  imports: [CommonModule, Select, FormsModule, OrganizationChartModule,NgbPopoverModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, Select, FormsModule, OrganizationChartModule, NgbPopoverModule, NoDataFoundComponent, DataLoaderContentComponent, TranslateModule, ModuleInformationComponent, DateformatPipe],
   templateUrl: './organizationchart.component.html',
   styleUrl: './organizationchart.component.scss',
   encapsulation: ViewEncapsulation.None,

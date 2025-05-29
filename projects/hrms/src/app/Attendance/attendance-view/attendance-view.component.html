@@ -100,7 +100,7 @@
                                 <div class="d-flex justify-content-end">
                                     @if(item.status !== '-'){
                                     <ul class="ps-0 mb-2">
-                                        <li class="main-status-text" [ngStyle]="{ color: item.displayStatus.colour }">
+                                        <li class="main-status-text" [ngStyle]="{ color: item?.displayStatus?.colour }">
                                             {{item?.status}}</li>
                                     </ul>
                                     }

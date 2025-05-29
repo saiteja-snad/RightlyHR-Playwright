@@ -242,6 +242,10 @@ body {
             padding: 0.75rem !important;
         }
 
+        .custom-employee-dropdown {
+            transform: translate(18px, -85px) !important;
+        }
+
         .dropdown-menu-icon {
             width: 1.5rem;
             height: 1.5rem;
@@ -1135,7 +1139,7 @@ select:focus {
 .main-letter-content {
     .letter-fields-content {
         width: 27rem;
-        height: calc(100dvh - 14.5rem);
+        height: calc(100dvh - 12rem);
         overflow-x: hidden;
         overflow-y: auto;
     }
@@ -1143,7 +1147,7 @@ select:focus {
     .letter-data-content {
         width: 100%;
         flex: 1;
-        height: calc(100dvh - 14.5rem);
+        height: calc(100dvh - 12rem);
         overflow: auto;
 
         .letter-sub-data-content {

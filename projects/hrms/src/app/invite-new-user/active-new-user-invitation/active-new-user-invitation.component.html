@@ -1,19 +1,6 @@
 <div class="custom-main-component-container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <p class="component-header mb-0">
-        <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Dashboard' | translate}}
-      </p>
-    </div>
-  </div>
-
-  <!--tabs content-->
-  <div class="mb-3">
-    <app-new-user-invitation-tabs />
-  </div>
-
   <form autocomplete="off" [formGroup]="inviteActiveEmployeeForm" (ngSubmit)="activeInviteEmployee()">
-    <div class="card custom-content-data p-4">
+    <div class="custom-content-data">
       <div class="input-content mb-4">
         <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Select Employee' | translate}}<span
             class="text-danger">*</span></label>
@@ -58,5 +45,4 @@
       </div>
     </div>
   </form>
-  <!--content-->
 </div>

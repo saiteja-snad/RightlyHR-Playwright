@@ -9,9 +9,15 @@
             </li>
             }
             <!--Employee Management-->
-            <li class="nav-item menu-item-clear" [routerLink]="'/employee-management'" routerLinkActive="active-nav-link"
-                (click)="resetDropdown()">
-                <img src="main-menu-icons/dashboard-square.png" alt="Icon" class="main-menu-icon">Employee Management
+            <li class="nav-item menu-item-clear" routerLinkActive="active-nav-link" (click)="resetDropdown()">
+                <div class="btn-group dropend custom-main-menu-dropdown">
+                    <div class="d-flex flex-column align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="main-menu-icons/employee-management-icon.png" alt="Icon" class="main-menu-icon">Employees
+                    </div>
+                    <ul class="dropdown-menu custom-employee-dropdown">
+                        <app-employee-management-tabs />
+                    </ul>
+                </div>
             </li>
             <!--My Info-->
             <!-- @if(this.rbac.allowedToAccess('My Info.view')){

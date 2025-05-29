@@ -522,7 +522,6 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
       }
     }
   }
-
   assignHeading() {
     const currentPath = this.router.url;
 

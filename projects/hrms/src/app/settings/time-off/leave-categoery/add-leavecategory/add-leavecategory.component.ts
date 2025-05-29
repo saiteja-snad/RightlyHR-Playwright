@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Select } from 'primeng/select';
 import { Subscription } from 'rxjs';
@@ -8,15 +8,15 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { Router } from '@angular/router';
 import { ShiftData } from '../../../../Interfaces/timoff-model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
 @Component({
   selector: 'app-add-leavecategory',
-  imports: [CommonModule,Select,ReactiveFormsModule],
+  imports: [CommonModule, Select, ReactiveFormsModule],
   templateUrl: './add-leavecategory.component.html',
-  styleUrl: './add-leavecategory.component.scss'
+  styleUrl: './add-leavecategory.component.scss',
+  encapsulation:ViewEncapsulation.None
 })
+
 export class AddLeavecategoryComponent {
-  
   leavePolicyForm!: FormGroup;
   subscription!: Subscription;
   years: { label: string; value: number }[] = [];
@@ -26,33 +26,27 @@ export class AddLeavecategoryComponent {
   publishedCategories: any[] = [];
   postOrgPloicyDetailsArray: [] = [];
   leaveCategoryType: any[] = [
-    {label : 'General', value : 1},
-    {label : 'Flexible', value : 0}
+    { label: 'General', value: 1 },
+    { label: 'Flexible', value: 0 }
   ];
   genderDetails: any[] = [
-    {label : 'All', value : 0},
-    {label : 'Male', value : 1},
-    {label : 'Female', value : 2},
+    { label: 'All', value: 0 },
+    { label: 'Male', value: 1 },
+    { label: 'Female', value: 2 },
   ];
   marriedDetails: any[] = [
-    {label : 'All', value : 0},
-    {label : 'Married', value : 1},
-    {label : 'Unmarried', value : 2},
+    { label: 'All', value: 0 },
+    { label: 'Married', value: 1 },
+    { label: 'Unmarried', value: 2 },
   ];
-
   global: any[] = [
-    {label : 'Yes', value : true},
-    {label : 'No', value : false}
+    { label: 'Yes', value: true },
+    { label: 'No', value: false }
   ];
- shiftsArray =  [ ] as any [];
-  
+  shiftsArray = [] as any[];
 
-
-  constructor(private fb: FormBuilder,private http: HttpService,private confirmation: OpenModalService,private router: Router,private modalService: NgbModal) {
-    
-
-   
-    
+  constructor(private fb: FormBuilder, private http: HttpService, private confirmation: OpenModalService,
+     private router: Router, private modalService: NgbModal) {
   }
 
   ngOnInit(): void {
@@ -62,13 +56,12 @@ export class AddLeavecategoryComponent {
     for (let year = currentYear; year >= currentYear - 10; year--) {
       this.years.push({ label: year.toString(), value: year });
     }
-     this.leavePolicyForm = this.fb.group({
+    this.leavePolicyForm = this.fb.group({
       // Location/Shift Section
       applicableYear: [undefined, Validators.required],
       locationID: [undefined, Validators.required],
       subLocation: [undefined, Validators.required],
       shiftId: [undefined, Validators.required],
-      
       // Leave Category Information
       type: [undefined, Validators.required],
       name: ['', [Validators.required, this.restrictInputValidator]],
@@ -76,7 +69,6 @@ export class AddLeavecategoryComponent {
       validity: ['', [Validators.required, this.restrictInputNumbersValidator]],
       categoryColor: ['#000000', Validators.required],
       parentId: [undefined],
-      
       // Additional Information
       allowedGender: [undefined, Validators.required],
       allowedMaritalStatus: [undefined, Validators.required],
@@ -85,36 +77,26 @@ export class AddLeavecategoryComponent {
       isOptionalHoliday: [undefined, Validators.required],
       allowedHalfDay: [undefined, Validators.required],
       isApplicableProRataLeave: [undefined, Validators.required],
-      
       // Future Dates
       futureDatesAllowed: [undefined, Validators.required],
-      futureDatesAllowedDays: [{value:null,disabled:true}, [this.dependentRequiredValidator('futureDatesAllowed')]],
-      
+      futureDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('futureDatesAllowed')]],
       // Past Dates
       pastDateAllowed: [undefined, Validators.required],
-      pastDatesAllowedDays: [{value:null,disabled:true}, [this.dependentRequiredValidator('pastDateAllowed')]],
-      
+      pastDatesAllowedDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('pastDateAllowed')]],
       // Carry Forward
       carryForwardAllowed: [undefined, Validators.required],
-      carryForwardAllowedValue: [{value:null,disabled:true}, [this.dependentRequiredValidator('carryForwardAllowed')]],
-      
+      carryForwardAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('carryForwardAllowed')]],
       // Encash
       encashAllowedType: [undefined, Validators.required],
-      encashAllowedValue: [{value:null,disabled:true}, [this.dependentRequiredValidator('encashAllowedType')]],
-      
+      encashAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('encashAllowedType')]],
       // Notice Period
       noticeperiodAllowedType: [undefined, Validators.required],
-      noticePeriodAllowedValue: [{value:null,disabled:true}, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
-      
+      noticePeriodAllowedValue: [{ value: null, disabled: true }, [this.dependentRequiredValidator('noticeperiodAllowedType')]],
       // Probation Period
       isProbationAllowed: [undefined, Validators.required],
-      probationDays: [{value:null,disabled:true}, [this.dependentRequiredValidator('isProbationAllowed')]]
+      probationDays: [{ value: null, disabled: true }, [this.dependentRequiredValidator('isProbationAllowed')]]
     });
-
-
     this.setupDependentFieldListeners();
-
-    
   }
 
   jobLocationList() {
@@ -123,14 +105,15 @@ export class AddLeavecategoryComponent {
         this.jobLocationDropDownData = data.jobLocations;
       }
     })
-  } 
-  OnClickLocation(id :any) {
+  }
+
+  OnClickLocation(id: any) {
     const locationID = id;
-    console.log(locationID);
     this.leavePolicyForm.get('subLocation')?.reset();
-    this.leavePolicyForm.get('shiftId')?.reset(); 
+    this.leavePolicyForm.get('shiftId')?.reset();
     this.getSubLocationByid(locationID);
   }
+
   getSubLocationByid(locationID: any) {
     this.subscription = this.http.getData(`JobLocation/sub-location-by-joblocation/${locationID}`).subscribe({
       next: (data: any) => {
@@ -139,10 +122,10 @@ export class AddLeavecategoryComponent {
       }
     })
   }
-  
+
   subloactionid(id?: any) {
-      const sublocationId = this.subLocationsDropdown?.find((c: any) => parseInt(c.id) === parseInt(id));
-      this.getShiftBYid(sublocationId);
+    const sublocationId = this.subLocationsDropdown?.find((c: any) => parseInt(c.id) === parseInt(id));
+    this.getShiftBYid(sublocationId);
   }
 
   getShiftBYid(Values: any) {
@@ -165,18 +148,17 @@ export class AddLeavecategoryComponent {
   }
 
   getOrgLeavesCategories() {
-      this.subscription = this.http.getData('OrgLeavesCategories').subscribe({
-        next: (responseData: any) => {
-          this, responseData.orgcategory
-          console.log(responseData);
-          this.postOrgPloicyDetailsArray = responseData as [];
-          this.publishedCategories = responseData.filter((x: any) => x.status === 'Published');
-        },
-        error: error => {
-          console.error(error);
-        }
-      });
-    }
+    this.subscription = this.http.getData('OrgLeavesCategories').subscribe({
+      next: (responseData: any) => {
+        this,responseData.orgcategory
+        this.postOrgPloicyDetailsArray = responseData as [];
+        this.publishedCategories = responseData.filter((x: any) => x.status === 'Published');
+      },
+      error: error => {
+        console.error(error);
+      }
+    });
+  }
 
   private dependentRequiredValidator(controlName: string) {
     return (control: AbstractControl) => {
@@ -189,7 +171,7 @@ export class AddLeavecategoryComponent {
   }
 
   private setupDependentFieldListeners() {
-    this.leavePolicyForm?.get('futureDatesAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('futureDatesAllowed')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('futureDatesAllowedDays');
       if (value) {
         daysControl?.enable();
@@ -201,8 +183,7 @@ export class AddLeavecategoryComponent {
       }
       daysControl?.updateValueAndValidity();
     });
-
-    this.leavePolicyForm?.get('pastDateAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('pastDateAllowed')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('pastDatesAllowedDays');
       if (value) {
         daysControl?.enable();
@@ -214,7 +195,7 @@ export class AddLeavecategoryComponent {
       }
       daysControl?.updateValueAndValidity();
     });
-    this.leavePolicyForm?.get('carryForwardAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('carryForwardAllowed')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('carryForwardAllowedValue');
       if (value) {
         daysControl?.enable();
@@ -226,8 +207,7 @@ export class AddLeavecategoryComponent {
       }
       daysControl?.updateValueAndValidity();
     });
-
-    this.leavePolicyForm?.get('encashAllowedType')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('encashAllowedType')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('encashAllowedValue');
       if (value) {
         daysControl?.enable();
@@ -239,8 +219,7 @@ export class AddLeavecategoryComponent {
       }
       daysControl?.updateValueAndValidity();
     });
-
-    this.leavePolicyForm?.get('noticeperiodAllowedType')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('noticeperiodAllowedType')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('noticePeriodAllowedValue');
       if (value) {
         daysControl?.enable();
@@ -252,8 +231,7 @@ export class AddLeavecategoryComponent {
       }
       daysControl?.updateValueAndValidity();
     });
-
-    this.leavePolicyForm?.get('isProbationAllowed')?.valueChanges.subscribe((value :any) => {
+    this.leavePolicyForm?.get('isProbationAllowed')?.valueChanges.subscribe((value: any) => {
       const daysControl = this.leavePolicyForm.get('probationDays');
       if (value) {
         daysControl?.enable();
@@ -265,8 +243,6 @@ export class AddLeavecategoryComponent {
       }
       daysControl?.updateValueAndValidity();
     });
-
-    
   }
 
   restrictInputValidator(control: AbstractControl) {
@@ -284,12 +260,9 @@ export class AddLeavecategoryComponent {
     return null;
   }
 
-  navigate(){
+  navigate() {
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
   }
-
-
- 
 
   // Patch form values (for edit mode)
   patchFormValues(data: any) {
@@ -324,7 +297,6 @@ export class AddLeavecategoryComponent {
       isProbationAllowed: data.isProbationAllowed,
       probationDays: data.probationDays
     });
-
     // Manually trigger value changes for dependent fields
     this.leavePolicyForm.get('futureDatesAllowed')?.updateValueAndValidity();
     this.leavePolicyForm.get('pastDateAllowed')?.updateValueAndValidity();
@@ -337,7 +309,6 @@ export class AddLeavecategoryComponent {
   // Form submission
   onSubmit() {
     const formData = this.leavePolicyForm.value;
-    console.log('Form Data:', formData);
     let payload = {
       applicableYear: this.leavePolicyForm.value.applicableYear,
       locationID: this.leavePolicyForm.value.locationID,
@@ -370,11 +341,10 @@ export class AddLeavecategoryComponent {
       probationDays: this.leavePolicyForm.value.probationDays ?? 0,
       addedBy: 3356,
       lastModifiedBy: 3356,
-      status :"Pending for submission",
-      addedDate : new Date(),
-      lastModifiedDate : new Date()
+      status: "Pending for submission",
+      addedDate: new Date(),
+      lastModifiedDate: new Date()
     };
-
     this.http.postdata('OrgLeavesCategories', payload).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Leave Category added successfully');
@@ -386,15 +356,17 @@ export class AddLeavecategoryComponent {
       }
     });
   }
-  resetForm(content:any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+
+  resetForm(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
     this.leavePolicyForm.reset();
   }
-  cancel(){
+
+  cancel() {
     this.router.navigate(['/settings/timeoff-configurations/leave-categoery/pendingleavecategory']);
   }
-  closepopup(){
+
+  closepopup() {
     this.modalService.dismissAll();
   }
-
 }

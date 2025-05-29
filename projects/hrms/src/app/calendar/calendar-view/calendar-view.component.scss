@@ -55,4 +55,10 @@
       color: var(--primary-color) !important;
     }
   }
+
+  .event-title {
+    img {
+      display: none !important;
+    }
+  }
 }

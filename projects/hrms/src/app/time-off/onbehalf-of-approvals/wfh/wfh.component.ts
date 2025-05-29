@@ -83,6 +83,7 @@ export class WfhComponent {
           this.getAllPendingApprovals();
         } else {
           this.leaves.next([]);
+          this.wfhsSelects  = [];
         }
         this.http.resetTriggerSignal();
       }

@@ -85,6 +85,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
           this.getAllPendingApprovals();
         } else {
           this.leaves.next([]);
+           this.leavesselect = [];
         }
         this.http.resetTriggerSignal();
         if (this.selectedProducts?.length > 0) {
@@ -106,6 +107,7 @@ export class TimeOffComponent implements OnInit, OnDestroy {
       this.getAllPendingApprovals();
     } else {
        this.leaves.next([]);
+
     }
   }
 

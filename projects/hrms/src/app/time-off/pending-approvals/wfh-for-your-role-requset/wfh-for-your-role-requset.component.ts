@@ -76,7 +76,7 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
   spinnerLoader = false;
   searchValue: any | null;
   dataload = false;
-  wfhsselect!: LeaveApproval[];
+  wfhsselect!: AttendanceRequest;
   wfhsselects!: AttendanceRequest[];
   selectedLeavesItems: AttendanceRequest[] = [];
   multiSelect = false;
@@ -241,10 +241,10 @@ export class WfhForYourRoleRequsetComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           if(response.data.length > 0){
             this.leaves.next(response.data);
-            this.wfhsselect = response.data;
+            this.wfhsselects = response.data;
           }else{
             this.leaves.next([]);
-            this.wfhsselect  = [];
+            this.wfhsselects  = [];
           }
         },
         error: (reason) => {

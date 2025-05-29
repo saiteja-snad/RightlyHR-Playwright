@@ -35,6 +35,7 @@
   "Are you sure you want to delete the Expense iteam?": "Are you sure you want to delete the Expense iteam?",
   "EmployeeName": "Employee Name",
   "Date should be after the date of probition end date": "Date should be after the date of probition end date",
+  "Special characters and spaces are not allowed at the beginning": "Special characters and spaces are not allowed at the beginning",
   "Personal Email": "Personal Email",
   "Phone Number": "Phone Number",
   "Location": "Location ",

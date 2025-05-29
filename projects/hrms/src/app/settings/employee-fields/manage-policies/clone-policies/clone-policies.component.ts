@@ -65,8 +65,8 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
           policyFile : [row.policyAttachment],
           policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
           policyNewFile: [''],
-          acknowledged : [row.acknowledged],
-          notification : [row.notification],
+          acknowledged : [row.requiresAcknowledgment],
+          notification : [row.sendEmailNotification],
         })
       );
     });

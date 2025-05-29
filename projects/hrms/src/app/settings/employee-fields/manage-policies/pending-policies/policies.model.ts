@@ -24,5 +24,9 @@ export interface IOrgPolicyItem {
     policyName: string;
     policyAttachment: string;
     policyDescription : string;
+    requiresAcknowledgment : boolean;
+    sendEmailNotification : boolean;
+    sendNotification : boolean;
+    sendPushNotification : boolean;
     status  : string;
 }

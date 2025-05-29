@@ -15,6 +15,7 @@ import { DataLoaderContentComponent } from "../../shared/data-loader-content/dat
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { OpenModalService } from '../../services/open-modal.service';
 @Component({
   selector: 'app-companypolicies',
   imports: [CommonModule, ReactiveFormsModule, NgxDocViewerModule, Select,NgbPopoverModule, NoDataFoundComponent, TranslateModule, DataLoaderContentComponent, ModuleInformationComponent],
@@ -50,7 +51,7 @@ export class CompanypoliciesComponent {
   selectedItem : any;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location,
-    private sanitizer: DomSanitizer, public readonly router: Router) { }
+    private sanitizer: DomSanitizer, public readonly router: Router, private confirmation: OpenModalService) { }
 
   // @ViewChild('viewattamchment') private viewattamchment!: TemplateRef<any>;
   @ViewChild('viewattamchment') private viewattamchment!: NgbModal;
@@ -183,7 +184,8 @@ export class CompanypoliciesComponent {
       locationId: jobShiftDetails[0]?.locationid,
       subLocationId: jobShiftDetails[0]?.sublocationid,
       shiftId: jobShiftDetails[0]?.shiftId,
-      Applicableyear: this.selectedYear
+      Applicableyear: this.selectedYear,
+      employeeId: this.empinfo.employeeId
     };
     this.subscription = this.http.getDataWithQueryParams(`orgPolicies/getpolicybylocation`, policies).subscribe({
       next: (response: any) => {
@@ -214,20 +216,21 @@ export class CompanypoliciesComponent {
       next: (response: any) => {
         console.log(response);
         this.loading = false;
-        const modalElement = document.getElementById('successhide');
-        if (modalElement) {
-          modalElement.classList.add('show');
-          modalElement.style.display = 'block';
-          modalElement.removeAttribute('aria-hidden');
-          modalElement.setAttribute('aria-modal', 'true');
-          // this.Message = 'Policy Acknowledged successfully';
-        }
+        // const modalElement = document.getElementById('successhide');
+        // if (modalElement) {
+        //   modalElement.classList.add('show');
+        //   modalElement.style.display = 'block';
+        //   modalElement.removeAttribute('aria-hidden');
+        //   modalElement.setAttribute('aria-modal', 'true');
+        //   // this.Message = 'Policy Acknowledged successfully';
+        // }
+        this.confirmation.openSuccessModal('Policy Acknowledged successfully');
         selectedItem.acknowledged = true;
         this.getjobDetails();
-        setTimeout(() => {
-          modalElement!.style.display = 'none';
-          modalElement!.classList.remove('show');
-        }, 2000);
+        // setTimeout(() => {
+        //   modalElement!.style.display = 'none';
+        //   modalElement!.classList.remove('show');
+        // }, 2000);
       },
       error: (reason: any) => console.log(reason)
     });

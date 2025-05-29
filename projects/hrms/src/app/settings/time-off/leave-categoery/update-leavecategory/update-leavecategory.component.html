@@ -1,7 +1,7 @@
 <div class="custom-main-component-container w-100">
   <div class="d-flex justify-content-between align-items-center mb-3">
-  
-    
+
+
     <div class="heading-content">
       <div class="commpoment-name cursor" (click)="navigate()">Leave Category<span class="ms-1"><i
             class="bi bi-chevron-double-right"></i></span></div>
@@ -83,8 +83,8 @@
           <label class="form-label custom-label mb-2" for="LeaveCategory">Leave Category Type<span
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
-            <p-select [options]="leaveCategoryType" optionLabel="label" optionValue="value" placeholder="Select Category"
-              formControlName="type" class="custom-select w-100">
+            <p-select [options]="leaveCategoryType" optionLabel="label" optionValue="value"
+              placeholder="Select Category" formControlName="type" class="custom-select w-100">
             </p-select>
           </div>
           <div class="error-msg" *ngIf="leavePolicyForm.get('type')?.invalid && 
@@ -176,8 +176,7 @@
               placeholder="Select marital status" formControlName="allowedMaritalStatus" class="custom-select w-100">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('allowedMaritalStatus')?.invalid && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('allowedMaritalStatus')?.invalid && 
                                           (leavePolicyForm.get('allowedMaritalStatus')?.touched   )">
             Allowed Marital Status is required
           </div>
@@ -222,8 +221,7 @@
               formControlName="isOptionalHoliday" class="custom-select w-100">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('isOptionalHoliday')?.invalid && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('isOptionalHoliday')?.invalid && 
                                           (leavePolicyForm.get('isOptionalHoliday')?.touched   )">
             Is Optional Holiday is required
           </div>
@@ -252,8 +250,7 @@
               formControlName="isApplicableProRataLeave" class="custom-select w-100">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('isApplicableProRataLeave')?.invalid && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('isApplicableProRataLeave')?.invalid && 
                                           (leavePolicyForm.get('isApplicableProRataLeave')?.touched   )">
             Pro Rata Leave Allocation is required
           </div>
@@ -269,8 +266,7 @@
               formControlName="futureDatesAllowed" class="custom-select w-100">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('futureDatesAllowed')?.invalid && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('futureDatesAllowed')?.invalid && 
                                           (leavePolicyForm.get('futureDatesAllowed')?.touched   )">
             Future Dates Allowed is required
           </div>
@@ -281,8 +277,7 @@
           <label class="form-label custom-label mb-2" for="gender">Days<span class="text-danger">*</span></label>
           <input type="number" formControlName="futureDatesAllowedDays" class="form-control custom-input"
             id="FutureDatesAllowedUnits" placeholder="No. of days" autocomplete="off" min="1">
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('futureDatesAllowed')?.value === true && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('futureDatesAllowed')?.value === true && 
                                           leavePolicyForm.get('futureDatesAllowedDays')?.invalid && 
                                           (leavePolicyForm.get('futureDatesAllowedDays')?.touched   )">
             <span *ngIf="leavePolicyForm.get('futureDatesAllowedDays')?.errors?.['required']">
@@ -315,8 +310,7 @@
           <label class="form-label custom-label mb-2" for="pastdatesdays">Days<span class="text-danger">*</span></label>
           <input type="number" formControlName="pastDatesAllowedDays" class="form-control custom-input"
             id="PastDatesAllowedUnits" placeholder="No. of days" autocomplete="off" min="1">
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('pastDateAllowed')?.value === true && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('pastDateAllowed')?.value === true && 
                                           leavePolicyForm.get('pastDatesAllowedDays')?.invalid && 
                                           (leavePolicyForm.get('pastDatesAllowedDays')?.touched   )">
             <span *ngIf="leavePolicyForm.get('pastDatesAllowedDays')?.errors?.['required']">
@@ -338,8 +332,7 @@
               formControlName="carryForwardAllowed" class="custom-select w-100">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('carryForwardAllowed')?.invalid && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('carryForwardAllowed')?.invalid && 
                                           (leavePolicyForm.get('carryForwardAllowed')?.touched   )">
             Carry Forward Leave is required
           </div>
@@ -350,8 +343,7 @@
           <label class="form-label custom-label mb-2" for="gender">Days<span class="text-danger">*</span></label>
           <input type="number" formControlName="carryForwardAllowedValue" class="form-control custom-input"
             id="CarryForwardLeaveUnits" placeholder="No. of days" autocomplete="off" min="1">
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('carryForwardAllowed')?.value === true && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('carryForwardAllowed')?.value === true && 
                                           leavePolicyForm.get('carryForwardAllowedValue')?.invalid && 
                                           (leavePolicyForm.get('carryForwardAllowedValue')?.touched   )">
             <span *ngIf="leavePolicyForm.get('carryForwardAllowedValue')?.errors?.['required']">
@@ -373,8 +365,7 @@
               formControlName="encashAllowedType" class="custom-select w-100">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('encashAllowedType')?.invalid && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('encashAllowedType')?.invalid && 
                                           (leavePolicyForm.get('encashAllowedType')?.touched   )">
             Encash Allowed is required
           </div>
@@ -418,8 +409,7 @@
               class="text-danger">*</span></label>
           <input type="number" formControlName="noticePeriodAllowedValue" class="form-control custom-input"
             id="NoticePeriodUnits" placeholder="No. of days" autocomplete="off" min="1">
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.value === true && 
+          <div class="error-msg" *ngIf="leavePolicyForm.get('noticeperiodAllowedType')?.value === true && 
                                           leavePolicyForm.get('noticePeriodAllowedValue')?.invalid && 
                                           (leavePolicyForm.get('noticePeriodAllowedValue')?.touched   )">
             <span *ngIf="leavePolicyForm.get('noticePeriodAllowedValue')?.errors?.['required']">
@@ -438,12 +428,11 @@
               class="text-danger">*</span></label>
           <div class="custom-p-select-content">
             <p-select [options]="global" optionLabel="label" optionValue="value" placeholder="Select option"
-              formControlName="isProbationAllowed" class="custom-select w-100">
+              formControlName="isProbationAllowed" class="custom-select w-100" appendTo="body">
             </p-select>
           </div>
-          <div class="error-msg"
-            *ngIf="leavePolicyForm.get('isProbationAllowed')?.invalid && 
-                                          (leavePolicyForm.get('isProbationAllowed')?.touched   )">
+          <div class="error-msg" *ngIf="leavePolicyForm.get('isProbationAllowed')?.invalid && 
+          (leavePolicyForm.get('isProbationAllowed')?.touched)">
             Allow Leaves is required
           </div>
         </div>
@@ -470,12 +459,15 @@
     <!-- Form submission buttons -->
     <div class="d-flex justify-content-end gap-3 pt-3">
       <button type="button" class="custom-btn btn-secondary px-5" (click)="resetForm(confirmationpopup)">Cancel</button>
-      <button type="button" class="custom-btn clone-btn px-5" (click)="navigateToCloneLeaveCategory()" [disabled]="leavePolicyForm.invalid">Clone</button>
-      <button type="button" class="custom-btn publish-btn px-5" (click)="onPublished()" [disabled]="leavePolicyForm.invalid">Publish</button>
+      <button type="button" class="custom-btn clone-btn px-5" (click)="navigateToCloneLeaveCategory()"
+        [disabled]="leavePolicyForm.invalid">Clone</button>
+      <button type="button" class="custom-btn publish-btn px-5" (click)="onPublished()"
+        [disabled]="leavePolicyForm.invalid">Publish</button>
       <button type="submit" class="custom-btn btn-primary px-5" [disabled]="leavePolicyForm.invalid">Update</button>
     </div>
   </form>
 </div>
+
 <ng-template #confirmationpopup let-model>
   <div class="result-popup-content" ngbAutofocus>
     <div>

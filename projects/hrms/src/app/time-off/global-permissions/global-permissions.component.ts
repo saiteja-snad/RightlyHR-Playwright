@@ -15,17 +15,16 @@ import { AddGlobalPermissionsComponent } from './add-global-permissions/add-glob
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { Select } from 'primeng/select';
+import { InfoIconComponent } from "../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-global-permissions',
-  imports: [CommonModule, NgbPopoverModule, FormsModule,Select, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, ModuleInformationComponent],
+  imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, GlobalpermissionsPipe, ModuleInformationComponent, InfoIconComponent],
   templateUrl: './global-permissions.component.html',
   styleUrl: './global-permissions.component.scss'
 })
 
 export class GlobalPermissionsComponent implements OnInit, OnDestroy {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   totalRecords = 100
   first: any = 1;
   rows: any = 10;
@@ -69,7 +68,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
     this.initiateUpdateModuleInfo();
     this.getjobLocationList();
   }
-  
+
   getjobLocationList() {
     this.subscription = this.http.getData(`JobLocation/getAllLocations`).subscribe({
       next: (data: any) => {
@@ -77,24 +76,20 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
       },
     });
   }
- onLocationChange() {
-   
-  }
-  initiateUpdateModuleInfo(){
+
+  initiateUpdateModuleInfo() {
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/time-off/global-permissions': MODULE_INFOS.TIME_OFF_GLOBAL_PERMISSION_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
@@ -114,7 +109,7 @@ export class GlobalPermissionsComponent implements OnInit, OnDestroy {
       },
     })
   }
-  
+
   //function to get the values 
   getEmployeeNames(employeeIds: any[]): string {
     return employeeIds.map(emp => `${emp.firstName ?? ''} ${emp.middleName ?? ''} ${emp.lastName ?? ''} 

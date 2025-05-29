@@ -11,13 +11,15 @@ import { Ilpid } from '../../../Interfaces/onbehalfof.model';
 import { AuthService } from '../../../services/auth.service';
 import { HttpService } from '../../../services/http.service';
 import { RbacService } from '../../../services/rbac.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-on-be-half-of-cancel',
-  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent],
+  imports: [CommonModule, NgbNavModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule, DateformatPipe, NoDataFoundComponent, InfoIconComponent],
   templateUrl: './on-be-half-of-cancel.component.html',
   styleUrl: './on-be-half-of-cancel.component.scss'
 })
+
 export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
   totalRecords = 100
   first: any = 0;
@@ -60,7 +62,6 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
     this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string);
     if (this.cadidateEmployeeId) {
       this.getDataByLPID();
-
     }
   }
 
@@ -78,11 +79,11 @@ export class OnBeHalfOfCancelComponent implements OnInit, OnDestroy {
       error: (reason: any) => console.log(reason)
     });
   }
+
   ngOnDestroy(): void {
     // Clean up any subscriptions or resources
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
   }
-
 }

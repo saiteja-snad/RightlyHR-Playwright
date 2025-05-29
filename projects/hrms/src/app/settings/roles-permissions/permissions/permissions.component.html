@@ -2029,7 +2029,15 @@
 
                         <!-- Asset Management  Tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Asset Management</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllAssetManagement
+                                    (change)="toggleSelectAll(assetManagementTabsFields, selectAllAssetManagement?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(assetManagementTabsFields)"
+                                    [indeterminate]="isSomeSelected(assetManagementTabsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Asset Management
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Asset Management - Create'  || per.fields === 'Asset Management - All'
@@ -2069,7 +2077,15 @@
 
                         <!--Asset Management Allocation All Tabs Actions -->
                         <tr>
-                            <th colspan="5" class="custom-header">Asset Management All Tab Actions</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllAssetManagementAllTabActions
+                                    (change)="toggleSelectAll(allAssetActionsFields, selectAllAssetManagementAllTabActions?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(allAssetActionsFields)"
+                                    [indeterminate]="isSomeSelected(allAssetActionsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Asset Management All Tab Actions
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2098,8 +2114,16 @@
                             </tr>
                         </ng-container>
                         <!-- Asset Management Allocation Available Tabs Actions -->
-                        <tr>
-                            <th colspan="5" class="custom-header">Asset Management Available Tab Actions</th>
+                       <tr>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllAssetManagementAvailableTabActions
+                                    (change)="toggleSelectAll(availableAssetActionsFields, selectAllAssetManagementAvailableTabActions?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(availableAssetActionsFields)"
+                                    [indeterminate]="isSomeSelected(availableAssetActionsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Asset Management Available Tab Actions
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2127,7 +2151,15 @@
 
                         <!-- Asset Management Allocation Allocated Tabs Actions -->
                         <tr>
-                            <th colspan="5" class="custom-header">Asset Management Allocated Tab Actions</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllAssetManagementAllocatedTabActions
+                                    (change)="toggleSelectAll(allocatedAssetActionsFields, selectAllAssetManagementAllocatedTabActions?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(allocatedAssetActionsFields)"
+                                    [indeterminate]="isSomeSelected(allocatedAssetActionsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Asset Management Allocated Tab Actions
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2154,7 +2186,15 @@
 
                         <!-- Asset Management Allocation Under Maintenance Tabs Actions -->
                         <tr>
-                            <th colspan="5" class="custom-header">Asset Management Under Maintenance Tab Actions</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllAssetManagementUndermaintenanceTabActions
+                                    (change)="toggleSelectAll(underMaintenanceAssetActionsFields, selectAllAssetManagementUndermaintenanceTabActions?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(underMaintenanceAssetActionsFields)"
+                                    [indeterminate]="isSomeSelected(underMaintenanceAssetActionsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Asset Management Under Maintenance Tab Actions
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2180,9 +2220,17 @@
                         </ng-container>
 
                         <!-- Asset Management Inactive Tabs Actions -->
-                        <tr>
-                            <th colspan="5" class="custom-header">Asset Management Inactive Tab Actions</th>
-                        </tr>
+                            <tr>
+                                <th colspan="5" class="custom-header">
+                                    <input type="checkbox" #selectAllAssetManagementInactiveTabActions
+                                        (change)="toggleSelectAll(inactiveAssetActionsFields, selectAllAssetManagementInactiveTabActions?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                        [checked]="isAllSelected(inactiveAssetActionsFields)"
+                                        [indeterminate]="isSomeSelected(inactiveAssetActionsFields)"
+                                        [disabled]="!roleToFilter?.id"
+                                        class="me-2 mt-2">
+                                    Asset Management Inactive Tab Actions
+                                </th>
+                            </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Inactive Mark as Active Asset' || per.fields === 'Inactive View Asset Details' || per.fields === 'Inactive Update Asset Details'">
@@ -2208,7 +2256,15 @@
 
                         <!-- My Info Sub tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">My Info Sub Tabs</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllMyInfoSubTabs
+                                    (change)="toggleSelectAll(myInfoSubTabsFields, selectAllMyInfoSubTabs?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(myInfoSubTabsFields)"
+                                    [indeterminate]="isSomeSelected(myInfoSubTabsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                My Info Sub Tabs
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2238,9 +2294,17 @@
 
                         <!-- My Info Personal Sub tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">My Info Personal Sub tabs</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllMyInfoPersonalSubTabs
+                                    (change)="toggleSelectAll(myInfoPersonalSubTabsFields, selectAllMyInfoPersonalSubTabs?.checked, isattendanceEligibilityCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(myInfoPersonalSubTabsFields)"
+                                    [indeterminate]="isSomeSelected(myInfoPersonalSubTabsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                My Info Personal Sub tabs
+                            </th>
                         </tr>
-                        <ng-container *ngFor="let per of permissions">
+                                                <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'My Info Basic Information' ||  per.fields === 'My Info Address Details' || per.fields === 'My Info Contact Details'
                             ||  per.fields === 'My Info Emergency Contact Details' || per.fields === 'My Info Education Details'  || per.fields === 'My Info Identity Details'
@@ -2340,9 +2404,17 @@
 
                         <!-- My Info Job Module -->
                         <tr>
-                            <th colspan="5" class="custom-header">My Info Job Module</th>
-                        </tr>
-                        <ng-container *ngFor="let per of permissions">
+                                <th colspan="5" class="custom-header">
+                                    <input type="checkbox" #selectAllMyInfoJobModule
+                                        (change)="toggleSelectAll(myInfoJobModuleFields, selectAllMyInfoJobModule?.checked, isattendanceEligibilityCheckboxDisabled.bind(this))"
+                                        [checked]="isAllSelected(myInfoJobModuleFields)"
+                                        [indeterminate]="isSomeSelected(myInfoJobModuleFields)"
+                                        [disabled]="!roleToFilter?.id"
+                                        class="me-2 mt-2">
+                                    My Info Job Module
+                                </th>
+                            </tr>
+                            <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'My Info Pre-Onboarding Details' ||  per.fields === 'My Info Onboarding Details' || per.fields === 'My Info Offboarding Details' || per.fields === 'My Info Job Details'
                             ||  per.fields === 'My Info Separation Request Details' || per.fields === 'My Info No Due Clearance Details' || 
@@ -2374,7 +2446,15 @@
 
                         <!-- My Info Separation Request Details -->
                         <tr>
-                            <th colspan="5" class="custom-header">My Info Separation Request Details</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllMyInfoSeparationRequestDetails
+                                    (change)="toggleSelectAll(myInfoSeparationRequestFields, selectAllMyInfoSeparationRequestDetails?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(myInfoSeparationRequestFields)"
+                                    [indeterminate]="isSomeSelected(myInfoSeparationRequestFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                My Info Separation Request Details
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2401,9 +2481,17 @@
                         </ng-container>
 
                         <!-- My Info No Due Clearance Details -->
-                        <tr>
-                            <th colspan="5" class="custom-header">My Info No Due Clearance Details</th>
-                        </tr>
+                            <tr>
+                                <th colspan="5" class="custom-header">
+                                    <input type="checkbox" #selectAllMyInfoNoDueClearanceDetails
+                                        (change)="toggleSelectAll(myInfoNoDueClearanceFields, selectAllMyInfoNoDueClearanceDetails?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                        [checked]="isAllSelected(myInfoNoDueClearanceFields)"
+                                        [indeterminate]="isSomeSelected(myInfoNoDueClearanceFields)"
+                                        [disabled]="!roleToFilter?.id"
+                                        class="me-2 mt-2">
+                                    My Info No Due Clearance Details
+                                </th>
+                            </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Submission Of No Due Clearance' ||  per.fields === 'Re-request for no due'">
@@ -2431,7 +2519,15 @@
 
                         <!-- Employee Info Sub tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Employee Info Sub tabs</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllEmployeeInfoSubTabs
+                                    (change)="toggleSelectAll(employeeInfoSubTabsFields, selectAllEmployeeInfoSubTabs?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(employeeInfoSubTabsFields)"
+                                    [indeterminate]="isSomeSelected(employeeInfoSubTabsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Employee Info Sub tabs
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Employee Info Personal Tab' ||  per.fields === 'Employee Info Job Tab' || per.fields === 'Employee Info Documents Tab'
@@ -2459,7 +2555,15 @@
 
                         <!-- Employee Info Personal Sub tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Employee Info Job Module</th>
+                           <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllEmployeeInfoJobModule
+                                    (change)="toggleSelectAll(employeeInfoJobModuleFields, selectAllEmployeeInfoJobModule?.checked, isEmployeeInfoJobActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(employeeInfoJobModuleFields)"
+                                    [indeterminate]="isSomeSelected(employeeInfoJobModuleFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Employee Info Job Module
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2508,7 +2612,15 @@
 
                         <!-- My Info Separation Request Details -->
                         <tr>
-                            <th colspan="5" class="custom-header">Employee Info Separation Request Details</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllEmployeeInfoSeparationRequestDetails
+                                    (change)="toggleSelectAll(employeeSeparationRequestFields, selectAllEmployeeInfoSeparationRequestDetails?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(employeeSeparationRequestFields)"
+                                    [indeterminate]="isSomeSelected(employeeSeparationRequestFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Employee Info Separation Request Details
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2561,7 +2673,15 @@
                         </ng-container>
                         <!-- Employee Info No Due Clearance Details -->
                         <tr>
-                            <th colspan="5" class="custom-header">Employee Info No Due Clearance Details</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllEmployeeInfoNoDueClearanceDetails
+                                    (change)="toggleSelectAll(employeeNoDueClearanceFields, selectAllEmployeeInfoNoDueClearanceDetails?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(employeeNoDueClearanceFields)"
+                                    [indeterminate]="isSomeSelected(employeeNoDueClearanceFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Employee Info No Due Clearance Details
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2589,7 +2709,15 @@
 
                         <!-- Employee Info Probation Details -->
                         <tr>
-                            <th colspan="5" class="custom-header">Employee Info Probation Details</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllEmployeeInfoProbationDetails
+                                    (change)="toggleSelectAll(employeeProbationRequestFields, selectAllEmployeeInfoProbationDetails?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(employeeProbationRequestFields)"
+                                    [indeterminate]="isSomeSelected(employeeProbationRequestFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Employee Info Probation Details
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2644,7 +2772,15 @@
 
                         <!-- Dashboard Module Card Items -->
                         <tr>
-                            <th colspan="5" class="custom-header">Dashboard Module Card Items</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllDashboardModuleCardItems
+                                    (change)="toggleSelectAll(dashboardModuleCardItemsFields, selectAllDashboardModuleCardItems?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(dashboardModuleCardItemsFields)"
+                                    [indeterminate]="isSomeSelected(dashboardModuleCardItemsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Dashboard Module Card Items
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2677,7 +2813,15 @@
 
                         <!--Dashboard Documents History -->
                         <tr>
-                            <th colspan="5" class="custom-header">Dashboard Documents History</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllDashboardDocumentsHistory
+                                    (change)="toggleSelectAll(documentsHistoryFields, selectAllDashboardDocumentsHistory?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(documentsHistoryFields)"
+                                    [indeterminate]="isSomeSelected(documentsHistoryFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Dashboard Documents History
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2706,7 +2850,15 @@
 
                         <!--ACtive letters -->
                         <tr>
-                            <th colspan="5" class="custom-header">Active Letters</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllActiveLetters
+                                    (change)="toggleSelectAll(activeLettersFields, selectAllActiveLetters?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(activeLettersFields)"
+                                    [indeterminate]="isSomeSelected(activeLettersFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Active Letters
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Address Proof Letter' || per.fields === 'Bank Loan Letter' ||  per.fields === 'Apprisal Letter' || 
@@ -2761,7 +2913,15 @@
 
                         <!--InACtive letters -->
                         <tr>
-                            <th colspan="5" class="custom-header">Probation Generate Documents</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllProbationGenerateDocuments
+                                    (change)="toggleSelectAll(probationGenerateDocumentsFields, selectAllProbationGenerateDocuments?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(probationGenerateDocumentsFields)"
+                                    [indeterminate]="isSomeSelected(probationGenerateDocumentsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Probation Generate Documents
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2788,7 +2948,15 @@
 
                         <!--Dashboard Document Offer Letter Actions -->
                         <tr>
-                            <th colspan="5" class="custom-header">Dashboard Document History Actions</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllDashboardDocumentHistoryActions
+                                    (change)="toggleSelectAll(dashboardDocumentHistoryActionsFields, selectAllDashboardDocumentHistoryActions?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(dashboardDocumentHistoryActionsFields)"
+                                    [indeterminate]="isSomeSelected(dashboardDocumentHistoryActionsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Dashboard Document History Actions
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2816,10 +2984,19 @@
                             </tr>
                         </ng-container>
 
-                        <!--Dashboard Generate Documents -->
+                        <!--Dashboard Generate Documents -->                      
                         <tr>
-                            <th colspan="5" class="custom-header">Dashboard Documents History</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllDashboardDocumentHistory
+                                    (change)="toggleSelectAll(dashboardGenerateDocumentsFields, selectAllDashboardDocumentHistory?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(dashboardGenerateDocumentsFields)"
+                                    [indeterminate]="isSomeSelected(dashboardGenerateDocumentsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Dashboard Documents History
+                            </th>
                         </tr>
+                      
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Dashboard Generate Documents Offer Letter' ||  per.fields === 'Dashboard Generate Documents Appointment Letter' || 
                             per.fields === 'Dashboard Generate Documents Trainee Offer Letter' || per.fields === 'Dashboard Generate Documents Trainee Appointment Letter' || 
@@ -2926,7 +3103,15 @@
 
                         <!-- Employee Info Team Member tabs -->
                         <tr>
-                            <th colspan="5" class="custom-header">Employee Info Team Members</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllEmployeeInfoTeamMembers
+                                    (change)="toggleSelectAll(employeeInfoTeamManagerFields, selectAllEmployeeInfoTeamMembers?.checked, isexpensesdActionDisabled.bind(this))"
+                                    [checked]="isAllSelected(employeeInfoTeamManagerFields)"
+                                    [indeterminate]="isSomeSelected(employeeInfoTeamManagerFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Employee Info Team Members
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -2948,13 +3133,21 @@
                                 <td scope="row">
                                     <input type="checkbox" [(ngModel)]="per.Delete" name="{{ per.fields }}.delete"
                                         [disabled]="true">
-                                </td>
+                                 </td>
                             </tr>
                         </ng-container>
 
                         <!--PMS Module -->
                         <tr>
-                            <th colspan="5" class="custom-header">PMS Module</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllPmsModule
+                                    (change)="toggleSelectAll(pmsModuleFields, selectAllPmsModule?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pmsModuleFields)"
+                                    [indeterminate]="isSomeSelected(pmsModuleFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                PMS Module
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center" *ngIf="per.fields === 'Review Cycle List' ||  per.fields === 'Review Cycle Employee List' || 
@@ -2982,7 +3175,15 @@
 
                         <!--Review Cycle List Actions -->
                         <tr>
-                            <th colspan="5" class="custom-header">Review Cycle List Actions</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllReviewCycleListActions
+                                    (change)="toggleSelectAll(reviewCycleListActionsFields, selectAllReviewCycleListActions?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(reviewCycleListActionsFields)"
+                                    [indeterminate]="isSomeSelected(reviewCycleListActionsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Review Cycle List Actions
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -3011,7 +3212,15 @@
 
                         <!--Review Cycle Employee List Actions-->
                         <tr>
-                            <th colspan="5" class="custom-header">Review Cycle Employee List Actions</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllReviewCycleEmployeeListActions
+                                    (change)="toggleSelectAll(reviewCycleEmployeeListActionsFields, selectAllReviewCycleEmployeeListActions?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(reviewCycleEmployeeListActionsFields)"
+                                    [indeterminate]="isSomeSelected(reviewCycleEmployeeListActionsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Review Cycle Employee List Actions
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -3048,7 +3257,15 @@
 
                         <!--My Performance Review Tabs Section-->
                         <tr>
-                            <th colspan="5" class="custom-header">My Performance Review Tabs Section</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllMyPerformanceReviewTabs
+                                    (change)="toggleSelectAll(myPerformanceReviewTabsFields, selectAllMyPerformanceReviewTabs?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(myPerformanceReviewTabsFields)"
+                                    [indeterminate]="isSomeSelected(myPerformanceReviewTabsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                My Performance Review Tabs Section
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -3103,7 +3320,15 @@
 
                         <!--Completed Reviews Actions-->
                         <tr>
-                            <th colspan="5" class="custom-header">Completed Reviews Actions</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllCompletedReviewsActions
+                                    (change)="toggleSelectAll(completedReviewsActionsFields, selectAllCompletedReviewsActions?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(completedReviewsActionsFields)"
+                                    [indeterminate]="isSomeSelected(completedReviewsActionsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Completed Reviews Actions
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -3131,7 +3356,15 @@
 
                         <!--Team Performance Review Tabs Section-->
                         <tr>
-                            <th colspan="5" class="custom-header">Team Performance Review Tabs Section</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllTeamPerformanceReviewTabs
+                                    (change)="toggleSelectAll(teamPerformanceReviewTabsFields, selectAllTeamPerformanceReviewTabs?.checked,isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(teamPerformanceReviewTabsFields)"
+                                    [indeterminate]="isSomeSelected(teamPerformanceReviewTabsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Team Performance Review Tabs Section
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -3186,7 +3419,15 @@
 
                         <!--Team Completed Reviews Actions-->
                         <tr>
-                            <th colspan="5" class="custom-header">Team Completed Reviews Actions</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllTeamCompletedReviews
+                                    (change)="toggleSelectAll(teamCompletedReviewsFields, selectAllTeamCompletedReviews?.checked,isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(teamCompletedReviewsFields)"
+                                    [indeterminate]="isSomeSelected(teamCompletedReviewsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Team Completed Reviews Actions
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -3215,7 +3456,15 @@
 
                         <!--PMS Module -->
                         <tr>
-                            <th colspan="5" class="custom-header">PMS Configuration Module</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllPmsConfiguration
+                                    (change)="toggleSelectAll(pmsConfigurationFields, selectAllPmsConfiguration?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(pmsConfigurationFields)"
+                                    [indeterminate]="isSomeSelected(pmsConfigurationFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                PMS Configuration Module
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -3241,9 +3490,17 @@
                             </tr>
                         </ng-container>
 
-                        <!--Increment Percentage Actions -->
+                        <!--Increment Percentage Actions -->         
                         <tr>
-                            <th colspan="5" class="custom-header">Increment Percentage Actions</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllIncrementPercentage
+                                    (change)="toggleSelectAll(incrementActionsFields, selectAllIncrementPercentage?.checked, isPmsConfigurationCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(incrementActionsFields)"
+                                    [indeterminate]="isSomeSelected(incrementActionsFields)"
+                                    [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                                Increment Percentage Actions
+                            </th>
                         </tr>
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
@@ -3270,10 +3527,18 @@
                             </tr>
                         </ng-container>
 
-                        <!--Assessor Configuration Actions -->
+                        <!--Assessor Configuration Actions -->   
                         <tr>
-                            <th colspan="5" class="custom-header">Assessor Configuration Actions</th>
+                            <th colspan="5" class="custom-header">
+                                <input type="checkbox" #selectAllsidebarsAssets
+                                    (change)="toggleSelectAll(assessorFields, selectAllsidebarsAssets?.checked, isAssetCheckboxDisabled.bind(this))"
+                                    [checked]="isAllSelected(assessorFields)"
+                                    [indeterminate]="isSomeSelected(assessorFields)" [disabled]="!roleToFilter?.id"
+                                    class="me-2 mt-2">
+                               Assessor Configuration Actions
+                            </th>
                         </tr>
+
                         <ng-container *ngFor="let per of permissions">
                             <tr class="text-align-center"
                                 *ngIf="per.fields === 'Assessor Create' || per.fields === 'Assessor Update(Status - Created)' ||  per.fields === 'Assessor Delete(Status - Created)' || 

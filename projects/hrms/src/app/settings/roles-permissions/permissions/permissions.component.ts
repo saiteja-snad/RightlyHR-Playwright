@@ -656,6 +656,294 @@ timeOffModuleSubTabs = [
   'Team Leave Balance Summary (Time Off)',
   'Team Leave Balance (Time Off)'
 ];
+// ////////
+assetManagementTabsFields = [
+  'Asset Management - Create',
+  'Asset Management - All',
+  'Asset Management - Available',
+  'Asset Management - Allocated',
+  'Asset Management - Under Maintenance',
+  'Asset Management - Inactive'
+];
+allAssetActionsFields = [
+  'All Allocate Asset',
+  'All Inactive Asset',
+  'All Mark as Maintenance',
+  'All Transfer Asset',
+  'All Reallocate Asset',
+  'All Release Asset',
+  'All Mark as Available Asset',
+  'All Mark as Active Asset',
+  'All View Asset Details',
+  'All Update Asset Details'
+];
+availableAssetActionsFields = [
+  'Available Allocate Asset',
+  'Available Inactive Asset',
+  'Available Mark as Maintenance Asset',
+  'Available Transfer Asset',
+  'Available View Asset Details',
+  'Available Update Asset Details'
+];
+allocatedAssetActionsFields = [
+  'Allocated Reallocate Asset',
+  'Allocated Release Asset',
+  'Allocated View Asset Details',
+  'Allocated Update Asset Details'
+];
+underMaintenanceAssetActionsFields = [
+  'Under Maintenance Mark as Available Asset',
+  'Under Maintenance View Asset Details',
+  'Under Maintenance Update'
+];
+inactiveAssetActionsFields = [
+  'Inactive Mark as Active Asset',
+  'Inactive View Asset Details',
+  'Inactive Update Asset Details'
+];
+myInfoSubTabsFields = [
+  'My Info Personal Tab',
+  'My Info Job Tab',
+  'My Info Documents Tab',
+  'My Info Team Members Tab',
+  'My Info Onboard Request Tab'
+];
+myInfoPersonalSubTabsFields = [
+  'My Info Basic Information',
+  'My Info Address Details',
+  'My Info Contact Details',
+  'My Info Emergency Contact Details',
+  'My Info Education Details',
+  'My Info Identity Details',
+  'My Info Family Details',
+  'My Info Bank Details',
+  'My Info Visa Details'
+];
+myInfoJobModuleFields = [
+  'My Info Pre-Onboarding Details',
+  'My Info Onboarding Details',
+  'My Info Offboarding Details',
+  'My Info Job Details',
+  'My Info Separation Request Details',
+  'My Info No Due Clearance Details',
+  'My Info Probation Details',
+  'My Info Previous Experience Details',
+  'My Info Certification Details',
+  'My Info Compensation Details',
+  'My Info Desk Details',
+  'My Info Asset Details',
+  'My Info Separation Request Button'
+];
+myInfoSeparationRequestFields = [
+  'Raise No Due',
+  'Recall',
+  'Early relieving'
+];
+myInfoNoDueClearanceFields = [
+  'Submission Of No Due Clearance',
+  'Re-request for no due'
+];
+employeeInfoSubTabsFields = [
+  'Employee Info Personal Tab',
+  'Employee Info Job Tab',
+  'Employee Info Documents Tab',
+  'Employee Info Team Members Tab'
+];
+employeeInfoJobModuleFields = [
+  'Employee Info Pre-Onboarding Details',
+  'Employee Info Onboarding Details',
+  'Employee Info Offboarding Details',
+  'Employee Info Job Details',
+  'Employee Info Separation Request Details',
+  'Employee Info No Due Clearance Details',
+  'Employee Info Probation Details',
+  'Employee Info Previous Experience Details',
+  'Employee Info Certification Details',
+  'Employee Info Onboarding Request Details',
+  'Employee Info Compensation Details',
+  'Employee Info Desk Details',
+  'Employee Info Asset Details',
+  'Employee Info Separation Request',
+  'No Due Form'
+];
+
+employeeInfoJobModuleUpdateDisabledFields = [
+  'Employee Info Asset Details',
+  'Employee Info Desk Details',
+  'Employee Info Pre-Onboarding Details',
+  'Employee Info Offboarding Details',
+  'Employee Info Separation Request Details',
+  'Employee Info No Due Clearance Details',
+  'Employee Info Probation Details',
+  'Employee Info Onboarding Request Details',
+  'No Due Form',
+  'Employee Info Separation Request'
+];
+
+employeeInfoJobModuleCreateDeleteDisabledFields = [
+  'Employee Info Onboarding Details',
+  'Employee Info Asset Details',
+  'Employee Info Desk Details',
+  'Employee Info Pre-Onboarding Details',
+  'Employee Info Offboarding Details',
+  'Employee Info Separation Request Details',
+  'No Due Form',
+  'Employee Info Separation Request',
+  'Employee Info No Due Clearance Details',
+  'Employee Info Probation Details',
+  'Employee Info Onboarding Request Details'
+];
+employeeSeparationRequestFields = [
+  'Employee Raise No Due',
+  'Employee Recall',
+  'Employee Early relieving'
+];
+employeeNoDueClearanceFields = [
+  'Employee Submission Of No Due Clearance',
+  'Employee Re-request for no due'
+];
+
+employeeProbationRequestFields = [
+  'Employee Request for Probation Confirmation',
+  'Employee Re-Request for Probation Confirmation'
+];
+
+dashboardModuleCardItemsFields = [
+  'Dashboard Prospective Employees Card',
+  'Dashboard Active Employees Card',
+  'Dashboard Inactive Employees Card',
+  'Dashboard Prospective Trainee Card',
+  'Dashboard Active Trainees Card',
+  'Dashboard Inactive Trainees Card',
+  'Dashboard Current Openings Card',
+  'Dashboard Probation Employees Card',
+  'Add Prospective Employee',
+  'Add Prospective Trainee',
+  'Dashboard Active Invite New User',
+  'Invite New User',
+  'Dashboard Trainee Active Invite New User'
+];
+activeLettersFields = [
+  'Address Proof Letter',
+  'Bank Loan Letter',
+  'Apprisal Letter',
+  'Salary Revision Letter',
+  'Promotion Letter'
+];
+probationGenerateDocumentsFields = [
+  'Probation Confirmation Letter',
+  'Probation Extension Letter'
+];
+dashboardDocumentHistoryActionsFields = [
+  'Offer Letter Download',
+  'Offer Letter Release Offer',
+  'Offer Letter Approve',
+  'Offer Letter Reject',
+  'Appointment Letter Download',
+  'Trainee Offer Letter Download',
+  'Trainee Offer Letter Release Offer',
+  'Trainee Offer Letter Approve',
+  'Trainee Offer Letter Reject',
+  'Trainee Appointment Letter Download'
+];
+documentsHistoryFields = [
+  'Documents History Offer Letter',
+  'Documents History Appointment Letter',
+  'Documents History Trainee Offer Letter',
+  'Documents History Trainee Appointment Letter'
+];
+dashboardGenerateDocumentsFields = [
+  'Dashboard Generate Documents Offer Letter',
+  'Dashboard Generate Documents Appointment Letter',
+  'Dashboard Generate Documents Trainee Offer Letter',
+  'Dashboard Generate Documents Trainee Appointment Letter',
+  'Dashboard Generate Documents Welcome Letter'
+];
+employeeInfoTeamManagerFields = [
+  'Employee Info Reporting Manager Tab',
+  'Employee Info Change RM Button',
+  'Employee Info Team Managers Tab',
+  'Employee Info Change TM Button'
+];
+pmsModuleFields = [
+  'Review Cycle List',
+  'Review Cycle Employee List',
+  'My Performance Review',
+  'My Team Performance Review'
+];
+reviewCycleListActionsFields = [
+  'Create Review Cycle',
+  'Hold',
+  'Resume',
+  'Update',
+  'View',
+  'Initiate'
+];
+reviewCycleEmployeeListActionsFields = [
+  'Assign Review Template',
+  'Employee List Add Employee',
+  'Download Appraisal Report',
+  'Generate Appraisal Letters',
+  'Send Appraisal Letters',
+  'Generate Promotion Letters',
+  'Send Promotion Letters',
+  'Employee List Hold',
+  'Assign Review Template(Employee)',
+  'Assign Review Template(Review on Hold)',
+  'Update Review Template',
+  'Employee List Resume',
+  'Promotion Letter Download',
+  'Appraisal Letter Download',
+  'Generate Appraisal Letter(Status - Completed)',
+  'Send Appraisal Letter(Appraisal Letter Generated)',
+  'Re-Generate Appraisal Letter',
+  'Re-Send Appraisal Letter',
+  'Re-Generate Appraisal Letter(Promotion Letter Generated)',
+  'Re-Send Appraisal Letter(Promotion Letter Sent)',
+  'Generate Promotion Letter(Status - Completed)',
+  'Re-Generate Promotion Letter',
+  'Send Promotion Letter',
+  'Re-Send Promotion Letter',
+  'Re-Generate Promotion Letter(Appraisal Letter Generated)',
+  'Re-Send Promotion Letter(Appraisal Letter Sent)'
+];
+myPerformanceReviewTabsFields = [
+  'Pending Reviews',
+  'Completed Reviews'
+];
+completedReviewsActionsFields = [
+  'My Performance Assessment View',
+  'My Performance Promotion Letter Download',
+  'My Performance Appraisal Letter Download'
+];
+teamPerformanceReviewTabsFields = [
+  'Team Pending Reviews',
+  'Team Completed Reviews'
+];
+teamCompletedReviewsFields = [
+  'Team Assessment View',
+  'Team Promotion Letter Download',
+  'Team Appraisal Letter Download'
+];
+pmsConfigurationFields = [
+  'Increment Percentage',
+  'Assessor Configuration'
+];
+incrementActionsFields = [
+  'Increment Create',
+  'Increment Update(Status - Created)',
+  'Increment Delete(Status - Created)',
+  'Increment View(Status - Initialted)',
+  'Increment Update(Status - Review On Hold)'
+];
+assessorFields = [
+  'Assessor Create',
+  'Assessor Update(Status - Created)',
+  'Assessor Delete(Status - Created)',
+  'Assessor Update(Status - Initialted)',
+  'Assessor Update(Status - Review On Hold)'
+];
+
   // Generic toggle function for checkboxes
   toggleSelectAll(
     fields: string[],
@@ -1142,7 +1430,89 @@ timeOffModuleSubTabs = [
     }
     return false;
   }
-  
+
+/////////////////////////////////
+isEmployeeInfoJobActionDisabled(field: string, action: string): boolean {
+  const alwaysDisabledForUpdate = [
+    'Employee Info Asset Details', 'Employee Info Desk Details',
+    'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
+    'Employee Info Separation Request Details', 'Employee Info No Due Clearance Details',
+    'Employee Info Probation Details', 'Employee Info Onboarding Request Details',
+    'No Due Form', 'Employee Info Separation Request'
+  ];
+  if (action === 'Update') {
+    return alwaysDisabledForUpdate.includes(field);
+  }
+  if (action === 'Create') {
+    return [
+      'Employee Info Onboarding Details', 'Employee Info Asset Details', 'Employee Info Desk Details',
+      'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
+      'Employee Info Separation Request Details', 'No Due Form', 'Employee Info Separation Request',
+      'Employee Info No Due Clearance Details', 'Employee Info Probation Details',
+      'Employee Info Onboarding Request Details'
+    ].includes(field);
+  }
+  if (action === 'Delete') {
+    return [
+      'Employee Info Onboarding Details', 'Employee Info Asset Details', 'Employee Info Desk Details',
+      'Employee Info Pre-Onboarding Details', 'Employee Info Offboarding Details',
+      'Employee Info Separation Request Details', 'No Due Form', 'Employee Info Separation Request',
+      'Employee Info No Due Clearance Details', 'Employee Info Probation Details',
+      'Employee Info Onboarding Request Details'
+    ].includes(field);
+  }
+  return false;
+}
+ 
+  isemployeeInfoCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+       return !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id;
+    
+    }
+    if (action === 'Create') {
+        return true;
+    }
+    if (action === 'Delete') {
+      return true;
+    }
+    return false;
+  }
+isPmsConfigurationCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  if (action === 'View') {
+    // Enable 'View' only if a role is selected
+    return !this.roleToFilter?.id;
+  }
+  // 'Update', 'Create', 'Delete' are always disabled for PMS Configuration actions
+  if (action === 'Update' || action === 'Create' || action === 'Delete') {
+    return true;
+  }
+  return false;
+}
+// isIncrementPercentageCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+//   if (action === 'View') {
+//     // Enable 'View' only if a role is selected
+//     return !this.roleToFilter?.id;
+//   }
+//   // 'Update', 'Create', 'Delete' are always disabled for increment percentage actions
+//   if (action === 'Update' || action === 'Create' || action === 'Delete') {
+//     return true;
+//   }
+//   return false;
+// }
+  isAssetCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+  if (action === 'View') {
+    // Enable 'View' only if a role is selected
+    return !this.roleToFilter?.id;
+  }
+  // 'Update', 'Create', 'Delete' are always disabled for asset fields
+  if (action === 'Update' || action === 'Create' || action === 'Delete') {
+    return true;
+  }
+  return false;
+}
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

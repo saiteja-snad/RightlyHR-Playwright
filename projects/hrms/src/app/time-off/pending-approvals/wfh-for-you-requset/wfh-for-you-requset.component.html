@@ -26,7 +26,7 @@
     }
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" (ngModelChange)="onSearchChange()"
             placeholder="Search here" aria-label="Username" aria-describedby="basic-addon1" autocomplete="off">
     </div>
 
@@ -47,11 +47,11 @@
                     <th>{{'Applied Date' | translate}}</th>
                     @if(!multiSelect && (rbac.allowedToAccess('For You (WFH).update') || 
                     rbac.allowedToAccess('For You (WFH).delete'))){
-                    <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">{{'(s)'  | translate}}</span></th>
+                    <th class="text-center">{{'Action' | translate}}</th>
                     }
                 </tr>
             </ng-template>
-            <ng-template #body let-leave>
+            <ng-template #body let-leave appendTo="body">
                 <tr>
                     <td>
                         <p-tableCheckbox [value]="leave" (selectionChange)="selectCheck($event)" />
@@ -228,27 +228,27 @@
     </div>
 </ng-template>
 
-<!-- commentspopup -->
+<!-- Comments Popup-->
 <ng-template #commentspopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div>
-                <p class="popup-heading mb-0">{{"Approver Comments" | translate}}</p>
+                <p class="popup-heading mb-0">{{'Approver Comments'| translate}}</p>
             </div>
             <div>
                 <a (click)="modal.dismiss('Cross click')">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon"></a>
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
             </div>
         </div>
-
         <div class="custom-main-popup-content" *ngFor="let comment of approverComments">
             <div class="card p-3">
-                <div >
+                <div>
                     <div class="mb-0">
-                        <p><b>{{'Comments' | translate}}:</b> {{ comment?.comments }} </p>
-                        <p><b>{{'Commented By'|translate}}:</b> {{ comment?.addedName }}</p>
-                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment?.addedDate | dateformat }}</p>
-                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment?.addedByFusionEmpId }}</p>
+                        <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
+                        <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
+                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
+                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
                     </div>
                 </div>
             </div>

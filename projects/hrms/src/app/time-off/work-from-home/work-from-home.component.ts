@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { IJob } from '../../Interfaces/letters-model';
 import { Ileavesdatas, Ilpid, IValidations } from '../../Interfaces/timoff-model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,7 +18,6 @@ import { DropdownModule } from 'primeng/dropdown';
 import { Select } from 'primeng/select';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
-
 @Component({
   selector: 'app-work-from-home',
   imports: [
@@ -26,7 +25,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     RouterModule,
     ReactiveFormsModule,
     WfhApprovaltabsComponent, TranslateModule, DropdownModule, Select,
-    ModuleInformationComponent
+    ModuleInformationComponent, NgbPopoverModule
 ],
   templateUrl: './work-from-home.component.html',
   styleUrl: './work-from-home.component.scss',
@@ -238,7 +237,7 @@ export class WorkFromHomeComponent implements OnInit, OnDestroy {
       workedDate: ['', [Validators.required]],
       availing: ['', Validators.required],
       halfType: [''],
-      reason: ['', Validators.required],
+      reason: ['', [Validators.required, Validators.minLength(10)],],
     });
   }
 

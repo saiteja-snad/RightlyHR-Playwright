@@ -1,14 +1,22 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="component-header-content">
         <!--header-->
-        <div class="component-header">Reports</div>
+
+        <div class="heading-content">
+            <div class="commpoment-name ">Standard Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">Family Members Data</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
 
         <!--right data-->
         <form autocomplete="off" [formGroup]="reportForm" (ngSubmit)="onSubmit(reportForm)">
             <div class="d-flex gap-3">
                 @if(rbac.allowedToAccess('Family Members Data - Generate.view')){
                 <div class="d-flex gap-2 align-items-center">
-                    <div class="custom-label text-nowrap">Employee Status</div>
+                    <div class="custom-label text-nowrap m-0">Employee Status</div>
                     <div class="custom-p-select-content">
                         <p-select [options]="empStatusList" optionLabel="empStatusList" [filter]="false"
                             [showClear]="false" class="form-select custom-select" formControlName="status"
@@ -49,15 +57,16 @@
     </div>
 
     <!--Module Information-->
-    <div>
+    <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    </ng-template>
 
     <div class="d-flex gap-3 w-100">
-        <div class="custom-component-left-content">
+        <div class="component-left-tabs-container">
             <app-standard-report-tabs />
         </div>
-        <div class="custom-component-right-content">
+
+        <div class="component-right-content">
             <ng-container *ngIf="dataload; else maincontent">
                 <ng-template #loadingSpinner>
                     <div class="custom-compoent-data-loader">
@@ -71,24 +80,22 @@
                 <div class="custom-table-content">
                     <table class="w-100">
                         <thead>
-                            <tr>
-                                <th>{{ "Employee ID" }}</th>
-                                <th>{{ "First Name" }}</th>
-                                <th>{{ "Middle Name" }}</th>
-                                <th>{{ "Last Name" }}</th>
-                                <th>{{ "Work Email" }}</th>
-                                <th>{{ "Employee Status" }}</th>
-                                <th>{{ "Name" }}</th>
-                                <th>{{ "Relation" }}</th>
-                                <th>{{ "Date of Birth" }}</th>
-                                <th>{{ "Dependent" }}</th>
-                            </tr>
+                            <th>{{ "Employee ID" }}</th>
+                            <th>{{ "First Name" }}</th>
+                            <th>{{ "Middle Name" }}</th>
+                            <th>{{ "Last Name" }}</th>
+                            <th>{{ "Work Email" }}</th>
+                            <th>{{ "Employee Status" }}</th>
+                            <th>{{ "Name" }}</th>
+                            <th>{{ "Relation" }}</th>
+                            <th>{{ "Date of Birth" }}</th>
+                            <th>{{ "Dependent" }}</th>
                         </thead>
                         <tbody>
                             <ng-container *ngIf="familydata.length > 0; else noData">
                                 @for(row of familydata; track row){
                                 <tr>
-                                    <td>{{ row.fusionEmpId || "-" }}</td>
+                                    <td>{{ row.employeeId || "-" }}</td>
                                     <td>{{ row.firstName || "-" }}</td>
                                     <td>{{ row.middleName || "-" }}</td>
                                     <td>{{ row.lastName || "-" }}</td>
@@ -126,9 +133,7 @@
                             </ng-container>
                             <ng-template #noData>
                                 <tr>
-                                    <td colspan="8">
-                                        <app-no-data-found></app-no-data-found>
-                                    </td>
+                                    <app-no-data-found></app-no-data-found>
                                 </tr>
                             </ng-template>
                         </tbody>

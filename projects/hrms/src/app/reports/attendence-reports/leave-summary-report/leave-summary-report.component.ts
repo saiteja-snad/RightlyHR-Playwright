@@ -21,6 +21,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-leave-summary-report',
   imports: [
@@ -32,7 +33,8 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
     TranslateModule,
     ReactiveFormsModule, NoDataFoundComponent,
     DataLoaderContentComponent,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    NgbPopoverModule
 ],
   templateUrl: './leave-summary-report.component.html',
   styleUrl: './leave-summary-report.component.scss'
@@ -99,6 +101,7 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.lvSummeryReportForm.reset();
+    this.filterlvsumRecord = [];
   }
 
   initializeForm() {
@@ -237,13 +240,13 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
 
     const request: ILeavesummery = {};
 
-    if (formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (formValue.employee?.employeeId) {
+      request.EmployeeId = formValue.employee.employeeId !== 'all';
     }
 
     // Manager full name
     if (formValue.manager) {
-      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
+      request.teamManagerID = formValue.manager.employeeId;
     }
 
     // Leave category
@@ -256,8 +259,8 @@ export class LeaveSummaryReportComponent implements OnInit, OnDestroy {
       request.Year = formValue.year;
     }
 
-    if (!isAllEmployeesSelected && formValue.employee?.fusionEmpId) {
-      request.FusionEmpId = formValue.employee.fusionEmpId;
+    if (!isAllEmployeesSelected && formValue.employee?.employeeId) {
+      request.EmployeeId = formValue.employee.employeeId;
     }
 
     // Call service with the constructed request

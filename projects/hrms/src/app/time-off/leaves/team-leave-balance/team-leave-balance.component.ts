@@ -9,7 +9,7 @@ import { IEmployeeLeaveData } from '../leaves.model';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormsModule } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { DateformatPipe } from "../../../Pipes/dateformat.pipe";
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
@@ -17,7 +17,7 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
 
 @Component({
   selector: 'app-team-leave-balance',
-  imports: [CommonModule, Select, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, ModuleInformationComponent],
+  imports: [CommonModule, Select, LeavesApprovaltabsComponent, AccordionModule, NoDataFoundComponent, DataLoaderContentComponent, FormsModule, DateformatPipe, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './team-leave-balance.component.html',
   styleUrl: './team-leave-balance.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -74,7 +74,7 @@ export class TeamLeaveBalanceComponent implements OnInit, OnDestroy {
     const url = this.router.url;
   
     const routeToInfoMap: { [key: string]: string } = {
-      '/time-off/leaves/team-leave-balance': MODULE_INFOS.TIME_OFF_LEAVES_MODULE_INFO
+      '/time-off/leaves/team-leave-balance': MODULE_INFOS.TIME_OFF_LEAVES_TEAM_LEAVE_BALANCE_MODULE_INFO
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));

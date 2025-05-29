@@ -8,15 +8,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-dashboard',
-  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, RouterModule, DocumentHistoryLayoutComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
 
 export class DashboardComponent {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
   subscription!: Subscription;
   Inactive!: number;
   ACTDATA!: number;
@@ -34,7 +35,7 @@ export class DashboardComponent {
   }
   cardItems: any[] = [];
 
-  constructor(private router: Router, private http: HttpService, private cdr: ChangeDetectorRef, 
+  constructor(private router: Router, private http: HttpService, private cdr: ChangeDetectorRef,
     public rbac: RbacService) { }
 
   ngOnInit(): void {
@@ -52,25 +53,21 @@ export class DashboardComponent {
     this.initiateUpdateModuleInfo();
   }
 
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
+  initiateUpdateModuleInfo() {
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
       this.updateModuleInfo();
     });
   }
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/admin/dashboard': MODULE_INFOS.DASHBOARD_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
-  
+
   fetchData() {
     this.empdata();
     this.activeEmpData();
@@ -95,7 +92,7 @@ export class DashboardComponent {
 
   //   function for active Employees
   activeEmpData() {
-    this.subscription = this.http.getData(`Employeedata/ActiveEmployees`).subscribe({
+    this.subscription = this.http.getData(`v2/Employeedata/ActiveEmployeesData`).subscribe({
       next: (data: any) => {
         this.Active = data.length;
         this.updateCardItems();
@@ -193,19 +190,19 @@ export class DashboardComponent {
     });
   }
 
-generateDocument() {
-  if (this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view')) {
-    this.router.navigate(['/admin/letters/offer-letter']);
-  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view')) {
-    this.router.navigate(['/admin/letters/trainee-appointment-letter']);
-  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view')) {
-    this.router.navigate(['/admin/letters/trainee-offer-letter']);
-  } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view')) {
-    this.router.navigate(['/admin/letters/appointment-letter']);
-  }else if (this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view')) {
-    this.router.navigate(['/admin/letters/welcome-letter']);
+  generateDocument() {
+    if (this.rbac.allowedToAccess('Dashboard Generate Documents Offer Letter.view')) {
+      this.router.navigate(['/admin/letters/offer-letter']);
+    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Appointment Letter.view')) {
+      this.router.navigate(['/admin/letters/trainee-appointment-letter']);
+    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Trainee Offer Letter.view')) {
+      this.router.navigate(['/admin/letters/trainee-offer-letter']);
+    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Appointment Letter.view')) {
+      this.router.navigate(['/admin/letters/appointment-letter']);
+    } else if (this.rbac.allowedToAccess('Dashboard Generate Documents Welcome Letter.view')) {
+      this.router.navigate(['/admin/letters/welcome-letter']);
+    }
   }
-}
 
   updateCardItems() {
     this.cardItems = [
@@ -251,13 +248,13 @@ generateDocument() {
         backgroundColor: '#FEE1F1',
         profileColor: '#760C46', permission: { feature: 'Dashboard Inactive Trainees Card', action: 'view' }
       },
-      {
-        label: 'Current Openings',
-        link: '/admin/timeoff',
-        count: this.activeCount,
-        backgroundColor: '#FEEFE1',
-        profileColor: '#A95200', permission: { feature: 'Dashboard Current Openings Card', action: 'view' }
-      },
+      // {
+      //   label: 'Current Openings',
+      //   link: '/admin/timeoff',
+      //   count: this.activeCount,
+      //   backgroundColor: '#FEEFE1',
+      //   profileColor: '#A95200', permission: { feature: 'Dashboard Current Openings Card', action: 'view' }
+      // },
       {
         label: 'Probation Employees',
         link: '/admin/probation-employees',
@@ -267,10 +264,8 @@ generateDocument() {
       },
     ];
     this.filterTabsByRbac();
-
     // this.cdr.detectChanges();
   }
-
 
   filterTabsByRbac(): void {
     this.cardItems = this.cardItems.filter(tab => {

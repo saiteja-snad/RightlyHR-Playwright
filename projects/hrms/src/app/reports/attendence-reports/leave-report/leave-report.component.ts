@@ -22,6 +22,7 @@ import { RbacService } from '../../../services/rbac.service';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
@@ -36,7 +37,8 @@ import { MODULE_INFOS } from '../../../shared/modules-info';
     TranslateModule,
     ReactiveFormsModule, NoDataFoundComponent,
     DataLoaderContentComponent,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    NgbPopoverModule
 ],
   templateUrl: './leave-report.component.html',
   styleUrl: './leave-report.component.scss'
@@ -143,6 +145,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.LeaveReportForm.reset();
+    this.filteredleaveRecord = [];
   }
 
   getEmployeeId() {
@@ -267,7 +270,7 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
   
     // Apply manager name if provided
     if (formValue.manager) {
-      request.TeamManagerSnadId = formValue.manager.fusionEmployeeId;
+      request.teamManagerID = formValue.manager.employeeId;
     }
 
     // Only include employee filter if not "All Employees"
@@ -456,7 +459,12 @@ export class LeaveReportComponent implements OnInit, OnDestroy {
         },
       });
   }
-  
+
+  isAnyFilterApplied(): boolean {
+    const form = this.LeaveReportForm.value;
+    return !!(form.dateRange || form.employee || form.manager || form.team || form.leaveCategory);
+  }
+
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();

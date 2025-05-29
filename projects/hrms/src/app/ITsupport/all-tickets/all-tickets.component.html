@@ -2,7 +2,7 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search Here" aria-label="Username"
+        <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input" placeholder="Search here" aria-label="Username"
             aria-describedby="basic-addon1">
     </div>
 
@@ -48,7 +48,8 @@
                     <td>{{ticket.ticketStatus || '-'}}</td>
                     <td>{{ticket.updatedAt | dateformat}}</td>
                     @if(rbac.allowedToAccess('All Tickets Tab.update')){
-                    <td class="text-center">
+                    <!-- <td class="text-center" *ngIf="rbac.allowedToAccess('All Tickets Tab.update')">
+                        <ng-container *ngIf="ticket.ticketStatus !== 'Closed'; else noAction">
                         <div class="dropdown">
                             <span type="button" data-bs-toggle="dropdown">
                                 <i class="bi bi-three-dots-vertical"></i>
@@ -61,7 +62,27 @@
                                 </li>
                             </ul>
                         </div>
+                    </td> -->
+                    <td class="text-center" *ngIf="rbac.allowedToAccess('All Tickets Tab.update')">
+                        <ng-container *ngIf="ticket.ticketStatus !== 'Closed'; else noAction">
+                            <div class="dropdown">
+                                <span type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </span>
+                                <ul class="dropdown-menu custom-dropdown-menu">
+                                    <li (click)="openModal(updatetickets, ticket)">
+                                        <a class="dropdown-item">
+                                        <i class="bi bi-pencil me-2"></i>Update
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </ng-container>
+                        <ng-template #noAction>
+                        <!-- No action -->
+                        </ng-template>
                     </td>
+ 
                 }
                 </tr>
                 <tr *ngIf="filteredTickets.length === 0">
@@ -78,10 +99,6 @@
         <div class="d-flex justify-content-between popup-header-border p-4">
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{this.selectedTickets.ticketStatus}} Ticket</p>
-            </div>
-            <div>
-                <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
             </div>
         </div>
         <div class="custom-main-popup-content p-4">
@@ -277,7 +294,7 @@
 
                 <div class="d-flex justify-content-end gap-3 mt-4">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmationModal(confirmationpopup)">{{'Close'}}</button>
+                        (click)="openConfirmationModal(confirmationpopup)">{{'Cancel'}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">
@@ -296,7 +313,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text"> Are you sure you want to close?</p>
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
 
         <div class="custom-modal-footer">

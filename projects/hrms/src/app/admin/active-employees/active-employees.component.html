@@ -1,9 +1,13 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
-    <div>
-      <p class="component-header mb-0">
-        <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateDashboard()"></i>{{'Active Employees'|translate}}
-      </p>
+
+    <div class="heading-content">
+      <div class="commpoment-name cursor" (click)="navigateDashboard()">Dashboard<span class="ms-1"><i
+            class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">{{'Active Employees'|translate}}</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
     </div>
 
     @if(this.rbac.allowedToAccess('Address Proof Letter.view') || this.rbac.allowedToAccess('Bank Loan Letter.view')
@@ -40,9 +44,9 @@
   </div>
 
   <!--Module Information-->
-  <div>
+  <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+  </ng-template>
 
   <!--Input search-->
   <div class="input-group custom-search mb-3">
@@ -55,7 +59,7 @@
     @if (!loader) {
     <table class="w-100">
       <thead>
-        <th>{{'Id'|translate}}</th>
+        <th>{{'Employee ID'|translate}}</th>
         <th>{{'Employee Name'|translate}}</th>
         <th>{{'Work Email'|translate}}</th>
         <th>{{'Phone Number'|translate}}</th>

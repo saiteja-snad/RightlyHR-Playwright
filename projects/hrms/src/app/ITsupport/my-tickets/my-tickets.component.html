@@ -1,21 +1,26 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div>
-            <p class="component-header mb-0">IT Support</p>
-        </div>
     
+            <div class="heading-content">
+      <div class="commpoment-name">IT Support<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">My Tickets</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
+
         @if(rbac.allowedToAccess('My Tickets Tab.create')){
         <div>
             <button type="button" class="custom-btn btn-primary" (click)="openModal(addtickets)">
-            <i class="bi bi-plus me-2"></i>Add New Ticket</button>
+                <i class="bi bi-plus me-2"></i>Add New Ticket</button>
         </div>
         }
     </div>
 
     <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+  <ng-template #popContent>
+    <app-module-information [moduleInfo]="moduleinfo" />
+  </ng-template>
 
     <div class="custom-table-content">
         <table class="w-100">
@@ -67,10 +72,10 @@
             <div class="pt-2">
                 <p class="popup-heading mb-0">Add New Ticket</p>
             </div>
-            <div>
+            <!-- <div>
                 <a (click)="openConfirmationModal(confirmationpopup)"><img src="icons/close.png" alt="Close Icon"
                         class="close-icon"></a>
-            </div>
+            </div> -->
         </div>
         <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="itSupportForm" (ngSubmit)="onSubmit()">
@@ -216,17 +221,19 @@
                         </div>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Subject' | translate}}<span
+                                class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <input type="text" class="form-control custom-input" formControlName="subject"
-                                placeholder="Please enter subject" pattern="^\S.*" [maxlength]="50" />
-                            <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50
-                            </div>
-                            <div
-                                *ngIf="itSupportForm.get('subject')?.errors?.['pattern'] && itSupportForm.get('subject')?.invalid && itSupportForm.get('subject')?.touched">
-                                <div class="error-msg">{{'Subject is required' | translate}}</div>
-                            </div>
+                                placeholder="Please enter subject" [maxlength]="50" />
                         </div>
+                        <div
+                            *ngIf="itSupportForm.get('subject')?.hasError('required') && itSupportForm.get('subject')?.touched">
+                            <div class="error-msg">{{ 'Subject is required' | translate }}</div>
+                        </div>
+                        <div class="textarea-count-text">{{ itSupportForm.get('subject')?.value?.length ?? 0 }}/50
+                        </div>
+                        
                     </div>
                 </div>
 
@@ -236,18 +243,22 @@
                                 class="text-danger">*</span></label>
                         <textarea class="form-control custom-input" formControlName="description" pattern="^\S.*"
                             [maxlength]="250" placeholder="Please enter description"></textarea>
-                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250
-                        </div>
-                    </div>
-                    <div *ngIf="itSupportForm.get('description')?.errors?.['pattern'] && itSupportForm.get('description')?.invalid
+                             <div *ngIf="itSupportForm.get('description')?.invalid
                      && itSupportForm.get('description')?.touched">
-                        <div class="error-msg">{{'Description is required' | translate}}</div>
+                            <div class="error-msg ">{{'Description is required' | translate}}</div>
+                        </div>
+                        <div class="textarea-count-text">{{ itSupportForm.get('description')?.value?.length ?? 0 }}/250
+
+                        </div>
+                       
+
                     </div>
+
                 </div>
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openConfirmationModal(confirmationpopup)">{{'Close'}}</button>
+                        (click)="openConfirmationModal(confirmationpopup)">{{'Cancel'}}</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="itSupportForm.invalid || isLoading">
                         <span *ngIf="!isLoading">{{'Submit'}}</span>
@@ -263,7 +274,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text"> Are you sure you want to close?</p>
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
 
         <div class="custom-modal-footer">

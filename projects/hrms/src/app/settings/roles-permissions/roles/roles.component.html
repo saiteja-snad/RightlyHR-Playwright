@@ -1,13 +1,20 @@
 <div class="custom-main-component-container">
     <!--header-->
     <div class="mb-3">
-        <div class="component-header">Settings</div>
+          <div class="heading-content">
+            <div class="commpoment-name">Settings<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">Roles</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
     </div>
-
     <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo"/>
-     </div>
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo" />
+    </ng-template>
+
 
     <!--tabs content-->
     <div class="mb-3">
@@ -21,7 +28,7 @@
                 <div class="custom-settings-add-input input-group">
                     <input type="text" class="form-control custom-input" placeholder="Please enter role"
                         aria-label="role" aria-describedby="role" formControlName="role"
-                        (keypress)="formValidation.restrictInput($event)">
+                         (input)="capitalizeFirstLetter($event, 'add')" (keypress)="formValidation.restrictInput($event)">
                     <span class="input-group-text" id="role">
                         <button type="submit" class="custom-btn btn-primary" [disabled]="roleForm.invalid">
                             {{'Add'| translate}}
@@ -30,6 +37,7 @@
                 </div>
                 <div *ngIf="roleForm.get('role')?.touched || roleForm.get('role')?.dirty" class="error-msg">
                     <!-- Required validation message -->
+                    <div *ngIf="roleForm.get('role')?.hasError('maxlength')">Please limit your input to 50 characters</div>
                     <div *ngIf="roleForm.get('role')?.hasError('required')">Role is required</div>
                     <div class="error-msg" *ngIf="roleForm.get('role')?.errors?.['pattern']">Enter a valid role</div>
                 </div>
@@ -106,9 +114,10 @@
                     <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Role'|translate}}<span
                             class="error-msg">*</span></label>
                     <input type="text" class="form-control custom-input" formControlName="firstName" placeholder="Please enter role"
-                        (keypress)="formValidation.restrictInput($event)">
+                        (input)="capitalizeFirstLetter($event, 'update')" (keypress)="formValidation.restrictInput($event)">
                     <div *ngIf="updateForm.get('firstName')?.touched || updateForm.get('firstName')?.dirty" class="error-msg">
                         <div *ngIf="updateForm.get('firstName')?.hasError('required')">Role is required</div>
+                        <div *ngIf="updateForm.get('firstName')?.hasError('maxlength')">Please limit your input to 50 characters</div>
                         <div *ngIf="updateForm.get('firstName')?.errors?.['pattern']">Enter a valid role </div>
                     </div>
                 </div>

@@ -140,6 +140,7 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
     this.dstForm.get('subLocation')?.enable();
     this.dstForm.get('subLocation')?.reset();
     this.dstForm.get('shift')?.disable();
+    this.dstForm.get('subLocation')?.markAsTouched();
   }
 
   getAllShifts(subLocation: ISubLocation): void {
@@ -147,12 +148,13 @@ export class UpdateDstComponent implements OnInit, OnDestroy {
       locationId: subLocation.jobLocationId,
       subLocationId: subLocation.id,
     };
-
+    this.dstForm.get('shift')?.markAsTouched();
     this.http
       .getDataWithQueryParams('orgShifts/getshiftlocation', params)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+          this.dstForm.get('shift')?.markAsTouched();
           this.dstForm.get('shift')?.enable();
           this.shiftDetails = res.flatMap(
             (header: any) => header.orgShiftsItems ?? []

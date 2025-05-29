@@ -18,8 +18,7 @@
               <span *ngIf="question.question === 'DOJ:'">{{dynamicFormDetails.dateOfJoining | date}}</span>
               <span *ngIf="question.question === 'Department:'">{{dynamicFormDetails.departmentname}}</span>
               <span *ngIf="question.question === 'Reviewer ID:'">{{loggedindata.fusionEmpId}}</span>
-              <span *ngIf="question.question === 'Reviewer Name:'">{{loggedindata.firstName??'' }}
-                {{loggedindata.middleName??'' }}{{loggedindata.lastName??'' }}</span>
+              <span *ngIf="question.question === 'Reviewer Name:'">{{loggedindata.firstName??'' }} {{loggedindata.middleName??'' }} {{loggedindata.lastName??'' }}</span>
               <span *ngIf="question.question === 'Reporting Manager Name:'">{{dynamicFormDetails.rmName}}</span>
               <span *ngIf="question.question === 'Team Manager Name:'">{{dynamicFormDetails.tmName}}</span>
             </p>
@@ -89,7 +88,7 @@
                 </ng-template>
               </div>
             </div>
-            <p>{{'Over all rating:' | translate}} {{overallRatingcount|number : '1.2-2'}}</p>
+            <p>{{'Overall rating:' | translate}} {{overallRatingcount|number : '1.2-2'}}</p>
           </div>
         </form>
       </div>
@@ -98,9 +97,9 @@
         <p class="text-danger mb-0"><span>{{'Note:'|translate}}</span>{{'Please fill all the fields' | translate}}</p>
       </div>
       <div class="d-flex justify-content-center gap-3">
-        <button class="custom-btn btn-secondary px-5" (click)="openModal(cancelmodal)">{{'Close' | translate}}</button>
+        <button class="custom-btn btn-secondary px-5" (click)="openModal(cancelmodal)">{{'Cancel' | translate}}</button>
         <button class="custom-btn btn-primary px-5" (click)="textArea()"
-          [disabled]='!personal.valid || this.selected_questions.length<36'>{{'Save' | translate}}</button>
+          [disabled]='!personal.valid || this.selected_questions.length<36'>{{'Submit' | translate}}</button>
       </div>
     </div>
     }
@@ -131,7 +130,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
-      <p class="confirmation-text">{{'Are you sure you want to Save?' | translate}}</p>
+      <p class="confirmation-text">{{'Are you sure you want to submit?' | translate}}</p>
     </div>
     <div class="custom-modal-footer">
       <button type="button" class="custom-btn btn-secondary" (click)="closeModal()">{{'No' | translate}}</button>
@@ -155,7 +154,7 @@
   <div class="result-popup-content" ngbAutofocus>
     <div>
       <img src="icons\succes-icon.png" alt="failure icon" class="confirmation-icon">
-      <p class="confirmation-text">{{'Data Saved Successfully!' | translate}}</p>
+      <p class="confirmation-text">{{'Assessment form submitted successfully' | translate}}</p>
     </div>
       <button type="submit" class="custom-btn btn-primary max-width px-4" (click)="openModal(formapprovals)">
         {{'OK' | translate}}</button>
@@ -177,11 +176,14 @@
               (click)="toggleApprove()">
             <label class="form-check-label ms-2" for="flexRadioEarly">{{'Confirmed' | translate}}</label>
           </div>
-          <div class="form-check form-check-inline ms-3">
+          @if(selected_approve.probationextendedcount<=probationExtensionTimes){
+           <div class="form-check form-check-inline ms-3">
             <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend"
               (click)="toggleExtend()">
             <label class="form-check-label ms-2" for="flexRadioExtend">{{'Extend' | translate}}</label>
           </div>
+          }
+          
           <div class="form-check form-check-inline ms-3">
             <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDiscontinue"
               (click)="toggleDiscontinue()">
@@ -193,64 +195,81 @@
           <label for="exampleFormControlTextarea1" class="form-label custom-label">{{'Comments' | translate}}
             <span class="text-danger">*</span></label>
           <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-            placeholder="Please Provide Comments" name="earlyrelievingreason" #earlyrelievingreason="ngModel"
+            placeholder="Please provide comments" name="earlyrelievingreason" #earlyrelievingreason="ngModel"
             maxlength="250" [(ngModel)]="selected_approve.comments"
             (ngModelChange)="ifreasonnull(selected_approve?.comments)" required rows="3"></textarea>
           <div class="textarea-count-text">{{selected_approve.comments?.length?selected_approve.comments?.length:0}}/250
           </div>
-          <div class="text-danger" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || 
+          <div class="error-msg">
+             <div *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || 
           (earlyrelievingreason.invalid && acceptForm.submitted)">{{'Comment is required' | translate}}</div>
+             <div  *ngIf="earlyrelievingreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
+            </div>
+        
+         
         </div>
-
-        <div class="mb-3" *ngIf="extend">
+         @if(selected_approve.probationextendedcount<=probationExtensionTimes){
+          <div class="mb-3" *ngIf="extend">
           <label for="exampleFormControlInput1" class="form-label custom-label">{{'Extend Date' | translate}}
             <span class="text-danger">*</span>
           </label>
           <input class="form-control custom-input" type="date" aria-label="Default select example" id="extenddate"
             placeholder="" name="extenddate" #extenddate="ngModel" (keypress)="letters($event)"
-            [(ngModel)]="selected_approve.extenddate" [min]="getBlockedFutureDate(selected_approve.probationEndDate)"
-            [max]="getBlockedFutureDateupto(selected_approve.probationEndDate,probationExtensionDuration)" required>
+            [(ngModel)]="selected_approve.extenddate" [min]="getBlockedFutureDate(selected_approve.probationEndDate,selected_approve.probationExtendedDate)"
+            [max]="getBlockedFutureDateupto(selected_approve.probationEndDate,probationExtensionDuration,selected_approve.probationExtendedDate)" required>
           <div class="error-msg"
             *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && acceptForm.submitted)">
             {{'Extend date is required' | translate}}
           </div>
-          <div class="error-msg" *ngIf="!isempeffectivevaild">
+         
+          <div class="error-msg">
+           <div *ngIf="!isempeffectivevaild">
             {{'Extend Date cannot be less than Training End date' | translate}}</div>
+          </div>
+          
         </div>
 
         <div class="mb-3" *ngIf="extend">
           <label for="exampleFormControlTextarea1" class="form-label">{{'Feedback for Extend' | translate}}
             <span class="text-danger">*</span></label>
           <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-            placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
+            placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
             [(ngModel)]="selected_approve.reasonForExtend" maxlength="250"
             (ngModelChange)="ifreasonnull(selected_approve.reasonForExtend)" required rows="3"></textarea>
           <div class="textarea-count-text">
             {{selected_approve.reasonForExtend?.length?selected_approve.reasonForExtend?.length:0}}/250</div>
-          <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || 
-          (Extendreason.invalid && acceptForm.submitted) || (Extendreason.errors?.['pattern'])">
+            <div class="error-msg">
+             <div  *ngIf="(Extendreason.touched && Extendreason.invalid) || 
+             (Extendreason.invalid && acceptForm.submitted) || (Extendreason.errors?.['pattern'])">
             {{'Feedback for Extend is required' | translate}}</div>
+             <div  *ngIf="Extendreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
+            </div>
+       
         </div>
 
+         }
+       
         <div class="mb-3" *ngIf="discontinue">
           <label for="Descriptiondetails" class="form-label custom-label">{{'Reject Reason' | translate}}
             <span class="text-danger">*</span></label>
           <textarea type="text" class="form-control custom-input" id="Descriptiondetails" name="Descriptiondetails"
-            aria-label="Description" rows="3" maxlength="250" placeholder="Please Provide Reason"
+            aria-label="Description" rows="3" maxlength="250" placeholder="Please provide reason"
             #Descriptiondetails="ngModel" autocomplete="off"
             (ngModelChange)="ifreasonnull(selected_approve.rejectedReason)"
             [(ngModel)]="selected_approve.rejectedReason" required></textarea>
           <div class="textarea-count-text">{{selected_approve.rejectedReason?.length ?
             selected_approve.rejectedReason.length : 0}}/250</div>
-          <div class="error-msg" *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || 
+            <div class="error-msg">
+              <div  *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || 
           (Descriptiondetails.invalid && selectedData.submitted)">{{'Reason is required' | translate}}
           </div>
-        </div>
-      </div>
-
+          <div *ngIf="Descriptiondetails.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
+            </div>
+          </div>
+          </div>
       <div class="custom-modal-footer">
         <button type="reset" class="custom-btn btn-secondary" (click)="reset(confirmpopup)">
-          {{'Close' | translate}}</button>
+          {{'Cancel' | translate}}</button>
         <button type="submit" class="custom-btn btn-primary"
           [disabled]="acceptForm.invalid || issubmitdiable || !buttondisable">
           {{'Submit' | translate}}</button>

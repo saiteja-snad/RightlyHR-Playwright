@@ -1,10 +1,14 @@
 <div class="custom-main-component-container w-100">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <p class="component-header mb-0" (click)="nagvition()">
-        <i class="bi bi-arrow-90deg-left me-2"></i>{{'Update Holiday' | translate}}
-      </p>
-    </div>
+ 
+      <div class="heading-content">
+            <div class="commpoment-name cursor"(click)="nagvition()">Manage Holidays<span class="ms-1"><i
+                        class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{'Update Holidays' | translate}}</div>
+            <!-- <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div> -->
+        </div>
   </div>
   
   <div class="custom-setting-right-content w-100 p-3">
@@ -77,7 +81,7 @@
         <!-- add holidays -->
         <div class="pt-4 mt-1">
           <button type="button" class="custom-btn btn-primary" (click)="addHolidayRow()">
-            <i class="bi bi-plus me-2"></i>{{'Add Row' | translate}}
+            <i class="bi bi-plus me-2"></i>{{'Add New' | translate}}
           </button>
         </div>
       </div>
@@ -130,8 +134,7 @@
         </div>
       </div>
 
-      <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
-
+     <div class="error-msg my-1">Note: All Fields are Mandatory Fields</div>
       <div class="d-flex justify-content-end gap-3 pt-4">
         <button type="button" class="custom-btn btn-secondary px-5" (click)="openmodel(cancelpopup)" id="submitButton">
           {{'Cancel' | translate}}

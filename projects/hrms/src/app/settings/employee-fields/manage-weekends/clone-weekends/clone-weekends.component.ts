@@ -193,11 +193,13 @@ export class CloneWeekendsComponent {
     if (location?.jobSubLocations?.length) {
       this.subLocationDetails = location.jobSubLocations;
       this.weekendForm.get('subLocation')?.enable();
+      this.weekendForm.get('subLocation')?.markAsTouched();
     }
      else {
       this.subLocationDetails = [];
       this.weekendForm.get('subLocation')?.enable();
       this.weekendForm.get('subLocation')?.reset();
+      this.weekendForm.get('subLocation')?.markAsTouched();
     }
   }
 
@@ -211,6 +213,7 @@ export class CloneWeekendsComponent {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
+           this.weekendForm.get('shift')?.markAsTouched();
           this.shiftDetails = res.flatMap((header: any) => header.orgShiftsItems || []);
           this.weekendForm.get('shift')?.enable();
         },

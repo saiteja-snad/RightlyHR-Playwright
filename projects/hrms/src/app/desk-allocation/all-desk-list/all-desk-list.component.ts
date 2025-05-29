@@ -14,10 +14,11 @@ import { DropdownModule } from 'primeng/dropdown';
 import { DataLoaderContentComponent } from "../../shared/data-loader-content/data-loader-content.component";
 import { RbacService } from '../../services/rbac.service';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { TranslateModule } from '@ngx-translate/core';
 @Component({
   selector: 'app-all-desk-list',
   imports: [CommonModule, TabsModule, RouterModule, FormsModule, PaginatorModule, DropdownModule, NoDataFoundComponent,
-     FormsModule, ReactiveFormsModule, Select, DataLoaderContentComponent],
+    FormsModule, ReactiveFormsModule, Select, DataLoaderContentComponent,TranslateModule],
   templateUrl: './all-desk-list.component.html',
   styleUrl: './all-desk-list.component.scss'
 })
@@ -53,9 +54,12 @@ export class AllDeskListComponent {
   deskid: any;
   selectedAsset!: any;
   deskiteamid: any;
-  first: any = 1;
-  rows: any = 10;
-  totalRecords = 100;
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize!: number;
+  first = 0;
+  totalRecords = 0;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -111,7 +115,7 @@ export class AllDeskListComponent {
     this.getdatabyentriy()
     this.intialrealsedata()
     this.getdatabyentriyrealse();
-    // this.getAllDesks(this.first, this.rows, this.selectedLocationId, null,null);
+    // this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, null,null);
     this.getFilteredData();
     this.assiginForm.get('shifts')?.valueChanges
       .subscribe((seletshift) => {
@@ -132,9 +136,9 @@ export class AllDeskListComponent {
   getFilteredData() {
     this.subscription = this.http.desklocationId$.subscribe({
       next: (Value: any) => {
-        this.selectedLocationId= JSON.parse(localStorage.getItem('locationId') ?? 'null');
+        this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
-        this.getAllDesks(this.first, this.rows, Value, this.selectedSubLocationId, this.Status);
+        this.getAllDesks(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
       }
     })
   }
@@ -220,27 +224,33 @@ export class AllDeskListComponent {
   }
 
   onRowsChange() {
-    this.first = 1;
-    this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, null);
+    this.page = 1;        
+    this.first = 0; 
+    this.getAllDesks(this.page, this.pageSize, null,null, null);
   }
 
-  onPageChange(event: PaginatorState) {
+  onPageChange(event: any) {
+     this.page = event.page + 1;
+    this.pageSize = event.rows;
     this.first = event.first;
-    this.rows = event.rows;
-    this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, null);
+    this.getAllDesks(this.page, this.pageSize, null,null, null);
   }
 
   // Called when first size changes
   onPageSizeChange(newPageSize: number) {
-    this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, null);
+     this.pageSize = newPageSize;
+    this.rows = newPageSize; 
+    this.page = 1;
+    this.first = 0;
+    this.getAllDesks(this.page, this.pageSize, null,null, null);
   }
 
   onSearchChange(event: any) {
     if (event !== '' && event.length >= 1) {
-      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, null);
+      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, null);
     }
     if (event === '') {
-      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, null);
+      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, null);
     }
   }
 
@@ -262,7 +272,7 @@ export class AllDeskListComponent {
           this.desklist.next(data.items)
           //this.getcount(this.selectedLocationId, this.selectedSubLocationId)
           // Update the collection size (total records) for pagination
-          this.totalRecords = data.totalRecords;
+          this.collectionSize = data.totalRecords;
         },
         error: (error: any) => {
           console.error('Error fetching desk data', error);
@@ -347,7 +357,7 @@ export class AllDeskListComponent {
         next: (res) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request submitted Successfully')
-          this.getAllDesks(this.first, this.rows, null, null, null);
+          this.getAllDesks(this.page, this.pageSize, null, null, null);
           this.assiginForm.reset();
           this.assiginForm.get('employeeName')?.reset()
           this.assiginForm.get('approvid')?.reset()
@@ -403,7 +413,7 @@ export class AllDeskListComponent {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request submitted Successfully')
           ///this.updatedeskallowcation(this.assiginForm)
-          this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, null);
+          this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, null);
           this.reassiginForm.reset();
           this.reassiginForm.get('employeeName')?.reset()
           this.reassiginForm.get('approvid')?.reset()
@@ -476,7 +486,7 @@ export class AllDeskListComponent {
         next: (res) => {
           this.modalService.dismissAll();
           this.conformationPopup.openSuccessModal('Request submitted Successfully')
-          this.getAllDesks(this.first, this.rows, null, null, null);
+          this.getAllDesks(this.page, this.pageSize, null, null, null);
           this.assiginForm.reset();
         },
         error: (error) => {
@@ -539,11 +549,11 @@ export class AllDeskListComponent {
       this.http.putData(`DeskAllocationHeader/${this.deskid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Desk marked as Inactivated Successfully')
+          this.conformationPopup.openSuccessModal('Desk marked as inactive successfully');
           setTimeout(() => {
             location.reload();
           }, 2000);
-          this.getAllDesks(this.first, this.rows, null, null, null);
+          this.getAllDesks(this.page, this.pageSize, null, null, null);
           this.inactiveForm.reset();
         },
         error: (error) => {
@@ -646,8 +656,8 @@ export class AllDeskListComponent {
       this.http.putData(`DeskAllocationHeader/${this.deskid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Desk marked as Maintenance Successfully')
-          this.getAllDesks(this.first, this.rows, null, null, null)
+          this.conformationPopup.openSuccessModal('Desk marked as under maintenance successfully')
+          this.getAllDesks(this.page, this.pageSize, null, null, null)
           this.undermaintancedata.reset();
         },
         error: (error) => {
@@ -673,9 +683,9 @@ export class AllDeskListComponent {
     this.http.putData(`DeskAllocationHeader/${this.deskid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Desk marked as Active Successfully')
-        // this.getAllDesks(this.first, this.rows);
-        this.getAllDesks(this.first, this.rows, null, null, null)
+        this.conformationPopup.openSuccessModal('Desk marked as active successfully')
+        // this.getAllDesks(this.page, this.pageSize);
+        this.getAllDesks(this.page, this.pageSize, null, null, null)
       },
       error: (error) => {
         this.conformationPopup.openSuccessModal(error.error?.Message || 'Error occurred during assignment.')
@@ -696,9 +706,9 @@ export class AllDeskListComponent {
     this.http.putData(`DeskAllocationHeader/${this.deskid}`, payload).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.modalService.dismissAll();
-        this.conformationPopup.openSuccessModal('Desk marked as Available Successfully')
-        // this.getAllDesks(this.first, this.rows);
-        this.getAllDesks(this.first, this.rows, null, null, null);
+        this.conformationPopup.openSuccessModal('Desk marked as available successfully')
+        // this.getAllDesks(this.page, this.pageSize);
+        this.getAllDesks(this.page, this.pageSize, null, null, null);
         setTimeout(() => {
           location.reload();
         }, 2000);
@@ -735,7 +745,7 @@ export class AllDeskListComponent {
 
   //close dailog open
   openConfirmationModal(content: any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   cleardata() {
@@ -746,12 +756,13 @@ export class AllDeskListComponent {
   // close allocation data
   //close dailog open
   openallocationModal(content: any) {
-    this.modalService.open(content, {centered: true,backdrop: 'static'});
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
   }
 
   cleardataallocation() {
     this.reassiginForm.reset();
     this.modalService.dismissAll();
+    this.assiginForm.reset();
   }
 
   canPerformActionsOnDesk(desk: any): boolean {

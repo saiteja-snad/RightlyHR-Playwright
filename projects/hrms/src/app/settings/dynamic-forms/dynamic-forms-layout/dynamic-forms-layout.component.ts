@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { SettingDynamicFormsTabsComponent } from "../../../shared/settings-tabs/setting-dynamic-forms-tabs/setting-dynamic-forms-tabs.component";
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
@@ -7,25 +7,27 @@ import { ModuleInformationComponent } from "../../../shared/module-information/m
 import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../../shared/modules-info';
 import { TranslateModule } from '@ngx-translate/core';
-
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-dynamic-forms-layout',
-  imports: [SettingDynamicFormsTabsComponent, CommonModule, RouterModule, ModuleInformationComponent, TranslateModule],
+  imports: [SettingDynamicFormsTabsComponent, CommonModule, RouterModule, ModuleInformationComponent, TranslateModule,NgbPopoverModule],
   templateUrl: './dynamic-forms-layout.component.html',
-  styleUrl: './dynamic-forms-layout.component.scss'
+  styleUrl: './dynamic-forms-layout.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
+
 export class DynamicFormsLayoutComponent implements OnInit {
-  moduleinfo : string = '';
+  moduleinfo: string = '';
 
   constructor(public readonly router: Router, public rbac: RbacService) { }
 
   ngOnInit(): void {
     this.updateModuleInfo();
     this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.updateModuleInfo();
+      });
   }
 
   isActive(route: string): boolean {
@@ -38,14 +40,12 @@ export class DynamicFormsLayoutComponent implements OnInit {
 
   updateModuleInfo() {
     const url = this.router.url;
-  
     const routeToInfoMap: { [key: string]: string } = {
       '/settings/dynamic-forms/active-forms': MODULE_INFOS.SETTINGS_DYNAMIC_FORMS_MODULE_INFO,
       '/settings/dynamic-forms/inactive-forms': MODULE_INFOS.SETTINGS_DYNAMIC_FORMS_MODULE_INFO,
       '/settings/dynamic-forms/draft-forms': MODULE_INFOS.SETTINGS_DYNAMIC_FORMS_MODULE_INFO,
       '/settings/dynamic-forms/form-settings': MODULE_INFOS.SETTINGS_DYNAMIC_FORMS_MODULE_INFO
     };
-  
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
     this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }

@@ -80,11 +80,12 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
   searchValue: any | null;
   spinnerLoader = false;
   dataload = false;
-  compOffselect!: LeaveApproval[];
-  selectedLeavesItems: LeaveApproval[] = [];
+  compOffselect!: AttendanceRequest[];
+  selectedLeavesItems: AttendanceRequest[] = [];
   multiSelect = false;
   requestBody = {} as any;
-
+  hasSelectedAllOnce = false; 
+  previousSearchValue: string = '';
   requestSummary!: any;
   constructor(
     private modalService: NgbModal,
@@ -100,17 +101,18 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.getAllPendingApprovals();
     this.intializeApproveForm();
   }
+  
   selectCheck(value: any) {
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
     if (!value || value.length === 0) {
       this.selectedLeavesItems = [];
+      this.hasSelectedAllOnce = false; 
       return;
     }
 
     const stageMap: { [stage: string]: any[] } = {};
 
-    // Group items by their approval stage
     value.forEach((item: any) => {
       const stage = item.approvalHeader?.currentapprovalStage;
       if (!stageMap[stage]) {
@@ -124,65 +126,64 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     const totalSelected = value.length;
     const isBulkSelect = totalSelected === totalAvailable;
 
-    // Get the dominant stage (most frequent)
-    let dominantStage = stages[0];
-    let maxCount = stageMap[dominantStage].length;
-    for (const stage of stages) {
-      const count = stageMap[stage].length;
-      if (count > maxCount) {
-        dominantStage = stage;
-        maxCount = count;
-      } else if (count === maxCount && stage === '1') {
-        dominantStage = stage;
+    if (isBulkSelect && stages.length > 1) {
+      if (this.hasSelectedAllOnce) {
+        this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
       }
+
+      this.hasSelectedAllOnce = true; 
+
+      let dominantStage = stages[0];
+      let maxCount = stageMap[dominantStage].length;
+
+      for (const stage of stages) {
+        const count = stageMap[stage].length;
+        if (count > maxCount || (count === maxCount && stage === '1')) {
+          dominantStage = stage;
+          maxCount = count;
+        }
+      }
+
+      const dominantItems = stageMap[dominantStage];
+      this.selectedLeavesItems = [...dominantItems];
+      setTimeout(() => this.updateTableSelectionState(dominantItems));
+      return;
     }
 
-    const lastSelected = value[value.length - 1];
-    const lastSelectedStage = lastSelected.approvalHeader?.currentapprovalStage;
-
-    // Scenario 1: Progressive Selection (mixing stages)
-    const existingStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
-    if (
-      this.selectedLeavesItems.length > 0 &&
-      lastSelectedStage &&
-      existingStage &&
-      lastSelectedStage !== existingStage
-    ) {
+    if (!isBulkSelect && stages.length > 1) {
       this.sharedModalService.openErrorModal('You can only select records from the same approval stage');
-      const newSelection = this.selectedLeavesItems.filter(
-        item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+      const validStage = this.selectedLeavesItems[0]?.approvalHeader?.currentapprovalStage;
+      const newSelection = value.filter(
+        (item: { approvalHeader: { currentapprovalStage: string; }; }) => item.approvalHeader?.currentapprovalStage === validStage
       );
       this.selectedLeavesItems = [...newSelection];
       setTimeout(() => this.updateTableSelectionState(newSelection));
       return;
     }
 
-    // Scenario 2: Bulk select - filter by dominant stage only
-    if (isBulkSelect && stages.length > 1) {
-      const dominantItems = [...stageMap[dominantStage]];
-      this.selectedLeavesItems = dominantItems;
-
-
-      setTimeout(() => this.updateTableSelectionState(dominantItems));
-      return;
-    }
-
-    // Valid multi-select with same stage
     this.selectedLeavesItems = [...value];
   }
 
 
   private updateTableSelectionState(selectedItems: any[]) {
-    // Create a new array reference to force change detection
     this.selectedLeavesItems = [...selectedItems];
 
-    // If using PrimeNG table with dataKey
     if (this.table) {
-      // Clear and reset selection to ensure checkbox states update
       this.table.selection = null;
       setTimeout(() => {
         this.table.selection = selectedItems;
       });
+    }
+  }
+
+  
+  onSearchChange(): void {
+    if (this.searchValue !== this.previousSearchValue) {
+      this.previousSearchValue = this.searchValue;
+      this.selectedLeavesItems = [];
+      this.hasSelectedAllOnce = false; 
+      this.multiSelect = false;
+      this.updateTableSelectionState([]);
     }
   }
   bulkapprove(approverPopup: any) {
@@ -241,10 +242,17 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          this.leaves.next(response.data);
-          this.compOffselect = response.data;
+           if(response.data.length > 0){
+            this.leaves.next(response.data);
+            this.compOffselect = response.data;
+          }else{
+            this.leaves.next([]);
+            this.compOffselect  = [];
+          }
         },
-        error: (reason) => console.error(reason),
+        error: (reason) =>{
+          this.dataload = false;
+           console.error(reason)},
         complete: () => {
           this.dataload = false;
         },
@@ -266,30 +274,32 @@ export class CompoffForYouRequestComponent implements OnInit, OnDestroy {
     this.selectedLeaveData = request;
   }
 
+  
+
+
   getFilteredAndSortedLeaves(): AttendanceRequest[] {
     const search = this.searchValue?.toLowerCase() ?? '';
-    const allLeaves = this.leaves?.getValue() ?? [];
+    let leaves =  this.compOffselect ?? [];
 
-    // Filter
-    let filteredLeaves = allLeaves;
     if (search) {
-      filteredLeaves = filteredLeaves.filter((item: AttendanceRequest) =>
+      leaves = leaves.filter(item =>
         item.entity?.attendanceRequestFusionEmployeeId?.toLowerCase().includes(search) ||
         item.entity?.attendanceRequesterName?.toLowerCase().includes(search) ||
         item.entity?.attendanceRequestDurationType?.toLowerCase().includes(search)
       );
     }
 
-    // Sort
+    // Sort (preserve original sorting logic)
     if (!this.selectedLeavesItems || this.selectedLeavesItems.length === 0) {
-      return filteredLeaves;
+      this.leaves.next(leaves);
+      return this.leaves.getValue();
     }
 
     const selectedIds = new Set(this.selectedLeavesItems.map(item => item.approvalHeader?.id));
-    const selected = filteredLeaves.filter(item => selectedIds.has(item.approvalHeader?.id));
-    const unselected = filteredLeaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
-
-    return [...selected, ...unselected];
+    const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+    const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+    this.leaves.next([...selected, ...unselected]);
+    return this.leaves.getValue();
   }
 
 

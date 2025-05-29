@@ -276,6 +276,7 @@ export const permissionsData = [
   { fields: 'Approved (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Processed (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Rejected (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
+  { fields: 'Cancelled (On Behalf Of)', View: false, Update: false, Create: false, Delete: false },
   { fields: 'Request On Behalf Button', View: false, Update: false, Create: false, Delete: false },
 
 

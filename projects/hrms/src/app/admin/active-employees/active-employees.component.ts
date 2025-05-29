@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { filter, Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { Iactive } from './active-model';
@@ -16,7 +16,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-active-employees',
-  imports: [CommonModule, RouterModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent, NoDataFoundComponent, ModuleInformationComponent],
+  imports: [CommonModule, RouterModule, ActiveEmployeePipe, TranslateModule, FormsModule, DataLoaderContentComponent,NgbPopoverModule, NoDataFoundComponent, ModuleInformationComponent],
   templateUrl: './active-employees.component.html',
   styleUrl: './active-employees.component.scss'
 })
@@ -59,7 +59,7 @@ export class ActiveEmployeesComponent implements OnInit, OnDestroy {
   //function for active Employees
   empdata() {
     this.loader = true;
-    this.subscription = this.http.getData(`Employeedata/ActiveEmployeeswithJobDetails`).subscribe({
+    this.subscription = this.http.getData(`v2/Employeedata/ActiveEmployeeswithJobDetailsData`).subscribe({
       next: (data: any) => {
         this.Active = data as Iactive[];
         this.loader = false;

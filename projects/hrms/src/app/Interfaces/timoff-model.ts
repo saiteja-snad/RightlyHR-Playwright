@@ -147,6 +147,7 @@ export interface RegularizationRequest {
   processedComment: string;
   notes: string;
   approverHeaderId: number;
+  cancelledReason:string;
   regularizationApproverComments: RegularizationApproverComment[];
 }
 export interface LeaveType {

@@ -146,7 +146,7 @@ inititializeForm() {
   this.dstForm = this.fb.group({
     year: ['', Validators.required],
     location: ['', Validators.required],
-    subLocation: [{ value: '', disabled: true }, Validators.required],
+    subLocation: [{ value: null, disabled: true }, Validators.required],
     shift: [{ value: null, disabled: true }, Validators.required],
     momentRows: this.fb.array([]),
   });
@@ -226,32 +226,43 @@ createMomentRow(): FormGroup {
     this.subLocationDetails = location.jobSubLocations ?? [];
     this.dstForm.get('subLocation')?.enable();
     this.dstForm.get('subLocation')?.reset();
+    this.dstForm.get('shift')?.reset();
+    this.dstForm.get('shift')?.disable();
+    this.dstForm.get('subLocation')?.markAsTouched();
   }
 
-  getAllShifts(subLocation: ISubLocation): void {
-    const params = {
-      locationId: subLocation.jobLocationId,
-      subLocationId: subLocation.id,
-    };
-   
-    this.http
-      .getDataWithQueryParams('orgShifts/getshiftlocation', params)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res: any) => {
-          this.shiftDetails = res.flatMap(
-            (header: any) => header.orgShiftsItems || []
-          );
-          this.dstForm.get('shift')?.enable();
-        },
-        error: (err) => {
-          console.error('Error fetching shifts:', err);
-          this.shiftDetails = [];
-          this.dstForm.get('shift')?.reset();
-          this.dstForm.get('shift')?.disable();
-        },
-      });
-  }
+getAllShifts(subLocation: ISubLocation): void {
+  const params = {
+    locationId: subLocation.jobLocationId,
+    subLocationId: subLocation.id,
+  };
+
+  // Reset and disable shift field before fetching new shifts
+  const shiftControl = this.dstForm.get('shift');
+  shiftControl?.reset();      
+  shiftControl?.disable();      
+  shiftControl?.markAsTouched(); 
+  this.http
+    .getDataWithQueryParams('orgShifts/getshiftlocation', params)
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (res: any) => {
+        this.shiftDetails = res.flatMap(
+          (header: any) => header.orgShiftsItems || []
+        );
+        shiftControl?.enable(); 
+        // Re-validate now that new options are loaded
+        shiftControl?.setValidators([Validators.required]);
+        shiftControl?.updateValueAndValidity();
+      },
+      error: (err) => {
+        console.error('Error fetching shifts:', err);
+        this.shiftDetails = [];
+        shiftControl?.reset();
+        shiftControl?.disable();
+      },
+    });
+}
 
   private getAllLocations(): void {
     this.http

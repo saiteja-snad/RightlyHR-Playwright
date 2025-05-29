@@ -38,12 +38,11 @@ export class IncrementPercentageComponent implements OnInit, OnDestroy {
     { label: 20, value: 20 },
     { label: 25, value: 25 },
   ];
-
+searchQuery = '';
   page = 1;
   pageSize = 10;
   rows = 10;
   collectionSize!: number;
-  searchQuery = '';
   first = 0;
   totalRecords = 0;
   searchText = '';

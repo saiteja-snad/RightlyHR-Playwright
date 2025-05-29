@@ -1,9 +1,12 @@
 <div class="custom-main-component-container">
   <div class="component-header-content">
-    <div>
-      <p class="component-header mb-0">Org Leave Balance</p>
-    </div>
-
+  <div class="heading-content">
+            <div class="commpoment-name">Time off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">Org Leave Balance</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
+        </div>
     <div class="d-flex gap-3 flex-wrap">
       <div class="d-flex align-items-center gap-3">
         <label class="form-label custom-label m-0">Select Manager</label>
@@ -28,10 +31,11 @@
     </div>
   </div>
 
-  <!--Module Information-->
-  <div>
-    <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+ 
+   <!--Module Information-->
+    <ng-template #popContent>
+        <app-module-information [moduleInfo]="moduleinfo"  />
+    </ng-template>
 
   <div class="d-flex w-100 gap-3">
     <div class="component-left-tabs-container">

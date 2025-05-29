@@ -1,6 +1,14 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="component-header">Increment Percentage</div>
+
+    <div class="component-header-content">
+        <div class="heading-content">
+            <div class="commpoment-name cursor">PMS Configuration<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header"> Increment Percentage</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
         @if(rbac.allowedToAccess('Increment Create.view')){
         <div>
             <button class="custom-btn btn-primary px-5" (click)="openAdd()">Create</button>
@@ -8,15 +16,17 @@
         }
     </div>
 
-     <!--Module Information-->
-     <div>
+    <!--Module Information-->
+    <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
-    
+    </ng-template>
+
+
     <div class="w-100">
-         <!--Input search-->
-         <div class="input-group custom-search mb-3">
-            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
+        <!--Input search-->
+        <div class="input-group custom-search mb-3">
+            <span class="input-group-text custom-input-group-search" id="basic-addon1"><i
+                    class="bi bi-search"></i></span>
             <input type="search" class="form-control custom-search-input" placeholder="Search" [(ngModel)]="searchText"
                 (ngModelChange)="onSearchTextChange()" aria-label="Search">
         </div>
@@ -31,9 +41,11 @@
                         <th>Location</th>
                         <th>Sub Location</th>
                         <th>Rating Scale</th>
-                        @if (rbac.allowedToAccess('Increment Update(Status - Created).view') || rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
-                            rbac.allowedToAccess('Increment View(Status - Initiated).view') || rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
-                        <th>Action(s)</th>
+                        @if (rbac.allowedToAccess('Increment Update(Status - Created).view') ||
+                        rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
+                        rbac.allowedToAccess('Increment View(Status - Initiated).view') ||
+                        rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
+                        <th>Action<span class="text-lowercase">(S)</span></th>
                         }
                     </tr>
                 </thead>
@@ -44,29 +56,36 @@
                     <tr>
                         <td>{{item?.reviewCycleName?item?.reviewCycleName:'-' }}</td>
                         <td>{{item?.deptName?( getNamesAsString(item?.deptName, 'departments')):'-' }}</td>
-                        <td>{{item?.subdeptName? (getNamesAsString(item?.subdeptName, 'subDepartmentName')):'-' }}</td>
+                        <td>{{item?.subdeptName? (getNamesAsString(item?.subdeptName, 'subDepartmentName')):'-' }}
+                        </td>
                         <td>{{item?.locationName?( getNamesAsString(item?.locationName, 'locationName')):'-' }}</td>
-                        <td>{{item?.sublocationName? (getNamesAsString(item?.sublocationName, 'subLocationName')):'-' }}
+                        <td>{{item?.sublocationName? (getNamesAsString(item?.sublocationName,
+                            'subLocationName')):'-' }}
                         </td>
                         <td>{{item?.rating?item?.rating:'-'}}</td>
-                        @if (rbac.allowedToAccess('Increment Update(Status - Created).view') || rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
-                            rbac.allowedToAccess('Increment View(Status - Initiated).view') || rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
+                        @if (rbac.allowedToAccess('Increment Update(Status - Created).view') ||
+                        rbac.allowedToAccess('Increment Delete(Status - Created).view') ||
+                        rbac.allowedToAccess('Increment View(Status - Initiated).view') ||
+                        rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')) {
                         <td class="text-center">
                             @if(showIncrementActionDropdown(item)){
-                                <div class="dropdown">
+                            <div class="dropdown">
                                 <span type="button" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
-                                  </span>
+                                </span>
                                 <ul class="dropdown-menu custom-dropdown-menu">
                                     @if (rbac.allowedToAccess('Increment Update(Status - Created).view')) {
-                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Created' || item?.reviewCycleStatus ==='Initiated'" (click)="editDetails(item)">Update</a></li>
+                                    <li><a class="dropdown-item"
+                                            *ngIf="item?.reviewCycleStatus ==='Created' || item?.reviewCycleStatus ==='Initiated'"
+                                            (click)="editDetails(item)">Update</a></li>
                                     }
                                     @if(rbac.allowedToAccess('Increment Delete(Status - Created).view')){
                                     <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Created'"
                                             (click)="openDelete(confirmation, item.id)">Delete</a></li>
                                     }
                                     @if(rbac.allowedToAccess('Increment View(Status - Initiated).view')){
-                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Initiated'" (click)="viewDetails(item)">View</a></li>
+                                    <li><a class="dropdown-item" *ngIf="item?.reviewCycleStatus ==='Initiated'"
+                                            (click)="viewDetails(item)">View</a></li>
                                     }
                                     @if(rbac.allowedToAccess('Increment Update(Status - Review On Hold).view')){
                                     @if(item?.reviewCycleStatus ==='Review on Hold'){
@@ -97,23 +116,24 @@
         </div>
 
         @if(IncementalDetailsget.length > 0){
-            <div class="pagination-content">
-                <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                    <div class="d-flex align-items-center gap-3 p-2">
-                        <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                            (ngModelChange)="onPageSizeChange($event)">
-                            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                            </option>
-                        </select>
-                        <span class="pagination-label text-nowrap">
-                            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{ collectionSize }}
-                        </span>                          
-                    </div>
-                    <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
-                        (onPageChange)="onPageChange($event)"></p-paginator>
+        <div class="pagination-content">
+            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+                <div class="d-flex align-items-center gap-3 p-2">
+                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+                        (ngModelChange)="onPageSizeChange($event)">
+                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+                        </option>
+                    </select>
+                    <span class="pagination-label text-nowrap">
+                        Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first +
+                        +rows) }} of {{ collectionSize }}
+                    </span>
                 </div>
+                <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+                    (onPageChange)="onPageChange($event)"></p-paginator>
             </div>
-            }
+        </div>
+        }
     </div>
 </div>
 

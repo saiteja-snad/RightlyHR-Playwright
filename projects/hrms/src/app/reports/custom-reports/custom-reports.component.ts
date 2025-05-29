@@ -17,6 +17,7 @@ import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 interface FieldGroup {
   name: string;
   fields: string[];
@@ -34,7 +35,8 @@ interface FieldGroup {
     NgxDaterangepickerBootstrapDirective,
     AccordionModule,
     NoDataFoundComponent,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    NgbPopoverModule
 ],
   templateUrl: './custom-reports.component.html',
   styleUrl: './custom-reports.component.scss',
@@ -73,24 +75,26 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
   empStatusList = ['All Employees', 'Active', 'Inactive', 'Prospective'];
   selectedData: any[] = [];
   selectedFields: string[] = [
-    'ID',
+    // 'ID',
     'Employee ID',
     'Salutation',
     'First Name',
     'Middle Name',
     'Last Name',
+    'Status'
   ];
   reportFields: string[] = [];
   emp: Ipersonal[] = [];
   reportdata: any[] = [];
   // Define locked fields per group (if needed)
   lockedFields: string[] = [
-    'ID',
+    // 'ID',
     'Employee ID',
     'Salutation',
     'First Name',
     'Middle Name',
     'Last Name',
+    'Status'
   ];
   employeeStatus!: string;
   selectedFieldsOption = [] as any;
@@ -102,7 +106,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     basicInfo: {
       name: 'Basic Information',
       fields: [
-        'ID',
+        // 'ID',
         'Employee ID',
         'Salutation',
         'First Name',
@@ -115,12 +119,13 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
         'Blood Group',
       ],
       selectedFields: [
-        'ID',
+        // 'ID',
         'Employee ID',
         'Salutation',
         'First Name',
         'Middle Name',
         'Last Name',
+        'Status'
       ],
       selectAll: false,
     },
@@ -257,12 +262,6 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
       selectedFields: [],
       selectAll: false,
     },
-    employmentTypeDetails: {
-      name: 'Employment Type Details',
-      fields: ['Job Type', 'Grade Name'],
-      selectedFields: [],
-      selectAll: false,
-    },
     jobDetails: {
       name: 'Job Details',
       fields: [
@@ -367,7 +366,7 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     this.showCard = false;
     this.JobShowCard = true;
   
-    const defaultFields = ['ID', 'Employee ID', 'First Name', 'Middle Name', 'Last Name'];
+    const defaultFields = ['Employee ID', 'First Name', 'Middle Name', 'Last Name'];
   
     // Ensure no duplicates
     const fieldSet = new Set([...defaultFields, ...this.selectedFields]);
@@ -467,31 +466,53 @@ export class CustomReportsComponent implements OnInit, OnDestroy {
     const formData = this.reportForm.value;
     this.updateReportFields();
     this.hasPendingChanges = false;
-    //if dateOfJoining present filter the data with provide range
-    const startDate = formData.dateOfJoining?.startDate ? new Date(formData.dateOfJoining.startDate) : null;
-    const endDate = formData.dateOfJoining?.endDate ? new Date(formData.dateOfJoining.endDate) : null;
+    // //if dateOfJoining present filter the data with provide range
+    // const startDate = formData.dateOfJoining?.startDate ? new Date(formData.dateOfJoining.startDate) : null;
+    // const endDate = formData.dateOfJoining?.endDate ? new Date(formData.dateOfJoining.endDate) : null;
     // Step 1: Filter employees based on DoJ if date range is provided
-    const filteredEmployees = this.emp.filter((user: Ipersonal) => {
-      const status = this.reportForm.get('status')?.value;
-      const empStatus = status.toLowerCase(); 
-      const dateToCheck =
-        empStatus === 'active'
-          ? (user.dateOfJoining ? new Date(user.dateOfJoining) : null)
-          : (user.lastworkingday ? new Date(user.lastworkingday) : null);
-    
-      if (!dateToCheck || isNaN(dateToCheck.getTime())) return false;
-    
-      if (startDate && dateToCheck < startDate) return false;
-      if (endDate && dateToCheck > endDate) return false;
-    
-      return true;
-    });
-    
+    const statusRaw = this.reportForm.get('status')?.value;
+const empStatus = statusRaw?.toString().trim().toLowerCase();
+
+const startDate = formData.dateOfJoining?.startDate
+  ? new Date(formData.dateOfJoining.startDate)
+  : null;
+
+const endDate = formData.dateOfJoining?.endDate
+  ? new Date(formData.dateOfJoining.endDate)
+  : null;
+
+const filteredEmployees = this.emp.filter((user: Ipersonal) => {
+  // Determine the date field to use based on the selected status
+  let dateToCheck: Date | null = null;
+
+  if (empStatus === 'active' && user.dateOfJoining) {
+    dateToCheck = new Date(user.dateOfJoining);
+  } else if (empStatus === 'inactive' && user.lastworkingday) {
+    dateToCheck = new Date(user.lastworkingday);
+  }
+
+  // If date filtering is not applicable (dateToCheck is null), include the employee
+  if (!dateToCheck || isNaN(dateToCheck.getTime())) return true;
+
+  // Apply date range filter only if a valid range is provided
+  if (empStatus === 'active' && (startDate || endDate)) {
+    if (startDate && dateToCheck < startDate) return false;
+    if (endDate && dateToCheck > endDate) return false;
+  }
+
+  if (empStatus === 'inactive' && (startDate || endDate)) {
+    if (startDate && dateToCheck < startDate) return false;
+    if (endDate && dateToCheck > endDate) return false;
+  }
+
+  return true;
+});
+
     filteredEmployees.forEach((user: Ipersonal) => {
       const data: { [key: string]: any } = {};
       this.selectedFields.forEach((field: string) => {
         // Basic Info
-        if (field === 'ID') data[field] = user.employeeId;
+        if (field === 'Employee ID') data[field] = user.fusionEmpId;
         else if (field === 'Employee ID') data[field] = user.fusionEmpId;
         else if (field === 'Salutation') data[field] = user.title;
         else if (field === 'First Name') data[field] = user.firstName;

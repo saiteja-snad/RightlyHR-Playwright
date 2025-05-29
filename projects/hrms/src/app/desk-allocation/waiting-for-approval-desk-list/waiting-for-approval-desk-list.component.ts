@@ -27,9 +27,12 @@ export class WaitingForApprovalDeskListComponent {
   deskid: any
   selectedAsset!: any
   deskiteamid: any;
-  first:any = 1;
-  rows:any = 10;
-  totalRecords = 100;
+  page = 1;
+  pageSize = 10;
+  rows = 10;
+  collectionSize!: number;
+  first = 0;
+  totalRecords = 0;
   options = [
     { label: 10, value: 10 },
     { label: 15, value: 15 },
@@ -64,7 +67,7 @@ export class WaitingForApprovalDeskListComponent {
         this.selectedLocationId = JSON.parse(localStorage.getItem('locationId') ?? 'null');
         this.selectedSubLocationId = JSON.parse(localStorage.getItem('sublocationId') ?? 'null');
 
-        this.getAllDesks(this.first, this.rows, Value, this.selectedSubLocationId, this.Status);
+        this.getAllDesks(this.page, this.pageSize, Value, this.selectedSubLocationId, this.Status);
         this.getcount(Value, this.selectedSubLocationId, this.Status);   
       }
     })
@@ -92,7 +95,7 @@ export class WaitingForApprovalDeskListComponent {
           this.desklist.next(data.items)
           this.getcount(this.selectedLocationId, this.selectedSubLocationId, this.Status)
           // Update the collection size (total records) for pagination
-          this.totalRecords = data.totalRecords;
+          this.collectionSize = data.totalRecords;
 
         },
         error: (error: any) => {
@@ -108,25 +111,36 @@ export class WaitingForApprovalDeskListComponent {
       });
   }
   onRowsChange() {
-    this.first = 1;
-    this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-
+    this.page = 1;        
+    this.first = 0; 
+    this.getAllDesks(this.page, this.pageSize, null,null,this.Status);
   }
-  onPageChange(event: PaginatorState) {
+
+  onPageChange(event: any) {
+     this.page = event.page + 1;
+    this.pageSize = event.rows;
     this.first = event.first;
-    this.rows = event.rows;
-    this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
-
+    this.getAllDesks(this.page, this.pageSize, null,null, this.Status);
   }
+
+  // Called when first size changes
+  onPageSizeChange(newPageSize: number) {
+     this.pageSize = newPageSize;
+    this.rows = newPageSize; 
+    this.page = 1;
+    this.first = 0;
+    this.getAllDesks(this.page, this.pageSize, null,null, this.Status);
+  }
+
   onSearchChange(event: any) {
 
     if (event !== '' && event.length >= 1) {
 
-      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
 
     if (event === '') {
-      this.getAllDesks(this.first, this.rows, this.selectedLocationId, this.selectedSubLocationId, this.Status);
+      this.getAllDesks(this.page, this.pageSize, this.selectedLocationId, this.selectedSubLocationId, this.Status);
     }
   }
 

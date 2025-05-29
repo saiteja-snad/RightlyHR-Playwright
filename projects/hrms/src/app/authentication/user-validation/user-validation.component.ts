@@ -30,7 +30,8 @@ export class UserValidationComponent {
   }
   async postLogin() {
     await this._msalService.instance.initialize();
-    const loginResponse = await this._msalService.instance.loginPopup();
+
+  //  const loginResponse = await this._msalService.instance.loginRedirect();
     //console.log(loginResponse.accessToken);
     
     const account = this._msalService.instance.getAllAccounts()[0];
@@ -65,7 +66,7 @@ export class UserValidationComponent {
             } else if (response.roles.includes('ADMIN') || response.roles.includes('HR MANAGER')) {
               this.router.navigate(['/admin/dashboard']);
             } else {
-              const route = this.accessNav.navigateToAccessedHeaderRoute('/personalinfo');
+              const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
               if (route) {
                 this.router.navigate([route]);
               }
@@ -76,7 +77,7 @@ export class UserValidationComponent {
           }, 2000);
 
         } else {
-          const route = this.accessNav.navigateToAccessedHeaderRoute('/personalinfo');
+          const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
               if (route) {
                 this.router.navigate([route]);
               }
@@ -87,7 +88,7 @@ export class UserValidationComponent {
       },
       error: (err) => {
         console.log(err);
-        const route = this.accessNav.navigateToAccessedHeaderRoute('/personalinfo');
+        const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
               if (route) {
                 this.router.navigate([route]);
               }

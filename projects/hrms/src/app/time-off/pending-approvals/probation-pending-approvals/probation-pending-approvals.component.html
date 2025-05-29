@@ -15,7 +15,7 @@
                     <th>{{'Probation End Date' | translate}}</th>
                     <th class="text-center">{{'Approved History' | translate}}</th>
                     @if(rbac.allowedToAccess('Probation Details.update') || rbac.allowedToAccess('Probation Details.delete')) {
-                    <th class="text-center">Action(s)</th>
+                    <th class="text-center">{{'Action' | translate}}</th>
                     }
             </thead>
             <tbody>
@@ -81,7 +81,7 @@
                     <thead>
                         <tr>
                             <th>Approver Role</th>
-                            <th>Over all Rating</th>
+                            <th>Overall Rating</th>
                             <th>Status</th>
                             <th>Extended Date</th>
                             <th>Comments </th>
@@ -157,13 +157,13 @@
                             (click)="toggleApprove()">
                         <label class="form-check-label ms-2" for="flexRadioEarly">{{'Process' | translate}}</label>
                     </div>
-
+                     @if(selectedData.probationextendedcount<=probationExtensionTimes){
                     <div class="form-check form-check-inline ms-3">
                         <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioExtend"
                             (click)="toggleExtend()">
                         <label class="form-check-label ms-2" for="flexRadioExtend">{{'Extend' | translate}}</label>
                     </div>
-
+                    }
                     <div class="form-check form-check-inline ms-3">
                         <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDiscontinue"
                             (click)="toggleDiscontinue()">
@@ -182,16 +182,17 @@
                         {{selectedData.comments?.length?selectedData.comments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(earlyrelievingreason.touched && earlyrelievingreason.invalid) || 
                     (earlyrelievingreason.invalid && ProcessacceptForm.submitted)">{{'Comments is required' | translate}}</div>
+                     <div class="error-msg" *ngIf="earlyrelievingreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
                 </div>
-
+             @if(selectedData.probationextendedcount<=probationExtensionTimes){
                 <div class="mb-3" *ngIf="extend">
                     <label for="exampleFormControlInput1" class="form-label custom-label">{{'Extend Date' |
                         translate}}<span class="text-danger">*</span>
                     </label>
                     <input class="form-control custom-input" type="date" aria-label="Default select example"
                         id="extenddate" placeholder="" name="extenddate" #extenddate="ngModel"
-                        (keypress)="letters($event)" [min]="getBlockedFutureDate(selectedData.probationEndDate)"
-                        [max]="getBlockedFutureDateupto(selectedData.probationEndDate,probationExtensionDuration)"
+                        (keypress)="letters($event)" [min]="getBlockedFutureDate(selectedData.probationEndDate,selectedData.probationExtendedDate)"
+                        [max]="getBlockedFutureDateupto(selectedData.probationEndDate,probationExtensionDuration,selectedData.probationExtendedDate)"
                         [(ngModel)]="selectedData.extenddate" required>
                     <div class="error-msg"
                         *ngIf="(extenddate.touched && extenddate.invalid) || (extenddate.invalid && ProcessacceptForm.submitted)">
@@ -204,20 +205,21 @@
                     <label for="exampleFormControlTextarea1" class="form-label custom-label">{{'Feedback for Extend' |
                         translate}}<span class="error-msg">*</span></label>
                     <textarea class="form-control custom-input" id="exampleFormControlTextarea1"
-                        placeholder="Please Provide Feedback" name="Extendreason" #Extendreason="ngModel"
+                        placeholder="Please provide feedback" name="Extendreason" #Extendreason="ngModel"
                         [(ngModel)]="selectedData.comments" maxlength="250"
                         (ngModelChange)="ifreasonnull(selectedData.comments)" required rows="3"></textarea>
                     <div class="textarea-count-text">{{selectedData.comments?.length?selectedData.comments?.length:0}}/250</div>
                     <div class="error-msg" *ngIf="(Extendreason.touched && Extendreason.invalid) || (Extendreason.invalid && ProcessacceptForm.submitted)
                      || (Extendreason.errors?.['pattern']) ">{{'Feedback for Extend is required' | translate}}</div>
+                      <div class="error-msg" *ngIf="Extendreason.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
                 </div>
-
+            }
                 <div class="mb-3" *ngIf="discontinue">
                     <label for="Descriptiondetails" type="Notes" class="form-label custom-label">{{'Reject Reason' | translate}}
                         <span class="text-danger">*</span></label>
                     <textarea type="text" class="form-control custom-input" id="Descriptiondetails"
                         name="Descriptiondetails" aria-label="Description" rows="3" maxlength="250"
-                        placeholder="Please Provide Reason" #Descriptiondetails="ngModel" autocomplete="off"
+                        placeholder="Please provide reason" #Descriptiondetails="ngModel" autocomplete="off"
                         (ngModelChange)="ifreasonnull(selectedData.rejectedReason)"
                         [(ngModel)]="selectedData.rejectedReason" required></textarea>
                     <div class="textarea-count-text">{{selectedData.rejectedReason?.length ?
@@ -226,6 +228,7 @@
                         *ngIf="(Descriptiondetails.touched && Descriptiondetails.invalid) || (Descriptiondetails.invalid && ProcessacceptForm.submitted)">
                         {{'Reason is required' | translate}}
                     </div>
+                     <div class="error-msg" *ngIf="Descriptiondetails.dirty &&issubmitdiable">{{'Special characters and spaces are not allowed at the beginning'|translate}}</div>
                 </div>
             </div>
 
@@ -248,7 +251,7 @@
                 <p class="popup-heading mb-0">{{'Assessment Form'| translate}}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')">
+                <a (click)="modal.dismiss('Cross click');openModalView()">
                     <img src="icons/close.png" alt="Close Icon" class="close-icon">
                 </a>
             </div>

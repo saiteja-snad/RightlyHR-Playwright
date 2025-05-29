@@ -45,7 +45,7 @@ export class LeavesApprovalComponent {
 
   ngOnInit(): void {
     this.loggedinuser = this.authService.getToken();
-    this.empdata = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
+    this.empdata = this.loggedinuser;
     this.getDataByLPID();
     this.http.selectedEmployeeIdTimeoff$.subscribe((id) => {
       if (id) {
@@ -59,7 +59,7 @@ export class LeavesApprovalComponent {
   }
 
   getDataByLPID() {
-    let empid =  this.selectempid || this.empdata.employeeId;
+    let empid = this.empdata.employeeId ?? this.selectempid;
     this.subscription = this.http.getData(`Timeoff/${empid}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {

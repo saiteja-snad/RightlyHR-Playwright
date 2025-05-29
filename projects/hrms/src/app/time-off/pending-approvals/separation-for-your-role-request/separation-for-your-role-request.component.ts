@@ -36,7 +36,7 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
     NoDataFoundComponent,
     DateformatPipe,
     PendingapprovalsseparationPipe,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
   ],
   templateUrl: './separation-for-your-role-request.component.html',
   styleUrl: './separation-for-your-role-request.component.scss',
@@ -68,6 +68,12 @@ export class SeparationForYourRoleRequestComponent {
     rejectedReason: '',
     early: false,
   };
+  
+  salaryHoldOptions = [
+  { label: 'Yes', value: true },
+  { label: 'No', value: false }
+];
+
   isLoading = false;
   regular = false;
   extend = false;
@@ -95,7 +101,6 @@ export class SeparationForYourRoleRequestComponent {
   ) { }
 
   ngOnInit(): void {
-    console.log('Initial spsalaryhold:', this.selectedSpRequestData.spsalaryhold);
     this.getseparationforrolerequests();
   }
 
@@ -193,7 +198,6 @@ export class SeparationForYourRoleRequestComponent {
 
   resetNoticePeriod() {
     this.selectedSpRequestData.noticperiodType = null;
-    
   }
 
   onRowsChange() {
@@ -431,7 +435,7 @@ export class SeparationForYourRoleRequestComponent {
       isAcceptEarly: this.selectedSpRequestData.spIsAcceptEarlyRelieving ?? false,
       noticePeriodType: this.selectedSpRequestData.noticperiodType,
       noticePeriodTypeDays: this.selectedSpRequestData.noticperioddays,
-      salaryhold: this.selectedSpRequestData.spsalaryhold,
+      salaryhold: this.selectedSpRequestData.spsalaryhold?.value,
       meta: this.jsonData,
       approvedBy: loggedInUser.employeeId.toString(),
       currentStage: parseInt(this.requesthandler.approvalHeader.currentapprovalStage),

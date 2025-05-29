@@ -11,6 +11,7 @@ import { NgxDocViewerModule } from 'ngx-doc-viewer';
 import { FormsModule } from '@angular/forms';
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationService } from '../../../../../../preonboarding/src/app/common-services/form-validation.service';
 @Component({
   selector: 'app-pending-expenses',
   imports: [CommonModule, DateformatPipe, NgxDocViewerModule, FormsModule, NoDataFoundComponent, DataLoaderContentComponent],
@@ -34,8 +35,8 @@ export class PendingExpensesComponent {
   @ViewChild('commentspopup') modalContent: any;
   expenesEmplyeedata = new BehaviorSubject<IExpense[]>([])
   draftsCount: number = 0;
-
-  constructor(private http: HttpService, private modalService: NgbModal, private sanitizer: DomSanitizer) { }
+ expensesAttachment: any;
+  constructor(private http: HttpService,public formValidation: FormValidationService, private modalService: NgbModal, private sanitizer: DomSanitizer) { }
 
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
@@ -84,7 +85,12 @@ export class PendingExpensesComponent {
     });
     this.approverComments = value;
   }
-
+  private renameFiles(originalFile: File, newName: string) {
+    return new File([originalFile], newName, {
+      type: originalFile.type,
+      lastModified: originalFile.lastModified,
+    });
+  }
   onSelectDownload(file: any): void {
     this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', file).subscribe({
       next: (res: any) => {

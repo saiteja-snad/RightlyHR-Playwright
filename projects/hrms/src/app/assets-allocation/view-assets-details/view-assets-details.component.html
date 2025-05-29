@@ -1,8 +1,16 @@
-<div class="custom-main-component-container ">
-    <div class="component-header-content">
-        <p class="component-header">
-            <i class="bi bi-arrow-90deg-left me-2 cursor" (click)="navigateassets()"></i>{{'Asset Management'|translate}}
-        </p>
+<div class="custom-main-component-container">
+    <div class="component-header-content pt-2">
+        <!-- <p class="component-header m-0 pt-2">
+            <img src="/images/back-icon.png" alt="Icon" class="back-icon" (click)="navigateassets()">{{'Asset Management'|translate}}
+        </p> -->
+        <div class="heading-content">
+            <div class="commpoment-name" (click)="navigateassets()">{{'Asset Management'|translate}}<span
+                    class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{'Asset Details '|translate}}</div>
+            <!-- <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div> -->
+        </div>
     </div>
 
     <div class="d-flex gap-3 w-100">
@@ -21,8 +29,8 @@
             </div>
         </div>
 
-        <div class="card custom-component-right-content p-3">
-            <div class="card p-3 mt-2 mb-3">
+        <div class="custom-component-right-content p-3">
+            <div class="card p-3 mb-3">
                 <p class=" component-header cursor mb-4">Asset Management</p>
                 <div class="row mb-3">
                     <div class="col-6"><b class="component-sub-header mb-0">Asset Model:</b>
@@ -66,7 +74,7 @@
             <div class="card p-3 mb-3">
                 <h5 class="component-header cursor mb-4">Vendor Details</h5>
                 <div class="row mb-3">
-                    <div class="col-6"><b class="component-sub-header mb-0">Vendor Name:</b> 
+                    <div class="col-6"><b class="component-sub-header mb-0">Vendor Name:</b>
                         {{ assetDetails?.venderName ? assetDetails?.venderName : 'N/A'}}</div>
                     <div class="col-6"><b class="component-sub-header mb-0">Contact Number:</b>
                         {{ assetDetails?.contactnumber ? assetDetails?.contactnumber :'N/A' }}</div>

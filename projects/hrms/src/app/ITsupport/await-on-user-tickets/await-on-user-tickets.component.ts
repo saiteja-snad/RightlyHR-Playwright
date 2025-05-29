@@ -97,6 +97,7 @@ export class AwaitOnUserTicketsComponent {
     this.selectedTickets = ticket;
     this.getEmployee(this.selectedTickets.empId)
     this.itSupportForm.patchValue({
+      employee: this.selectedTickets.employee === 'Self' ? 'Self' : 'Self',
       name: this.selectedTickets.employeeName,
       email: this.selectedTickets.emailaddress,
       phoneNumber: this.selectedTickets.contactnumber,
@@ -157,14 +158,16 @@ export class AwaitOnUserTicketsComponent {
     if(this.itSupportForm.value.assignedto !== null && this.itSupportForm.value.assignedto !== "" && this.itSupportForm.value.assignedto !== undefined){
       this.itTicketDetails.assigneeId = this.itSupportForm.value.assignedto.assigneeId.toString();
     }
-    if(this.itSupportForm.value.assignedto === undefined){
-      this.itTicketDetails.assigneeId = null;
-    }
-    console.log(this.itSupportForm.value.assignedto.assigneeId.toString());
+    // if(this.itSupportForm.value.assignedto === undefined){
+    //   this.itTicketDetails.assigneeId = null;
+    // }
+    // console.log(this.itSupportForm.value.assignedto.assigneeId.toString());
     
     this.subscription = this.http.postdata(`Tickets/Update`, this.itTicketDetails).subscribe({
       next: (data: any) => {
         this.confirmation.openSuccessModal('Ticket updated successfully');
+         this.http.requestRefresh();
+
         localStorage.removeItem('ticketDetails');
         setTimeout(() => {
           this.itSupportForm.reset();

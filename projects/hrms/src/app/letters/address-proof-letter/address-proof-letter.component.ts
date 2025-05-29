@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
@@ -19,9 +19,12 @@ import { OpenModalService } from '../../services/open-modal.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+
+
+
 @Component({
   selector: 'app-address-proof-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LetterFooterComponent, LettersheaderComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './address-proof-letter.component.html',
   styleUrl: './address-proof-letter.component.scss'
 })
@@ -69,6 +72,7 @@ export class AddressProofLetterComponent {
   addressFlag = false;
   addressErrorMessage = ''; 
   spinnerLoader= false;
+  lastSelectedEmployeeId: string | null = null;
 
   constructor(
     private http: HttpService,
@@ -158,14 +162,29 @@ export class AddressProofLetterComponent {
   }
 
   Onclick(selectedEmployee: any) {
-    if (!selectedEmployee || typeof selectedEmployee !== 'object') {
+    if (!selectedEmployee || typeof selectedEmployee !== 'object' || !selectedEmployee.hasOwnProperty('employeeId')) {
       return;
     }
-
-    if (!selectedEmployee.hasOwnProperty('employeeId')) {
-      return;
+  
+    // If employee has changed, reset the dependent fields
+    if (this.lastSelectedEmployeeId && this.lastSelectedEmployeeId !== selectedEmployee.employeeId) {
+      this.employeeForm.patchValue({
+        SelectDropDown: '',
+        Documenttype: '',
+        authorityid: ''
+      });
+      ['SelectDropDown', 'Documenttype', 'authorityid'].forEach(controlName => {
+        const control = this.employeeForm.get(controlName);
+        control?.markAsPristine();
+        control?.markAsUntouched();
+        control?.updateValueAndValidity();
+      });
+    
     }
-
+  
+    // Update the last selected employeeId
+    this.lastSelectedEmployeeId = selectedEmployee.employeeId;
+  
     this.fusionEmpId = selectedEmployee.employeeId;
     this.addressLetterData = {};
 

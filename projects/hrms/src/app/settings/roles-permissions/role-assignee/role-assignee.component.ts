@@ -9,7 +9,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { IActiveEmployee } from './active-employees.model';
 import { SelectModule } from 'primeng/select';
 import { OpenModalService } from '../../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { RbacService } from '../../../services/rbac.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { NoDataFoundComponent } from "../../../shared/no-data-found/no-data-found.component";
@@ -18,10 +18,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ModuleInformationComponent } from "../../../shared/module-information/module-information.component";
 import { NavigationEnd, Router } from '@angular/router';
 import { MODULE_INFOS } from '../../../shared/modules-info';
+  
+
+
 @Component({
   selector: 'app-role-assignee',
   imports: [CommonModule, FormsModule, ReactiveFormsModule, MultiSelectModule, SelectModule, DataLoaderContentComponent, NoDataFoundComponent,
-    SettingsRolePermissionsModuleTabsComponent, TranslateModule, ModuleInformationComponent],
+    SettingsRolePermissionsModuleTabsComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './role-assignee.component.html',
   styleUrl: './role-assignee.component.scss',
   encapsulation:ViewEncapsulation.None
@@ -151,8 +154,9 @@ export class RoleAssigneeComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         this.modal.openSuccessModal('Assignee Added Successfully');
       },
-      error: (err) => {
-        this.modal.openErrorModal('Assignee Assignment Failed');
+      error: (err: any) => {
+        const msg = err.error.Message? err.error.Message : 'Assignee Assignment Failed'
+        this.modal.openErrorModal(msg);
       },
       complete: () => {
         this.createAssigneeForm.reset();

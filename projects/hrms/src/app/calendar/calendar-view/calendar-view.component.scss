@@ -2,11 +2,12 @@
   width: 20rem;
   min-width: 15rem;
   padding: 1rem;
+  height: calc(100vh - 12rem);
 }
 
 .calender-content {
   width: calc(100vw - 20rem);
-  height: calc(100vh - 10rem);
+  height: calc(100vh - 12rem);
   overflow: auto;
   padding: 1rem;
   min-width: 600px;

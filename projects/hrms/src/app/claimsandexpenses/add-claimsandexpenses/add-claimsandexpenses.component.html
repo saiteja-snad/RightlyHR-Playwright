@@ -1,10 +1,22 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header cursor mb-0">
-                <i class="bi bi-arrow-90deg-left me-2" (click)="navigateMyexpenses()"></i>{{'Create Expense' | translate}}
-            </p>
+
+    <div class="d-flex justify-content-between align-items-center pt-2 mb-3">
+        <div class="heading-content">
+            <div class="commpoment-name" (click)="navigateMyexpenses()">Expenses<span class="ms-1"><i
+                        class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{'Create Expense' |
+                translate}}s</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
+        <!--Module Information-->
+        <ng-template #popContent>
+            <app-module-information [moduleInfo]="moduleinfo" />
+        </ng-template>
+
+
     </div>
 
     <div class="card custom-card ">
@@ -13,9 +25,11 @@
                 <div class="d-flex gap-3 mb-4">
                     <!-- Expense Type  -->
                     <div class="w-25">
-                        <label class="form-label custom-label mb-2">{{'Expense Title' | translate}}<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Expense Title' | translate}}<span
+                                class="text-danger">*</span></label>
                         <input type="text" class="form-control custom-input" formControlName="expensesTitle"
-                            placeholder="Please enter expense title"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
+                            placeholder="Please enter expense title"
+                            (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                         <div class="error-msg" *ngIf="newExpenseForm.controls['expensesTitle'].invalid && (newExpenseForm.controls['expensesTitle'].touched || 
                             newExpenseForm.controls['expensesTitle'].dirty)">
                             <div *ngIf="newExpenseForm.controls['expensesTitle'].errors?.['required']">
@@ -25,20 +39,23 @@
                             </div>
                         </div>
                     </div>
-    
+
                     <div class="w-25">
-                        <label class="form-label custom-label mb-2">{{'Approver Email' | translate}}<span class="text-danger">*</span></label>
+                        <label class="form-label custom-label mb-2">{{'Approver Email' | translate}}<span
+                                class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
                             <p-select [options]="emails" optionLabel="label" placeholder="Please select approver email"
-                                formControlName="approvalemail" class="form-select custom-select"></p-select>
+                                formControlName="approvalemail" class="form-select custom-select"
+                                appendTo="body"></p-select>
                         </div>
                         <div class="error-msg"
                             *ngIf="newExpenseForm.controls['approvalemail'].invalid && (newExpenseForm.controls['approvalemail'].touched || newExpenseForm.controls['approvalemail'].dirty)">
-                            <div class="error-msg" *ngIf="newExpenseForm.controls['approvalemail'].errors?.['required']">
+                            <div class="error-msg"
+                                *ngIf="newExpenseForm.controls['approvalemail'].errors?.['required']">
                                 Approver email is required</div>
                         </div>
                     </div>
-    
+
                     <!-- Add New Expense Button -->
                     <div class="pt-4 mt-1">
                         <button type="button" class="custom-btn btn-primary" (click)="addExpenseItem()">
@@ -46,18 +63,21 @@
                         </button>
                     </div>
                 </div>
-    
+
                 <!-- Expense Items List -->
                 <div formArrayName="expenseItems">
-                    <div *ngFor="let item of expenseItems.controls; let i = index" [formGroupName]="i" class="card mb-3 p-3 custom-expense-item-card">
+                    <div *ngFor="let item of expenseItems.controls; let i = index" [formGroupName]="i"
+                        class="card mb-3 p-3 custom-expense-item-card">
                         <div class="row mb-3">
                             <!-- Expense Type -->
                             <div class="col-md-3">
-                                <label class="form-label custom-label">{{'Expense Type' | translate}}<span class="text-danger">*</span></label>
+                                <label class="form-label custom-label">{{'Expense Type' | translate}}<span
+                                        class="text-danger">*</span></label>
                                 <div class="custom-p-select-content">
                                     <p-select [options]="expensetype" optionValue="expenseId" optionLabel="expenseType"
-                                        (onChange)="onchangeexpnes($event, i)" placeholder="Please select expense type"
-                                        formControlName="item_expense" class="form-select custom-select"></p-select>
+                                        (onChange)="onchangeexpnes($event, i)" appendTo="body"
+                                        placeholder="Please select expense type" formControlName="item_expense"
+                                        class="form-select custom-select"></p-select>
                                 </div>
                                 <div *ngIf="item.get('item_expense')?.invalid && item.get('item_expense')?.touched"
                                     class="error-msg">
@@ -65,58 +85,64 @@
                                         Expense Type is required</div>
                                 </div>
                             </div>
-    
+
                             <!-- Expense Item -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">{{'Expense Item'  | translate }}<span
+                                <label class="form-label custom-label">{{'Expense Item' | translate }}<span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input" formControlName="item_Name"
-                                    placeholder="Please enter expense item"  (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
-                                <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty || item.get('item_Name')?.touched)"
+                                    placeholder="Please enter expense item"
+                                    (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
+                                <div *ngIf="item.get('item_Name')?.invalid && (item.get('item_Name')?.dirty && item.get('item_Name')?.touched)"
                                     class="error-msg">
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['required']">
                                         Expense item is required</div>
                                     <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['maxlength']">
                                         Expense item must be less than 50 characters
                                     </div>
+                                    <div class="error-msg" *ngIf="item.get('item_Name')?.errors?.['pattern']">
+                                        Expense item is invalid
+                                    </div>
                                 </div>
-    
+
                             </div>
-    
+
                             <!-- Expense Date -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">{{'Expense Date'  | translate}}<span
+                                <label class="form-label custom-label">{{'Expense Date' | translate}}<span
                                         class="text-danger">*</span></label>
-                                <input type="date" class="form-control custom-input"  formControlName="expense_Date" [min]="joiningDate" [max]="currentDate"
-                                    onkeypress="return false;" />
-                                    <div *ngIf="item.get('expense_Date')?.invalid && item.get('expense_Date')?.touched"
+                                <input type="date" class="form-control custom-input" formControlName="expense_Date"
+                                    [min]="joiningDate" [max]="currentDate" onkeypress="return false;" />
+                                <div *ngIf="item.get('expense_Date')?.invalid && item.get('expense_Date')?.touched"
                                     class="error-msg">
-                                    <div class="error-msg" *ngIf="item.get('expense_Date')?.errors?.['required']"> Expense
-                                      date is required</div>
-        
-                                  </div>
-        
-                                  <small *ngIf="item.get('expense_Date')?.errors?.['futureDate']" class="text-danger">
+                                    <div class="error-msg" *ngIf="item.get('expense_Date')?.errors?.['required']">
+                                        Expense
+                                        date is required</div>
+
+                                </div>
+
+                                <small *ngIf="item.get('expense_Date')?.errors?.['futureDate']" class="text-danger">
                                     Expense Date cannot be in the future.
-                                  </small>
-        
-                                  <small *ngIf="!istimeoffValid && item.get('expense_Date')?.errors?.['pastDate']"
+                                </small>
+
+                                <small *ngIf="!istimeoffValid && item.get('expense_Date')?.errors?.['pastDate']"
                                     class="text-danger">
                                     Expense Date cannot be before Date of Joining.
-                                  </small>
-    
+                                </small>
+
                             </div>
-    
+
                             <!-- Amount -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">{{'Amount' | translate}}<span class="text-danger">*</span></label>
+                                <label class="form-label custom-label">{{'Amount' | translate}}<span
+                                        class="text-danger">*</span></label>
                                 <input class="form-control custom-input" formControlName="expense_Amount"
                                     placeholder="Please enter amount" type="text" (input)="onAmountInput($event)"
                                     maxlength="7" />
-    
+
                                 <div *ngIf="item.get('expense_Amount')?.invalid && item.get('expense_Amount')?.touched"
                                     class="error-msg">
-    
+
                                     <div class="error-msg" *ngIf="item.get('expense_Amount')?.errors?.['required']">
                                         Expense amount is required
                                     </div>
@@ -131,13 +157,14 @@
                                     </div>
                                 </div>
                             </div>
-    
+
                             <!-- Receipt Number -->
                             <div class="col-md-2">
-                                <label class="form-label custom-label">{{'Receipt Number'  | translate}}<span
+                                <label class="form-label custom-label">{{'Receipt Number' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control custom-input" formControlName="receipt_Number"
-                                    placeholder="Please enter receipt number" (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)"  />
+                                    placeholder="Please enter receipt number"
+                                    (keypress)="formValidation.restrictInputallowspicalcharterswithnumbers($event)" />
                                 <div *ngIf="item.get('receipt_Number')?.invalid && 
                                             (item.get('receipt_Number')?.touched || 
                                              item.get('receipt_Number')?.dirty)" class="error-msg">
@@ -147,7 +174,7 @@
                                     <div *ngIf="item.get('receipt_Number')?.hasError('maxlength')">
                                         Receipt number should be allow up to 18 characters also
                                     </div>
-    
+
                                 </div>
                                 <div *ngIf="item.get('receipt_Number')?.hasError('duplicate') && 
                                         (item.get('receipt_Number')?.touched || 
@@ -156,9 +183,9 @@
                                         Receipt number should be unique
                                     </div>
                                 </div>
-    
+
                             </div>
-    
+
                             <!-- Delete Icon -->
                             <div class="col-md-1 mt-4 d-flex align-items-center  justify-content-end">
                                 <button type="button" class="custom-icon btn" (click)="delteitem(i)">
@@ -170,30 +197,33 @@
                         <div class="row mb-3">
                             <!-- Description -->
                             <div class="col-md-4">
-                                <label class="form-label custom-label">{{'Description'  | translate}}</label>
+                                <label class="form-label custom-label">{{'Description' | translate}}</label>
                                 <div>
-                                    <textarea class="form-control custom-input" [maxlength]="250" formControlName="item_Description"
-                                        placeholder="Please enter description " rows="1"></textarea>
-                                    <div class="character-count mt-2">
+                                    <textarea class="form-control custom-input" [maxlength]="250"
+                                        formControlName="item_Description" placeholder="Please enter description "
+                                        rows="1"></textarea>
+                                    <div class="textarea-count-text">
                                         {{ item.get("item_Description")?.value?.length || 0 }}/250
                                     </div>
                                 </div>
                             </div>
-    
+
                             <!-- File Upload -->
                             <div class="col-md-4">
-                                <label class="form-label custom-label">{{'Proof (Image and PDF only)'  | translate}}<span
+                                <label class="form-label custom-label">{{'Proof (Image and PDF only)' | translate}}<span
                                         class="text-danger">*</span></label>
                                 <input type="file" class="form-control custom-input px-0" accept=".pdf, image/*"
                                     (change)="fileupload($event, i)" />
+                                    <div *ngIf="fileuploadhide">
                                 <div class="error-msg"
-                                    *ngIf="item.get('attachment_url')?.invalid && item.get('attachment_url')?.touched">
-                                    Please choose a file
+                                    *ngIf="item.get('attachment_url')?.errors?.['required'] && (item.get('attachment_url')?.touched || item.get('attachment_url')?.dirty)">
+                                    File is required
+                                </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-    
+
                     <div class="text-center" *ngIf="totalexpensesamount > 0 ? totalexpensesamount : ''">
                         <b>Total Amount : </b>{{ totalexpensesamount > 0 ? totalexpensesamount : '' }}
                     </div>
@@ -228,7 +258,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons\delete-icon.png" alt="failure icon" class="confirmation-delete-icon mb-4">
-            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Expense item?'  | translate}}</p>
+            <p class="confirmation-text mb-4">{{'Are you sure you want to delete the Expense item?' | translate}}</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">No</button>

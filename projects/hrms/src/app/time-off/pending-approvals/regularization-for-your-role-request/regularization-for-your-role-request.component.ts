@@ -54,8 +54,8 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
   empinfo = {} as IJob;
   regularization = [] as PermissionRequestResponse[];
   approverComments = [] as any[];
-  regularizationselect!: LeaveApproval[];
-  selectedProducts!: LeaveApproval[];
+  regularizationselect!: PermissionRequestResponse[];
+  selectedProducts!: PermissionRequestResponse[];
   requestBody = {} as any;
   leaveEntitlementsList = {} as ICategoryDetails;
   @ViewChild('commentspopup') modalContent: any;
@@ -174,29 +174,65 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
     this.selectedLeaveData = request;
   }
 
+  previousSearchValue: string = '';
+  hasSelectedAllOnce = false;
+  onSearchChange(): void {
+    if (this.searchValue !== this.previousSearchValue) {
+      this.previousSearchValue = this.searchValue;
+      this.multiSelect = false;
+      this.selectedProducts = [];
+      this.hasSelectedAllOnce = false;
+    }
+  }
+
   getFilteredAndSortedLeaves(): any[] {
     const search = this.searchValue?.toLowerCase() ?? '';
     let leaves = this.regularizationselect ?? [];
-    // Filter
+
     if (search) {
       leaves = leaves.filter(item =>
-        item.entity?.leavefusionempId?.toLowerCase().includes(search) ||
-        item.entity?.employeeName?.toLowerCase().includes(search) ||
-        item.entity?.leaveDurationType?.toLowerCase().includes(search) ||
-        item.entity?.leaveCategoryName?.toLowerCase().includes(search)
+        item.entity?.fusionempId.toLowerCase().includes(search) ||
+        item.entity?.raisedForName?.toLowerCase().includes(search) ||
+        item.entity?.type?.toLowerCase().includes(search)
       );
     }
 
     // Sort (preserve original sorting logic)
     if (!this.selectedProducts || this.selectedProducts.length === 0) {
-      return leaves;
+      this.leaves.next(leaves);
+      return this.leaves.getValue();
     }
 
     const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
     const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
     const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
-    return [...selected, ...unselected];
+    this.leaves.next([...selected, ...unselected]);
+    return this.leaves.getValue();
   }
+
+  // getFilteredAndSortedLeaves(): any[] {
+  //   const search = this.searchValue?.toLowerCase() ?? '';
+  //   let leaves = this.regularizationselect ?? [];
+
+  //   if (search) {
+  //     leaves = leaves.filter(item =>
+  //       item.entity?.fusionempId.toLowerCase().includes(search) ||
+  //       item.entity?.raisedForName?.toLowerCase().includes(search) ||
+  //       item.entity?.type?.toLowerCase().includes(search)
+  //     );
+  //   }
+
+  //   if (!this.selectedProducts || this.selectedProducts.length === 0) {
+  //     this.leaves.next(leaves);
+  //     return this.leaves.getValue();
+  //   }
+
+  //   const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
+  //   const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
+  //   const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
+  //   this.leaves.next([...selected, ...unselected]);
+  //   return this.leaves.getValue();
+  // }
 
   removeLeadingWhitespace(control: AbstractControl | null): void {
     if (control) {
@@ -517,7 +553,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
           requestProcessedBy: approvedBy,
           status: 'Rejected',
           comments: comments,
-          moduleId: environment.permissionsModuleId,
+          moduleId: environment.attendanceRegularizationModuleId,
           headerRequests: this.selectedProducts.map((item) => ({
             headerID: item.approvalHeader.id,
             currentStage: item.approvalHeader.currentapprovalStage,
@@ -528,7 +564,7 @@ export class RegularizationForYourRoleRequestComponent implements OnInit, OnDest
           requestProcessedBy: approvedBy,
           status: 'Rejected',
           comments: comments,
-          moduleId: environment.permissionsModuleId,
+          moduleId: environment.attendanceRegularizationModuleId,
           headerRequests: [
             {
               headerID: this.selectedLeaveData.approvalHeader.id,

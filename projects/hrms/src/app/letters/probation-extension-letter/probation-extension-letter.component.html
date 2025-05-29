@@ -1,81 +1,96 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header mb-0" (click)="naviagte()">
-                <i class="bi bi-arrow-90deg-left me-2 cursor"></i>Probation Extenstion Letter
-            </p>
+    <div class="component-header-content">
+      
+        <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="naviagte()">Dashboard<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">Probation Extension Letter</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
     </div>
 
-    <!--Module Information-->
-    <div>
+   <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    </ng-template>
 
     <!--letter content-->
     <div class="main-letter-content gap-4 d-flex w-100">
         <div class="card letter-fields-content p-4">
-            <form autocomplete="off" [formGroup]="probationExtensionForm" (ngSubmit)="postProbationExtensionLetterFormSubmit()">
+            <form autocomplete="off" [formGroup]="probationExtensionForm"
+                (ngSubmit)="postProbationExtensionLetterFormSubmit()">
                 <!-- Employee Name -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Select Employee<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="employeedetails" optionLabel="fullName" [filter]="true" filterBy="fullName" (onChange)="onClickEmployee($event)"
-                             placeholder="Please select employee" formControlName="employeeId" class="custom-select w-100" resetFilterOnHide="true">
+                        <p-select [options]="employeedetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
+                            (onChange)="onClickEmployee($event)" placeholder="Please select employee"
+                            formControlName="employeeId" class="custom-select w-100" resetFilterOnHide="true">
                         </p-select>
                     </div>
-                    <div *ngIf="probationExtensionForm.get('employeeId')?.invalid && probationExtensionForm.get('employeeId')?.touched">
+                    <div
+                        *ngIf="probationExtensionForm.get('employeeId')?.invalid && probationExtensionForm.get('employeeId')?.touched">
                         <div class="error-msg">Employee is required</div>
                     </div>
                 </div>
-            
+
                 <!-- Issued Date -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Issued Date<span class="error-msg">*</span></label>
-                    <input type="date" class="form-control custom-input" formControlName="issuedDate" placeholder="Please enter Date" 
-                        (change)="pathValuesFuction()" [min]="todayDate" (keydown)="preventTyping($event)"/>
-                    <div *ngIf="probationExtensionForm.get('issuedDate')?.invalid && probationExtensionForm.get('issuedDate')?.touched">
+                    <input type="date" class="form-control custom-input" formControlName="issuedDate"
+                        placeholder="Please enter Date" (change)="pathValuesFuction()" [min]="todayDate"
+                        (keydown)="preventTyping($event)" />
+                    <div
+                        *ngIf="probationExtensionForm.get('issuedDate')?.invalid && probationExtensionForm.get('issuedDate')?.touched">
                         <div class="error-msg">Issued Date is required</div>
                     </div>
                 </div>
-            
+
                 <!-- Document Type -->
                 <div class="mb-3">
                     <label class="form-label custom-label mb-2">Document Type<span class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="documentType" optionValue="value" optionLabel="name" placeholder="Please select document type" 
-                          formControlName="Documenttype" class="custom-select w-100" (onChange)="pathValuesFuction()">
+                        <p-select [options]="documentType" optionValue="value" optionLabel="name"
+                            placeholder="Please select document type" formControlName="Documenttype"
+                            class="custom-select w-100" (onChange)="pathValuesFuction()">
                         </p-select>
                     </div>
                     <div *ngIf="probationExtensionForm.get('Documenttype')?.invalid && probationExtensionForm.get('Documenttype')?.touched"
                         class="error-msg">Document Type is required
                     </div>
                 </div>
-            
+
                 <!-- Signature Authority Name -->
                 <div class="mb-3">
-                    <label class="form-label custom-label mb-2">Signature Authority Name<span class="error-msg">*</span></label>
+                    <label class="form-label custom-label mb-2">Signature Authority Name<span
+                            class="error-msg">*</span></label>
                     <div class="custom-p-select-content">
-                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true" filterBy="fullName"
-                          placeholder="Please select signature authority name" formControlName="authorityid" class="custom-select w-100"
-                           (onChange)="pathValuesFuction()" resetFilterOnHide="true">
+                        <p-select [options]="authorityDetails" optionLabel="fullName" [filter]="true"
+                            filterBy="fullName" placeholder="Please select signature authority name"
+                            formControlName="authorityid" class="custom-select w-100" (onChange)="pathValuesFuction()"
+                            resetFilterOnHide="true">
                         </p-select>
                     </div>
-                    <div *ngIf="probationExtensionForm.get('authorityid')?.invalid && probationExtensionForm.get('authorityid')?.touched">
+                    <div
+                        *ngIf="probationExtensionForm.get('authorityid')?.invalid && probationExtensionForm.get('authorityid')?.touched">
                         <div class="error-msg">Signature authority is required</div>
                     </div>
                 </div>
 
                 <div>
-                    <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name, Designation,
+                    <p class="note-text"><span class="note me-2">Note:</span>Please Update Employee Full Name,
+                        Designation,
                         Joining Date, Address, in Personal and Job Tabs before Generating the Document.</p>
                 </div>
-                
+
                 <div class="d-flex flex-wrap gap-3 pt-3">
-                    <button type="submit" class="custom-btn btn-primary" [disabled]="probationExtensionForm.invalid || spinnerLoader">
+                    <button type="submit" class="custom-btn btn-primary"
+                        [disabled]="probationExtensionForm.invalid || spinnerLoader">
                         <ng-container *ngIf="spinnerLoader; else addText">
                             <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
                                 <span>{{'Loading...'}}</span>
                             </div>
                         </ng-container>
@@ -88,7 +103,8 @@
                         [disabled]="!enableBtn || releaseLoader">
                         <ng-container *ngIf="releaseLoader; else releaseText">
                             <div class="button-loader-content">
-                                <span class="spinner-border button-spinner text-light" role="status" aria-hidden="true"></span>
+                                <span class="spinner-border button-spinner text-light" role="status"
+                                    aria-hidden="true"></span>
                                 <span>{{'Loading...'}}</span>
                             </div>
                         </ng-container>
@@ -99,7 +115,7 @@
                 </div>
             </form>
         </div>
-    
+
         <div class="card letter-data-content p-4">
             <div class="letter-sub-data-content">
                 <div>
@@ -111,14 +127,17 @@
                             <ng-template #doc>
                                 <div class="hard-copy-letter"></div>
                             </ng-template>
-    
+
                             <div class="d-flex justify-content-between mb-3">
                                 <div>
                                     <ul class="list-style-none ps-0">
-                                        <li *ngIf="!probationExtensionLetterData.firstName && !probationExtensionLetterData.lastName;else fullname"></li>
+                                        <li
+                                            *ngIf="!probationExtensionLetterData.firstName && !probationExtensionLetterData.lastName;else fullname">
+                                        </li>
                                         <ng-template #fullname>
-                                            <li>{{probationExtensionLetterData.firstName}} {{probationExtensionLetterData.middleName}}
-                                                 {{probationExtensionLetterData.lastName}}</li>
+                                            <li>{{probationExtensionLetterData.firstName}}
+                                                {{probationExtensionLetterData.middleName}}
+                                                {{probationExtensionLetterData.lastName}}</li>
                                         </ng-template>
                                         <li>{{probationExtensionLetterData.fusionEmpId}}</li>
                                         <li>{{probationExtensionLetterData.jobRole}}</li>
@@ -127,56 +146,67 @@
                                     </ul>
                                 </div>
                                 <div>
-                                    <p><span class="letter-sub-header">Issued Date:</span> {{probationExtensionLetterData.dateofprobationextension | dateformat}}</p>
+                                    <p><span class="letter-sub-header">Issued Date:</span>
+                                        {{probationExtensionLetterData.dateofprobationextension | dateformat}}</p>
                                 </div>
                             </div>
-    
+
                             <div>
                                 <p class="letter-sub-header">Dear {{probationExtensionLetterData.firstName}}
-                                    {{probationExtensionLetterData.middleName}} {{probationExtensionLetterData.lastName}},
+                                    {{probationExtensionLetterData.middleName}}
+                                    {{probationExtensionLetterData.lastName}},
                                 </p>
                             </div>
-    
+
                             <div>
                                 <p>We are pleased to inform that following a performance appraisal
-                                    and subsequent review, your probation period has been extended by {{probationExtensionLetterData.probationmonths}} months.
-                                    This extension will conclude on {{ probationExtensionLetterData.probationExtendedDate | dateformat}}.
-                                    At the conclusion of this extended probation period, we will conduct another performance
+                                    and subsequent review, your probation period has been extended by
+                                    {{probationExtensionLetterData.probationmonths}} months.
+                                    This extension will conclude on {{
+                                    probationExtensionLetterData.probationExtendedDate | dateformat}}.
+                                    At the conclusion of this extended probation period, we will conduct another
+                                    performance
                                     review to determine the subsequent course of action based on your performance.</p>
-    
+
                                 <p>
                                     During this extended probationary period, we will continue to provide you with
                                     guidance, feedback, and support to help you excel in your role. Our aim is to ensure
-                                    that you have the necessary time and resources to meet our performance expectations and
+                                    that you have the necessary time and resources to meet our performance expectations
+                                    and
                                     demonstrate your full potential as a valuable member of our team.
                                 </p>
-    
+
                                 <p>Please be aware that your terms and conditions of employment will
                                     remain the same during this extension, and all other aspects of your employment
                                     relationship with RightlyHR will remain unchanged.</p>
-    
+
                                 <p> We believe that this extension will provide you with an opportunity to
-                                    further showcase your abilities, and we have confidence in your potential to succeed in
-                                    your current role. We are committed to working closely with you to ensure your continued growth and success within
+                                    further showcase your abilities, and we have confidence in your potential to succeed
+                                    in
+                                    your current role. We are committed to working closely with you to ensure your
+                                    continued growth and success within
                                     our organization.</p>
-    
-                                <p> We look forward to witnessing your continued progress and contributions to our team during 
+
+                                <p> We look forward to witnessing your continued progress and contributions to our team
+                                    during
                                     this extended probationary period.</p>
 
                                 <p class="pt-4">Sincerely,</p>
                                 <p>for RightlyHR</p>
 
-                                 <!-- Show "Authority Signature" only when no authority is selected -->
-                                 <div *ngIf="!probationExtensionLetterData.authorityName" class="letter-sub-header pt-4">Authority Signature</div>
-                                 <!-- Show Name & Designation only when authorityName is set -->
-                                 <div *ngIf="!probationExtensionLetterData.authorityName">
-                                     <p class="letter-sub-header m-0">Authority Name</p>
-                                     <p class="letter-sub-header m-0">Designation</p>
-                                 </div>
+                                <!-- Show "Authority Signature" only when no authority is selected -->
+                                <div *ngIf="!probationExtensionLetterData.authorityName" class="letter-sub-header pt-4">
+                                    Authority Signature</div>
+                                <!-- Show Name & Designation only when authorityName is set -->
+                                <div *ngIf="!probationExtensionLetterData.authorityName">
+                                    <p class="letter-sub-header m-0">Authority Name</p>
+                                    <p class="letter-sub-header m-0">Designation</p>
+                                </div>
                                 <div class="letter-signature  pt-4">{{probationExtensionLetterData.authorityName}}</div>
                                 <div>
                                     <p class="letter-sub-header">{{probationExtensionLetterData.authorityName}}</p>
-                                    <p class="letter-sub-header">{{probationExtensionLetterData.authorityDesignation}}</p>
+                                    <p class="letter-sub-header">{{probationExtensionLetterData.authorityDesignation}}
+                                    </p>
                                 </div>
                             </div>
                         </div>

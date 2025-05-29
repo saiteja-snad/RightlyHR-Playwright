@@ -1,21 +1,36 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
-        <div>
+    <div class="d-flex justify-content-space-between align-items-center mb-4 pt-2">
+        
             @if (router.url !== '/time-off/pending-approvals/assessmentform') {
-            <p class="component-header mb-0">{{'Pending Approvals'|translate}}</p>
+            <div class="heading-content">
+                <div class="commpoment-name">Time off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+                <div class="component-header">Pending Approvals</div>
+                <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
+                <ng-template #popContent>
+                    <app-module-information [moduleInfo]="moduleinfo"  />
+                </ng-template>
+            </div>
             }
             @else {
-            <p class="component-header mb-0" (click)="navigate()">
-                <i class="bi bi-arrow-90deg-left me-2 cursor"></i>{{'Assessment Form'|translate}}
-            </p>
+            <div class="heading-content">
+                <div class="commpoment-name cursor" (click)="navigate()">Time off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+                <div class="component-header"  > Assessment Form</div>
+               <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+            </div>
+                <ng-template #popContent>
+                    <app-module-information [moduleInfo]="moduleinfo"  />
+                </ng-template>
+            </div>
             }
-        </div>
+        
+
+
     </div>
 
-    <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+
 
     <div class="d-flex gap-3 w-100">
         @if (router.url != '/time-off/pending-approvals/assessmentform') {

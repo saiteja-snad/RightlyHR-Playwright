@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { filter, Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { SelectModule } from 'primeng/select';
@@ -17,11 +17,14 @@ import { IEmployee } from '../probation-confirmation-letter/probation.modal';
 import { IEmployeeSignatures } from '../letters.modal';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
 import { MODULE_INFOS } from '../../shared/modules-info';
+import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+
 @Component({
   selector: 'app-probation-extension-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './probation-extension-letter.component.html',
-  styleUrl: './probation-extension-letter.component.scss'
+  styleUrl: './probation-extension-letter.component.scss',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ProbationExtensionLetterComponent {
@@ -46,6 +49,7 @@ export class ProbationExtensionLetterComponent {
     { name: 'Hard Copy', value: false },
   ];
   todayDate!: string;
+   lastSelectedEmployeeId: number | null = null;
 
   constructor(private http: HttpService, private router: Router, private fb: FormBuilder, private openModalService: OpenModalService) { }
 
@@ -71,7 +75,7 @@ export class ProbationExtensionLetterComponent {
     const url = this.router.url;
   
     const routeToInfoMap: { [key: string]: string } = {
-      '/organization-chart': MODULE_INFOS.PROBATION_EXTENSION_LETTER_MODULE_INFO
+      '/admin/letters/probation-extension-letter': MODULE_INFOS.PROBATION_EXTENSION_LETTER_MODULE_INFO
     };
   
     const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
@@ -153,7 +157,33 @@ export class ProbationExtensionLetterComponent {
   }
 
   onClickEmployee(event: any){
-    const empId= event.value.employeeId;
+    const newlySelectedEmployee = event?.value;
+    if (!newlySelectedEmployee || typeof newlySelectedEmployee !== 'object') {
+      return;
+    }
+
+    // Reset dependent fields if employee changes
+    if (
+      this.lastSelectedEmployeeId &&
+      this.lastSelectedEmployeeId !== newlySelectedEmployee.employeeId
+    ) {
+      this.probationExtensionForm.patchValue({
+        issuedDate: null,
+        Documenttype: null,
+        authorityid: null,
+      });
+
+      ['issuedDate', 'Documenttype', 'authorityid'].forEach((controlName) => {
+        const control = this.probationExtensionForm.get(controlName);
+        control?.markAsPristine();
+        control?.markAsUntouched();
+        control?.updateValueAndValidity();
+      });
+    }
+
+    this.lastSelectedEmployeeId = newlySelectedEmployee.employeeId;
+
+    const empId = event.value.employeeId;
     this.getProbationRequest(empId);
     this.pathValuesFuction();
   }
@@ -205,6 +235,7 @@ export class ProbationExtensionLetterComponent {
         this.uploadprobationextentionLetter();
       });
     }
+    this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
   }
 
   //function to get the separation request details
@@ -230,7 +261,9 @@ export class ProbationExtensionLetterComponent {
         if (data) {
           this.enableBtn= true;
           this.postProbationDetails(data.path);
+          // this.openModalService.openSuccessModal('Probation Extension Letter Generated Successfully');
         }
+        
       },
       error: (reason: any) => {
         this.spinnerLoader= false;
@@ -244,6 +277,7 @@ export class ProbationExtensionLetterComponent {
 
   Documenturlresult: any;
   postProbationDetails(docurl: string) {
+    debugger
     let payload = {
       probationId : this.getProbationDetails.probationId,
       formId : this.getProbationDetails.formId,

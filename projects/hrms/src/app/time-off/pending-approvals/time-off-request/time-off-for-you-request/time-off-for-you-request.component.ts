@@ -18,6 +18,7 @@ import { Table, TableModule } from 'primeng/table';
 import { environment } from '../../../../../environments/environment';
 import { SignalsService } from '../../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { FormValidationsService } from '../../../../services/form-validations.service';
 @Component({
   selector: 'app-time-off-for-you-request',
   imports: [
@@ -80,6 +81,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     private http: HttpService,
     private modalService: NgbModal,
     private conformationPopup: OpenModalService,
+    public formsValidation: FormValidationsService,
     public rbac: RbacService, private signalService: SignalsService
   ) { }
 
@@ -155,18 +157,18 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
   //   }
   // }
 
+  hasSelectedAllOnce = false; 
   selectCheck(value: any) {
-    // debugger
     this.multiSelect = Array.isArray(value) && value.length > 0;
 
     if (!value || value.length === 0) {
       this.selectedProducts = [];
+      this.hasSelectedAllOnce = false; 
       return;
     }
 
     const stageMap: { [stage: string]: any[] } = {};
 
-    // Group items by their approval stage
     value.forEach((item: any) => {
       const stage = item.approvalHeader?.currentapprovalStage;
       if (!stageMap[stage]) {
@@ -180,60 +182,49 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     const totalSelected = value.length;
     const isBulkSelect = totalSelected === totalAvailable;
 
-    // Get the dominant stage (most frequent)
-    let dominantStage = stages[0];
-    let maxCount = stageMap[dominantStage].length;
-    for (const stage of stages) {
-      const count = stageMap[stage].length;
-      if (count > maxCount) {
-        dominantStage = stage;
-        maxCount = count;
-      } else if (count === maxCount && stage === '1') {
-        dominantStage = stage;
+    if (isBulkSelect && stages.length > 1) {
+      if (this.hasSelectedAllOnce) {
+        this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
       }
+
+      this.hasSelectedAllOnce = true; 
+
+      let dominantStage = stages[0];
+      let maxCount = stageMap[dominantStage].length;
+
+      for (const stage of stages) {
+        const count = stageMap[stage].length;
+        if (count > maxCount || (count === maxCount && stage === '1')) {
+          dominantStage = stage;
+          maxCount = count;
+        }
+      }
+
+      const dominantItems = stageMap[dominantStage];
+      this.selectedProducts = [...dominantItems];
+      setTimeout(() => this.updateTableSelectionState(dominantItems));
+      return;
     }
 
-    const lastSelected = value[value.length - 1];
-    const lastSelectedStage = lastSelected.approvalHeader?.currentapprovalStage;
-
-    // Scenario 1: Progressive Selection (mixing stages)
-    const existingStage = this.selectedProducts[0]?.approvalHeader?.currentapprovalStage;
-    if (
-      this.selectedProducts.length > 0 &&
-      lastSelectedStage &&
-      existingStage &&
-      lastSelectedStage !== existingStage
-    ) {
+    if (!isBulkSelect && stages.length > 1) {
       this.conformationPopup.openErrorModal('You can only select records from the same approval stage');
-      const newSelection = this.selectedProducts.filter(
-        item => item.approvalHeader?.id !== lastSelected.approvalHeader?.id
+      const validStage = this.selectedProducts[0]?.approvalHeader?.currentapprovalStage;
+      const newSelection = value.filter(
+        (item: { approvalHeader: { currentapprovalStage: string; }; }) => item.approvalHeader?.currentapprovalStage === validStage
       );
       this.selectedProducts = [...newSelection];
       setTimeout(() => this.updateTableSelectionState(newSelection));
       return;
     }
 
-    // Scenario 2: Bulk select - filter by dominant stage only
-    if (isBulkSelect && stages.length > 1) {
-      const dominantItems = [...stageMap[dominantStage]];
-      this.selectedProducts = dominantItems;
-
-      setTimeout(() => this.updateTableSelectionState(dominantItems));
-      return;
-    }
-
-    // Valid multi-select with same stage
     this.selectedProducts = [...value];
   }
 
 
   private updateTableSelectionState(selectedItems: any[]) {
-    // Create a new array reference to force change detection
     this.selectedProducts = [...selectedItems];
 
-    // If using PrimeNG table with dataKey
     if (this.table) {
-      // Clear and reset selection to ensure checkbox states update
       this.table.selection = null;
       setTimeout(() => {
         this.table.selection = selectedItems;
@@ -241,10 +232,21 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
     }
   }
 
+  previousSearchValue: string = '';
+  onSearchChange(): void {
+    if (this.searchValue !== this.previousSearchValue) {
+      this.previousSearchValue = this.searchValue;
+      this.multiSelect= false;
+      this.selectedProducts = [];
+      this.hasSelectedAllOnce = false; 
+      this.updateTableSelectionState([]);
+    }
+  }
+
   getFilteredAndSortedLeaves(): any[] {
     const search = this.searchValue?.toLowerCase() ?? '';
     let leaves = this.leavesselect ?? [];
-    // Filter
+
     if (search) {
       leaves = leaves.filter(item =>
         item.entity?.leavefusionempId?.toLowerCase().includes(search) ||
@@ -256,13 +258,15 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
 
     // Sort (preserve original sorting logic)
     if (!this.selectedProducts || this.selectedProducts.length === 0) {
-      return leaves;
+      this.leaves.next(leaves);
+      return this.leaves.getValue();
     }
 
     const selectedIds = new Set(this.selectedProducts.map(item => item.approvalHeader?.id));
     const selected = leaves.filter(item => selectedIds.has(item.approvalHeader?.id));
     const unselected = leaves.filter(item => !selectedIds.has(item.approvalHeader?.id));
-    return [...selected, ...unselected];
+    this.leaves.next([...selected, ...unselected]);
+    return this.leaves.getValue();
   }
 
 
@@ -455,7 +459,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-           this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
+            this.signalService.handleResponse(this.responseSummary, 'Request Approved Successfully');
           } else {
             this.openModal(this.leaveSummary);
           }
@@ -526,7 +530,7 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
             this.signalService.handleResponse(this.responseSummary, 'Request Rejected Successfully');
-          }else {
+          } else {
             this.openModal(this.leaveSummary);
           }
         },
@@ -594,8 +598,8 @@ export class TimeOffForYouRequestComponent implements OnInit, OnDestroy {
           this.modalService.dismissAll();
           this.responseSummary = response.data;
           if (this.selectedProducts && this.selectedProducts.length <= 0) {
-             this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
-          }else {
+            this.signalService.handleResponse(this.responseSummary, 'Request Processed Successfully');
+          } else {
             this.openModal(this.leaveSummary);
           }
         },

@@ -2,7 +2,7 @@
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
-        <input type="search" class="form-control custom-input custom-search-input" placeholder="search Here"
+        <input type="search" class="form-control custom-input custom-search-input" placeholder="Search here"
             aria-label="Username" [(ngModel)]="searchQuery" (ngModelChange)="onSearchChange($event)"
             aria-describedby="basic-addon1">
     </div>
@@ -29,7 +29,7 @@
                     <th>Desk Status</th>
                     @if(rbac.allowedToAccess('Available Request for Allocation.view') || rbac.allowedToAccess('Available Inactive desk.view') ||
                     rbac.allowedToAccess('Available Schedule for Maintenance.view') || rbac.allowedToAccess('Available View Desk Details.view')){
-                    <th class="text-center">Action(s)</th>
+                       <th class="text-center">{{"Action" | translate}}<span class="text-lowercase">(s)</span></th>
                     }
                 </thead>
                 <tbody>
@@ -97,22 +97,23 @@
                 </tbody>
             </table>
         </div>
-        <div class="pagination-content pt-2 w-100" *ngIf="totalRecords > 0">
-            <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
-                <div class="d-flex align-items-center gap-3 p-2">
-                    <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
-                        (ngModelChange)="onRowsChange()">
-                        <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
-                        </option>
-                    </select>
-                    <span class="pagination-label text-nowrap">Showing {{ first + 1 }} - {{ first + rows >
-                        totalRecords ? totalRecords : first + rows }} of {{ totalRecords }}</span>
-                </div>
-                <!-- Pagination -->
-                <p-paginator [first]="first" [rows]="rows" [totalRecords]="totalRecords"
-                    (onPageChange)="onPageChange($event)"></p-paginator>
-            </div>
+      <div class="pagination-content" *ngIf="((desklist | async) ?? []).length > 0">
+      <div class="d-flex justify-content-between align-items-center w-100 flex-wrap">
+        <div class="d-flex align-items-center gap-3 p-2">
+          <select title="text" class="form-select custom-pagination-select" [(ngModel)]="rows"
+            (ngModelChange)="onPageSizeChange($event)">
+            <option *ngFor="let option of options" [value]="option.value">{{ option.label }}
+            </option>
+          </select>
+          <span class="pagination-label text-nowrap">
+            Showing {{ +first + 1 }} - {{ (+first + +rows) > collectionSize ? collectionSize : (+first + +rows) }} of {{
+            collectionSize }}
+          </span>
         </div>
+        <p-paginator [first]="first" [rows]="rows" [totalRecords]="collectionSize"
+          (onPageChange)="onPageChange($event)"></p-paginator>
+      </div>
+    </div>
     </ng-template>
 </div>
 
@@ -120,13 +121,9 @@
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
-                <p class="popup-heading mb-0">Allocate an Desk</p>
+                <p class="popup-heading mb-0">Allocate Desk</p>
             </div>
-            <div>
-                <a (click)="openallocationModal(confirmationpopup)">
-                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
-                </a>
-            </div>
+           
         </div>
 
         <div class="custom-main-popup-content">
@@ -151,7 +148,7 @@
                         <label for="asseTID" class="form-label custom-label mb-2">Select Employee<span
                                 class="text-danger">*</span></label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"
+                            <p-select [options]="employeeiddetails" optionLabel="employeeName" [filter]="true"   [resetFilterOnHide]="true"
                                 filterBy="employeeName" (onChange)="onEmployeeSelect($event)"
                                 formControlName="employeeid" placeholder="Please select employee"
                                 class="form-select custom-select"></p-select>
@@ -167,7 +164,7 @@
                             Select Approver<span class="text-danger">*</span>
                         </label>
                         <div class="custom-p-select-content">
-                            <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true"
+                            <p-select [options]="approvalname" optionLabel="employeeName" [filter]="true"   [resetFilterOnHide]="true"
                                 filterBy="employeeName" formControlName="approvid" placeholder="Please select approver"
                                 class="form-select custom-select" (onChange)="onApprovalSelects($event)"></p-select>
                         </div>
@@ -180,7 +177,7 @@
 
                 <div class="custom-modal-footer">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openallocationModal(confirmationpopup)">Close</button>
+                        (click)="openallocationModal(confirmationpopup)">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="assiginForm.invalid">Submit</button>
                 </div>
@@ -193,7 +190,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text"> Are you sure you want to close?</p>
+            <p class="confirmation-text"> Are you sure you want to cancel?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" (click)="model.dismiss()" class="custom-btn btn-secondary">
@@ -212,7 +209,7 @@
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
         </div>
         <div class="text-center">
-            <h5 class="confirmation-text mb-2"> Are you sure you want to Inactive this Desk ?</h5>
+            <h5 class="confirmation-text mb-2"> Are you sure you want to mark this desk as inactive?</h5>
         </div>
         <div class="custom-main-popup-content  p-4">
             <form autocomplete="off" [formGroup]="inactiveForm" (ngSubmit)="inactivedesk(inactiveForm)">
@@ -259,10 +256,9 @@
                     </div>
                 </div>
 
-
                 <div class="d-flex justify-content-end gap-3">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openModal(inativeconfromation);model.dismiss()">Close</button>
+                        (click)="openModal(inativeconfromation)">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary"
                         [disabled]="inactiveForm.invalid">Submit</button>
                 </div>
@@ -277,11 +273,11 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
             <button type="button" class="custom-btn btn-secondary"
-                (click)="openModal(deleteasstes);modal.dismiss()">No</button>
+                (click)="modal.dismiss()">No</button>
             <button type="submit" class="custom-btn btn-primary"
                 (click)="conformationpoppup();modal.dismiss()">Yes</button>
         </div>
@@ -294,7 +290,7 @@
             <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-2  pt-4">
         </div>
         <div class="text-center">
-            <h5 class="confirmation-text mb-2">Are you sure you want to Mark as Maintenance?</h5>
+            <h5 class="confirmation-text mb-2">Are you sure you want to mark this desk as under maintenance?</h5>
         </div>
 
         <div class="custom-main-popup-content  p-4">
@@ -367,7 +363,7 @@
                 </div>
                 <div class="d-flex justify-content-end gap-3">
                     <button type="button" class="custom-btn btn-secondary"
-                        (click)="openModal(conformationpopup);model.dismiss()">Close</button>
+                        (click)="openModal(conformationpopup)">Cancel</button>
                     <button type="submit" class="custom-btn btn-primary" [disabled]="undermaintancedata.invalid">Submit</button>
                 </div>
         
@@ -380,10 +376,10 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4"> Are you sure you want to close ?</p>
+            <p class="confirmation-text mb-4"> Are you sure you want to cancel?</p>
         </div>
         <div class="d-flex justify-content-center gap-3 mt-4">
-            <button type="button" class="custom-btn btn-secondary" (click)="openModal(undermaintance)">No</button>
+            <button type="button" class="custom-btn btn-secondary" (click)="modal.dimiss()">No</button>
             <button type="submit" class="custom-btn btn-primary"
                 (click)="conformationpoppup();modal.dismiss()">Yes</button>
         </div>

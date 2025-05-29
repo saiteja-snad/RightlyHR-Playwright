@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AddEventComponent } from './add-event/add-event.component';
 import { filter, Observable, of, shareReplay, Subscription, tap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
@@ -21,7 +21,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 
 @Component({
   selector: 'app-upcoming-events',
-  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule, NoDataFoundComponent, EventsTabsComponent, DataLoaderContentComponent, ModuleInformationComponent],
+  imports: [CommonModule, DateformatPipe, ReactiveFormsModule, TranslateModule,NgbPopoverModule, NoDataFoundComponent, EventsTabsComponent, DataLoaderContentComponent, ModuleInformationComponent],
   templateUrl: './upcoming-events.component.html',
   styleUrl: './upcoming-events.component.scss'
 })

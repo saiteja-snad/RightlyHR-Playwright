@@ -1,15 +1,22 @@
 <div class="custom-main-component-container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="component-header-content">
         <!--header-->
-        <div class="component-header">Reports</div>
 
+        <div class="heading-content">
+            <div class="commpoment-name">Standard Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">Job Location Wise Data </div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
+        </div>
         <div>
             <form autocomplete="off" [formGroup]="locationReportsForm" (ngSubmit)="onSubmit(locationReportsForm)">
                 <div class="d-flex align-items-center gap-3">
                     <!-- Date of Joining -->
                     @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view')){
                     <div class="d-flex align-items-center gap-2">
-                        <label class="custom-label text-nowrap">{{"Date of Joining" | translate}}</label>
+                        <label class="custom-label text-nowrap m-0">{{"Date of Joining" | translate}}</label>
                         <div>
                             <input type="text" ngxDaterangepickerBootstrap [autoApply]="true" [ranges]="ranges"
                                 [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
@@ -21,7 +28,7 @@
 
                     <!-- Location -->
                     <div class="d-flex align-items-center gap-2">
-                        <label class="custom-label text-nowrap">{{ "Location" | translate }}</label>
+                        <label class="custom-label text-nowrap m-0">{{ "Location" | translate }}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="locationDetails" optionLabel="jobLocationName"
                                 filterBy="jobLocationName" [filter]="true" [showClear]="false"
@@ -36,7 +43,7 @@
 
                     <!-- Sub Location -->
                     <div class="d-flex align-items-center gap-2">
-                        <label for="subLocation" class="custom-label text-nowrap">{{ "Sub Location" | translate
+                        <label for="subLocation" class="custom-label text-nowrap m-0">{{ "Sub Location" | translate
                             }}</label>
                         <div class="custom-p-select-content">
                             <p-select [options]="subLocationDetails" optionLabel="jobSubLocationName" [filter]="true"
@@ -61,7 +68,8 @@
                             }
                         </button>
                         }
-                        @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view') && rbac.allowedToAccess('Job Location Wise Data - Export.view')){
+                        @if(rbac.allowedToAccess('Job Location Wise Data - Generate.view') && rbac.allowedToAccess('Job
+                        Location Wise Data - Export.view')){
                         <button type="button" class="custom-btn btn-primary"
                             [disabled]="locationReportList.length === 0 || disableBtn"
                             (click)="onClickJobLocationExport() ">
@@ -80,15 +88,16 @@
     </div>
 
     <!--Module Information-->
-    <div>
+    <ng-template #popContent>
         <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+    </ng-template>
 
     <div class="d-flex gap-3 w-100">
-        <div class="custom-component-left-content">
+        <div class="component-left-tabs-container">
             <app-standard-report-tabs />
         </div>
-        <div class="custom-component-right-content">
+
+        <div class="component-right-content">
             <ng-container *ngIf="dataload; else maincontent">
                 <ng-template #loadingSpinner>
                     <div class="custom-compoent-data-loader">
@@ -101,43 +110,40 @@
                 <div class="custom-table-content">
                     <table class="w-100" id="jobLocation">
                         <thead>
-                            <tr>
-                                <th>Employee ID</th>
-                                <th>Salutation</th>
-                                <th>First Name</th>
-                                <th>Middle Name</th>
-                                <th>Last Name</th>
-                                <th>Status</th>
-                                <th>Date Of Joining</th>
-                                <th>Address Line 1(current)</th>
-                                <th>Address Line 2(current)</th>
-                                <th>City(current)</th>
-                                <th>State(current)</th>
-                                <th>Country(current)</th>
-                                <th>ZipCode(current)</th>
-                                <th>Address Line 1(permanent)</th>
-                                <th>Address Line 2(permanent)</th>
-                                <th>City(permanent)</th>
-                                <th>State(permanent)</th>
-                                <th>Country(permanent)</th>
-                                <th>ZipCode(permanent)</th>
-                                <th>Work Number</th>
-                                <th>Mobile Number</th>
-                                <th>Work Email</th>
-
-                                <th>Job Effective Date</th>
-                                <th>Job Role</th>
-                                <th>Grade Name</th>
-                                <th>Department</th>
-                                <th>Team</th>
-                                <th>Team Manager</th>
-                                <th>Reporting To</th>
-                                <th>Location</th>
-                                <th>Sub Location</th>
-                                <th>Shift</th>
-                                <th>Shift Code</th>
-                                <th>Job Type</th>
-                            </tr>
+                            <th>Employee ID</th>
+                            <th>Salutation</th>
+                            <th>First Name</th>
+                            <th>Middle Name</th>
+                            <th>Last Name</th>
+                            <th>Status</th>
+                            <th>Date Of Joining</th>
+                            <th>Address Line 1(current)</th>
+                            <th>Address Line 2(current)</th>
+                            <th>City(current)</th>
+                            <th>State(current)</th>
+                            <th>Country(current)</th>
+                            <th>ZipCode(current)</th>
+                            <th>Address Line 1(permanent)</th>
+                            <th>Address Line 2(permanent)</th>
+                            <th>City(permanent)</th>
+                            <th>State(permanent)</th>
+                            <th>Country(permanent)</th>
+                            <th>ZipCode(permanent)</th>
+                            <th>Work Number</th>
+                            <th>Mobile Number</th>
+                            <th>Work Email</th>
+                            <th>Job Effective Date</th>
+                            <th>Job Role</th>
+                            <th>Grade Name</th>
+                            <th>Department</th>
+                            <th>Team</th>
+                            <th>Team Manager</th>
+                            <th>Reporting To</th>
+                            <th>Location</th>
+                            <th>Sub Location</th>
+                            <th>Shift</th>
+                            <th>Shift Code</th>
+                            <th>Job Type</th>
                         </thead>
                         <tbody>
                             @if(locationReportList.length > 0){
@@ -166,7 +172,6 @@
                                     <td>{{ emp.workPhone ? emp.workPhone : '-' }}</td>
                                     <td>{{ emp.contactnumber ? emp.contactnumber : '-' }}</td>
                                     <td>{{ emp.workEmail ? emp.workEmail : '-' }}</td>
-
                                     <td>{{ emp.jobeffectivedate ? (emp.jobeffectivedate | date:'MM-dd-yyyy') : '-' }}
                                     </td>
                                     <td>{{ emp.jobRole ? emp.jobRole : '-' }}</td>
@@ -185,9 +190,7 @@
                             </ng-container>
                             }@else {
                             <tr>
-                                <td colspan="8">
-                                    <app-no-data-found></app-no-data-found>
-                                </td>
+                                <app-no-data-found></app-no-data-found>
                             </tr>
                             }
                         </tbody>

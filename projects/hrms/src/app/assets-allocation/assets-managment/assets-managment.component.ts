@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewEncapsulation } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { Select } from 'primeng/select';
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../services/http.service';
@@ -15,7 +15,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-assets-managment',
-  imports: [CommonModule, TabsModule, Select, RouterModule, ReactiveFormsModule, FormsModule, ModuleInformationComponent],
+  imports: [CommonModule, TabsModule, Select, RouterModule, ReactiveFormsModule,NgbPopoverModule, FormsModule, ModuleInformationComponent],
   templateUrl: './assets-managment.component.html',
   styleUrl: './assets-managment.component.scss',
   encapsulation:ViewEncapsulation.None,
@@ -93,7 +93,7 @@ export class AssetsManagmentComponent {
 
   initialform() {
     this.assetForm = this.fb.group({
-      assetModel: [null, [Validators.required, Validators.maxLength(20)]],
+      assetModel: [null, [Validators.required, Validators.maxLength(20),Validators.pattern(/^[^\s].*$/)]],
       assetCategory: [null, Validators.required],
       assetSubCategory: [{ value: null, disabled: true }, Validators.required],
       assetID: [null],
@@ -313,20 +313,37 @@ export class AssetsManagmentComponent {
     });
   }
 
-  onassetsubcategory() {
-    this.assetForm.get('assetSubCategory')?.enable()
-    const selectedId = this.assetForm.get('assetCategory')?.value.id;
-    this.http.getData(`AssetCategory?parentId=${selectedId}`).pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data: any) => {
-          this.assetSubCategory = data;
-          let selectname = this.assetSubCategory.value.find((item: any) => item.id === selectedId)?.name;
-        },
-        error: (reason: any) => {
-          console.log(reason);
-        },
-      });
-  }
+  // onassetsubcategory() {
+  //   this.assetForm.get('assetSubCategory')?.enable()
+  //   const selectedId = this.assetForm.get('assetCategory')?.value.id;
+  //   this.http.getData(`AssetCategory?parentId=${selectedId}`).pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (data: any) => {
+  //         this.assetSubCategory = data;
+  //         let selectname = this.assetSubCategory.value.find((item: any) => item.id === selectedId)?.name;
+  //       },
+  //       error: (reason: any) => {
+  //         console.log(reason);
+  //       },
+  //     });
+  // }
+onassetsubcategory() {
+  this.assetForm.get('assetSubCategory')?.reset(); // Reset previous value
+  this.assetForm.get('assetSubCategory')?.markAsTouched(); // Mark as touched to trigger validation
+  this.assetForm.get('assetSubCategory')?.enable();
+
+  const selectedId = this.assetForm.get('assetCategory')?.value.id;
+
+  this.http.getData(`AssetCategory?parentId=${selectedId}`).pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data: any) => {
+        this.assetSubCategory = data;
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+    });
+}
 
   getAssetCatData(data: any) {
     return this.assetCategorys.find((t) => parseInt(data) === t.id)?.name
@@ -390,32 +407,65 @@ export class AssetsManagmentComponent {
     });
   }
 
-  getSubLocationByid(selectedLocation: any): void {
-    this.assetForm.get('subLocationId')?.enable()
-    if (selectedLocation && selectedLocation.id) {
-      this.subscription = this.http
-        .getData(
-          `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
-        )
-        .subscribe({
-          next: (data: any) => {
-            if (data.length === 0) {
-              this.subLocationsDropdown = []; // Reset if no sub-locations are found
-            } else {
-              this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
-            }
-            // Reset the sub-location selection in the form
-            this.assetForm.patchValue({ subLocation: null });
-          },
-          error: (err: any) => {
-            this.subLocationsDropdown = []; // Reset on error
-            this.assetForm.patchValue({ subLocation: null }); // Reset the sub-location field
-          },
-        });
-    } else {
-      this.subLocationsDropdown = []; // Reset if no location is selected
-    }
+  // getSubLocationByid(selectedLocation: any): void {
+  //   this.assetForm.get('subLocationId')?.enable()
+  //   if (selectedLocation && selectedLocation.id) {
+  //     this.subscription = this.http
+  //       .getData(
+  //         `JobLocation/sub-location-by-joblocation/${selectedLocation.id}`
+  //       )
+  //       .subscribe({
+  //         next: (data: any) => {
+  //           if (data.length === 0) {
+  //             this.subLocationsDropdown = []; // Reset if no sub-locations are found
+  //           } else {
+  //             this.subLocationsDropdown = data.jobSubLocations; // Update the sub-location dropdown values
+  //           }
+  //           // Reset the sub-location selection in the form
+  //           this.assetForm.patchValue({ subLocation: null });
+  //         },
+  //         error: (err: any) => {
+  //           this.subLocationsDropdown = []; // Reset on error
+  //           this.assetForm.patchValue({ subLocation: null }); // Reset the sub-location field
+  //         },
+  //       });
+  //   } else {
+  //     this.subLocationsDropdown = []; // Reset if no location is selected
+  //   }
+  // }
+getSubLocationByid(selectedLocation: any): void {
+  this.assetForm.get('subLocationId')?.enable();
+
+  if (selectedLocation && selectedLocation.id) {
+    this.subscription = this.http
+      .getData(`JobLocation/sub-location-by-joblocation/${selectedLocation.id}`)
+      .subscribe({
+        next: (data: any) => {
+          if (data.length === 0) {
+            this.subLocationsDropdown = [];
+          } else {
+            this.subLocationsDropdown = data.jobSubLocations;
+          }
+
+          // Reset and make subLocationId required
+          this.assetForm.get('subLocationId')?.setValue(null);
+          this.assetForm.get('subLocationId')?.setValidators([Validators.required]);
+          this.assetForm.get('subLocationId')?.markAsTouched(); // Force show error immediately
+          this.assetForm.get('subLocationId')?.updateValueAndValidity();
+        },
+        error: (err: any) => {
+          this.subLocationsDropdown = [];
+          this.assetForm.get('subLocationId')?.setValue(null);
+          this.assetForm.get('subLocationId')?.markAsTouched();
+        },
+      });
+  } else {
+    this.subLocationsDropdown = [];
+    this.assetForm.get('subLocationId')?.setValue(null);
+    this.assetForm.get('subLocationId')?.clearValidators();
+    this.assetForm.get('subLocationId')?.updateValueAndValidity();
   }
+}
 
   postassets(formdata: FormGroup) {
     if (formdata.valid) {
@@ -461,7 +511,7 @@ export class AssetsManagmentComponent {
       this.http.postdata('AssetMaster', payload).pipe(takeUntil(this.destroy$)).subscribe({
         next: (res) => {
           this.modalService.dismissAll();
-          this.conformationPopup.openSuccessModal('Asset Registered Successfully ');
+          this.conformationPopup.openSuccessModal('Asset Registered successfully ');
           this.getassetsdata(this.page, this.pageSize, null, null, this.Status);
           this.getcount(null, null);
           this.assetForm.reset();

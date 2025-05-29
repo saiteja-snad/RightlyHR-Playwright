@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IJob } from '../../Interfaces/letters-model';
 import { filter, Subject, takeUntil } from 'rxjs';
@@ -26,7 +26,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     ReactiveFormsModule,
     CommonModule,
     CompOffApprovalTabsComponent, DropdownModule, Select, TranslateModule,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    NgbPopoverModule
 ],
   templateUrl: './comp-off.component.html',
   styleUrl: './comp-off.component.scss',
@@ -136,7 +137,7 @@ export class CompOffComponent implements OnInit, OnDestroy {
       ],
       availing: ['', Validators.required],
       halfType: [''],
-      reason: ['', Validators.required],
+      reason: ['', [Validators.required, Validators.minLength(10)]],
     });
   }
 

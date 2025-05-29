@@ -44,7 +44,8 @@ import { MODULE_INFOS } from '../../shared/modules-info';
     DataLoaderContentComponent,
     TohoursPipe,
     DatePicker,
-    ModuleInformationComponent
+    ModuleInformationComponent,
+    
 ],
   templateUrl: './attendance-view.component.html',
   styleUrl: './attendance-view.component.scss',
@@ -123,7 +124,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log(this.date);
     // Get current date
     const now = moment().startOf('month'); // ← important!
     this.date = now.toDate();
@@ -169,7 +169,6 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       const selectedDate = moment(Value);
       this.selectedYear = selectedDate.year();
       this.selectedMonth = selectedDate.month() + 1; // month() is 0-based
-      console.log(this.selectedYear + this.selectedMonth);
       this.getAttendnaceData(this.getSelectedEmployee());
     }
   }
@@ -185,7 +184,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       permissionDate: [{ value: null, disable: true }, Validators.required],
       duration: [null, Validators.required],
       leaveType: [null, Validators.required],
-      reason: [null, [Validators.required, Validators.maxLength(250)]],
+      reason: [null, [Validators.required,Validators.minLength(10), Validators.maxLength(250)]],
     });
     this.getDuration();
   }
@@ -202,7 +201,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
       backdrop: 'static',
     });
   }
-
+//function to get the attendance criteria
   getAttendanceCriteria() {
     const params = 'AttendanceRegularization';
     const param = [
@@ -369,49 +368,51 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
         },
       });
   }
-
+getStatusClass(color:any){
+return color
+}
   //function to bind color for the each status
-  getStatusClass(status: string): string {
-    switch (status?.toLowerCase()) {
-      case 'present':
-        return 'status-present';
-      case 'half day present':
-        return 'status-halfdaypresent';
-      case 'absent':
-      case 'absent(permission)':
-        return 'status-absent';
-      case 'leave':
-        return 'status-leave';
-      case 'half day leave':
-        return 'status-leave';
-      case 'first half leave':
-        return 'status-leave';
-      case 'second half leave':
-        return 'status-leave';
-      case 'wfh':
-        return 'status-wfh';
-      case 'first half wfh':
-        return 'status-wfh';
-      case 'second half wfh':
-        return 'status-wfh';
-      case 'half day wfh':
-        return 'status-wfh';
-      case 'compoff':
-        return 'status-compoff';
-      case 'holiday':
-        return 'status-holiday';
-      case 'weekend':
-        return 'status-weekend';
-      case 'half day remote':
-        return 'status-remote';
-      case 'half day':
-        return 'status-halfday';
-      case 'norecords':
-        return 'status-norecords';
-      default:
-        return '';
-    }
-  }
+  // getStatusClass(status: string): string {
+  //   switch (status?.toLowerCase()) {
+  //     case 'present':
+  //       return 'status-present';
+  //     case 'half day present':
+  //       return 'status-halfdaypresent';
+  //     case 'absent':
+  //     case 'absent(permission)':
+  //       return 'status-absent';
+  //     case 'leave':
+  //       return 'status-leave';
+  //     case 'half day leave':
+  //       return 'status-leave';
+  //     case 'first half leave':
+  //       return 'status-leave';
+  //     case 'second half leave':
+  //       return 'status-leave';
+  //     case 'wfh':
+  //       return 'status-wfh';
+  //     case 'first half wfh':
+  //       return 'status-wfh';
+  //     case 'second half wfh':
+  //       return 'status-wfh';
+  //     case 'half day wfh':
+  //       return 'status-wfh';
+  //     case 'compoff':
+  //       return 'status-compoff';
+  //     case 'holiday':
+  //       return 'status-holiday';
+  //     case 'weekend':
+  //       return 'status-weekend';
+  //     case 'half day remote':
+  //       return 'status-remote';
+  //     case 'half day':
+  //       return 'status-halfday';
+  //     case 'norecords':
+  //       return 'status-norecords';
+  //     default:
+  //       return '';
+  //   }
+  // }
 
   // function to get the data of employees by hierarchy
   getAllEmployeeDetails() {
@@ -431,7 +432,7 @@ export class AttendanceViewComponent implements OnInit, OnDestroy {
                 return {
                   ...employee,
                   fullName: `${employee.fusionEmpId ? employee.fusionEmpId + ' - ' : ''
-                    }${employee.firstName} ${employee.middleName ? employee.middleName + ' ' : ''
+                    }${employee.firstName??''} ${employee.middleName ? employee.middleName + ' ' : ''
                     }${employee.lastName}`,
                 };
               });

@@ -40,13 +40,13 @@ export class GenderComponent {
     this.GenderForm = this.fb.group({
       Gender: ['',  [
         Validators.required,
-        this.formValidations.maxCharactersValidator(51)
+        this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)
       ]]
     });
     this.updateForm = this.fb.group({
       Gender: ['',  [
         Validators.required,
-        this.formValidations.maxCharactersValidator(51)
+        this.formValidations.maxCharactersValidator(51), Validators.pattern(/^[^\s].*$/)
       ]]
     });
     this.getGender();

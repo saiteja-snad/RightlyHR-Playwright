@@ -1,10 +1,15 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <!--header-->
-    <div class="component-header">Reports</div>
-
-    <div>
-      <form autocomplete="off" [formGroup]="wfhReportForm" (ngSubmit)="generateWfhReport()">
+    
+         <div class="heading-content">
+      <div class="commpoment-name">Attandance Reports<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="component-header">WFH Report</div>
+      <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div>
+    </div>
+    <form autocomplete="off" [formGroup]="wfhReportForm" (ngSubmit)="generateWfhReport()">
         <div class="d-flex align-items-center gap-3">
           @if(rbac.allowedToAccess('WFH Report - Generate.view')){
           <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
@@ -88,21 +93,20 @@
             }
           </div>
         </div>
-      </form>
-    </div>
+    </form>
   </div>
 
-  <!--Module Information-->
-  <div>
+ <!--Module Information-->
+  <ng-template #popContent>
     <app-module-information [moduleInfo]="moduleinfo" />
-  </div>
+  </ng-template>
+
   
   <div class="d-flex gap-3 w-100">
-    <div class="custom-component-left-content">
+    <div class="component-left-tabs-container">
       <app-attandace-report-tabs />
     </div>
-    <div class="custom-component-right-content">
-
+    <div class="component-right-content">
       @if(isLoading){
       <div class="custom-compoent-data-loader">
         <app-data-loader-content />
@@ -111,7 +115,6 @@
       <div class="custom-table-content">
         <table id="wfhReportTable" class="content w-100">
           <thead>
-            <tr>
               <th>Employee ID</th>
               <th>Employee Name</th>
               <th>Department</th>
@@ -121,23 +124,22 @@
               <th>Shift</th>
               <th>Worked Date</th>
               <th>Duration</th>
-            </tr>
           </thead>
           <tbody>
             @if (filteredWfhRecord && filteredWfhRecord.length > 0) {
             @for (record of filteredWfhRecord; track record) {
             <tr>
-              <td class="td-center">{{ record.fusionEmpId ?? '-' }}</td>
-              <td class="td-center">{{ record.employeeName ?? '-' }}</td>
-              <td class="td-center">{{ record.department ?? '-' }}</td>
-              <td class="td-center">{{ record.teamManagerName ?? '-' }}</td>
-              <td class="td-center">{{ record.location ?? '-' }}</td>
-              <td class="td-center">{{ record.subLocation ?? '-' }}</td>
-              <td class="td-center">{{ record.shift ?? '-' }}</td>
-              <td class="td-center">
+              <td>{{ record.fusionEmpId ?? '-' }}</td>
+              <td>{{ record.employeeName ?? '-' }}</td>
+              <td>{{ record.department ?? '-' }}</td>
+              <td>{{ record.teamManagerName ?? '-' }}</td>
+              <td>{{ record.location ?? '-' }}</td>
+              <td>{{ record.subLocation ?? '-' }}</td>
+              <td>{{ record.shift ?? '-' }}</td>
+              <td>
                 {{ record.worked_Date ? (record.worked_Date | date: 'dd-MMM-yyyy') : '-' }}
               </td>
-              <td class="td-center">{{ record.duration ?? '-' }}</td>
+              <td>{{ record.duration ?? '-' }}</td>
             </tr>
             }
             } @else {

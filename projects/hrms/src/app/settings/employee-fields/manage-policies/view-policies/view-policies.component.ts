@@ -52,7 +52,7 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') ?? '{}');
     this.updatePoliciesData = JSON.parse(
-      localStorage.getItem('viewpolicies') ?? '{}'
+      localStorage.getItem('updatepolicies') ?? '{}'
     );
 
     this.getjobLocationList();
@@ -121,20 +121,21 @@ export class ViewPoliciesComponent implements OnInit, OnDestroy {
     this.policies.push(policyGroup);
   }
 
-  cloneshiftsPolicy1(): void {
-    const policyData = localStorage.getItem('viewpolicies');
-    if (policyData) {
-      const parsedPolicy = JSON.parse(policyData);
-      const id = parsedPolicy?.id;
-      localStorage.setItem('cloningPolicyId', id);
-      if (id) {
-        this.router.navigate(['/settings/employee-fields/clonepolices', id]);
-      } else {
-        console.error('ID not found in viewpolicies localStorage.');
-      }
-    } else {
-      console.error('No viewpolicies data found in localStorage.');
-    }
+  cloneshiftsPolicy1() {
+    // const policyData = localStorage.getItem('viewpolicies');
+    // if (policyData) {
+    //   const parsedPolicy = JSON.parse(policyData);
+    //   const id = parsedPolicy?.id;
+    //   localStorage.setItem('cloningPolicyId', id);
+    //   if (id) {
+    //     this.router.navigate(['/settings/employee-fields/clonepolices', id]);
+    //   } else {
+    //     console.error('ID not found in viewpolicies localStorage.');
+    //   }
+    // } else {
+    //   console.error('No viewpolicies data found in localStorage.');
+    // }
+    this.router.navigate(['/settings/employee-fields/clonepolices']);
   }
   removePolicyRow(index: number) {
     if (this.policies.length > 1) {

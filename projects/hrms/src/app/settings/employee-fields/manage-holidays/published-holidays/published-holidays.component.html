@@ -1,6 +1,6 @@
 <div class="custom-main-component-container">
   <div class="d-flex justify-content-between align-items-center mb-3">
-    <div><span class="component-sub-header">{{'Holidays Management' | translate}}</span></div>
+    <div><span class="component-sub-header">{{'Manage Holidays' | translate}}</span></div>
     <div class="custom-add-btn" (click)="nagvition()" *ngIf="rbac.allowedToAccess('Holidays Pending Tab.create')">
       <i class="bi bi-plus plus-icon me-1"></i>{{'Add New' | translate}}
     </div>
@@ -16,7 +16,7 @@
           <th>{{'Shift Name' | translate}}</th>
           <th>{{'Status' | translate}}</th>
           <th>{{'Added By' | translate}}</th>
-          <th>{{'Action(s)' | translate}}</th>
+          <th>{{'Action' | translate}}</th>
         </tr>
       </thead>
       <tbody>

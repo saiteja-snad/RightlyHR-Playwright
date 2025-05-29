@@ -27,13 +27,12 @@ export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
   ticketsAwaitOnUser: any[] = [];
   navTabs: any[] = [];
   defaultRoute: string = '';
-
   // Original unfiltered tab structure with permissions
   private allTabs = [
     { label: 'All Tickets', link: '/it-support/team-tickets/all-tickets', countKey: 'AllCount', icon: '/desk-icon/all-icon.png', permission: { feature: 'All Tickets Tab', action: 'view' } },
     { label: 'Open Tickets', link: '/it-support/team-tickets/open-tickets', countKey: 'openTicketCount', icon: '/it-support-icons/open-icon.png', permission: { feature: 'Open Tickets Tab', action: 'view' } },
     { label: 'Await On User Tickets', link: '/it-support/team-tickets/await-on-user-tickets', countKey: 'awaitingOnUserTicketCount', icon: '/it-support-icons/Await-icon.png', permission: { feature: 'Await On User Tickets Tab', action: 'view' } },
-    { label: 'Solved Tickets', link: '/it-support/team-tickets/solved-tickets', countKey: 'closedTicketCount', icon: '/it-support-icons/solved-icon.png', permission: { feature: 'Solved Tickets Tab', action: 'view' } },
+    { label: 'Closed Tickets', link: '/it-support/team-tickets/solved-tickets', countKey: 'closedTicketCount', icon: '/it-support-icons/solved-icon.png', permission: { feature: 'Solved Tickets Tab', action: 'view' } },
     { label: 'Rejected Tickets', link: '/it-support/team-tickets/rejected-tickets', countKey: 'rejectedTicketCount', icon: '/time-off-icon/rejected-icon.png', permission: { feature: 'Rejected Tickets Tab', action: 'view' } }
   ];
 
@@ -45,6 +44,9 @@ export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.empinfo = JSON.parse(localStorage.getItem('rightlyHrUser') || '{}');
     this.getuserticketsbyempid();
+    this.http.refreshRequested$.subscribe(() => {
+    this.getuserticketsbyempid();
+  });
   }
 
   getuserticketsbyempid() {
@@ -74,6 +76,7 @@ export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
         if (this.navTabs.length > 0) {
           this.defaultRoute = this.navTabs[0].link;
         }
+      
         // const currentUrl = this.router.url;
         // const baseUrl = '/it-support/team-tickets';
         // if (currentUrl === baseUrl && this.defaultRoute) {
@@ -84,12 +87,12 @@ export class ItsupportCompomentTabsComponent implements OnInit, OnDestroy {
         //   this.router.navigateByUrl(this.defaultRoute);
         // }
       },
+      
       error: (err: any) => {
         console.error(err);
       }
     });
   }
-
   ngOnDestroy() {
     if (this.subscription) {
       this.subscription.unsubscribe();

@@ -12,8 +12,7 @@
             <th>Grade Name</th>
             <th>Job grade</th>
             <th class="text-center" *ngIf="rbac.allowedToAccess('Grade Details.update') || 
-              rbac.allowedToAccess('Grade Details.delete')">Action(S)
-            </th>
+              rbac.allowedToAccess('Grade Details.delete')">Action<span class="text-lowercase">(S)</span> </th>
           </tr>
         </thead>
         <tbody>
@@ -80,6 +79,9 @@
           <div *ngIf="AddForm.get('Addgrade')?.errors?.['maxCharacters']" class="error-msg">
             {{ 'Please limit your input to 100 characters' | translate }}
           </div>
+          <div *ngIf="AddForm.get('Addgrade')?.errors?.['pattern']" class="error-msg">
+                    {{ 'Field cannot start with a space' | translate }}
+            </div>
         </div>
       
         <!-- Job Grade Field -->
@@ -97,6 +99,9 @@
           <div *ngIf="AddForm.get('jobgrade')?.errors?.['maxCharacters']" class="error-msg">
             {{ 'Max 100 characters allowed' | translate }}
           </div>
+          <div *ngIf="AddForm.get('jobgrade')?.errors?.['pattern']" class="error-msg">
+                    {{ 'Field cannot start with a space' | translate }}
+            </div>
         </div>
         <!-- Buttons -->
         <div class="custom-modal-footer">
@@ -143,6 +148,9 @@
             <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['maxCharacters']" class="error-msg">
               {{ 'Max 100 characters allowed' | translate }}
             </div>
+            <div *ngIf="updateForm.get('Updatejobrole')?.errors?.['pattern']" class="error-msg">
+                    {{ 'Field cannot start with a space' | translate }}
+            </div>
         </div>
 
         <div class="mb-3">
@@ -160,6 +168,9 @@
           <div *ngIf="updateForm.get('updategraderole')?.errors?.['maxCharacters']" class="error-msg">
             {{ 'Please limit your input to 100 characters' | translate }}
           </div>
+          <div *ngIf="updateForm.get('updategraderole')?.errors?.['pattern']" class="error-msg">
+                    {{ 'Field cannot start with a space' | translate }}
+            </div>
         </div>
         
         <div class="custom-modal-footer">

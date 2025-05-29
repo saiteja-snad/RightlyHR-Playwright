@@ -1,17 +1,37 @@
 <div class="custom-main-component-container">
     <div class="component-header-content">
-        <div>
-            <p class="component-header mb-0">
-                <i *ngIf="showBackIcon" class="bi bi-arrow-90deg-left me-2" (click)="onBackSubmit()"></i>{{headerName}}
-            </p>
+
+
+        <div class="heading-content">
+            <div *ngIf="headerName !== 'My Info'; else nonClickableHeader" class="commpoment-name cursor"
+                (click)="onBackSubmit()">
+                {{headerName}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+            </div>
+            <ng-template #nonClickableHeader>
+                <div class="commpoment-name">
+                    {{headerName}}<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span>
+                </div>
+            </ng-template>
+            <div class="component-header">{{subHeader}}</div>
+            <div>
+                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
+                    class="module-icon">
+            </div>
         </div>
+        <!--Module Information-->
+        <ng-template #popContent>
+            <app-module-information [moduleInfo]="moduleinfo" />
+        </ng-template>
 
         <div class="d-flex gap-2">
-            <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/job/employmentType') && 
-            empdata?.empstatus !=='Inactive' &&  empdata?.empstatus !=='Trainee Inactive' && empdata?.employeeId !==  loginEmployee.employeeId" (click)="navigation()">Inactive</button>
+            <button class="custom-btn btn-primary"
+                *ngIf="isActive('personalinfo/job/employmentType') && 
+            empdata?.empstatus !=='Inactive' &&  empdata?.empstatus !=='Trainee Inactive' && empdata?.employeeId !==  loginEmployee.employeeId"
+                (click)="navigation()">Inactive</button>
 
-            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus =='Employee Created'
-             || empdata?.substatus=='Requested Documents') ){
+            @if((empdata.empstatus=='Prospective' || empdata.empstatus=='Trainee Prospective') && (empdata?.substatus
+            =='Employee Created'
+            || empdata?.substatus=='Requested Documents') ){
             <button class="custom-btn btn-primary" *ngIf="isActive('personalinfo/personal/basic-info')"
                 (click)="emailForRequestDoc()" [disabled]="isLoading">
                 <span *ngIf="!isLoading">{{'Request for Documents'|translate}}</span>
@@ -20,7 +40,7 @@
                 </div>
             </button>
             }
-            
+
             <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus == 'Prospective'
                 || emppersonalinfo.empstatus == 'Trainee Prospective')  && (emppersonalinfo?.substatus == 'Employee Created' || 
                 emppersonalinfo?.substatus=='Requested Documents' || emppersonalinfo?.substatus == 'Documents Submitted' || 
@@ -32,7 +52,8 @@
             <!-- <div *ngIf=""> -->
             @if(getOfferDetails.status == 'Released' || getTraineeOfferDetails.status=='Released'){
             <button class="custom-btn btn-secondary" *ngIf="isActive('personalinfo/personal/basic-info') && (emppersonalinfo.empstatus=='Prospective' 
-            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')" (click)="openModal(revokeoffer)">
+            || emppersonalinfo.empstatus =='Trainee Prospective')  && (emppersonalinfo?.substatus!='Employee Created')"
+                (click)="openModal(revokeoffer)">
                 {{' Revoke Offer'|translate}}
             </button>
             }
@@ -44,10 +65,7 @@
         </div>
     </div>
 
-    <!--Module Information-->
-    <div>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </div>
+
 
     <div class="d-flex gap-3">
         <!--User profile content-->
@@ -64,7 +82,7 @@
 
 <ng-template #revokeoffer let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
-        <div class="d-flex justify-content-between popup-header-border p-3">
+        <div class="custom-poup-header-content popup-header-border">
             <div class="pt-2">
                 <p class="popup-heading mb-0">{{'Revoke Offer'|translate}}</p>
             </div>
@@ -73,7 +91,8 @@
                         class="close-icon"></a>
             </div>
         </div>
-        <div class="custom-main-popup-content p-4">
+
+        <div class="custom-main-popup-content">
             <form autocomplete="off" [formGroup]="revokeForm" (ngSubmit)="submitrevoke()" class="w-100">
                 <div class="mb-3">
                     <label for="comments" class="form-label custom-label mb-2">{{'Revoke Reason'|translate}}
@@ -87,7 +106,7 @@
                         <div class="error-msg">{{'Revoke Reason is required'|translate}}</div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-end gap-3">
+                <div class="custom-modal-footer">
                     <button type="reset" class="custom-btn btn-secondary px-4"
                         (click)="close();this.revokeForm.reset()">{{'Close'|translate}}</button>
                     <button type="submit" class="custom-btn btn-primary px-4"
@@ -101,10 +120,10 @@
 <ng-template #archivedbtn let-modal>
     <div class="result-popup-content" ngbAutofocus>
         <div>
-            <img src="icons/conformation.png" alt="failure icon" class="confirmation-icon mb-4">
-            <p class="confirmation-text mb-4">Are you sure you want to Archive?</p>
+            <img src="icons/conformation.png" alt="failure icon" class="confirmation-delete-icon">
+            <p class="confirmation-text">Are you sure you want to Archive?</p>
         </div>
-        <div class="d-flex justify-content-center gap-3 mt-4">
+        <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>
             <button type="submit" class="custom-btn btn-primary" (click)="submitArchive()">{{'Yes'|translate}}</button>
         </div>

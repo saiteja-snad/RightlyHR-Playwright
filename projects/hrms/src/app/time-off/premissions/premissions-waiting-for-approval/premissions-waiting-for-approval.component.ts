@@ -98,6 +98,7 @@ export class PremissionsWaitingForApprovalComponent
         null,
         [
           Validators.required,
+          Validators.minLength(10),
           Validators.maxLength(250)
         ],
       ],
@@ -105,6 +106,16 @@ export class PremissionsWaitingForApprovalComponent
   }
   isBeforeToday(date: string | Date): boolean {
     return moment().isSameOrBefore(moment(date), 'day');
+  }
+
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, backdrop: 'static' });
+  }
+
+  
+  cleardata() {
+    this.modalService.dismissAll();
+    this.cancelForm.reset();
   }
   onRowsChange() {
     this.first = 0;

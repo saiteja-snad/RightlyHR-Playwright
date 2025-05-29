@@ -6,7 +6,7 @@ import { Select } from 'primeng/select';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { OpenModalService } from '../../services/open-modal.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { RbacService } from '../../services/rbac.service';
 import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
@@ -14,7 +14,7 @@ import { filter } from 'rxjs';
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-monthly-attandance-report',
-  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule, ModuleInformationComponent],
+  imports: [RouterModule, Select, ReactiveFormsModule, CommonModule, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
   templateUrl: './monthly-attandance-report.component.html',
   styleUrl: './monthly-attandance-report.component.scss'
 })

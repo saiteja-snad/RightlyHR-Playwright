@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { AddProspectiveEmployeeComponent } from './add-prospective-employee/add-prospective-employee.component';
 import { FormsModule } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
@@ -17,7 +17,7 @@ import { ModuleInformationComponent } from "../../shared/module-information/modu
 import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-prospective-employees',
-  imports: [CommonModule, FormsModule, ProspectivePipe, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent, ModuleInformationComponent],
+  imports: [CommonModule, FormsModule, ProspectivePipe, TranslateModule, NoDataFoundComponent, DataLoaderContentComponent,NgbPopoverModule, ModuleInformationComponent],
   templateUrl: './prospective-employees.component.html',
   styleUrl: './prospective-employees.component.scss'
 })

@@ -178,6 +178,7 @@ export class AddShiftComponent {
       );
       // Extract subLocations
       this.subLocations = selectedLocation?.subLocations || [];
+      this.shiftForm.get('subLocation')?.markAsTouched();
     } else {
       // Disable if location is invalid
       subLocationControl?.disable();

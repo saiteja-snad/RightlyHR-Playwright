@@ -1,19 +1,21 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { Select } from 'primeng/select';
 import { IExpense, Iexpensetype, } from '../../Interfaces/claimsandexpenses.model';
-import { Subscription, switchMap } from 'rxjs';
+import { filter, Subscription, switchMap } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { OpenModalService } from '../../services/open-modal.service';
 import { TabsModule } from 'primeng/tabs';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationService } from '../../../../../preonboarding/src/app/common-services/form-validation.service';
+import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
+import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-add-claimsandexpenses',
-  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule, CommonModule, TabsModule],
+  imports: [RouterModule, Select, ReactiveFormsModule, TranslateModule,NgbPopoverModule, CommonModule, TabsModule, ModuleInformationComponent],
   templateUrl: './add-claimsandexpenses.component.html',
   styleUrl: './add-claimsandexpenses.component.scss',
   providers: [DatePipe]
@@ -22,6 +24,7 @@ import { FormValidationService } from '../../../../../preonboarding/src/app/comm
 export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
   empinfo: any;
   Myexpense: any;
+  moduleinfo: any
   totalexpensesamount = 0;
   selectedExpenseType: any;
   selectedexpensesid: any;
@@ -53,6 +56,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
     this.initiateForm();
     this.getExpensetype();
     this.getdatabyentriy();
+    this.updateModuleInfo();
     this.getexpensesheaderbyid(this.empinfo.employeeid)
     this.setDate()
     this.newExpenseForm.valueChanges.subscribe(() => {
@@ -77,7 +81,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       expense_Date: [null, Validators.required],
       expense_Amount: [null, [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/), this.noAlphabetsOrZeroValidator()]],
       receipt_Number: [null, [Validators.required, Validators.maxLength(18)]],
-      attachment_url: [null, Validators.required],
+      attachment_url: ['', Validators.required],
     });
   }
 
@@ -92,6 +96,23 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
 
   navigateMyexpenses() {
     this.router.navigate(['/claimsandexpenses/expenses/draft'])
+  }
+  
+  initiateUpdateModuleInfo(){
+    this.router.events
+    .pipe(filter(event => event instanceof NavigationEnd))
+    .subscribe(() => {
+      this.updateModuleInfo();
+    });
+  }
+
+  updateModuleInfo() {
+    const url = this.router.url;
+    const routeToInfoMap: { [key: string]: string } = {
+      '/claimsandexpenses/addexpense':MODULE_INFOS.EXPENSES_MODULE_INFO
+    };
+    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
+    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   calculateTotalExpensesAmount(): void {
@@ -211,30 +232,68 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
       },
     });
   }
-
-  fileupload(event: any, index: number): void {
+fileuploadhide :any;
+    fileupload(event: any, index: number): void {
     const file = event.target.files[0]; // Get the selected file
-    if (file) {
-      const filepath = `/Expenses/${this.empinfo.employeeId}`;
-      // Upload the file
-      const fileUpload$ = this.http.uploadFileWithQuery(
-        'FileSystem/uploadfiletodirectory',
-        filepath,
-        file
-      );
-      fileUpload$.subscribe({
-        next: (data: any) => {
-          // Assuming data.path contains the uploaded file path
-          const uploadedFilePath = data.path;
-          this.expenseItems.at(index)?.get('attachment_url')?.setValue(uploadedFilePath);
-        },
-        error: (error: any) => {
-          console.error('Error uploading file:', error);
-          // Handle error if needed
-        }
-      });
+     const d: Date = new Date();
+     if (!file) {
+        this.fileuploadhide = true;
+    //    const control = this.expenseItems.at(index)?.get('attachment_url');
+    // control?.setValue(null);
+    // control?.markAsTouched();
+     //control?.updateValueAndValidity();
+     }
+ 
+ 
+    const allowedTypes = [
+      'image/jpeg',
+      'image/png',
+      'application/pdf'
+    ];
+    const maxSizeInMB = 25;
+    const fileSizeInMB = file.size / (1024 * 1024);
+ 
+    // File type validation
+    if (!allowedTypes.includes(file.type)) {
+      this.conformationPopup.openErrorModal('Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed.');
+      this.expenseItems.at(index)?.get('attachment_url')?.reset();
+      this.expenseItems.at(index)?.get('attachment_url')?.markAsTouched();
+      event.target.value = ''; // Reset the file input
+      return;
     }
+ 
+    // File size validation
+    if (fileSizeInMB > maxSizeInMB) {
+      this.conformationPopup.openErrorModal('The file size should be less than 25MB.');
+      this.expenseItems.at(index)?.get('attachment_url')?.reset();
+      this.expenseItems.at(index)?.get('attachment_url')?.markAsTouched();
+      event.target.value = ''; // Reset the file input
+      return;
+    }
+ 
+    const filepath = `/Expenses/${this.empinfo.employeeId}`;
+    // Upload the file
+    const fileUpload$ = this.http.uploadFileWithQuery(
+      'FileSystem/uploadfiletodirectory',
+      filepath,
+      file
+    );
+    fileUpload$.subscribe({
+      next: (data: any) => {
+        // Assuming data.path contains the uploaded file path
+        const uploadedFilePath = data.path;
+       
+        this.expenseItems.at(index)?.get('attachment_url')?.setValue(uploadedFilePath);
+      },
+      error: (error: any) => {
+        console.error('Error uploading file:', error);
+        this.conformationPopup.openErrorModal('Error uploading file.');
+        this.expenseItems?.at(index)?.get('attachment_url')?.setValue(null); // Reset the attachment_url if upload fails
+      }
+    });
   }
+
+ 
 
   onchangeexpnes(event: any, index: number) {
     const selectedId = event.value;
@@ -316,6 +375,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
             if (data) {
               this.conformationPopup.openSuccessModal('Expenses submitted successfully');
               this.newExpenseForm.reset();
+              this.http.setnewcountDetails();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.getexpensesheaderbyid(this.empinfo.employeeId);
               this.spinnerLoader = false;
@@ -381,6 +441,7 @@ export class AddClaimsandexpensesComponent implements OnInit, OnDestroy {
         ).subscribe({
           next: (data: any) => {
             if (data) {
+              this.http.setnewcountDetails();
               this.newExpenseForm.reset();
               (this.newExpenseForm.controls['expenseItems'] as FormArray).clear();
               this.conformationPopup.openSuccessModal(' Expenses saved as draft successfully ');

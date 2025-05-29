@@ -231,6 +231,7 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
     };
     this.assesorDetails.push(newRow);
   }
+  
   // Delete Row from FormArray
   deleteupdateRow(index: number) {
     if (this.assesorDetails[index]) {
@@ -238,25 +239,13 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
       this.deletedRows.push(deletedRow);
       this.assesorDetails.splice(index, 1);
     }
-    this.conformationPopup.openSuccessModal('Row Deleted Successfully');
+    this.conformationPopup.openSuccessModal('Row deleted successfully');
   }
   // Handle form submission
   Updateassessor() {
     this.isLoading = true;
     const loggedinuser = this.authService.getToken();
     const currentDate = moment().startOf('day');
-  
-    // Check for past deadline dates
-    const invalidDeadline = this.assesorDetails.some((item: any) => {
-      const deadline = moment(item.deadlineindays).startOf('day');
-      return deadline.isBefore(currentDate);
-    });
-  
-    if (invalidDeadline) {
-      this.isLoading = false;
-      this.conformationPopup.openErrorModal("Deadline date cannot be in the past");
-      return;
-    }
   
     if (this.updateassesorConfiguration) {
       const payload = {
@@ -297,7 +286,7 @@ export class UpdateAssessorComponent implements OnInit, OnDestroy {
             this.isLoading = false;
             this.modalService.dismissAll();
             this.conformationPopup.openSuccessModal(
-              'Assessor Configurations Updated Successfully'
+              'Assessor configurations updated successfully'
             );
           },
           error: (err: any) => {

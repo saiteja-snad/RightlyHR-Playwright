@@ -1,4 +1,5 @@
 <div class="custom-main-component-container">
+    
     @if (selectedLeavesItems && selectedLeavesItems.length > 0 &&multiSelect) {
     <div class="component-header-content">
         @if(selectedLeavesItems){
@@ -29,7 +30,7 @@
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>
         <input type="search" #search="ngModel" [(ngModel)]="searchValue" class="form-control custom-search-input"
-            placeholder="Search here" aria-label="Username" autocomplete="off">
+            placeholder="Search here" aria-label="Username" autocomplete="off" (ngModelChange)="onSearchChange()">
     </div>
 
     <div class="custom-p-multi-select-table">
@@ -47,7 +48,7 @@
                     <th class="text-center">{{'Approver Comments' | translate}}</th>
                     <th>{{'Applied Date' | translate}}</th>
                     @if(!multiSelect && (rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For You (Comp Off).delete'))){
-                    <th class="text-center">{{'Action' | translate}}<span class="text-lowercase">{{'(s)' | translate}}</span></th>
+                    <th class="text-center">{{'Action' | translate}}</th>
                     }
                     </tr>
                 </ng-template>
@@ -82,6 +83,7 @@
                             </div>
                         </div>
                         <ng-template #compoffcomments>-</ng-template>
+                        
                     </td>
                     <td>{{leave?.entity?.attendanceRequestAppliedDate | dateformat}}</td>
                     @if(!multiSelect && (rbac.allowedToAccess('For You (Comp Off).update') || rbac.allowedToAccess('For You (Comp Off).delete'))){
@@ -222,7 +224,7 @@
     </div>
 </ng-template>
 
-<!-- commentspopup -->
+<!-- Comments Popup-->
 <ng-template #commentspopup let-modal>
     <div class="custom-main-popup-container" ngbAutofocus>
         <div class="custom-poup-header-content popup-header-border">
@@ -230,19 +232,19 @@
                 <p class="popup-heading mb-0">{{'Approver Comments'| translate}}</p>
             </div>
             <div>
-                <a (click)="modal.dismiss('Cross click')"><img src="icons/close.png" alt="Close Icon"
-                        class="close-icon"></a>
+                <a (click)="modal.dismiss('Cross click')">
+                    <img src="icons/close.png" alt="Close Icon" class="close-icon">
+                </a>
             </div>
         </div>
-
-        <div class="custom-main-popup-content">
+        <div class="custom-main-popup-content" *ngFor="let comment of approverComments">
             <div class="card p-3">
-                <div *ngFor="let comment of approverComments">
+                <div>
                     <div class="mb-0">
-                        <p><b>{{'Comments' | translate}}:</b> {{ comment?.comments }} </p>
-                        <p><b>{{'Commented By'|translate}}:</b> {{ comment?.addedName }}</p>
-                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment?.addedDate | dateformat }}</p>
-                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment?.addedByFusionEmpId }}</p>
+                        <p><b>{{'Comments' | translate}}:</b> {{ comment.comments }} </p>
+                        <p><b>{{'Commented By'|translate}}:</b> {{ comment.addedName }}</p>
+                        <p><b>{{"Approved Date" | translate}}:</b> {{ comment.addedDate | dateformat }}</p>
+                        <p><b>{{'Commented By ID' | translate}}:</b> {{ comment.addedByFusionEmpId }}</p>
                     </div>
                 </div>
             </div>

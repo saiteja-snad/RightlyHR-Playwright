@@ -137,7 +137,7 @@
 
             <div class="custom-modal-footer">
                 <button type="button" class="custom-btn btn-secondary" (click)="openconfirmationModelforcancle(cancel,UpdateAssesorDetails)">
-                    {{'Close'|translate}}</button>
+                    {{'Cancel'|translate}}</button>
                 <button type="button" class="custom-btn btn-primary" (click)="openconfirmationModel(confirmationtosave)"
                     [disabled]="UpdateAssesorDetails.invalid||isLoading">{{'Update'|translate}}</button>
             </div>
@@ -171,7 +171,7 @@
     <div class="result-popup-content" ngbAutofocus>
         <div>
             <img src="icons/reject.png" alt="failure icon" class="confirmation-delete-icon">
-            <p class="confirmation-text">Are you sure you want to close?</p>
+            <p class="confirmation-text">Are you sure you want to cancel?</p>
         </div>
         <div class="custom-modal-footer">
             <button type="button" class="custom-btn btn-secondary" (click)="modal.dismiss()">{{'No'|translate}}</button>

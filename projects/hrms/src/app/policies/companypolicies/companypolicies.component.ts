@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
 import { filter, Subscription } from 'rxjs';
 import { environment } from '../../../environments/environment.dev';
@@ -25,6 +25,7 @@ import { MODULE_INFOS } from '../../shared/modules-info';
 export class CompanypoliciesComponent {
   moduleinfo: string = '';
   policiesform!: FormGroup;
+  ackForm!: FormGroup
   ExpenseViewURL: any;
   ExpenseImageUrl: any;
   empinfo: any;
@@ -45,6 +46,8 @@ export class CompanypoliciesComponent {
   isViewingAttachment = false;
   shouldOpenModal = false;
   viewPolicyname!: string;
+  ackCheckboxChecked : any;
+  selectedItem : any;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private http: HttpService, private location: Location,
     private sanitizer: DomSanitizer, public readonly router: Router) { }
@@ -66,6 +69,9 @@ export class CompanypoliciesComponent {
     for (let i = this.currentYear - 1; i <= this.currentYear + 1; i++) {
       this.years.push({ label: i.toString(), value: i });
     }
+    this.ackForm = this.fb.group({
+      acknowledged: [false, Validators.requiredTrue]
+    });
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
   }
@@ -111,6 +117,7 @@ export class CompanypoliciesComponent {
     this.shouldOpenModal = true;
     this.EduImageUrl = '';
     this.EduViewURL = '';
+    this.ackCheckboxChecked = false;
     const isImage = /\.(jpg|jpeg|png)$/i.test(policyAttachment);
     const isPDF = policyAttachment.toLowerCase().endsWith('.pdf');
     this.modalService.dismissAll();
@@ -125,8 +132,9 @@ export class CompanypoliciesComponent {
     this.openModal(this.viewattamchment);
   }
 
-  onViewAttachement(url: any, name: any) {
+  onViewAttachement(url: any, name: any, selectedItem : any) {
     this.viewPolicyname = name;
+    this.selectedItem = selectedItem;
     const lowerUrl = url?.toLowerCase();
     if (lowerUrl?.endsWith('jpg') || lowerUrl?.endsWith('jpeg') || lowerUrl?.endsWith('png')) {
       this.subscription = this.http.DownloadDataWithQuery('FileSystem/Downloadfile', url).subscribe({
@@ -136,6 +144,7 @@ export class CompanypoliciesComponent {
           this.ExpenseImageUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
           this.ExpenseViewURL = null;
           this.toggleViewModal();
+          this.ackForm.reset({ acknowledged: false });
         },
         error: (err) => console.error('Error downloading image:', err),
       });
@@ -143,11 +152,13 @@ export class CompanypoliciesComponent {
       this.ExpenseImageUrl = null;
       this.ExpenseViewURL = `${environment.viewUrl}${url}`; // assumed to be full URL
       this.toggleViewModal();
+      this.ackForm.reset({ acknowledged: false });
     } else {
       // fallback for other types if needed
       this.ExpenseImageUrl = null;
       this.ExpenseViewURL = `${environment.viewUrl}${url}`;
       this.toggleViewModal();
+      this.ackForm.reset({ acknowledged: false });
     }
   }
 
@@ -189,4 +200,37 @@ export class CompanypoliciesComponent {
       },
     });
   }
+
+  postacknowledgement(selectedItem : any) {
+    let data = {
+      orgPolicyItemId: selectedItem.id,
+      employeeId: this.empinfo.employeeId,
+      acknowledged: true,
+      acknowledgedDate: new Date(),
+      source: "Web"
+    }
+    console.log(data);
+    this.subscription = this.http.postdata('OrgPolicyAcknowledgment', data).subscribe({
+      next: (response: any) => {
+        console.log(response);
+        this.loading = false;
+        const modalElement = document.getElementById('successhide');
+        if (modalElement) {
+          modalElement.classList.add('show');
+          modalElement.style.display = 'block';
+          modalElement.removeAttribute('aria-hidden');
+          modalElement.setAttribute('aria-modal', 'true');
+          // this.Message = 'Policy Acknowledged successfully';
+        }
+        selectedItem.acknowledged = true;
+        this.getjobDetails();
+        setTimeout(() => {
+          modalElement!.style.display = 'none';
+          modalElement!.classList.remove('show');
+        }, 2000);
+      },
+      error: (reason: any) => console.log(reason)
+    });
+  }
+
 }

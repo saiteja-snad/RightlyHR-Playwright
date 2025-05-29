@@ -9,6 +9,7 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 @Component({
   selector: 'app-update-policies',
@@ -18,6 +19,7 @@ import { FormValidationsService } from '../../../../services/form-validations.se
     ReactiveFormsModule,
     TranslateModule,
     NgbPopoverModule,
+    ToggleSwitchModule
   ],
   templateUrl: './update-policies.component.html',
   styleUrl: './update-policies.component.scss',
@@ -81,6 +83,8 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
             [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)],
           ],
           policyNewFile: [''],
+          acknowledged : [row.acknowledged],
+          notification : [row.notification],
         })
       );
     });
@@ -97,6 +101,8 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
       policyFile: [''],
       policyDescription: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       policyNewFile: ['', Validators.required],
+      acknowledged : [false],
+      notification : [false],
     });
     this.policies.push(policyGroup);
   }
@@ -106,6 +112,26 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
       this.policies.removeAt(index);
     }
   }
+
+  onClickedAck(event: any, index : number){
+    const control = this.policies.at(index);
+    if (event.target.checked) {
+      control.get('acknowledged')?.setValue(true);
+    } else {
+      control.get('acknowledged')?.setValue(false);
+    }
+  }
+
+  onClickedEmail(event: any, index : number){
+    const control = this.policies.at(index);
+    if (event.target.checked) {
+      control.get('notification')?.setValue(true);
+    } else {
+      control.get('notification')?.setValue(false);
+    }
+
+  }
+  
   onPolicyFileChange(event: any, index: number): void {
     const file = event.target.files[0];
     if (!file) return;
@@ -160,6 +186,10 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
             ? item.policyNewFile
             : item.policyFile,
         PolicyDescription: item.policyDescription,
+        requiresAcknowledgment : item.acknowledged,
+        sendEmailNotification: item.notification,
+        sendPushNotification : false,
+        sendNotification: item.notification,
         Status: 'Published',
         // holidayColor: 'string',
         HeaderID: this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,
@@ -226,6 +256,10 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
             ? item.policyNewFile
             : item.policyFile,
         PolicyDescription: item.policyDescription,
+        requiresAcknowledgment : item.acknowledged,
+        sendEmailNotification: item.notification,
+        sendPushNotification : false,
+        sendNotification: item.notification,
         Status: 'Published',
         // holidayColor: 'string',
         HeaderID: this.updatePoliciesData?.orgPolicyItems?.[0]?.headerID,

@@ -7,6 +7,8 @@ import { Select } from 'primeng/select';
 import { IPolicies } from '../../../../Interfaces/policies.model';
 import { Subject, takeUntil } from 'rxjs';
 import { ILocation, IShiftHeader, ISubLocation } from '../../../time-off/flexible-leave-allocation/leave-allocation.model';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
+
 
 import { TabsModule } from 'primeng/tabs';
 import { HttpService } from '../../../../services/http.service';
@@ -20,7 +22,7 @@ import { FormValidationsService } from '../../../../services/form-validations.se
   imports: [RouterModule,
     Select,
     CommonModule,
-    ReactiveFormsModule,TabsModule,TranslateModule],
+    ReactiveFormsModule,TabsModule,TranslateModule, ToggleSwitchModule],
   templateUrl: './add-policies.component.html',
   styleUrl: './add-policies.component.scss'
 })
@@ -60,7 +62,9 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
         policyName: ['',[Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
         policyFile: ['',Validators.required],
         policyFilePath:[''],
-        policyDescription: ['',[Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]]
+        policyDescription: ['',[Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
+        acknowledged : [false],
+        notification : [false],
       });
     }
     getAllYears() {
@@ -80,6 +84,24 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
       // }
     }
   
+    onClickedAck(event: any, index : number){
+      const control = this.policies.at(index);
+      if (event.target.checked) {
+        control.get('acknowledged')?.setValue(true);
+      } else {
+        control.get('acknowledged')?.setValue(false);
+      }
+    }
+
+    onClickedEmail(event: any, index : number){
+      const control = this.policies.at(index);
+      if (event.target.checked) {
+        control.get('notification')?.setValue(true);
+      } else {
+        control.get('notification')?.setValue(false);
+      }
+
+    }
   
     removePolicyRow(index: number) {
       this.policies.removeAt(index);
@@ -125,6 +147,10 @@ export class AddPoliciesComponent implements OnInit, OnDestroy {
           policyName: item.policyName,
           policyDescription: item.policyDescription,
           policyAttachment: item.policyFilePath,
+          requiresAcknowledgment : item.acknowledged,
+          sendEmailNotification: item.notification,
+          sendPushNotification : false,
+          sendNotification: item.notification,
           status: "Pending for submission",
         }))
       };

@@ -9,10 +9,11 @@ import { OpenModalService } from '../../../../services/open-modal.service';
 import { NgbModal, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormValidationsService } from '../../../../services/form-validations.service';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 @Component({
   selector: 'app-clone-policies',
-  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule, NgbPopoverModule],
+  imports: [CommonModule,Select,ReactiveFormsModule,TranslateModule, NgbPopoverModule, ToggleSwitchModule],
   templateUrl: './clone-policies.component.html',
   styleUrl: './clone-policies.component.scss'
 })
@@ -63,8 +64,9 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
           policyName : [row.policyName,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
           policyFile : [row.policyAttachment],
           policyDescription  : [row.policyDescription,[Validators.required, Validators.maxLength(50), Validators.pattern('^[a-zA-Z][a-zA-Z\\s]*$')]],
-          policyNewFile: ['']
-         
+          policyNewFile: [''],
+          acknowledged : [row.acknowledged],
+          notification : [row.notification],
         })
       );
     });
@@ -128,7 +130,9 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
       policyName: ['', [Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
       policyFile: [''],
       policyDescription: ['',[ Validators.required, Validators.maxLength(50), Validators.pattern(/.*\S.*/)]],
-      policyNewFile: ['', Validators.required]
+      policyNewFile: ['', Validators.required],
+      acknowledged : [false],
+      notification : [false],
     });
     this.policies.push(policyGroup);
   }
@@ -168,6 +172,24 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
     return new File([file], newName, { type: file.type });
   }
   
+  onClickedAck(event: any, index : number){
+    const control = this.policies.at(index);
+    if (event.target.checked) {
+      control.get('acknowledged')?.setValue(true);
+    } else {
+      control.get('acknowledged')?.setValue(false);
+    }
+  }
+
+  onClickedEmail(event: any, index : number){
+    const control = this.policies.at(index);
+    if (event.target.checked) {
+      control.get('notification')?.setValue(true);
+    } else {
+      control.get('notification')?.setValue(false);
+    }
+
+  }
   
 
   submit() {
@@ -190,6 +212,10 @@ export class ClonePoliciesComponent implements OnInit, OnDestroy {
         policyAttachment:  (item.policyNewFile && item.policyNewFile !== '') 
         ? item.policyNewFile 
         : item.policyFile,
+        requiresAcknowledgment : item.acknowledged,
+        sendEmailNotification: item.notification,
+        sendPushNotification : false,
+        sendNotification: item.notification,
         status: "Pending for submission",
       }))
     };

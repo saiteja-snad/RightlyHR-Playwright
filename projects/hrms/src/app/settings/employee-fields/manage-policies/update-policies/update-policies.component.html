@@ -100,25 +100,40 @@
               </ng-template>
             </div>
         
+            <!-- Description moved here -->
             <div class="w-100">
-              <div class="d-flex justify-content-between">
-                <div>
-                  <label class="form-label custom-label">{{'Description' | translate}}<span class="text-danger">*</span></label>
-                </div>
-                <div>
-                  <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
-                    class="btn p-0 border-0 bg-transparent">
-                    <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
-                  </button>
-                </div>
-              </div>
+              <label class="form-label custom-label">{{'Description' | translate}}<span
+                  class="text-danger">*</span></label>
               <input type="text" formControlName="policyDescription" class="form-control custom-input w-100"
                 placeholder="Please enter description" maxlength="50"
                 (keydown)="formValidations.restrictInitialSpace($event)" />
-              <div *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.invalid"
+              <div
+                *ngIf="policy.get('policyDescription')?.touched && policy.get('policyDescription')?.hasError('required')"
                 class="error-msg">
                 {{'Policy Description is required'|translate}}
               </div>
+            </div>
+
+            <!-- Acknowledgement Toggle -->
+            <div class="w-100">
+              <div class="d-flex justify-content-between">
+              <label class="form-label custom-label">{{'Acknowledgement Required' | translate}}<span
+                  class="text-danger">*</span></label>
+                </div>
+              <p-toggleswitch formControlName="acknowledged" (change)="onClickedAck($event, i)" />
+            </div>
+
+            <!-- Email Notification Toggle + Delete Button -->
+            <div class="w-100">
+              <div class="d-flex justify-content-between">
+                <label class="form-label custom-label">{{'Email Notification' | translate}}<span
+                    class="text-danger">*</span></label>
+                <button title="Delete" type="button" (click)="removePolicyRow(i)" *ngIf="policies.length > 1"
+                  class="btn p-0 border-0 bg-transparent">
+                  <img src="/icons/red-trash-icon.png" alt="trash-icon" class="red-trash-icon" />
+                </button>
+              </div>
+              <p-toggleswitch formControlName="notification" (onChange)="onClickedEmail($event, i)" />
             </div>
           </div>
         </div>

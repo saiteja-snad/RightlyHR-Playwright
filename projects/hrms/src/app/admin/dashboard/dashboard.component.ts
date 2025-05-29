@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { DocumentHistoryLayoutComponent } from '../document-history/document-history-layout/document-history-layout.component';
 import { filter, Subscription } from 'rxjs';
@@ -18,7 +18,7 @@ import { ChartModule } from 'primeng/chart';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class DashboardComponent {
+export class DashboardComponent implements OnInit, OnDestroy {
   moduleinfo: string = '';
   subscription!: Subscription;
   employeedata: any;
@@ -43,6 +43,7 @@ export class DashboardComponent {
   totalEmployeesCount: any;
   currentTime: Date = new Date();
   iconPath: string = '';
+  private intervalId: any;
 
   constructor(private router: Router, private http: HttpService, private cdr: ChangeDetectorRef,
     public rbac: RbacService) { }
@@ -61,6 +62,9 @@ export class DashboardComponent {
     this.updateModuleInfo();
     this.initiateUpdateModuleInfo();
     this.setIconBasedOnTime();
+    this.intervalId = setInterval(() => {
+      this.currentTime = new Date();
+    }, 1000);
   }
 
   initiateUpdateModuleInfo() {
@@ -95,10 +99,10 @@ export class DashboardComponent {
     if (hour >= 5 && hour < 12) {
       // Morning
       this.iconPath = '/dashboard-icon/morning-icon.png';
-    } else if (hour >= 12 && hour < 17) {
+    } else if (hour >= 12 && hour < 16) {
       // Afternoon
       this.iconPath = '/dashboard-icon/afternoon-icon.png';
-    } else if (hour >= 17 && hour < 20) {
+    } else if (hour >= 16 && hour < 19) {
       // Evening
       this.iconPath = '/dashboard-icon/sunset-icon.png';
     } else {
@@ -323,5 +327,11 @@ export class DashboardComponent {
       const permissionString = `${feature}.${action}`;
       return this.rbac.allowedToAccess(permissionString);
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 }

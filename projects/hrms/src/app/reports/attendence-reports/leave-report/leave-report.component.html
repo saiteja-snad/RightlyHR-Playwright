@@ -21,7 +21,7 @@
         <div class="d-flex align-items-center gap-2">
           <div>
             <input type="text" class="form-control custom-input w-100" ngxDaterangepickerBootstrap [autoApply]="true"
-              [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions" [showClearButton]="true"
+              [ranges]="ranges" [alwaysShowCalendars]="true" [locale]="localeOptions"
               placeholder="Please select date" formControlName="dateRange" [startKey]="'startDate'" [endKey]="'endDate'"
               readonly />
           </div>
@@ -32,7 +32,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select [options]="employeeiddetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-              [showClear]="true" formControlName="employee" placeholder="Please select employee"
+               formControlName="employee" placeholder="Please select employee"
               class="form-select custom-select" filterPlaceholder="Search employee">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
@@ -45,7 +45,7 @@
         @if(rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="teamdetails" [filter]="true" [showClear]="true" optionLabel="fullName"
+            <p-select [options]="teamdetails" [filter]="true" optionLabel="fullName"
               filterBy="fullName" formControlName="manager" placeholder="Please select manager"
               class="form-select custom-select" filterPlaceholder="Search manager">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
@@ -60,7 +60,7 @@
         && !rbac.allowedToAccess('Attendance Team Manager List(Leaves).view')){
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="getEmployeeInfo" [filter]="true" [showClear]="true" optionLabel="fullName"
+            <p-select [options]="getEmployeeInfo" [filter]="true" optionLabel="fullName"
               filterBy="fullName" formControlName="team" placeholder="Please select employee"
               class="form-select custom-select" filterPlaceholder="Search employee" (onChange)="onClick($event)">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
@@ -72,7 +72,7 @@
         <!-- Leave Category -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="uniqueLeaveCategory" [filter]="true" [showClear]="true" optionLabel="label"
+            <p-select [options]="uniqueLeaveCategory" [filter]="true" optionLabel="label"
               filterBy="label" formControlName="leaveCategory" placeholder="Select leave category"
               class="form-select custom-select" filterPlaceholder="Search leave type">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>

@@ -1,9 +1,12 @@
 <div class="custom-main-component-container w-100">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <div>
-            <p class="component-header cursor mb-0" (click)="Cancel()">
-                <i class="bi bi-arrow-90deg-left me-2"></i>{{"Update Weekends" | translate}}
-            </p>
+       <div class="heading-content">
+            <div class="commpoment-name cursor" (click)="navigate()">Manage Weekends<span class="ms-1"><i
+                        class="bi bi-chevron-double-right"></i></span></div>
+            <div class="component-header">{{"Update Weekends" | translate}}</div>
+            <!-- <div>
+        <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
+      </div> -->
         </div>
     </div>
 

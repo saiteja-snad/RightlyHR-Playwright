@@ -20,7 +20,7 @@
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName"
-                filterBy="fullName" [filter]="true" [showClear]="true" formControlName="employee"
+                filterBy="fullName" [filter]="true" formControlName="employee"
                 placeholder="Please select employee" filterPlaceholder="Search employee">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                 <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
@@ -32,7 +32,7 @@
           <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="teamdetails" optionLabel="fullName" filterBy="fullName" [filter]="true"
-                [showClear]="true" formControlName="manager" placeholder="Please select manager"
+                formControlName="manager" placeholder="Please select manager"
                 class="form-select custom-select" filterPlaceholder="Search manager">
                 <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
                 <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
@@ -44,7 +44,7 @@
           <div class="d-flex align-items-center gap-2">
             <div class="d-flex align-items-center gap-2">
               <div class="custom-p-select-content">
-                <p-select [options]="uniqueLeaveCategory" optionLabel="label" filterBy="label" [showClear]="true"
+                <p-select [options]="uniqueLeaveCategory" optionLabel="label" filterBy="label"
                   formControlName="leaveCategory" placeholder="Please select leave category"
                   class="form-select custom-select" [filter]="true" filterPlaceholder="Search leave type">
                   <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>

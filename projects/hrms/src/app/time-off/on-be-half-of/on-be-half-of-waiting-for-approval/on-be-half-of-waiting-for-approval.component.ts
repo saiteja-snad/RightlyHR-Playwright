@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
 import { AuthService } from '../../../services/auth.service';
 import { Ilpid } from '../../../Interfaces/timoff-model';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-on-be-half-of-waiting-for-approval',
   imports: [
@@ -21,7 +22,8 @@ import { Ilpid } from '../../../Interfaces/timoff-model';
     DropdownModule,
     DateformatPipe,
     NoDataFoundComponent,
-  ],
+    InfoIconComponent
+],
   templateUrl: './on-be-half-of-waiting-for-approval.component.html',
   styleUrl: './on-be-half-of-waiting-for-approval.component.scss',
 })

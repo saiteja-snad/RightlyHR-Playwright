@@ -62,7 +62,7 @@
           <td class="text-center">
             @if(item.description){
             <div (click)="decription(item.description,openDiscriotionviewpopup)" class="cursor">
-              <i class="bi bi-info-circle-fill"></i>
+              <app-info-icon />
             </div>
             }
             @else {
@@ -74,7 +74,7 @@
           <td class="text-center">
             @if(item.approvers && item.approvers.length > 0;){
             <div id="tooltip" (click)="approverCommentsFunction(item.approvers,ApprovalPopup)" class="cursor">
-              <i class="bi bi-info-circle-fill"></i>
+              <app-info-icon />
             </div>
             }
             @else{

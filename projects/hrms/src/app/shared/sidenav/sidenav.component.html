@@ -58,8 +58,8 @@
             }
             <!--Calendar-->
             @if(this.rbac.allowedToAccess('Calendar.view')){
-            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/calendar');resetDropdown()"
-                [class.active-nav-link]="isActiveRoute('/calendar')">
+            <li class="nav-item menu-item-clear" (click)="goToAccessibleRoute('/calendar-view');resetDropdown()"
+                [class.active-nav-link]="isActiveRoute('/calendar-view')">
                 <img src="main-menu-icons/calendar.png" alt="Icon" class="main-menu-icon">Calendar
             </li>
             }

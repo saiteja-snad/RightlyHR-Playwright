@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
 export class EmployeeManagementTabsComponent {
   navTabs: any[] = [];
   allTabs: any[] = [
-    { label: 'All Employee', link: '/employee-management', icon: '/main-menu-icons/all-employees-icon.png'},
+    { label: 'All Employees', link: '/employee-management', icon: '/main-menu-icons/all-employees-icon.png'},
     { label: 'Generate Documents', link: '/letters/offer-letter', icon: '/main-menu-icons/generate-documents.png'},
     { label: 'Invite New User', link: '/invite-user', icon: '/main-menu-icons/invite-new-user.png'},
   ];

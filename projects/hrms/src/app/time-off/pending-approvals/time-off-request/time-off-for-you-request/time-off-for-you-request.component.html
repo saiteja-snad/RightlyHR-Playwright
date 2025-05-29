@@ -70,7 +70,7 @@
                     <td class="text-center">
                         <div>
                             <a type="button" [ngbPopover]="reason">
-                                <i class="bi bi-info-circle-fill"></i>
+                                <app-info-icon />
                             </a>
                             <ng-template #reason>
                                 <p class="mb-0">{{item.entity.leaveDescription}}</p>
@@ -80,7 +80,7 @@
                     <td class="text-center">
                         <div *ngIf="item.entity.leaveApproverComments[0]?.comments?.trim(); else noComments">
                             <div type="button" (click)="comments(item.entity.leaveApproverComments, commentspopup)">
-                                <i class="bi bi-info-circle-fill"></i>
+                                <app-info-icon />
                             </div>
                         </div>
                         <ng-template #noComments>-</ng-template>

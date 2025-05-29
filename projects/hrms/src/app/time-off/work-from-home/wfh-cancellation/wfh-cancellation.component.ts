@@ -13,10 +13,11 @@ import { DataLoaderContentComponent } from '../../../shared/data-loader-content/
 import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-found.component';
 import { ICompOff } from '../../comp-off/compoff.modal';
 import { TranslateModule } from '@ngx-translate/core';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-wfh-cancellation',
-  imports: [  CommonModule,
+  imports: [CommonModule,
     NgbPopoverModule,
     FormsModule,
     PaginatorModule,
@@ -24,8 +25,7 @@ import { TranslateModule } from '@ngx-translate/core';
     DateformatPipe,
     NoDataFoundComponent,
     DataLoaderContentComponent,
-    TranslateModule
-],
+    TranslateModule, InfoIconComponent],
   templateUrl: './wfh-cancellation.component.html',
   styleUrl: './wfh-cancellation.component.scss'
 })

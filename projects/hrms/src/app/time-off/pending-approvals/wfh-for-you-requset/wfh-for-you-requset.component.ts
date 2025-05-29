@@ -27,15 +27,14 @@ import { NoDataFoundComponent } from '../../../shared/no-data-found/no-data-foun
 import { DateformatPipe } from '../../../Pipes/dateformat.pipe';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
-import { WfhsearchfilterPipe } from '../../../Pipes/wfhsearchfilter.pipe';
 import { RbacService } from '../../../services/rbac.service';
 import { noWhitespaceValidator } from '../../../shared/nowhitespace/nowhitespace.component';
 import { DataLoaderContentComponent } from '../../../shared/data-loader-content/data-loader-content.component';
 import { SignalsService } from '../../../services/signals.service';
 import { Table, TableModule } from 'primeng/table';
-import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { environment } from '../../../../environments/environment';
 import { FormValidationsService } from '../../../services/form-validations.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 
 @Component({
   selector: 'app-wfh-for-you-requset',
@@ -51,7 +50,8 @@ import { FormValidationsService } from '../../../services/form-validations.servi
     TranslateModule,
     DataLoaderContentComponent,
     TableModule,
-  ],
+    InfoIconComponent
+],
   templateUrl: './wfh-for-you-requset.component.html',
   styleUrl: './wfh-for-you-requset.component.scss',
   encapsulation: ViewEncapsulation.None,

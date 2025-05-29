@@ -30,6 +30,7 @@ import { LeaveApproval } from '../../../Interfaces/pendingapprovalsmodel';
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { SignalsService } from '../../../services/signals.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-permissions',
   imports: [
@@ -43,7 +44,8 @@ import { SignalsService } from '../../../services/signals.service';
     ReactiveFormsModule,
     TranslateModule,
     TableModule,
-    DataLoaderContentComponent
+    DataLoaderContentComponent,
+    InfoIconComponent
 ],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.scss',

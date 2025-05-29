@@ -19,10 +19,11 @@ import { Table, TableModule } from 'primeng/table';
 import { DataLoaderContentComponent } from "../../../shared/data-loader-content/data-loader-content.component";
 import { FormValidationsService } from '../../../services/form-validations.service';
 import { SignalsService } from '../../../services/signals.service';
+import { InfoIconComponent } from "../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-comp-off-entitlement',
   imports: [CommonModule, NgbPopoverModule, FormsModule, PaginatorModule, DropdownModule,
-    NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule, TableModule, DataLoaderContentComponent],
+    NoDataFoundComponent, DateformatPipe, ReactiveFormsModule, TranslateModule, TableModule, DataLoaderContentComponent, InfoIconComponent],
   templateUrl: './comp-off-entitlement.component.html',
   styleUrl: './comp-off-entitlement.component.scss'
 })

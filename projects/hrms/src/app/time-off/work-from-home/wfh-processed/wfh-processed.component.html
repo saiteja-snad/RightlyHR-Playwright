@@ -22,7 +22,7 @@
             <td class="text-center">
               <div>
                 <div *ngIf="wfhRequest.requestedComments; else noReason" type="button" [ngbPopover]="requestedComments">
-                  <i class="bi bi-info-circle-fill"></i>
+                  <app-info-icon />
                 </div>
                 <ng-template #requestedComments>
                   <p class="mb-0">{{ wfhRequest.requestedComments }}</p>

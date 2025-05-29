@@ -77,6 +77,7 @@ export class CompOffEntitlementComponent {
           this.getAllPendingApprovals();
         } else {
           this.leaves.next([]);
+          this.leavesselect = [];
         }
         this.http.resetTriggerSignal(); // Reset after handling
       }
@@ -91,6 +92,7 @@ export class CompOffEntitlementComponent {
       this.getAllPendingApprovals();
     } else {
       this.leaves.next([]);
+      this.leavesselect = [];
     }
     this.intializeApproveForm();
   }

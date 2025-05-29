@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { SelectModule } from 'primeng/select';
 import { DateformatPipe } from "../../Pipes/dateformat.pipe";
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IAsset, IDepartment, IEmployeeAddress, IemployeeDetails, IEmployeeIdentity, IEmployeeJobInfo, IEmployeeProfile, IIssuelocation, IMake } from './appointment-letter-model';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -13,22 +13,18 @@ import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { IEmployeeSignatures } from '../letters.modal';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-appointment-letter',
-  imports: [CommonModule, LettersTabComponent, SelectModule, DateformatPipe, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, SelectModule, DateformatPipe, ReactiveFormsModule, LettersheaderComponent, LetterFooterComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './appointment-letter.component.html',
   styleUrl: './appointment-letter.component.scss'
 })
 
 export class AppointmentLetterComponent {
-  moduleinfo : string = '';
   subscription!: Subscription; 
   appointmentLetterTemplate: any | string | ArrayBuffer | null = null;
   JoinDateValid: boolean = true;
@@ -51,17 +47,14 @@ export class AppointmentLetterComponent {
   selectedAuthority: IEmployeeSignatures | undefined;
   authorityFullName!: string;
   isLoading = false;
-  
   SelectDropDown = [
     { name: 'Current Address', code: 'C' },
     { name: 'Permanent Address', code: 'P' }
   ];
-
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
-
 
   constructor(
     private http: HttpService, 
@@ -77,9 +70,6 @@ export class AppointmentLetterComponent {
     this.getAllBranchLocations();
     this.getAssertType();
     this.getAuthorityDetails();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
   }
@@ -99,7 +89,6 @@ export class AppointmentLetterComponent {
       notes: ['',],
       authorityid: ['', Validators.required],
       jobValid: [false, Validators.requiredTrue],
-
       addressLine1: [''],
       addressLine2: [''],
       city: [''],
@@ -107,29 +96,9 @@ export class AppointmentLetterComponent {
       country: [''],
       pinCode: ['']
     });
-
     this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe(() => {
       this.JoiningDateValidation();
     });
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/letters/appointment-letter': MODULE_INFOS.APPOINTMENT_LETTER_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   getAllActiveEmployees() {
@@ -274,7 +243,6 @@ export class AppointmentLetterComponent {
     const selectedAddress = this.employeeaddress.employeeAddresses.find(
       (address: IEmployeeAddress) => address.type.toLowerCase() === Value.value.toLowerCase()
     );
-  
     if (selectedAddress) {
       this.employeeForm.patchValue({
         addressLine1: selectedAddress.addressLine1,
@@ -290,7 +258,6 @@ export class AppointmentLetterComponent {
   JoiningDateValidation() {
     const appointmentDate = this.employeeForm.get('appointmentdate')?.value;
     const dateOfJoining = this.employeeForm.get('dateOfJoining')?.value;
-  
     if (appointmentDate && dateOfJoining) {
       const appDate = new Date(appointmentDate);
       const joinDate = new Date(dateOfJoining);

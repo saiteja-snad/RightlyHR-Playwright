@@ -1,8 +1,8 @@
-import { CommonModule, formatDate } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component} from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { Select } from 'primeng/select';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { HttpService } from '../../services/http.service';
@@ -15,17 +15,14 @@ import { TranslateModule } from '@ngx-translate/core';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { IEmployeeDetails, IEmployeeJobDetails, IEmployeeSignatures } from '../letters.modal';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../shared/modules-info';
 @Component({
   selector: 'app-relieving-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, ModuleInformationComponent],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent],
   templateUrl: './relieving-letter.component.html',
   styleUrl: './relieving-letter.component.scss'
 })
 
 export class RelievingLetterComponent {
-  moduleinfo : string = '';
   subscription!: Subscription;
   relievingTemplate: any | string | ArrayBuffer | null = null; 
   result = {} as any;
@@ -62,27 +59,6 @@ export class RelievingLetterComponent {
     this.initializeForm();
     this.getAllInActiveEmployees();
     this.getAuthorityDetails();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/letters/relieving-letter': MODULE_INFOS.RELIEVING_LETTER_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   initializeForm() {

@@ -9,11 +9,24 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
+            <button type="button" class="clear-all-btn" (click)="clearWFHData()">Clear All</button>
             <label class="form-label custom-label m-0">{{'My Team'| translate}}</label>
             <div class="custom-p-select-content">
-                <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId" class="form-select custom-select"
+                <!-- <p-select [options]="getEmployeeInfo" optionLabel="fullName" optionValue="employeeId" class="form-select custom-select"
                     name="myteamemployees" placeholder="Select Employee Name" [filter]="true" required (onChange)="onCheckemployee($event.value)">
-                </p-select>
+                </p-select> -->
+                <p-select 
+      [options]="getEmployeeInfo" 
+      optionLabel="fullName" 
+      optionValue="employeeId" 
+      class="form-select custom-select"
+      name="myteamemployees" 
+      placeholder="Select Employee Name" 
+      [filter]="true" 
+      [formControl]="selectedWFHEmployeeControl"
+      required 
+      (onChange)="onCheckemployee($event.value)">
+    </p-select>
             </div>
 
             <!-- <div class="component-sub-header" *ngIf="totalbalance">Current Month Balance: {{ availablebalance }} / {{ totalbalance }}</div> -->

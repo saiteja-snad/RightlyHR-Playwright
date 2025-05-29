@@ -268,7 +268,7 @@ expiryDatevalidate:any;
       if (!issuedDate || !expiryDate) {
         return null; // Don’t validate if one of the dates is missing
       }
-      return new Date(expiryDate) <= new Date(issuedDate) ? { offerDateInvalid: true } : null;
+      return new Date(expiryDate) < new Date(issuedDate) ? { offerDateInvalid: true } : null;
     };
   }
 

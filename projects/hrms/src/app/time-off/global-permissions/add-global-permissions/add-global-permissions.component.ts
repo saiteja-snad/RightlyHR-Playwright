@@ -114,7 +114,7 @@ validationCheck() {
     location?.clearValidators();
     sublocation?.clearValidators();
     locationEmployees?.clearValidators();
-  } else if (selectType === 'Location/Sublocation') {
+  } else if (selectType === 'Location/Sub Location') {
     location?.setValidators([Validators.required]);
     sublocation?.setValidators([Validators.required]);
     locationEmployees?.setValidators([Validators.required]);
@@ -356,7 +356,7 @@ this.subscription = this.http.getData(`Subdepartments/Getnames/V2/${value}`).sub
         let deptId_locationId = '';
         let teamId_sublocationId = '';
   
-        if (formData.selectType === 'Location/Sublocation') {
+        if (formData.selectType === 'Location/Sub Location') {
           deptId_locationId = Array.isArray(formData.location) ? formData.location.join(',') : String(formData.location);
           teamId_sublocationId = Array.isArray(formData.sublocation) ? formData.sublocation.join(',') : String(formData.sublocation);
         } else if (formData.selectType === 'Department/Team') {

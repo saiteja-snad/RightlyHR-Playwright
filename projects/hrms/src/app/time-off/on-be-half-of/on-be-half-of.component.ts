@@ -300,6 +300,7 @@ export class OnBeHalfOfComponent {
     this.getLeavesData(fusionemployeeId.value);
     localStorage.setItem('onbehalfof', fusionemployeeId.value);
     this.http.triggerActionSignal();
+    this.http.onBehalfOfTriggerSignal.set(true);
   }
 
   resetOnBehalfOfData(): void {
@@ -722,18 +723,14 @@ export class OnBeHalfOfComponent {
         this.subscription = this.http.postdata("Timeoff", this.leaveFormData).subscribe({
           next: (data: any) => {
             console.log(data);
-            localStorage.setItem('onbehalfof', JSON.stringify(data));
+            // localStorage.setItem('onbehalfof', JSON.stringify(data));
             if (data) {
-              this.generateEmail(data)
+             
               this.leaveBalance(data);
-              this.leaveForm.reset();
               this.resetRadioButtons();
-              this.conformationPopup.openSuccessModal('Leave processed successfully')
-              setTimeout(() => {
-                this.modalService.dismissAll();
-                this.leaveForm.reset();
-                // window.location.reload();
-              }, 2000);
+              this.modalService.dismissAll();
+              this.conformationPopup.openSuccessModal('Leave processed successfully');
+              this.generateEmail(data)
               this.startdatevalid = true
               this.disableSubmitButton = true
               this.issEndDategreater = true
@@ -752,6 +749,7 @@ export class OnBeHalfOfComponent {
           },
           complete: () => {
             this.leaveForm.reset();
+            this.http.onBehalfOfTriggerSignal.set(true);
           }
         });
       } else {
@@ -980,7 +978,7 @@ export class OnBeHalfOfComponent {
     //Third Step is to send the email and attachment to Directreportee
     this.subscription = this.http.postdata(`CustomEmail/LeaveConfirmationToEmp`, emaildetails).subscribe({
       next: (data: any) => {
-        this.conformationPopup.openSuccessModal('Email Sent Successfully')
+        // this.conformationPopup.openSuccessModal('Email Sent Successfully')
       },
     })
   }
@@ -1075,7 +1073,7 @@ export class OnBeHalfOfComponent {
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate.day()];
     let captureHoliday: any;
-    const dayPresent = this.orgweekend.orgWeekendItems?.some((holiday: any) => {
+    const dayPresent = this.orgweekend?.orgWeekendItems?.some((holiday: any) => {
       if (holiday.weekday === this.selectedDay) {
         captureHoliday = holiday;
         return true;
@@ -1280,7 +1278,7 @@ export class OnBeHalfOfComponent {
     const weekdayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     this.selectedDay = weekdayNames[selectedDate.day()];
     let captureHoliday: any;
-    const dayPresent = this.orgweekend.orgWeekendItems?.some((holiday: any) => {
+    const dayPresent = this.orgweekend?.orgWeekendItems?.some((holiday: any) => {
       if (holiday.weekday === this.selectedDay) {
         captureHoliday = holiday;
         return true;

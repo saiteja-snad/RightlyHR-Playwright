@@ -29,7 +29,7 @@
                     <td>
                         @if(probation.approvers && probation.approvers.length > 0;){
                         <div (click)="probationCommentsFunction(probation.approvers,approverhistory)" class="cursor">
-                            <i class="bi bi-info-circle-fill"></i>
+                            <app-info-icon />
                         </div>
                         } @else {
                         <div>-</div>

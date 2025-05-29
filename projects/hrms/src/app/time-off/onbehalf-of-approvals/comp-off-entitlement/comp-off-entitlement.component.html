@@ -69,7 +69,7 @@
                         leave.entity.attendanceRequestDescription != '') {
                         <div>
                             <a type="button" [ngbPopover]="reason">
-                                <i class="bi bi-info-circle-fill"></i>
+                                <app-info-icon />
                             </a>
                             <ng-template #reason>
                                 <p class="mb-0">{{leave.entity.attendanceRequestDescription}} </p>
@@ -84,7 +84,7 @@
                     <td class="text-center">
                         <div *ngIf="leave.entity.attendanceApprovalcomments[0]?.comments;else compoffcomments">
                             <div (click)="comments(leave.entity.attendanceApprovalcomments,commentspopup)">
-                                <i class="bi bi-info-circle-fill"></i>
+                                <app-info-icon />
                             </div>
                         </div>
                         <ng-template #compoffcomments>-</ng-template>

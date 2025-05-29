@@ -27,7 +27,7 @@
                     <td class="text-center">
                         <div>
                             <div type="button" [ngbPopover]="reason">
-                                 <i class="bi bi-info-circle-fill"></i>
+                                <app-info-icon />
                             </div>
                             <ng-template #reason>
                                 <p class="mb-0">{{item.notes}}</p>
@@ -37,7 +37,7 @@
                     <td class="text-center">
                         <div>
                             <div type="button" [ngbPopover]="approvereason">
-                                 <i class="bi bi-info-circle-fill"></i>
+                                <app-info-icon />
                             </div>
                             <ng-template #approvereason>
                                 <p class="mb-0">{{item.rejectedReason}}</p>

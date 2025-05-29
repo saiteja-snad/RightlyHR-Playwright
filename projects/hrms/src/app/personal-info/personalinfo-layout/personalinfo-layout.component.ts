@@ -484,29 +484,29 @@ export class PersonalinfoLayoutComponent implements OnInit, OnDestroy {
     }
     let routestatus = JSON.parse(localStorage.getItem('personaldata') || '{}');
     if (routestatus.empType === 'Probation') {
-      this.router.navigate(['/admin/probation-employees']);
+      this.router.navigate(['/employee-management/probation-employees']);
     } else {
       switch (routestatus.empstatus) {
         case 'Prospective':
-          this.router.navigate(['/admin/prospective-employees'])
+          this.router.navigate(['/employee-management/prospective-employees'])
           break;
         case 'Active':
-          this.router.navigate(['/admin/active-employees'])
+          this.router.navigate(['/employee-management/active-employees'])
           break;
         case 'Probation':
-          this.router.navigate(['/admin/probation-employees'])
+          this.router.navigate(['/employee-management/probation-employees'])
           break;
         case 'Inactive':
-          this.router.navigate(['/admin/inactive-employees'])
+          this.router.navigate(['/employee-management/inactive-employees'])
           break;
         case 'Trainee Prospective':
-          this.router.navigate(['/admin/prospective-interns'])
+          this.router.navigate(['/employee-management/prospective-interns'])
           break;
         case 'Trainee Active':
-          this.router.navigate(['/admin/active-interns'])
+          this.router.navigate(['/employee-management/active-interns'])
           break;
         case 'Trainee Inactive':
-          this.router.navigate(['admin/inactive-interns'])
+          this.router.navigate(['/employee-management/inactive-interns'])
           break;
         case 'External Prospective':
           this.router.navigate(['/admin/externalprospective-employee'])

@@ -22,6 +22,7 @@ import moment from 'moment';
 import { environment } from '../../../../../environments/environment';
 import { SignalsService } from '../../../../services/signals.service';
 import { DataLoaderContentComponent } from "../../../../shared/data-loader-content/data-loader-content.component";
+import { InfoIconComponent } from "../../../../icons/info-icon/info-icon.component";
 @Component({
   selector: 'app-time-off-for-your-role-request',
   imports: [
@@ -35,8 +36,9 @@ import { DataLoaderContentComponent } from "../../../../shared/data-loader-conte
     NoDataFoundComponent,
     TimeoffsearchPipe,
     TableModule,
-    DataLoaderContentComponent
-  ],
+    DataLoaderContentComponent,
+    InfoIconComponent
+],
   templateUrl: './time-off-for-your-role-request.component.html',
   styleUrl: './time-off-for-your-role-request.component.scss',
   encapsulation: ViewEncapsulation.None,

@@ -12,7 +12,7 @@
     <form autocomplete="off" [formGroup]="inactiveReportForm" (ngSubmit)="generateInactiveReport()">
       <div class="d-flex align-items-center gap-3">
         @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view')){
-        <button type="button" class="clear-all-btn" (click)="clearAllFilters()">
+        <button type="button" class="clear-all-btn" [disabled]="!inactiveReportForm.get('employee')?.value" (click)="clearAllFilters()">
           Clear All
         </button>
         }
@@ -20,7 +20,7 @@
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
             <p-select class="form-select custom-select" [options]="employeeiddetails" optionLabel="fullName"
-              filterBy="fullName" [filter]="true" [showClear]="true" formControlName="employee"
+              filterBy="fullName" [filter]="true" formControlName="employee"
               placeholder="Please select employee" filterPlaceholder="Search employee">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
               <ng-template let-employee #item>{{ employee.fullName }}</ng-template>
@@ -31,7 +31,7 @@
         <!-- Team Manager -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select class="form-select custom-select" [options]="teamdetails" [filter]="true" [showClear]="true"
+            <p-select class="form-select custom-select" [options]="teamdetails" [filter]="true"
               optionLabel="fullName" filterBy="fullName" formControlName="manager" placeholder="Please select manager"
               filterPlaceholder="Search manager">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.fullName }}</ng-template>
@@ -44,7 +44,7 @@
         <!-- <div class="d-flex align-items-center gap-2">
             <div class="custom-p-select-content">
               <p-select [options]="months" optionLabel="name" optionValue="value" placeholder="Please select month"
-                formControlName="month" class="form-select custom-select" [showClear]="true">
+                formControlName="month" class="form-select custom-select">
               </p-select>
             </div>
           </div> -->
@@ -52,7 +52,7 @@
         <!-- Leave Category -->
         <div class="d-flex align-items-center gap-2">
           <div class="custom-p-select-content">
-            <p-select [options]="uniqueLeaveCategory" [filter]="true" [showClear]="true" optionLabel="label"
+            <p-select [options]="uniqueLeaveCategory" [filter]="true" optionLabel="label"
               filterBy="label" formControlName="leaveCategory" placeholder="Select leave category"
               class="form-select custom-select" filterPlaceholder="Search leave type">
               <ng-template #selectedItem let-selectedOption>{{ selectedOption.label }}</ng-template>
@@ -73,8 +73,7 @@
             }
           </button>
           }
-          @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view') && rbac.allowedToAccess('Inactive
-          Empolyee Report - Export.view')){
+          @if(rbac.allowedToAccess('Inactive Empolyee Report - Generate.view') && rbac.allowedToAccess('Inactive Empolyee Report - Export.view')){
           <button type="button" class="custom-btn btn-primary" (click)="exportToExcelInactive()"
             [disabled]="filteredInactiveRecord.length == 0 || disableBtn">
             @if(spinnerLoader2){

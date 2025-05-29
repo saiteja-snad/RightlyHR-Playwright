@@ -430,6 +430,938 @@ export class PermissionsComponent implements OnInit, OnDestroy {
     this.modal.openSuccessModal('Permissions reset successfully');
   }
   
+    sidebarFields = [
+    'Roles', 'Employee Fields Module', 'Settings Timeoff Module',
+    'Assets Management Configuration Module', 'Dynamic Forms Module'
+  ];
+  employeeFields = [
+    'Personal Tab',
+    'Job Tab',
+    'Document Tab',
+    'Manage Shifts Tab',
+    'Manage Policies Tab',
+    'Manage Holidays Tab',
+    'Manage Weekends Tab',
+    'Manage DST Tab',
+    'Expense Tab',
+    'NoDue Clearance Tab'
+  ];
+  settingsEmployeeJobFields = [
+    'Job Role',
+    'Job Type',
+    'Probation Status',
+    'Background check Status',
+    'Notice Period',
+    'Frequency',
+    'Paytype',
+    'Overtime Eligibility',
+    'Business Area',
+    'Termination Reason',
+    'Eligible For Rehire',
+    'Department',
+    'Team',
+    'Grade Details',
+    'Compensation Reason',
+    'Location',
+    'Sub Location',
+    'Pre Onboard Documents',
+    'Serving Period',
+    'Consultancy',
+    'Signature Authority',
+    'Settings Job Probation Details'
+  ];
+  settingsEmployeePersonalFields = [
+    'Salutation',
+    'Status',
+    'Gender',
+    'Marital Status',
+    'Degree',
+    'Visa Type',
+    'Identity Type',
+    'Relationship',
+    'Bank Names'
+  ];
+  settingsManageShiftsTabFields = [
+    'Shifts Pending Tab',
+    'Shifts Published Tab'
+  ];
+  settingsManagePoliciesTabFields = [
+    'Policies Pending Tab',
+    'Policies Published Tab'
+  ];
+  settingsManageHolidaysTab = [
+    'Holidays Pending Tab',
+    'Holidays Published Tab'
+  ]
+  settingsManageWeekendsTab = [
+    'Weekends Pending Tab',
+    'Weekends Published Tab'
+  ]
+  settingsManageDSTTab = [
+    'DST Pending Tab',
+    'DST Published Tab'
+  ]
+  settingsManageExpenseTab = [
+    'Expenes Configuartion',
+    'Expense Allowed Days'
+  ]
+  timeoffSettingsFields = [
+    'Leave Category Tab',
+    'Leave Allocation Tab',
+    'Flexible Leave Allocation Tab',
+    'Attendance Eligibility Criteria Tab',
+    'Load Entitlements Tab'
+  ];
+  leaveCategoryTabsFields = [
+    'Leave Category Pending Tab',
+    'Leave Category Published Tab'
+  ];
+  attendanceEligibilityFields = [
+    'Comp Off Entitlement Tab',
+    'WFH Entitlement Tab',
+    'Attendance Eligibility Permissions Tab',
+    'Permission Elgibility Tab',
+    'Attendance Regularization Tab',
+    'Attendance Regularization Eligibility Tab',
+    'Eligibility Global Permissions Tab'
+  ];
+  settingsAssetConfigurationFields = [
+    'Vendor Details',
+    'Asset Catagory',
+    'Asset Sub Catagory'
+  ];
+  expensesTypeFields = [
+    'Expenses Type',
+    'Expense Types Tab'
+  ];
+  settingsDynamicFormsFields = [
+    'Active Forms',
+    'Inactive Forms',
+    'Draft Forms',
+    'Form Settings'
+  ];
+  sidebarTabsFields = [
+    'Dashboard',
+    'My Info',
+    'Events',
+    'Time-Off',
+    'Expenses',
+    'Reports',
+    'Policies',
+    'Calendar',
+    'IT Support',
+    'Org Hierarchy',
+    'PMS',
+    'PMS Configurations',
+    'Desk Allocation',
+    'Asset Management',
+    'Holidays',
+    'Attendance',
+
+  ];
+  expensesModuleTabs = [
+    'Draft Tab',
+    'Approved Tab',
+    'Pending Tab',
+    'Processed Tab',
+    'Rejected Tab'
+  ];
+  itSupportModule = [
+    'Team Tickets Tab',
+    'My Tickets Tab'
+  ]
+  TeamTicketsTabs = [
+    'Rejected Tickets Tab',
+    'Await On User Tickets Tab',
+    'Solved Tickets Tab',
+    'Rejected Tickets Tab',
+    'All Tickets Tab',
+    'Open Tickets Tab'
+  ]
+  HolidaysModule = [
+    'Public Holidays Tab',
+    'Optional Holidays Tab'
+  ]
+  OrgHierarchyModule = [
+    'Organization Hierarchy - HR',
+    'Organization Hierarchy - Compensation',
+    'Organization Hierarchy - Download JPG',
+    'Organization Hierarchy - TM',
+    'Organization Hierarchy - Download PDF'
+  ]
+
+  deskAllocationModuleFields = [
+    'Desk Allocation - Create',
+    'Desk Allocation - All',
+    'Desk Allocation - Available',
+    'Desk Allocation - Allocated',
+    'Desk Allocation - Under Maintenance',
+    'Desk Allocation - Inactive',
+    'Desk Allocation - Waiting For Approval'
+  ];
+  deskAllocationAllTabActions = [
+    'Request for Allocation',
+    'Inactive desk',
+    'Schedule for Maintenance',
+    'Reallocate desk',
+    'Release Desk',
+    'Mark as Active',
+    'Mark as Available',
+    'View Desk Details'
+  ];
+  deskAllocationAvailableTabActions = [
+    'Available Request for Allocation',
+    'Available Inactive desk',
+    'Available Schedule for Maintenance',
+    'Available View Desk Details'
+  ];
+  deskAllocationAllocatedTabActions = [
+    'Allocated Reallocate desk',
+    'Allocated Release Desk',
+    'Allocated View Desk Details'
+  ];
+  deskAllocationUnderMaintenanceTabActions = [
+    'Under Maintenance Mark as Available',
+    'Under Maintenance View Desk Details',
+
+  ];
+  deskAllocationInactiveTabActions = [
+    'Inactive Mark as Available',
+    'Inactive View Desk Details'
+  ];
+  deskAllocationWaitingForApprovalTabActions = [
+    'Waiting For Approval View Desk Detailssk',
+
+  ];
+  timeOffTabsFields = [
+    'Time Off Module',
+    'WFH/On Duty Module',
+    'Remote Login Module',
+    'Comp Off Module',
+    'Permissions Module',
+    'Regularization Module',
+    'On Behalf Of Module',
+    'On Behalf Of Approvals Module',
+    'Global Permissions Module',
+    'Pending Approvals Module'
+  ];
+timeOffModuleSubTabs = [
+  'Waiting For Approval (Time Off)',
+  'Approved (Time Off)',
+  'Processed (Time Off)',
+  'Rejected (Time Off)',
+  'Request Leave Button',
+  'Cancelled (Time Off)',
+  'Org Leave Balance',
+  'Team Leave Balance Summary (Time Off)',
+  'Team Leave Balance (Time Off)'
+];
+WFHModuleSubTabs = [
+  'Waiting For Approval (WFH)',
+  'Approved (WFH)',
+  'Processed (WFH)',
+  'Cancel (WFH)',
+  'Rejected (WFH)',
+  'Request WFH Button'
+];
+compOffModuleSubTabs = [
+  'Waiting For Approval (Comp Off)',
+  'Approved (Comp Off)',
+  'Processed (Comp Off)',
+  'Rejected (Comp Off)',
+  'Request Comp Off Button'
+];
+permissionsModuleSubTabs = [
+  'Waiting For Approval (Permissions)',
+  'Approved (Permissions)',
+  'Cancel (Permissions)',
+  'Rejected (Permissions)',
+  'Request Permission Button'
+];
+regularizationModuleSubTabs = [
+  'Waiting For Approval (Regularization)',
+  'Approved (Regularization)',
+  'Rejected (Regularization)',
+  'Processed (Regularization)'
+];
+onBehalfOfModuleSubTabs = [
+  'Waiting For Approval (On Behalf Of)',
+  'Approved (On Behalf Of)',
+  'Request On Behalf Button',
+  'Rejected (On Behalf Of)',
+  'Processed (On Behalf Of)'
+];
+attendanceModuleSubTabs = [
+  'Request Regularization',
+  'Request Leave',
+  'Attendance Select Employee For Manager',
+  'Attendance Select Employee For HR'
+];
+globalPermissionModuleSubTabs = [
+  'Global Permissions',
+  'Request Global Permission Button'
+];
+pendingApprovalsSubTabs = [
+  'Time Off Tab',
+  'WFH Tab',
+  'Comp Off Tab',
+  'Permissions Tab',
+  'Regularization Tab',
+  'Separation Request Tab',
+  'Recall Request Tab',
+  'Trainee Details Tab',
+  'No Due Clearence Requests Tab',
+  'Claims and Expenses Tab',
+  'Desk Requests Tab',
+  'Probation Details Tab'
+];
+pendingApprovalTimeOffSubTabs = [
+  'For You (Time Off)',
+  'For Role (Time Off)'
+];
+pendingApprovalWFHSubTabs = [
+  'For You (WFH)',
+  'For Role (WFH)'
+];
+pendingApprovalCompOffSubTabs = [
+  'For You (Comp Off)',
+  'For Role (Comp Off)'
+];
+  pendingApprovalPermissionSubTabs = [
+  'For You (Permission)',
+  'For Role (Permission)'
+];
+pendingApprovalRegularizationSubTabs = [
+  'For You (Regularization)',
+  'For Role (Regularization)'
+];
+pendingApprovalSeparationRequestsSubTabs = [
+  'For You (Separation Requests)',
+  'For Role (Separation Requests)'
+];
+pendingApprovalRecallRequestsSubTabs = [
+  'For You (Recall Requests)',
+  'For Role (Recall Requests)'
+];
+pendingApprovalClaimsAndExpensesSubTabs = [
+  'For You (Claims and Expenses)',
+  'For Role (Claims and Expenses)'
+];
+pendingApprovalDeskRequestsSubTabs = [
+  'For You (Desk Requests)',
+  'For Role (Desk Requests)'
+];
+onBehalfOfApprovalsSubTabs = [
+  'Time Off (On Behalf Of Approvals)',
+  'WFH (On Behalf Of Approvals)',
+  'Comp Off (On Behalf Of Approvals)',
+  'Permission (On Behalf Of Approvals)'
+];
+reportsTabsFields = [
+  'Standard Reports',
+  'Custom Reports',
+  'Attendance reports',
+  'Monthly Attendance Reports'
+];
+standardReportsTabsFields = [
+  'Employee Master Data',
+  'Employee Master Data - Generate',
+  'Employee Master Data - Export',
+  'Job Location Wise Data',
+  'Job Location Wise Data - Generate',
+  'Job Location Wise Data - Export',
+  'Branch Location Wise Data',
+  'Branch Location Wise Data - Generate',
+  'Branch Location Wise Data - Export',
+  'Family Members Data',
+  'Family Members Data - Generate',
+  'Family Members Data - Export'
+];
+customReportsTabsFields = [
+  'Custom Reports - Generate',
+  'Custom Reports - Export'
+];
+attendanceReportsTabsFields = [
+  'Leave Report',
+  'Leave Report - Generate',
+  'Leave Report - Export',
+  'Leave Summary Report',
+  'Leave Summary Report - Generate',
+  'Leave Summary Report - Export',
+  'Comp Off Report',
+  'Comp Off Report - Generate',
+  'Comp Off Report - Export',
+  'WFH Report',
+  'WFH Report - Generate',
+  'WFH Report - Export',
+  'Absent Report',
+  'Absent Report - Generate',
+  'Absent Report - Export',
+  'Inactive Empolyee Report',
+  'Inactive Empolyee Report - Generate',
+  'Inactive Empolyee Report - Export',
+  'Yearly Summary Report',
+  'Yearly Summary Report - Generate',
+  'Yearly Summary Report - Export',
+  'Permission Report',
+  'Permission Report - Generate',
+  'Permission Report - Export',
+  'Regularization Report',
+  'Regularization Report - Generate',
+  'Regularization Report - Export'
+];
+attendanceReportsEmployeeTeamTabsFields = [
+  'Attendance All Employees List(Leaves)',
+  'Attendance Team Manager List(Leaves)',
+  'My Team Report(Leave)',
+  'Attendance All Employees List(Compoff)',
+  'Attendance Team Manager List(Compoff)',
+  'My Team Report(Compoff)',
+  'Attendance All Employees List(WFH)',
+  'Attendance Team Manager List(WFH)',
+  'My Team Report(WFH)',
+  'Attendance All Employees List(Permission)',
+  'Attendance Team Manager List(Permission)',
+  'My Team Report(Permission)',
+  'Attendance All Employees List(Regularization)',
+  'Attendance Team Manager List(Regularization)',
+  'My Team Report(Regularization)'
+];
+assetManagementTabsFields = [
+  'Asset Management - Create',
+  'Asset Management - All',
+  'Asset Management - Available',
+  'Asset Management - Allocated',
+  'Asset Management - Under Maintenance',
+  'Asset Management - Inactive'
+];
+assetManagementAllTabActions = [
+  'All Allocate Asset',
+  'All Inactive Asset',
+  'All Mark as Maintenance',
+  'All Transfer Asset',
+  'All Reallocate Asset',
+  'All Release Asset',
+  'All Mark as Available Asset',
+  'All Mark as Active Asset',
+  'All View Asset Details',
+  'All Update Asset Details'
+];
+assetManagementAvailableTabActions = [
+  'Available Allocate Asset',
+  'Available Inactive Asset',
+  'Available Mark as Maintenance Asset',
+  'Available Transfer Asset',
+  'Available View Asset Details',
+  'Available Update Asset Details'
+];
+assetManagementAllocatedTabActions = [
+  'Allocated Reallocate Asset',
+  'Allocated Release Asset',
+  'Allocated View Asset Details',
+  'Allocated Update Asset Details'
+];
+assetManagementUnderMaintenanceTabActions = [
+  'Under Maintenance Mark as Available Asset',
+  'Under Maintenance View Asset Details',
+  'Under Maintenance Update'
+];
+assetManagementInactiveTabActions = [
+  'Inactive Mark as Active Asset',
+  'Inactive View Asset Details',
+  'Inactive Update Asset Details'
+];
+  // Generic toggle function for checkboxes
+  toggleSelectAll(
+    fields: string[],
+    checked: any,
+    disableFn: (per: any, action: 'View' | 'Update' | 'Create' | 'Delete') => boolean
+  ) {
+    if (!Array.isArray(this.permissions)) return;
+    this.permissions
+      .filter(per => fields.includes(per.fields))
+      .forEach(per => {
+        (['View', 'Update', 'Create', 'Delete'] as const).forEach(action => {
+          if (!disableFn(per, action)) {
+            per[action] = checked;
+            this.onCheckboxChange(per, action);
+          }
+        });
+      });
+  }
+
+
+  // Generic "all selected" function
+  isAllSelected(fields: string[]): boolean {
+    if (!Array.isArray(this.permissions)) return false;
+    return this.permissions
+      .filter(per => fields.includes(per.fields))
+      .every(per => per.View);
+  }
+
+  // Generic "some selected" function
+  isSomeSelected(fields: string[]): boolean {
+    if (!Array.isArray(this.permissions)) return false;
+    const filtered = this.permissions.filter(per => fields.includes(per.fields));
+    return filtered.some(per => per.View) && !this.isAllSelected(fields);
+  }
+
+
+  isSidebarCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return true;
+    }
+    if (action === 'Create') {
+      return !this.isActionEnabled(per.fields, 'Create') || !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return true;
+    }
+    return false;
+  }
+
+
+
+  isemployeeCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      // Only enabled for 'NoDue Clearance Tab'
+      return !this.roleToFilter?.id || !['NoDue Clearance Tab'].includes(per.fields);
+    }
+    if (action === 'Create' || action === 'Delete') {
+
+      return !this.roleToFilter?.id || !['Document Tab', 'NoDue Clearance Tab'].includes(per.fields);
+    }
+    return false;
+  }
+  isSettingsEmployeeJobCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+
+  isSettingsEmployeePersonalCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return !this.roleToFilter?.id; // Only enabled if role is selected
+    }
+    return false;
+  }
+
+
+  isSettingsManageShiftsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      // Disabled if no role or if your isDisabled helper says so
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
+    }
+    if (action === 'Create') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+
+  isSettingsManagePoliciesCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
+    }
+    if (action === 'Create') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return true;
+    }
+    return false;
+  }
+
+
+  isSettingsManageHolidaysCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
+    }
+    if (action === 'Create') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return true;
+    }
+    return false;
+  }
+
+
+  isSettingsManageWeekendsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
+    }
+    if (action === 'Create') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return true;
+    }
+    return false;
+  }
+
+
+
+
+  isSettingsManageExpensesCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create') {
+
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Create');
+    }
+    if (action === 'Delete') {
+
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Delete');
+    }
+    return false;
+  }
+
+
+  isSettingsManageDSTCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
+    }
+    if (action === 'Create') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return true;
+    }
+    return false;
+  }
+
+
+  istimeoffSettingsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+
+      return true;
+    }
+    if (action === 'Create') {
+
+      return !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+
+      return true;
+    }
+    return false;
+  }
+
+
+
+  isleaveCategoryCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
+    }
+    if (action === 'Create') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return true;
+    }
+    return false;
+  }
+
+
+  isattendanceEligibilityCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create') {
+      return this.isDisabled(per.fields, 'Create') || !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      return this.isDisabled(per.fields, 'Delete') || !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+
+
+  isSettingsAssetConfigurationCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      // View is only enabled if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create') {
+      // Create is only enabled if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+      // Delete is only enabled if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+
+
+  isDynamicFormsCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create') {
+
+      return this.isDisabled(per.fields, 'Create') || !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+
+      return !this.roleToFilter?.id || !['Active Forms', 'Draft Forms', 'Form Settings'].includes(per.fields);
+    }
+    return false;
+  }
+  isAllSelectedDynamicForms(): boolean {
+    if (!Array.isArray(this.permissions)) return false;
+    return this.permissions
+      .filter(per => this.settingsDynamicFormsFields.includes(per.fields))
+      .every(per => per.View);
+  }
+  isSomeSelectedDynamicForms(): boolean {
+    if (!Array.isArray(this.permissions)) return false;
+    const filtered = this.permissions.filter(per => this.settingsDynamicFormsFields.includes(per.fields));
+    return filtered.some(per => per.View) && !this.isAllSelectedDynamicForms();
+  }
+
+
+  isExpensesTypeCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create') {
+
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Delete') {
+
+      return !this.roleToFilter?.id;
+    }
+    return false;
+  }
+
+  issideCheckboxDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      // View is only enabled if a role is selected
+      return !this.roleToFilter?.id;
+    }
+    // Update, Create, Delete are always disabled
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true;
+    }
+    return false;
+  }
+
+  isexpensesdActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    // Example logic, adjust as needed for your requirements
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update') {
+      return !this.isActionEnabled(per.fields, 'Update') || !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return true; // Always disabled in your current example
+    }
+    return false;
+  }
+
+  isItSupportActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    if (action === 'Create') {
+      // Only enabled if role is selected and your custom logic (if any)
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Create');
+    }
+    return false;
+  }
+  isItSupportteamActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    if (action === 'Update') {
+      // Only enabled if role is selected and your custom logic (if any)
+      return !this.roleToFilter?.id || this.isDisabled(per.fields, 'Update');
+    }
+    return false;
+  }
+
+  isHolidaysActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+
+    return false;
+  }
+
+  isOrgHierarchyActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+  isdekActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isdeskallActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isdeskavilableActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isdeskallocationActionDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+  isdeskundermaintanceDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isdeskinactiveDisabled(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+  isonlyviewfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'View') {
+      return !this.roleToFilter?.id;
+    }
+    if (action === 'Update' || action === 'Create' || action === 'Delete') {
+      return true; // Always disabled
+    }
+    return false;
+  }
+
+
+  isonlycreatfunction(per: any, action: 'View' | 'Update' | 'Create' | 'Delete'): boolean {
+    if (action === 'Create') {
+      return true;
+    }
+    if (action === 'Update' || action === 'View' || action === 'Delete') {
+     return !this.roleToFilter?.id;
+    }
+    return false;
+    return false;
+  }
+
+
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -5,32 +5,25 @@ import jsPDF from 'jspdf';
 import { IAddress, IDepartment, IemployeeDetails, IIssuelocation, IMake } from '../appointment-letter/appointment-letter-model';
 import moment from 'moment';
 import { AuthService } from '../../services/auth.service';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { CommonModule } from '@angular/common';
 import { Select } from 'primeng/select';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
-import { LettersTabComponent } from '../../shared/letters-shared-content/letters-tab/letters-tab.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
 import { TranslateModule } from '@ngx-translate/core';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-
-
-
 @Component({
   selector: 'app-trainee-appointment-letter',
-  imports: [CommonModule, LettersTabComponent, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule ,NgbPopoverModule],
   templateUrl: './trainee-appointment-letter.component.html',
   styleUrl: './trainee-appointment-letter.component.scss'
 })
 
 export class TraineeAppointmentLetterComponent {
-  moduleinfo : string = '';
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false }
@@ -84,8 +77,6 @@ export class TraineeAppointmentLetterComponent {
     this.getIssuedEmployeebyId();
     this.getAssertType();
     this.getAuthorityDetails();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
     this.employeeForm.get('dateOfJoining')?.valueChanges.subscribe((date: string) => {
       this.traineeAppointmentletterData.dateOfJoining = date;
     });
@@ -108,25 +99,6 @@ export class TraineeAppointmentLetterComponent {
       signatureAuthority: ['', Validators.required],
       documentType: ['', Validators.required],
     });
-  }
-  
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/letters/trainee-appointment-letter': MODULE_INFOS.TRAINEE_APPOINTMENT_LETTER_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   //function for assert type get

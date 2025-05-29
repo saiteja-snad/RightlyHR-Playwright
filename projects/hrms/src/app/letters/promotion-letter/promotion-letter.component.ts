@@ -1,12 +1,12 @@
-import { Component, ElementRef, HostListener, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { AuthService } from '../../services/auth.service';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { Select } from 'primeng/select';
 import { CommonModule } from '@angular/common';
@@ -14,18 +14,15 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-promotion-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, NgbPopoverModule],
   templateUrl: './promotion-letter.component.html',
   styleUrl: './promotion-letter.component.scss',
   encapsulation: ViewEncapsulation.None,
 })
 export class PromotionLetterComponent {
-  moduleinfo : string = '';
   subscription!: Subscription;
   appraisalData = {} as any;
   PromotionTemplate: any | string | ArrayBuffer | null = null; //appraisal letter template
@@ -53,7 +50,6 @@ export class PromotionLetterComponent {
   authoritydetails = [] as any;
   disablebuttonforemployeeid: boolean = true; //variable to disable the fields
   disablebuttonforauthority: boolean = true; //variable to disable the fields
-
   Status: any
   employeeForm!: FormGroup;
   employees = [{ name: 'John Doe', id: 1 }, { name: 'Jane Smith', id: 2 }];
@@ -64,12 +60,10 @@ export class PromotionLetterComponent {
     { name: 'Yes', value: true },
     { name: 'No', value: false },
   ];
-
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
-
   spinnerLoader= false;
   jobErrorMessage!: string;
 
@@ -101,27 +95,6 @@ export class PromotionLetterComponent {
     this.initializeForm();
     this.getEmployeeId();
     this.getAuthorityDetails();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/letters/promotion-letter': MODULE_INFOS.PROMOTION_LETTER_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   initializeForm() {

@@ -21,10 +21,10 @@ import { MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalBroadcas
 import { MSALGuardConfigFactory, MSALInstanceFactory, MSALInterceptorConfigFactory } from './azure/msal-config';
 import { provideDaterangepickerLocale } from "ngx-daterangepicker-bootstrap";
 
-
 export function createTranslateLoader(http: HttpClient) {
   return new TranslateHttpLoader(http, '/language/', '.json');
 }
+
 // export function loggerCallback(logLevel: LogLevel, message: string) {
 //   console.log(message);
 // }
@@ -42,7 +42,6 @@ export function createTranslateLoader(http: HttpClient) {
 //     },
 //     cache: {
 //       cacheLocation: BrowserCacheLocation.LocalStorage,
-
 //     },
 //     system: {
 //       allowRedirectInIframe: true,
@@ -57,7 +56,6 @@ export function createTranslateLoader(http: HttpClient) {
 // export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
 //   const protectedResourceMap = new Map<string, Array<string | ProtectedResourceScopes> | null>();
 //   protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
-
 //   protectedResourceMap.set(`${environment.ApiUrl}`, [...protectedResources.getAllEmployees.scopes.read]);
 //   return {
 //     interactionType: InteractionType.Redirect,
@@ -81,9 +79,7 @@ export function createTranslateLoader(http: HttpClient) {
 // }
 // export class Msal {
 //   constructor(private msalservices: MsalService) {
-
 //   }
-
 //   getActive() {
 //     return this.msalservices.instance.getAllAccounts()[0]
 //   }
@@ -102,9 +98,7 @@ export function createTranslateLoader(http: HttpClient) {
 //   }).catch((error:any) => {
 //     console.log(error);
 //     return '';
-
 //   });
-
 // }
 
 export const appConfig: ApplicationConfig = {
@@ -157,8 +151,5 @@ export const appConfig: ApplicationConfig = {
       separator: ' - ',
       applyLabel: 'Apply'
     })
-   
   ],
 };
-
-

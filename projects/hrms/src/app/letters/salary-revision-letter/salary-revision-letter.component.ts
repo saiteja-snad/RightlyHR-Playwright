@@ -1,9 +1,9 @@
-import { Component, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { filter, Subscription } from 'rxjs';
+import { Component, ViewEncapsulation } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Subscription } from 'rxjs';
 import { HttpService } from '../../services/http.service';
 import { HttpClient } from '@angular/common/http';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import moment from 'moment';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -16,19 +16,16 @@ import { TranslateModule } from '@ngx-translate/core';
 import { OpenModalService } from '../../services/open-modal.service';
 import { LetterFooterComponent } from '../../shared/letters-shared-content/letter-footer/letter-footer.component';
 import { LettersheaderComponent } from '../../shared/letters-shared-content/lettersheader/lettersheader.component';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-salary-revision-letter',
-  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, Select, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, TranslateModule, LetterFooterComponent, NgbPopoverModule],
   templateUrl: './salary-revision-letter.component.html',
   styleUrl: './salary-revision-letter.component.scss',
   encapsulation: ViewEncapsulation.None
 })
 
 export class SalaryRevisionLetterComponent {
-  moduleinfo : string = '';
   employeementType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
@@ -97,27 +94,6 @@ export class SalaryRevisionLetterComponent {
     this.getCompensationById;
     this.getIssuedEmployeebyId();
     this.getAuthorityDetails();
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/letters/salary-revision-letter': MODULE_INFOS.SALARY_REVISION_LETTER_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   initializeForm() {
@@ -210,7 +186,6 @@ export class SalaryRevisionLetterComponent {
   }
 
   onclickDesignation() {
-
     let signatureAuthorityDetails = this.authoritydetails.find(
       (c: any) => c.employeeId == this.appraisalData.authorityid
     );

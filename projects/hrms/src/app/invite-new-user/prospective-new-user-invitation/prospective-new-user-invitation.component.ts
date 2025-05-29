@@ -1,23 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component } from '@angular/core';
 import { Select } from 'primeng/select';
-import { NewUserInvitationTabsComponent } from "../../../shared/new-user-invitation-tabs/new-user-invitation-tabs.component";
-import { Subscription } from 'rxjs';
-import { Iactive } from '../../active-employees/active-model';
-import { HttpService } from '../../../services/http.service';
-import { OpenModalService } from '../../../services/open-modal.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
+import { Iactive } from '../../admin/active-employees/active-model';
+import { HttpService } from '../../services/http.service';
+import { OpenModalService } from '../../services/open-modal.service';
 
 @Component({
-  selector: 'app-active-new-user-invitation',
-  imports: [CommonModule, Select, NewUserInvitationTabsComponent, ReactiveFormsModule, TranslateModule],
-  templateUrl: './active-new-user-invitation.component.html',
-  styleUrl: './active-new-user-invitation.component.scss'
+  selector: 'app-prospective-new-user-invitation',
+  imports: [CommonModule, Select, ReactiveFormsModule, TranslateModule],
+  templateUrl: './prospective-new-user-invitation.component.html',
+  styleUrl: './prospective-new-user-invitation.component.scss'
 })
-export class ActiveNewUserInvitationComponent {
+
+export class ProspectiveNewUserInvitationComponent {
   inviteActiveEmployeeForm!: FormGroup;
   isCheckBoxChecked = false;
   isSubmitDisabled = false;
@@ -25,11 +23,10 @@ export class ActiveNewUserInvitationComponent {
   subscription!: Subscription;
   getName: any = {};
   inviteeEmployeeID: any;
-  spinnerLoader : boolean = false;
-  isSelectedEmployee : boolean = false;
+  spinnerLoader: boolean = false;
+  isSelectedEmployee: boolean = false;
 
-
-  constructor(private fb: FormBuilder,private router: Router, private conformationPopup: OpenModalService,private http: HttpService) {}
+  constructor(private fb: FormBuilder, private conformationPopup: OpenModalService, private http: HttpService) { }
 
   ngOnInit(): void {
     this.inviteActiveEmployeeForm = this.fb.group({
@@ -48,13 +45,9 @@ export class ActiveNewUserInvitationComponent {
       this.getName = selected;
       this.isSubmitDisabled = true;
       this.inviteeEmployeeID = selected.employeeId;
-      console.log(this.getName);
-      
       this.inviteActiveEmployeeForm.patchValue({
-        fullname: selected.firstName + ' ' + selected.middleName +' '+ selected.lastName,
+        fullname: selected.firstName + ' ' + selected.middleName + ' ' + selected.lastName,
       });
-     
-      
     }
   }
 
@@ -63,20 +56,16 @@ export class ActiveNewUserInvitationComponent {
   }
 
   getActiveEmployeeData() {
-    this.subscription = this.http
-      .getData('Employeedata/ActiveEmployees')
-      .subscribe({
-        next: (data: any) => {
-          console.log(data);
-          this.Activeemployeedata = data as Iactive[];
-        },
-        error: (reason: any) => {
-          console.log(reason);
-
-        },
-        complete: () => {
-        }
-      });
+    this.subscription = this.http.getData('Employeedata/TraineeActiveEmployees/Trainee%20Active').subscribe({
+      next: (data: any) => {
+        this.Activeemployeedata = data as Iactive[];
+      },
+      error: (reason: any) => {
+        console.log(reason);
+      },
+      complete: () => {
+      }
+    });
   }
 
   activeInviteEmployee(): void {
@@ -90,42 +79,34 @@ export class ActiveNewUserInvitationComponent {
         invitee: this.inviteeEmployeeID,
       };
       this.subscription = this.http.postdata('InviteUser', reqBody).subscribe({
-        next: (response) => {
-          console.log(response);
-          this.conformationPopup.openSuccessModal('Invite New User provided successfully')
+        next: (response: any) => {
+          this.conformationPopup.openSuccessModal('Invite New User provided successfully');
           this.isSubmitDisabled = false;
           this.isCheckBoxChecked = false;
-          this.isSelectedEmployee = false;
           this.inviteeEmployeeID = null;
+          this.isSelectedEmployee = false;
           this.inviteActiveEmployeeForm.reset();
           this.getName = {};
-          
         },
-        error: (err) => {
-          console.log(err);
-          this.conformationPopup.openErrorModal('Please update work email for this employee')
+        error: (err: any) => {
           this.isSubmitDisabled = false;
           this.isCheckBoxChecked = true;
           this.inviteeEmployeeID = null;
-          this.spinnerLoader = false
+          this.spinnerLoader = false;
+          this.conformationPopup.openErrorModal('Please update work email for this employee');
         },
         complete: () => {
-          this.spinnerLoader = false;
           this.getActiveEmployeeData();
+          this.spinnerLoader = false;
           this.isSubmitDisabled = false;
           this.isCheckBoxChecked = false;
           this.inviteeEmployeeID = null;
-          this.inviteActiveEmployeeForm.reset();
           this.isSelectedEmployee = false;
+          this.inviteActiveEmployeeForm.reset();
           this.getName = {};
-          
         },
       });
     }
-  }
-
-  navigateDashboard() {
-    this.router.navigate(['/admin/dashboard'])
   }
 
   ngOnDestroy() {

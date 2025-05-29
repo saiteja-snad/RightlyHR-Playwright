@@ -11,10 +11,10 @@
                     <app-itsuporrt-header-tabs />
                 </div>
                 <div *ngIf="showPmsTabs()">
-                    <app-pms-tabs/>
+                    <app-pms-tabs />
                 </div>
                 <div *ngIf="showPmsConfigurationTabs()">
-                    <app-pms-settings-tabs/>
+                    <app-pms-settings-tabs />
                 </div>
             </div>
         </div>
@@ -36,26 +36,29 @@
 
                 <ul class="dropdown-menu">
                     <div class="dropdown-content">
-                    <div class="image-content">
-                        <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image" class="profile-image">
-                        <!-- <div class="edit-icon-content">
+                        <div class="image-content">
+                            <img [src]="imageUrl ? imageUrl : 'images/alternate.png'" alt="profile Image"
+                                class="profile-image">
+                            <!-- <div class="edit-icon-content">
                             <label for="formFile" class="form-label">
                             <img src="/my-info-icons/editimages.png" alt="edit-icon" class="edit-icon cursor"></label>
                             <input class="form-control d-none" type="file" id="formFile" accept=".jpg"
                                 (change)="chooseNewProfile($event)">
                         </div> -->
-                    </div>
-                    <div class="data-content">
-                        <p class="name m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}} {{empdata?.lastName}}
-                        </p>
-                        <p class="sub-text m-0 mb-1">{{this.empdata?.workEmail || 'N/A'}}</p>
-                        <p class="sub-text m-0 mb-1">{{jobRole}}</p>
-                        <div class="mb-2">
-                            <a class="profile-btn" [routerLink]="['/myinfo/personal/basic-info']">View Profile</a>
                         </div>
-                        <button class="custom-btn btn-primary" (click)="openlogoutModal()"><img
-                                src="/icons/logout-icon.png" alt="Logout" class="logout-icon me-2">Logout</button>
-                    </div>
+                        <div class="data-content">
+                            <p class="name m-0 mb-1">{{empdata?.firstName}} {{empdata?.middleName || ''}}
+                                {{empdata?.lastName}}
+                            </p>
+                            <p class="sub-text m-0 mb-1">{{this.empdata?.workEmail || 'N/A'}}</p>
+                            <p class="sub-text m-0 mb-1">{{jobRole}}</p>
+                            <div class="mb-2">
+                                <a class="profile-btn" [routerLink]="['/myinfo/personal/basic-info']">View Profile</a>
+                            </div>
+                            <button class="custom-btn btn-primary" (click)="openlogoutModal()">
+                                <img src="/icons/logout-icon.png" alt="Logout" class="logout-icon me-2">Logout
+                            </button>
+                        </div>
                     </div>
                 </ul>
             </div>

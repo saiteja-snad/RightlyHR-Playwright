@@ -83,7 +83,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     })
   }
 
-  chooseNewProfile(event: any) {
+  chooseNewProfileHeader(event: any) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
@@ -101,15 +101,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
       this.img = file;
       input.value = ''; // clear input if needed to allow same file re-selection
-      this.onProfilepicSelected(this.img);
+      this.onProfilepicSelectedheader(this.img);
     }
   }
 
-  onProfilepicSelected(img: any) {
+  onProfilepicSelectedheader(img: any) {
     let file = img;
     let d: Date = new Date()
     this.profilePic = this.renameFile(file, `${this.empinfo.employeeId}_${d.getTime()}_${file.name}`)
-    this.postUploadprofilePic()
+    this.postUploadprofilePicheader()
   }
 
   private renameFile(originalFile: File, newName: string) {
@@ -119,7 +119,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  postUploadprofilePic() {
+  postUploadprofilePicheader() {
     let filePath = `/Profilepics/${this.empinfo.employeeId}`;
     this.subscription = this.http.uploadFileWithQuery('FileSystem/uploadfiletodirectory', filePath, this.profilePic).subscribe({
       next: (data: any) => {

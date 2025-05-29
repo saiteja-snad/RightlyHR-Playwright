@@ -66,7 +66,7 @@ export class UserValidationComponent {
             } else if (response.roles.includes('ADMIN') || response.roles.includes('HR MANAGER')) {
               this.router.navigate(['/admin/dashboard']);
             } else {
-              const route = this.accessNav.navigateToAccessedHeaderRoute('/personalinfo');
+              const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
               if (route) {
                 this.router.navigate([route]);
               }
@@ -77,7 +77,7 @@ export class UserValidationComponent {
           }, 2000);
 
         } else {
-          const route = this.accessNav.navigateToAccessedHeaderRoute('/personalinfo');
+          const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
               if (route) {
                 this.router.navigate([route]);
               }
@@ -88,7 +88,7 @@ export class UserValidationComponent {
       },
       error: (err) => {
         console.log(err);
-        const route = this.accessNav.navigateToAccessedHeaderRoute('/personalinfo');
+        const route = this.accessNav.navigateToAccessedHeaderRoute('/myinfo');
               if (route) {
                 this.router.navigate([route]);
               }

@@ -58,6 +58,7 @@ export interface IInactiveReportRequest {
   Year?: number;
   TeamManagerSnadId?: string;
   employeeId?:string;
+  teamManagerID?:any;
 }
 
 export interface IYearlyReportRequest {
@@ -71,6 +72,7 @@ export interface IYearlyReportRequest {
   EntitlementYear?: number;
   TeamManagerSnadId?: string;
   employeeId?:string;
+  teamManagerID?: any;
 }
 
 

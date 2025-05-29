@@ -1,11 +1,11 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { DateformatPipe } from '../../Pipes/dateformat.pipe';
 import { SelectModule } from 'primeng/select';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpService } from '../../services/http.service';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import moment from 'moment';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -15,13 +15,10 @@ import { LettersheaderComponent } from '../../shared/letters-shared-content/lett
 import { TranslateModule } from '@ngx-translate/core';
 import { IEmployee } from '../probation-confirmation-letter/probation.modal';
 import { IEmployeeSignatures } from '../letters.modal';
-import { ModuleInformationComponent } from "../../shared/module-information/module-information.component";
-import { MODULE_INFOS } from '../../shared/modules-info';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
-
 @Component({
   selector: 'app-probation-extension-letter',
-  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, ModuleInformationComponent,NgbPopoverModule],
+  imports: [CommonModule, SelectModule, ReactiveFormsModule, DateformatPipe, LettersheaderComponent, LetterFooterComponent, TranslateModule, NgbPopoverModule],
   templateUrl: './probation-extension-letter.component.html',
   styleUrl: './probation-extension-letter.component.scss',
   encapsulation: ViewEncapsulation.None
@@ -39,17 +36,15 @@ export class ProbationExtensionLetterComponent {
   loading: boolean = false;
   Status: any;
   probationExtensionForm!: FormGroup;
-
   enableBtn= false;
   spinnerLoader= false;
   releaseLoader= false;
-
   documentType: { name: string, value: boolean }[] = [
     { name: 'Soft Copy', value: true },
     { name: 'Hard Copy', value: false },
   ];
   todayDate!: string;
-   lastSelectedEmployeeId: number | null = null;
+  lastSelectedEmployeeId: number | null = null;
 
   constructor(private http: HttpService, private router: Router, private fb: FormBuilder, private openModalService: OpenModalService) { }
 
@@ -59,27 +54,6 @@ export class ProbationExtensionLetterComponent {
     this.getAuthorityDetails();
     const today = new Date();
     this.todayDate = today.toISOString().split('T')[0];
-    this.updateModuleInfo();
-    this.initiateUpdateModuleInfo();
-  }
-
-  initiateUpdateModuleInfo(){
-    this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.updateModuleInfo();
-    });
-  }
-
-  updateModuleInfo() {
-    const url = this.router.url;
-  
-    const routeToInfoMap: { [key: string]: string } = {
-      '/admin/letters/probation-extension-letter': MODULE_INFOS.PROBATION_EXTENSION_LETTER_MODULE_INFO
-    };
-  
-    const matchedEntry = Object.entries(routeToInfoMap).find(([route]) => url.includes(route));
-    this.moduleinfo = matchedEntry ? matchedEntry[1] : '';
   }
 
   naviagte(){
@@ -161,7 +135,6 @@ export class ProbationExtensionLetterComponent {
     if (!newlySelectedEmployee || typeof newlySelectedEmployee !== 'object') {
       return;
     }
-
     // Reset dependent fields if employee changes
     if (
       this.lastSelectedEmployeeId &&
@@ -207,7 +180,6 @@ export class ProbationExtensionLetterComponent {
     this.probationExtensionLetterData.authorityName = formValues.authorityid?.fullName,
     this.probationExtensionLetterData.authorityDesignation = formValues.authorityid?.designation,
     this.probationExtensionLetterData.employeeId = formValues.employeeId?.employeeId
-
   }
 
   async postProbationExtensionLetterFormSubmit() {
@@ -246,10 +218,9 @@ export class ProbationExtensionLetterComponent {
         this.getProbationDetails = response.find((ele: any) => {
           return (ele.status?.toLowerCase() === 'extended');
         });
-
         this.probationExtensionLetterData.probationExtendedDate = this.getProbationDetails.probationExtendedDate
-        this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(this.getProbationDetails.probationEndDate, this.getProbationDetails.probationExtendedDate)
-      
+        this.probationExtensionLetterData.probationmonths = this.convertDaysToMonths(this.getProbationDetails.probationEndDate,
+           this.getProbationDetails.probationExtendedDate)
       }
     })
   }

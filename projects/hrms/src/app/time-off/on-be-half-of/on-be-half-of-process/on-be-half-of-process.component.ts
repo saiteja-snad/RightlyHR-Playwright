@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, effect } from '@angular/core';
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 import { Subscription } from 'rxjs';
 import { HttpService } from '../../../services/http.service';
@@ -39,7 +39,17 @@ export class OnBeHalfOfProcessComponent {
   }
 
   constructor(private http: HttpService, private authService: AuthService,) {
-
+    effect(() => {
+      if (this.http.onBehalfOfTriggerSignal()) {
+        this.cadidateEmployeeId = parseInt(
+          localStorage.getItem('onbehalfof') as string
+        );
+        if (this.cadidateEmployeeId != null) {
+          this.getDataByLPID();
+        }
+        this.http.onBehalfOfTriggerSignal.set(false);
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -54,7 +64,7 @@ export class OnBeHalfOfProcessComponent {
     this.subscription = this.http.getData(`Timeoff/${this.cadidateEmployeeId}`).subscribe({
       next: (response: any) => {
         if (Array.isArray(response)) {
-          this.processedLeaves = response.filter(item => item.status === 'Processed');
+          this.processedLeaves = response.filter(item => item.status.toLowerCase() === 'processed');
           let pendingCount = this.processedLeaves.length;
         } else {
           console.error("Invalid response format");

@@ -1,0 +1,48 @@
+<div class="custom-main-component-container">
+  <form autocomplete="off" [formGroup]="inviteActiveEmployeeForm" (ngSubmit)="activeInviteEmployee()">
+    <div class="custom-content-data">
+      <div class="input-content mb-4">
+        <label for="exampleFormControlInput1" class="form-label custom-label mb-2">{{'Select Employee' | translate}}<span
+            class="text-danger">*</span></label>
+        <div class="custom-p-select-content">
+          <p-select [options]="Activeemployeedata" optionLabel="name" optionValue="employeeId" [filter]="true"
+            filterBy="name" placeholder="Please select employee" class="custom-select w-100" formControlName = "EmployeeID"
+            (onChange)="onChangePropesctiveEmployess($event)">
+            <!-- Template for selected item -->
+            <ng-template #selectedItem let-selectedOption>{{ selectedOption.firstName }} {{ selectedOption.middleName }} 
+              {{ selectedOption.lastName }} - {{selectedOption.workEmail ?? 'NA'}}</ng-template>
+            <!-- Template for dropdown items -->
+            <ng-template let-employee #item>{{ employee.firstName }} {{ employee.middleName }} {{ employee.lastName }}
+              - {{employee.workEmail ?? 'NA'}}</ng-template>
+          </p-select>
+        </div>
+      </div>
+
+      <div class="input-content mb-4">
+        <label class="form-label custom-label mb-2">{{'Employee Name' | translate}}</label>
+        <input type="text" formControlName="fullname" placeholder="Employee Name" class="form-control custom-input">
+      </div>
+  
+      <div class="form-check input-field mb-4" *ngIf="isSelectedEmployee">
+        <input type="checkbox" class="form-check-input" id="flexCheckDefault" formControlName="agreement"
+          (click)="onCheckValue()">
+        <label class="form-check-label check-box-text" for="flexCheckDefault">
+          {{'I Agree to invite' | translate}}  <b><span class="email">{{ getName.workEmail }}</span></b> {{'into organization' | translate}}
+        </label>
+      </div>
+  
+      <div class="btn-div">
+        <button type="submit" class="custom-btn btn-primary" [disabled]=" !isCheckBoxChecked || spinnerLoader">
+          @if(spinnerLoader){
+            <div class="button-loader-content">
+                <div class="spinner-border button-spinner text-light" role="status"></div>
+                <div>{{'Loading..' | translate}}...</div>
+            </div>
+            }@else {
+            <span>{{'Send Invite' | translate}}</span>
+            }
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

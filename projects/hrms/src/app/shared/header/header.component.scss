@@ -1,5 +1,4 @@
 .header-profile-dropdown-content {
-
     .profile-dropdown {
         display: flex;
         gap: 1rem;
@@ -10,7 +9,7 @@
         padding: 0.313rem 0.5rem;
         background: linear-gradient(95.64deg, rgba(255, 255, 255, 0.2) -11.57%, rgba(11, 58, 131, 0.2) 100.11%);
         border-radius: 0.5rem;
-        border: 1px solid rgba(11, 58, 131, 0.1);
+        border: 1px solid var(--header-info-border-color);
 
         .name {
             font-weight: 700;
@@ -38,7 +37,6 @@
         opacity: 1;
         padding: 0rem !important;
         border: 0.9px solid rgba(11, 58, 131, 0.1);
-        transform: translate(0px, 56px) !important;
 
         .dropdown-content {
             width: 100%;

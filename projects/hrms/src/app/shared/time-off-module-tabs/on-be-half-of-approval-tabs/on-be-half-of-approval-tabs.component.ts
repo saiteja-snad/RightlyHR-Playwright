@@ -43,7 +43,7 @@ export class OnBeHalfOfApprovalTabsComponent {
   ) {
     // Signal reaction for employee switch
     effect(() => {
-      if (this.http.trigger()) {
+      if (this.http.onBehalfOfTriggerSignal()) {
         this.cadidateEmployeeId = parseInt(localStorage.getItem('onbehalfof') as string);
         if (this.cadidateEmployeeId != null) {
           this.getDataByLPID();

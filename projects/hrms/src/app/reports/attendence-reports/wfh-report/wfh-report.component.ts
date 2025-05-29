@@ -262,6 +262,7 @@ export class WfhReportComponent implements OnInit, OnDestroy {
 
   clearAllFilters(): void {
     this.wfhReportForm.reset();
+    this.filteredWfhRecord = [];
   }
 
   formatDate(date: Date): string {

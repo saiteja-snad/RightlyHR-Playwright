@@ -23,10 +23,10 @@
                 <p class="sub-text m-0 mb-1">
                     <i class="bi bi-clock-history me-1"></i>
                     <b *ngIf="jobdata?.jobTypeName; else noData">{{jobdata?.jobTypeName}}</b>
-                    <span *ngIf="jobdata?.jobTypeName && jobdata?.shiftName" class="mx-1">||</span>
+                    <span *ngIf="jobdata?.jobTypeName && jobdata?.shiftName" class="mx-1">|</span>
                     <span *ngIf="jobdata?.shiftName">{{jobdata?.shiftName}}</span>
                     <span *ngIf="(jobdata?.shiftName || jobdata?.jobTypeName) && 
-                            (jobdata?.shiftStartTime && jobdata?.shiftEndTime)" class="mx-1">||</span>
+                            (jobdata?.shiftStartTime && jobdata?.shiftEndTime)" class="mx-1">|</span>
                     <span *ngIf="jobdata?.shiftStartTime && jobdata?.shiftEndTime">{{jobdata?.shiftStartTime}}-{{jobdata?.shiftEndTime}}</span>
                     <ng-template #noData>N/A</ng-template>
                 </p>
@@ -50,18 +50,21 @@
 
     <!--nav tabs content-->
     <div>
+        <!--Personal Info Tabs-->
         <div *ngIf="isActive('personalinfo/personal' )">
-            <app-personal-personal-tabs></app-personal-personal-tabs>
+            <app-personal-personal-tabs />
         </div>
+        <!--Personal Info Job Tabs-->
+        <div *ngIf="isActive('personalinfo/job')">
+            <app-personal-job-tabs />
+        </div>
+        <!--My Info Tabs-->
         <div *ngIf="isActive('myinfo/personal')">
             <app-my-info-personal-tabs />
         </div>
+        <!--My Info Job Tabs-->
         <div *ngIf="isActive('myinfo/job' )">
             <app-myinfo-job-tabs />
-        </div>
-
-        <div *ngIf="isActive('personalinfo/job')">
-            <app-personal-job-tabs></app-personal-job-tabs>
         </div>
     </div>
 </div>

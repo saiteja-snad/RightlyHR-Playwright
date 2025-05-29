@@ -163,6 +163,8 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
 
   hidePublishCloneButtons: boolean = false;
   submit() {
+    debugger
+    console.log(this.updatePoliciesData)
     const formValue = this.policyForm.value;
     const payload = {
       locationId: formValue.location?.id ?? this.updatePoliciesData.locationId,
@@ -180,6 +182,7 @@ export class UpdatePoliciesComponent implements OnInit, OnDestroy {
       shiftID: formValue.shift?.id ?? this.updatePoliciesData.shiftID,
       id: this.updatePoliciesData.id,
       orgPolicyItems: formValue.policies.map((item: any) => ({
+        Id : item.id,
         PolicyName: item.policyName,
         PolicyAttachment:
           item.policyNewFile && item.policyNewFile !== ''

@@ -113,7 +113,7 @@ export class ProfileInfoDetailsComponent implements OnInit, OnDestroy {
     })
   }
 
-  chooseNewProfile(event: any) {
+  chooseProfile(event: any) {
 
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {

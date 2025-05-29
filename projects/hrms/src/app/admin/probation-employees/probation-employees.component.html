@@ -1,45 +1,4 @@
 <div class="custom-main-component-container">
-    <div class="component-header-content">
-      
-        <div class="heading-content">
-            <div class="commpoment-name cursor"  (click)="navigateDashboard()">Dashboard<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
-            <div class="component-header"> {{'Probation Employees'|translate}}</div>
-            <div>
-                <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent"
-                    class="module-icon">
-            </div>
-        </div>
-
-        @if(this.rbac.allowedToAccess('Probation Confirmation Letter.view') ||
-        this.rbac.allowedToAccess('Probation Extension Letter.view')){
-        <div class="dropdown">
-            <button type="button" class="custom-btn btn-primary" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-plus me-2"></i>{{'Generate Documents'| translate}}
-            </button>
-
-            <ul class="dropdown-menu custom-dropdown-menu">
-                @if(rbac.allowedToAccess('Probation Confirmation Letter.view')){
-                <li>
-                    <a class="dropdown-item" [routerLink]="['/admin/letters/probation-confirmation-letter']"
-                        routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>
-                        Probation Confirmation Letter</a>
-                </li>}
-
-                @if(rbac.allowedToAccess('Probation Extension Letter.view')){
-                <li>
-                    <a class="dropdown-item" [routerLink]="['/admin/letters/probation-extension-letter']"
-                        routerLinkActive="active"><i class="bi bi-file-earmark-text-fill me-2"></i>
-                        Probation Extension Letter</a>
-                </li>}
-            </ul>
-        </div>
-        }
-    </div>
-
-     <ng-template #popContent>
-        <app-module-information [moduleInfo]="moduleinfo" />
-    </ng-template>
-
     <!--Input search-->
     <div class="input-group custom-search mb-3">
         <span class="input-group-text custom-input-group-search" id="basic-addon1"><i class="bi bi-search"></i></span>

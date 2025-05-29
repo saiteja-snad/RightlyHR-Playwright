@@ -2,7 +2,7 @@
   <div class="component-header-content">
 
     <div class="heading-content">
-      <div class="commpoment-name">Time off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
+      <div class="commpoment-name">Time Off<span class="ms-1"><i class="bi bi-chevron-double-right"></i></span></div>
       <div class="component-header">On Behalf Of Approvals</div>
       <div>
                 <img src="\icons\moduelicon.png" alt="Icon" placement="bottom" [ngbPopover]="popContent" class="module-icon">
@@ -35,7 +35,7 @@
               <img src="/time-off-icon/leaves-icon.png" alt="Icon" class="icon mb-2">
               <div>Time Off ({{ timeOffCount }})</div>
             </div>
-            <div class="border-bottom"></div>
+            <div class="tabs-border-bottom"></div>
           </li>
           }
           @if(rbac.allowedToAccess('Comp Off (On Behalf Of Approvals).view') ) {
@@ -44,7 +44,7 @@
               <img src="/time-off-icon/comp-off.png" alt="Icon" class="icon mb-2">
               <div>Comp Off ({{ compOffCount }})</div>
             </div>
-            <div class="border-bottom"></div>
+            <div class="tabs-border-bottom"></div>
           </li>
           }
           @if(rbac.allowedToAccess('WFH (On Behalf Of Approvals).view') ) {
@@ -53,7 +53,7 @@
               <img src="/time-off-icon/WFH-icon.png" alt="Icon" class="icon mb-2">
               <div>WFH ({{ wfhCount }})</div>
             </div>
-            <div class="border-bottom"></div>
+            <div class="tabs-border-bottom"></div>
           </li>
           }
           @if(rbac.allowedToAccess('Permission (On Behalf Of Approvals).view') ) {
